@@ -319,7 +319,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn('class="meaning-row-check"', replica)
         self.assertIn('class="example-ticks"', replica)
         self.assertNotIn('class="compact-example-counter-label"', replica)
-        self.assertIn("speechCard: 'ptProvarSpeech'", tutorial)
+        self.assertIn("speechCard: 'ptParecerSpeech'", tutorial)
         self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', replica)
         self.assertIn('class="sense-note-trigger"', replica)
         self.assertIn('class="sense-cross-reference"', replica)
@@ -528,7 +528,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("window.getCardTutorialLanguageKey?.()", main)
         self.assertIn("window.setCardTutorialLanguage?.(language)", main)
         self.assertIn("startCardTutorial(key)", main)
-        self.assertIn("How common this meaning is", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
+        self.assertIn("How common each meaning is", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
         self.assertIn("Tap them to read Dominant, Common, Uncommon, or Rare", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
 
     def test_sense_frequency_uses_readable_labels_not_mystery_dots(self) -> None:
@@ -547,7 +547,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("conjugationData: _conjugationData", flashcards)
         self.assertIn("window.loadConjugationData()", (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8"))
         self.assertIn("function replicaProminence(pct)", (APP_ROOT / "js" / "card-replica.js").read_text(encoding="utf-8"))
-        self.assertIn("How common this meaning is", tutorial)
+        self.assertIn("How common each meaning is", tutorial)
         self.assertIn("Tap them to read Dominant, Common, Uncommon, or Rare", tutorial)
 
     def test_in_app_tutorial_skips_language_choice_when_one_is_already_selected(self) -> None:

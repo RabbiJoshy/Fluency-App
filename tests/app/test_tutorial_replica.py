@@ -16,40 +16,33 @@ class TutorialReplicaTests(unittest.TestCase):
 import assert from 'node:assert/strict';
 import { REPLICA_CARDS, renderBack } from './app/js/card-replica.js';
 globalThis.window = {};
-const card = REPLICA_CARDS.ptProvarSpeech;
-const selected = card.defaultMeaningIndex;
-const back = renderBack(card, selected, 0);
-const rowIndices = [...back.matchAll(/data-meaning-index="(\d+)"/g)].map(m => +m[1]);
-assert.deepEqual(rowIndices.map(i => card.meanings[i].translation), ['to prove', 'to taste; to try', 'to try on']);
-assert.equal(rowIndices[0], selected);
-const shuffled = {...card, meanings: [card.meanings[1], card.meanings[0], card.meanings[2]]};
-assert.deepEqual([...renderBack(shuffled, 1, 0).matchAll(/data-meaning-index="(\d+)"/g)].map(m => +m[1]), [1, 0, 2]);
-assert(back.includes('Tens de me ajudar'));
-assert(back.includes('Power · S3 E7'));
-assert.equal(card.meanings.reduce((n, m) => n + m.examples.length, 0), 14);
-assert(card.meanings[0].pct > 75);
-assert(card.meanings.slice(1).every(m => m.examples.length >= 2));
-assert(back.includes('Information about this meaning'));
-assert(!back.includes('replica-dictionary-source'));
-assert(!back.includes('example-source-favicon--wikipedia'));
-assert(!back.includes('meaning-row-check'));
-assert(!back.includes('>tr.</span>'));
-assert(back.includes('meaning-row-sub sense-cue-area'));
-assert(!back.includes('· show that something is true'));
-for (const [index, meaning] of card.meanings.entries()) {
-  for (let example = 0; example < meaning.examples.length; example++) {
-    const html = renderBack(card, index, example);
-    assert(!html.includes('Speech example'));
-    assert(html.includes('example-source-chip'));
-    assert(html.includes(meaning.examples[example].english.replace(/&/g, '&amp;').replace(/"/g, '&quot;')));
+for (const key of ['ptParecerSpeech', 'quieroSpeech']) {
+  const card = REPLICA_CARDS[key];
+  // A form whose dictionary form differs, with more than one meaning, early
+  // in its deck, and glosses short enough for a narrow phone.
+  assert.notEqual(card.word, card.lemma);
+  assert(card.meanings.length >= 2);
+  assert(card.rank <= 150);
+  assert(card.meanings.every(m => m.translation.length <= 14));
+  const back = renderBack(card, card.defaultMeaningIndex, 0);
+  const rowIndices = [...back.matchAll(/data-meaning-index="(\d+)"/g)].map(m => +m[1]);
+  assert.equal(rowIndices.length, card.meanings.length);
+  // Rows are drawn most common first.
+  const shares = rowIndices.map(i => card.meanings[i].pct);
+  assert.deepEqual(shares, [...shares].sort((a, b) => b - a));
+  for (const [index, meaning] of card.meanings.entries()) {
+    assert(meaning.examples.length >= 1);
+    for (let example = 0; example < meaning.examples.length; example++) {
+      const html = renderBack(card, index, example);
+      assert(html.includes('example-source-chip'));
+      assert(html.includes(meaning.examples[example].english.replace(/&/g, '&amp;').replace(/"/g, '&quot;')));
+    }
   }
 }
-const tasteIndex = rowIndices[1];
-assert(renderBack(card, tasteIndex, 0).includes('How about trying some sushi?'));
-assert.equal(card.meanings[tasteIndex].translation, 'to taste; to try');
-const clothesIndex = rowIndices[2];
-assert(renderBack(card, clothesIndex, 0).includes('this dress'));
-assert(renderBack(card, selected, 8).includes('Tens de me ajudar'));
+assert.equal(REPLICA_CARDS.quieroSpeech.lemma, 'querer');
+assert.equal(REPLICA_CARDS.ptParecerSpeech.lemma, 'parecer');
+assert(renderBack(REPLICA_CARDS.quieroSpeech, 0, 0).includes('Information about this meaning'));
+assert(!renderBack(REPLICA_CARDS.quieroSpeech, 0, 0).includes('meaning-row-check'));
 ''', capture_output=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -89,9 +82,10 @@ assert(cardSteps().every(step => step.deck === 'lyrics'));
 const deck = deckById('lyrics');
 assert.equal(deck.card, 'cielo');
 assert(deck.faces.front.notes.some(note => note.title === 'Kind of word'));
-assert(deck.faces.front.notes.find(note => note.title === 'How common the word is').text.includes('your chosen songs'));
-assert(deck.faces.back.notes.some(note => note.title === 'The meanings at a glance'));
+assert(deck.faces.front.notes.find(note => note.title === 'Song lines').text.includes('your chosen songs'));
+assert(deck.faces.back.notes.some(note => note.title === 'The kind of word'));
 assert(deck.faces.back.notes.some(note => note.title === 'Which song it is from'));
+assert(deck.faces.back.notes.some(note => note.title === 'The line in English'));
 assert(deck.faces.back.notes.some(note => note.title === 'Play the line'));
 assert(!deck.faces.back.notes.some(note => note.title === 'Where the example is from'));
 `, context);
@@ -152,11 +146,13 @@ state.meaningIndex = 0;
 assert.equal(tutorialCardHeight(), 342);
 document.querySelector = () => null;
 // Progress counts the chapter on show: the card's two faces.
-assert.equal(tutorialStepPosition().total, 12);
+assert.equal(tutorialStepPosition().total, 16);
 const front = stepNotes(tutorialSteps()[0]);
-assert.deepEqual(front.map(note => note.title), ['The word', 'How common the word is', 'Kind of word', 'The dictionary form']);
+assert.deepEqual(front.map(note => note.title), ['The word', 'Vocabulary rank', 'How often it is said', 'Kind of word', 'The dictionary form']);
 const back = stepNotes(tutorialSteps()[1]);
-assert.deepEqual(back.map(note => note.title), ['The meanings at a glance', 'The selected meaning', 'Rare uses', 'Review meanings', 'How common this meaning is', 'A real example', 'Look up', 'Grade your answer']);
+// One note per meaning row (parece has two), then the card's other parts.
+// parece's opening meaning has no usage line or grammar, so no "More about a meaning" note.
+assert.deepEqual(back.map(note => note.title), ['The kind of word', 'The most common meaning', 'The next meaning', 'How common each meaning is', 'A real example', 'The sentence in English', 'Where it comes from', 'Rare uses', 'Review meanings', 'Look up', 'Grade your answer']);
 // Notes explain; none sets a task that holds Next back.
 for (const step of tutorialSteps()) for (const note of stepNotes(step)) {
   assert.equal(note.practice, undefined);
@@ -164,23 +160,23 @@ for (const step of tutorialSteps()) for (const note of stepNotes(step)) {
 }
 // Smart Skip and the vocabulary source are pages, each in the language taught.
 const skip = stepNotes(tutorialSteps()[2]);
-assert.deepEqual(skip.map(note => note.title), ['Turn it on', 'Word forms share a card', 'Look-alikes are skipped']);
+assert.deepEqual(skip.map(note => note.title), ['Turn it on', 'Word forms share a card', 'Singular and plural share a card', 'Look-alikes are skipped']);
 assert(tutorialText(skip[1].text).startsWith('“falo”, “falou” and “falar”'));
 assert(TUTORIAL_PAGES.smartSkip.html(tutorialAdapter()).includes('falou'));
 // Portuguese has no music catalogue, so the artist/playlist note is absent.
 assert.equal(stepNotes(tutorialSteps()[3]).length, 3);
 assert(TUTORIAL_PAGES.modes.html(tutorialAdapter()).includes('Your music'));
 state.stepIndex = 2;
-assert.deepEqual(tutorialStepPosition(0), {current: 1, total: 3});
+assert.deepEqual(tutorialStepPosition(0), {current: 1, total: 4});
 state.stepIndex = 0;
 tutorialLanguageOverride = 'spanish';
 state.mode = 'lyrics';
-assert.equal(tutorialStepPosition().total, 15);
+assert.equal(tutorialStepPosition().total, 18);
 const lyricsBack = stepNotes(tutorialSteps()[1]);
 assert(lyricsBack.some(note => note.title === 'Play the line'));
 // Grading closes the face even after the song details are added.
 assert.equal(lyricsBack[lyricsBack.length - 1].title, 'Grade your answer');
-assert.equal(stepNotes(tutorialSteps()[0]).length, 4);
+assert.equal(stepNotes(tutorialSteps()[0]).length, 5);
 `, context);
 ''', capture_output=True,
         )

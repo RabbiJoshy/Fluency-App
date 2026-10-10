@@ -22319,12 +22319,12 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
    and the coach sheet; the box it leaves behind shrinks with it. The face
    title ("The back of the card —") is dropped, since the coach already says
    which side is showing, and the summary sits closer to the top bar. */
+#cardTutorialStage .card-replica {
+    transform: scale(var(--replica-card-scale, 1));
+    transform-origin: top center;
+    margin-bottom: calc(var(--replica-card-h, 480px) * (var(--replica-card-scale, 1) - 1));
+}
 @media (max-width: 700px) {
-    #cardTutorialStage .card-replica {
-        transform: scale(var(--replica-card-scale, 1));
-        transform-origin: top center;
-        margin-bottom: calc(var(--replica-card-h, 480px) * (var(--replica-card-scale, 1) - 1));
-    }
     .card-tutorial-blurb .card-tutorial-lede { display: none; }
     .card-tutorial-topbar { row-gap: 6px; }
 }
@@ -23377,10 +23377,10 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 #cardTutorialContinue:disabled, #cardTutorialMobileNext:disabled { opacity: .45; cursor: default; }
 .card-tutorial-scroll-hint { display: none; }
-#cardTutorialStage .meanings-scroll { flex: 0 1 auto; min-height: 72px; overflow-y: auto !important; overflow-x: hidden; max-height: none !important; }
+/* Never scroll inside the meanings: the card grows (or is scaled down) to hold every row. */
+#cardTutorialStage .meanings-scroll { flex: 0 0 auto; min-height: 0; overflow: visible !important; max-height: none !important; }
 #cardTutorialStage .card-details { height: 100%; overflow-y: auto; overflow-x: hidden; }
 #cardTutorialStage .sentence { flex: 0 0 auto; max-height: none; overflow: visible; box-sizing: border-box; }
-#cardTutorialStage .sentence.is-annotation-active { outline: 2px solid var(--accent-amber); outline-offset: -1px; border-radius: 10px; }
 #cardTutorialStage .meaning-row { padding-left: 44px !important; }
 #cardTutorialStage .sense-note-trigger { left: 2px; width: 44px; height: 44px; min-width: 44px; border: 0; background: transparent; }
 #cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 1px solid var(--border-light); border-radius: 50%; background: var(--bg-card); }
@@ -23404,7 +23404,7 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
     #cardTutorialBody .card-tutorial-stage-col { display: block; width: 100%; max-width: 440px; margin: 0 auto; }
     #cardTutorialBody .card-tutorial-notes-left, #cardTutorialBody .card-tutorial-notes-right { display: none; }
     #cardTutorialBody .card-tutorial-stage-wrap { width: 100%; }
-    #cardTutorialStage .card-replica { width: 100%; transform: none; margin-bottom: 0; }
+    #cardTutorialStage .card-replica { width: 100%; }
     #cardTutorialBody .card-tutorial-stage-col > .card-tutorial-lesson-tools { display: none; }
     #cardTutorialStage .card-back { padding: 14px 10px; }
     #cardTutorialStage .card-details { gap: 10px; }
@@ -23422,7 +23422,6 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
     #cardTutorialMobileCoach .card-tutorial-lesson-tools { grid-column: 1; gap: 4px; justify-content: flex-start; }
     #cardTutorialMobileCoach .card-tutorial-lesson-tools button { padding: 4px 8px; font-size: 13px; }
     #cardTutorialStage .card-face { font-size: 16px; }
-    #cardTutorialStage .sense-note-trigger.is-annotation-active { outline-offset: 0; }
 }
 
 /* Your music is one card: the option on top, Spotify as its footer, so the

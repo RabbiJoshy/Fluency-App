@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T22:14:49+01:00",
+      "date": "2026-10-10 22:14 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: finer-grained steps, new demo words, plural merging in Smart Skip, card always fits",
+      "detail": [
+        "Front: rank and frequency are separate steps. Back: the sense row, then each meaning row, the usage bars, the example, its English, its source, then Rare uses, Review meanings and Look up.",
+        "Demo cards are now quiero (querer, three meanings) in Spanish and parece (parecer, two short meanings) in Portuguese, replacing que and provar.",
+        "Smart Skip shows that singular and plural nouns with identical meanings share a card (Spanish and Portuguese).",
+        "The card no longer scrolls inside itself: on narrow phones it is scaled down (not below 70%) so every row is visible, and the page scrolls the rest."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T21:52:18+01:00",
       "date": "2026-10-10 21:52 BST",
       "agent": "Claude",
@@ -362,18 +375,6 @@
         "Conjugation table on a -se verb opens on the card's tense and highlights its form: fue with irse selected now opens Pretérito on 'se fue' (was: present tense, nothing highlighted). The pronoun stays in the table: 'me siento'.",
         "Measured on live v23 decks: no existing row changed and none lost its English; only rows that showed the infinitive gained one.",
         "Known: 3 pt rows read 'been' (feita under fazer's weather sense) — a sentence-assignment issue upstream, not inflection."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T19:43:12+01:00",
-      "date": "2026-10-09 19:43 BST",
-      "agent": "Codex",
-      "summary": "Choose an earlier or later estimated starting point",
-      "detail": [
-        "Offer a more conservative starting level near 90% recognition and a later level near 80%, showing how familiar the vocabulary is likely to be.",
-        "Use the same cognate decisions as Smart Skip for estimation even when Smart Skip is off; qualifying cognates never appear as questions.",
-        "Show AUTO under levels covered by the saved estimate, without recording estimator answers as learned cards or changing actual study progress."
       ],
       "commit": "pending"
     }

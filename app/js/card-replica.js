@@ -205,161 +205,60 @@ export const REPLICA_CARDS = {
             },
         ],
     },
-    // Portuguese learner tutorial: three distinct uses of provar and fourteen
-    // curated examples from pt-speech-v23-10000x30-slim, unchanged. The live
-    // release assigns 22 examples to prove, four to taste and two to try on;
-    // shares are relative to those three displayed senses. The general "try
-    // out" sense is omitted because its examples overlap the clothing sense.
-    // IMDb titles are resolved from the shipped source_titles.json mapping.
-    ptProvarSpeech: {
-        "mode": "speech",
-        "word": "provar",
-        "pos": "VERB",
-        "lemma": "provar",
-        "rank": 1165,
-        "vocabSize": 10000,
-        "corpusCount": 74.556751,
-        "defaultMeaningIndex": 0,
-        "meanings": [
-            {
-                "pos": "VERB",
-                "translation": "to prove",
-                "context": "show that something is true",
-                "pct": 78.57142857142857,
-                "metadata": [
-                    {
-                        "short": "tr.",
-                        "full": "transitive: used with an object",
-                        "family": "construction"
-                    }
-                ],
-                "examples": [
-                    {
-                        "target": "Tens de me ajudar a provar que estou inocente.",
-                        "english": "I need you to help me prove that I'm innocent.",
-                        "sourceLabel": "IMDb",
-                        "titleId": "5273862",
-                        "sourceTitle": "Power · S3 E7"
-                    },
-                    {
-                        "target": "Você não precisa provar nada para mim.",
-                        "english": "You don't need to prove anything to me.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Eu posso provar que tenho razão.",
-                        "english": "I can prove that I am right.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Pode provar que estou errado?",
-                        "english": "Can you prove I'm wrong?",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Eu posso provar isso.",
-                        "english": "I can prove it.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Você pode provar isso?",
-                        "english": "Can you prove that?",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Não o vou deixar em paz até o conseguir provar.",
-                        "english": "I'm not letting you alone until I prove it.",
-                        "sourceLabel": "IMDb",
-                        "titleId": "4172404",
-                        "sourceTitle": "The Mentalist · S7 E6"
-                    },
-                    {
-                        "target": "Sempre tive de provar que sou bom.",
-                        "english": "I've always had to prove I'm good enough.",
-                        "sourceLabel": "IMDb",
-                        "titleId": "5521456",
-                        "sourceTitle": "Avengers Assemble · S3 E2"
-                    }
-                ]
-            },
-            {
-                "pos": "VERB",
-                "translation": "to taste; to try",
-                "context": "food",
-                "pct": 14.285714285714285,
-                "metadata": [
-                    {
-                        "short": "tr.",
-                        "full": "transitive: used with an object",
-                        "family": "construction"
-                    }
-                ],
-                "examples": [
-                    {
-                        "target": "Que tal provar um pouco de sushi?",
-                        "english": "How about trying some sushi?",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Parece delicioso. Acho que vou provar algum.",
-                        "english": "Looks delicious. Think I'll try some.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Isso parece delicioso. Gostaria de provar.",
-                        "english": "That looks delicious. I'd like to try it.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Quando você provar, vai achar toda esta comida excelente e muito nutritiva.",
-                        "english": "When you taste it, you will find all this food excellent and very nourishing.",
-                        "sourceLabel": "Tatoeba example"
-                    }
-                ]
-            },
-            {
-                "pos": "VERB",
-                "translation": "to try on",
-                "context": "clothes",
-                "pct": 7.142857142857142,
-                "metadata": [
-                    {
-                        "short": "tr.",
-                        "full": "transitive: used with an object",
-                        "family": "construction"
-                    }
-                ],
-                "examples": [
-                    {
-                        "target": "Eu gostaria de provar este vestido.",
-                        "english": "I'd like to try on this dress.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Gostaria de provar um tamanho menor que este.",
-                        "english": "I'd like to try on one size smaller than this.",
-                        "sourceLabel": "Tatoeba example"
-                    }
-                ]
-            }
-        ]
-    },
-    queSpeech: {
-        mode: 'speech', word: 'que', pos: 'CCONJ', lemma: 'que', rank: 1, vocabSize: 6000, corpusCount: 33170,
+    // Portuguese learner tutorial: `parece` (rank 127), a form of `parecer`
+    // with two short senses, so every row fits a narrow phone untruncated.
+    // Senses, shares (28 vs 2 assigned examples) and examples are read out of
+    // pt-speech-v24-headway-r2-10000x30-slim; IMDb titles come from the
+    // shipped source_titles.json mapping.
+    ptParecerSpeech: {
+        mode: 'speech', word: 'parece', pos: 'VERB', lemma: 'parecer', rank: 127, vocabSize: 10000, corpusCount: 926,
+        defaultMeaningIndex: 0,
         meanings: [
             {
-                pos: 'CCONJ', translation: 'that', context: 'introduces a subordinate clause', pct: 34,
-                metadata: [{ short: 'subordinate clause', full: 'used to introduce a subordinate clause', family: 'functional' }],
-                examples: [{ target: 'Es sólo que no es sutil.', english: "It’s just that it isn’t subtle.", sourceLabel: 'Speech example' }],
+                pos: 'VERB', translation: 'to seem', context: null, pct: 93,
+                examples: [
+                    { target: 'Parece que você não se lembra de mim.', english: "It seems like you don't remember me.", sourceLabel: 'Tatoeba example' },
+                    { target: 'Ele parece saber tudo sobre o seu passado.', english: 'He seems to know everything about your past.', sourceLabel: 'Tatoeba example' },
+                    { target: 'Mas parece que ainda não estavas pronto.', english: "But it appears you weren't ready yet.", sourceLabel: 'IMDb', titleId: '6063486', sourceTitle: 'Once Upon a Time · S6 E8' },
+                ],
             },
             {
-                pos: 'CCONJ', translation: 'than; to', context: 'used in comparisons', pct: 33,
-                metadata: [{ short: 'comparison', full: 'used in comparisons', family: 'construction' }],
-                examples: [{ target: 'Prefiero las tiendas pequeñas que los grandes supermercados.', english: 'I prefer small stores to big supermarkets.', sourceLabel: 'SpanishDict example' }],
+                pos: 'VERB', translation: 'to resemble', context: '+ com', pct: 7,
+                metadata: [{ short: 'pron.', full: 'pronominal', family: 'construction' }],
+                examples: [
+                    { target: 'Tom se parece muito com o pai.', english: 'Tom looks a lot like his father.', sourceLabel: 'Tatoeba example' },
+                    { target: 'Você não se parece muito com seu pai.', english: "You don't look very much like your father.", sourceLabel: 'Tatoeba example' },
+                ],
+            },
+        ],
+    },
+    // Spanish learner tutorial: `quiero` (rank 64), a form of `querer`, three
+    // short senses. Read out of es-speech-v24-headway-r4-10000x30-slim: 27, 2
+    // and 1 assigned examples.
+    quieroSpeech: {
+        mode: 'speech', word: 'quiero', pos: 'VERB', lemma: 'querer', rank: 64, vocabSize: 10000, corpusCount: 1925,
+        defaultMeaningIndex: 0,
+        meanings: [
+            {
+                pos: 'VERB', translation: 'to want', context: 'to wish', pct: 90,
+                examples: [
+                    { target: 'Eso es lo que quiero.', english: "That's what I want.", sourceLabel: 'Tatoeba example' },
+                    { target: 'Quiero hablar de una cosa con vuestra madre.', english: 'I want to talk about something with your mother.', sourceLabel: 'Tatoeba example' },
+                    { target: 'Y cuando lo haga, quiero estar aquí.', english: 'And when he does, I wanna be here.', sourceLabel: 'IMDb', titleId: '4950318', sourceTitle: 'Daredevil · S2 E10' },
+                ],
             },
             {
-                pos: 'PRON', translation: 'that; which', context: 'defines the object', pct: 33,
-                examples: [{ target: 'Ese es el teléfono que yo quiero.', english: 'That is the phone that I want.', sourceLabel: 'SpanishDict example' }],
+                pos: 'VERB', translation: 'to love', context: 'to feel affection for', pct: 7,
+                examples: [
+                    { target: 'Y... aún te quiero.', english: 'And... I love you still.', sourceLabel: 'IMDb', titleId: '5767452', sourceTitle: 'Scandal · S6 E3' },
+                    { target: '“Os quiero a todos... pero ya es suficiente”.', english: '“I love you all... but enough’s enough.”', sourceLabel: 'IMDb', titleId: '5218470', sourceTitle: 'Fear the Walking Dead · S2 E13' },
+                ],
+            },
+            {
+                pos: 'VERB', translation: 'to mean', context: 'to have as intention', pct: 3,
+                examples: [
+                    { target: 'Bueno, eso no es lo que quiero decir.', english: "Well, that's not what I mean.", sourceLabel: 'IMDb', titleId: '5350058', sourceTitle: 'Jane the Virgin · S2 E11' },
+                ],
             },
         ],
     },

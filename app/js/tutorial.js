@@ -22,10 +22,10 @@ import {
 // The Smart Skip examples are the ones its own page uses (fast-mode.js), so
 // the tutorial and the setting never show a learner different words.
 const TUTORIAL_LANGUAGE_ADAPTERS = {
-    spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true,
-        smartSkip: { forms: ['hablo', 'habló', 'hablar'], lookalike: 'chocolate' } },
-    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptProvarSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true,
-        smartSkip: { forms: ['falo', 'falou', 'falar'], lookalike: 'hotel' } },
+    spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'quieroSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true,
+        smartSkip: { forms: ['hablo', 'habló', 'hablar'], plurals: ['vida', 'vidas'], lookalike: 'chocolate' } },
+    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptParecerSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true,
+        smartSkip: { forms: ['falo', 'falou', 'falar'], plurals: ['noite', 'noites'], lookalike: 'hotel' } },
     czech: { language: 'Czech', flag: '🇨🇿', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true,
         smartSkip: { forms: ['dělám', 'dělal', 'dělat'], lookalike: 'film' } },
     french: { language: 'French', flag: '🇫🇷', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false,
@@ -61,6 +61,18 @@ function tutorialText(value) {
         .replaceAll('{provider}', adapter.provider)
         .replaceAll('{posExample}', tutorialLanguageKey() === 'portuguese' ? 'For example, Portuguese “como” can be a verb (“I eat”) or a conjunction (“as”).' : '')
         .replaceAll('{demoLemma}', currentCard()?.lemma || currentCard()?.word || '')
+        .replaceAll('{lemmaSentence}', (() => {
+            const card = currentCard();
+            if (!card) return '';
+            return card.lemma && card.lemma !== card.word
+                ? `Here the word is “${card.word}” but its dictionary form is “${card.lemma}”, the form you would find in a dictionary.`
+                : `Here the word and dictionary form are both “${card.lemma || card.word}”. Inflected words can differ: {lemmaExample}.`;
+        })())
+        .replaceAll('{demoWord}', currentCard()?.word || '')
+        .replaceAll('{rank}', (currentCard()?.rank || '').toLocaleString())
+        .replaceAll('{vocabSize}', (currentCard()?.vocabSize || '').toLocaleString())
+        .replaceAll('{perMillion}', Math.round(currentCard()?.corpusCount || 0).toLocaleString())
+        .replaceAll('{pluralForms}', listPhrase((adapter.smartSkip.plurals || []).map(form => `“${form}”`)))
         .replaceAll('{lemmaExample}', ({ portuguese: '“tenho” (I have) comes from “ter” (to have)', spanish: '“tengo” (I have) comes from “tener” (to have)', czech: '“jsem” (I am) comes from “být” (to be)', french: '“ai” (I have) comes from “avoir” (to have)' })[tutorialLanguageKey()] || '')
         .replaceAll('{smartSkipForms}', listPhrase(adapter.smartSkip.forms.map(form => `“${form}”`)))
         .replaceAll('{smartSkipLookalike}', `“${adapter.smartSkip.lookalike}”`)
@@ -115,18 +127,6 @@ const TUTORIAL_DECKS = [
             back: {
                 notes: [
                     {
-                        side: 'left',
-                        anchor: '.translation',
-                        title: 'The line in English',
-                        text: 'So the whole lyric makes sense without looking anything up.',
-                    },
-                    {
-                        side: 'left',
-                        anchor: '.example-song-credit',
-                        title: 'Which song it is from',
-                        text: 'Plus any guest artist singing that line.',
-                    },
-                    {
                         side: 'right',
                         anchor: '.spotify-btn',
                         title: 'Play the line',
@@ -150,14 +150,17 @@ const TUTORIAL_DECKS = [
                     {
                         side: 'left',
                         anchor: '.pos-section-head',
-                        title: 'The meanings at a glance',
-                        text: 'Meanings are grouped by kind of word, with the most common first.',
+                        title: 'The kind of word',
+                        text: 'Meanings are grouped by kind of word. This heading names the group, gives its dictionary form and sums up the meanings beneath.',
                     },
+                    // One note per meaning row, filled in from the card on show.
+                    { side: 'left', rows: true },
                     {
                         side: 'left',
-                        anchor: '.meaning-row.is-current-sense',
-                        title: 'The selected meaning',
-                        text: 'Tap any meaning to change the example below. The shaded cue explains when that meaning is used.',
+                        anchor: '.sense-note-trigger',
+                        when: card => Boolean(selectedMeaning(card)?.context || selectedMeaning(card)?.metadata?.length),
+                        title: 'More about a meaning',
+                        text: 'Tap the “i” on the highlighted meaning for when it is used and any grammar that goes with it.',
                     },
                     {
                         side: 'left',
@@ -168,27 +171,45 @@ const TUTORIAL_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.meaning-row.is-current-sense .sense-prominence-badge',
+                        anchor: '.meaning-row .sense-prominence-badge',
+                        all: true,
                         requires: 'usageShares',
-                        title: 'How common this meaning is',
-                        text: 'The bars show how often this meaning shows up in real speech. Tap them to read Dominant, Common, Uncommon, or Rare.',
-                        lyricsText: 'The bars show how often this meaning shows up in your chosen songs. Tap them to read Dominant, Common, Uncommon, or Rare.',
+                        title: 'How common each meaning is',
+                        text: 'The bars show how often each meaning turns up in real speech. Tap them to read Dominant, Common, Uncommon, or Rare.',
+                        lyricsText: 'The bars show how often each meaning turns up in your chosen songs. Tap them to read Dominant, Common, Uncommon, or Rare.',
                     },
                     {
                         side: 'right',
                         anchor: '.sentence',
                         title: 'A real example',
-                        text: 'Each sentence matches the selected meaning; where there are several, tap it for the next. Beneath it is where it comes from: film or TV dialogue (IMDb), Tatoeba for contributed sentences, or {provider} for dictionary examples.',
-                        lyricsText: 'Each lyric matches the selected meaning; where there are several, tap it for the next.',
+                        lyricsTitle: 'A real lyric',
+                        text: 'A sentence that uses the highlighted meaning. Tap a meaning to see its example; where a meaning has several, tap the sentence for the next.',
+                        lyricsText: 'A line that uses the highlighted meaning. Tap a meaning to see its line; where it has several, tap the line for the next.',
                     },
                     {
-                        side: 'left',
+                        side: 'right',
+                        anchor: '.sentence .translation',
+                        title: 'The sentence in English',
+                        lyricsTitle: 'The line in English',
+                        text: 'So you can check the meaning without looking anything up.',
+                        lyricsText: 'So the whole lyric makes sense without looking anything up.',
+                    },
+                    {
+                        side: 'right',
+                        anchor: '.example-song-credit',
+                        title: 'Where it comes from',
+                        lyricsTitle: 'Which song it is from',
+                        text: 'Film or TV dialogue (IMDb), Tatoeba for contributed sentences, or {provider} for dictionary examples.',
+                        lyricsText: 'The song, plus any guest artist singing that line.',
+                    },
+                    {
+                        side: 'right',
                         anchor: '.ref-rare-uses-btn',
                         title: 'Rare uses',
                         text: 'Less common definitions and expressions collected in one place, so you can explore them without cluttering normal study.',
                     },
                     {
-                        side: 'left',
+                        side: 'right',
                         anchor: '.knowledge-overview-trigger',
                         title: 'Review meanings',
                         text: 'Know the word, but not every definition? Choose the specific meanings you want future review sessions to focus on.',
@@ -221,10 +242,18 @@ const TUTORIAL_DECKS = [
                     },
                     {
                         side: 'left',
-                        anchor: '.card-ranking',
-                        title: 'How common the word is',
-                        text: 'Its place in the {language} deck, and how often it is said per million words. The most common words come first.',
-                        lyricsText: 'Its place in your deck, and how many lines in your chosen songs contain it. The most common words come first.',
+                        anchor: '.card-rank-label',
+                        title: 'Vocabulary rank',
+                        text: 'Where the word sits in the {language} deck: number {rank} of {vocabSize}. The most common words come first.',
+                        lyricsText: 'Where the word sits in your deck: number {rank} of {vocabSize}. The most common words come first.',
+                    },
+                    {
+                        side: 'right',
+                        anchor: '.card-freq-label',
+                        title: 'How often it is said',
+                        lyricsTitle: 'Song lines',
+                        text: 'About {perMillion} times in every million words of {language} dialogue.',
+                        lyricsText: 'How many lines in your chosen songs contain it: {perMillion}.',
                     },
                     {
                         side: 'right',
@@ -236,7 +265,7 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         anchor: '.front-lemma-name',
                         title: 'The dictionary form',
-                        text: 'Here the word and dictionary form are both “{demoLemma}”. Inflected words can differ: {lemmaExample}. The small label tells you which dictionary entry to look up.',
+                        text: '{lemmaSentence} The small label tells you which dictionary entry to look up.',
                     },
                 ],
             },
@@ -262,6 +291,13 @@ const TUTORIAL_PAGES = {
                 anchor: '.tutorial-page-forms',
                 title: 'Word forms share a card',
                 text: '{smartSkipForms} share one flashcard, so you learn the word once.',
+            },
+            {
+                side: 'right',
+                anchor: '.tutorial-page-plurals',
+                when: () => Boolean(tutorialAdapter().smartSkip.plurals),
+                title: 'Singular and plural share a card',
+                text: '{pluralForms} are one noun, so they share one flashcard. This happens only when the singular and the plural mean exactly the same things; if either has an extra meaning they stay separate.',
             },
             {
                 side: 'right',
@@ -307,7 +343,7 @@ const TUTORIAL_PAGES = {
 };
 
 function smartSkipPageHTML(adapter) {
-    const { forms, lookalike } = adapter.smartSkip;
+    const { forms, lookalike, plurals } = adapter.smartSkip;
     const word = value => `<span class="tutorial-page-word">${esc(value)}</span>`;
     return `
         <div class="tutorial-page" aria-label="Example of Smart Skip">
@@ -327,6 +363,14 @@ function smartSkipPageHTML(adapter) {
                     <span class="tutorial-page-result">1 card</span>
                 </div>
             </div>
+            ${plurals ? `<div class="tutorial-page-example tutorial-page-plurals">
+                <span class="tutorial-page-label">Combine singular and plural</span>
+                <div class="tutorial-page-flow">
+                    <span class="tutorial-page-words">${plurals.map(word).join('')}</span>
+                    <span class="tutorial-page-arrow" aria-hidden="true">→</span>
+                    <span class="tutorial-page-result">1 card</span>
+                </div>
+            </div>` : ''}
             <div class="tutorial-page-example tutorial-page-lookalike">
                 <span class="tutorial-page-label">Skip look-alikes</span>
                 <div class="tutorial-page-flow">
@@ -438,9 +482,14 @@ function deckById(id) {
     const speech = TUTORIAL_DECKS.find(d => d.id === 'speech');
     if (id === 'speech') return { ...speech, card: tutorialAdapter().speechCard };
     const lyrics = TUTORIAL_DECKS.find(d => d.id === 'lyrics');
-    const forLyrics = note => (note.lyricsText ? { ...note, text: note.lyricsText } : note);
-    // Shared meanings and examples first; only song-specific details are added.
-    const back = [...speech.faces.back.notes.map(forLyrics), ...lyrics.faces.back.notes];
+    const forLyrics = note => ({ ...note,
+        ...(note.lyricsText ? { text: note.lyricsText } : {}),
+        ...(note.lyricsTitle ? { title: note.lyricsTitle } : {}) });
+    // Shared meanings and examples first; the song-specific button follows the
+    // line it belongs to.
+    const shared = speech.faces.back.notes.map(forLyrics);
+    const credit = shared.findIndex(note => note.anchor === '.example-song-credit');
+    const back = [...shared.slice(0, credit + 1), ...lyrics.faces.back.notes, ...shared.slice(credit + 1)];
     return { ...lyrics, faces: {
         front: { ...speech.faces.front, title: 'The front of a Lyrics card', notes: speech.faces.front.notes.map(forLyrics) },
         back: { ...speech.faces.back, title: 'The back of a Lyrics card',
@@ -469,12 +518,41 @@ function currentFace() {
     return stepFace(currentStep());
 }
 
+// The meaning the card opens on, as the card data says.
+function selectedMeaning(card) {
+    return card?.meanings?.[card.defaultMeaningIndex || 0] || null;
+}
+
+// Rows are drawn most common first (card-replica.js renderMeaningRows), so one
+// note per row, in that order, names each meaning the way the card shows it.
+function meaningRowNotes(card, side) {
+    const ordered = [...(card?.meanings || [])]
+        .sort((a, b) => (Number(b.pct) || 0) - (Number(a.pct) || 0));
+    return ordered.map((meaning, i) => {
+        const gloss = `“${esc(meaning.translation)}”`;
+        const last = i === ordered.length - 1 && ordered.length > 2;
+        return {
+            side,
+            find: stage => stage.querySelectorAll('.meanings-scroll .meaning-row')[i],
+            title: i === 0 ? 'The most common meaning'
+                : last ? 'The least common meaning' : 'The next meaning',
+            text: i === 0
+                ? `${gloss} is the meaning you will meet most often. The shaded line, when there is one, says when it is used.`
+                : `${gloss} is ${last ? 'the rarest meaning of this word' : 'a less common meaning of the same word'}. Tap its row to see an example of it.`,
+        };
+    });
+}
+
 // Left column first, then right, so each note sits on the same side as the
 // element it explains; a closing note ends the face.
 function stepNotes(step) {
     const face = stepFace(step);
     if (!face) return [];
-    const notes = face.notes.filter(note => !note.requires || tutorialAdapter()[note.requires]);
+    const card = step.kind === 'card' ? REPLICA_CARDS[deckById(step.deck).card] : null;
+    const notes = face.notes
+        .flatMap(note => (note.rows ? meaningRowNotes(card, note.side) : [note]))
+        .filter(note => !note.requires || tutorialAdapter()[note.requires])
+        .filter(note => !note.when || note.when(card));
     const body = notes.filter(n => !n.closing);
     return [...body.filter(n => n.side !== 'right'), ...body.filter(n => n.side === 'right'),
         ...notes.filter(n => n.closing)];
@@ -528,7 +606,7 @@ function renderCard() {
     // A face starts blank; its first element fades in a beat later so the
     // card visibly builds rather than appearing complete.
     if (step.kind === 'card') {
-        stage.querySelectorAll('.card-tutorial-anchored:not(.card-back), .meanings-scroll').forEach(el =>
+        stage.querySelectorAll('.card-tutorial-anchored:not(.card-back)').forEach(el =>
             el.classList.add('card-tutorial-unrevealed'));
         setTimeout(syncReveal, 60);
     }
@@ -735,8 +813,29 @@ function fitCardToContent() {
         probe.remove();
         intro.style.minHeight = `${tallest}px`;
     }
-    const height = tutorialCardHeight();
+    let height = tutorialCardHeight();
     inner.style.setProperty('--replica-card-h', `${height}px`);
+    // Everything on a face must be on screen. If a face's content is taller
+    // than the box it has (a narrow phone wraps rows), shrink the whole card
+    // to fit rather than cut a row off; below 70% the page scrolls instead.
+    let need = 0;
+    inner.querySelectorAll('.card-face, .tutorial-page').forEach(face => {
+        // The back's details box scrolls on its own, so its overflow does not
+        // reach the face: add what is hidden in it to the face's own height.
+        const details = face.querySelector('.card-details');
+        const hidden = details ? Math.max(0, details.scrollHeight - details.clientHeight) : 0;
+        need = Math.max(need, face.scrollHeight + hidden);
+        face.scrollTop = 0;
+        if (details) details.scrollTop = 0;
+    });
+    inner.style.setProperty('--replica-card-scale', '1');
+    if (need > height + 1) {
+        // Give the card the room its content needs, then shrink the whole
+        // card back down to the room there is (never below 70%).
+        const scale = Math.max(0.7, height / need);
+        inner.style.setProperty('--replica-card-h', `${Math.ceil(need)}px`);
+        inner.style.setProperty('--replica-card-scale', String(scale));
+    }
     const compactDesktop = window.innerWidth > 700 && window.innerWidth <= 1180;
     const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
     const width = Math.min(640, (compactDesktop ? height * .85 : Math.max(440, height * .78)), (pane?.clientWidth || window.innerWidth) * (compactDesktop ? .95 : .4));
@@ -751,10 +850,13 @@ function markAnchors() {
         delete el.dataset.cardTutorialNote;
     });
     orderedNotes().forEach((note, i) => {
-        const target = stage.querySelector(note.anchor);
-        if (!target) return;
-        target.classList.add('card-tutorial-anchored');
-        target.dataset.cardTutorialNote = String(i);
+        const found = note.find ? [note.find(stage)]
+            : note.all ? [...stage.querySelectorAll(note.anchor)]
+            : [stage.querySelector(note.anchor)];
+        found.filter(Boolean).forEach(target => {
+            target.classList.add('card-tutorial-anchored');
+            target.dataset.cardTutorialNote = String(i);
+        });
     });
     if (state.activeNote >= 0) setActiveNote(state.activeNote);
     else syncReveal();
@@ -763,25 +865,16 @@ function markAnchors() {
 // Both faces start blank and each element appears as its note comes up.
 // Elements keep their space (opacity, not display) so the card does not
 // reflow as they arrive. Going back keeps everything already seen. The whole
-// back face is itself annotated (the closing note), so it is never hidden;
-// the meanings list, which holds several notes' targets, appears with the
-// first of them.
+// back face is itself annotated (the closing note), so it is never hidden.
 function syncReveal() {
     const stage = document.getElementById('cardTutorialStage');
     if (!stage) return;
     const step = currentStep();
     const building = step?.kind === 'card';
-    const first = new Map();
     stage.querySelectorAll('.card-tutorial-anchored').forEach(el => {
         const index = Number(el.dataset.cardTutorialNote);
         if (el.classList.contains('card-back')) return;
         el.classList.toggle('card-tutorial-unrevealed', building && index > state.activeNote);
-        const group = el.closest('.meanings-scroll');
-        if (group) first.set(group, Math.min(index, first.has(group) ? first.get(group) : Infinity));
-    });
-    stage.querySelectorAll('.meanings-scroll').forEach(group => {
-        const index = first.has(group) ? first.get(group) : -1;
-        group.classList.toggle('card-tutorial-unrevealed', building && index > state.activeNote);
     });
     // The capsule that holds the kind-of-word pill and the dictionary form
     // belongs to the pill: it should not sit there empty before the pill does.
@@ -800,7 +893,8 @@ function positionRing() {
     const stage = document.getElementById('cardTutorialStage');
     if (!stage) return;
     let ring = stage.querySelector('.card-tutorial-ring');
-    const target = stage.querySelector('.card-tutorial-anchored.is-annotation-active');
+    const targets = [...stage.querySelectorAll('.card-tutorial-anchored.is-annotation-active')];
+    const target = targets[0];
     const card = stage.querySelector('.card-replica');
     if (!target || !card || state.flipping || target.classList.contains('card-tutorial-unrevealed')) {
         if (ring) ring.hidden = true;
@@ -816,7 +910,14 @@ function positionRing() {
     const bounds = card.getBoundingClientRect();
     // A headword's box is the full card width; ring the word, not the row.
     let box = target.getBoundingClientRect();
-    if (target.matches('.card-word')) {
+    if (targets.length > 1) {
+        const rects = targets.map(el => el.getBoundingClientRect());
+        const left = Math.min(...rects.map(r => r.left));
+        const top = Math.min(...rects.map(r => r.top));
+        const right = Math.max(...rects.map(r => r.right));
+        const bottom = Math.max(...rects.map(r => r.bottom));
+        box = { left, top, right, bottom, width: right - left, height: bottom - top };
+    } else if (target.matches('.card-word')) {
         const range = document.createRange();
         range.selectNodeContents(target);
         const text = range.getBoundingClientRect();
@@ -868,7 +969,7 @@ function setActiveNote(index) {
             group.classList.add('is-open');
             group.querySelector('.pos-section-head')?.setAttribute('aria-expanded', 'true');
         }
-        active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        keepInView(active);
     }
     syncReveal();
     renderMobileCoach();
@@ -894,6 +995,21 @@ let _ringWatch = null;
 function watchRing() {
     clearInterval(_ringWatch);
     _ringWatch = setInterval(positionRing, 100);
+}
+
+// Bring the element being explained into view by scrolling the tutorial's own
+// body only. scrollIntoView() would also scroll the card faces, which clip
+// their overflow, and push the headword out of the card.
+function keepInView(el) {
+    // On a phone the columns scroll; on a desktop the body does.
+    const columns = document.querySelector('#cardTutorialBody .card-tutorial-columns');
+    const body = document.getElementById('cardTutorialBody');
+    const scroller = [columns, body].find(node => node && node.scrollHeight > node.clientHeight + 1);
+    if (!scroller || !el.getBoundingClientRect) return;
+    const view = scroller.getBoundingClientRect();
+    const box = el.getBoundingClientRect();
+    if (box.top < view.top + 8) scroller.scrollTop -= view.top + 8 - box.top;
+    else if (box.bottom > view.bottom - 8) scroller.scrollTop += box.bottom - view.bottom + 8;
 }
 
 // A first-time reader can stall on a step not knowing the tour moves on with
