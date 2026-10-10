@@ -20047,9 +20047,27 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
 .knowledge-overview-footer[hidden] { display: none !important; }
 .knowledge-overview-focus.is-static { cursor: default; }
 
-/* Rarer uses sheet: the expressions/rare-senses list from the old child
-   card, scrolling inside the sheet instead of the card face. */
+/* Rare uses sheet: the rare-senses list scrolling inside the sheet instead
+   of the card face. */
 body.rare-uses-open { overflow: hidden; }
+.rare-uses-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.rare-uses-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font: 600 11px/1.4 var(--font-emphasis, inherit);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+  color: var(--text-muted);
+  border: 1px solid color-mix(in srgb, var(--text-primary) 14%, transparent);
+}
 .rare-uses-subtitle {
   margin: 4px 0 0;
   color: var(--text-muted);

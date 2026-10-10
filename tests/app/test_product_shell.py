@@ -1516,7 +1516,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("function getQualifyingRareSenses(card)", flashcards)
         self.assertIn("function openRareAndExpressionsCard(event)", flashcards)
         self.assertIn('class="ref-tile ref-rare-uses-btn"', flashcards)
-        self.assertIn(">Rarer uses</span>", flashcards)
+        self.assertIn(">Rare uses</span>", flashcards)
         self.assertIn("function clusterRareSenses(items)", flashcards)
         # The tile opens a sheet (docked beside the card on desktop); rare
         # senses never chain after a correct answer.
