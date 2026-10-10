@@ -23628,3 +23628,74 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .estimation-placement-choice span { color: var(--text-secondary); font-size: 14px; }
 .estimation-placement-choice .estimation-choice-label { color: var(--text-primary); font-weight: 600; }
 #useEstimatedLevelBtn[hidden] { display: none; }
+
+/* Meaning review is a centred dialog, independent of the shared sheets. */
+#knowledgeOverviewModal {
+    place-items: center;
+    box-sizing: border-box;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+#knowledgeOverviewModal .knowledge-overview-sheet {
+    box-sizing: border-box;
+    width: min(580px, 100%);
+    max-height: calc(calc(100dvh / var(--ui-zoom, 1)) - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)));
+    border: 1px solid var(--border-color, rgba(255,255,255,.13));
+    border-radius: 20px;
+    animation: meaningReviewFadeIn 150ms ease-out both;
+}
+#knowledgeOverviewModal.is-closing .knowledge-overview-sheet {
+    animation: meaningReviewFadeOut 150ms ease-in both;
+}
+#knowledgeOverviewModal .knowledge-overview-header {
+    align-items: flex-start;
+    flex-shrink: 0;
+    padding: 16px;
+}
+#knowledgeOverviewModal .knowledge-overview-hint {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+#knowledgeOverviewModal .knowledge-overview-close { flex-shrink: 0; }
+#knowledgeOverviewModal .knowledge-overview-summary { display: none; }
+#knowledgeOverviewModal .knowledge-overview-list {
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 0;
+}
+#knowledgeOverviewModal .knowledge-overview-row {
+    cursor: pointer;
+    min-height: 48px;
+    gap: 12px;
+}
+#knowledgeOverviewModal .knowledge-overview-row.is-selected {
+    border-color: color-mix(in srgb, var(--text-secondary) 35%, transparent);
+    background: color-mix(in srgb, var(--text-secondary) 9%, transparent);
+}
+#knowledgeOverviewModal .knowledge-overview-focus {
+    cursor: inherit;
+    min-width: 0;
+    flex: 1;
+}
+#knowledgeOverviewModal .knowledge-overview-copy { overflow-wrap: anywhere; }
+#knowledgeOverviewModal .knowledge-overview-status { display: none; }
+#knowledgeOverviewModal .knowledge-overview-checkbox {
+    align-self: center;
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+    margin: 0 12px 0 0;
+    cursor: pointer;
+    accent-color: var(--accent-green, #10b981);
+}
+#knowledgeOverviewModal .knowledge-overview-row:focus-within {
+    outline: 2px solid var(--accent-green, #10b981);
+    outline-offset: -2px;
+}
+@keyframes meaningReviewFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes meaningReviewFadeOut { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+    #knowledgeOverviewModal .knowledge-overview-sheet,
+    #knowledgeOverviewModal.is-closing .knowledge-overview-sheet { animation: none; }
+}

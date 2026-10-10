@@ -118,7 +118,7 @@ const OCCUPANTS = [
     // Modals about the card.
     { id: 'lyricBreakdownModal', home: 'right', card: true,
       open: isShown, close: () => window.hideLyricBreakdown?.() },
-    { id: 'knowledgeOverviewModal', home: 'right', card: true, priority: PRIORITY_KNOWLEDGE,
+    { id: 'knowledgeOverviewModal', home: 'right', card: true, centred: () => true, priority: PRIORITY_KNOWLEDGE,
       open: el => !el.hidden && !el.classList.contains('is-closing'),
       close: () => window.closeKnowledgeOverview?.() },
     { id: 'rareUsesModal', home: 'right', card: true, priority: PRIORITY_KNOWLEDGE,
