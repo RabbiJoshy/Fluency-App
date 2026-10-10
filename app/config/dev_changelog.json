@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T18:27:55+01:00",
+      "date": "2026-10-10 18:27 BST",
+      "agent": "Codex",
+      "summary": "Plan TAGLINE: evaluate Portuguese sentence tagging and WSD safeguards",
+      "detail": [
+        "Added a named roadmap job to compare contextual POS taggers with a no-tagger baseline, starting with verified Portuguese és classification failures.",
+        "Keep source lemma corrections separate from sentence tagging and app display; use existing frozen evidence before any approved regeneration."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T18:15:00+01:00",
       "date": "2026-10-10 18:15 BST",
       "agent": "Antigravity",
@@ -368,18 +379,6 @@
         "Removed dashed underlines on elided words in favor of clean text with soft-cyan styling, keeping lyric flow natural without hyperlink-like baselines.",
         "Wired newly deployed TURBO-2 unified WSD decision logic into the lyrics quick-view modal so contextual senses (obligation, progressive, future, perfect, reflexive) are prioritized for each lyric line.",
         "Added dictionary fallback in postProcess to match tokens against the engine dictionary even when filtered out of high-frequency playlist card cuts."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T15:40:00+01:00",
-      "date": "2026-10-09 15:40 BST",
-      "agent": "Antigravity",
-      "summary": "TURBO-2: Web Worker WSD pipeline and live Spotify playlist study deck generation",
-      "detail": [
-        "Integrated unified UNISON WSD decision logic directly into client turbo-engine: progressive auxiliary, modal obligation, future auxiliary, perfect auxiliary, and reflexive clitic routing.",
-        "Created dedicated background Web Worker (app/js/turbo-worker.js) for non-blocking intake, normalization, and semantic sense assignment.",
-        "Updated live playlist import to stream background progress and assign playable Spotify clip timestamps to matched card senses."
       ],
       "commit": "pending"
     }

@@ -268,3 +268,28 @@ The cognate/coverage warnings above remain pre-promotion review items.
 Final app checks: 234 tests passed. The source/release code is committed as
 1a83f788, locally; no app redeploy or production push was performed for that
 checkpoint. Other chats’ uncommitted app edits were left untouched.
+
+## Follow-up: TAGLINE and reported déjalo search discrepancy
+
+Josh requested a named tagger-selection job; `docs/TAGLINE.md` and the roadmap
+now assign it, Portuguese first. HEADWAY’s read-only és WSD audit supplies the
+initial failures; no new tagger/download/paid run was started.
+
+Josh reports staging search for dejalo shows PHRASE without association to dejar.
+Fresh guest inspection on staging 990b059d, using the final es r4 candidate URL
+and Everyday speech, resolves that search to déjalo (rank 748) and déjalos.
+Opening déjalo shows title “déjalo dejar” but no meanings, only examples; this
+reproduces the search loading issue, not the exact reported PHRASE label. The
+corrected ledger and candidate row both classify déjalo as VERB from dejar;
+original PHRASE survives only in provider provenance. The exact user-visible
+PHRASE discrepancy remains unresolved; requested speech/music context. Do not
+close the report based solely on corrected backend data. Evidence is workspace
+`raw/surfaces/headway/staging-es-dejalo-search-990b059d.json` and corresponding
+screenshot. SEAM/release review should trace the selected release, cached entry
+and search/display path without changing source analyses or merging policy.
+
+No staging redeploy was performed. The current shared worktree app suite had
+234 passes and one estimator failure (`resolve is not a function`,
+`tests/app/estimation_checks.cjs:118`) while another chat’s estimation changes
+were uncommitted. This documentation-only checkpoint does not modify that code
+or claim a fresh passing app suite.
