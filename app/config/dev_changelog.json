@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T14:25:11+01:00",
+      "date": "2026-10-11 14:25 BST",
+      "agent": "Codex",
+      "summary": "Set progress boxes use white labels and darker, calmer colours",
+      "detail": [
+        "Known, practice, new and skipped progress segments use deeper green, muted amber, dark slate and grey.",
+        "White set labels remain readable across segment boundaries, including selected and hovered sets; minimum contrast is 5.4:1.",
+        "The SETWISE roadmap discussion will compare fewer progress boxes and a visible 25/50-card session choice; the four-box layout remains for now.",
+        "Spanish r5 release checks repaired: regenerate the level-estimation pool, recompute Smart Skip verdicts, and validate the existing checked noun-merge evidence against the r5 source senses."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T13:19:38+01:00",
       "date": "2026-10-11 13:19 BST",
       "agent": "Codex",
@@ -365,20 +378,6 @@
         "Restore supported earlier Spanish clitic corrections and preserve curated overrides.",
         "Re-score affected cards on existing frozen sentences; production decks remain unchanged.",
         "Staging candidate selection loads the candidate’s study structure and Merge Lemmas data."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T15:37:00+01:00",
-      "date": "2026-10-10 15:37 BST",
-      "agent": "Antigravity",
-      "summary": "Settings modal enhancements: App tab, birthday passwords, Spotify SVG branding, Your Words icons, and full-width modals",
-      "detail": [
-        "Rename Settings 'Account' tab to 'App' and move the Account section button to the bottom.",
-        "Clean up Account modal: user name inside avatar circle without repetition, larger logout pill, and replace secret word with Birthday password.",
-        "Replace music note with official Spotify SVG logo inline with connection status, drop redundant 'Spotify' heading, and add 'Used for lyrics mode' note.",
-        "Refine 'Your words': remove saved words list, fix font size consistency across all rows, and replace text pills with circular SVG action icons.",
-        "Make settings modals full width (edge-to-edge on mobile, 860px on desktop) with a prominent circular SVG close button."
       ],
       "commit": "pending"
     }
