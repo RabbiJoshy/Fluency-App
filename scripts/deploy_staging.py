@@ -97,6 +97,9 @@ def main() -> None:
             "npx", "wrangler", "pages", "deploy",
             str(build_dir),
             "--project-name", "fluency-staging",
+            # This is the staging project's canonical branch, not the real
+            # production app. Pin it so feature branches update STAGING_URL.
+            "--branch", "main",
             "--commit-dirty=true",
             "--commit-hash", full_sha,
             "--commit-message", f"Staging: {subject}",
