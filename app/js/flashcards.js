@@ -2780,6 +2780,7 @@ function showFloatingBtns(show) {
 }
 
 async function goBackToSetup() {
+    hideProminenceTooltip();
     // Rebuilding the level selector takes long enough to notice, and every
     // other transition in the app announces itself. Without this the tap read
     // as the app stalling rather than working — the same overlay Learn New and
@@ -5690,21 +5691,88 @@ function prominenceBadgeHTML(promInfo, extraStyle = '') {
     const label = promInfo.label || 'Rare';
     const blurb = PROMINENCE_BLURBS[key] || PROMINENCE_BLURBS.rare;
     const style = extraStyle ? ` style="${extraStyle}"` : '';
-    return `<span class="sense-prominence-badge prominence-${escapeCardText(key)}"${style} role="button" tabindex="0" aria-expanded="false" aria-label="${escapeCardText(label)}. Tap to explain." onclick="toggleProminenceBadge(event, this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') toggleProminenceBadge(event, this)">${prominenceMeterHTML(key)}<span class="sense-prominence-detail"><span class="sense-prominence-detail-heading">${prominenceMeterHTML(key)}<strong>${escapeCardText(label)}</strong></span><span class="sense-prominence-detail-description">${escapeCardText(blurb)}</span></span></span>`;
+    return `<span class="sense-prominence-badge prominence-${escapeCardText(key)}"${style} role="button" tabindex="0" aria-expanded="false" aria-label="${escapeCardText(label)}. Tap to explain." onpointerenter="if (event.pointerType !== 'touch') showProminenceTooltip(this)" onpointerleave="hideProminenceTooltip(this)" onfocus="showProminenceTooltip(this)" onblur="hideProminenceTooltip()" onclick="toggleProminenceBadge(event, this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') toggleProminenceBadge(event, this)">${prominenceMeterHTML(key)}<span class="sense-prominence-detail"><span class="sense-prominence-detail-heading">${prominenceMeterHTML(key)}<strong>${escapeCardText(label)}</strong></span><span class="sense-prominence-detail-description">${escapeCardText(blurb)}</span></span></span>`;
+}
+
+let prominenceTooltip = null;
+let prominenceTooltipSource = null;
+
+function hideProminenceTooltip(button = null) {
+    if (button && (button !== prominenceTooltipSource
+        || button.getAttribute('aria-expanded') === 'true')) return;
+    prominenceTooltipSource?.setAttribute('aria-expanded', 'false');
+    prominenceTooltipSource?.removeAttribute('aria-describedby');
+    prominenceTooltipSource = null;
+    if (!prominenceTooltip) return;
+    if (prominenceTooltip.hasAttribute('popover')
+        && prominenceTooltip.matches(':popover-open')) prominenceTooltip.hidePopover();
+    prominenceTooltip.hidden = true;
+}
+
+function showProminenceTooltip(button) {
+    const detail = button?.querySelector('.sense-prominence-detail');
+    if (!detail || !button.isConnected) return;
+    if (prominenceTooltipSource !== button) hideProminenceTooltip();
+    if (!prominenceTooltip) {
+        prominenceTooltip = document.createElement('div');
+        prominenceTooltip.id = 'commonnessTooltip';
+        prominenceTooltip.className = 'sense-prominence-detail sense-prominence-popup';
+        prominenceTooltip.setAttribute('role', 'tooltip');
+        // The browser's top layer escapes scrolling and transformed card
+        // ancestors. Older browsers still get a fixed overlay on the body.
+        if (typeof prominenceTooltip.showPopover === 'function') {
+            prominenceTooltip.setAttribute('popover', 'manual');
+        }
+        document.body.append(prominenceTooltip);
+    }
+    prominenceTooltipSource = button;
+    button.setAttribute('aria-describedby', 'commonnessTooltip');
+    prominenceTooltip.innerHTML = detail.innerHTML;
+    prominenceTooltip.hidden = false;
+    if (prominenceTooltip.hasAttribute('popover')
+        && !prominenceTooltip.matches(':popover-open')) prominenceTooltip.showPopover();
+
+    const anchor = button.getBoundingClientRect();
+    const box = prominenceTooltip.getBoundingClientRect();
+    const inset = 8;
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = window.innerHeight;
+    let left = anchor.left - box.width - inset;
+    if (left < inset) left = anchor.right + inset;
+    left = Math.max(inset, Math.min(left, viewportWidth - box.width - inset));
+    const top = Math.max(inset, Math.min(anchor.top + (anchor.height - box.height) / 2,
+        viewportHeight - box.height - inset));
+    // Account for the app's larger-text page zoom when positioning in
+    // viewport coordinates; the tooltip keeps the learner's text size.
+    const scale = box.width / prominenceTooltip.offsetWidth || 1;
+    prominenceTooltip.style.left = `${left / scale}px`;
+    prominenceTooltip.style.top = `${top / scale}px`;
 }
 
 function toggleProminenceBadge(event, button) {
     event?.stopPropagation?.();
     event?.preventDefault?.();
     if (!button) return;
-    const open = button.getAttribute('aria-expanded') === 'true';
-    document.querySelectorAll('.sense-prominence-badge[aria-expanded="true"]').forEach(el => {
-        if (el !== button) el.setAttribute('aria-expanded', 'false');
-    });
-    button.setAttribute('aria-expanded', open ? 'false' : 'true');
+    if (button.getAttribute('aria-expanded') === 'true') {
+        hideProminenceTooltip();
+    } else {
+        showProminenceTooltip(button);
+        button.setAttribute('aria-expanded', 'true');
+    }
 }
+
+document.addEventListener('pointerdown', event => {
+    if (!event.target.closest('.sense-prominence-badge')) hideProminenceTooltip();
+}, true);
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') hideProminenceTooltip();
+});
+document.addEventListener('scroll', () => hideProminenceTooltip(), true);
+window.addEventListener?.('resize', () => hideProminenceTooltip());
 window.prominenceBadgeHTML = prominenceBadgeHTML;
 window.toggleProminenceBadge = toggleProminenceBadge;
+window.showProminenceTooltip = showProminenceTooltip;
+window.hideProminenceTooltip = hideProminenceTooltip;
 
 // True when at least one sense on this card would print a lemma under the
 // word. Read across every meaning rather than the selected one: the point is
@@ -8386,6 +8454,7 @@ function renderCardWikipediaBadge(card) {
     const renderedBack = document.getElementById('backContent');
     const backDomChanged = renderedBack?._fluencyRenderedHTML !== backHTML;
     if (renderedBack && backDomChanged) {
+        hideProminenceTooltip();
         // The conjugation panel is hosted on <body> while open (it covers the
         // viewport, which it cannot do from inside the clipped, 3D-transformed
         // card). backHTML re-creates its placeholder, so drop any open copy
@@ -8767,6 +8836,7 @@ function maybeShowCardTutorialPrompt() {
 }
 
 function flipCard() {
+    hideProminenceTooltip();
     // Chain children are back-only: there is no front content, so every flip
     // route (tap, keyboard, control button) is a no-op rather than a turn
     // onto a blank face.

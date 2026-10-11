@@ -22043,11 +22043,11 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .card-ranking .card-stat-unit--below { font-size: 11px; margin-top: -1px; }
 
 /* Commonness meter: a little wider and taller. */
-.sense-prominence-meter { height: 16px; gap: 2.5px; }
-.sense-prominence-meter i { width: 4.5px; border-radius: 1.5px; }
-.sense-prominence-meter i:nth-child(1) { height: 6px; }
-.sense-prominence-meter i:nth-child(2) { height: 11px; }
-.sense-prominence-meter i:nth-child(3) { height: 16px; }
+.sense-prominence-meter { height: 20px; gap: 2.5px; }
+.sense-prominence-meter i { width: 5px; border-radius: 1.5px; }
+.sense-prominence-meter i:nth-child(1) { height: 7px; }
+.sense-prominence-meter i:nth-child(2) { height: 13px; }
+.sense-prominence-meter i:nth-child(3) { height: 20px; }
 
 /* Rectangular flags (js/flags.js) in place of emoji. Sized in em so every
    spot that sized the emoji by font-size keeps its scale. */
@@ -24459,10 +24459,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .sense-prominence-detail-heading { display: flex; align-items: center; gap: 8px; }
 .sense-prominence-detail-heading strong { font-size: 16px; font-weight: 700; }
 .sense-prominence-detail-description { display: block; margin-top: 4px; font-size: 14px; font-weight: 400; }
-.prominence-dominant .sense-prominence-detail-heading { color: #38bdf8; }
-.prominence-common .sense-prominence-detail-heading { color: #34d399; }
-.prominence-uncommon .sense-prominence-detail-heading { color: #cbd5e1; }
-.prominence-rare .sense-prominence-detail-heading { color: #fbbf24; }
+.sense-prominence-detail-heading { color: #fff; }
 
 /* The study surface ends above a separate, compact row of card actions. */
 @media (min-width: 360px) {
@@ -24534,3 +24531,22 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 #step4 .study-set-choice { min-width: 0; }
 
 .study-set-stat i.is-estimated { background: var(--set-estimated, #77669e); }
+
+/* Commonness explanations escape the card's scroll clipping in the top layer. */
+.sense-prominence-badge,
+.sense-prominence-badge[aria-expanded="true"] { padding: 1px; }
+.sense-prominence-badge .sense-prominence-detail { display: none !important; }
+.sense-prominence-popup {
+  display: block;
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  transform: none;
+  z-index: 10000;
+  color: #fff;
+  font-family: var(--font-reading);
+  max-width: min(240px, calc(100vw / var(--ui-zoom, 1) - 32px));
+  pointer-events: none;
+}
+.sense-prominence-popup[hidden] { display: none; }
+.sense-prominence-popup strong { color: #fff; }

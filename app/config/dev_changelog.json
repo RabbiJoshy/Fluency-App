@@ -2,6 +2,18 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T23:05:37+01:00",
+   "date": "2026-10-11 23:05 BST",
+   "agent": "Codex",
+   "summary": "Commonness tooltips stay above the card without clipping; white text and taller sense meters.",
+   "detail": [
+    "Commonness explanations open in a separate overlay above scrolling and transformed card surfaces, positioned within the screen edges.",
+    "Tooltip text and commonness icon are white. Sense-row meters are taller and slightly wider, with less surrounding padding.",
+    "Hover, tap and keyboard access work; tooltips dismiss when scrolling, flipping, changing cards or returning to the menu."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T22:56:24+01:00",
    "date": "2026-10-11 22:56 BST",
    "agent": "Codex",
@@ -364,18 +376,6 @@
    "detail": [
     "Version the Spanish/Portuguese Merge Lemmas, cognate verdicts, frequencies and estimation pools so browser caches cannot substitute old v23 files.",
     "Preserve the latest UI and all existing source scores, frequencies and merging rules."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T19:07:01+01:00",
-   "date": "2026-10-10 19:07 BST",
-   "agent": "Codex",
-   "summary": "Make corrected Spanish and Portuguese speech decks the defaults",
-   "detail": [
-    "Default speech decks now use HEADWAY Spanish r4 and Portuguese r2, including déjalo → dejar / Verb; no special review URL is required.",
-    "Refresh deck-bound Merge Lemmas, cognate card decisions, frequency bindings and estimation pools using existing data and existing policies.",
-    "Keep the current staging UI; no new WSD, harvest or model download. Missing coverage assets are explicitly declared absent."
    ],
    "commit": "pending"
   }
