@@ -11,7 +11,11 @@
 //   node research/inflect/measure.mjs \
 //     --index <release>/app/vocabulary.index.json \
 //     --conjugations <release>/app/conjugations.json \
+//     [--sentences <release>/app/vocabulary.examples.shards] \
 //     [--baseline /path/to/old-reverse-cues.mjs] [--out rows.jsonl] [--examples 8]
+//
+// --sentences attaches each card's example sentences, as the app does once a
+// set is loaded; whether a form also shows as a command is decided from them.
 //
 // Writes nothing unless --out is given; outputs belong in the scratchpad or
 // the workspace, not in git.
@@ -38,6 +42,13 @@ const rows = JSON.parse(fs.readFileSync(args.index, 'utf8'));
 const conjugations = JSON.parse(fs.readFileSync(args.conjugations, 'utf8'));
 const fold = value => String(value || '').normalize('NFC').toLocaleLowerCase().trim();
 const tables = new Map(Object.entries(conjugations).map(([lemma, entry]) => [fold(lemma), entry]));
+const sentencesByCard = new Map();
+if (args.sentences) {
+    for (const name of fs.readdirSync(args.sentences).filter(file => file.endsWith('.json'))) {
+        const shard = JSON.parse(fs.readFileSync(path.join(args.sentences, name), 'utf8'));
+        for (const [id, record] of Object.entries(shard)) sentencesByCard.set(id, record?.m || []);
+    }
+}
 
 function statusOf(row, meaning, cue) {
     if (fold(row.word) === fold(meaning.headword)) return 'dictionary_form_card';
@@ -53,6 +64,8 @@ function statusOf(row, meaning, cue) {
 
 // The error classes INFLECT removed; a non-zero count is a regression.
 const ERROR_CLASSES = {
+    // Allowed when the card's sentences use the command (--sentences); without
+    // them it must be 0.
     command_listed_with_statement: cue => cue.includes('!') && cue.includes(' / '),
     stative_progressive: cue => /\b(?:was|were) (?:being|having|knowing|wanting|needing|liking|loving|believing|seeming|meaning|wishing)\b/u.test(cue),
     broken_brackets: cue => (cue.match(/\(/gu) || []).length !== (cue.match(/\)/gu) || []).length,
@@ -67,7 +80,12 @@ const out = [];
 const bump = key => { counts[key] = (counts[key] || 0) + 1; };
 
 for (const row of rows) {
-    const meanings = (row.meanings || []).map(meaning => ({ ...meaning, meaning: meaning.translation }));
+    const perMeaning = sentencesByCard.get(row.id) || [];
+    const meanings = (row.meanings || []).map((meaning, index) => ({
+        ...meaning,
+        meaning: meaning.translation,
+        allExamples: (perMeaning[index] || []).map(sentence => ({ target: sentence.t, english: sentence.e })),
+    }));
     for (const meaning of meanings) {
         const pos = String(meaning.pos || '').toUpperCase();
         if (pos !== 'VERB' && pos !== 'AUX') continue;

@@ -217,7 +217,7 @@ console.log(JSON.stringify(out));
         for row in rows:
             self.assertEqual(row["actual"], row["expected"], row)
 
-    def test_dynamic_pronoun_tracking_and_predicate_factoring(self) -> None:
+    def test_pronoun_detection_factoring_and_rows_ignore_the_example(self) -> None:
         node = shutil.which("node")
         if not node:
             self.skipTest("node is required to execute reverse-cues.js")
@@ -282,24 +282,15 @@ for (const [input, expected] of compressCases) {
     }
 }
 
-// 3. Dynamic 3sg resolution and factoring through englishProductionCue
+// 3. A row describes the word, not the sentence on screen: the example being
+// shown never changes the person (was: "she speaks", "I spoke").
 const cueCases = [
-    // 3sg present: the command reading is dropped; he vs she follows the example
     [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables }, 'he/she speaks'],
-    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She speaks Spanish.' } }, 'she speaks'],
-    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He speaks Spanish.' } }, 'he speaks'],
-    // 1s/3s homophonous imperfect: the example's subject picks one person
+    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She speaks Spanish.' } }, 'he/she speaks'],
     [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables }, 'I/he/she spoke'],
-    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She was speaking Spanish.' } }, 'she spoke'],
-    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He was speaking Spanish.' } }, 'he spoke'],
-    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'I was speaking to him.' } }, 'I spoke'],
-    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He said I was speaking.' } }, 'I/he spoke'],
-    // Card with card._activeExample set directly
-    [{ targetWord: 'hablaba', _activeExample: { english: 'She was speaking.' } }, verb('hablar', 'to speak'), { conjugationData: tables }, 'she spoke'],
-    [{ targetWord: 'hablaba', _activeExample: { english: 'He was speaking.' } }, verb('hablar', 'to speak'), { conjugationData: tables }, 'he spoke'],
-    // Conditional
-    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She would speak to him.' } }, 'she would speak'],
-    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He would speak to her.' } }, 'he would speak'],
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'I was speaking to him.' } }, 'I/he/she spoke'],
+    [{ targetWord: 'hablaba', _activeExample: { english: 'He was speaking.' } }, verb('hablar', 'to speak'), { conjugationData: tables }, 'I/he/she spoke'],
+    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She would speak to him.' } }, 'I/he/she would speak'],
 ];
 
 const results = cueCases.map(([card, sense, options, expected]) => ({
@@ -375,12 +366,14 @@ const tables = {
     explodir: { tenses: { Pretérito: ['explodi', 'explodiste', 'explodiu', 'explodimos', 'explodistes', 'explodiram'] } },
 };
 const verb = (headword, translation) => ({ pos: 'verb', translation, headword });
-const ex = english => ({ conjugationData: tables, activeExample: { english } });
 const plain = { conjugationData: tables };
+// A card's own sentences (all its rows' examples) decide whether a form that
+// is also a command shows the command: at least one in five, first when most.
+const sentences = (...english) => english.map((text, i) => ({ target: `s${i}`, english: text }));
 const cases = [
     // imperfect is simple past (was: "I/he/she was being", "was having")
     ['era', verb('ser', 'to be'), plain, 'I/he/she was'],
-    ['era', verb('ser', 'to be'), ex('I was a very different person then.'), 'I was'],
+    ['era', verb('ser', 'to be'), plain, 'I/he/she was', sentences('I was a very different person then.')],
     ['tenía', verb('tener', 'to have'), plain, 'I/he/she had'],
     // past subjunctive is simple past; be is "were" (was: "I/he/she was being")
     ['fuera', verb('ser', 'to be'), plain, 'I/he/she were'],
@@ -389,12 +382,21 @@ const cases = [
     ['sea', verb('ser', 'to be'), plain, 'I am / he/she is'],
     // a statement wins over an identical command (was: "seem! / he/she seems")
     ['parece', verb('parecer', 'to seem'), plain, 'he/she seems'],
-    ['parece', verb('parecer', 'to seem'), ex("It's not at all what it looks like, all right?"), 'he/she seems'],
+    ['parece', verb('parecer', 'to seem'), plain, 'he/she seems',
+        sentences("It's not at all what it looks like.", 'She seems tired.', 'Seems fine to me.')],
     ['vamos', verb('ir', 'to go'), plain, 'we go'],
-    // ...unless the example is a command
-    ['vamos', verb('ir', 'to go'), ex("Come on, let's go!"), "let's go!"],
-    ['espera', verb('esperar', 'to wait'), ex('Wait here, please.'), 'wait!'],
-    ['hables', verb('hablar', 'to speak'), ex("Don't speak to me like that."), "don't speak!"],
+    // ...unless the card's sentences use the command: first when most do
+    ['vamos', verb('ir', 'to go'), plain, "let's go! / we go",
+        sentences("Let's go!", "Come on, let's go.", 'We go every day.', 'We are going home.')],
+    ['vamos', verb('ir', 'to go'), plain, "we go / let's go!",
+        sentences('We go every day.', "We're going home.", 'We are leaving.', 'We go there often.', "Let's go.")],
+    ['vamos', verb('ir', 'to go'), plain, 'we go',
+        sentences('We go every day.', "We're going home.", 'We are leaving.', 'We go there often.',
+            'We went.', 'We will see.', "Let's go.")],
+    ['espera', verb('esperar', 'to wait'), plain, 'wait! / he/she waits',
+        sentences('Wait here, please.', 'Wait for me!', 'She waits every day.', 'He is waiting.')],
+    ['hables', verb('hablar', 'to speak'), plain, "don't speak! / you speak",
+        sentences("Don't speak to me like that.", 'I want you to speak.')],
     ['hables', verb('hablar', 'to speak'), plain, 'you speak'],
     // a form that is only a command stays one
     ['ven', verb('venir', 'to come'), plain, 'come!'],
@@ -423,11 +425,10 @@ const cases = [
     // no verb in front: no inflection rather than "I/he/she was noting care less"
     ['valía', verb('valer', 'to not care less'), plain, null],
 ];
-const out = cases.map(([surface, sense, options, expected]) => ({
-    surface,
-    expected,
-    actual: englishProductionCue({ targetWord: surface }, sense, null, options),
-}));
+const out = cases.map(([surface, sense, options, expected, cardSentences]) => {
+    const card = { targetWord: surface, meanings: [{ ...sense, allExamples: cardSentences || [] }] };
+    return { surface, expected, actual: englishProductionCue(card, sense, null, options) };
+});
 console.log(JSON.stringify(out));
 """ % json.dumps(REVERSE_CUES.as_uri())
         result = subprocess.run(

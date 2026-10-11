@@ -20,13 +20,21 @@ release's own `conjugations.json`) and reports:
 W=../Fluency-Workspace/releases/es/speech/<release>/app
 git show <sha>:app/js/reverse-cues.js > /tmp/baseline.mjs   # optional
 node research/inflect/measure.mjs --index $W/vocabulary.index.json \
-  --conjugations $W/conjugations.json --baseline /tmp/baseline.mjs --examples 8
+  --conjugations $W/conjugations.json --sentences $W/vocabulary.examples.shards \
+  --baseline /tmp/baseline.mjs --examples 8
 ```
 
+`--sentences` gives each card its example sentences, as the app has once a set
+is loaded. Since 2026-10-11 a form that is both a statement and a command shows
+the command when at least one in five of the card's sentences uses it (first
+when most do), so `command_listed_with_statement` is expected to be non-zero
+with `--sentences` and 0 without (es v24 r4: 324 rows, e.g. *mira* "look! /
+he/she looks"; pt v24 r3: 366). The sentence on screen no longer changes a
+row: *era* is "I/he/she was" on every example.
+
 Measure the release the app serves (`app/config/config.json`, `indexPath` and
-`conjugationsPath`), not the workspace's `active.json`. Rows are run without an
-example sentence; on a card the example can also pick I vs he/she and show a
-command, so the card can read better than this report.
+`conjugationsPath`), not the workspace's `active.json`. Without `--sentences`
+no row shows a command.
 
 Readings on 2026-10-11 (after INFLECT, `96375c29`):
 

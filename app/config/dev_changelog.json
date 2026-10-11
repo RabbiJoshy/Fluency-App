@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T12:42:00+01:00",
+      "date": "2026-10-11 12:42 BST",
+      "agent": "Claude",
+      "summary": "Verb rows no longer change with the example on screen; a command shows when the card's own sentences use one",
+      "detail": [
+        "The person on a verb row describes the word, not the sentence being shown: era is 'I/he/she was' on every example (was 'I was' or 'he was' depending on the example), habla is 'he/she speaks'.",
+        "A form that is both a statement and a command shows the command when at least one in five of the card's sentences use it, first when most do: mira 'look! / he/she looks' (19 of 26 sentences), deja 'he/she leaves / leave!', no te preocupes → preocupes 'don't worry! / you worry'. quiere, sabe, parece stay 'he/she …'.",
+        "Decided once per card from all its sentences, so the row is stable while browsing. 324 es and 366 pt rows gain a command (v24 decks); no row lost its English."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T12:12:26+01:00",
       "date": "2026-10-11 12:12 BST",
       "agent": "Codex",
@@ -366,19 +378,6 @@
         "Candidate deck selection: staging can select candidate deck versions via config, query parameters, or interactive Developer settings without replacing production data.",
         "Repeatable publication and promotion: `make stage` publishes proposed changes to Cloudflare Pages; `make promote` deliberately promotes only the reviewed commit, blocking unreviewed changes.",
         "Staging service worker skipWaiting enables immediate asset loading on phone and laptop."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T12:43:57+01:00",
-      "date": "2026-10-10 12:43 BST",
-      "agent": "Codex",
-      "summary": "Select particular meanings to review in a centered, scrollable modal",
-      "detail": [
-        "Replace the known-count control with a bookmark and Review meaning(s).",
-        "Select meanings using one checkbox per row; retain selections automatically without Save or Next Card buttons.",
-        "Center the dialog on mobile and desktop, with scrolling for long lists and keyboard focus handling.",
-        "Preserve individually marked meanings when answering the whole card; keep the existing review-card presentation."
       ],
       "commit": "pending"
     }
