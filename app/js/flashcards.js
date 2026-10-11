@@ -3194,6 +3194,9 @@ function inferOccurrenceFromSentence(surface, sentence) {
 // while the sentence read *buenos*, and the underline — which does check the
 // sentence — matched nothing and highlighted nothing. One bug, both halves.
 function resolveExampleOccurrence(card, example, sentence) {
+    if (example?.canonical) {
+        return { surface: canonicalOccurrenceSurface(card, example, sentence), kind: 'declared' };
+    }
     // `surface` is the immutable spelling attached to this occurrence;
     // `pooledFrom` is the canonical sibling form that contributed the example
     // to a merged lemma. Prefer what was actually said, then preserve legacy
@@ -3785,6 +3788,7 @@ function highlightAttachedCliticInSentence(html, highlightedForm) {
 function getExampleProductionForm(card, meaning, example, targetSentence) {
     const sentence = String(targetSentence || '').replace(/<[^>]*>/g, '');
     if (!sentence || !card) return '';
+    if (example?.canonical) return canonicalOccurrenceSurface(card, example, sentence);
     if (meaning?.allMWEs?.length) {
         const item = meaning.allMWEs[currentMWEIndex % meaning.allMWEs.length];
         return _matchedMweForm(
@@ -4203,7 +4207,8 @@ function collectRareSenseItems(card) {
         const trans = q.meaning || q.translation || '';
         if (!trans) continue;
         const ex = typeof extractCanonicalDictionaryExamples === 'function'
-            ? extractCanonicalDictionaryExamples(q)
+            ? extractCanonicalDictionaryExamples(q, card).filter(example =>
+                canonicalOccurrenceSurface(card, example, example.target))
             : [];
         items.push({
             parentCard: card,
@@ -4214,7 +4219,7 @@ function collectRareSenseItems(card) {
             translation: trans,
             context: q.context || '',
             examples: [
-                ...(ex.length > 0 ? ex : (q.canonicalExample ? [q.canonicalExample] : [])),
+                ...ex,
                 ...(q.allExamples || []),
             ]
         });
@@ -4229,7 +4234,8 @@ function collectRareSenseItems(card) {
             if (!trans) continue;
             if (id) seenSenseIds.add(id);
             const ex = typeof extractCanonicalDictionaryExamples === 'function'
-                ? extractCanonicalDictionaryExamples(unused)
+                ? extractCanonicalDictionaryExamples(unused, card).filter(example =>
+                    canonicalOccurrenceSurface(card, example, example.target))
                 : [];
             items.push({
                 parentCard: card,
@@ -4242,7 +4248,7 @@ function collectRareSenseItems(card) {
                 // A low-share sense moved off the main card keeps its corpus
                 // sentences; an unused menu sense has none.
                 examples: [
-                    ...(ex.length > 0 ? ex : (unused.canonicalExample ? [unused.canonicalExample] : [])),
+                    ...ex,
                     ...(unused.allExamples || []),
                 ]
             });
@@ -5397,12 +5403,16 @@ function canonicalExampleHTML(meaning) {
     </div>`;
 }
 
-function extractCanonicalDictionaryExamples(meaning) {
+function extractCanonicalDictionaryExamples(meaning, card = null) {
+    const activeMeaning = meaning?.pos === 'SENSE_CYCLE' && meaning.allSenses?.length
+        ? meaning.allSenses[currentMWEIndex % meaning.allSenses.length] || meaning.allSenses[0]
+        : meaning;
     const canonical = canonicalRecord(meaning);
     const text = String(canonical?.text || canonical?.target || canonical?.spanish || '').trim();
     const translation = String(canonical?.translation || canonical?.english || '').trim();
+    const result = [];
     if (text && translation) {
-        return [{
+        result.push({
             target: text,
             english: translation,
             targetSentence: text,
@@ -5414,9 +5424,9 @@ function extractCanonicalDictionaryExamples(meaning) {
             url: canonical.url,
             bold_text_offsets: canonical.bold_text_offsets,
             bold_translation_offsets: canonical.bold_translation_offsets,
-        }];
+        });
     }
-    const meta = meaning?.metadata;
+    const meta = activeMeaning?.metadata;
     const isSd = Boolean(
         meta?.sense_provider_metadata?.spanishdict?.examples
         || meta?.sense_metadata?.source_metadata?.spanishdict?.examples
@@ -5425,18 +5435,51 @@ function extractCanonicalDictionaryExamples(meaning) {
         || meta?.sense_metadata?.source_metadata?.spanishdict?.examples
         || meta?.source_metadata?.examples
         || [];
-    if (!Array.isArray(examples)) return [];
     const dictName = isSd ? 'SpanishDict' : (meta?.source_provider || meaning?.source || 'Wiktionary');
-    return examples.map(ex => ({
-        target: ex.original || ex.target || ex.spanish || '',
-        english: ex.translated || ex.english || '',
-        targetSentence: ex.original || ex.target || ex.spanish || '',
-        englishSentence: ex.translated || ex.english || '',
+    const supplemental = card?.dictionaryExamples?.[activeMeaning?.senseId || activeMeaning?.sense_id] || [];
+    const all = [...supplemental, ...(Array.isArray(examples) ? examples : [])];
+    result.push(...all.map(ex => ({
+        target: ex.text || ex.original || ex.target || ex.spanish || '',
+        english: ex.translation || ex.translated || ex.english || '',
+        targetSentence: ex.text || ex.original || ex.target || ex.spanish || '',
+        englishSentence: ex.translation || ex.translated || ex.english || '',
         source: dictName.toLowerCase(),
         evidence: 'dictionary',
         dictionarySource: dictName,
-        canonical: true
-    })).filter(ex => ex.target && ex.english);
+        canonical: true,
+        bold_text_offsets: ex.bold_text_offsets || [],
+        bold_translation_offsets: ex.bold_translation_offsets || [],
+        url: ex.url
+    })).filter(ex => ex.target && ex.english));
+    const seen = new Set();
+    return result.filter(ex => {
+        const key = `${ex.target}\u0000${ex.english}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+}
+
+// Dictionary prose is clean spelling, so matching is exact apart from case.
+// No accent folding, guessed stems or clitic stripping: hacerlo is not hacer.
+function canonicalOccurrenceSurface(card, example, sentence) {
+    const forms = card?.mergedLemma
+        ? [...(card.mergedSurfaces || []), card.displaySurface, card.targetWord]
+        : [card?.representativeSurface || card?.targetWord || card?.displaySurface];
+    const text = String(sentence || example?.target || '').normalize('NFC');
+    const allowed = new Set(forms.filter(Boolean).map(form => String(form).normalize('NFC').toLocaleLowerCase()));
+    for (const range of example?.bold_text_offsets || []) {
+        if (!Array.isArray(range) || range[0] < 0 || range[1] > text.length || range[1] <= range[0]) continue;
+        const marked = text.slice(range[0], range[1]);
+        if (allowed.has(marked.toLocaleLowerCase())) return marked;
+    }
+    for (const form of forms) {
+        if (!form) continue;
+        const escaped = String(form).normalize('NFC').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const hit = text.match(_cachedRegex(`(?<![\\p{L}\\p{N}])(${escaped})(?![\\p{L}\\p{N}])`, 'iu'));
+        if (hit) return hit[1];
+    }
+    return '';
 }
 
 // Default sentence (tick 1): a corpus line when WSD `supported_level` is
@@ -5488,10 +5531,12 @@ function canonicalAsDisplayExample(meaning) {
 
 function findCanonicalForCard(card, meaning) {
     if (meaning) {
-        return canonicalAsDisplayExample(meaning);
+        return extractCanonicalDictionaryExamples(meaning, card).find(example =>
+            !card || canonicalOccurrenceSurface(card, example, example.target)) || null;
     }
     if (card && (card.canonicalExample || card.canonical_example)) {
-        return canonicalAsDisplayExample(card);
+        return extractCanonicalDictionaryExamples(card, card).find(example =>
+            canonicalOccurrenceSurface(card, example, example.target)) || null;
     }
     return null;
 }
@@ -8010,9 +8055,17 @@ function renderCardWikipediaBadge(card) {
 
             const useCanonicalMarkup = Boolean(currentExample?.canonical);
             if (useCanonicalMarkup) {
+                const canonicalText = currentExample.target || displayTargetSentence;
+                const canonicalSurface = canonicalOccurrenceSurface(card, currentExample, canonicalText);
+                const canonicalOffsets = [];
+                if (canonicalSurface) {
+                    const escaped = canonicalSurface.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const matcher = _cachedRegex(`(?<![\\p{L}\\p{N}])(${escaped})(?![\\p{L}\\p{N}])`, 'giu');
+                    for (const hit of canonicalText.matchAll(matcher)) canonicalOffsets.push([hit.index, hit.index + hit[0].length]);
+                }
                 displayTargetSentence = highlightWithDeclaredOffsets(
-                    currentExample.target || displayTargetSentence,
-                    currentExample.bold_text_offsets
+                    canonicalText,
+                    canonicalOffsets
                 );
                 displayEnglishSentence = highlightWithDeclaredOffsets(
                     currentExample.english || displayEnglishSentence,

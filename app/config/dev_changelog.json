@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T12:06:17+01:00",
+      "date": "2026-10-11 12:06 BST",
+      "agent": "Codex",
+      "summary": "SEAM: dictionary examples now match the studied form; retained alternatives recovered",
+      "detail": [
+        "Non-merged cards choose a dictionary sentence containing the exact surface, including attached pronouns and accents. Other-form dictionary sentences stay out of the study and Less common uses sequences.",
+        "Merged dictionary examples use an allowed group form; the header, sentence highlight and In this example cue agree.",
+        "Recovered existing frozen dictionary alternatives for Spanish r4 and current Portuguese r3 without editing releases, senses, merging rules or saved progress. No production promotion."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T11:29:24+01:00",
       "date": "2026-10-11 11:29 BST",
       "agent": "Claude",
@@ -367,16 +379,6 @@
         "Publish matching v23 metadata for 314 Spanish and 335 Portuguese noun groups, shared by Smart Skip, the level estimator and deck grouping.",
         "Recover SpanishDict evidence for 773 candidate spellings and Wiktionary entry tags from the saved dump; keep changed, incomplete or ambiguous menus separate.",
         "Preserve card IDs, saved progress, definitions and examples; verify all 20,000 full and early-loading decisions agree."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T00:35:00+01:00",
-      "date": "2026-10-10 00:35 BST",
-      "agent": "Claude",
-      "summary": "Memory tip sheet text gets side padding",
-      "detail": [
-        "Text no longer touches the sheet's left edge."
       ],
       "commit": "pending"
     }

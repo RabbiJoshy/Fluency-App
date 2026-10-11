@@ -88,7 +88,8 @@
       "speechLang": "es-ES",
       "cognatesPath": "cognates/es/cognates-headway-r4.json",
       "mergeExceptionsPath": "data/merge-exceptions/es-headway-r4-seam-v1.json",
-      "coveragePath": null
+      "coveragePath": null,
+      "dictionaryExamplesPath": "data/dictionary-examples/es-es-speech-v24-headway-r4-10000x30-slim-v1.json"
     },
     "swedish": {
       "name": "Swedish",
@@ -573,7 +574,8 @@
       "speechLang": "pt-PT",
       "cognatesPath": "cognates/pt/cognates-headway-r3.json",
       "mergeExceptionsPath": "data/merge-exceptions/pt-headway-r3-seam-v1.json",
-      "coveragePath": null
+      "coveragePath": null,
+      "dictionaryExamplesPath": "data/dictionary-examples/pt-pt-speech-v24-headway-r3-10000x30-slim-v1.json"
     },
     "portuguese_brazilian": {
       "name": "Brazilian Portuguese",

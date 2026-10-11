@@ -130,3 +130,34 @@ warning/error console logs; the cause/duration was not measured. Earlier one-tab
 crash and slow startup remain browser observations, not claims of a repaired app
 problem. Physical phone and live two-device checks remain TOUCHPOINT's scope.
 No production promotion was performed; Josh's approval is required.
+
+## Canonical dictionary examples follow-up (2026-10-11)
+
+Josh confirmed: non-merged dictionary examples must contain the exact studied
+form; merged examples may use an allowed group form, with the displayed form
+and sentence highlight agreeing. No extra “different form” section is wanted.
+This does not change sense or merging policy.
+
+Release assembly currently picks one canonical illustration per sense and removes
+provider example arrays from app metadata. The exact frozen menus retain them.
+The new release-bound display supplement recovers those alternatives rather than
+editing immutable releases or calling dictionaries again. The audit covers all
+20,000 current cards, including assigned and unused senses, and finds replacements
+for 207 Spanish / 242 Portuguese card-sense occurrences whose originally chosen
+line does not contain their form. Example: tengo, “Mis abuelos tienen 40 años de
+casados.” → “Tengo dos años sin verlo.”; Portuguese é, “Não mexa em nada que não
+for seu.” → “Essa casa é do prefeito.” The current shared staging configuration
+now selects TAGLINE's Portuguese r3; it is preserved. Spanish remains r4.
+
+The app checks exact dictionary spelling, ignoring case only; it does not strip
+accents, peel pronouns or guess stems. Canonical sentences using kept-apart forms
+do not enter another merged group's sequence. Without a matching dictionary
+example, corpus examples and the meaning remain. Main study and Less common uses
+share the filter. English dictionary highlighting remains provider-declared;
+target highlighting follows the selected exact occurrence.
+
+Evidence: workspace audits/seam/canonical-form-audit.json. Supplemental paths
+and source/index hashes are recorded in the two dictionary-examples assets.
+Future releases must regenerate their supplements; mismatched release bindings
+are ignored. Other languages retain their existing one-example payloads and gain
+the exact-form filter, but alternative recovery remains deferred.

@@ -1529,7 +1529,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
     def test_rare_dictionary_senses_expansion_and_canonical_examples(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
 
-        self.assertIn("function extractCanonicalDictionaryExamples(meaning)", flashcards)
+        self.assertIn("function extractCanonicalDictionaryExamples(meaning, card = null)", flashcards)
         self.assertIn("function canonicalExampleHTML(meaning)", flashcards)
         self.assertIn("function getQualifyingRareSenses(card)", flashcards)
         self.assertIn("function openRareAndExpressionsCard(event)", flashcards)
