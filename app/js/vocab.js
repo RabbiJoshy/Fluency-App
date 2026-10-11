@@ -2127,7 +2127,8 @@ async function fetchActiveVocabularyData(langConfig) {
         await globalThis.loadCoverage?.(langConfig);
     }
     await stampContractions(vocabulary, langConfig);
-    await stampDictionaryExamples(vocabulary, langConfig);
+    await stampDictionaryExamples(vocabulary,
+        activeArtist || window.playlistLiveActive?.() ? null : langConfig);
     return vocabulary;
 }
 

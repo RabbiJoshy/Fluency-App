@@ -161,3 +161,19 @@ and source/index hashes are recorded in the two dictionary-examples assets.
 Future releases must regenerate their supplements; mismatched release bindings
 are ignored. Other languages retain their existing one-example payloads and gain
 the exact-form filter, but alternative recovery remains deferred.
+
+Follow-up verification: five focused behavior checks cover exact forms, accents,
+clitics, allowed merged forms, provider alternative recovery and release switching.
+The app suite passed before staging f0e8f230. The actual display audit evaluates
+98,867 Spanish / 46,883 Portuguese assigned-plus-unused sense occurrences; it
+finds 99 assigned + 108 unused Spanish replacements and 174 assigned + 67 unused
+Portuguese replacements relative to the existing app selector. The source-menu
+audit's 242 Portuguese candidates includes one the existing app selector already
+resolves; the display audit counts 241 additional replacements. No selected
+canonical example violates the form filter.
+
+The staged tengo popup and its rare-use rows were inspected in browser DOM/AX;
+the user welcome overlay prevented a complete visual review, then browser control
+became unavailable. Visual/physical-device review remains pending. No grading or
+progress edits were made. Artist/live-lyrics paths explicitly clear the Speech
+supplement; future artist/other-language alternative recovery remains deferred.

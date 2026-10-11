@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T12:12:26+01:00",
+      "date": "2026-10-11 12:12 BST",
+      "agent": "Codex",
+      "summary": "SEAM: keep recovered Speech dictionary examples scoped to Speech",
+      "detail": [
+        "Artist and live-lyrics cards cannot inherit Speech dictionary alternatives or Speech form-group lists.",
+        "Current Spanish/Portuguese Speech examples still match the studied form. Staging only; no production promotion."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T12:11:40+01:00",
       "date": "2026-10-11 12:11 BST",
       "agent": "Claude",
@@ -368,19 +379,6 @@
         "Select meanings using one checkbox per row; retain selections automatically without Save or Next Card buttons.",
         "Center the dialog on mobile and desktop, with scrolling for long lists and keyboard focus handling.",
         "Preserve individually marked meanings when answering the whole card; keep the existing review-card presentation."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T12:13:00+01:00",
-      "date": "2026-10-10 12:13 BST",
-      "agent": "Claude",
-      "summary": "Merge Lemmas works again in Czech and Finnish before a set opens",
-      "detail": [
-        "Czech, Finnish and French Merge Lemmas lists rebuilt for their live decks. The app had ignored them (Czech's was built for v21; Finnish's and French's predated the plural/singular rule), so nothing merged until a set's senses loaded.",
-        "Verb forms merge from the start again: 4,179 Czech cards (into být, jít…) and 862 Finnish (into olla, saada…). Nouns stay separate until the plural/singular check runs for those languages (roadmap CONVOY).",
-        "French has nothing to merge yet: its 200-card deck carries no headwords.",
-        "A new app test stops any deploy whose live deck lacks a list built for it."
       ],
       "commit": "pending"
     }
