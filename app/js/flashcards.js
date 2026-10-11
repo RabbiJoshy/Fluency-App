@@ -8418,7 +8418,14 @@ function renderCardWikipediaBadge(card) {
         // Same for every docked card panel, and when the card itself changed,
         // the side sheets that described the old one (side-dock.js).
         window.sideDock?.beforeBackRender(card);
+        // Keep the actions outside the study surface, but inside the back
+        // face so flipping and card navigation still move them together.
+        const backFace = renderedBack.closest('.card-back');
+        backFace?.querySelector(':scope > .links-section')?.remove();
         renderedBack.innerHTML = backHTML;
+        const actionTray = renderedBack.querySelector(':scope > .links-section');
+        if (actionTray && backFace) renderedBack.after(actionTray);
+        backFace?.classList.toggle('has-action-tray', Boolean(actionTray));
         placeRowInformationButtons(renderedBack);
         placeRowLeadMarks(renderedBack);
         arrangeSenseCueAreas(renderedBack);
@@ -8433,8 +8440,8 @@ function renderCardWikipediaBadge(card) {
     //   1. Flag meaning rows whose translation+context actually overflows the
     //      3-line clamp so the span becomes tap-to-expand. We only flag what
     //      measures as clipped, not everything past an arbitrary char count.
-    //   2. If the total (meanings + tray + sentence + links) would overflow
-    //      the card's content area, cap .meanings-scroll to the remaining
+    //   2. If the total (meanings + expression tray + sentence) would overflow
+    //      the study surface above the actions, cap .meanings-scroll to the remaining
     //      space so IT scrolls — not the whole card. If everything fits, no
     //      cap is applied and flex-layout centres the block as normal.
     //

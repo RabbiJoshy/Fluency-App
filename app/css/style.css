@@ -24463,3 +24463,50 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .prominence-common .sense-prominence-detail-heading { color: #34d399; }
 .prominence-uncommon .sense-prominence-detail-heading { color: #cbd5e1; }
 .prominence-rare .sense-prominence-detail-heading { color: #fbbf24; }
+
+/* The study surface ends above a separate, compact row of card actions. */
+@media (min-width: 360px) {
+  .card-face.card-back.has-action-tray {
+    padding: 0;
+    gap: 10px;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible;
+  }
+  .card-back.has-action-tray::before,
+  .card-back.has-action-tray::after { display: none; }
+  .card-back.has-action-tray > #backContent,
+  .card-back.has-action-tray > .card-details {
+    padding: 20px 4px 12px;
+    border-radius: 16px;
+    background: var(--bg-card);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+  }
+  .card-back.has-action-tray > .links-section {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 6px 4px 4px;
+    border-radius: 14px;
+    background: #000;
+  }
+  .card-replica .card-back.has-action-tray > .card-details { padding: 20px 16px 12px; }
+  .card-replica .card-back.has-action-tray > .links-section { padding-inline: 16px; }
+  :root[data-theme="light"] .card-back.has-action-tray > #backContent,
+  :root[data-theme="light"] .card-back.has-action-tray > .card-details {
+    box-shadow: 0 10px 28px rgba(27, 39, 51, 0.12);
+  }
+  :root[data-theme="light"] .card-back.has-action-tray > .links-section { background: #edf1f5; }
+  body.artist-mode .card-back.has-action-tray > #backContent {
+    background-image: linear-gradient(rgba(30, 39, 50, 0.9), rgba(30, 39, 50, 0.9)), var(--card-artwork, none);
+    background-size: cover;
+    background-position: center;
+  }
+  :root[data-theme="light"] body.artist-mode .card-back.has-action-tray > #backContent {
+    background-image: linear-gradient(rgba(250, 252, 253, 0.91), rgba(250, 252, 253, 0.91)), var(--card-artwork, none);
+  }
+}
+@media (min-width: 768px) {
+  .card-back.has-action-tray > #backContent,
+  .card-back.has-action-tray > .links-section { padding-inline: 16px; }
+}

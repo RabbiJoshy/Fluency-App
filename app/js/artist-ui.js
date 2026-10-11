@@ -56,6 +56,7 @@ function updateArtistBackground() {
         if (face.dataset.albumImage === imageUrl) return;
         face.dataset.albumImage = imageUrl;
         face.style.backgroundImage = imageUrl ? `url('${imageUrl}')` : '';
+        face.style.setProperty('--card-artwork', imageUrl ? `url('${imageUrl}')` : 'none');
     });
 }
 
