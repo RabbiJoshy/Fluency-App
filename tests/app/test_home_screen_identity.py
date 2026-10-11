@@ -44,6 +44,11 @@ class HomeScreenIdentityTests(unittest.TestCase):
         self.assertEqual(png_size(APP_ROOT / "icons/apple-touch-icon.png"), (180, 180))
         self.assertNotIn("Flashcards</title>", html)
 
+    def test_manifest_link_is_versioned_so_an_old_worker_cannot_serve_it_stale(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertRegex(html, r'<link rel="manifest" href="manifest\.json\?v=[^"]+">')
+        self.assertIn('href="manifest.json?v=stg-abc"', build_pages_site.stamp(html, "stg-abc"))
+
     def test_icons_are_cached_for_offline_use(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
         for name in ("apple-touch-icon.png", "icon-192.png", "icon-512.png"):

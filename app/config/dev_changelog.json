@@ -1,382 +1,381 @@
 {
- "_readme": "User-visible changes in the replacement app, newest first.",
- "entries": [
-  {
-   "timestamp": "2026-10-11T23:31:14+01:00",
-   "date": "2026-10-11 23:31 BST",
-   "agent": "Codex",
-   "summary": "Progress uses stronger colours and shows the cards left to study first.",
-   "detail": [
-    "Changed the washed-out palette to the Portuguese level accent green, vivid yellow, white, violet and slate; made legend text more readable.",
-    "The continuous bar and its legend now run New, Practice, Known, Estimated familiar, Skipped, putting the work remaining on the left.",
-    "Session selection, level boundaries, estimation and saved learning progress are unchanged."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T23:25:05+01:00",
-   "date": "2026-10-11 23:25 BST",
-   "agent": "Codex",
-   "summary": "Level progress is now one continuous bar with lighter status colours.",
-   "detail": [
-    "Removed the four progress divisions and grouped each learning status into one continuous stretch instead of repeating colours across rank regions.",
-    "Known cards are light green, practice is light yellow, new is white, estimated familiarity is soft lilac and skipped is blue-grey. Legend colours match in both themes.",
-    "Kept 100-card target levels, 20-card sessions, saved progress and within-level estimation unchanged."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T23:22:13+01:00",
-   "date": "2026-10-11 23:22 BST",
-   "agent": "Codex",
-   "summary": "Rare uses has a monochrome count in a thin circle instead of a coloured notification badge.",
-   "detail": [
-    "Removed the coloured fill and shadow behind the Rare uses count.",
-    "Count remains above the icon at the top left, with white digits and a thin white ring; light mode uses dark ink.",
-    "Kept the three-bar icon and its half-filled first bar."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T23:19:32+01:00",
-   "date": "2026-10-11 23:19 BST",
-   "agent": "Codex",
-   "summary": "Card actions sit directly on the page background, with less padding and more room for card content.",
-   "detail": [
-    "Removed the action row’s coloured background and rounded tray in both themes; it now blends into the page like the scrubber.",
-    "Reduced the gap and button padding, preserving readable labels and usable tap targets.",
-    "Reclaimed footer space: about 30px more card content on desktop and 42px on phones, while respecting the phone safe area."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T23:05:37+01:00",
-   "date": "2026-10-11 23:05 BST",
-   "agent": "Codex",
-   "summary": "Commonness tooltips stay above the card without clipping; white text and taller sense meters.",
-   "detail": [
-    "Commonness explanations open in a separate overlay above scrolling and transformed card surfaces, positioned within the screen edges.",
-    "Tooltip text and commonness icon are white. Sense-row meters are taller and slightly wider, with less surrounding padding.",
-    "Hover, tap and keyboard access work; tooltips dismiss when scrolling, flipping, changing cards or returning to the menu."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T22:56:24+01:00",
-   "date": "2026-10-11 22:56 BST",
-   "agent": "Codex",
-   "summary": "SETWISE: one level progress bar and short 20-card sessions, with finer starting-level suggestions.",
-   "detail": [
-    "Keep 100-card target levels; four quiet progress segments replace the selectable 25-card boxes. Go starts up to 20 eligible cards across the level.",
-    "Session completion offers Another 20 (or the smaller remaining count) and waits for your choice. New cards and practice remain separate.",
-    "Estimation suggests positions such as around halfway through Level 1 while preserving the saved starting rank. Estimated familiarity is shown separately from answered-card progress.",
-    "Resume retains saved session membership and order, including old sessions and companion cards. Guest sessions advance in memory without syncing answers."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T22:48:26+01:00",
-   "date": "2026-10-11 22:48 BST",
-   "agent": "Codex",
-   "summary": "Clearer Rare uses badge and Flag a meaning counter, with a softer card action tray.",
-   "detail": [
-    "Rare uses count moves to the top left with larger digits, and its first bar is half filled in white.",
-    "Mark a meaning becomes Flag a meaning. Its counter starts at zero and counts the meanings flagged for review, matching the checked rows.",
-    "The action tray uses the normal dark background colour instead of pure black; light mode retains its soft grey surface."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T22:37:33+01:00",
-   "date": "2026-10-11 22:37 BST",
-   "agent": "Codex",
-   "summary": "Clearer level and set controls, larger centred lookup icons, and a separate card action tray.",
-   "detail": [
-    "Word range sits quietly at the top right; the selected level is wider with larger text and less surrounding padding. The lyrics-frequency sentence is hidden while its calculation remains available.",
-    "Set bars are taller with larger labels; the set summary and progress legend are centred and more subtle.",
-    "Commonness tooltips show a coloured icon and title above the explanation; Rare uses shares the sense meters’ bar proportions.",
-    "Larger lookup icons rise centred above the magnifying glass. Card-back actions sit on a separate black tray with a 10px gap; light mode uses soft grey."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T21:14:00+01:00",
-   "date": "2026-10-11 21:14 BST",
-   "agent": "Claude",
-   "summary": "Spanish and Portuguese 'de' (and pt 'em') cards now show 'of' / 'in; at' instead of stray senses like 'by means of' and 'in (wearing)' (candidate decks pt r4, es r6)",
-   "detail": [
-    "LITERAL-GROUND. Only the preposition cards were re-run: pt de, do, da, dos, das, em, no, na, nos, nas (10 cards) and es de, del (2 cards). Every other card is byte-identical to pt r3 / es r5.",
-    "A rarer preposition sense must now beat the main one by 0.025, and de takes 'of' outright where it follows a verb or noun it belongs to (precisar de, gostaria de fazer, lembrar de mim, bolso da jaqueta).",
-    "Examples: pt dos went from 12 mixed rows to one 'of' row; pt da lost 'by means of' (5) and 'in (wearing)' (3); es de lost 'from' (13 of 80, mostly wrong) to 'of'.",
-    "Measured on 124 hand-judged changed sentences: 78 better, 7 worse where the card English changes (e.g. 'caiu da ponte' now 'of', should be 'from').",
-    "Not changed: por, para, es a / al / en (a prior made them worse), and the English-wording fix ('except' vs 'except for') is verified but not rolled out deck-wide yet.",
-    "No spend: WSD ran offline from the existing embedding cache."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T18:15:00+01:00",
-   "date": "2026-10-11 18:15 BST",
-   "agent": "Claude",
-   "summary": "Home-screen app is now Fluency β (staging: Fluency α) with a glowing F mark, not Flashcards with a book emoji",
-   "detail": [
-    "Home-screen name, manifest name and browser tab title are Fluency β on production and Fluency α on staging, so the two installs are told apart.",
-    "Icon is the app's F mark in its neutral periwinkle, on the tinted tile with the soft glow, with a small β (or α) beside the F.",
-    "Placeholder until a real logo is chosen. Phones that already added the app keep the old icon until it is removed and re-added."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:00:00+01:00",
-   "date": "2026-10-11 12:00 BST",
-   "agent": "Claude",
-   "summary": "Memory tips cover far more cards and show a step-by-step link from the word to English",
-   "detail": [
-    "Any card whose own English gloss can be reached by a short chain of edits now gets a tip: about 39% of Spanish and 44% of Portuguese speech cards (was 7% and 8%).",
-    "Each tip is tiered: Same word, Regular pattern, Close match, or Loose link (loose ones say to check the meaning).",
-    "The sheet shows the word against its English partner letter by letter, then numbered steps (drop the accent, -ción becomes -tion, swap a letter) with the changed letters highlighted.",
-    "Verb infinitives (informar → inform) and spelling-variant senses are handled; the deck's own lemma is never offered as the English word."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T16:10:00+01:00",
-   "date": "2026-10-11 16:10 BST",
-   "agent": "Claude",
-   "summary": "INFLECT-2: verbs only a thing can do say \"it\": pasa \"it happens\", gusta \"it pleases\"",
-   "detail": [
-    "Spanish and Portuguese rows for happen, occur, cost, matter, rain, last, be enough, be worth, be missing and be left now use \"it\" (pasa \"it happens\", vale \"it costs\", basta \"it is enough\", pt chove \"it rains\"); they no longer show an \"I\" or \"you\" reading.",
-    "gustar-type verbs describe the thing, not a person: gusta \"it pleases\" (was \"he/she likes\"), gustan \"they please\", encanta \"it delights\", duele \"it hurts\".",
-    "The participle gustado stays \"liked\"; verbs a person can do (pasa \"he/she spends\") keep \"he/she\".",
-    "Measured on es r5 and pt r3: 115 and 64 rows changed, 0 gained, 0 lost, all error classes 0."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T15:40:00+01:00",
-   "date": "2026-10-11 15:40 BST",
-   "agent": "Claude",
-   "summary": "INFLECT-2: reverted the Portuguese bracket change; the card already shows those definitions as sub-rows",
-   "detail": [
-    "Checked on real cards: production vou already shows \"I go\" with \"to begin an action or process\" and \"+ para to move to a destination\" as sub-rows, and quero shows \"I want to\" with \"to feel the need to do something\".",
-    "The earlier INFLECT-2 change removed the \"to\" from those sub-rows and, on quero, removed one entirely, so it is reverted: Portuguese rows are back to the INFLECT build (fa94c9bc).",
-    "Nothing else changed; Spanish was never affected."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T15:05:00+01:00",
-   "date": "2026-10-11 15:05 BST",
-   "agent": "Antigravity",
-   "summary": "Artist mode: updated to es-lyrics-v24-1 with soft evidence gating and Transformer POS tagging",
-   "detail": [
-    "Inherits soft evidence gating (pos_penalty=0.06), Transformer POS tagger (es_dep_news_trf@3.8.0), and multiword phrases from the es-v24-1 engine via the unified LyricsWSDAdapter.",
-    "Planted across all artists (spanish-test-playlist, bad-bunny, rosalia, young-miko): 20,232 cards and 54,221 WSD assignments completed with 0 fallback assignments.",
-    "Packaged and published validated lyrics release bundle to Fluency-Releases-lyrics (lyrics-all-artists-v20)."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T15:02:01+01:00",
-   "date": "2026-10-11 15:02 BST",
-   "agent": "Claude",
-   "summary": "INFLECT-2: Portuguese verb rows no longer read as \"he went (to move to a destination)\"",
-   "detail": [
-    "A Wiktionary definition in brackets after a conjugated verb is dropped when the row already differs from its siblings on the card: foi \"he/she went (to move to a destination)\" is now \"he/she went\" where nothing else on the card says the same.",
-    "Where the bracket is the only thing telling two rows apart it stays, without the infinitive \"to\": é \"he/she is (have the given quality)\", foi \"he/she went (move to a destination)\".",
-    "A bracket that completes the verb (\"pay (attention, respect etc.)\", \"waits (for a person)\") is untouched.",
-    "Measured on pt-speech-v24-headway-r3: 3,389 rows changed (2,227 brackets dropped, 1,162 rewritten), 0 gained, 0 lost, no new identical rows on any card; Spanish is unchanged."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T14:25:11+01:00",
-   "date": "2026-10-11 14:25 BST",
-   "agent": "Codex",
-   "summary": "Set progress boxes use white labels and darker, calmer colours",
-   "detail": [
-    "Known, practice, new and skipped progress segments use deeper green, muted amber, dark slate and grey.",
-    "White set labels remain readable across segment boundaries, including selected and hovered sets; minimum contrast is 5.4:1.",
-    "The SETWISE roadmap discussion will compare fewer progress boxes and a visible 25/50-card session choice; the four-box layout remains for now.",
-    "Spanish r5 release checks repaired: regenerate the level-estimation pool, recompute Smart Skip verdicts, and validate the existing checked noun-merge evidence against the r5 source senses."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T13:19:38+01:00",
-   "date": "2026-10-11 13:19 BST",
-   "agent": "Codex",
-   "summary": "TOUCHPOINT: more reliable phone swipes without moving controls",
-   "detail": [
-    "Both grading directions use the same 50px threshold and existing indicators.",
-    "Vertical scrolling cannot turn into a grade or cycle content inside a scrollport.",
-    "Deliberate drags may start over buttons; taps keep their existing actions.",
-    "Cancelled and multiple-touch gestures reset without activating buttons on release; grading transitions reject duplicate grades.",
-    "Touch taps use the existing click path once; the first-swipe hint only dismisses after touch grading.",
-    "Layout, button positions, card identities and saved progress are unchanged. Physical-phone feel remains unverified."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T13:00:00+01:00",
-   "date": "2026-10-11 13:00 BST",
-   "agent": "Claude",
-   "summary": "Verb rows show one reading: the statement, or the command when the word is almost always one or the example on screen is one",
-   "detail": [
-    "No more 'look! / he/she looks' double rows: each row shows one reading.",
-    "The command shows when two-thirds of the card's own sentences use it: mira 'look!', olhe 'look!', esqueça 'don't forget!' (Não se esqueça), juguemos 'let's play!'. 14 es and 29 pt rows.",
-    "Otherwise the statement, switching to the command only while the example on screen is a command for that row's verb: espera 'he/she waits', and 'wait!' on '¡Espera aquí!'.",
-    "A command uses one verb: pare 'stop!' (not 'stop; cease!'), vejamos 'let's see!'.",
-    "The person still never follows the example: era is 'I/he/she was' on every example."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:42:00+01:00",
-   "date": "2026-10-11 12:42 BST",
-   "agent": "Claude",
-   "summary": "Verb rows no longer change with the example on screen; a command shows when the card's own sentences use one",
-   "detail": [
-    "The person on a verb row describes the word, not the sentence being shown: era is 'I/he/she was' on every example (was 'I was' or 'he was' depending on the example), habla is 'he/she speaks'.",
-    "A form that is both a statement and a command shows the command when at least one in five of the card's sentences use it, first when most do: mira 'look! / he/she looks' (19 of 26 sentences), deja 'he/she leaves / leave!', no te preocupes → preocupes 'don't worry! / you worry'. quiere, sabe, parece stay 'he/she …'.",
-    "Decided once per card from all its sentences, so the row is stable while browsing. 324 es and 366 pt rows gain a command (v24 decks); no row lost its English."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:12:26+01:00",
-   "date": "2026-10-11 12:12 BST",
-   "agent": "Codex",
-   "summary": "SEAM: keep recovered Speech dictionary examples scoped to Speech",
-   "detail": [
-    "Artist and live-lyrics cards cannot inherit Speech dictionary alternatives or Speech form-group lists.",
-    "Current Spanish/Portuguese Speech examples still match the studied form. Staging only; no production promotion."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:11:40+01:00",
-   "date": "2026-10-11 12:11 BST",
-   "agent": "Claude",
-   "summary": "Mark a meaning: known/total badge, reviewed meanings first and known ones faded; collapsible uses lists; calmer example word",
-   "detail": [
-    "Less common uses: part-of-speech sections start collapsed when there are several; examples open by default when they all fit.",
-    "Expressions page uses the same layout and collapsible sections as Less common uses.",
-    "'Focus meanings' is now 'Mark a meaning', showing known/total meaning rows (? until any are marked) instead of a target icon.",
-    "Cards with meanings brought back: those meanings sit at the top in colour; known meanings fade to the bottom. Amber target styling removed; front shows 'N meanings to review'.",
-    "Example sentence word: no pulse or boxed glow during audio and no tinted box; underline plus a soft permanent glow."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:06:17+01:00",
-   "date": "2026-10-11 12:06 BST",
-   "agent": "Codex",
-   "summary": "SEAM: dictionary examples now match the studied form; retained alternatives recovered",
-   "detail": [
-    "Non-merged cards choose a dictionary sentence containing the exact surface, including attached pronouns and accents. Other-form dictionary sentences stay out of the study and Less common uses sequences.",
-    "Merged dictionary examples use an allowed group form; the header, sentence highlight and In this example cue agree.",
-    "Recovered existing frozen dictionary alternatives for Spanish r4 and current Portuguese r3 without editing releases, senses, merging rules or saved progress. No production promotion."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T11:29:24+01:00",
-   "date": "2026-10-11 11:29 BST",
-   "agent": "Claude",
-   "summary": "Less common uses rows put meaning and context on one line when they fit",
-   "detail": [
-    "Rare uses sheet: meaning and context share a line when there is room; the context drops beneath as a whole when there isn't."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T11:04:22+01:00",
-   "date": "2026-10-11 11:04 BST",
-   "agent": "Claude",
-   "summary": "Focus meanings rows made uniform; Less common uses sheet is compact with example buttons",
-   "detail": [
-    "Focus meanings: every row is the same box — translation, then context; family headings sit inside each row; head reads 'Verb from decir'.",
-    "Rare uses sheet retitled 'Less common uses of <word>' (one line, no subtitle); rows are meaning + context with an examples icon button on the right."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T09:59:30+01:00",
-   "date": "2026-10-11 09:59 BST",
-   "agent": "Claude",
-   "summary": "Rare uses sheet redesigned; part-of-speech labels in sentence case; sense note is now Usage notes",
-   "detail": [
-    "Rare uses sheet: centred header 'Rare uses of <word>', no pill, clearer subtitle, POS headings in the sense-row style, centred rows in the card's fonts, no meta labels.",
-    "Part-of-speech labels use sentence case everywhere ('Verb from estar', 'Noun').",
-    "Sense-row information sheet heading renamed from 'About this meaning' to 'Usage notes'."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T09:40:38+01:00",
-   "date": "2026-10-11 09:40 BST",
-   "agent": "Claude",
-   "summary": "Card back: clearer sense rows, distinct POS colours, Focus meanings and practice cards, paired companion segments",
-   "detail": [
-    "Sense row reads 'verb from estar' with POS and lemma at the same size; the lemma chip at the top of the back is removed (reflexive shows as 'from irse').",
-    "Every shipped part of speech has its own colour; Portuguese name/article/abbreviation no longer fall to grey.",
-    "Example source line is upright and muted; the example pips (dot strip) are 20% larger.",
-    "'Review meaning(s)' is now 'Focus meanings' with a target icon.",
-    "Cards with meanings marked for practice show 'Practising N of M meanings' on the front; those rows open and carry a target dot on the back.",
-    "Companion (A/B) cards are joined as one bracketed pair in the deck scrubber."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T23:05:47+01:00",
-   "date": "2026-10-10 23:05 BST",
-   "agent": "Codex",
-   "summary": "SEAM: correct kept-apart titles, hydrated search cues and checked noun merging",
-   "detail": [
-    "Kept-apart forms use their surface title; merged titles and answers follow the existing merge key.",
-    "Search cards judge Examples only from the loaded menu; unloaded search results no longer claim their meanings are absent.",
-    "Restored complete-menu evidence for Spanish and Portuguese noun pairs; row loading retains that evidence. Matching estimator pools and cache-safe supporting URLs updated.",
-    "Existing merging policy and saved learner progress are preserved; staging review only."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T22:57:57+01:00",
-   "date": "2026-10-10 22:57 BST",
-   "agent": "Codex",
-   "summary": "Stalled progress and deck downloads now time out with a way to retry",
-   "detail": [
-    "Progress reads stop after 12 seconds per request; capability checks stop after 5 seconds. Failed reads retain cached progress and queued answers, and offer Retry progress load.",
-    "Deck JSON downloads stop after 20 seconds per request, including a stalled response body. Failed deck loads explain how to retry.",
-    "A partial progress refresh retains its previous sync watermark so retrying can recover the missing rows."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T22:25:52+01:00",
-   "date": "2026-10-10 22:25 BST",
-   "agent": "Claude",
-   "summary": "Tutorial: the tour now performs changing a meaning, cycling examples and opening Rare uses, Review meanings and Look up",
-   "detail": [
-    "Back of card: new steps where the tour taps another meaning (the example changes), cycles through a meaning's examples, opens the Rare uses sheet (and unfolds an example), opens Review meanings (and ticks one), opens the Look up column and arms a site's Visit button.",
-    "The sheets are the live app's own Rare uses and Review meanings markup, drawn over the replica card from the demo word's real rare senses.",
-    "Smart Skip: look-alikes now come before merged word forms and merged singular/plural.",
-    "Portuguese demo word is now devia (dever): should / ought, with two real rare senses."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T23:05:00+01:00",
-   "date": "2026-10-10 23:05 BST",
-   "agent": "Claude",
-   "summary": "Reviewer access for the JOSHUA profile; one profile per username",
-   "detail": [
-    "JOSHUA (profile_028abec8…) can flag cards and open the data and model panel with Cmd/Ctrl+I, but sees no admin settings, changelog modal, provenance pills or scrape inspector. It is allow-listed by profile ID, not display name.",
-    "A username now belongs to one profile, compared case-insensitively. The worker refuses a second profile with the same name or with an unclaimed legacy name (needs migration 0007 and a worker deploy).",
-    "The sign-in match dialog no longer offers 'No, create an account' for a name that already exists."
-   ],
-   "commit": "pending"
-  }
- ]
+  "_readme": "User-visible changes in the replacement app, newest first.",
+  "entries": [
+    {
+      "timestamp": "2026-10-11T22:30:00+01:00",
+      "date": "2026-10-11 22:30 BST",
+      "agent": "Claude",
+      "summary": "Home-screen icon is now just the glowing F and β (no inner tile), and Add to Home Screen should stop offering the old Flashcards name",
+      "detail": [
+        "Icon drops the inner rounded square: a larger periwinkle F with a small β (α on staging), glowing on the dark background.",
+        "The manifest link now carries a version tag, so a phone still running the previous app version fetches the new manifest instead of its cached \"Flashcards\" one."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T23:31:14+01:00",
+      "date": "2026-10-11 23:31 BST",
+      "agent": "Codex",
+      "summary": "Progress uses stronger colours and shows the cards left to study first.",
+      "detail": [
+        "Changed the washed-out palette to the Portuguese level accent green, vivid yellow, white, violet and slate; made legend text more readable.",
+        "The continuous bar and its legend now run New, Practice, Known, Estimated familiar, Skipped, putting the work remaining on the left.",
+        "Session selection, level boundaries, estimation and saved learning progress are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T23:25:05+01:00",
+      "date": "2026-10-11 23:25 BST",
+      "agent": "Codex",
+      "summary": "Level progress is now one continuous bar with lighter status colours.",
+      "detail": [
+        "Removed the four progress divisions and grouped each learning status into one continuous stretch instead of repeating colours across rank regions.",
+        "Known cards are light green, practice is light yellow, new is white, estimated familiarity is soft lilac and skipped is blue-grey. Legend colours match in both themes.",
+        "Kept 100-card target levels, 20-card sessions, saved progress and within-level estimation unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T23:22:13+01:00",
+      "date": "2026-10-11 23:22 BST",
+      "agent": "Codex",
+      "summary": "Rare uses has a monochrome count in a thin circle instead of a coloured notification badge.",
+      "detail": [
+        "Removed the coloured fill and shadow behind the Rare uses count.",
+        "Count remains above the icon at the top left, with white digits and a thin white ring; light mode uses dark ink.",
+        "Kept the three-bar icon and its half-filled first bar."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T23:19:32+01:00",
+      "date": "2026-10-11 23:19 BST",
+      "agent": "Codex",
+      "summary": "Card actions sit directly on the page background, with less padding and more room for card content.",
+      "detail": [
+        "Removed the action row’s coloured background and rounded tray in both themes; it now blends into the page like the scrubber.",
+        "Reduced the gap and button padding, preserving readable labels and usable tap targets.",
+        "Reclaimed footer space: about 30px more card content on desktop and 42px on phones, while respecting the phone safe area."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T23:05:37+01:00",
+      "date": "2026-10-11 23:05 BST",
+      "agent": "Codex",
+      "summary": "Commonness tooltips stay above the card without clipping; white text and taller sense meters.",
+      "detail": [
+        "Commonness explanations open in a separate overlay above scrolling and transformed card surfaces, positioned within the screen edges.",
+        "Tooltip text and commonness icon are white. Sense-row meters are taller and slightly wider, with less surrounding padding.",
+        "Hover, tap and keyboard access work; tooltips dismiss when scrolling, flipping, changing cards or returning to the menu."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T22:56:24+01:00",
+      "date": "2026-10-11 22:56 BST",
+      "agent": "Codex",
+      "summary": "SETWISE: one level progress bar and short 20-card sessions, with finer starting-level suggestions.",
+      "detail": [
+        "Keep 100-card target levels; four quiet progress segments replace the selectable 25-card boxes. Go starts up to 20 eligible cards across the level.",
+        "Session completion offers Another 20 (or the smaller remaining count) and waits for your choice. New cards and practice remain separate.",
+        "Estimation suggests positions such as around halfway through Level 1 while preserving the saved starting rank. Estimated familiarity is shown separately from answered-card progress.",
+        "Resume retains saved session membership and order, including old sessions and companion cards. Guest sessions advance in memory without syncing answers."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T22:48:26+01:00",
+      "date": "2026-10-11 22:48 BST",
+      "agent": "Codex",
+      "summary": "Clearer Rare uses badge and Flag a meaning counter, with a softer card action tray.",
+      "detail": [
+        "Rare uses count moves to the top left with larger digits, and its first bar is half filled in white.",
+        "Mark a meaning becomes Flag a meaning. Its counter starts at zero and counts the meanings flagged for review, matching the checked rows.",
+        "The action tray uses the normal dark background colour instead of pure black; light mode retains its soft grey surface."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T22:37:33+01:00",
+      "date": "2026-10-11 22:37 BST",
+      "agent": "Codex",
+      "summary": "Clearer level and set controls, larger centred lookup icons, and a separate card action tray.",
+      "detail": [
+        "Word range sits quietly at the top right; the selected level is wider with larger text and less surrounding padding. The lyrics-frequency sentence is hidden while its calculation remains available.",
+        "Set bars are taller with larger labels; the set summary and progress legend are centred and more subtle.",
+        "Commonness tooltips show a coloured icon and title above the explanation; Rare uses shares the sense meters’ bar proportions.",
+        "Larger lookup icons rise centred above the magnifying glass. Card-back actions sit on a separate black tray with a 10px gap; light mode uses soft grey."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T21:14:00+01:00",
+      "date": "2026-10-11 21:14 BST",
+      "agent": "Claude",
+      "summary": "Spanish and Portuguese 'de' (and pt 'em') cards now show 'of' / 'in; at' instead of stray senses like 'by means of' and 'in (wearing)' (candidate decks pt r4, es r6)",
+      "detail": [
+        "LITERAL-GROUND. Only the preposition cards were re-run: pt de, do, da, dos, das, em, no, na, nos, nas (10 cards) and es de, del (2 cards). Every other card is byte-identical to pt r3 / es r5.",
+        "A rarer preposition sense must now beat the main one by 0.025, and de takes 'of' outright where it follows a verb or noun it belongs to (precisar de, gostaria de fazer, lembrar de mim, bolso da jaqueta).",
+        "Examples: pt dos went from 12 mixed rows to one 'of' row; pt da lost 'by means of' (5) and 'in (wearing)' (3); es de lost 'from' (13 of 80, mostly wrong) to 'of'.",
+        "Measured on 124 hand-judged changed sentences: 78 better, 7 worse where the card English changes (e.g. 'caiu da ponte' now 'of', should be 'from').",
+        "Not changed: por, para, es a / al / en (a prior made them worse), and the English-wording fix ('except' vs 'except for') is verified but not rolled out deck-wide yet.",
+        "No spend: WSD ran offline from the existing embedding cache."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T18:15:00+01:00",
+      "date": "2026-10-11 18:15 BST",
+      "agent": "Claude",
+      "summary": "Home-screen app is now Fluency β (staging: Fluency α) with a glowing F mark, not Flashcards with a book emoji",
+      "detail": [
+        "Home-screen name, manifest name and browser tab title are Fluency β on production and Fluency α on staging, so the two installs are told apart.",
+        "Icon is the app's F mark in its neutral periwinkle, on the tinted tile with the soft glow, with a small β (or α) beside the F.",
+        "Placeholder until a real logo is chosen. Phones that already added the app keep the old icon until it is removed and re-added."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T12:00:00+01:00",
+      "date": "2026-10-11 12:00 BST",
+      "agent": "Claude",
+      "summary": "Memory tips cover far more cards and show a step-by-step link from the word to English",
+      "detail": [
+        "Any card whose own English gloss can be reached by a short chain of edits now gets a tip: about 39% of Spanish and 44% of Portuguese speech cards (was 7% and 8%).",
+        "Each tip is tiered: Same word, Regular pattern, Close match, or Loose link (loose ones say to check the meaning).",
+        "The sheet shows the word against its English partner letter by letter, then numbered steps (drop the accent, -ción becomes -tion, swap a letter) with the changed letters highlighted.",
+        "Verb infinitives (informar → inform) and spelling-variant senses are handled; the deck's own lemma is never offered as the English word."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T16:10:00+01:00",
+      "date": "2026-10-11 16:10 BST",
+      "agent": "Claude",
+      "summary": "INFLECT-2: verbs only a thing can do say \"it\": pasa \"it happens\", gusta \"it pleases\"",
+      "detail": [
+        "Spanish and Portuguese rows for happen, occur, cost, matter, rain, last, be enough, be worth, be missing and be left now use \"it\" (pasa \"it happens\", vale \"it costs\", basta \"it is enough\", pt chove \"it rains\"); they no longer show an \"I\" or \"you\" reading.",
+        "gustar-type verbs describe the thing, not a person: gusta \"it pleases\" (was \"he/she likes\"), gustan \"they please\", encanta \"it delights\", duele \"it hurts\".",
+        "The participle gustado stays \"liked\"; verbs a person can do (pasa \"he/she spends\") keep \"he/she\".",
+        "Measured on es r5 and pt r3: 115 and 64 rows changed, 0 gained, 0 lost, all error classes 0."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T15:40:00+01:00",
+      "date": "2026-10-11 15:40 BST",
+      "agent": "Claude",
+      "summary": "INFLECT-2: reverted the Portuguese bracket change; the card already shows those definitions as sub-rows",
+      "detail": [
+        "Checked on real cards: production vou already shows \"I go\" with \"to begin an action or process\" and \"+ para to move to a destination\" as sub-rows, and quero shows \"I want to\" with \"to feel the need to do something\".",
+        "The earlier INFLECT-2 change removed the \"to\" from those sub-rows and, on quero, removed one entirely, so it is reverted: Portuguese rows are back to the INFLECT build (fa94c9bc).",
+        "Nothing else changed; Spanish was never affected."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T15:05:00+01:00",
+      "date": "2026-10-11 15:05 BST",
+      "agent": "Antigravity",
+      "summary": "Artist mode: updated to es-lyrics-v24-1 with soft evidence gating and Transformer POS tagging",
+      "detail": [
+        "Inherits soft evidence gating (pos_penalty=0.06), Transformer POS tagger (es_dep_news_trf@3.8.0), and multiword phrases from the es-v24-1 engine via the unified LyricsWSDAdapter.",
+        "Planted across all artists (spanish-test-playlist, bad-bunny, rosalia, young-miko): 20,232 cards and 54,221 WSD assignments completed with 0 fallback assignments.",
+        "Packaged and published validated lyrics release bundle to Fluency-Releases-lyrics (lyrics-all-artists-v20)."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T15:02:01+01:00",
+      "date": "2026-10-11 15:02 BST",
+      "agent": "Claude",
+      "summary": "INFLECT-2: Portuguese verb rows no longer read as \"he went (to move to a destination)\"",
+      "detail": [
+        "A Wiktionary definition in brackets after a conjugated verb is dropped when the row already differs from its siblings on the card: foi \"he/she went (to move to a destination)\" is now \"he/she went\" where nothing else on the card says the same.",
+        "Where the bracket is the only thing telling two rows apart it stays, without the infinitive \"to\": é \"he/she is (have the given quality)\", foi \"he/she went (move to a destination)\".",
+        "A bracket that completes the verb (\"pay (attention, respect etc.)\", \"waits (for a person)\") is untouched.",
+        "Measured on pt-speech-v24-headway-r3: 3,389 rows changed (2,227 brackets dropped, 1,162 rewritten), 0 gained, 0 lost, no new identical rows on any card; Spanish is unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T14:25:11+01:00",
+      "date": "2026-10-11 14:25 BST",
+      "agent": "Codex",
+      "summary": "Set progress boxes use white labels and darker, calmer colours",
+      "detail": [
+        "Known, practice, new and skipped progress segments use deeper green, muted amber, dark slate and grey.",
+        "White set labels remain readable across segment boundaries, including selected and hovered sets; minimum contrast is 5.4:1.",
+        "The SETWISE roadmap discussion will compare fewer progress boxes and a visible 25/50-card session choice; the four-box layout remains for now.",
+        "Spanish r5 release checks repaired: regenerate the level-estimation pool, recompute Smart Skip verdicts, and validate the existing checked noun-merge evidence against the r5 source senses."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T13:19:38+01:00",
+      "date": "2026-10-11 13:19 BST",
+      "agent": "Codex",
+      "summary": "TOUCHPOINT: more reliable phone swipes without moving controls",
+      "detail": [
+        "Both grading directions use the same 50px threshold and existing indicators.",
+        "Vertical scrolling cannot turn into a grade or cycle content inside a scrollport.",
+        "Deliberate drags may start over buttons; taps keep their existing actions.",
+        "Cancelled and multiple-touch gestures reset without activating buttons on release; grading transitions reject duplicate grades.",
+        "Touch taps use the existing click path once; the first-swipe hint only dismisses after touch grading.",
+        "Layout, button positions, card identities and saved progress are unchanged. Physical-phone feel remains unverified."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T13:00:00+01:00",
+      "date": "2026-10-11 13:00 BST",
+      "agent": "Claude",
+      "summary": "Verb rows show one reading: the statement, or the command when the word is almost always one or the example on screen is one",
+      "detail": [
+        "No more 'look! / he/she looks' double rows: each row shows one reading.",
+        "The command shows when two-thirds of the card's own sentences use it: mira 'look!', olhe 'look!', esqueça 'don't forget!' (Não se esqueça), juguemos 'let's play!'. 14 es and 29 pt rows.",
+        "Otherwise the statement, switching to the command only while the example on screen is a command for that row's verb: espera 'he/she waits', and 'wait!' on '¡Espera aquí!'.",
+        "A command uses one verb: pare 'stop!' (not 'stop; cease!'), vejamos 'let's see!'.",
+        "The person still never follows the example: era is 'I/he/she was' on every example."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T12:42:00+01:00",
+      "date": "2026-10-11 12:42 BST",
+      "agent": "Claude",
+      "summary": "Verb rows no longer change with the example on screen; a command shows when the card's own sentences use one",
+      "detail": [
+        "The person on a verb row describes the word, not the sentence being shown: era is 'I/he/she was' on every example (was 'I was' or 'he was' depending on the example), habla is 'he/she speaks'.",
+        "A form that is both a statement and a command shows the command when at least one in five of the card's sentences use it, first when most do: mira 'look! / he/she looks' (19 of 26 sentences), deja 'he/she leaves / leave!', no te preocupes → preocupes 'don't worry! / you worry'. quiere, sabe, parece stay 'he/she …'.",
+        "Decided once per card from all its sentences, so the row is stable while browsing. 324 es and 366 pt rows gain a command (v24 decks); no row lost its English."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T12:12:26+01:00",
+      "date": "2026-10-11 12:12 BST",
+      "agent": "Codex",
+      "summary": "SEAM: keep recovered Speech dictionary examples scoped to Speech",
+      "detail": [
+        "Artist and live-lyrics cards cannot inherit Speech dictionary alternatives or Speech form-group lists.",
+        "Current Spanish/Portuguese Speech examples still match the studied form. Staging only; no production promotion."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T12:11:40+01:00",
+      "date": "2026-10-11 12:11 BST",
+      "agent": "Claude",
+      "summary": "Mark a meaning: known/total badge, reviewed meanings first and known ones faded; collapsible uses lists; calmer example word",
+      "detail": [
+        "Less common uses: part-of-speech sections start collapsed when there are several; examples open by default when they all fit.",
+        "Expressions page uses the same layout and collapsible sections as Less common uses.",
+        "'Focus meanings' is now 'Mark a meaning', showing known/total meaning rows (? until any are marked) instead of a target icon.",
+        "Cards with meanings brought back: those meanings sit at the top in colour; known meanings fade to the bottom. Amber target styling removed; front shows 'N meanings to review'.",
+        "Example sentence word: no pulse or boxed glow during audio and no tinted box; underline plus a soft permanent glow."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T12:06:17+01:00",
+      "date": "2026-10-11 12:06 BST",
+      "agent": "Codex",
+      "summary": "SEAM: dictionary examples now match the studied form; retained alternatives recovered",
+      "detail": [
+        "Non-merged cards choose a dictionary sentence containing the exact surface, including attached pronouns and accents. Other-form dictionary sentences stay out of the study and Less common uses sequences.",
+        "Merged dictionary examples use an allowed group form; the header, sentence highlight and In this example cue agree.",
+        "Recovered existing frozen dictionary alternatives for Spanish r4 and current Portuguese r3 without editing releases, senses, merging rules or saved progress. No production promotion."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T11:29:24+01:00",
+      "date": "2026-10-11 11:29 BST",
+      "agent": "Claude",
+      "summary": "Less common uses rows put meaning and context on one line when they fit",
+      "detail": [
+        "Rare uses sheet: meaning and context share a line when there is room; the context drops beneath as a whole when there isn't."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T11:04:22+01:00",
+      "date": "2026-10-11 11:04 BST",
+      "agent": "Claude",
+      "summary": "Focus meanings rows made uniform; Less common uses sheet is compact with example buttons",
+      "detail": [
+        "Focus meanings: every row is the same box — translation, then context; family headings sit inside each row; head reads 'Verb from decir'.",
+        "Rare uses sheet retitled 'Less common uses of <word>' (one line, no subtitle); rows are meaning + context with an examples icon button on the right."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T09:59:30+01:00",
+      "date": "2026-10-11 09:59 BST",
+      "agent": "Claude",
+      "summary": "Rare uses sheet redesigned; part-of-speech labels in sentence case; sense note is now Usage notes",
+      "detail": [
+        "Rare uses sheet: centred header 'Rare uses of <word>', no pill, clearer subtitle, POS headings in the sense-row style, centred rows in the card's fonts, no meta labels.",
+        "Part-of-speech labels use sentence case everywhere ('Verb from estar', 'Noun').",
+        "Sense-row information sheet heading renamed from 'About this meaning' to 'Usage notes'."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T09:40:38+01:00",
+      "date": "2026-10-11 09:40 BST",
+      "agent": "Claude",
+      "summary": "Card back: clearer sense rows, distinct POS colours, Focus meanings and practice cards, paired companion segments",
+      "detail": [
+        "Sense row reads 'verb from estar' with POS and lemma at the same size; the lemma chip at the top of the back is removed (reflexive shows as 'from irse').",
+        "Every shipped part of speech has its own colour; Portuguese name/article/abbreviation no longer fall to grey.",
+        "Example source line is upright and muted; the example pips (dot strip) are 20% larger.",
+        "'Review meaning(s)' is now 'Focus meanings' with a target icon.",
+        "Cards with meanings marked for practice show 'Practising N of M meanings' on the front; those rows open and carry a target dot on the back.",
+        "Companion (A/B) cards are joined as one bracketed pair in the deck scrubber."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T23:05:47+01:00",
+      "date": "2026-10-10 23:05 BST",
+      "agent": "Codex",
+      "summary": "SEAM: correct kept-apart titles, hydrated search cues and checked noun merging",
+      "detail": [
+        "Kept-apart forms use their surface title; merged titles and answers follow the existing merge key.",
+        "Search cards judge Examples only from the loaded menu; unloaded search results no longer claim their meanings are absent.",
+        "Restored complete-menu evidence for Spanish and Portuguese noun pairs; row loading retains that evidence. Matching estimator pools and cache-safe supporting URLs updated.",
+        "Existing merging policy and saved learner progress are preserved; staging review only."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T22:57:57+01:00",
+      "date": "2026-10-10 22:57 BST",
+      "agent": "Codex",
+      "summary": "Stalled progress and deck downloads now time out with a way to retry",
+      "detail": [
+        "Progress reads stop after 12 seconds per request; capability checks stop after 5 seconds. Failed reads retain cached progress and queued answers, and offer Retry progress load.",
+        "Deck JSON downloads stop after 20 seconds per request, including a stalled response body. Failed deck loads explain how to retry.",
+        "A partial progress refresh retains its previous sync watermark so retrying can recover the missing rows."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T22:25:52+01:00",
+      "date": "2026-10-10 22:25 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: the tour now performs changing a meaning, cycling examples and opening Rare uses, Review meanings and Look up",
+      "detail": [
+        "Back of card: new steps where the tour taps another meaning (the example changes), cycles through a meaning's examples, opens the Rare uses sheet (and unfolds an example), opens Review meanings (and ticks one), opens the Look up column and arms a site's Visit button.",
+        "The sheets are the live app's own Rare uses and Review meanings markup, drawn over the replica card from the demo word's real rare senses.",
+        "Smart Skip: look-alikes now come before merged word forms and merged singular/plural.",
+        "Portuguese demo word is now devia (dever): should / ought, with two real rare senses."
+      ],
+      "commit": "pending"
+    }
+  ]
 }
