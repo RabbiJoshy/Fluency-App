@@ -7,38 +7,7 @@
  * or black because they sit on media, glass, or a full-screen scrim.
  */
 
-:root[data-theme="light"] {
-    color-scheme: light;
 
-    /* Cool daylight neutrals keep the industrial Fluency grammar crisp. */
-    --bg-primary: #eef2f5;
-    --bg-secondary: #f6f8fa;
-    --bg-tertiary: #e6ebef;
-    --bg-card: #ffffff;
-    --bg-card-hover: #f1f5f8;
-
-    --text-primary: #17212b;
-    --text-secondary: #354353;
-    --text-muted: #5d6b7a;
-
-    --accent-orange: #c84f24;
-    --accent-amber: #946000;
-    --accent-blue: #1769aa;
-    --accent-green: #087f68;
-    --accent-phrases: #7453c6;
-    --accent-phrases-rgb: 116, 83, 198;
-
-    --success: #087f68;
-    --error: #bd3847;
-    --warning: #946000;
-
-    --border-color: #d7dfe6;
-    --border-light: #c1ccd6;
-
-    --glow-orange: rgba(200, 79, 36, 0.18);
-    --glow-blue: rgba(23, 105, 170, 0.17);
-    --glow-green: rgba(8, 127, 104, 0.17);
-}
 
 :root[data-theme="light"] body {
     background-color: var(--bg-primary);
