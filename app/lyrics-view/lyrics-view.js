@@ -1,5 +1,5 @@
-import { linePlaybackTarget, restartLyricLine } from './line-playback.js?v=52af77e0';
-import { TurboEngine } from '../turbo/turbo-engine.js?v=52af77e0';
+import { linePlaybackTarget, restartLyricLine } from './line-playback.js?v=e5c9cfa4';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=e5c9cfa4';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -226,7 +226,7 @@ async function init() {
     } catch (error) {
       console.warn('Could not initialize Spotify configuration:', error);
     }
-    await import('../js/spotify.js?v=52af77e0');
+    await import('../js/spotify.js?v=e5c9cfa4');
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');

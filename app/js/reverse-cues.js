@@ -703,11 +703,48 @@ function agreeReflexive(rest, subject) {
     return rest.replace(/\boneself\b/gu, forms[0]).replace(/\bone['’]s\b/gu, forms[1]);
 }
 
+// English verbs whose subject is a thing, never a person: pasa is "it
+// happens", not "he/she happens"; vale "it costs"; basta "it is enough".
+const THING_SUBJECT_ENGLISH_VERBS = new Set([
+    'happen', 'occur', 'cost', 'matter', 'rain', 'snow', 'hail', 'suffice', 'last', 'function',
+]);
+const THING_SUBJECT_BE_COMPLEMENTS = /^\s+(?:enough|worth|missing|left|left over|useful|pleasing|possible|lacking|necessary|sufficient|important|convenient|required)\b/u;
+// Verbs where Spanish and Portuguese put the thing in the subject
+// (me gusta la casa, me duele la cabeza): the row never describes a person.
+const THING_SUBJECT_LEMMAS = new Set([
+    'gustar', 'encantar', 'fascinar', 'interesar', 'doler', 'bastar', 'sobrar',
+    'doer', 'agradar', 'interessar',
+]);
+// "gusta" is "it pleases" and "encanta" "it delights"; the dictionary's "to
+// like" and "to love" have the person as subject. Finite rows only: the
+// participle gustado stays "liked".
+const EXPERIENCER_VERB_REWRITE = { gustar: { like: 'please' }, encantar: { love: 'delight' } };
+
+function hasThingSubject(gloss, meaning) {
+    if (THING_SUBJECT_LEMMAS.has(foldCueForm(meaning?.headword))) return true;
+    const first = gloss?.clauses?.[0];
+    if (!first?.head) return false;
+    const head = lowerVerb(String(first.head).split(/\/| or /u)[0]);
+    if (THING_SUBJECT_ENGLISH_VERBS.has(head)) return true;
+    if (head === 'be') return THING_SUBJECT_BE_COMPLEMENTS.test(first.rest || '');
+    return head === 'take' && /^\s+place\b/u.test(first.rest || '');
+}
+
+function rewriteExperiencerGloss(gloss, meaning) {
+    const rewrite = EXPERIENCER_VERB_REWRITE[foldCueForm(meaning?.headword)];
+    if (!rewrite || !gloss) return gloss;
+    return {
+        ...gloss,
+        clauses: gloss.clauses.map(clause => (clause.head && rewrite[lowerVerb(clause.head)]
+            ? { ...clause, head: rewrite[lowerVerb(clause.head)] } : clause)),
+    };
+}
+
 // A row describes the word, not the sentence on screen: era is "I/he/she
-// was" on every example, and 3sg is "he/she" (clock and weather copulas
-// take dummy it).
-function thirdPersonSubject(meaning) {
-    return isDummyItCopulaSense(meaning) ? 'it' : 'he/she';
+// was" on every example, and 3sg is "he/she" (clock and weather copulas,
+// and verbs only a thing can do, take "it").
+function thirdPersonSubject(meaning, gloss) {
+    return isDummyItCopulaSense(meaning) || hasThingSubject(gloss, meaning) ? 'it' : 'he/she';
 }
 
 function imperativeSubject(personIdx) {
@@ -726,7 +763,7 @@ function finiteEnglishCue(kind, personIdx, gloss, meaning, options = {}) {
             (head, rest, first, lead) => `${lead}${eachVerb(head, lowerVerb)}${agreeReflexive(rest, subject)}`);
         return `${prefix}${body}!`;
     }
-    const subject = personIdx === 2 ? thirdPersonSubject(meaning, options) : ENGLISH_PRONOUNS[personIdx];
+    const subject = personIdx === 2 ? thirdPersonSubject(meaning, gloss) : ENGLISH_PRONOUNS[personIdx];
     if (!subject) return null;
     const body = renderGlossClauses(gloss.clauses, (head, rawRest, first, lead) => {
         const rest = agreeReflexive(rawRest, subject);
@@ -900,9 +937,14 @@ function conjugationTableCue(card, meaning, translation, conjugationData, option
     }
     if (!readings.length && agreeingParticipleMatches(entry.past_participle, surface)) return participleCue();
     const chosen = chooseTableReadings(readings, gloss, card, options);
+    // A thing-subject verb has no "I"/"you"/"we": it is "it happens" or
+    // "they happen", whichever third-person reading the table also has.
+    const thirdPerson = chosen.filter(r => KIND_MOOD[r.kind] === 'command' || [2, 5].includes(r.personIdx));
+    const finiteGloss = rewriteExperiencerGloss(gloss, meaning);
     const render = rowGloss => {
         const cues = [];
-        for (const reading of chosen) {
+        const readingsToShow = hasThingSubject(rowGloss, meaning) && thirdPerson.length ? thirdPerson : chosen;
+        for (const reading of readingsToShow) {
             const cue = finiteEnglishCue(reading.kind, reading.personIdx, rowGloss, meaning, options);
             if (cue && !cues.includes(cue)) cues.push(cue);
         }
@@ -910,10 +952,10 @@ function conjugationTableCue(card, meaning, translation, conjugationData, option
     };
     // A command is said with one verb: "stop!", not "stop; cease!".
     const onlyCommandsChosen = chosen.length && chosen.every(r => KIND_MOOD[r.kind] === 'command');
-    let rowGloss = onlyCommandsChosen ? firstClauseGloss(gloss) : gloss;
+    let rowGloss = onlyCommandsChosen ? firstClauseGloss(finiteGloss) : finiteGloss;
     let cue = render(rowGloss);
     if (cue && cue.includes(' / ') && rowGloss.clauses.length > 1) {
-        rowGloss = firstClauseGloss(gloss);
+        rowGloss = firstClauseGloss(finiteGloss);
         cue = render(rowGloss);
     }
     return withGlossTail(cue, rowGloss);
@@ -943,7 +985,7 @@ export function grammarProductionCue(card, meaning, translation, options = {}) {
     const personIdx = personIndexFromGrammar(grammar);
     if (personIdx === undefined) return null;
 
-    const gloss = inflectableGloss(translation, meaning);
+    const gloss = rewriteExperiencerGloss(inflectableGloss(translation, meaning), meaning);
     if (!gloss) return null;
     return withGlossTail(finiteEnglishCue('present', personIdx, gloss, meaning, options), gloss);
 }
