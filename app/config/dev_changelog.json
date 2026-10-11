@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T15:02:01+01:00",
+      "date": "2026-10-11 15:02 BST",
+      "agent": "Claude",
+      "summary": "INFLECT-2: Portuguese verb rows no longer read as \"he went (to move to a destination)\"",
+      "detail": [
+        "A Wiktionary definition in brackets after a conjugated verb is dropped when the row already differs from its siblings on the card: foi \"he/she went (to move to a destination)\" is now \"he/she went\" where nothing else on the card says the same.",
+        "Where the bracket is the only thing telling two rows apart it stays, without the infinitive \"to\": é \"he/she is (have the given quality)\", foi \"he/she went (move to a destination)\".",
+        "A bracket that completes the verb (\"pay (attention, respect etc.)\", \"waits (for a person)\") is untouched.",
+        "Measured on pt-speech-v24-headway-r3: 3,389 rows changed (2,227 brackets dropped, 1,162 rewritten), 0 gained, 0 lost, no new identical rows on any card; Spanish is unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T14:25:11+01:00",
       "date": "2026-10-11 14:25 BST",
       "agent": "Codex",
@@ -365,19 +378,6 @@
         "Significantly enlarge the commonness tooltip (16px font, comfortable padding) for clear legibility.",
         "Simplify card study options sheet: remove redundant 'Study settings' button, rename to 'Speak text', and enlarge menu icons.",
         "Clean up main Settings Study tab: remove 'Speak the word' and promote Spaced repetition to the top with explainer 'Bring back learned words'."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T15:48:48+01:00",
-      "date": "2026-10-10 15:48 BST",
-      "agent": "Codex",
-      "summary": "HEADWAY: corrected Spanish and Portuguese headwords prepared for staging review",
-      "detail": [
-        "Correct source lemma imports and preserve attached pronouns, specialised meanings and distinct verb/noun analyses.",
-        "Restore supported earlier Spanish clitic corrections and preserve curated overrides.",
-        "Re-score affected cards on existing frozen sentences; production decks remain unchanged.",
-        "Staging candidate selection loads the candidate’s study structure and Merge Lemmas data."
       ],
       "commit": "pending"
     }
