@@ -76,6 +76,19 @@ def tracked_app_files(ref: str) -> list[tuple[str, str]]:
     return files
 
 
+# Staging installs alongside production on a home screen, so it gets its own
+# name and icon: "Fluency α" and app/icons/staging/ instead of "Fluency β".
+STAGING_IDENTITY_FILES = ("index.html", "manifest.json", "service-worker.js")
+
+
+def staging_identity(rel: str, content: bytes) -> bytes:
+    if rel not in STAGING_IDENTITY_FILES:
+        return content
+    content = content.replace("Fluency β".encode("utf-8"), "Fluency α".encode("utf-8"))
+    content = content.replace(b"icons/apple-touch-icon.png", b"icons/staging/apple-touch-icon.png")
+    return content.replace(b"icons/icon-", b"icons/staging/icon-")
+
+
 def build(dest: Path, ref: str, version: str | None = None, env: str = "production") -> int:
     files = tracked_app_files(ref)
     if not any(rel == "index.html" for _, rel in files):
@@ -87,6 +100,8 @@ def build(dest: Path, ref: str, version: str | None = None, env: str = "producti
             content = stamp(content.decode("utf-8"), version).encode("utf-8")
         if env == "staging" and rel == "index.html":
             content = content.replace(b"<head>", b"<head>\n    <script>window.__FLUENCY_ENV__ = 'staging';</script>")
+        if env == "staging":
+            content = staging_identity(rel, content)
         for target in (dest / rel, dest / "app" / rel):
             if target.exists() and target.read_bytes() == content:
                 continue
