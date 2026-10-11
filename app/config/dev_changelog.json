@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T15:05:00+01:00",
+      "date": "2026-10-11 15:05 BST",
+      "agent": "Antigravity",
+      "summary": "Artist mode: updated to es-lyrics-v24-1 with soft evidence gating and Transformer POS tagging",
+      "detail": [
+        "Inherits soft evidence gating (pos_penalty=0.06), Transformer POS tagger (es_dep_news_trf@3.8.0), and multiword phrases from the es-v24-1 engine via the unified LyricsWSDAdapter.",
+        "Planted across all artists (spanish-test-playlist, bad-bunny, rosalia, young-miko): 20,232 cards and 54,221 WSD assignments completed with 0 fallback assignments.",
+        "Packaged and published validated lyrics release bundle to Fluency-Releases-lyrics (lyrics-all-artists-v20)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T15:02:01+01:00",
       "date": "2026-10-11 15:02 BST",
       "agent": "Claude",

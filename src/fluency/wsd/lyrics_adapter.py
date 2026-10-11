@@ -109,17 +109,22 @@ class LyricsWSDAdapter:
         menu_prior = float(prior_cfg.get("weight", 0.02)) if prior_cfg.get("enabled", True) else 0.0
         menu_prior_decay = float(prior_cfg.get("decay", 0.5))
 
+        constraint_mode = self.profile_config.get("constraint_mode", "filter")
+        constrain_cfg = self.profile_config.get("constrain") or {}
+        pos_penalty = float(constrain_cfg.get("pos_penalty", 0.06))
+
         self.components = WSDComponents(
             language=language_adapter,
             gloss=ExactTextGlossScorer(self.vectors, target_locale=""),
             candidate_policy=SpanishV5CandidatePolicy(
                 language="es",
-                constraint_mode="filter",
+                constraint_mode=constraint_mode,
                 menu_prior=menu_prior,
                 menu_prior_decay=menu_prior_decay,
                 clitic_gate=True,
                 pronominal_gate=True,
                 domain_penalty=0.04,
+                pos_penalty=pos_penalty,
             ),
             multiword_index=self.multiword_index,
             multiword_inventory_content_id=self.multiword_content_id,

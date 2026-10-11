@@ -51,7 +51,7 @@ from fluency.surfaces.stores import stack
 from fluency.wsd.lyrics_adapter import LyricsWSDAdapter
 from fluency.wsd.pos_bridge import acceptable_categories
 
-PROFILE_ID = "es-lyrics-v20-1"
+PROFILE_ID = "es-lyrics-v24-1"
 REPO_ROOT = Path(__file__).resolve().parents[1]
 WORKSPACE = REPO_ROOT.parent / "Fluency-Workspace"
 ARTISTS = ("spanish-test-playlist", "bad-bunny", "rosalia", "young-miko")
@@ -69,10 +69,15 @@ ENGLISH_STOPWORDS = {
 }
 
 
-def load_profile() -> dict[str, Any]:
-    profile = json.loads((REPO_ROOT / "config/wsd/models" / f"{PROFILE_ID}.json").read_text(encoding="utf-8"))
-    if profile.get("profile_id") != PROFILE_ID:
-        raise SystemExit(f"profile id mismatch in {PROFILE_ID}.json")
+def load_profile(profile_id: str = PROFILE_ID) -> dict[str, Any]:
+    from fluency.speech.wsd_execute import model_profile
+    profile = model_profile(profile_id)
+    if not profile:
+        profile_path = REPO_ROOT / "config/wsd/models" / f"{profile_id}.json"
+        if profile_path.is_file():
+            profile = json.loads(profile_path.read_text(encoding="utf-8"))
+    if not profile:
+        raise SystemExit(f"could not load profile {profile_id}")
     return profile
 
 
@@ -577,7 +582,7 @@ def plan_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallback
 
 def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallback: str = "heuristic") -> None:
     profile = load_profile()
-    wsd_cfg = profile["wsd"]
+    wsd_cfg = profile.get("wsd") or profile
     plan = plan_artist(artist, workspace=workspace, polysemous_fallback=polysemous_fallback, profile=profile)
     source, resolved_cards, senses_by_card = plan["source"], plan["cards"], plan["senses"]
     raw_examples, raw_index, songs_doc = source["examples"], source["index"], source["songs"]
@@ -586,9 +591,16 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
     song_id_to_valid_lines = plan["selection"]["song_id_to_valid_lines"]
     conj_rev = plan["conj_rev"]
 
-    from fluency.nlp.pos import load_pinned
-    nlp = load_pinned(pin(wsd_cfg["occurrence_pos"]))
-    embed = StoreEmbeddings(workspace / wsd_cfg["embedding_cache"], tuple(wsd_cfg["uncached_overlap_scores"]))
+    wsd_adapter = LyricsWSDAdapter(
+        profile_id=profile.get("profile_id", PROFILE_ID),
+        workspace=workspace,
+    )
+    nlp = wsd_adapter.nlp
+    embed_cache_rel = wsd_cfg.get("embedding_cache")
+    if not embed_cache_rel and isinstance(wsd_cfg.get("gloss"), dict):
+        embed_cache_rel = "embeddings/es/exact-text-gemini-embedding-001.npz"
+    embed = StoreEmbeddings(workspace / (embed_cache_rel or "embeddings/es/exact-text-gemini-embedding-001.npz"),
+                            tuple(wsd_cfg.get("uncached_overlap_scores", (0.4, 0.1))))
 
     final_master: dict[str, dict[str, Any]] = {}
     final_index: list[dict[str, Any]] = []
@@ -598,16 +610,8 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
     trf_doc_cache: dict[str, Any] = {}
     stats: Counter[str] = Counter()
     run_ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%MZ")
-    prompt_poly = f"lyrics-v20-polysemous-{polysemous_fallback}"
 
-    wsd_adapter = LyricsWSDAdapter(
-        profile_id="es-lyrics-v23-1",
-        workspace=workspace,
-        vectors=embed.vectors,
-        nlp=nlp,
-    )
-
-    print(f"\n[{artist}] ClosedMenu WSD (es-lyrics-v23-1 via LyricsWSDAdapter)...")
+    print(f"\n[{artist}] ClosedMenu WSD ({wsd_adapter.profile_id} via LyricsWSDAdapter)...")
     for item in raw_index:
         cid = item["id"]
         card = resolved_cards[cid]
@@ -697,8 +701,8 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
                   for i, cid in enumerate(final_master)},
         "decision_count": assigned, "evidence_version": "artist-wsd-evidence/v1",
         "publication_views": {"assigned": len(final_master), "total": len(final_master)},
-        "selection_projection": "mwe_augmented", "source_kind": "lyrics_wsd_v23_pipeline",
-        "profile_id": "es-lyrics-v23-1", "menu_provenance": plan["resolved"]["pinned"],
+        "selection_projection": "mwe_augmented", "source_kind": f"lyrics_wsd_{profile.get('profile_id', PROFILE_ID)}_pipeline",
+        "profile_id": profile.get("profile_id", PROFILE_ID), "menu_provenance": plan["resolved"]["pinned"],
         "embedding_pairs": {"scored": embed.pairs_scored, "without_vector": embed.pairs_uncached},
         "polysemous_fallback": polysemous_fallback,
         "confidence": wsd_cfg.get("confidence", {"kind": "raw_best_score"}),
@@ -722,7 +726,9 @@ def main() -> None:
     parser.add_argument("--polysemous-fallback", default=None, choices=("heuristic", "embedding"),
                         help="How Wiktionary senses are scored; default from the profile.")
     args = parser.parse_args()
-    fallback = args.polysemous_fallback or load_profile()["wsd"]["polysemous_fallback_default"]
+    prof = load_profile()
+    wsd_cfg = prof.get("wsd") or prof
+    fallback = args.polysemous_fallback or wsd_cfg.get("polysemous_fallback_default", "embedding")
     for artist in ARTISTS if args.artist == "all" else (args.artist,):
         if args.stage == "menus":
             plan_artist(artist, polysemous_fallback=fallback)
