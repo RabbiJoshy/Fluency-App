@@ -5460,16 +5460,16 @@
         .ref-tile-count-badge {
             position: absolute;
             top: -2px;
-            right: -6px;
-            min-width: 17px;
-            height: 17px;
+            left: -6px;
+            min-width: 20px;
+            height: 20px;
             padding: 0 4px;
-            border-radius: 9px;
+            border-radius: 50%;
             background: var(--accent-primary, #6366f1);
             color: #fff;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 700;
-            line-height: 17px;
+            line-height: 20px;
             text-align: center;
             pointer-events: none;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
@@ -24488,7 +24488,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     margin: 0;
     padding: 6px 4px 4px;
     border-radius: 14px;
-    background: #000;
+    background: var(--bg-secondary);
   }
   .card-replica .card-back.has-action-tray > .card-details { padding: 20px 16px 12px; }
   .card-replica .card-back.has-action-tray > .links-section { padding-inline: 16px; }

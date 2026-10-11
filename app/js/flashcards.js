@@ -8288,6 +8288,7 @@ function renderCardWikipediaBadge(card) {
             <div class="ref-tile-icon-wrap">
                 <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="currentColor" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.28" stroke-width="0.5" aria-hidden="true">
                     <rect x="3" y="14" width="4.5" height="6" rx="1.5"></rect>
+                    <rect x="3" y="17" width="4.5" height="3" rx="0.75" fill="#fff" fill-opacity="1" stroke="none"></rect>
                     <rect x="10" y="9" width="4.5" height="11" rx="1.5"></rect>
                     <rect x="17" y="4" width="4.5" height="16" rx="1.5"></rect>
                 </svg>

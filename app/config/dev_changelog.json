@@ -2,6 +2,18 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T22:48:26+01:00",
+   "date": "2026-10-11 22:48 BST",
+   "agent": "Codex",
+   "summary": "Clearer Rare uses badge and Flag a meaning counter, with a softer card action tray.",
+   "detail": [
+    "Rare uses count moves to the top left with larger digits, and its first bar is half filled in white.",
+    "Mark a meaning becomes Flag a meaning. Its counter starts at zero and counts the meanings flagged for review, matching the checked rows.",
+    "The action tray uses the normal dark background colour instead of pure black; light mode retains its soft grey surface."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T22:37:33+01:00",
    "date": "2026-10-11 22:37 BST",
    "agent": "Codex",
@@ -362,19 +374,6 @@
    "detail": [
     "Added a named roadmap job to compare contextual POS taggers with a no-tagger baseline, starting with verified Portuguese és classification failures.",
     "Keep source lemma corrections separate from sentence tagging and app display; use existing frozen evidence before any approved regeneration."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T18:15:00+01:00",
-   "date": "2026-10-10 18:15 BST",
-   "agent": "Antigravity",
-   "summary": "Simpler progress modal, tidier level and set explainers, and you can now step back through companion cards.",
-   "detail": [
-    "Progress modal: single title row with language flag; removed Study history, action buttons and Refresh; coverage says it is based on speech you understand, not cards answered; Skipped box shown when Smart Skip is on",
-    "Level explainer: title is 'Choose where to begin' (centred), levels described as 100 cards, shorter centred estimate box with time hint",
-    "Set explainer: titles removed; New, Rev, Known and Skip pills with coloured labels",
-    "Left arrow/button now steps back between companion cards of a word opened from search or lyrics"
    ],
    "commit": "pending"
   }
