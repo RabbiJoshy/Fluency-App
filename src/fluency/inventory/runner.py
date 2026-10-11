@@ -32,6 +32,11 @@ from fluency.inventory.lexique import (
     ranked_surfaces,
     read_lexique4,
 )
+from fluency.inventory.subtlex import (
+    FREQUENCY_UNIT as SUBTLEX_FREQUENCY_UNIT,
+    ADAPTER_ID as SUBTLEX_ADAPTER_ID,
+    read_subtlex,
+)
 from fluency.inventory.recovered import (
     ADAPTER_ID as RECOVERED_ADAPTER_ID,
     load_recovered_surface_ranking,
@@ -79,6 +84,7 @@ def _implementation_content_id(adapter_id: str) -> str:
         CORPUS_ADAPTER_ID: package / "corpus_frequency.py",
         RECOVERED_ADAPTER_ID: package / "recovered.py",
         FREQUENCY_LIST_ADAPTER_ID: package / "frequency_list.py",
+        SUBTLEX_ADAPTER_ID: package / "subtlex.py",
     }[adapter_id]
     paths = (Path(__file__).resolve(), package / "config.py", adapter_path)
     return canonical_content_id(
@@ -145,6 +151,7 @@ def build_inventory_stage(
         CORPUS_ADAPTER_ID,
         RECOVERED_ADAPTER_ID,
         FREQUENCY_LIST_ADAPTER_ID,
+        SUBTLEX_ADAPTER_ID,
     }:
         raise InventoryRunError("no installed inventory adapter matches the run profile")
     language_policy = load_inventory_language_policy(
@@ -194,6 +201,25 @@ def build_inventory_stage(
             "rejected_empty_or_zero": listed.rejected_empty_or_zero,
             "rejected_surface_shape": listed.rejected_surface_shape,
             "duplicate_normalized_rows": listed.duplicate_rows,
+        }
+        upstream_inputs = {}
+        source_ranked = list(ranked_surfaces(frequencies))
+    elif adapter_id == SUBTLEX_ADAPTER_ID:
+        if not resolved_snapshot.is_file():
+            raise InventoryRunError("the SUBTLEX adapter requires one TSV export file")
+        subtlex = read_subtlex(resolved_snapshot, language=language)
+        frequencies = subtlex.frequencies
+        frequency_unit = SUBTLEX_FREQUENCY_UNIT
+        source_content_id = file_content_id(resolved_snapshot)
+        source_metrics = {
+            "source_rows": subtlex.source_rows,
+            "rejected_malformed": subtlex.rejected_malformed,
+            "rejected_empty_or_zero": subtlex.rejected_empty_or_zero,
+            "rejected_surface_shape": subtlex.rejected_surface_shape,
+            "duplicate_normalized_rows": subtlex.duplicate_rows,
+            "split_multiword_rows": subtlex.split_multiword_rows,
+            "trailing_stop_rows": subtlex.trailing_stop_rows,
+            "apostrophe_repaired_rows": subtlex.apostrophe_repaired_rows,
         }
         upstream_inputs = {}
         source_ranked = list(ranked_surfaces(frequencies))

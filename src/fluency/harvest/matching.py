@@ -79,7 +79,11 @@ class SurfaceMatcher:
 
     def _literal_pattern(self, surface: str) -> str:
         escaped = re.escape(surface).replace(r"\ ", r"\s+")
-        left = r"(?<!\w)" if self._is_word_character(surface[:1]) else ""
+        # A surface that starts with an apostrophe (Dutch 't, 'n, 's) still
+        # needs a left edge, or 's would be found inside auto's and 'n inside
+        # z'n. The canonical apostrophe is the only one left after normalize.
+        starts_word = self._is_word_character(surface[:1]) or surface[:1] == "'"
+        left = r"(?<!\w)" if starts_word else ""
         right = r"(?!\w)" if self._is_word_character(surface[-1:]) else ""
         return f"{left}{escaped}{right}"
 

@@ -73,3 +73,32 @@ class DeclaredNotHardcodedTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+NL = json.loads((ROOT / "config/harvest/languages/nl-v2.json").read_text())
+
+
+class LeadingApostropheMatchTests(unittest.TestCase):
+    """Dutch 't, 'n, 's are words that begin with an apostrophe."""
+
+    def _found(self, sentence):
+        cards = [
+            {"card_id": "s", "display_form": "'s"},
+            {"card_id": "n", "display_form": "'n"},
+            {"card_id": "zn", "display_form": "z'n"},
+        ]
+        return {card["card_id"] for card in SurfaceMatcher(cards, NL).find_cards(sentence)}
+
+    def test_a_leading_apostrophe_word_is_found(self) -> None:
+        self.assertEqual(self._found("Het is ’s morgens koud."), {"s"})
+
+    def test_it_is_not_found_inside_another_word(self) -> None:
+        self.assertEqual(self._found("Ik heb twee auto's."), set())
+        self.assertEqual(self._found("Hij pakt z'n jas."), {"zn"})
+
+    def test_the_scoring_tokenizer_keeps_the_apostrophe_but_not_quotes(self) -> None:
+        matcher = SurfaceMatcher([{"card_id": "c", "display_form": "goed"}], NL)
+        self.assertEqual(
+            matcher.tokens("Is 't goed? Ze zei 'nee'."),
+            ["is", "'t", "goed", "ze", "zei", "nee"],
+        )

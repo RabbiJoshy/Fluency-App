@@ -1,0 +1,32 @@
+{
+  "config_version": "inventory-language-policy/v1",
+  "policy_id": "nl-v2",
+  "language": "nl",
+  "surface_exclusions": {
+    "n": {
+      "reason": "bare letter n; SUBTLEX-NL keeps 'n (een) as its own row (rank 81), so what remains is initials, spelling and residue of 'n written without its apostrophe",
+      "decision": "exclude_without_redirect"
+    },
+    "t": {
+      "reason": "bare letter t; SUBTLEX-NL keeps 't (het) as its own row (rank 58). Most of the bare count is 't.' with the apostrophe lost in the source subtitles; the bare letter is not a Dutch word",
+      "decision": "exclude_without_redirect"
+    },
+    "s": {
+      "reason": "bare letter s; SUBTLEX-NL keeps 's as its own row (rank 316); the remainder is plural-s and 's morgens residue with the apostrophe lost",
+      "decision": "exclude_without_redirect"
+    },
+    "m": {
+      "reason": "the letter M, appearing as a clothing size or initial, not a Dutch word",
+      "decision": "exclude_without_redirect"
+    },
+    "mr": {
+      "reason": "abbreviation of meneer, not a spoken word",
+      "decision": "exclude_without_redirect"
+    },
+    "lk": {
+      "reason": "subtitle OCR misreading of ik (capital I read as lowercase l); not a Dutch word. Rank 690 in SUBTLEX-NL, 421 in FrequencyWords",
+      "decision": "exclude_without_redirect"
+    }
+  },
+  "exclusion_note": "For the SUBTLEX-NL list (adapter subtlex-surface-frequency/v1), which keeps apostrophe words ('t, 'n, z'n, m'n) whole. Carries nl-v1's exclusions with reasons restated for the new list, and adds lk (OCR). nl-v1's verification stands: 'u' is the formal second person and is kept. Other short residue (r, d, b, c, e, dr, mrs) is left to the surface ledger's review rather than excluded on sight."
+}
