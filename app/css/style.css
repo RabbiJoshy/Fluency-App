@@ -2295,12 +2295,6 @@
             background: rgba(255, 255, 255, 0.04);
             border-radius: 0 8px 8px 0;
         }
-        .rarer-uses-cluster-meta {
-            font: 650 11px/1.2 var(--font-data);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.48);
-        }
         .rarer-uses-pager {
             display: inline-flex;
             align-items: center;
@@ -4040,7 +4034,7 @@
         .front-meaning-pos {
             font-family: var(--font-data);
             font-size: 11px;
-            text-transform: uppercase;
+            text-transform: none;
             padding: 3px 8px;
             border-radius: 4px;
             border: 1px solid var(--border-color);
@@ -4394,7 +4388,7 @@
             color: white;
             text-align: center;
             margin-bottom: 12px;
-            text-transform: uppercase;
+            text-transform: none;
             padding: 6px 14px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
@@ -20221,28 +20215,31 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
 /* Rare uses sheet: the rare-senses list scrolling inside the sheet instead
    of the card face. */
 body.rare-uses-open { overflow: hidden; }
-.rare-uses-title-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+/* Sheet header: centred, title + muted one-line subtitle, close top-right. */
+.rare-uses-sheet .knowledge-overview-header {
+  position: relative;
+  display: block;
+  padding: 18px 52px 8px;
+  text-align: center;
 }
-.rare-uses-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 7px;
-  border-radius: 6px;
-  font: 600 11px/1.4 var(--font-emphasis, inherit);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  background: color-mix(in srgb, var(--text-primary) 8%, transparent);
-  color: var(--text-muted);
-  border: 1px solid color-mix(in srgb, var(--text-primary) 14%, transparent);
+.rare-uses-sheet .knowledge-overview-header h2 {
+  font: 600 18px/1.2 var(--font-emphasis);
+  letter-spacing: 0;
+}
+.rare-uses-sheet .rare-uses-word {
+  font-family: var(--font-reading);
+  font-weight: 750;
+}
+.rare-uses-sheet .knowledge-overview-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 .rare-uses-subtitle {
   margin: 4px 0 0;
   color: var(--text-muted);
   font: 500 13px/1.35 var(--font-reading);
+  text-align: center;
 }
 .rare-uses-modal .rare-uses-body {
   flex: 1 1 auto;
@@ -20251,6 +20248,74 @@ body.rare-uses-open { overflow: hidden; }
   padding: 0 20px 20px;
 }
 #rareUsesModal[data-dock] .rare-uses-body { padding: 0 16px 16px; }
+.rare-uses-sheet .rare-uses-body { gap: 14px; text-align: center; }
+.rare-uses-sheet .other-uses-pos { align-items: stretch; gap: 8px; text-align: center; }
+.rare-uses-sheet .other-uses-pos-heading {
+  margin: 6px 0 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(var(--sense-match-rgb), 0.35);
+  color: rgb(var(--sense-match-rgb));
+  font: 750 17px/1.2 var(--font-emphasis);
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: center;
+}
+.rare-uses-sheet .other-uses-gloss-group { padding-bottom: 0; }
+.rare-uses-sheet .other-uses-leaf,
+.rare-uses-sheet .rarer-uses-cluster,
+.rare-uses-sheet .phrase-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--text-primary) 5%, transparent);
+  text-align: center;
+}
+/* Inside a cluster the container is the card; its rows are plain. */
+.rare-uses-sheet .rarer-uses-cluster { gap: 6px; }
+.rare-uses-sheet .rarer-uses-cluster .other-uses-leaf {
+  padding: 6px 0;
+  background: none;
+  border-radius: 0;
+}
+.rare-uses-sheet .rarer-uses-cluster .other-uses-leaf + .other-uses-leaf {
+  border-top: 1px solid color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+.rare-uses-sheet .phrase-summary-item { gap: 4px; }
+.rare-uses-sheet .other-uses-gloss,
+.rare-uses-sheet .phrase-expression {
+  font: 650 18px/1.25 var(--font-reading);
+  color: var(--text-primary);
+}
+.rare-uses-sheet .phrase-translation {
+  font: 500 15px/1.3 var(--font-reading);
+  color: var(--text-secondary);
+}
+.rare-uses-sheet .phrase-context {
+  font: 500 14px/1.3 var(--font-reading);
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: center;
+}
+.rare-uses-sheet .rare-use-examples { margin-top: 2px; width: 100%; }
+.rare-uses-sheet .rare-use-examples > summary {
+  justify-content: center;
+  font: 600 13px/1.3 var(--font-reading);
+}
+.rare-uses-sheet .phrase-example { text-align: center; }
+.rare-uses-sheet .phrase-example.phrase-example--compact {
+  border-left-width: 1px;
+  border-left-color: rgba(var(--sense-match-rgb), 0.45);
+  border-color: rgba(var(--sense-match-rgb), 0.3);
+}
+.rare-uses-sheet .rarer-uses-pager,
+.rare-uses-sheet .rarer-uses-pager button { font-family: var(--font-reading); }
+.rare-uses-sheet .rarer-uses-pager { justify-content: center; }
 
 
 /* Setup header: flag and language name sit side by side on one line — the

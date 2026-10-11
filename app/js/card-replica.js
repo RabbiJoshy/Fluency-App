@@ -388,6 +388,7 @@ const POS_NAME = {
 };
 
 const posClass = (pos) => POS_CLASS[String(pos || '').toUpperCase()] || '';
+export const posLabel = (pos) => { const n = posName(pos); return n.charAt(0).toUpperCase() + n.slice(1); };
 export const posName = (pos) => POS_NAME[String(pos || '').toUpperCase()] || String(pos || '').toLowerCase();
 
 export function esc(s) {
@@ -576,8 +577,8 @@ function renderMeaningRows(card, selectedIdx) {
     return `
         <section class="meaning-pos-section pos-collapsible is-open" data-pos="${esc(card.pos)}"
                  style="--sense-match-rgb: ${posAccentRgb(card.pos)};">
-            <button type="button" class="pos-section-head" aria-expanded="true" aria-label="${esc(`${posName(card.pos).toLowerCase()}${replicaLemma ? ' from ' + card.lemma : ''}: ${ordered.map(({ meaning }) => replicaSenseSummary(meaning.translation)).join('; ')}`)}">
-                <span class="pos-section-label">${esc(posName(card.pos).toLowerCase())}</span>
+            <button type="button" class="pos-section-head" aria-expanded="true" aria-label="${esc(`${posLabel(card.pos)}${replicaLemma ? ' from ' + card.lemma : ''}: ${ordered.map(({ meaning }) => replicaSenseSummary(meaning.translation)).join('; ')}`)}">
+                <span class="pos-section-label">${esc(posLabel(card.pos))}</span>
                 ${replicaLemma}
                 <span class="pos-section-summary">${summaries}${more}</span>
                 <span class="pos-section-chevron">▾</span>

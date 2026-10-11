@@ -1138,14 +1138,14 @@ function rareSheetHTML(card) {
                 ${item.context ? `<div class="phrase-context">${esc(item.context)}</div>` : ''}${example}
             </div></div>`;
         }).join('');
-        return `<section class="other-uses-pos"><h4 class="other-uses-pos-heading" style="color: rgb(${accent});">${esc(posName(pos))}</h4>${leaves}</section>`;
+        return `<section class="other-uses-pos" style="--sense-match-rgb: ${accent};"><h4 class="other-uses-pos-heading">${esc(posName(pos).replace(/^./, c => c.toUpperCase()))}</h4>${leaves}</section>`;
     }).join('');
     return `<div class="knowledge-overview-modal rare-uses-modal tutorial-demo-sheet" role="dialog" aria-label="Rare uses">
         <div class="knowledge-overview-sheet rare-uses-sheet">
             <header class="knowledge-overview-header">
                 <div>
-                    <div class="rare-uses-title-row"><h2>${esc(card.word)}</h2><span class="rare-uses-pill">Rare uses</span></div>
-                    <p class="rare-uses-subtitle">Low-frequency senses not tested in daily reviews</p>
+                    <h2>Rare uses of <span class="rare-uses-word">${esc(card.word)}</span></h2>
+                    <p class="rare-uses-subtitle">Less common meanings. They won't come up in your reviews.</p>
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close rare uses" data-demo-close>×</button>
             </header>

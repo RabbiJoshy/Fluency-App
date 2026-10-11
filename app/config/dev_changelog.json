@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T09:59:30+01:00",
+      "date": "2026-10-11 09:59 BST",
+      "agent": "Claude",
+      "summary": "Rare uses sheet redesigned; part-of-speech labels in sentence case; sense note is now Usage notes",
+      "detail": [
+        "Rare uses sheet: centred header 'Rare uses of <word>', no pill, clearer subtitle, POS headings in the sense-row style, centred rows in the card's fonts, no meta labels.",
+        "Part-of-speech labels use sentence case everywhere ('Verb from estar', 'Noun').",
+        "Sense-row information sheet heading renamed from 'About this meaning' to 'Usage notes'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T09:40:38+01:00",
       "date": "2026-10-11 09:40 BST",
       "agent": "Claude",
@@ -364,18 +376,6 @@
       "summary": "Fix: Memory tip tile now actually appears (it was reading the wrong language variable)",
       "detail": [
         "The first release looked up the language by a name that does not exist, so no card ever got a tip. It now uses selectedLanguage."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T23:40:00+01:00",
-      "date": "2026-10-09 23:40 BST",
-      "agent": "Claude",
-      "summary": "Memory tip tile on the card back shows how a word's ending maps to English (rápidamente → rapidly)",
-      "detail": [
-        "New Memory tip tile beside Rarer uses; opens a small sheet naming the shift, e.g. -mente becomes -ly, -ción becomes -tion.",
-        "Spanish, Portuguese and French endings; a tip appears only when the card's own English gloss really wears the English ending, so false friends such as actualmente and chica get none.",
-        "Shown on any matching card, not only with Smart Skip off."
       ],
       "commit": "pending"
     }

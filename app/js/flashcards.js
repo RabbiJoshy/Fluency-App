@@ -4901,7 +4901,6 @@ function renderRareSenseCluster(group, pos, posAccentRgb, clusterId) {
                </div>`
             : '';
         return `<div class="rarer-uses-cluster" style="--sense-match-rgb: ${posAccentRgb};">
-            <div class="rarer-uses-cluster-meta">Matching senses</div>
             <div class="other-uses-gloss">${escapeCardText(sharedGloss)}</div>
             ${sharedContext ? `<div class="phrase-context">${escapeCardText(sharedContext)}</div>` : ''}
             ${foldedExamplesHTML(compactPhraseExampleHTML((item.examples || [])[0], posAccentRgb) + pager, group.length)}
@@ -4916,7 +4915,6 @@ function renderRareSenseCluster(group, pos, posAccentRgb, clusterId) {
         hideContext: Boolean(sharedContext),
     })).join('');
     return `<div class="rarer-uses-cluster" style="--sense-match-rgb: ${posAccentRgb};">
-        <div class="rarer-uses-cluster-meta">${sharedGloss ? 'Same gloss' : (sharedContext ? 'Same context' : 'Linked senses')}</div>
         ${head}
         ${leaves}
     </div>`;
@@ -4942,8 +4940,8 @@ function renderRareSenseGroups(rareItems) {
             const clusterId = `${pos}-${index}`;
             return renderRareSenseCluster(group, pos, posAccentRgb, clusterId);
         }).join('');
-        return `<section class="other-uses-pos">
-            <h4 class="other-uses-pos-heading" style="color: rgb(${posAccentRgb});">${escapeCardText(posDisplayName(pos))}</h4>
+        return `<section class="other-uses-pos" style="--sense-match-rgb: ${posAccentRgb};">
+            <h4 class="other-uses-pos-heading">${escapeCardText(posDisplayName(pos))}</h4>
             ${groups}
         </section>`;
     }).join('');
@@ -4992,7 +4990,7 @@ function phraseSummaryContent(items) {
         ? '<h4 class="other-uses-pos-heading">Expressions</h4>'
         : '';
     const phraseHTML = phraseItems.length
-        ? `<section class="other-uses-pos">
+        ? `<section class="other-uses-pos other-uses-pos--phrases" style="--sense-match-rgb: var(--accent-phrases-rgb);">
             ${phraseHeading}
             ${phraseItems.map(renderPhraseRow).join('')}
            </section>`
@@ -5002,11 +5000,11 @@ function phraseSummaryContent(items) {
     const phraseCount = items.length - rareCount;
     let subtitle;
     if (rareCount && !phraseCount) {
-        subtitle = 'Low-frequency senses not tested in daily reviews';
+        subtitle = "Less common meanings. They won't come up in your reviews.";
     } else if (phraseCount && !rareCount) {
-        subtitle = 'Expressions and idioms using this word';
+        subtitle = 'Expressions that use this word.';
     } else {
-        subtitle = 'Low-frequency senses and expressions not tested in daily reviews';
+        subtitle = "Less common meanings and expressions. They won't come up in your reviews.";
     }
     return { subtitle, bodyHTML: `${rareHTML}${phraseHTML}${cliticHTML}` };
 }
@@ -5042,10 +5040,7 @@ function ensureRareUsesModal() {
         <div class="knowledge-overview-sheet rare-uses-sheet">
             <header class="knowledge-overview-header">
                 <div>
-                    <div class="rare-uses-title-row">
-                        <h2 id="rareUsesTitle"></h2>
-                        <span class="rare-uses-pill">Rare uses</span>
-                    </div>
+                    <h2 id="rareUsesTitle"></h2>
                     <p class="rare-uses-subtitle" id="rareUsesSubtitle"></p>
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close rare uses" onclick="closeRareUsesModal(event)">×</button>
@@ -5314,7 +5309,7 @@ function openRareAndExpressionsCard(event) {
 
     _rareUsesItems = items;
     const modal = ensureRareUsesModal();
-    modal.querySelector('#rareUsesTitle').textContent = parentCard.displaySurface || parentCard.targetWord || '';
+    modal.querySelector('#rareUsesTitle').innerHTML = `Rare uses of <span class="rare-uses-word">${escapeCardText(parentCard.displaySurface || parentCard.targetWord || '')}</span>`;
     renderRareUsesBody();
     modal.querySelector('#rareUsesBody').scrollTop = 0;
     modal.hidden = false;
@@ -6795,7 +6790,7 @@ function renderCardWikipediaBadge(card) {
                 const hw = lemmaDiffers
                     ? `<span class="pos-lemma-from">from</span><span class="pos-pill-lemma"${showSe ? ` title="${escapeCardText(formNote)}"` : ''}>${escapeCardText(rowLemma)}</span>`
                     : '';
-                const headAria = `${posDisplayName(pos).toLowerCase()}${lemmaDiffers ? ' from ' + rowLemma : ''}`;
+                const headAria = `${posDisplayName(pos)}${lemmaDiffers ? ' from ' + rowLemma : ''}`;
                 const visibleSenses = rows.summarySenses || [];
                 const summarySense = key === activeLemmaPosKey && visibleSenses.includes(activeGroupSense)
                     ? activeGroupSense
@@ -6847,7 +6842,7 @@ function renderCardWikipediaBadge(card) {
                     <button type="button" class="pos-section-head"
                             aria-label="${escapeCardText(`${headAria}: ${summarySenses.join('; ')}`)}"
                             onclick="selectLemmaPosGroup(event, '${key.replace(/\u0000/g, '~~')}', ${g.firstMeaningIndex})">
-                        <span class="pos-section-label">${escapeCardText(posDisplayName(pos).toLowerCase())}</span>
+                        <span class="pos-section-label">${escapeCardText(posDisplayName(pos))}</span>
                         ${hw}
                         ${collapsedSummary}
                         <span class="pos-section-chevron">${open ? '\u25BE' : '\u25B8'}</span>

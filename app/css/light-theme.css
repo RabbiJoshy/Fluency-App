@@ -411,10 +411,6 @@
     background: rgba(23, 33, 43, 0.04);
 }
 
-:root[data-theme="light"] .rarer-uses-cluster-meta {
-    color: var(--text-muted);
-}
-
 :root[data-theme="light"] .rarer-uses-pager {
     color: var(--text-secondary);
 }
