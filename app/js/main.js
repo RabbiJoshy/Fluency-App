@@ -810,16 +810,36 @@ loadConfig().then(async () => {
         closeLearningContext();
         document.getElementById('artistSourceArtistBtn')?.click();
     });
+    const openActivityChoice = (activity, href) => {
+        if (!href) return;
+        if (activity === 'translation' && !['lyrics', 'live'].includes(window.currentLearningMode?.())) return;
+        closeLearningContext();
+        const translation = activity === 'translation';
+        showChoiceSheet({
+            id: 'learningActivityChoiceSheet',
+            ariaLabel: translation ? 'Song translation' : 'Verb conjugations',
+            title: translation ? 'Song translation' : 'Verb conjugations',
+            intro: translation
+                ? 'Read a song line by line, explore its words, and listen with Spotify. Opening the song library may take a moment.'
+                : 'Choose verbs and tenses, then practise at your own pace. Preparing the exercises may take a moment.',
+            stepLabel: languageDisplayName(activeArtist?.language || selectedLanguage),
+            onBack: () => learningContextModal?.classList.remove('hidden'),
+            entries: [{
+                label: translation ? 'Open song translation' : 'Start practising',
+                description: translation ? 'Choose a song from the library.' : 'Choose what you want to practise.',
+                iconHTML: document.getElementById(translation ? 'learningContextLyricsViewBtn' : 'learningContextVerbsBtn')?.querySelector('.learning-context-mode-icon')?.innerHTML || '',
+                onSelect: () => { window.location.href = href; }
+            }]
+        });
+    };
     document.getElementById('learningContextVerbsBtn')?.addEventListener('click', event => {
-        const href = event.currentTarget.dataset.href;
-        if (href) window.location.href = href;
+        openActivityChoice('verbs', event.currentTarget.dataset.href);
     });
     document.getElementById('learningContextLyricsViewBtn')?.addEventListener('click', event => {
-        const href = event.currentTarget.dataset.href || 'lyrics-view/';
-        window.location.href = href;
+        openActivityChoice('translation', event.currentTarget.dataset.href || 'lyrics-view/');
     });
     document.getElementById('artistSourceLyricsViewBtn')?.addEventListener('click', () => {
-        window.location.href = 'lyrics-view/';
+        openActivityChoice('translation', 'lyrics-view/');
     });
     document.getElementById('learningContextSongsBtn')?.addEventListener('click', () => {
         closeLearningContext();

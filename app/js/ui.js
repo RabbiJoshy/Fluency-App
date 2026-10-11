@@ -537,10 +537,12 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     }
     const lyricsViewRow = document.getElementById('learningContextLyricsViewBtn');
     if (lyricsViewRow) {
-        const lyricsActive = Boolean(activeArtist) || modeKey === 'lyrics' || selectedLanguage === 'spanish';
+        const lyricsActive = modeKey === 'lyrics' || modeKey === 'live';
         lyricsViewRow.hidden = !lyricsActive;
         lyricsViewRow.dataset.href = 'lyrics-view/';
     }
+    const activities = document.getElementById('learningContextActivities');
+    if (activities) activities.hidden = Boolean(verbsRow?.hidden && lyricsViewRow?.hidden);
     // No vocabulary chosen yet means no deck to measure.
     const progressButton = document.getElementById('topBarProgressBtn');
     if (progressButton) progressButton.hidden = !modeKey;
@@ -968,6 +970,7 @@ function setupLanguageTabs() {
                     await deckOverviewHold;
                     window.hideAppLoading?.();
                 }
+                window.renderResumeLastSetCard?.();
                 if (!window.maybeShowKnownLanguagesIntro?.(newLanguage)) {
                     if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
                 }

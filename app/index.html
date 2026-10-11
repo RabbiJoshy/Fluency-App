@@ -475,7 +475,7 @@
                             <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
                         </button>
                         <div class="artist-source-secondary-actions">
-                            <button type="button" id="artistSourceLyricsViewBtn" class="artist-source-action-btn">Lyrics view ›</button>
+                            <button type="button" id="artistSourceLyricsViewBtn" class="artist-source-action-btn">Song translation ›</button>
                             <button type="button" id="artistSourceArtistBtn" class="artist-source-action-btn">Change artist</button>
                             <button type="button" id="artistSourceSpeechBtn" class="artist-source-action-btn">Speech ›</button>
                         </div>
@@ -786,7 +786,7 @@
             <div class="learning-context-close-row">
                 <button class="modal-close" id="closeLearningContextModal" aria-label="Close learning settings">&#10005;</button>
             </div>
-            <div class="learning-context-switches">
+            <div class="learning-context-switches learning-context-vocabulary" role="group" aria-label="Language and vocabulary">
                 <button id="learningContextLanguageBtn" class="learning-context-choice" type="button">
                     <span id="learningContextSheetFlag" class="learning-context-sheet-flag" aria-hidden="true"></span>
                     <span><small>Language</small><strong id="learningContextSheetLanguage"></strong></span>
@@ -807,17 +807,23 @@
                     <span><small>Songs</small><strong id="learningContextSheetSongs"></strong></span>
                     <span aria-hidden="true">›</span>
                 </button>
+            </div>
+            <section class="learning-context-activities" id="learningContextActivities" aria-labelledby="learningContextActivitiesTitle">
+                <h3 id="learningContextActivitiesTitle">Explore</h3>
+                <p>Another way to practise.</p>
+                <div class="learning-context-switches">
                 <button id="learningContextLyricsViewBtn" class="learning-context-choice" type="button" hidden>
                     <span class="learning-context-mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span>
-                    <span><small>Song lyrics</small><strong>Lyrics & token view</strong></span>
+                    <span><strong>Song translation</strong><small>Read and listen, line by line</small></span>
                     <span aria-hidden="true">›</span>
                 </button>
                 <button id="learningContextVerbsBtn" class="learning-context-choice" type="button" hidden>
                     <span class="learning-context-mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10"></path><path d="M4 12h7"></path><path d="M4 17h10"></path><path d="m16 10 4 2-4 2"></path></svg></span>
-                    <span><small>Verb drills</small><strong>Practise conjugations</strong></span>
+                    <span><strong>Verb conjugations</strong><small>Practise verbs and tenses</small></span>
                     <span aria-hidden="true">›</span>
                 </button>
-            </div>
+                </div>
+            </section>
         </div>
     </div>
 

@@ -90,3 +90,77 @@ card.keydown({key:'Escape'});
 assert.ok(card.removed);
 ''')
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_explicit_speech_switch_cannot_resume_last_lyrics_set(self):
+        result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r'''
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const source = fs.readFileSync('app/js/vocab.js', 'utf8');
+const lyrics = {mode:'lyrics',artistSlug:'bad-bunny',language:'spanish'};
+const speech = {mode:'speech',language:'spanish'};
+const saved = new Map([['session',lyrics],['session:speech:spanish',speech],['session:lyrics:bad-bunny',lyrics]]);
+const storage = new Map();
+let speechChosen = false;
+const context = {
+ activeArtist:null,selectedLanguage:'spanish',selectedSongIds:[],LAST_STUDY_SESSION_KEY:'session',
+ window:{fluencyRoute:{kind:'home'},_urlArtistSlug:'bad-bunny',_selectedArtistSlugs:['bad-bunny']},
+ document:{getElementById:()=>({classList:{contains:()=>speechChosen}})},
+ sessionStorage:{getItem:key=>storage.get(key)},
+ readStudySession:key=>saved.get(key)||null,
+ studySessionScope:s=>`${s.mode}:${s.artistSlug||s.language}`,
+ studySessionMatchesCurrentRelease:()=>true
+};
+vm.runInNewContext(source.slice(source.indexOf('function activeStudySessionScope()'),source.indexOf('function currentLyricsReleaseId()')),context);
+vm.runInNewContext(source.slice(source.indexOf('function getLastStudySession()'),source.indexOf('function renderResumeLastSetCard()')),context);
+// Normal landing retains the latest saved deck.
+assert.equal(context.getLastStudySession(),lyrics);
+// A pending switch is scoped even before asynchronous Speech setup finishes.
+storage.set('fluencyPendingSpeechLanguage','spanish');
+assert.equal(context.getLastStudySession(),speech);
+storage.clear();speechChosen=true;
+assert.equal(context.getLastStudySession(),speech);
+saved.delete('session:speech:spanish');
+assert.equal(context.getLastStudySession(),null);
+// Legacy global speech snapshots still work, but a different language does not.
+saved.set('session',speech);assert.equal(context.getLastStudySession(),speech);
+context.selectedLanguage='portuguese';assert.equal(context.getLastStudySession(),null);
+// An explicitly chosen Lyrics deck retains its own history.
+context.activeArtist={language:'spanish'};assert.equal(context.getLastStudySession(),lyrics);
+''')
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_activity_entry_waits_for_a_choice_and_translation_is_lyrics_only(self):
+        result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r'''
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const main = fs.readFileSync('app/js/main.js','utf8');
+let mode='speech', sheet=null, closed=0;
+const context = {
+ activeArtist:null,selectedLanguage:'spanish',window:{location:{href:'original'},currentLearningMode:()=>mode},
+ document:{getElementById:()=>null},
+ closeLearningContext:()=>closed++,showChoiceSheet:options=>{sheet=options;},languageDisplayName:()=> 'Spanish',learningContextModal:null
+};
+const start=main.indexOf('    const openActivityChoice =');
+const end=main.indexOf("    document.getElementById('learningContextVerbsBtn')",start);
+vm.runInNewContext(main.slice(start,end)+'\nthis.openActivityChoice=openActivityChoice;',context);
+context.openActivityChoice('translation','lyrics-view/');
+assert.equal(sheet,null);assert.equal(context.window.location.href,'original');
+context.openActivityChoice('verbs','conjugation/?lang=es');
+assert.equal(closed,1);assert.equal(context.window.location.href,'original');
+assert.equal(sheet.title,'Verb conjugations');sheet.entries[0].onSelect();
+assert.equal(context.window.location.href,'conjugation/?lang=es');
+mode='lyrics';context.openActivityChoice('translation','lyrics-view/');
+assert.equal(sheet.title,'Song translation');
+assert.equal(context.window.location.href,'conjugation/?lang=es');
+sheet.entries[0].onSelect();assert.equal(context.window.location.href,'lyrics-view/');
+const ui=fs.readFileSync('app/js/ui.js','utf8');
+const row={hidden:false,dataset:{}};
+const visibility={document:{getElementById:()=>row},modeKey:'speech'};
+const a=ui.indexOf("    const lyricsViewRow = document.getElementById('learningContextLyricsViewBtn');");
+const b=ui.indexOf('    const activities =',a);
+vm.runInNewContext(ui.slice(a,b).replace('const lyricsViewRow','var lyricsViewRow'),visibility);assert.equal(row.hidden,true);
+visibility.modeKey='lyrics';vm.runInNewContext(ui.slice(a,b).replace('const lyricsViewRow','var lyricsViewRow'),visibility);assert.equal(row.hidden,false);
+''')
+        self.assertEqual(result.returncode, 0, result.stderr)
