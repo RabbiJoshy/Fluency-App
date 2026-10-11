@@ -10,6 +10,7 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
     if (card.dataset.touchGesturesInstalled) return;
     card.dataset.touchGesturesInstalled = '1';
     let drag = null;
+    let cancelled = false;
     let suppressClickUntil = 0;
 
     function clearVisuals() {
@@ -20,7 +21,10 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
         feedback(null);
     }
     function cancel() {
-        if (drag) suppressClickUntil = Date.now() + 700;
+        if (drag) {
+            suppressClickUntil = Date.now() + 700;
+            cancelled = true;
+        }
         cancelPress();
         drag = null;
         clearVisuals();
@@ -52,6 +56,7 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
         // The set scrubber has its own drag navigation. It keeps ownership.
         if (event.target.closest('.card-back-scrubber')) { cancel(); return; }
         suppressClickUntil = 0;
+        cancelled = false;
         const touch = event.touches[0];
         drag = {
             id: touch.identifier, startX: touch.clientX, startY: touch.clientY,
@@ -87,7 +92,16 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
     // Capture ends before button ontouchend handlers: a grading drag must
     // not also play audio, navigate, or open a menu on release.
     card.addEventListener('touchend', event => {
-        if (!drag) return;
+        if (!drag) {
+            // Fingers lifted after a multiple-touch cancellation must not
+            // reach a button's inline touchend activation either.
+            if (cancelled) {
+                if (event.cancelable) event.preventDefault();
+                event.stopImmediatePropagation();
+                if (!event.touches.length) cancelled = false;
+            }
+            return;
+        }
         if (event.touches.length || busy()) { cancel(); return; }
         const touch = Array.from(event.changedTouches).find(item => item.identifier === drag.id);
         if (!touch) { cancel(); return; }

@@ -14,6 +14,7 @@ class CardTouchTests(unittest.TestCase):
                                 text=True, capture_output=True, input=r'''
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import vm from 'node:vm';
 const source = fs.readFileSync('app/js/card-touch.js', 'utf8');
 const {installCardTouch} = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 function classes(initial=[]) {
@@ -22,7 +23,7 @@ function classes(initial=[]) {
  toggle(k,value){if(value)s.add(k);else s.delete(k);}};
 }
 function fixture({flipped=true,control=false,scroll=false,scrubber=false}={}) {
- const listeners={}, grades=[], cycles=[];let feedback=null, busy=false, pressesCancelled=0;
+ const listeners={}, grades=[], cycles=[];let feedback=null, busy=false, pressesCancelled=0, flips=0;
  const card={dataset:{},classList:classes(flipped?['flipped']:[]),style:{},
   addEventListener(k,fn){(listeners[k]||=[]).push(fn);}};
  const port={parentElement:card,scrollHeight:500,clientHeight:100,overflowY:'auto'};
@@ -34,11 +35,16 @@ function fixture({flipped=true,control=false,scroll=false,scrubber=false}={}) {
  const options={card,correctIndicator,incorrectIndicator,grade:d=>grades.push(d),cycle:s=>cycles.push(s),
   feedback:d=>feedback=d,busy:()=>busy,cancelPress:()=>pressesCancelled++,getStyle:n=>n};
  installCardTouch(options);installCardTouch(options); // setup is idempotent
+ const flashcardsSource=fs.readFileSync('app/js/flashcards.js','utf8');
+ const clickStart=flashcardsSource.indexOf("    flashcard.addEventListener('click'",flashcardsSource.indexOf('// Flip on back side'));
+ const clickEnd=flashcardsSource.indexOf('// Arrow buttons',clickStart);
+ vm.runInNewContext(flashcardsSource.slice(clickStart,clickEnd),{
+  flashcard:card,suppressCardFlipUntil:0,Date,flipCard:()=>flips++});
  const touch=(x=0,y=0,id=1)=>({identifier:id,clientX:150+x,clientY:100+y});
  function emit(type,extra={}) {
   const e={target,touches:[],changedTouches:[],cancelable:true,detail:1,
    preventDefault(){this.prevented=true;},stopImmediatePropagation(){this.stopped=true;},...extra};
-  for(const fn of listeners[type]||[])fn(e);
+  for(const fn of listeners[type]||[]){fn(e);if(e.stopped)break;}
   return e;
  }
  return {card,grades,cycles,correctIndicator,incorrectIndicator,
@@ -47,7 +53,7 @@ function fixture({flipped=true,control=false,scroll=false,scrubber=false}={}) {
   end:(x,y=0)=>emit('touchend',{changedTouches:[touch(x,y)]}),
   cancel:()=>emit('touchcancel'),click:extra=>emit('click',extra),
   multi:()=>emit('touchstart',{touches:[touch(),touch(0,0,2)]}),
-  setBusy:v=>busy=v,feedback:()=>feedback,pressesCancelled:()=>pressesCancelled};
+  setBusy:v=>busy=v,feedback:()=>feedback,pressesCancelled:()=>pressesCancelled,flips:()=>flips};
 }
 for(const sign of [-1,1]) {
  const f=fixture();f.start();f.move(sign*49);
@@ -87,7 +93,7 @@ for(const step of [-1,1]) {
  f.start();f.end(0);assert.equal(f.click().prevented,undefined);}
 {const f=fixture({control:true});f.start();f.move(0,40);f.end(0,40);assert.deepEqual(f.cycles,[]);}
 for(const stop of ['cancel','multi']) {
- const f=fixture();f.start();f.move(60);f[stop]();f.end(60);
+ const f=fixture();f.start();f.move(60);f[stop]();assert.equal(f.end(60).stopped,true);
  assert.deepEqual(f.grades,[]);assert.equal(f.card.style.transform,'');
  assert.equal(f.correctIndicator.classList.contains('visible'),false);
  assert.equal(f.card.classList.contains('swiping'),false);
@@ -98,7 +104,9 @@ for(const stop of ['cancel','multi']) {
 // Front and back taps have one owner: no flip callback in the touch arbiter.
 for(const flipped of [false,true]) {
  const f=fixture({flipped});f.start();f.end(0);assert.equal(f.click().prevented,undefined);
+ assert.equal(f.flips(),1);
  f.start();f.move(60);f.end(60);
+ f.click();assert.equal(f.flips(),1);
  assert.equal(f.click({detail:0}).prevented,undefined);
  assert.equal(f.click({sourceCapabilities:{firesTouchEvents:false}}).prevented,undefined);
 }

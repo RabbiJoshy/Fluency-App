@@ -55,7 +55,31 @@ scrubber exclusion, idempotent setup, busy transitions and click suppression.
 Integration tests exercise duplicate grade rejection, hint ownership and guard
 release after async errors. Existing onboarding and local resume tests also pass.
 
-Full app suite and staging browser review: pending publication.
+Full app suite: 252 tests passed. `make stage` independently repeated the suite
+successfully and published `ed368cdb` (stamped `stg-ed368cdb`). A final follow-up
+also blocks inline button release after multi-touch cancellation and extends
+single-flip tests to use the real existing card click handler; focused tests pass.
+The final deployment reference is recorded in `.airlock/staging_release.json`.
+
+Staging browser evidence (Codex in-app browser, desktop host; browser version
+not exposed): 390×844 and 375×667 viewport overrides, guest review only. Spanish
+`que` reveals correctly and keyboard grading opens its phrases summary. The
+existing card menu opens and returns to setup. The phrase list has 578px of content
+in a 487px scrollport at the smaller size. Portuguese `no` and long-back `não`
+reveal correctly; `não` has 310px of content in a 195px meanings scrollport.
+Both reviewed languages show the new handler installed and computed `pan-y` on
+cards; overflow regions retain `overflow-y: auto`. No layout controls were moved.
+
+The first-swipe hint is intentionally absent in this desktop/fine-pointer browser,
+including at phone width; its touch-only ownership is verified in automated tests.
+Attempts to scroll the phrases with the browser tool did not change scrollTop.
+A subsequent scrollbar-drag attempt was interrupted by the in-app browser's
+crashed-tab page. Thus actual scrolling movement/momentum is not a browser pass;
+the cause of the browser interruption was not established. Screenshots before
+interruption are saved under workspace `raw/surfaces/touchpoint/`:
+`staging-es-390.jpg`, `staging-es-phrases-375.jpg`, `staging-pt-no-375.jpg`, and
+`staging-pt-nao-375.jpg`. Physical touch arbitration remains unit-test evidence,
+not something established by screenshots or desktop clicks.
 
 ## Physical-device evidence and limits
 

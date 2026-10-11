@@ -2,15 +2,15 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
-      "timestamp": "2026-10-11T13:12:40+01:00",
-      "date": "2026-10-11 13:12 BST",
+      "timestamp": "2026-10-11T13:19:38+01:00",
+      "date": "2026-10-11 13:19 BST",
       "agent": "Codex",
       "summary": "TOUCHPOINT: more reliable phone swipes without moving controls",
       "detail": [
         "Both grading directions use the same 50px threshold and existing indicators.",
         "Vertical scrolling cannot turn into a grade or cycle content inside a scrollport.",
         "Deliberate drags may start over buttons; taps keep their existing actions.",
-        "Cancelled and multiple-touch gestures reset; grading transitions reject duplicate grades.",
+        "Cancelled and multiple-touch gestures reset without activating buttons on release; grading transitions reject duplicate grades.",
         "Touch taps use the existing click path once; the first-swipe hint only dismisses after touch grading.",
         "Layout, button positions, card identities and saved progress are unchanged. Physical-phone feel remains unverified."
       ],
