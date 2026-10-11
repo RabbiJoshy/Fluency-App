@@ -965,6 +965,12 @@ def main() -> None:
         help="use only the existing local embedding cache and fail on any miss",
     )
     parser.add_argument(
+        "--offline-skip-missing",
+        action="store_true",
+        help="with --offline-only: leave out (and list in the bundle) occurrences whose "
+             "multiword candidate gloss has no cached vector, instead of failing",
+    )
+    parser.add_argument(
         "--limit-cards",
         type=int,
         default=None,
@@ -1325,13 +1331,17 @@ def main() -> None:
             batch_size=args.pos_batch_size,
             skip_single_pos_menus=args.skip_single_pos_menus,
         )
+    multiword_texts_by_item: dict[tuple[str, str], set[str]] = {}
     if multiword_index is not None:
-        for card, menu_card, _sentence_id, text, _translation in work:
+        for card, menu_card, sentence_id, text, _translation in work:
             for analysis, _entry, _span in multiword_analyses(
                 card_id=card["card_id"], surface_form=card["display_form"],
                 sentence=text, index=multiword_index,
             ):
                 needed.add(analysis.senses[0].gloss_text)
+                multiword_texts_by_item.setdefault(
+                    (card["card_id"], sentence_id), set()
+                ).add(analysis.senses[0].gloss_text)
     for card in menu["cards"]:
         if card["card_id"] not in embedding_scored_cards:
             continue
@@ -1378,6 +1388,35 @@ def main() -> None:
             'utf8_bytes': sum(len(t.encode('utf-8')) for t in uncached),
             'selected_occurrences': report['occurrences_selected'], 'scored_occurrences': len(work),
         }, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+    offline_unscored: list[dict[str, Any]] = []
+    if args.offline_only and args.offline_skip_missing and uncached:
+        # Only a multiword candidate's gloss may be missing: those occurrences
+        # are left out of this run and listed, so a splice carries their
+        # previous decision instead of paying to embed. A missing menu leaf or
+        # sentence is still a hard failure below.
+        missing_set = set(uncached)
+        kept = []
+        for item in work:
+            key = (item[0]["card_id"], item[2])
+            absent = sorted(multiword_texts_by_item.get(key, set()) & missing_set)
+            if absent:
+                offline_unscored.append({
+                    "card_id": key[0], "sentence_id": key[1], "missing_texts": absent,
+                })
+            else:
+                kept.append(item)
+        work = kept
+        needed = {
+            text for text in needed
+            if text not in missing_set
+            or any(
+                text in multiword_texts_by_item.get((item[0]["card_id"], item[2]), ())
+                for item in work
+            )
+        }
+        uncached = sorted(needed - set(cached_vectors))
+        print(f"offline-skip-missing: {len(offline_unscored):,} occurrences left unscored "
+              "(their multiword gloss has no cached vector)")
     if args.offline_only:
         if uncached:
             preview = "\n".join(f"  {text!r}" for text in uncached[:20])
@@ -1733,6 +1772,8 @@ def main() -> None:
         },
         "assignments": assignments,
     }
+    if offline_unscored:
+        bundle["offline_unscored"] = offline_unscored
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(bundle, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(f"\nwrote {args.out}")

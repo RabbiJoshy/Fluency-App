@@ -42,18 +42,18 @@ These chats directly affect assignments, menus, and deck semantics. Run in this 
 
 ---
 
-### Track 2: UI & Interaction Polish (Flexible / Parallel Track)
-These do not block the WSD pipeline and can be worked on in any order:
+### Track 2: UI & Interaction Polish (Prioritised for Speech Mode Launch)
+TOUCHPOINT is complete. The remaining items are ordered by what should be done soonest to release Spanish & Portuguese speech mode:
 
-| Codename | Job | Status |
-|---|---|---|
-| **SETWISE** | Study set selection UX (2 boxes vs 4 boxes, session length choice). | Queued. |
-| **TOUCHPOINT** | Code-led swipe and scrolling audit; scope narrowed by Josh. | Complete: fixes tested and staged. Physical-phone feel remains unverified; two-device checks deferred at Josh’s request. |
-| **INFLECT-3** | Subjunctive, multi-reading, and modal verb row English polish. | Waiting for Josh's app usage on staging. |
-| **TERSE-2** | Shorten over-long Wiktionary glosses/contexts on card back. | Queued. |
-| **ACCORDION** | In-card vs modal rarer uses presentation. | Collapsible lists live; final design check. |
-| **UPKEEP** | Learner database legacy state cleanup (stage 0 rows, JST/JOSHUA). | Awaiting explicit approval. |
-| **TURBO / TURBO-STREAM** | In-client playlist ingestion & progressive streaming delivery. | In progress. |
+| Priority | Codename | Focus / Role in Speech Launch | Status |
+|---|---|---|---|
+| **Done** | **TOUCHPOINT** | Code-led swipe and scrolling audit; fixes tested and staged. | **Complete** (staged, 252 tests pass). |
+| **UI-1** | **SETWISE** | Study set selection UX (2 boxes vs 4 boxes, session length choice: 25 vs 50 cards). Primary landing screen entry for speech study. | Queued. |
+| **UI-2** | **TERSE-2** | Shorten over-long Wiktionary glosses/contexts on card back (especially pt/es Kaikki text). Direct visual polish for card back readability. | Queued. |
+| **UI-3** | **ACCORDION** | Rarer uses & nuances presentation on card back. | Collapsible lists live (`c94b87f8`); quick visual check. |
+| **UI-4** | **INFLECT-3** | Second-look English polish on verb rows (subjunctives, modals). | Waiting for Josh's app usage on staging. |
+| *Parallel* | **UPKEEP** | Learner DB legacy state cleanup (stage 0 rows, JST/JOSHUA). | Awaiting explicit approval; independent of speech launch. |
+| *Parallel* | **TURBO / TURBO-STREAM** | In-client playlist ingestion & progressive streaming delivery. | In progress; song mode feature, independent of speech launch. |
 
 ---
 
