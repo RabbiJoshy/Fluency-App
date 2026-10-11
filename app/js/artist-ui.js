@@ -1,4 +1,4 @@
-import './state.js?v=0dca818b';
+import './state.js?v=78548470';
 
 // Per-artist default album art, keyed by slug (for multi-artist fallback)
 const artistDefaultArt = {};
@@ -56,6 +56,7 @@ function updateArtistBackground() {
         if (face.dataset.albumImage === imageUrl) return;
         face.dataset.albumImage = imageUrl;
         face.style.backgroundImage = imageUrl ? `url('${imageUrl}')` : '';
+        face.style.setProperty('--card-artwork', imageUrl ? `url('${imageUrl}')` : 'none');
     });
 }
 

@@ -678,7 +678,7 @@ export function renderBack(card, selectedIdx, exampleIdx) {
     const cursor = meaning.examples.length > 1 ? 'cursor: pointer;' : '';
 
     return `
-        <div class="card-face card-back">
+        <div class="card-face card-back has-action-tray">
             <div class="card-details">
                 <div class="back-header">
                     <div class="flip-back-area">
@@ -693,6 +693,7 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                     <div class="translation">${esc(example.english)}</div>
                     ${renderCredit(card, meaning, example, exampleIdx % meaning.examples.length)}
                 </div>
+            </div>
                 <div class="links-section" id="replicaLinksSection">
                     ${hasRareUses(card) ? `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses" title="Rare uses">
                         <div class="ref-tile-icon-wrap">
@@ -718,7 +719,6 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                     </button>
                     ${lookupSheetHTML(card)}</div>
                 </div>
-            </div>
             <div class="card-tint" aria-hidden="true"></div>
         </div>`;
 }
@@ -809,7 +809,7 @@ export function measureReplicaCard(inner) {
     if (!face || !details) return 0;
     const faceStyle = getComputedStyle(face);
     const pad = parseFloat(faceStyle.paddingTop) + parseFloat(faceStyle.paddingBottom);
-    // Sum the three blocks rather than reading the container. .meanings-scroll
+    // Sum the study blocks and action tray rather than reading the container. .meanings-scroll
     // is the flex child that gives, so inside a fixed-height card it has
     // already been squeezed and the container's own scrollHeight reports the
     // squeezed figure — the overflow it is hiding never shows up.
@@ -821,6 +821,8 @@ export function measureReplicaCard(inner) {
     };
     return Math.ceil(
         pad + rowGap * 2
+        + (parseFloat(detailStyle.paddingTop) || 0) + (parseFloat(detailStyle.paddingBottom) || 0)
+        + heightOf('.links-section') + (parseFloat(faceStyle.rowGap) || 0)
         + heightOf('.back-header') + heightOf('.meanings-scroll') + heightOf('.sentence'),
     );
 }
