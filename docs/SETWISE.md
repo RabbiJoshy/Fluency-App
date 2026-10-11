@@ -10,8 +10,10 @@ and oversized-deck level exceptions remain supported.
 - The visible bar aggregates the whole level by status: each colour appears once,
   with no four-way divisions or rank patches. Internal 25-position regions remain
   for estimation and old-session compatibility. Filters never move level boundaries.
-- Use light green for known, light yellow for practice, white for new, soft lilac
-  for estimated familiarity and blue-grey for skipped. The legend shares this palette.
+- Show work remaining first: New → Practice → Known → Estimated familiar → Skipped.
+  The legend follows the same order. Use the Portuguese level accent green for known,
+  vivid yellow for practice, white for new, violet for estimated familiarity and
+  slate for skipped. Legend text uses primary ink; both themes share the palette.
 - Go selects new cards in existing vocabulary order within the selected level.
   When no new cards remain, offer practice, then clearly labelled Study again.
 - Cap constructed cards at 20; keep companion pairs together, allowing 19 cards

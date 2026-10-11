@@ -56,19 +56,23 @@ const {createHarness} = require('./estimation_harness.cjs');
     const html=node('rangeSelector').innerHTML;
     assert.equal((html.match(/class="study-level-bar"/g)||[]).length,1);
     assert.ok(!html.includes('study-level-segment'));
-    assert.match(html,/--set-known-end:20%;--set-review-end:25%;--set-estimated-end:40%;--set-new-end:90%/);
+    assert.match(html,/--level-new-end:50%;--level-review-end:55%;--level-known-end:75%;--level-estimated-end:90%/);
     assert.ok(!html.includes('study-set-dot'));
     assert.match(html,/Go · 20 cards/);
     assert.match(html,/15 Estimated familiar/);
     assert.match(html,/5 Practice/);
     assert.match(html,/10 Skipped/);
     assert.match(html,/20 Known/);
+    assert.ok(html.indexOf('50 New') < html.indexOf('5 Practice'));
+    assert.ok(html.indexOf('5 Practice') < html.indexOf('20 Known'));
+    assert.ok(html.indexOf('20 Known') < html.indexOf('15 Estimated familiar'));
+    assert.ok(html.indexOf('15 Estimated familiar') < html.indexOf('10 Skipped'));
     assert.equal(context.window.__studySessionContext.range,'1-101');
     assert.equal(context.window.__studySessionContext.unseenCount,50);
     vocab=[];
     await context.renderRangeSelector();
     assert.match(node('rangeSelector').innerHTML,/100 Skipped/);
-    assert.match(node('rangeSelector').innerHTML,/--set-known-end:0%;--set-review-end:0%;--set-estimated-end:0%;--set-new-end:0%/);
+    assert.match(node('rangeSelector').innerHTML,/--level-new-end:0%;--level-review-end:0%;--level-known-end:0%;--level-estimated-end:0%/);
     assert.match(node('rangeSelector').innerHTML,/disabled>No cards available/);
 
     // Continuation recounts current progress; no practice/replay fallback.

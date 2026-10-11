@@ -24522,11 +24522,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 
 /* SETWISE: continuous progress by status, with no labels inside the bar. */
 #step4 {
-  --set-known: #a8e4bb;
-  --set-review: #f6df93;
+  --set-known: #06a557;
+  --set-review: #ffcc00;
   --set-new: #ffffff;
-  --set-skipped: #bdc7d5;
-  --set-estimated: #cfc3e6;
+  --set-skipped: #64748b;
+  --set-estimated: #9f7aea;
 }
 #step4 .study-level-bar {
   width: 100%;
@@ -24536,13 +24536,14 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   overflow: hidden;
   margin: 8px 0;
   background: linear-gradient(to right,
-    var(--set-known) 0 var(--set-known-end),
-    var(--set-review) var(--set-known-end) var(--set-review-end),
-    var(--set-estimated) var(--set-review-end) var(--set-estimated-end),
-    var(--set-new) var(--set-estimated-end) var(--set-new-end),
-    var(--set-skipped) var(--set-new-end) 100%);
+    var(--set-new) 0 var(--level-new-end),
+    var(--set-review) var(--level-new-end) var(--level-review-end),
+    var(--set-known) var(--level-review-end) var(--level-known-end),
+    var(--set-estimated) var(--level-known-end) var(--level-estimated-end),
+    var(--set-skipped) var(--level-estimated-end) 100%);
 }
 #step4 .study-set-choice { min-width: 0; }
+#step4 .study-set-current-copy span { color: var(--text-primary); }
 
 .study-set-stat i.is-estimated { background: var(--set-estimated, #77669e); }
 

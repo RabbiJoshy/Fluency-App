@@ -2891,10 +2891,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     // Group each status once across the whole level; this bar is not a rank map.
     const levelTotal = levelCardCount + levelSkippedCount;
     const percent = count => levelTotal > 0 ? 100 * count / levelTotal : 0;
-    const progressStyle = `--set-known-end:${percent(levelKnownCount)}%;`
-        + `--set-review-end:${percent(levelKnownCount + levelReviewCount)}%;`
-        + `--set-estimated-end:${percent(levelKnownCount + levelReviewCount + levelEstimatedCount)}%;`
-        + `--set-new-end:${percent(levelCardCount)}%`;
+    const progressStyle = `--level-new-end:${percent(levelNewCount)}%;`
+        + `--level-review-end:${percent(levelNewCount + levelReviewCount)}%;`
+        + `--level-known-end:${percent(levelNewCount + levelReviewCount + levelKnownCount)}%;`
+        + `--level-estimated-end:${percent(levelCardCount)}%`;
     const context = {
         range: `${minWord}-${maxWord}`, rankBasis, levelNumber,
         unseenCount: levelNewCount, reviewCount: levelReviewCount, cardCount: levelCardCount, ranges,
@@ -2905,16 +2905,16 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         levelNewCount || levelReviewCount || levelCardCount);
     const action = nextCount === 0 ? 'No cards available' : context.studyMode === 'new' ? `Go · ${nextCount} cards`
         : context.studyMode === 'review' ? `Practise · ${nextCount} cards` : `Study again · ${nextCount} cards`;
-    const description = `${levelKnownCount} known, ${levelReviewCount} practice, ${levelNewCount} new, ${levelEstimatedCount} estimated familiar, ${levelSkippedCount} skipped`;
+    const description = `${levelNewCount} new, ${levelReviewCount} practice, ${levelKnownCount} known, ${levelEstimatedCount} estimated familiar, ${levelSkippedCount} skipped`;
     container.innerHTML = `
         <div class="study-set-panel">
             <div class="study-set-choice">
                 <div class="study-level-bar" role="img" aria-label="Level progress: ${description}" style="${progressStyle}"></div>
                 <div class="study-set-current-copy">
                     <span>
-                        <b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>
-                        <b class="study-set-stat"><i class="is-review"></i>${levelReviewCount} Practice</b>
                         <b class="study-set-stat"><i class="is-unseen"></i>${levelNewCount} New</b>
+                        <b class="study-set-stat"><i class="is-review"></i>${levelReviewCount} Practice</b>
+                        <b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>
                         ${levelEstimatedCount > 0 ? `<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated familiar</b>` : ''}
                         ${levelSkippedCount > 0 ? `<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>` : ''}
                     </span>

@@ -2,6 +2,18 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T23:31:14+01:00",
+   "date": "2026-10-11 23:31 BST",
+   "agent": "Codex",
+   "summary": "Progress uses stronger colours and shows the cards left to study first.",
+   "detail": [
+    "Changed the washed-out palette to the Portuguese level accent green, vivid yellow, white, violet and slate; made legend text more readable.",
+    "The continuous bar and its legend now run New, Practice, Known, Estimated familiar, Skipped, putting the work remaining on the left.",
+    "Session selection, level boundaries, estimation and saved learning progress are unchanged."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T23:25:05+01:00",
    "date": "2026-10-11 23:25 BST",
    "agent": "Codex",
@@ -363,19 +375,6 @@
     "JOSHUA (profile_028abec8…) can flag cards and open the data and model panel with Cmd/Ctrl+I, but sees no admin settings, changelog modal, provenance pills or scrape inspector. It is allow-listed by profile ID, not display name.",
     "A username now belongs to one profile, compared case-insensitively. The worker refuses a second profile with the same name or with an unclaimed legacy name (needs migration 0007 and a worker deploy).",
     "The sign-in match dialog no longer offers 'No, create an account' for a name that already exists."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T22:14:49+01:00",
-   "date": "2026-10-10 22:14 BST",
-   "agent": "Claude",
-   "summary": "Tutorial: finer-grained steps, new demo words, plural merging in Smart Skip, card always fits",
-   "detail": [
-    "Front: rank and frequency are separate steps. Back: the sense row, then each meaning row, the usage bars, the example, its English, its source, then Rare uses, Review meanings and Look up.",
-    "Demo cards are now quiero (querer, three meanings) in Spanish and parece (parecer, two short meanings) in Portuguese, replacing que and provar.",
-    "Smart Skip shows that singular and plural nouns with identical meanings share a card (Spanish and Portuguese).",
-    "The card no longer scrolls inside itself: on narrow phones it is scaled down (not below 70%) so every row is visible, and the page scrolls the rest."
    ],
    "commit": "pending"
   }
