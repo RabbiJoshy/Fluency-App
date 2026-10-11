@@ -26,11 +26,12 @@ node research/inflect/measure.mjs --index $W/vocabulary.index.json \
 
 `--sentences` gives each card its example sentences, as the app has once a set
 is loaded. Since 2026-10-11 a form that is both a statement and a command shows
-the command when at least one in five of the card's sentences uses it (first
-when most do), so `command_listed_with_statement` is expected to be non-zero
-with `--sentences` and 0 without (es v24 r4: 324 rows, e.g. *mira* "look! /
-he/she looks"; pt v24 r3: 366). The sentence on screen no longer changes a
-row: *era* is "I/he/she was" on every example.
+one reading, never both: the statement, unless the card's sentences are
+two-thirds commands (*mira* "look!", *esqueça* "don't forget!") or the example
+on screen is a command for that row's verb ("¡Espera aquí!": "wait!"; this
+report runs without an on-screen example). So `command_listed_with_statement`
+stays 0. The person never follows the example: *era* is "I/he/she was" on every
+example.
 
 Measure the release the app serves (`app/config/config.json`, `indexPath` and
 `conjugationsPath`), not the workspace's `active.json`. Without `--sentences`

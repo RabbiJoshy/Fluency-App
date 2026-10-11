@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T13:00:00+01:00",
+      "date": "2026-10-11 13:00 BST",
+      "agent": "Claude",
+      "summary": "Verb rows show one reading: the statement, or the command when the word is almost always one or the example on screen is one",
+      "detail": [
+        "No more 'look! / he/she looks' double rows: each row shows one reading.",
+        "The command shows when two-thirds of the card's own sentences use it: mira 'look!', olhe 'look!', esqueça 'don't forget!' (Não se esqueça), juguemos 'let's play!'. 14 es and 29 pt rows.",
+        "Otherwise the statement, switching to the command only while the example on screen is a command for that row's verb: espera 'he/she waits', and 'wait!' on '¡Espera aquí!'.",
+        "A command uses one verb: pare 'stop!' (not 'stop; cease!'), vejamos 'let's see!'.",
+        "The person still never follows the example: era is 'I/he/she was' on every example."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T12:42:00+01:00",
       "date": "2026-10-11 12:42 BST",
       "agent": "Claude",
@@ -364,20 +378,6 @@
         "Remove redundant 'Learn new'/'Practice' track tag and strip 'speech' suffix from language name in resume prompt.",
         "Rename resume action to 'Continue set' and remove colored accent outline in favor of clean solid focus styling.",
         "Remove top bar language chevron so long language names like 'Portuguese' are never obscured on mobile."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T14:00:00+01:00",
-      "date": "2026-10-10 14:00 BST",
-      "agent": "Antigravity",
-      "summary": "AIRLOCK: Establish isolated staging deployment and deliberate promotion workflow",
-      "detail": [
-        "Staging hosted at https://fluency-staging.pages.dev/ with clear amber environment identification and title badge.",
-        "Browser and backend isolation: separate IndexedDB database ('fluency-offline-staging') and wire sync namespacing ('stg_*') ensure real learning progress is 100% protected.",
-        "Candidate deck selection: staging can select candidate deck versions via config, query parameters, or interactive Developer settings without replacing production data.",
-        "Repeatable publication and promotion: `make stage` publishes proposed changes to Cloudflare Pages; `make promote` deliberately promotes only the reviewed commit, blocking unreviewed changes.",
-        "Staging service worker skipWaiting enables immediate asset loading on phone and laptop."
       ],
       "commit": "pending"
     }

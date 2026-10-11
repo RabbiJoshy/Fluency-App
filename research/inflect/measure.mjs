@@ -15,7 +15,7 @@
 //     [--baseline /path/to/old-reverse-cues.mjs] [--out rows.jsonl] [--examples 8]
 //
 // --sentences attaches each card's example sentences, as the app does once a
-// set is loaded; whether a form also shows as a command is decided from them.
+// set is loaded; a form whose sentences are two-thirds commands shows the command.
 //
 // Writes nothing unless --out is given; outputs belong in the scratchpad or
 // the workspace, not in git.
@@ -64,8 +64,6 @@ function statusOf(row, meaning, cue) {
 
 // The error classes INFLECT removed; a non-zero count is a regression.
 const ERROR_CLASSES = {
-    // Allowed when the card's sentences use the command (--sentences); without
-    // them it must be 0.
     command_listed_with_statement: cue => cue.includes('!') && cue.includes(' / '),
     stative_progressive: cue => /\b(?:was|were) (?:being|having|knowing|wanting|needing|liking|loving|believing|seeming|meaning|wishing)\b/u.test(cue),
     broken_brackets: cue => (cue.match(/\(/gu) || []).length !== (cue.match(/\)/gu) || []).length,

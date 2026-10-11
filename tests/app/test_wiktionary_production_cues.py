@@ -367,8 +367,8 @@ const tables = {
 };
 const verb = (headword, translation) => ({ pos: 'verb', translation, headword });
 const plain = { conjugationData: tables };
-// A card's own sentences (all its rows' examples) decide whether a form that
-// is also a command shows the command: at least one in five, first when most.
+// A form that is also a command shows one reading: the command when the
+// card's own sentences are two-thirds commands or the example on screen is one.
 const sentences = (...english) => english.map((text, i) => ({ target: `s${i}`, english: text }));
 const cases = [
     // imperfect is simple past (was: "I/he/she was being", "was having")
@@ -385,17 +385,22 @@ const cases = [
     ['parece', verb('parecer', 'to seem'), plain, 'he/she seems',
         sentences("It's not at all what it looks like.", 'She seems tired.', 'Seems fine to me.')],
     ['vamos', verb('ir', 'to go'), plain, 'we go'],
-    // ...unless the card's sentences use the command: first when most do
-    ['vamos', verb('ir', 'to go'), plain, "let's go! / we go",
-        sentences("Let's go!", "Come on, let's go.", 'We go every day.', 'We are going home.')],
-    ['vamos', verb('ir', 'to go'), plain, "we go / let's go!",
-        sentences('We go every day.', "We're going home.", 'We are leaving.', 'We go there often.', "Let's go.")],
+    // one reading per row: the command only when the card's sentences are
+    // overwhelmingly commands (two-thirds) ...
     ['vamos', verb('ir', 'to go'), plain, 'we go',
-        sentences('We go every day.', "We're going home.", 'We are leaving.', 'We go there often.',
-            'We went.', 'We will see.', "Let's go.")],
-    ['espera', verb('esperar', 'to wait'), plain, 'wait! / he/she waits',
+        sentences("Let's go!", "Come on, let's go.", 'We go every day.', 'We are going home.')],
+    ['vamos', verb('ir', 'to go'), plain, "let's go!",
+        sentences("Let's go!", "Come on, let's go.", "Let's go home.", 'We are going home.')],
+    ['espera', verb('esperar', 'to wait'), plain, 'he/she waits',
         sentences('Wait here, please.', 'Wait for me!', 'She waits every day.', 'He is waiting.')],
-    ['hables', verb('hablar', 'to speak'), plain, "don't speak! / you speak",
+    ['espera', verb('esperar', 'to wait'), { ...plain, activeExample: { english: 'She waits every day.' } }, 'wait!',
+        sentences('Wait!', 'Wait here.', 'Wait for me.', 'She waits every day.')],
+    // ... or when the example on screen is a command for that row's verb
+    ['vamos', verb('ir', 'to go'), { ...plain, activeExample: { english: "Come on, let's go!" } }, "let's go!"],
+    ['espera', verb('esperar', 'to wait'), { ...plain, activeExample: { english: 'Wait here, please.' } }, 'wait!'],
+    ['espera', verb('esperar', 'to wait'), { ...plain, activeExample: { english: 'Look at that!' } }, 'he/she waits'],
+    ['hables', verb('hablar', 'to speak'), { ...plain, activeExample: { english: "Don't speak to me like that." } }, "don't speak!"],
+    ['hables', verb('hablar', 'to speak'), plain, 'you speak',
         sentences("Don't speak to me like that.", 'I want you to speak.')],
     ['hables', verb('hablar', 'to speak'), plain, 'you speak'],
     // a form that is only a command stays one
