@@ -5462,17 +5462,25 @@
             top: -2px;
             left: -6px;
             min-width: 20px;
-            height: 20px;
-            padding: 0 4px;
+            min-height: 20px;
+            aspect-ratio: 1;
+            width: max-content;
+            padding: 2px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 50%;
-            background: var(--accent-primary, #6366f1);
+            background: transparent;
+            border: 1px solid currentColor;
             color: #fff;
             font-size: 13px;
             font-weight: 700;
-            line-height: 20px;
+            line-min-height: 20px;
+            aspect-ratio: 1;
+            width: max-content;
             text-align: center;
             pointer-events: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: none;
         }
         .ref-tile-label {
             font-size: 13.5px;
@@ -24569,3 +24577,5 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   .card-container:has(#flashcard .has-action-tray) { padding-bottom: 8px; }
   #flashcard:has(.has-action-tray) { height: calc(100vh / var(--ui-zoom, 1) - 108px); }
 }
+
+:root[data-theme="light"] .ref-tile-count-badge { color: var(--text-primary); }

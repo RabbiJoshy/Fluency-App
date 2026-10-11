@@ -2,6 +2,18 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T23:22:13+01:00",
+   "date": "2026-10-11 23:22 BST",
+   "agent": "Codex",
+   "summary": "Rare uses has a monochrome count in a thin circle instead of a coloured notification badge.",
+   "detail": [
+    "Removed the coloured fill and shadow behind the Rare uses count.",
+    "Count remains above the icon at the top left, with white digits and a thin white ring; light mode uses dark ink.",
+    "Kept the three-bar icon and its half-filled first bar."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T23:19:32+01:00",
    "date": "2026-10-11 23:19 BST",
    "agent": "Codex",
@@ -363,20 +375,6 @@
    "detail": [
     "The back of the card starts blank: meanings, rare uses, review meanings, usage bars, example and look-up each appear as they are explained.",
     "The spotlight ring is re-measured continuously and corrects for page zoom, so it stays around its element after rows open, flips settle or text size changes."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T20:17:03+01:00",
-   "date": "2026-10-10 20:17 BST",
-   "agent": "Claude",
-   "summary": "Tutorial: one banner, a card that builds up, clearer Speech or music, tighter grading note, whole spotlight ring",
-   "detail": [
-    "Banner now reads Section · Title — Text on one line; the section is no longer repeated beside the title.",
-    "The front of the card starts blank and each element fades in as its note is explained.",
-    "Speech or music explains each source from first principles, including the two ways to choose music (pick artists, or build from a Spotify playlist).",
-    "Grade your answer note cut to one short sentence.",
-    "The yellow spotlight is now a ring drawn over the card and clamped inside it, so it is never clipped or pushed off screen (desktop and phone)."
    ],
    "commit": "pending"
   }
