@@ -4864,6 +4864,28 @@ function toggleRareExamples(event, btn) {
 }
 if (typeof window !== 'undefined') window.toggleRareExamples = toggleRareExamples;
 
+function setRareExamplesOpen(scroller, open) {
+    scroller.querySelectorAll('.rare-ex-panel').forEach(panel => {
+        panel.hidden = !open;
+        const btn = panel.previousElementSibling?.querySelector('.rare-ex-btn');
+        if (!btn) return;
+        const n = Number(btn.dataset.count || 0);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? 'Hide examples' : `Show ${n} example${n === 1 ? '' : 's'}`);
+    });
+}
+
+// Show every example when they all fit without scrolling; otherwise keep them
+// behind the count buttons. One measure per call, after layout.
+function fitRareExamples(scroller) {
+    if (!scroller || typeof requestAnimationFrame !== 'function') return;
+    requestAnimationFrame(() => {
+        if (!scroller.isConnected || !scroller.querySelector('.rare-ex-panel')) return;
+        setRareExamplesOpen(scroller, true);
+        if (scroller.scrollHeight > scroller.clientHeight + 1) setRareExamplesOpen(scroller, false);
+    });
+}
+
 function rareSenseLeafHTML(item, posAccentRgb, { hideGloss = false, hideContext = false } = {}) {
     const gloss = item.translation || item.expression || '';
     // A handful, not one: a sense here may rest on two or three corpus lines,
@@ -4944,7 +4966,44 @@ function renderRareSenseCluster(group, pos, posAccentRgb, clusterId) {
     </div>`;
 }
 
-function renderRareSenseGroups(rareItems) {
+// --- Collapsible sections (rare-uses sheet + expressions child card) ----------
+// Open/closed choices live here so a re-render (Known/Review mark) keeps them.
+// Reset when the list is shown for a different card. Default: collapsed when
+// there are several sections (every heading visible at once), open when alone.
+const _usesSectionState = new Map();
+let _usesStateOwner = null;
+
+function resetUsesSectionState(owner) {
+    if (_usesStateOwner === owner) return;
+    _usesStateOwner = owner;
+    _usesSectionState.clear();
+}
+
+const USES_CHEVRON_SVG = '<svg class="uses-section-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+
+function usesSectionHTML(ctx, { key, rgb, label, count, bodyHTML, extraClass = '' }) {
+    const open = _usesSectionState.has(key) ? _usesSectionState.get(key) : ctx.total === 1;
+    const id = `usesSection-${String(key).replace(/[^A-Za-z0-9_-]/g, '_')}`;
+    return `<section class="other-uses-pos uses-section ${extraClass}${open ? '' : ' is-collapsed'}" style="--sense-match-rgb: ${rgb};">
+        <h4 class="other-uses-pos-heading"><button type="button" class="uses-section-toggle" aria-expanded="${open}" aria-controls="${id}" data-section-key="${escapeCardText(key)}" onclick="toggleUsesSection(event, this)"><span class="uses-section-label">${escapeCardText(label)}</span><span class="uses-section-count">· ${count}</span>${USES_CHEVRON_SVG}</button></h4>
+        <div class="uses-section-rows" id="${id}"${open ? '' : ' hidden'}>${bodyHTML}</div>
+    </section>`;
+}
+
+function toggleUsesSection(event, btn) {
+    event?.stopPropagation?.();
+    const open = btn.getAttribute('aria-expanded') !== 'true';
+    btn.setAttribute('aria-expanded', String(open));
+    const section = btn.closest('.uses-section');
+    section?.classList.toggle('is-collapsed', !open);
+    const rows = document.getElementById(btn.getAttribute('aria-controls'));
+    if (rows) rows.hidden = !open;
+    _usesSectionState.set(btn.dataset.sectionKey, open);
+    fitRareExamples(btn.closest('.uses-list'));
+}
+if (typeof window !== 'undefined') window.toggleUsesSection = toggleUsesSection;
+
+function renderRareSenseGroups(rareItems, ctx = { total: 1 }) {
     const byPos = new Map();
     for (const item of rareItems) {
         const pos = String(item.pos || 'OTHER').toUpperCase();
@@ -4964,10 +5023,10 @@ function renderRareSenseGroups(rareItems) {
             const clusterId = `${pos}-${index}`;
             return renderRareSenseCluster(group, pos, posAccentRgb, clusterId);
         }).join('');
-        return `<section class="other-uses-pos" style="--sense-match-rgb: ${posAccentRgb};">
-            <h4 class="other-uses-pos-heading">${escapeCardText(posDisplayName(pos))}</h4>
-            ${groups}
-        </section>`;
+        return usesSectionHTML(ctx, {
+            key: `pos-${pos}`, rgb: posAccentRgb, label: posDisplayName(pos),
+            count: byPos.get(pos).length, bodyHTML: groups,
+        });
     }).join('');
 }
 
@@ -4991,7 +5050,7 @@ function renderPhraseRow(item) {
 // Section headings appear only when there is more than one kind of section
 // to tell apart; a lone "Expressions" heading under "Expressions that use
 // this word" said the same thing twice.
-function phraseSummaryContent(items) {
+function phraseSummaryContent(items, ctx0 = {}) {
     const cliticGroups = new Map();
     items.forEach((item, index) => {
         if (item.kind !== 'CLITIC') return;
@@ -5009,16 +5068,31 @@ function phraseSummaryContent(items) {
     }).join('');
     const phraseItems = items.filter(item => item.kind !== 'CLITIC' && item.kind !== 'RARE_SENSE');
     const rareItems = items.filter(item => item.kind === 'RARE_SENSE');
-    const rareHTML = rareItems.length ? renderRareSenseGroups(rareItems) : '';
-    const phraseHeading = (rareHTML || cliticHTML)
-        ? '<h4 class="other-uses-pos-heading">Expressions</h4>'
-        : '';
-    const phraseHTML = phraseItems.length
-        ? `<section class="other-uses-pos other-uses-pos--phrases" style="--sense-match-rgb: var(--accent-phrases-rgb);">
-            ${phraseHeading}
-            ${phraseItems.map(renderPhraseRow).join('')}
-           </section>`
-        : '';
+    const rarePosCount = new Set(rareItems.map(item => String(item.pos || 'OTHER').toUpperCase())).size;
+    const cliticCount = items.filter(item => item.kind === 'CLITIC').length;
+    const ctx = {
+        total: rarePosCount + (phraseItems.length ? 1 : 0) + (cliticHTML ? 1 : 0),
+    };
+    const rareHTML = rareItems.length ? renderRareSenseGroups(rareItems, ctx) : '';
+    // A lone Expressions / attached-forms section needs no heading or toggle:
+    // the title already says what it is.
+    const phraseHTML = !phraseItems.length ? ''
+        : ctx.total > 1
+            ? usesSectionHTML(ctx, {
+                key: 'phrases', rgb: 'var(--accent-phrases-rgb)', label: 'Expressions',
+                count: phraseItems.length, bodyHTML: phraseItems.map(renderPhraseRow).join(''),
+                extraClass: 'other-uses-pos--phrases',
+            })
+            : `<section class="other-uses-pos other-uses-pos--phrases" style="--sense-match-rgb: var(--accent-phrases-rgb);">
+                ${phraseItems.map(renderPhraseRow).join('')}
+               </section>`;
+    const cliticSection = !cliticHTML ? ''
+        : ctx.total > 1
+            ? usesSectionHTML(ctx, {
+                key: 'clitics', rgb: 'var(--accent-phrases-rgb)', label: 'Attached forms',
+                count: cliticCount, bodyHTML: cliticHTML,
+            })
+            : cliticHTML;
 
     const rareCount = rareItems.length;
     const phraseCount = items.length - rareCount;
@@ -5028,19 +5102,23 @@ function phraseSummaryContent(items) {
         ? 'Expressions with this word.'
         : 'Less common uses of this word.';
     const onlyExpressions = Boolean(phraseCount && !rareCount);
-    return { subtitle, onlyExpressions, bodyHTML: `${rareHTML}${phraseHTML}${cliticHTML}` };
+    return { subtitle, onlyExpressions, bodyHTML: `${rareHTML}${phraseHTML}${cliticSection}` };
 }
 
 function renderPhraseSummaryBack(card) {
-    const { subtitle, bodyHTML } = phraseSummaryContent(cardChainQueue || []);
+    resetUsesSectionState(`child:${card.id}`);
+    // The markup is returned as a string and inserted by the caller; measure
+    // once it is in the document.
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => requestAnimationFrame(() => fitRareExamples(document.querySelector('#backContent .uses-list'))));
+    const { subtitle, onlyExpressions, bodyHTML } = phraseSummaryContent(cardChainQueue || []);
+    const lead = onlyExpressions ? 'Expressions with' : 'Less common uses of';
     return `<div class="back-header other-uses-header">
-            <div class="back-headword-row">
-                <span class="back-headword other-uses-headword">${escapeCardText(card.chainParentWord || '')}</span>
-            </div>
-            <div class="phrase-summary-subtitle">${subtitle}</div>
+            <h2 class="uses-title">${lead} <span class="rare-uses-word">${escapeCardText(card.chainParentWord || '')}</span></h2>
+            ${onlyExpressions ? '' : `<div class="phrase-summary-subtitle">${subtitle}</div>`}
         </div>
-        <div class="phrase-summary-scroll">${bodyHTML}</div>`;
+        <div class="phrase-summary-scroll uses-list">${bodyHTML}</div>`;
 }
+
 
 // --- Rarer uses sheet --------------------------------------------------------
 // Rare dictionary senses (and the word's expressions) open as a sheet over the
@@ -5066,7 +5144,7 @@ function ensureRareUsesModal() {
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close rare uses" onclick="closeRareUsesModal(event)">×</button>
             </header>
-            <div class="phrase-summary-scroll rare-uses-body" id="rareUsesBody"></div>
+            <div class="phrase-summary-scroll rare-uses-body uses-list" id="rareUsesBody"></div>
         </div>`;
     modal.addEventListener('click', event => {
         event.stopPropagation();
@@ -5329,6 +5407,9 @@ function openRareAndExpressionsCard(event) {
     if (!items.length) return;
 
     _rareUsesItems = items;
+    // Fresh open = fresh section state (a re-open of the same card is also fresh).
+    _usesStateOwner = null;
+    resetUsesSectionState(`sheet:${parentCard.id}`);
     const modal = ensureRareUsesModal();
     modal.dataset.word = parentCard.displaySurface || parentCard.targetWord || '';
     renderRareUsesBody();
@@ -5350,6 +5431,7 @@ function renderRareUsesBody() {
     const top = body.scrollTop;
     body.innerHTML = bodyHTML;
     body.scrollTop = top;
+    fitRareExamples(body);
 }
 
 function canonicalRecord(meaning) {
@@ -6424,11 +6506,10 @@ function renderCardWikipediaBadge(card) {
             ? window.getPracticeMeaningInfo(card) : null;
         const hasPractice = Boolean(practiceInfo && practiceInfo.practising > 0 && !flippedFrontMeanings);
         const practiceBadgeEl = document.getElementById('frontPracticeBadge');
-        document.getElementById('flashcard')?.classList.toggle('has-practice-meanings', hasPractice);
         if (practiceBadgeEl) {
             practiceBadgeEl.hidden = !hasPractice;
             practiceBadgeEl.textContent = hasPractice
-                ? `Practising ${practiceInfo.practising} of ${practiceInfo.total} meanings` : '';
+                ? `${practiceInfo.practising} ${practiceInfo.practising === 1 ? 'meaning' : 'meanings'} to review` : '';
         }
     }
 
@@ -6802,6 +6883,18 @@ function renderCardWikipediaBadge(card) {
         const practiceIndices = typeof window.getPracticeMeaningIndices === 'function'
             ? window.getPracticeMeaningIndices(card) : new Set();
         const practiceSignature = [...practiceIndices].sort((a, b) => a - b).join(',');
+        // With meanings brought back for review, rows read in three tiers:
+        // practice (full colour, top), neither (normal), already known (greyed,
+        // bottom). renderSections orders by the tier class on each row.
+        const knownMeaningIndices = practiceIndices.size
+            ? (window.getPracticeMeaningInfo(card).known || new Set()) : new Set();
+        const meaningTierClass = indices => {
+            if (!practiceIndices.size || !indices.length) return '';
+            if (indices.some(i => practiceIndices.has(i))) return ' is-practice-meaning';
+            return indices.every(i => knownMeaningIndices.has(i)) ? ' is-known-meaning' : '';
+        };
+        const rowTier = html => html.includes('is-practice-meaning') ? 0
+            : (html.includes('is-known-meaning') ? 2 : 1);
         if (practiceIndices.size && card._practiceExpandedFor !== practiceSignature) {
             practiceIndices.forEach(index => {
                 const pm = card.meanings?.[index];
@@ -6822,7 +6915,24 @@ function renderCardWikipediaBadge(card) {
                 rows.summarySenses.push(senseSummaryText(displayLearnerGloss(card, meaning, false)));
             }
         };
-        const renderSections = (sections) => Array.from(sections)
+        const renderSections = (sections) => {
+            let entries = Array.from(sections);
+            if (practiceIndices.size) {
+                // Stable sorts: practice rows first, known rows last, inside
+                // each section; sections holding practice rows come first.
+                entries = entries.map(([key, rows]) => {
+                    const sorted = rows.map((html, i) => [html, i])
+                        .sort((a, b) => (rowTier(a[0]) - rowTier(b[0])) || (a[1] - b[1]))
+                        .map(pair => pair[0]);
+                    sorted.summarySenses = rows.summarySenses;
+                    return [key, sorted];
+                });
+                const secTier = rows => rows.length ? Math.min(...rows.map(rowTier)) : 1;
+                entries = entries.map((e, i) => [e, i])
+                    .sort((a, b) => (secTier(a[0][1]) - secTier(b[0][1])) || (a[1] - b[1]))
+                    .map(pair => pair[0]);
+            }
+            return entries
             .map(([key, rows]) => {
                 const g = groupInfo.get(key);
                 const pos = g ? g.pos : String(key).split('\u0000')[0];
@@ -6910,6 +7020,7 @@ function renderCardWikipediaBadge(card) {
                     <div class="meaning-pos-rows">${rows.join('')}</div>
                 </section>`;
             }).join('');
+        };
 
         // Render-side grouping: collapse rows that share either
         // translation OR context into a single "group card" — shared
@@ -7183,7 +7294,7 @@ function renderCardWikipediaBadge(card) {
             if (singletonFoldFollowers.has(idx)) return;
             const isSelected = idx === currentMeaningIndex;
             const rowStateClasses = (isSelected ? ' is-current-sense' : '')
-                + ((m.allSenses || [m]).some(sense => practiceIndices.has(card.meanings.indexOf(sense))) ? ' is-practice-meaning' : '');
+                + meaningTierClass((m.allSenses || [m]).map(sense => card.meanings.indexOf(sense)));
             // One flat fill for every row, matching the POS header above them
             // and the active row below. Activeness is the outline, not a
             // different shade.
@@ -7490,7 +7601,7 @@ function renderCardWikipediaBadge(card) {
                     const groupIsCurrent = groupSelected || anyMemberSelected;
                     recordSectionMeanings(target, orderedMembers.map(i => card.meanings[i]));
                     const groupStateClasses = (groupIsCurrent ? ' is-current-sense' : '')
-                        + (orderedMembers.some(mi => practiceIndices.has(mi)) ? ' is-practice-meaning' : '');
+                        + meaningTierClass(orderedMembers);
                     const cardBg = 'rgba(var(--sense-match-rgb), 0.08)';
                     // The outer row is the complete-family selection marker.
                     // Do not repeat it on the shared cell: an inner marker is
@@ -7880,7 +7991,7 @@ function renderCardWikipediaBadge(card) {
                         ? foldInfo.allIndices.every(index => card.meanings[index]?.isKnownSense)
                         : Boolean(m.isKnownSense);
                     const knownRowClass = rowKnown ? ' meaning-row-known' : '';
-                    const practiceRowClass = (isFoldedLeader ? foldInfo.allIndices : [idx]).some(index => practiceIndices.has(index)) ? ' is-practice-meaning' : '';
+                    const practiceRowClass = meaningTierClass(isFoldedLeader ? foldInfo.allIndices : [idx]);
                     const pctTail = rowKnown
                         ? knownSenseTagHTML('position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
                         : useProminenceLabels

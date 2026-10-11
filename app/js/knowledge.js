@@ -735,14 +735,8 @@ function knowledgeSectionLabel(item) {
     return 'Meanings';
 }
 
-const FOCUS_MEANINGS_ICON = `<svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="9"></circle>
-            <circle cx="12" cy="12" r="5"></circle>
-            <circle cx="12" cy="12" r="1"></circle>
-        </svg>`;
-
 // Meanings the learner can mark for practice, counted exactly as the
-// "Focus meanings" button counts them. Empty for guests and single-meaning cards.
+// "Mark a meaning" button counts them. Empty for guests and single-meaning cards.
 function getKnowledgeFocusItems(card) {
     if (!currentUser || currentUser.isGuest) return [];
     const items = getCardKnowledgeItems(card);
@@ -756,26 +750,68 @@ function getKnowledgeFocusItems(card) {
 function getPracticeMeaningInfo(card) {
     const focusItems = getKnowledgeFocusItems(card);
     const indices = new Set();
+    const known = new Set();
     let practising = 0;
     focusItems.forEach(item => {
         const state = getKnowledgeItemState(card, item);
         if (state.needsReview && state.reviewReason === 'incorrect') {
             practising += 1;
             if (Number.isInteger(item.meaningIndex)) indices.add(item.meaningIndex);
+        } else if (state.learned && Number.isInteger(item.meaningIndex)) {
+            known.add(item.meaningIndex);
         }
     });
-    return { indices, practising, total: focusItems.length };
+    return { indices, known, practising, total: focusItems.length };
 }
 
 function getPracticeMeaningIndices(card) {
     return getPracticeMeaningInfo(card).indices;
 }
 
+// The rows the "Mark a meaning" modal lists: the card's Meanings section (or
+// the first section), limited to the senses the card shows, in card order.
+// The button's fraction badge counts these same rows.
+function getKnowledgeOverviewRows(card) {
+    const items = getCardKnowledgeItems(card);
+    const sections = new Map();
+    items.forEach((item, index) => {
+        const label = knowledgeSectionLabel(item);
+        if (!sections.has(label)) sections.set(label, []);
+        sections.get(label).push({ item, index });
+    });
+    const meaningRows = sections.get('Meanings') || [];
+    let rows = meaningRows.length > 0 ? meaningRows : (sections.values().next().value || []);
+    // A sense moved to Rarer uses, or folded into another row, is not listed.
+    const display = card._senseDisplay;
+    if (display?.size) {
+        rows = rows
+            .filter(({ item }) => display.has(item.meaningIndex) && !display.get(item.meaningIndex).hidden)
+            .sort((a, b) => (display.get(a.item.meaningIndex).order - display.get(b.item.meaningIndex).order)
+                || (a.item.cycleIndex - b.item.cycleIndex));
+    }
+    return rows;
+}
+
+// "known/total" over the modal's rows; "?" until any row has been seen.
+function getKnowledgeOverviewFraction(card) {
+    const rows = getKnowledgeOverviewRows(card);
+    let known = 0, touched = false;
+    rows.forEach(({ item }) => {
+        const st = getKnowledgeItemState(card, item);
+        if (st.learned) known += 1;
+        if (st.seen || st.learned || st.needsReview) touched = true;
+    });
+    return { known, total: rows.length, touched };
+}
+
 function renderKnowledgeOverviewButton(card) {
     if (!getKnowledgeFocusItems(card).length) return '';
-    return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Focus meanings" aria-haspopup="dialog" onclick="showKnowledgeOverview(event)">
-        ${FOCUS_MEANINGS_ICON}
-        <span class="ref-tile-label">Focus meanings</span>
+    const { known, total, touched } = getKnowledgeOverviewFraction(card);
+    const shown = `${touched ? known : '?'}/${total}`;
+    const aria = touched ? `Mark a meaning, ${known} of ${total} meanings known` : `Mark a meaning, ${total} meanings`;
+    return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="${aria}" aria-haspopup="dialog" onclick="showKnowledgeOverview(event)">
+        <span class="ref-tile-fraction" aria-hidden="true">${shown}</span>
+        <span class="ref-tile-label">Mark a meaning</span>
     </button>`;
 }
 
@@ -793,7 +829,7 @@ function ensureKnowledgeOverviewModal() {
     modal.innerHTML = `
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
-                <h2 id="knowledgeOverviewTitle" class="visually-hidden">Focus meanings</h2>
+                <h2 id="knowledgeOverviewTitle" class="visually-hidden">Mark a meaning</h2>
                 <p id="knowledgeOverviewHint" class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>
                 <button type="button" class="knowledge-overview-close" aria-label="Close" onclick="closeKnowledgeOverview(event)">×</button>
             </header>
@@ -845,32 +881,11 @@ function knowledgeOverviewRowsHTML(card, rows, { groupedByPos = false } = {}) {
 
 function renderKnowledgeOverview(card) {
     const modal = ensureKnowledgeOverviewModal();
-    const items = getCardKnowledgeItems(card);
     const summaryEl = modal.querySelector('#knowledgeOverviewSummary');
     const listEl = modal.querySelector('#knowledgeOverviewList');
 
 
-    // Build sections but only show Meanings (hide Expressions to simplify).
-    // Expression knowledge is preserved in the data model; only the UI hides it.
-    const sections = new Map();
-    items.forEach((item, index) => {
-        const label = knowledgeSectionLabel(item);
-        if (!sections.has(label)) sections.set(label, []);
-        sections.get(label).push({ item, index });
-    });
-
-    // Force to Meanings only — skip Expressions / Attached forms tabs
-    const meaningRows = sections.get('Meanings') || [];
-    let rows = meaningRows.length > 0 ? meaningRows : (sections.values().next().value || []);
-    // Only the senses the card shows, in the card's order: a sense moved to
-    // Rarer uses, or folded into another row, is not listed here.
-    const display = card._senseDisplay;
-    if (display?.size) {
-        rows = rows
-            .filter(({ item }) => display.has(item.meaningIndex) && !display.get(item.meaningIndex).hidden)
-            .sort((a, b) => (display.get(a.item.meaningIndex).order - display.get(b.item.meaningIndex).order)
-                || (a.item.cycleIndex - b.item.cycleIndex));
-    }
+    const rows = getKnowledgeOverviewRows(card);
 
     // The total repeats the one group's own count, so it shows only when the
     // card has several groups.
@@ -1071,6 +1086,7 @@ window.renderKnowledgeControl = renderKnowledgeControl;
 window.renderKnowledgeOverviewButton = renderKnowledgeOverviewButton;
 window.getPracticeMeaningIndices = getPracticeMeaningIndices;
 window.getPracticeMeaningInfo = getPracticeMeaningInfo;
+window.getKnowledgeOverviewRows = getKnowledgeOverviewRows;
 window.markCurrentKnowledge = markCurrentKnowledge;
 window.showKnowledgeOverview = showKnowledgeOverview;
 window.findRareSenseKnowledgeItem = findRareSenseKnowledgeItem;

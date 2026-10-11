@@ -705,13 +705,9 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                         </div>
                         <span class="ref-tile-label">Rare uses</span>
                     </button>` : ''}
-                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Focus meanings" aria-haspopup="dialog">
-                        <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="12" cy="12" r="9"></circle>
-                            <circle cx="12" cy="12" r="5"></circle>
-                            <circle cx="12" cy="12" r="1"></circle>
-                        </svg>
-                        <span class="ref-tile-label">Focus meanings</span>
+                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Mark a meaning" aria-haspopup="dialog">
+                        <span class="ref-tile-fraction" aria-hidden="true">?/${Math.max(2, (card.meanings || []).length || 3)}</span>
+                        <span class="ref-tile-label">Mark a meaning</span>
                     </button>
                     <button type="button" class="ref-tile ref-lookup-btn" aria-label="Look up" title="Look up">
                         <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

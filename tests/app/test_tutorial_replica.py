@@ -152,7 +152,7 @@ assert.deepEqual(front.map(note => note.title), ['The word', 'Vocabulary rank', 
 const back = stepNotes(tutorialSteps()[1]);
 // One note per meaning row (parece has two), then the card's other parts.
 // parece's opening meaning has no usage line or grammar, so no "More about a meaning" note.
-assert.deepEqual(back.map(note => note.title), ['The kind of word', 'The most common meaning', 'The next meaning', 'How common each meaning is', 'A real example', 'The sentence in English', 'Where it comes from', 'Change the meaning', 'Cycle through the examples', 'Rare uses', 'Focus meanings', 'Look up', 'Open a dictionary', 'Grade your answer']);
+assert.deepEqual(back.map(note => note.title), ['The kind of word', 'The most common meaning', 'The next meaning', 'How common each meaning is', 'A real example', 'The sentence in English', 'Where it comes from', 'Change the meaning', 'Cycle through the examples', 'Rare uses', 'Mark a meaning', 'Look up', 'Open a dictionary', 'Grade your answer']);
 // Notes explain; none sets a task that holds Next back.
 for (const step of tutorialSteps()) for (const note of stepNotes(step)) {
   assert.equal(note.practice, undefined);

@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T12:11:40+01:00",
+      "date": "2026-10-11 12:11 BST",
+      "agent": "Claude",
+      "summary": "Mark a meaning: known/total badge, reviewed meanings first and known ones faded; collapsible uses lists; calmer example word",
+      "detail": [
+        "Less common uses: part-of-speech sections start collapsed when there are several; examples open by default when they all fit.",
+        "Expressions page uses the same layout and collapsible sections as Less common uses.",
+        "'Focus meanings' is now 'Mark a meaning', showing known/total meaning rows (? until any are marked) instead of a target icon.",
+        "Cards with meanings brought back: those meanings sit at the top in colour; known meanings fade to the bottom. Amber target styling removed; front shows 'N meanings to review'.",
+        "Example sentence word: no pulse or boxed glow during audio and no tinted box; underline plus a soft permanent glow."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T12:06:17+01:00",
       "date": "2026-10-11 12:06 BST",
       "agent": "Codex",
@@ -367,18 +381,6 @@
         "Verb forms merge from the start again: 4,179 Czech cards (into být, jít…) and 862 Finnish (into olla, saada…). Nouns stay separate until the plural/singular check runs for those languages (roadmap CONVOY).",
         "French has nothing to merge yet: its 200-card deck carries no headwords.",
         "A new app test stops any deploy whose live deck lacks a list built for it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T11:35:14+01:00",
-      "date": "2026-10-10 11:35 BST",
-      "agent": "Codex",
-      "summary": "Activate verified noun merges in Spanish and Portuguese Speech decks",
-      "detail": [
-        "Publish matching v23 metadata for 314 Spanish and 335 Portuguese noun groups, shared by Smart Skip, the level estimator and deck grouping.",
-        "Recover SpanishDict evidence for 773 candidate spellings and Wiktionary entry tags from the saved dump; keep changed, incomplete or ambiguous menus separate.",
-        "Preserve card IDs, saved progress, definitions and examples; verify all 20,000 full and early-loading decisions agree."
       ],
       "commit": "pending"
     }

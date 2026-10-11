@@ -1601,8 +1601,11 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("speechRate: 0.9", state)
         self.assertIn("window.getSpeechRate = getSpeechRate;", speech)
         self.assertIn("window.setSpeechRate = setSpeechRate;", speech)
-        self.assertIn("body.is-spotify-playing .sentence .example-word-highlight", css)
-        self.assertIn("body.is-speaking-active .sentence .example-word-highlight", css)
+        # The example word no longer pulses or boxes itself while audio
+        # plays; it keeps a permanent soft glow instead (2026-10-11).
+        self.assertNotIn("body.is-spotify-playing .sentence .example-word-highlight", css)
+        self.assertNotIn("body.is-speaking-active .sentence .example-word-highlight", css)
+        self.assertIn("text-shadow: 0 0 10px rgba(var(--sense-match-rgb), 0.35);", css)
 
     def test_global_state_binding_and_ui_safety(self) -> None:
         state_js = (APP_ROOT / "js" / "state.js").read_text(encoding="utf-8")
