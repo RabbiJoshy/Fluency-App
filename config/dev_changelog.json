@@ -2,6 +2,121 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T09:59:30+01:00",
+      "date": "2026-10-11 09:59 BST",
+      "agent": "Claude",
+      "summary": "Rare uses sheet redesigned; part-of-speech labels in sentence case; sense note is now Usage notes",
+      "detail": [
+        "Rare uses sheet: centred header 'Rare uses of <word>', no pill, clearer subtitle, POS headings in the sense-row style, centred rows in the card's fonts, no meta labels.",
+        "Part-of-speech labels use sentence case everywhere ('Verb from estar', 'Noun').",
+        "Sense-row information sheet heading renamed from 'About this meaning' to 'Usage notes'."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T09:40:38+01:00",
+      "date": "2026-10-11 09:40 BST",
+      "agent": "Claude",
+      "summary": "Card back: clearer sense rows, distinct POS colours, Focus meanings and practice cards, paired companion segments",
+      "detail": [
+        "Sense row reads 'verb from estar' with POS and lemma at the same size; the lemma chip at the top of the back is removed (reflexive shows as 'from irse').",
+        "Every shipped part of speech has its own colour; Portuguese name/article/abbreviation no longer fall to grey.",
+        "Example source line is upright and muted; the example pips (dot strip) are 20% larger.",
+        "'Review meaning(s)' is now 'Focus meanings' with a target icon.",
+        "Cards with meanings marked for practice show 'Practising N of M meanings' on the front; those rows open and carry a target dot on the back.",
+        "Companion (A/B) cards are joined as one bracketed pair in the deck scrubber."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T23:05:47+01:00",
+      "date": "2026-10-10 23:05 BST",
+      "agent": "Codex",
+      "summary": "SEAM: correct kept-apart titles, hydrated search cues and checked noun merging",
+      "detail": [
+        "Kept-apart forms use their surface title; merged titles and answers follow the existing merge key.",
+        "Search cards judge Examples only from the loaded menu; unloaded search results no longer claim their meanings are absent.",
+        "Restored complete-menu evidence for Spanish and Portuguese noun pairs; row loading retains that evidence. Matching estimator pools and cache-safe supporting URLs updated.",
+        "Existing merging policy and saved learner progress are preserved; staging review only."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T22:57:57+01:00",
+      "date": "2026-10-10 22:57 BST",
+      "agent": "Codex",
+      "summary": "Stalled progress and deck downloads now time out with a way to retry",
+      "detail": [
+        "Progress reads stop after 12 seconds per request; capability checks stop after 5 seconds. Failed reads retain cached progress and queued answers, and offer Retry progress load.",
+        "Deck JSON downloads stop after 20 seconds per request, including a stalled response body. Failed deck loads explain how to retry.",
+        "A partial progress refresh retains its previous sync watermark so retrying can recover the missing rows."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T22:25:52+01:00",
+      "date": "2026-10-10 22:25 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: the tour now performs changing a meaning, cycling examples and opening Rare uses, Review meanings and Look up",
+      "detail": [
+        "Back of card: new steps where the tour taps another meaning (the example changes), cycles through a meaning's examples, opens the Rare uses sheet (and unfolds an example), opens Review meanings (and ticks one), opens the Look up column and arms a site's Visit button.",
+        "The sheets are the live app's own Rare uses and Review meanings markup, drawn over the replica card from the demo word's real rare senses.",
+        "Smart Skip: look-alikes now come before merged word forms and merged singular/plural.",
+        "Portuguese demo word is now devia (dever): should / ought, with two real rare senses."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T23:05:00+01:00",
+      "date": "2026-10-10 23:05 BST",
+      "agent": "Claude",
+      "summary": "Reviewer access for the JOSHUA profile; one profile per username",
+      "detail": [
+        "JOSHUA (profile_028abec8…) can flag cards and open the data and model panel with Cmd/Ctrl+I, but sees no admin settings, changelog modal, provenance pills or scrape inspector. It is allow-listed by profile ID, not display name.",
+        "A username now belongs to one profile, compared case-insensitively. The worker refuses a second profile with the same name or with an unclaimed legacy name (needs migration 0007 and a worker deploy).",
+        "The sign-in match dialog no longer offers 'No, create an account' for a name that already exists."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T22:14:49+01:00",
+      "date": "2026-10-10 22:14 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: finer-grained steps, new demo words, plural merging in Smart Skip, card always fits",
+      "detail": [
+        "Front: rank and frequency are separate steps. Back: the sense row, then each meaning row, the usage bars, the example, its English, its source, then Rare uses, Review meanings and Look up.",
+        "Demo cards are now quiero (querer, three meanings) in Spanish and parece (parecer, two short meanings) in Portuguese, replacing que and provar.",
+        "Smart Skip shows that singular and plural nouns with identical meanings share a card (Spanish and Portuguese).",
+        "The card no longer scrolls inside itself: on narrow phones it is scaled down (not below 70%) so every row is visible, and the page scrolls the rest."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T21:52:18+01:00",
+      "date": "2026-10-10 21:52 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: back of the card builds up too; spotlight ring follows its element",
+      "detail": [
+        "The back of the card starts blank: meanings, rare uses, review meanings, usage bars, example and look-up each appear as they are explained.",
+        "The spotlight ring is re-measured continuously and corrects for page zoom, so it stays around its element after rows open, flips settle or text size changes."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T20:17:03+01:00",
+      "date": "2026-10-10 20:17 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: one banner, a card that builds up, clearer Speech or music, tighter grading note, whole spotlight ring",
+      "detail": [
+        "Banner now reads Section · Title — Text on one line; the section is no longer repeated beside the title.",
+        "The front of the card starts blank and each element fades in as its note is explained.",
+        "Speech or music explains each source from first principles, including the two ways to choose music (pick artists, or build from a Spotify playlist).",
+        "Grade your answer note cut to one short sentence.",
+        "The yellow spotlight is now a ring drawn over the card and clamped inside it, so it is never clipped or pushed off screen (desktop and phone)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T19:13:33+01:00",
       "date": "2026-10-10 19:13 BST",
       "agent": "Codex",
@@ -261,123 +376,6 @@
       "summary": "Fix: Memory tip tile now actually appears (it was reading the wrong language variable)",
       "detail": [
         "The first release looked up the language by a name that does not exist, so no card ever got a tip. It now uses selectedLanguage."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T23:40:00+01:00",
-      "date": "2026-10-09 23:40 BST",
-      "agent": "Claude",
-      "summary": "Memory tip tile on the card back shows how a word's ending maps to English (rápidamente → rapidly)",
-      "detail": [
-        "New Memory tip tile beside Rarer uses; opens a small sheet naming the shift, e.g. -mente becomes -ly, -ción becomes -tion.",
-        "Spanish, Portuguese and French endings; a tip appears only when the card's own English gloss really wears the English ending, so false friends such as actualmente and chica get none.",
-        "Shown on any matching card, not only with Smart Skip off."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T23:20:00+01:00",
-      "date": "2026-10-09 23:20 BST",
-      "agent": "Codex",
-      "summary": "Noun forms merge only when every dictionary sense matches and both words have one noun entry",
-      "detail": [
-        "Keep ser/seres and poder/poderes separate: noun and verb entries remain distinct even when their headword spelling matches.",
-        "Compare complete original SpanishDict and Wiktionary menus before filtering or display inflection; reject missing evidence and number-specific senses.",
-        "Invalidate earlier noun approvals and preserve the same decision in Smart Skip, deck grouping and early-loading indexes. Existing releases need refreshed source metadata to approve noun pairs."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T22:58:00+01:00",
-      "date": "2026-10-09 22:58 BST",
-      "agent": "Antigravity",
-      "summary": "Polish landing layout: prominent titles, level scrubber badge, target example words, card range nomenclature, centered modals",
-      "detail": [
-        "Header titles are enlarged and capitalized (Choose a Level, Choose a Set, Practice Errors).",
-        "Level picker features an illuminated focal badge on the active level, removes redundant header level label, and places speech coverage inline after target-language example words.",
-        "Retired 'Set 1, 2, ...' in favor of card ranges (e.g. 1–25) across selectors, buttons, loading screens, and completion modals.",
-        "Refactored setup tooltip modals to be concise, scannable, and cleanly centered across both mobile and desktop viewports."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T20:32:00+01:00",
-      "date": "2026-10-09 20:32 BST",
-      "agent": "Claude",
-      "summary": "Inflected Portuguese rows drop dictionary notes and inflect every meaning: está 'he/she is', not 'he/she is; forms the progressive aspect'",
-      "detail": [
-        "Notes beside the meanings are left off inflected rows: 'forms the progressive aspect', 'formula used in greetings', 'especially…', 'usually', 'such as…'. vai: 'he/she is doing; formula used in greetings' → 'he/she is doing'.",
-        "Meanings written without 'to' now inflect too: busca 'he/she fetches, pick up' → 'he/she fetches, picks up'; tira 'takes, take out, take away' → 'takes, takes out, takes away'; cola 'sticks or attach' → 'sticks or attaches'.",
-        "Alternatives after 'to be' stay as they are ('he/she is absent, not present'); an object alternate stays ('starts an engine, vehicle').",
-        "Measured on live v23: 232 Portuguese rows changed, no Spanish row changed, none lost its English."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T19:59:45+01:00",
-      "date": "2026-10-09 19:59 BST",
-      "agent": "Codex",
-      "summary": "Early level estimates suggest a particular study set",
-      "detail": [
-        "Suggest a level and set within Levels 1–10, using the same 25-position set boundaries as the study picker; from Level 11 suggest whole levels.",
-        "Keep earlier and later options separate when they land in different sets of the same level, and select the chosen set after its controls finish loading.",
-        "Sample more finely near the start of the frequency range while keeping the adaptive check at up to 30 questions and preserving saved Speech-rank placement."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T19:49:00+01:00",
-      "date": "2026-10-09 19:49 BST",
-      "agent": "Claude",
-      "summary": "INFLECT pass 2: reflexive rows and feminine/plural participles get inflected English; conjugation table finds -se forms",
-      "detail": [
-        "Spanish -se rows inflect: siento (sentirse) 'to feel' → 'I feel'; fue (irse) 'to leave' → 'he/she left'; acuerdo (acordarse) → 'I remember'. 2,000 rows on 1,183 card/verb pairs.",
-        "Feminine and plural participles inflect: pt feita → 'made', querida → 'loved', mortos → 'killed'; es muertos → 'died'. 341 pt rows, 77 es rows. Only when the word is not also an ordinary verb form (pt pega stays 'he/she catches').",
-        "Conjugation table on a -se verb opens on the card's tense and highlights its form: fue with irse selected now opens Pretérito on 'se fue' (was: present tense, nothing highlighted). The pronoun stays in the table: 'me siento'.",
-        "Measured on live v23 decks: no existing row changed and none lost its English; only rows that showed the infinitive gained one.",
-        "Known: 3 pt rows read 'been' (feita under fazer's weather sense) — a sentence-assignment issue upstream, not inflection."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T19:43:12+01:00",
-      "date": "2026-10-09 19:43 BST",
-      "agent": "Codex",
-      "summary": "Choose an earlier or later estimated starting point",
-      "detail": [
-        "Offer a more conservative starting level near 90% recognition and a later level near 80%, showing how familiar the vocabulary is likely to be.",
-        "Use the same cognate decisions as Smart Skip for estimation even when Smart Skip is off; qualifying cognates never appear as questions.",
-        "Show AUTO under levels covered by the saved estimate, without recording estimator answers as learned cards or changing actual study progress."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T16:09:00+01:00",
-      "date": "2026-10-09 16:09 BST",
-      "agent": "Claude",
-      "summary": "INFLECT pass 1: conjugated verb rows read as natural English (era → 'I was', parece → 'he/she seems')",
-      "detail": [
-        "Imperfect and past subjunctive are simple past, never progressive: era 'I/he/she was being' → 'I/he/she was', tenía 'was having' → 'had'.",
-        "A form that is both a statement and a command shows the statement: parece 'seem! / he/she seems' → 'he/she seems'. The command shows only when the example is one ('Let's go!' → let's go!).",
-        "When the example says I or he/she, the row uses that person: era + 'I was a very different person then.' → 'I was'.",
-        "English spelling fixed: meaned → meant, runing → running, planed → planned, lended → lent, hurted → hurt (full irregular table + consonant doubling).",
-        "Wiktionary glosses keep every clause and whole brackets: vi 'I saw (to be able to see' → 'I saw (to be able to see; not to be blind or blinded)'; faço 'I play' → 'I play; pretend to be'.",
-        "Measured on live v23 decks: command clutter 2,264 → 0 (es) and 2,169 → 0 (pt); progressive imperfects 760/705 → 0; misspellings and broken brackets → 0.",
-        "Not yet: -se verbs (siento under sentirse), agreeing participles (feita), clitic forms (dime) still show the infinitive — counted for pass 2."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T15:52:00+01:00",
-      "date": "2026-10-09 15:52 BST",
-      "agent": "Antigravity",
-      "summary": "Song lyrics view: removed synthetic word-by-word line translations in favor of strictly authentic hand-translated lyrics",
-      "detail": [
-        "Removed synthetic dictionary word concatenation from lyric lines: only verified hand-translated English subtitles are rendered underneath.",
-        "When no authentic human translation exists for a line, lyrics render in pure Spanish without artificial glosses.",
-        "Synced audio timestamps render directly alongside the original lyric text; topbar 'EN line' toggle button hides automatically when a song has no hand-translated lines.",
-        "Word, idiom, and entity quick-view modals retain full access to Fluency's hand-curated definitions and WSD sense assignments."
       ],
       "commit": "pending"
     }

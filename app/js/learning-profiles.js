@@ -191,13 +191,11 @@ export async function submitProfileLogin(onSelected) {
             card.append(info, button);
             cardsHost.appendChild(card);
         }
+        // A name belongs to one profile (case-insensitively), so there is no
+        // "create a separate one" path from this dialog; the worker would
+        // refuse it as already taken.
         const separateBtn = document.getElementById('profileMatchCreateBtn');
-        if (separateBtn) {
-            separateBtn.onclick = async () => {
-                modal?.classList.add('hidden');
-                await create();
-            };
-        }
+        if (separateBtn) separateBtn.hidden = true;
         const closeBtn = document.getElementById('closeProfileMatchModal');
         if (closeBtn) {
             closeBtn.onclick = () => {

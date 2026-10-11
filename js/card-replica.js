@@ -44,6 +44,8 @@ export const REPLICA_CARDS = {
         word: 'cielo',
         lemma: 'cielo',
         pos: 'NOUN',
+        lookup: ['spanishDict', 'reverso'],
+        rareUses: [],
         rank: 344,
         vocabSize: 2000,
         corpusCount: 33,
@@ -205,166 +207,98 @@ export const REPLICA_CARDS = {
             },
         ],
     },
-    // Portuguese learner tutorial: three distinct uses of provar and fourteen
-    // curated examples from pt-speech-v23-10000x30-slim, unchanged. The live
-    // release assigns 22 examples to prove, four to taste and two to try on;
-    // shares are relative to those three displayed senses. The general "try
-    // out" sense is omitted because its examples overlap the clothing sense.
-    // IMDb titles are resolved from the shipped source_titles.json mapping.
-    ptProvarSpeech: {
-        "mode": "speech",
-        "word": "provar",
-        "pos": "VERB",
-        "lemma": "provar",
-        "rank": 1165,
-        "vocabSize": 10000,
-        "corpusCount": 74.556751,
-        "defaultMeaningIndex": 0,
-        "meanings": [
-            {
-                "pos": "VERB",
-                "translation": "to prove",
-                "context": "show that something is true",
-                "pct": 78.57142857142857,
-                "metadata": [
-                    {
-                        "short": "tr.",
-                        "full": "transitive: used with an object",
-                        "family": "construction"
-                    }
-                ],
-                "examples": [
-                    {
-                        "target": "Tens de me ajudar a provar que estou inocente.",
-                        "english": "I need you to help me prove that I'm innocent.",
-                        "sourceLabel": "IMDb",
-                        "titleId": "5273862",
-                        "sourceTitle": "Power · S3 E7"
-                    },
-                    {
-                        "target": "Você não precisa provar nada para mim.",
-                        "english": "You don't need to prove anything to me.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Eu posso provar que tenho razão.",
-                        "english": "I can prove that I am right.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Pode provar que estou errado?",
-                        "english": "Can you prove I'm wrong?",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Eu posso provar isso.",
-                        "english": "I can prove it.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Você pode provar isso?",
-                        "english": "Can you prove that?",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Não o vou deixar em paz até o conseguir provar.",
-                        "english": "I'm not letting you alone until I prove it.",
-                        "sourceLabel": "IMDb",
-                        "titleId": "4172404",
-                        "sourceTitle": "The Mentalist · S7 E6"
-                    },
-                    {
-                        "target": "Sempre tive de provar que sou bom.",
-                        "english": "I've always had to prove I'm good enough.",
-                        "sourceLabel": "IMDb",
-                        "titleId": "5521456",
-                        "sourceTitle": "Avengers Assemble · S3 E2"
-                    }
-                ]
-            },
-            {
-                "pos": "VERB",
-                "translation": "to taste; to try",
-                "context": "food",
-                "pct": 14.285714285714285,
-                "metadata": [
-                    {
-                        "short": "tr.",
-                        "full": "transitive: used with an object",
-                        "family": "construction"
-                    }
-                ],
-                "examples": [
-                    {
-                        "target": "Que tal provar um pouco de sushi?",
-                        "english": "How about trying some sushi?",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Parece delicioso. Acho que vou provar algum.",
-                        "english": "Looks delicious. Think I'll try some.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Isso parece delicioso. Gostaria de provar.",
-                        "english": "That looks delicious. I'd like to try it.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Quando você provar, vai achar toda esta comida excelente e muito nutritiva.",
-                        "english": "When you taste it, you will find all this food excellent and very nourishing.",
-                        "sourceLabel": "Tatoeba example"
-                    }
-                ]
-            },
-            {
-                "pos": "VERB",
-                "translation": "to try on",
-                "context": "clothes",
-                "pct": 7.142857142857142,
-                "metadata": [
-                    {
-                        "short": "tr.",
-                        "full": "transitive: used with an object",
-                        "family": "construction"
-                    }
-                ],
-                "examples": [
-                    {
-                        "target": "Eu gostaria de provar este vestido.",
-                        "english": "I'd like to try on this dress.",
-                        "sourceLabel": "Tatoeba example"
-                    },
-                    {
-                        "target": "Gostaria de provar um tamanho menor que este.",
-                        "english": "I'd like to try on one size smaller than this.",
-                        "sourceLabel": "Tatoeba example"
-                    }
-                ]
-            }
-        ]
-    },
-    queSpeech: {
-        mode: 'speech', word: 'que', pos: 'CCONJ', lemma: 'que', rank: 1, vocabSize: 6000, corpusCount: 33170,
+    // Portuguese learner tutorial: `devia` (rank 332), a form of `dever`, with
+    // two short senses. Read out of pt-speech-v24-headway-r2-10000x30-slim:
+    // 28 and 2 assigned examples, plus two rare senses; IMDb titles come from
+    // the shipped source_titles.json mapping.
+    ptDeviaSpeech: {
+        mode: 'speech', word: 'devia', pos: 'VERB', lemma: 'dever', rank: 332, vocabSize: 10000, corpusCount: 412,
+        defaultMeaningIndex: 0,
+        lookup: ['reverso'],
+        rareUses: [
+            { pos: 'VERB', translation: 'owe', context: 'to be in debt', example: null },
+            { pos: 'VERB', translation: 'will likely', context: null,
+              example: { target: 'Deve chover.', english: "(It looks like) it's going to rain." } },
+        ],
         meanings: [
             {
-                pos: 'CCONJ', translation: 'that', context: 'introduces a subordinate clause', pct: 34,
-                metadata: [{ short: 'subordinate clause', full: 'used to introduce a subordinate clause', family: 'functional' }],
-                examples: [{ target: 'Es sólo que no es sutil.', english: "It’s just that it isn’t subtle.", sourceLabel: 'Speech example' }],
+                pos: 'VERB', translation: 'should', context: null, pct: 93,
+                examples: [
+                    { target: 'Isto é um filme que toda a gente devia ver.', english: 'This is a film that everybody should see.', sourceLabel: 'Tatoeba example' },
+                    { target: 'Você devia ter feito isso na semana passada.', english: "You should've done that last week.", sourceLabel: 'Tatoeba example' },
+                    { target: 'Sei que isto parece loucura, mas o que eu devia fazer?', english: "I know this all sounds loco, but what am I supposed to do?", sourceLabel: 'IMDb', titleId: '6385978', sourceTitle: 'Criminal Minds: Beyond Borders · S2 E3' },
+                ],
             },
             {
-                pos: 'CCONJ', translation: 'than; to', context: 'used in comparisons', pct: 33,
-                metadata: [{ short: 'comparison', full: 'used in comparisons', family: 'construction' }],
-                examples: [{ target: 'Prefiero las tiendas pequeñas que los grandes supermercados.', english: 'I prefer small stores to big supermarkets.', sourceLabel: 'SpanishDict example' }],
+                pos: 'VERB', translation: 'ought', context: null, pct: 7,
+                examples: [
+                    { target: 'Desculpa, eu sei que não devia estar aqui.', english: "I'm sorry. I know I'm not supposed to be here.", sourceLabel: 'IMDb', titleId: '4168598', sourceTitle: 'Rectify · S3 E3' },
+                    { target: 'Você ainda não fez tudo o que devia ter feito.', english: "You haven't yet done everything that you were supposed to do.", sourceLabel: 'Tatoeba example' },
+                ],
+            },
+        ],
+    },
+    // Spanish learner tutorial: `quiero` (rank 64), a form of `querer`, three
+    // short senses. Read out of es-speech-v24-headway-r4-10000x30-slim: 27, 2
+    // and 1 assigned examples.
+    quieroSpeech: {
+        mode: 'speech', word: 'quiero', pos: 'VERB', lemma: 'querer', rank: 64, vocabSize: 10000, corpusCount: 1925,
+        defaultMeaningIndex: 0,
+        lookup: ['spanishDict', 'reverso'],
+        // The word's unused menu senses in the live deck: what Rare uses lists.
+        rareUses: [
+            { pos: 'NOUN', translation: 'beloved', context: "object of one's affection",
+              example: { target: 'Llora por el hombre que fue su querer.', english: 'She cries for the man that was her beloved.' } },
+            { pos: 'NOUN', translation: 'love', context: "object of one's affection",
+              example: { target: 'El primer querer siempre es el más fuerte.', english: 'First love is always the deepest.' } },
+            { pos: 'NOUN', translation: 'love affair', context: 'romance',
+              example: { target: 'Cuando salió a relucir su querer, el gobernador renunció.', english: 'When his love affair was exposed, the governor resigned.' } },
+            { pos: 'VERB', translation: 'to like', context: 'to feel affection for',
+              example: { target: 'El perro te quiere mucho.', english: 'The dog likes you a lot.' } },
+            { pos: 'VERB', translation: 'to be fond of', context: 'to feel affection for',
+              example: { target: 'Quiero mucho a mis estudiantes.', english: 'I am very fond of my students.' } },
+            { pos: 'VERB', translation: 'to try', context: 'to have as intention',
+              example: { target: 'Hace años que quiero ir a París, pero es demasiado caro.', english: "I've been trying to go to Paris for years, but it's too expensive." } },
+            { pos: 'VERB', translation: 'to love each other', context: 'to feel affection for',
+              example: { target: 'Dejaron de quererse.', english: 'They no longer love each other.' } },
+            { pos: 'VERB', translation: 'to love oneself', context: 'to appreciate oneself',
+              example: { target: 'Necesitas empezar a quererte más.', english: 'You need to learn to love yourself more.' } },
+        ],
+        meanings: [
+            {
+                pos: 'VERB', translation: 'to want', context: 'to wish', pct: 90,
+                examples: [
+                    { target: 'Eso es lo que quiero.', english: "That's what I want.", sourceLabel: 'Tatoeba example' },
+                    { target: 'Quiero hablar de una cosa con vuestra madre.', english: 'I want to talk about something with your mother.', sourceLabel: 'Tatoeba example' },
+                    { target: 'Y cuando lo haga, quiero estar aquí.', english: 'And when he does, I wanna be here.', sourceLabel: 'IMDb', titleId: '4950318', sourceTitle: 'Daredevil · S2 E10' },
+                ],
             },
             {
-                pos: 'PRON', translation: 'that; which', context: 'defines the object', pct: 33,
-                examples: [{ target: 'Ese es el teléfono que yo quiero.', english: 'That is the phone that I want.', sourceLabel: 'SpanishDict example' }],
+                pos: 'VERB', translation: 'to love', context: 'to feel affection for', pct: 7,
+                examples: [
+                    { target: 'Y... aún te quiero.', english: 'And... I love you still.', sourceLabel: 'IMDb', titleId: '5767452', sourceTitle: 'Scandal · S6 E3' },
+                    { target: '“Os quiero a todos... pero ya es suficiente”.', english: '“I love you all... but enough’s enough.”', sourceLabel: 'IMDb', titleId: '5218470', sourceTitle: 'Fear the Walking Dead · S2 E13' },
+                ],
+            },
+            {
+                pos: 'VERB', translation: 'to mean', context: 'to have as intention', pct: 3,
+                examples: [
+                    { target: 'Bueno, eso no es lo que quiero decir.', english: "Well, that's not what I mean.", sourceLabel: 'IMDb', titleId: '5350058', sourceTitle: 'Jane the Virgin · S2 E11' },
+                ],
             },
         ],
     },
     jeSpeech: {
         mode: 'speech', word: 'je', pos: 'VERB', lemma: 'být', rank: 3, vocabSize: 4000, corpusCount: 12890,
+        lookup: ['reverso'],
+        rareUses: [
+            { pos: 'VERB', translation: 'used to form passive voice forms of verbs with passive participles', context: 'auxiliary',
+              example: { target: 'Jsem překvapen.', english: 'I am surprised.' } },
+            { pos: 'VERB', translation: 'used to form past tense forms of verbs with past participles', context: 'auxiliary',
+              example: { target: 'Jel jsem do Prahy.', english: 'I went to Prague.' } },
+            { pos: 'VERB', translation: 'used to form future tense forms of verbs with infinitives', context: 'auxiliary',
+              example: { target: 'Budu ti pomáhat.', english: 'I will be helping you.' } },
+        ],
         meanings: [
             {
                 pos: 'VERB', translation: 'he/she is (exists)', pct: 40,
@@ -380,6 +314,8 @@ export const REPLICA_CARDS = {
     },
     deSpeech: {
         mode: 'speech', word: 'de', pos: 'PREP', lemma: 'de', rank: 1, vocabSize: 6000, corpusCount: 26810,
+        lookup: ['reverso'],
+        rareUses: [],
         meanings: [
             {
                 pos: 'PREP', translation: 'of', context: 'possession, association or relationship',
@@ -403,7 +339,9 @@ const POS_CLASS = {
     VERB: 'pos-verb', NOUN: 'pos-noun', ADJ: 'pos-adj', ADV: 'pos-adv',
     PREP: 'pos-prep', ADP: 'pos-prep', CONJ: 'pos-conj', CCONJ: 'pos-cconj',
     SCONJ: 'pos-sconj', PRON: 'pos-pron', DET: 'pos-det', INT: 'pos-int',
-    INTJ: 'pos-int', NUM: 'pos-num', MWE: 'pos-mwe',
+    INTJ: 'pos-int', NUM: 'pos-num', MWE: 'pos-mwe', PROPN: 'pos-propn',
+    AUX: 'pos-aux', NAME: 'pos-propn', ARTICLE: 'pos-det', ABBREVIATION: 'pos-abbr',
+    ABBR: 'pos-abbr', CONTRACTION: 'pos-contraction',
 };
 
 // Every colour on the back of a card comes from one custom property. The live
@@ -414,20 +352,27 @@ const POS_CLASS = {
 // resolved to nothing and the card came out grey. These are the live values.
 const POS_ACCENT_RGB = {
     'pos-noun': '74, 158, 255',
-    'pos-propn': '14, 165, 233',
+    'pos-propn': '34, 211, 238',
     'pos-verb': '0, 212, 170',
-    'pos-aux': '45, 212, 191',
+    'pos-aux': '0, 212, 170',
     'pos-adj': '245, 166, 35',
-    'pos-adv': '168, 85, 247',
+    'pos-adv': '192, 90, 245',
     'pos-prep': '236, 72, 153',
-    'pos-conj': '20, 184, 166',
+    'pos-conj': '34, 197, 94',
     'pos-cconj': '34, 197, 94',
-    'pos-sconj': '132, 204, 22',
-    'pos-pron': '99, 102, 241',
-    'pos-det': '244, 63, 94',
-    'pos-int': '234, 179, 8',
-    'pos-num': '6, 182, 212',
-    'pos-mwe': '251, 191, 36',
+    'pos-sconj': '34, 197, 94',
+    'pos-pron': '108, 92, 246',
+    'pos-det': '239, 68, 68',
+    'pos-int': '250, 224, 50',
+    'pos-num': '163, 230, 53',
+    'pos-mwe': '245, 166, 35',
+    'pos-clitic': '205, 130, 60',
+    'pos-part': '217, 70, 239',
+    'pos-prefix': '125, 211, 252',
+    'pos-suffix': '252, 165, 165',
+    'pos-contraction': '251, 120, 50',
+    'pos-abbr': '176, 148, 120',
+    'pos-other': '148, 163, 184',
 };
 
 export const posAccentRgb = pos => POS_ACCENT_RGB[posClass(pos)] || '148, 163, 184';
@@ -437,11 +382,14 @@ const POS_NAME = {
     PREP: 'preposition', ADP: 'preposition', CONJ: 'conjunction',
     CCONJ: 'conjunction', SCONJ: 'conjunction', PRON: 'pronoun',
     DET: 'determiner', INT: 'interjection', INTJ: 'interjection',
-    NUM: 'number', MWE: 'expression',
+    NUM: 'number', MWE: 'expression', PROPN: 'proper noun', AUX: 'auxiliary verb',
+    NAME: 'proper noun', ARTICLE: 'article', ABBREVIATION: 'abbreviation',
+    ABBR: 'abbreviation', CONTRACTION: 'contraction',
 };
 
 const posClass = (pos) => POS_CLASS[String(pos || '').toUpperCase()] || '';
-const posName = (pos) => POS_NAME[String(pos || '').toUpperCase()] || String(pos || '').toLowerCase();
+export const posLabel = (pos) => { const n = posName(pos); return n.charAt(0).toUpperCase() + n.slice(1); };
+export const posName = (pos) => POS_NAME[String(pos || '').toUpperCase()] || String(pos || '').toLowerCase();
 
 export function esc(s) {
     return String(s ?? '')
@@ -624,12 +572,14 @@ function renderMeaningRows(card, selectedIdx) {
     const more = hiddenCount > 0
         ? `<span class="pos-pill-more" aria-label="${hiddenCount} more senses">+${hiddenCount}</span>`
         : '';
+    const replicaLemma = card.lemma && card.lemma.toLowerCase() !== String(card.word || '').toLowerCase()
+        ? `<span class="pos-lemma-from">from</span><span class="pos-pill-lemma">${esc(card.lemma)}</span>` : '';
     return `
         <section class="meaning-pos-section pos-collapsible is-open" data-pos="${esc(card.pos)}"
                  style="--sense-match-rgb: ${posAccentRgb(card.pos)};">
-            <button type="button" class="pos-section-head" aria-expanded="true" aria-label="${esc(`${posName(card.pos)}: ${ordered.map(({ meaning }) => replicaSenseSummary(meaning.translation)).join('; ')}`)}">
-                <span class="pos-section-label">${esc(posName(card.pos))}</span>
-                <span class="pos-pill-lemma">${esc(card.lemma || card.word)}</span>
+            <button type="button" class="pos-section-head" aria-expanded="true" aria-label="${esc(`${posLabel(card.pos)}${replicaLemma ? ' from ' + card.lemma : ''}: ${ordered.map(({ meaning }) => replicaSenseSummary(meaning.translation)).join('; ')}`)}">
+                <span class="pos-section-label">${esc(posLabel(card.pos))}</span>
+                ${replicaLemma}
                 <span class="pos-section-summary">${summaries}${more}</span>
                 <span class="pos-section-chevron">▾</span>
             </button>
@@ -697,6 +647,31 @@ function renderCredit(card, meaning, example, exampleIdx) {
         </div>`;
 }
 
+// A card with no `rareUses` list keeps the tile (the walkthrough's cards
+// predate the list); an explicit empty list means the word has none, and the
+// live card then draws no tile at all.
+function hasRareUses(card) {
+    return !Array.isArray(card.rareUses) || card.rareUses.length > 0;
+}
+
+// The sites the live card's Look up sheet offers, as it builds them
+// (flashcards.js: every reference link but WordReference and conjugation).
+const LOOKUP_SITES = {
+    spanishDict: { label: 'SpanishDict', domain: 'spanishdict.com' },
+    reverso: { label: 'Reverso Context', domain: 'reverso.net' },
+};
+
+function lookupSheetHTML(card) {
+    const sites = (card.lookup || []).map(key => LOOKUP_SITES[key]).filter(Boolean);
+    if (!sites.length) return '';
+    const leaveIcon = '<svg class="outbound-leave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>';
+    return `<div class="lookup-sheet" hidden>${sites.map(site => `
+        <span role="button" tabindex="0" class="lookup-sheet-icon" title="${esc(site.label)}" aria-label="${esc(site.label)}" aria-expanded="false" data-replica-lookup>
+            <img src="https://www.google.com/s2/favicons?domain=${site.domain}&sz=64" width="40" height="40" alt="${esc(site.label)}" style="border-radius:4px">
+            <button type="button" class="outbound-leave-btn outbound-leave-btn--label" hidden aria-label="Visit ${esc(site.label)}"><span class="outbound-visit-label">Visit ${esc(site.label)}</span>${leaveIcon}</button>
+        </span>`).join('')}</div>`;
+}
+
 export function renderBack(card, selectedIdx, exampleIdx) {
     const meaning = card.meanings[selectedIdx];
     const example = meaning.examples[exampleIdx % meaning.examples.length];
@@ -719,23 +694,24 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                     ${renderCredit(card, meaning, example, exampleIdx % meaning.examples.length)}
                 </div>
                 <div class="links-section" id="replicaLinksSection">
-                    <button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses" title="Rare uses">
+                    ${hasRareUses(card) ? `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses" title="Rare uses">
                         <div class="ref-tile-icon-wrap">
                             <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <rect x="3.5" y="14" width="4" height="6" rx="1.5"></rect>
                                 <rect x="10" y="9" width="4" height="11" rx="1.5"></rect>
                                 <rect x="16.5" y="4" width="4" height="16" rx="1.5"></rect>
                             </svg>
-                            <span class="ref-tile-count-badge">2</span>
+                            <span class="ref-tile-count-badge">${Array.isArray(card.rareUses) ? card.rareUses.length : 2}</span>
                         </div>
                         <span class="ref-tile-label">Rare uses</span>
-                    </button>
-                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Review meaning(s)" aria-haspopup="dialog">
+                    </button>` : ''}
+                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Focus meanings" aria-haspopup="dialog">
                         <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
-                            <path d="M21 3v5h-5"></path>
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <circle cx="12" cy="12" r="1"></circle>
                         </svg>
-                        <span class="ref-tile-label">Review meaning(s)</span>
+                        <span class="ref-tile-label">Focus meanings</span>
                     </button>
                     <button type="button" class="ref-tile ref-lookup-btn" aria-label="Look up" title="Look up">
                         <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -744,6 +720,7 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                         </svg>
                         <span class="ref-tile-label">Look up</span>
                     </button>
+                    ${lookupSheetHTML(card)}
                 </div>
             </div>
             <div class="card-tint" aria-hidden="true"></div>

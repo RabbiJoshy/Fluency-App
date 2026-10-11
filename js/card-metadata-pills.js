@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=2d348f0a';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=4ffd0219';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -1840,7 +1840,7 @@ export function openSenseNote(event, control) {
     const title = source.dataset.senseNoteTitle || 'This meaning';
     const overlay = document.createElement('div');
     overlay.className = 'sense-note-overlay';
-    overlay.innerHTML = `<div class="sense-note-dialog" role="dialog" aria-modal="true" aria-labelledby="senseNoteTitle" tabindex="-1"><button type="button" class="sense-note-close" aria-label="Close sense note">×</button><div class="sense-note-eyebrow">About this meaning</div><h2 id="senseNoteTitle">${escapeCardText(title)}</h2><div class="sense-note-body"></div></div>`;
+    overlay.innerHTML = `<div class="sense-note-dialog" role="dialog" aria-modal="true" aria-labelledby="senseNoteTitle" tabindex="-1"><button type="button" class="sense-note-close" aria-label="Close usage notes">×</button><div class="sense-note-eyebrow">Usage notes</div><h2 id="senseNoteTitle">${escapeCardText(title)}</h2><div class="sense-note-body"></div></div>`;
     overlay.querySelector('.sense-note-body').append(...source.cloneNode(true).children);
     document.body.appendChild(overlay);
 

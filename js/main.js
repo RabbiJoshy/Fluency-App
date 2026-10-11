@@ -1,36 +1,36 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=2d348f0a';
-import { releaseUrl } from './release-host.js?v=2d348f0a';
-import './theme.js?v=2d348f0a';
-import { installFlagRendering } from './flags.js?v=2d348f0a';
-import { IS_STAGING } from './env.js?v=2d348f0a';
-import './state.js?v=2d348f0a';
-import './offline-db.js?v=2d348f0a';
-import './sync-queue.js?v=2d348f0a';
-import { initOfflineContent } from './offline-content.js?v=2d348f0a';
-import './speech.js?v=2d348f0a';
-import './artist-ui.js?v=2d348f0a';
-import './auth.js?v=2d348f0a';
-import './tutorial.js?v=2d348f0a';
-import './walkthrough.js?v=2d348f0a';
-import './estimation.js?v=2d348f0a';
-import './config.js?v=2d348f0a';
-import './progress.js?v=2d348f0a';
-import './knowledge.js?v=2d348f0a';
-import './ui.js?v=2d348f0a';
-import './vocab.js?v=2d348f0a';
-import './cognates.js?v=2d348f0a';
-import './coverage.js?v=2d348f0a';
-import './fast-mode.js?v=2d348f0a';
-import './extras.js?v=2d348f0a';
-import './review-home.js?v=2d348f0a';
-import './song-sets.js?v=2d348f0a';
-import './playlist-live.js?v=2d348f0a';
-import './spotify-playlist-import.js?v=2d348f0a';
-import './vocabulary-import.js?v=2d348f0a';
-import './flashcards.js?v=2d348f0a';
-import { validateArtistCatalog } from './data-contracts.js?v=2d348f0a';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=4ffd0219';
+import { releaseUrl } from './release-host.js?v=4ffd0219';
+import './theme.js?v=4ffd0219';
+import { installFlagRendering } from './flags.js?v=4ffd0219';
+import { IS_STAGING } from './env.js?v=4ffd0219';
+import './state.js?v=4ffd0219';
+import './offline-db.js?v=4ffd0219';
+import './sync-queue.js?v=4ffd0219';
+import { initOfflineContent } from './offline-content.js?v=4ffd0219';
+import './speech.js?v=4ffd0219';
+import './artist-ui.js?v=4ffd0219';
+import './auth.js?v=4ffd0219';
+import './tutorial.js?v=4ffd0219';
+import './walkthrough.js?v=4ffd0219';
+import './estimation.js?v=4ffd0219';
+import './config.js?v=4ffd0219';
+import './progress.js?v=4ffd0219';
+import './knowledge.js?v=4ffd0219';
+import './ui.js?v=4ffd0219';
+import './vocab.js?v=4ffd0219';
+import './cognates.js?v=4ffd0219';
+import './coverage.js?v=4ffd0219';
+import './fast-mode.js?v=4ffd0219';
+import './extras.js?v=4ffd0219';
+import './review-home.js?v=4ffd0219';
+import './song-sets.js?v=4ffd0219';
+import './playlist-live.js?v=4ffd0219';
+import './spotify-playlist-import.js?v=4ffd0219';
+import './vocabulary-import.js?v=4ffd0219';
+import './flashcards.js?v=4ffd0219';
+import { validateArtistCatalog } from './data-contracts.js?v=4ffd0219';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -84,7 +84,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=2d348f0a').catch(error => {
+    ? import('./spotify.js?v=4ffd0219').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1738,7 +1738,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=2d348f0a')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=4ffd0219')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
@@ -2010,7 +2010,7 @@ async function buildFindWordIndex() {
             firstMeaning: firstMeaning ? firstMeaning.translation : '',
             firstMeaningObj: firstMeaning || null,
             exclusionReason: window.getVocabularyExclusionReason?.(item) || null,
-            examplesOnly: matchedMeanings.length === 0,
+            examplesOnly: !item._indexRowsPending && matchedMeanings.length === 0,
             sourceEntry: item
         };
     });

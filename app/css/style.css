@@ -2295,12 +2295,6 @@
             background: rgba(255, 255, 255, 0.04);
             border-radius: 0 8px 8px 0;
         }
-        .rarer-uses-cluster-meta {
-            font: 650 11px/1.2 var(--font-data);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.48);
-        }
         .rarer-uses-pager {
             display: inline-flex;
             align-items: center;
@@ -2650,9 +2644,26 @@
             flex-shrink: 0;
             color: rgb(var(--sense-match-rgb));
             font-family: var(--font-emphasis);
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0.04em;
+            font-size: 17px;
+            font-weight: 750;
+            letter-spacing: 0;
+        }
+        .pos-collapsible .pos-lemma-from {
+            flex-shrink: 0;
+            margin-left: -2px;
+            color: var(--text-muted);
+            font-family: var(--font-reading);
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .pos-collapsible .pos-lemma-se {
+            flex-shrink: 0;
+            margin-left: -2px;
+            padding-left: 6px;
+            border-left: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+            color: color-mix(in srgb, rgb(var(--sense-match-rgb)) 58%, var(--text-primary));
+            font-size: 13px;
+            font-weight: 700;
         }
         /* The group summary is the primary scan layer. It contains as many
            complete sense glosses as actually fit; JS measures the row and
@@ -2694,7 +2705,7 @@
             flex-shrink: 0;
             color: color-mix(in srgb, rgb(var(--sense-match-rgb)) 58%, var(--text-primary));
             font-family: var(--font-emphasis);
-            font-size: 15px;
+            font-size: 17px;
             font-weight: 700;
         }
         /* How many further meanings sit behind this pill. Makes the expand
@@ -2907,7 +2918,8 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            font-style: italic;
+            font-style: normal;
+            color: var(--text-muted);
         }
         body.is-spotify-playing .sentence .example-word-highlight,
         body.is-speaking-active .sentence .example-word-highlight {
@@ -4022,7 +4034,7 @@
         .front-meaning-pos {
             font-family: var(--font-data);
             font-size: 11px;
-            text-transform: uppercase;
+            text-transform: none;
             padding: 3px 8px;
             border-radius: 4px;
             border: 1px solid var(--border-color);
@@ -4376,7 +4388,7 @@
             color: white;
             text-align: center;
             margin-bottom: 12px;
-            text-transform: uppercase;
+            text-transform: none;
             padding: 6px 14px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
@@ -4384,29 +4396,34 @@
             display: inline-block;
         }
 
-        /* Part of speech colours. Data aliases (for example ADJ/ADJECTIVE)
-           intentionally share a semantic theme; genuinely different POS and
-           special row types each receive their own accent. */
+        /* Part of speech colours. Each shipped POS has its own distinct hue:
+           noun blue, propn cyan, verb teal (aux shares it), adj amber,
+           adv violet, pron indigo, prep magenta, intj yellow, det red,
+           contraction orange, num lime, conj/cconj/sconj green, abbr tan.
+           Data aliases (ADJ/ADJECTIVE, conj/cconj/sconj) share a theme;
+           mwe/phrase borrows adj amber. Keep style.css, light-theme.css,
+           getPosAccentRgb and card-replica.js POS_ACCENT_RGB in step. */
         .pos-noun { background: rgba(74, 158, 255, 0.45); border-color: rgba(74, 158, 255, 0.6); color: #8fc2ff; }
-        .pos-propn { background: rgba(14, 165, 233, 0.45); border-color: rgba(14, 165, 233, 0.6); color: #7dd3fc; }
+        .pos-propn { background: rgba(34, 211, 238, 0.45); border-color: rgba(34, 211, 238, 0.6); color: #67e8f9; }
         .pos-verb { background: rgba(0, 212, 170, 0.45); border-color: rgba(0, 212, 170, 0.6); color: #66e4cc; }
-        .pos-aux { background: rgba(45, 212, 191, 0.45); border-color: rgba(45, 212, 191, 0.6); color: #87eee0; }
+        .pos-aux { background: rgba(0, 212, 170, 0.45); border-color: rgba(0, 212, 170, 0.6); color: #66e4cc; }
         .pos-adj { background: rgba(245, 166, 35, 0.45); border-color: rgba(245, 166, 35, 0.6); color: #f9c96e; }
-        .pos-adv { background: rgba(168, 85, 247, 0.45); border-color: rgba(168, 85, 247, 0.6); color: #c9a0f9; }
+        .pos-adv { background: rgba(192, 90, 245, 0.45); border-color: rgba(192, 90, 245, 0.6); color: #dba6fa; }
         .pos-prep { background: rgba(236, 72, 153, 0.45); border-color: rgba(236, 72, 153, 0.6); color: #f291be; }
-        .pos-conj { background: rgba(20, 184, 166, 0.45); border-color: rgba(20, 184, 166, 0.6); color: #6dd4c8; }
+        .pos-conj { background: rgba(34, 197, 94, 0.45); border-color: rgba(34, 197, 94, 0.6); color: #86efac; }
         .pos-cconj { background: rgba(34, 197, 94, 0.45); border-color: rgba(34, 197, 94, 0.6); color: #86efac; }
-        .pos-sconj { background: rgba(132, 204, 22, 0.45); border-color: rgba(132, 204, 22, 0.6); color: #bef264; }
-        .pos-pron { background: rgba(99, 102, 241, 0.45); border-color: rgba(99, 102, 241, 0.6); color: #9b9df6; }
-        .pos-det { background: rgba(244, 63, 94, 0.45); border-color: rgba(244, 63, 94, 0.6); color: #f88da5; }
-        .pos-int { background: rgba(234, 179, 8, 0.45); border-color: rgba(234, 179, 8, 0.6); color: #f2d166; }
-        .pos-num { background: rgba(6, 182, 212, 0.45); border-color: rgba(6, 182, 212, 0.6); color: #66d4e6; }
-        .pos-mwe { background: rgba(251, 191, 36, 0.45); border-color: rgba(251, 191, 36, 0.6); color: #fcd57a; }
-        .pos-clitic { background: rgba(249, 115, 22, 0.45); border-color: rgba(249, 115, 22, 0.6); color: #fdba74; }
-        .pos-part { background: rgba(192, 132, 252, 0.45); border-color: rgba(192, 132, 252, 0.6); color: #d8b4fe; }
-        .pos-prefix { background: rgba(163, 230, 53, 0.45); border-color: rgba(163, 230, 53, 0.6); color: #d9f99d; }
-        .pos-suffix { background: rgba(74, 222, 128, 0.45); border-color: rgba(74, 222, 128, 0.6); color: #a7f3d0; }
-        .pos-contraction { background: rgba(248, 113, 113, 0.45); border-color: rgba(248, 113, 113, 0.6); color: #fecaca; }
+        .pos-sconj { background: rgba(34, 197, 94, 0.45); border-color: rgba(34, 197, 94, 0.6); color: #86efac; }
+        .pos-pron { background: rgba(108, 92, 246, 0.45); border-color: rgba(108, 92, 246, 0.6); color: #aaa0fb; }
+        .pos-det { background: rgba(239, 68, 68, 0.45); border-color: rgba(239, 68, 68, 0.6); color: #fca5a5; }
+        .pos-int { background: rgba(250, 224, 50, 0.45); border-color: rgba(250, 224, 50, 0.6); color: #fde96b; }
+        .pos-num { background: rgba(163, 230, 53, 0.45); border-color: rgba(163, 230, 53, 0.6); color: #bef264; }
+        .pos-mwe { background: rgba(245, 166, 35, 0.45); border-color: rgba(245, 166, 35, 0.6); color: #f9c96e; }
+        .pos-clitic { background: rgba(205, 130, 60, 0.45); border-color: rgba(205, 130, 60, 0.6); color: #e5b98a; }
+        .pos-part { background: rgba(217, 70, 239, 0.45); border-color: rgba(217, 70, 239, 0.6); color: #f0abfc; }
+        .pos-prefix { background: rgba(125, 211, 252, 0.45); border-color: rgba(125, 211, 252, 0.6); color: #bae6fd; }
+        .pos-suffix { background: rgba(252, 165, 165, 0.45); border-color: rgba(252, 165, 165, 0.6); color: #fecaca; }
+        .pos-contraction { background: rgba(251, 120, 50, 0.45); border-color: rgba(251, 120, 50, 0.6); color: #fdba8c; }
+        .pos-abbr { background: rgba(176, 148, 120, 0.45); border-color: rgba(176, 148, 120, 0.6); color: #d6c3ad; }
         .pos-other { background: rgba(148, 163, 184, 0.45); border-color: rgba(148, 163, 184, 0.6); color: #cbd5e1; }
 
 
@@ -4486,25 +4503,26 @@
            border picks up the colour; background/text stay dark so
            the reading is comfortable. */
         .pos-info-popover.pos-noun { border-color: rgba(74, 158, 255, 0.7); }
-        .pos-info-popover.pos-propn { border-color: rgba(14, 165, 233, 0.7); }
+        .pos-info-popover.pos-propn { border-color: rgba(34, 211, 238, 0.7); }
         .pos-info-popover.pos-verb { border-color: rgba(0, 212, 170, 0.7); }
-        .pos-info-popover.pos-aux { border-color: rgba(45, 212, 191, 0.7); }
-        .pos-info-popover.pos-adj  { border-color: rgba(245, 166, 35, 0.7); }
-        .pos-info-popover.pos-adv  { border-color: rgba(168, 85, 247, 0.7); }
+        .pos-info-popover.pos-aux { border-color: rgba(0, 212, 170, 0.7); }
+        .pos-info-popover.pos-adj { border-color: rgba(245, 166, 35, 0.7); }
+        .pos-info-popover.pos-adv { border-color: rgba(192, 90, 245, 0.7); }
         .pos-info-popover.pos-prep { border-color: rgba(236, 72, 153, 0.7); }
-        .pos-info-popover.pos-conj { border-color: rgba(20, 184, 166, 0.7); }
+        .pos-info-popover.pos-conj { border-color: rgba(34, 197, 94, 0.7); }
         .pos-info-popover.pos-cconj { border-color: rgba(34, 197, 94, 0.7); }
-        .pos-info-popover.pos-sconj { border-color: rgba(132, 204, 22, 0.7); }
-        .pos-info-popover.pos-pron { border-color: rgba(99, 102, 241, 0.7); }
-        .pos-info-popover.pos-det  { border-color: rgba(244, 63, 94, 0.7); }
-        .pos-info-popover.pos-int  { border-color: rgba(234, 179, 8, 0.7); }
-        .pos-info-popover.pos-num  { border-color: rgba(6, 182, 212, 0.7); }
-        .pos-info-popover.pos-mwe  { border-color: rgba(251, 191, 36, 0.7); }
-        .pos-info-popover.pos-clitic { border-color: rgba(249, 115, 22, 0.7); }
-        .pos-info-popover.pos-part { border-color: rgba(192, 132, 252, 0.7); }
-        .pos-info-popover.pos-prefix { border-color: rgba(163, 230, 53, 0.7); }
-        .pos-info-popover.pos-suffix { border-color: rgba(74, 222, 128, 0.7); }
-        .pos-info-popover.pos-contraction { border-color: rgba(248, 113, 113, 0.7); }
+        .pos-info-popover.pos-sconj { border-color: rgba(34, 197, 94, 0.7); }
+        .pos-info-popover.pos-pron { border-color: rgba(108, 92, 246, 0.7); }
+        .pos-info-popover.pos-det { border-color: rgba(239, 68, 68, 0.7); }
+        .pos-info-popover.pos-int { border-color: rgba(250, 224, 50, 0.7); }
+        .pos-info-popover.pos-num { border-color: rgba(163, 230, 53, 0.7); }
+        .pos-info-popover.pos-mwe { border-color: rgba(245, 166, 35, 0.7); }
+        .pos-info-popover.pos-clitic { border-color: rgba(205, 130, 60, 0.7); }
+        .pos-info-popover.pos-part { border-color: rgba(217, 70, 239, 0.7); }
+        .pos-info-popover.pos-prefix { border-color: rgba(125, 211, 252, 0.7); }
+        .pos-info-popover.pos-suffix { border-color: rgba(252, 165, 165, 0.7); }
+        .pos-info-popover.pos-contraction { border-color: rgba(251, 120, 50, 0.7); }
+        .pos-info-popover.pos-abbr { border-color: rgba(176, 148, 120, 0.7); }
         .pos-info-popover.pos-other { border-color: rgba(148, 163, 184, 0.7); }
 
         .pos-info-name {
@@ -4790,6 +4808,54 @@
             text-shadow: 0 0 12px rgba(var(--accent-primary-rgb), 0.5);
             animation: deck-scrubber-lens 300ms cubic-bezier(0.2, 0.85, 0.25, 1.25);
             margin-inline: 8px;
+        }
+        /* Companion cards of a split word (7A, 7B) sit as one joined pair:
+           touching halves, a thin divider, a bracket round the unit. The
+           active pair's bracket takes the accent; the current half is already
+           the stronger one (.is-current), so the sibling reads as the other
+           half of an A|B toggle. */
+        .deck-progress-segment[data-pair-pos][data-distance] { z-index: 1; }
+        .deck-progress-segment.is-current[data-pair-pos] { z-index: 2; }
+        .deck-progress-segment[data-pair-pos="start"][data-distance] {
+            margin-inline-end: -1px;
+            border-start-end-radius: 3px;
+            border-end-end-radius: 3px;
+        }
+        .deck-progress-segment[data-pair-pos="end"][data-distance] {
+            margin-inline-start: -1px;
+            border-start-start-radius: 3px;
+            border-end-start-radius: 3px;
+        }
+        .deck-progress-segment[data-pair-pos="middle"][data-distance] {
+            margin-inline: -1px;
+            border-radius: 3px;
+        }
+        .deck-progress-segment[data-pair-pos]::after {
+            content: '';
+            position: absolute;
+            inset: -4px 0;
+            border: 1px solid rgba(170, 174, 184, 0.34);
+            border-inline-width: 0;
+            pointer-events: none;
+            transition: border-color 260ms ease;
+        }
+        .deck-progress-segment[data-pair-pos="start"]::after {
+            inset-inline-start: -4px;
+            border-inline-start-width: 1px;
+            border-start-start-radius: 14px;
+            border-end-start-radius: 14px;
+        }
+        .deck-progress-segment[data-pair-pos="end"]::after {
+            inset-inline-end: -4px;
+            border-inline-end-width: 1px;
+            border-start-end-radius: 14px;
+            border-end-end-radius: 14px;
+        }
+        .deck-progress-segment.is-pair-active[data-pair-pos]::after {
+            border-color: color-mix(in srgb, var(--accent-primary) 70%, transparent);
+        }
+        .deck-progress-segment.is-pair-active:not(.is-current) {
+            --scrubber-marker-text: rgba(255, 255, 255, 0.78);
         }
         @keyframes deck-scrubber-lens {
             0% { transform: scale(0.82); }
@@ -5319,8 +5385,8 @@
             gap: 2px;
         }
         .example-ticks.is-tight .example-tick {
-            width: 4px;
-            height: 4px;
+            width: 5px;
+            height: 5px;
         }
         .example-tick {
             /* No shrinking. Without this the strip silently compresses every
@@ -5328,14 +5394,14 @@
                the current one indistinguishable — the density tiers below are
                what should give way, in visible steps. */
             flex: 0 0 auto;
-            width: 7px;
-            height: 7px;
+            width: 8.5px;
+            height: 8.5px;
             border-radius: 999px;
             background: color-mix(in srgb, var(--text-secondary) 38%, transparent);
         }
         .example-ticks.is-dense .example-tick {
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
         }
         .example-tick.is-current {
             background: var(--text-primary);
@@ -15985,12 +16051,65 @@
 
 /* -------- Numbered badges and the elements they point at ----------------- */
 
-/* Ring the annotated element itself. outline (not border) so no card element
-   changes size when it lights up. */
+/* The spotlight is .card-tutorial-ring, drawn over the card by tutorial.js
+   from the element's measured box and clamped inside the card. An outline on
+   the element itself was clipped by the card faces' overflow and the card
+   edge, so it vanished on one side or ran off screen. */
 .card-tutorial-anchored.is-annotation-active {
-    outline: 2px solid var(--accent-amber);
-    outline-offset: 3px;
-    border-radius: 6px;
+    outline: none;
+}
+
+.card-tutorial-ring {
+    position: absolute;
+    z-index: 6;
+    box-sizing: border-box;
+    border: 2.5px solid var(--accent-amber);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-amber) 18%, transparent);
+    pointer-events: none;
+}
+
+.card-tutorial-ring[hidden] { display: none; }
+
+/* The Rare uses and Review meanings sheets the tour opens. They are the live
+   app's own sheets (same classes, same look), confined to the replica card
+   instead of covering the viewport. */
+.card-replica > .knowledge-overview-modal.tutorial-demo-sheet {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    display: grid;
+    place-items: start center;
+    padding: 6px;
+    border-radius: inherit;
+    overflow: hidden;
+}
+
+.card-replica > .knowledge-overview-modal.tutorial-demo-sheet .knowledge-overview-sheet {
+    width: 100%;
+    max-height: 100%;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.card-replica > .knowledge-overview-modal.tutorial-demo-sheet .knowledge-overview-header {
+    padding-top: 12px;
+}
+
+/* The front builds up: each element fades in as its note comes up. */
+.card-face .card-tutorial-anchored,
+.card-front .front-lemma-pair,
+.card-back .meanings-scroll {
+    transition: opacity 0.45s ease;
+}
+
+.card-tutorial-anchored.card-tutorial-unrevealed,
+.front-lemma-pair.card-tutorial-unrevealed,
+.meanings-scroll.card-tutorial-unrevealed {
+    opacity: 0;
+}
+
+.card-front .card-tutorial-unrevealed {
+    transform: translateY(8px);
 }
 
 /* -------- Notes column ---------------------------------------------------- */
@@ -16210,10 +16329,9 @@
         display: none;
     }
 
-    .card-tutorial-anchored.is-annotation-active {
-        outline-width: 3px;
-        box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent-amber) 18%, transparent);
-        animation: card-tutorial-mobile-spotlight 280ms ease-out;
+    .card-tutorial-ring {
+        border-width: 3px;
+        box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-amber) 18%, transparent);
     }
 
     .card-tutorial-mobile-coach:not([hidden]) {
@@ -16287,18 +16405,20 @@
     }
 }
 
-@keyframes card-tutorial-mobile-spotlight {
-    from { box-shadow: 0 0 0 18px transparent; }
-}
-
 @keyframes card-tutorial-mobile-coach-in {
     from { opacity: 0; transform: translateY(18px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .card-tutorial-anchored.is-annotation-active,
     .card-tutorial-mobile-coach:not([hidden]) {
         animation: none;
+    }
+
+    .card-tutorial-ring,
+    .card-face .card-tutorial-anchored,
+    .card-front .front-lemma-pair,
+    .card-back .meanings-scroll {
+        transition: none;
     }
 }
 
@@ -20095,28 +20215,31 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
 /* Rare uses sheet: the rare-senses list scrolling inside the sheet instead
    of the card face. */
 body.rare-uses-open { overflow: hidden; }
-.rare-uses-title-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+/* Sheet header: centred, title + muted one-line subtitle, close top-right. */
+.rare-uses-sheet .knowledge-overview-header {
+  position: relative;
+  display: block;
+  padding: 18px 52px 8px;
+  text-align: center;
 }
-.rare-uses-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 7px;
-  border-radius: 6px;
-  font: 600 11px/1.4 var(--font-emphasis, inherit);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  background: color-mix(in srgb, var(--text-primary) 8%, transparent);
-  color: var(--text-muted);
-  border: 1px solid color-mix(in srgb, var(--text-primary) 14%, transparent);
+.rare-uses-sheet .knowledge-overview-header h2 {
+  font: 600 18px/1.2 var(--font-emphasis);
+  letter-spacing: 0;
+}
+.rare-uses-sheet .rare-uses-word {
+  font-family: var(--font-reading);
+  font-weight: 750;
+}
+.rare-uses-sheet .knowledge-overview-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 .rare-uses-subtitle {
   margin: 4px 0 0;
   color: var(--text-muted);
   font: 500 13px/1.35 var(--font-reading);
+  text-align: center;
 }
 .rare-uses-modal .rare-uses-body {
   flex: 1 1 auto;
@@ -20125,6 +20248,74 @@ body.rare-uses-open { overflow: hidden; }
   padding: 0 20px 20px;
 }
 #rareUsesModal[data-dock] .rare-uses-body { padding: 0 16px 16px; }
+.rare-uses-sheet .rare-uses-body { gap: 14px; text-align: center; }
+.rare-uses-sheet .other-uses-pos { align-items: stretch; gap: 8px; text-align: center; }
+.rare-uses-sheet .other-uses-pos-heading {
+  margin: 6px 0 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(var(--sense-match-rgb), 0.35);
+  color: rgb(var(--sense-match-rgb));
+  font: 750 17px/1.2 var(--font-emphasis);
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: center;
+}
+.rare-uses-sheet .other-uses-gloss-group { padding-bottom: 0; }
+.rare-uses-sheet .other-uses-leaf,
+.rare-uses-sheet .rarer-uses-cluster,
+.rare-uses-sheet .phrase-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--text-primary) 5%, transparent);
+  text-align: center;
+}
+/* Inside a cluster the container is the card; its rows are plain. */
+.rare-uses-sheet .rarer-uses-cluster { gap: 6px; }
+.rare-uses-sheet .rarer-uses-cluster .other-uses-leaf {
+  padding: 6px 0;
+  background: none;
+  border-radius: 0;
+}
+.rare-uses-sheet .rarer-uses-cluster .other-uses-leaf + .other-uses-leaf {
+  border-top: 1px solid color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+.rare-uses-sheet .phrase-summary-item { gap: 4px; }
+.rare-uses-sheet .other-uses-gloss,
+.rare-uses-sheet .phrase-expression {
+  font: 650 18px/1.25 var(--font-reading);
+  color: var(--text-primary);
+}
+.rare-uses-sheet .phrase-translation {
+  font: 500 15px/1.3 var(--font-reading);
+  color: var(--text-secondary);
+}
+.rare-uses-sheet .phrase-context {
+  font: 500 14px/1.3 var(--font-reading);
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: center;
+}
+.rare-uses-sheet .rare-use-examples { margin-top: 2px; width: 100%; }
+.rare-uses-sheet .rare-use-examples > summary {
+  justify-content: center;
+  font: 600 13px/1.3 var(--font-reading);
+}
+.rare-uses-sheet .phrase-example { text-align: center; }
+.rare-uses-sheet .phrase-example.phrase-example--compact {
+  border-left-width: 1px;
+  border-left-color: rgba(var(--sense-match-rgb), 0.45);
+  border-color: rgba(var(--sense-match-rgb), 0.3);
+}
+.rare-uses-sheet .rarer-uses-pager,
+.rare-uses-sheet .rarer-uses-pager button { font-family: var(--font-reading); }
+.rare-uses-sheet .rarer-uses-pager { justify-content: center; }
 
 
 /* Setup header: flag and language name sit side by side on one line — the
@@ -22290,12 +22481,12 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
    and the coach sheet; the box it leaves behind shrinks with it. The face
    title ("The back of the card —") is dropped, since the coach already says
    which side is showing, and the summary sits closer to the top bar. */
+#cardTutorialStage .card-replica {
+    transform: scale(var(--replica-card-scale, 1));
+    transform-origin: top center;
+    margin-bottom: calc(var(--replica-card-h, 480px) * (var(--replica-card-scale, 1) - 1));
+}
 @media (max-width: 700px) {
-    #cardTutorialStage .card-replica {
-        transform: scale(var(--replica-card-scale, 1));
-        transform-origin: top center;
-        margin-bottom: calc(var(--replica-card-h, 480px) * (var(--replica-card-scale, 1) - 1));
-    }
     .card-tutorial-blurb .card-tutorial-lede { display: none; }
     .card-tutorial-topbar { row-gap: 6px; }
 }
@@ -23348,10 +23539,10 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 #cardTutorialContinue:disabled, #cardTutorialMobileNext:disabled { opacity: .45; cursor: default; }
 .card-tutorial-scroll-hint { display: none; }
-#cardTutorialStage .meanings-scroll { flex: 0 1 auto; min-height: 72px; overflow-y: auto !important; overflow-x: hidden; max-height: none !important; }
+/* Never scroll inside the meanings: the card grows (or is scaled down) to hold every row. */
+#cardTutorialStage .meanings-scroll { flex: 0 0 auto; min-height: 0; overflow: visible !important; max-height: none !important; }
 #cardTutorialStage .card-details { height: 100%; overflow-y: auto; overflow-x: hidden; }
 #cardTutorialStage .sentence { flex: 0 0 auto; max-height: none; overflow: visible; box-sizing: border-box; }
-#cardTutorialStage .sentence.is-annotation-active { outline: 2px solid var(--accent-amber); outline-offset: -1px; border-radius: 10px; }
 #cardTutorialStage .meaning-row { padding-left: 44px !important; }
 #cardTutorialStage .sense-note-trigger { left: 2px; width: 44px; height: 44px; min-width: 44px; border: 0; background: transparent; }
 #cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 1px solid var(--border-light); border-radius: 50%; background: var(--bg-card); }
@@ -23375,7 +23566,7 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
     #cardTutorialBody .card-tutorial-stage-col { display: block; width: 100%; max-width: 440px; margin: 0 auto; }
     #cardTutorialBody .card-tutorial-notes-left, #cardTutorialBody .card-tutorial-notes-right { display: none; }
     #cardTutorialBody .card-tutorial-stage-wrap { width: 100%; }
-    #cardTutorialStage .card-replica { width: 100%; transform: none; margin-bottom: 0; }
+    #cardTutorialStage .card-replica { width: 100%; }
     #cardTutorialBody .card-tutorial-stage-col > .card-tutorial-lesson-tools { display: none; }
     #cardTutorialStage .card-back { padding: 14px 10px; }
     #cardTutorialStage .card-details { gap: 10px; }
@@ -23393,7 +23584,6 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
     #cardTutorialMobileCoach .card-tutorial-lesson-tools { grid-column: 1; gap: 4px; justify-content: flex-start; }
     #cardTutorialMobileCoach .card-tutorial-lesson-tools button { padding: 4px 8px; font-size: 13px; }
     #cardTutorialStage .card-face { font-size: 16px; }
-    #cardTutorialStage .sense-note-trigger.is-annotation-active { outline-offset: 0; }
 }
 
 /* Your music is one card: the option on top, Spotify as its footer, so the
@@ -24151,3 +24341,51 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .level-estimate-modal-callout { align-items: center; text-align: center; }
 .level-estimate-modal-body { text-align: center; }
 .level-estimate-modal-btn { align-self: center; text-align: center; }
+
+/* ===== Focus meanings: cards with meanings marked for practice ============
+   Front: a count-only badge (never says which meanings) and a faint amber
+   top edge on the card. Back: the marked meaning rows carry a small target
+   marker. Set by flashcards.js updateCard from getPracticeMeaningInfo(). */
+.front-practice-badge {
+    align-self: center;
+    margin: -4px auto 0;
+    padding: 3px 10px 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--accent-amber, #e0a63a);
+    background: color-mix(in srgb, var(--accent-amber, #e0a63a) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-amber, #e0a63a) 38%, transparent);
+    pointer-events: none;
+}
+.front-practice-badge[hidden] { display: none; }
+.front-practice-badge::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    box-shadow: inset 0 0 0 1.5px transparent, 0 0 0 0 currentColor;
+    background: radial-gradient(circle, currentColor 0 1.5px, transparent 2px);
+    vertical-align: -0.5px;
+}
+.card.has-practice-meanings:not(.flipped) {
+    box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--accent-amber, #e0a63a) 55%, transparent);
+}
+.meaning-row.is-practice-meaning { position: relative; }
+.meaning-row.is-practice-meaning::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 7px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent-amber, #e0a63a);
+    background: radial-gradient(circle, var(--accent-amber, #e0a63a) 0 1.5px, transparent 2px);
+    pointer-events: none;
+    opacity: 0.9;
+}

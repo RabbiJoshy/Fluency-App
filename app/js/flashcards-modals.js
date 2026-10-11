@@ -1189,7 +1189,9 @@ async function popupFoundWord(entry, opts) {
             relatedLemma: vocabEntry.related_lemma || null,
             derivationRelation: vocabEntry.derivation_relation || null,
             searchExclusionReason: entry.exclusionReason || null,
-            searchExamplesOnly: entry.examplesOnly || meanings[0]?.exampleOnly || false
+            // The search list was built before row hydration. Judge the loaded
+            // menu here; a stale list flag must not hide an English-first cue.
+            searchExamplesOnly: meanings.length === 0 || meanings.every(m => m.exampleOnly === true)
         }, focusedMeaningIndex);
         const tempCard = opened.card;
         focusedMeaningIndex = opened.meaningIndex;
