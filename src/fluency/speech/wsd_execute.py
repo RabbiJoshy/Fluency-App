@@ -214,9 +214,8 @@ def _register_file_profiles() -> None:
         while base and base not in SUPPORTED_PROFILE_CONSTRAINT_MODES:
             parent_raw = json.loads((MODEL_PROFILE_DIR / f"{base}.json").read_text(encoding="utf-8"))
             base = parent_raw.get("flags_from") or parent_raw.get("extends")
-        if not base or base not in SUPPORTED_PROFILE_CONSTRAINT_MODES:
-            continue
-        SUPPORTED_PROFILE_CONSTRAINT_MODES[profile_id] = SUPPORTED_PROFILE_CONSTRAINT_MODES[base]
+        constraint_mode = data.get("constraint_mode") or SUPPORTED_PROFILE_CONSTRAINT_MODES[base]
+        SUPPORTED_PROFILE_CONSTRAINT_MODES[profile_id] = constraint_mode
         PROFILE_LANGUAGES[profile_id] = data.get("language") or PROFILE_LANGUAGES[base]
 
         def extend(flags: frozenset[str]) -> frozenset[str]:
@@ -378,6 +377,7 @@ def occurrence_pos_tags(
     # per-document tags, but a transformer at batch size 1 made tagging the
     # bottleneck of a 2,000-card run, so callers may raise it deliberately.
     batch_size: int = 1,
+    skip_single_pos_menus: bool = False,
 ) -> tuple[
     dict[tuple[str, str], str | None],
     dict[tuple[str, str], dict[str, Any]],
@@ -402,9 +402,29 @@ def occurrence_pos_tags(
     diagnostics: dict[tuple[str, str], dict[str, Any]] = {}
     uncached: list[tuple[dict[str, Any], dict[str, Any], str, str, str]] = []
     cache = cached_by_surface or {}
+    from fluency.wsd.pos_bridge import dictionary_pos_family
     for item in work:
-        card, _menu_card, sentence_id, _text, _translation = item
+        card, menu_card, sentence_id, _text, _translation = item
         key = (card["card_id"], sentence_id)
+        if skip_single_pos_menus and menu_card and isinstance(menu_card, dict) and menu_card.get("analyses"):
+            analyses = menu_card.get("analyses") or []
+            families = {
+                dictionary_pos_family(a.get("part_of_speech"))
+                for a in analyses
+                if isinstance(a, dict) and a.get("part_of_speech")
+            }
+            if len(families) <= 1:
+                observed[key] = None
+                diagnostics[key] = {
+                    "status": "single_pos_menu_bypassed",
+                    "observed_pos": None,
+                    "occurrence_tags": [],
+                    "observed_grammar": {},
+                    "canonicalized_target_for_model": False,
+                    "model_revision": model_pin,
+                    "source": "single_pos_skip",
+                }
+                continue
         frozen = cache.get((card["display_form"], sentence_id))
         if frozen is not None:
             observed[key] = frozen
@@ -956,6 +976,12 @@ def main() -> None:
         default=None,
         help="only evaluate cards with these specific display_form surfaces",
     )
+    parser.add_argument(
+        "--skip-single-pos-menus",
+        action="store_true",
+        default=False,
+        help="skip contextual POS tagging for cards whose menu has only one POS family",
+    )
     args = parser.parse_args()
 
     # The run states its own language. Counting directory levels is how
@@ -1292,6 +1318,7 @@ def main() -> None:
             adapter=binding.adapter_factory(),
             cached_by_surface=prewsd_pos,
             batch_size=args.pos_batch_size,
+            skip_single_pos_menus=args.skip_single_pos_menus,
         )
     if multiword_index is not None:
         for card, menu_card, _sentence_id, text, _translation in work:
@@ -1405,6 +1432,7 @@ def main() -> None:
             clitic_gate=run_language in {"es", "pt", "cs"},
             pronominal_gate=True,
             domain_penalty=0.04,
+            pos_penalty=float((profile_config.get("constrain") or {}).get("pos_penalty", 0.06)),
             normalized_leaf_gates=args.profile_id in EVIDENCE_GUARD_PROFILES,
             contextual_headword_selector=getattr(
                 language_adapter, "contextual_headwords", None

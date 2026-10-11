@@ -44,7 +44,8 @@ def load_pinned(pin: str, *, model: Any | None = None) -> Any:
     if model is not None:
         return model
 
-    if name == "stanza-fi-default":
+    if name.startswith("stanza-") and name.endswith("-default"):
+        lang = name.split("-")[1]
         import stanza
 
         actual = package_version("stanza")
@@ -54,7 +55,7 @@ def load_pinned(pin: str, *, model: Any | None = None) -> Any:
                 "Install the pinned revision, or change the pin deliberately."
             )
         pipeline = stanza.Pipeline(
-            "fi",
+            lang,
             processors="tokenize,mwt,pos,lemma,depparse",
             download_method=None,
             use_gpu=False,

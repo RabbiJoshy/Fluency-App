@@ -421,6 +421,121 @@ class TranslationOverlapTests(unittest.TestCase):
         self.assertFalse(_is_conflicting_regional_leaf(brazil_leaf, "pt-PT", sentence_variety="br"))
         self.assertAlmostEqual(_regional_register_penalty(brazil_leaf, "pt-PT", sentence_variety="br"), 0.0)
 
+    def test_skip_single_pos_menus_bypasses_tagger(self) -> None:
+        model = FakeModel({})
+        key = ("card_pt_" + "1" * 32, "sentence_" + "1" * 32)
+        menu_card = {
+            "analyses": [
+                {"part_of_speech": "verb", "headword": "falar"},
+            ]
+        }
+        item = (
+            {"card_id": key[0], "display_form": "falar"},
+            menu_card,
+            key[1],
+            "Eu quero falar com você.",
+            "",
+        )
+        observed, evidence = occurrence_pos_tags(
+            (item,),
+            model=model,
+            skip_single_pos_menus=True,
+        )
+        self.assertIsNone(observed[key])
+        self.assertEqual(evidence[key]["status"], "single_pos_menu_bypassed")
+        self.assertEqual(evidence[key]["source"], "single_pos_skip")
+        self.assertEqual(model.batch_sizes, [])
+
+    def test_soft_gate_allows_high_margin_override(self) -> None:
+        from fluency.wsd.languages.spanish import SpanishV5CandidatePolicy
+        from fluency.wsd.gloss_scoring import LeafScore
+        from fluency.wsd.menus import MenuAnalysis, SenseLeaf, build_analysis_id
+
+        card_id = "card_pt_" + "a" * 32
+        verb_id = build_analysis_id(card_id=card_id, source_adapter="test", source_analysis_key="ser")
+        noun_id = build_analysis_id(card_id=card_id, source_adapter="test", source_analysis_key="é")
+
+        analysis_verb = MenuAnalysis(
+            menu_analysis_id=verb_id,
+            card_id=card_id,
+            surface_form="és",
+            headword="ser",
+            part_of_speech="VERB",
+            source_adapter="test",
+            source_analysis_key="ser",
+            provider_metadata={},
+            senses=(
+                SenseLeaf(
+                    sense_id="sense_verb",
+                    translation="to be",
+                    definition="to exist",
+                    source_reference="test",
+                    provider_metadata={},
+                ),
+            ),
+        )
+        analysis_noun = MenuAnalysis(
+            menu_analysis_id=noun_id,
+            card_id=card_id,
+            surface_form="és",
+            headword="é",
+            part_of_speech="NOUN",
+            source_adapter="test",
+            source_analysis_key="é",
+            provider_metadata={},
+            senses=(
+                SenseLeaf(
+                    sense_id="sense_noun",
+                    translation="letter E",
+                    definition="name of the letter",
+                    source_reference="test",
+                    provider_metadata={},
+                ),
+            ),
+        )
+        analyses = (analysis_noun, analysis_verb)
+
+        # Under hard filter mode, observed_pos NOUN prunes verb:
+        hard_policy = SpanishV5CandidatePolicy(
+            language="pt",
+            constraint_mode="filter",
+            pos_is_orthogonal=lambda pos: False,
+        )
+        hard_prep = hard_policy.prepare(
+            sentence="Tu és incrível.",
+            surface_form="és",
+            observed_pos="NOUN",
+            analyses=analyses,
+        )
+        self.assertEqual(len(hard_prep.analyses), 1)
+        self.assertEqual(hard_prep.analyses[0].menu_analysis_id, noun_id)
+
+        # Under soft_gate mode, both survive in prepare():
+        soft_policy = SpanishV5CandidatePolicy(
+            language="pt",
+            constraint_mode="soft_gate",
+            pos_penalty=0.06,
+            pos_is_orthogonal=lambda pos: False,
+        )
+        soft_prep = soft_policy.prepare(
+            sentence="Tu és incrível.",
+            surface_form="és",
+            observed_pos="NOUN",
+            analyses=analyses,
+        )
+        self.assertEqual(len(soft_prep.analyses), 2)
+
+        # In adjust_scores(), a verb with higher semantic similarity (+0.16)
+        # easily overcomes the -0.06 penalty:
+        raw_scores = (
+            LeafScore(menu_analysis_id=verb_id, sense_id="sense_verb", score=0.76),
+            LeafScore(menu_analysis_id=noun_id, sense_id="sense_noun", score=0.60),
+        )
+        adjusted = soft_policy.adjust_scores(raw_scores, analyses)
+        self.assertEqual(adjusted[0].menu_analysis_id, verb_id)
+        # Verb was adjusted by -0.06 (to 0.70) while noun is at 0.60 + priors:
+        self.assertGreater(adjusted[0].score, adjusted[1].score)
+
 
 if __name__ == "__main__":
     unittest.main()

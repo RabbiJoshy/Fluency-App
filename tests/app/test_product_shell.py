@@ -149,11 +149,11 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["portuguese"]["indexPath"],
-            "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/vocabulary.index.json",
+            "releases/pt/speech/pt-speech-v24-headway-r3-10000x30-slim/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["portuguese"]["conjugationsPath"],
-            "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/conjugations.json",
+            "releases/pt/speech/pt-speech-v24-headway-r3-10000x30-slim/app/conjugations.json",
         )
         self.assertEqual(
             config["languages"]["czech"]["indexPath"],

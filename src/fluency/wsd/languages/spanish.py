@@ -304,6 +304,7 @@ class SpanishV5CandidatePolicy:
         has_clitic: Callable[[str], bool] | None = None,
         contextual_lemma_gate: bool = False,
         reflexive_tag: Callable[[str, str], str | None] | None = None,
+        pos_penalty: float = 0.06,
     ) -> None:
         self.language = language
         # fluency.reflexive's verdict for (surface, sentence): NO_SE, SE_FIRM,
@@ -338,11 +339,14 @@ class SpanishV5CandidatePolicy:
         )
         if menu_prior < 0 or not 0 < menu_prior_decay <= 1:
             raise ValueError("invalid Spanish menu-prior parameters")
-        if constraint_mode not in {"filter", "evidence_only"}:
+        if constraint_mode not in {"filter", "evidence_only", "soft_gate"}:
             raise ValueError("unsupported Spanish constraint mode")
         self.menu_prior = menu_prior
         self.menu_prior_decay = menu_prior_decay
         self.constraint_mode = constraint_mode
+        self.pos_penalty = pos_penalty
+        self._current_pos_removed: set[str] = set()
+        self._current_pos_compatible: set[str] = set()
         self.clitic_gate = clitic_gate
         self.normalized_leaf_gates = normalized_leaf_gates
         self.contextual_headword_selector = contextual_headword_selector
@@ -409,10 +413,20 @@ class SpanishV5CandidatePolicy:
                 }
                 pos_match_kind = "exact" if compatible & exact else "bridged_only"
                 pos_removed = sorted(keep_ids - compatible)
-                keep_ids &= compatible
+                if self.constraint_mode == "soft_gate":
+                    self._current_pos_removed = set(pos_removed)
+                    self._current_pos_compatible = set(compatible)
+                else:
+                    keep_ids &= compatible
             else:
                 pos_match_status = "no_compatible_analysis"
                 pos_match_kind = "none"
+                if self.constraint_mode == "soft_gate":
+                    self._current_pos_removed = set()
+                    self._current_pos_compatible = set()
+        elif self.constraint_mode == "soft_gate":
+            self._current_pos_removed = set()
+            self._current_pos_compatible = set()
 
         # Finnish's pinned UD parser supplies a contextual lemma as well as a
         # POS tag. Use it only when the dictionary actually contains that
@@ -742,6 +756,8 @@ class SpanishV5CandidatePolicy:
             for analysis in analyses
             for leaf in analysis.senses
         }
+        pos_penalty_val = getattr(self, "pos_penalty", 0.06)
+        current_pos_removed = getattr(self, "_current_pos_removed", set())
         adjusted = [
             replace(
                 score,
@@ -755,6 +771,11 @@ class SpanishV5CandidatePolicy:
                         penalty_value=-self.domain_penalty,
                     )
                     if self.domain_penalty > 0 and (score.menu_analysis_id, score.sense_id) in leaf_by_ref
+                    else 0.0
+                )
+                + (
+                    -pos_penalty_val
+                    if self.constraint_mode == "soft_gate" and score.menu_analysis_id in current_pos_removed
                     else 0.0
                 ),
             )

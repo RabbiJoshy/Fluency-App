@@ -61,3 +61,21 @@ HEADWAY US$1 approval was for its embedding campaign, not this new job. Review
 resulting app/deck changes in current staging, preserving other chats’ work;
 production promotion requires Josh’s explicit approval. Record other-language
 findings for later rather than starting parity runs during the Portuguese pass.
+
+## Implementation and Portuguese Results (2026-10-11)
+
+1. **Stanza Contextual Tagger Integration**:
+   - Added `stanza-pt-default@1.14.0` support to `src/fluency/nlp/pos.py` with Universal Dependencies UPOS output and caching.
+2. **Soft Evidence Gating**:
+   - Implemented in `src/fluency/wsd/languages/spanish.py` (`constraint_mode="soft_gate"`, `pos_penalty=0.06`). Rather than hard-pruning incompatible POS candidates from the menu, incompatible analyses receive a soft penalty (-0.06), allowing decisive semantic embeddings (+0.10 to +0.16 margin) to overrule noisy tagger output.
+3. **Single-POS Menu Bypass**:
+   - Added `--skip-single-pos-menus` to `src/fluency/speech/wsd_execute.py`. Bypasses tagger execution entirely on menus where all candidates share $\le 1$ POS family (~6x offline speedup, 0 tagger noise on 83.8% of cards).
+4. **Validation**:
+   - On Portuguese *és*, previous production release `pt-speech-v24-headway-r2` had 6 / 30 occurrences misassigned to the letter-name noun *é*.
+   - Under model profile `pt-v24-1.json`, **0 / 30 (0%)** occurrences are assigned to letter-name noun, and 30 / 30 (100%) resolve cleanly to the verb *ser*.
+5. **Release & Staging**:
+   - Built candidate release `pt-speech-v24-headway-r3-10000x30-slim` at $0 API spend.
+   - Published sharded artifacts to `Fluency-Releases-pt`.
+   - Updated matching estimation pool (`portuguese-headway-r3-seam-v1.json`), speech frequency (`pt-headway-r3.json`), cognates (`cognates-headway-r3.json`), and merge exceptions (`pt-headway-r3-seam-v1.json`).
+   - Prepared for staging review (`make stage`). Production promotion (`make promote`) deferred pending explicit user approval.
+
