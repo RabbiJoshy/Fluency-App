@@ -1452,7 +1452,7 @@ window.closeRadialPicker = closeRadialPicker;
 
 // Stable choice surfaces for lists that can grow. Options keep a fixed place,
 // remain discoverable, and can briefly explain the consequence of a choice.
-function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', entries, variant = 'list', onBack = null, dock = false, footer = null }) {
+function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', entries, variant = 'list', onBack = null, dock = false, footer = null, separatorText = '' }) {
     const existing = document.getElementById(id);
     if (existing) { closeChoiceSheet(id); return; }
     if (!entries.length) return;
@@ -1505,7 +1505,15 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
 
     const body = document.createElement('div');
     body.className = 'choice-sheet-body';
-    entries.forEach(entry => {
+    entries.forEach((entry, index) => {
+        if (separatorText && index > 0) {
+            const separator = document.createElement('div');
+            separator.className = 'choice-sheet-or';
+            const text = document.createElement('b');
+            text.textContent = separatorText;
+            separator.appendChild(text);
+            body.appendChild(separator);
+        }
         const item = document.createElement('button');
         item.type = 'button';
         item.className = 'choice-sheet-item';
@@ -1697,6 +1705,7 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
         id: 'lyricsSourceSheet',
         ariaLabel: 'Choose how to add music',
         title: 'Which music?',
+        separatorText: 'or',
         intro: 'Your deck is built from the words in the songs you pick.',
         stepLabel: `${languageDisplayName(language)} · Music`,
         onBack: openLearningSourcePicker,

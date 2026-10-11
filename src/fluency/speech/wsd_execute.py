@@ -1078,14 +1078,19 @@ def main() -> None:
         commit=CommitPolicy(
             strategy=(
                 "rank_agreement"
-                if args.profile_id in RANK_AGREEMENT_PROFILES
-                else "margin"
+                if (profile_config.get("commit") or {}).get("strategy", "").startswith("rank_agreement")
+                or args.profile_id in RANK_AGREEMENT_PROFILES
+                else (profile_config.get("commit") or {}).get("strategy") or "margin"
             ),
-            evidence_guards=args.profile_id in EVIDENCE_GUARD_PROFILES,
+            evidence_guards=bool(
+                (profile_config.get("commit") or {}).get(
+                    "evidence_guards",
+                    args.profile_id in EVIDENCE_GUARD_PROFILES
+                )
+            ),
             unresolved_outcome=(
-                "abstain"
-                if args.profile_id in ABSTAIN_UNRESOLVED_PROFILES
-                else "assign"
+                (profile_config.get("commit") or {}).get("unresolved_outcome")
+                or ("abstain" if args.profile_id in ABSTAIN_UNRESOLVED_PROFILES else "assign")
             ),
             shared_translation_licenses_glosskey=(
                 args.profile_id in ABSTAIN_UNRESOLVED_PROFILES

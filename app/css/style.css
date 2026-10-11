@@ -24427,3 +24427,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .learning-context-activities .learning-context-choice small { text-transform: none; letter-spacing: normal; font-size: 12px; font-weight: 400; }
 .learning-context-activities .learning-context-choice strong { font-size: 16px; }
 .learning-context-vocabulary .learning-context-choice:hover, .learning-context-activities .learning-context-choice:hover { background: color-mix(in srgb, var(--text-primary) 4%, transparent); }
+
+/* A clear alternative between the two ways to choose music. */
+.choice-sheet-or { display: flex; align-items: center; gap: 14px; margin: 6px 0; }
+.choice-sheet-or::before, .choice-sheet-or::after { content: ''; flex: 1; height: 1px; background: color-mix(in srgb, var(--text-muted) 45%, transparent); }
+.choice-sheet-or > b { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 1.5px solid color-mix(in srgb, var(--accent-primary) 55%, var(--border-color)); border-radius: 50%; background: var(--bg-tertiary); color: var(--text-primary); font: 800 13px/1 var(--font-emphasis); letter-spacing: .08em; text-transform: uppercase; }
+#lyricsSourceSheet .choice-sheet-body { background: transparent; border: 0; }
+#lyricsSourceSheet .choice-sheet-item { border: 0; border-radius: 0; }

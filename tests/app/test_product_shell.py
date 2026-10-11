@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v581"
+EXPECTED_CACHE_NAME = "flashcards-v582"
 
 
 
@@ -128,15 +128,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertEqual(config["languages"]["portuguese_brazilian"]["speechLang"], "pt-BR")
         self.assertEqual(
             config["languages"]["spanish"]["studyStructurePath"],
-            "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/study-structure.json",
+            "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/app/study-structure.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseManifestPath"],
-            "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/manifest.json",
+            "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/manifest.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseCompositionPath"],
-            "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/composition.json",
+            "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/composition.json",
         )
         for legacy_path in (
             "conjugatedEnglishPath",
@@ -145,7 +145,7 @@ class ProductShellTests(unittest.TestCase):
             self.assertNotIn(legacy_path, config["languages"]["spanish"])
         self.assertEqual(
             config["languages"]["spanish"]["conjugationsPath"],
-            "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/conjugations.json",
+            "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/app/conjugations.json",
         )
         self.assertEqual(
             config["languages"]["portuguese"]["indexPath"],

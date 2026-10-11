@@ -10,14 +10,14 @@
   "languages": {
     "spanish": {
       "name": "Spanish",
-      "indexPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/vocabulary.index.json",
-      "estimationPoolPath": "data/estimation-pools/spanish-headway-r4-seam-v1.json",
-      "frequencyPath": "data/speech-frequency/es-headway-r4.json",
-      "examplesPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/study-structure.json",
-      "releaseManifestPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/manifest.json",
-      "releaseCompositionPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/composition.json",
-      "conjugationsPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/conjugations.json",
+      "indexPath": "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/app/vocabulary.index.json",
+      "estimationPoolPath": "data/estimation-pools/spanish-headway-r5-seam-v1.json",
+      "frequencyPath": "data/speech-frequency/es-headway-r5.json",
+      "examplesPath": "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/app/study-structure.json",
+      "releaseManifestPath": "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/manifest.json",
+      "releaseCompositionPath": "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/composition.json",
+      "conjugationsPath": "releases/es/speech/es-speech-v24-headway-r5-10000x30-slim/app/conjugations.json",
       "exampleTargetField": "example_spanish",
       "exampleEnglishField": "example_english",
       "pipelineDefaults": {
@@ -86,10 +86,10 @@
       "conjugationDrill": "es",
       "shortCode": "ES",
       "speechLang": "es-ES",
-      "cognatesPath": "cognates/es/cognates-headway-r4.json",
-      "mergeExceptionsPath": "data/merge-exceptions/es-headway-r4-seam-v1.json",
+      "cognatesPath": "cognates/es/cognates-headway-r5.json",
+      "mergeExceptionsPath": "data/merge-exceptions/es-headway-r5-seam-v1.json",
       "coveragePath": null,
-      "dictionaryExamplesPath": "data/dictionary-examples/es-es-speech-v24-headway-r4-10000x30-slim-v1.json"
+      "dictionaryExamplesPath": "data/dictionary-examples/es-es-speech-v24-headway-r5-10000x30-slim-v1.json"
     },
     "swedish": {
       "name": "Swedish",
