@@ -1,12 +1,12 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=78548470';
-import { readJsonWithTimeout } from './read-request.js?v=78548470';
-import { validateVocabularyIndex } from './data-contracts.js?v=78548470';
-import { formatRoute } from './routes.js?v=78548470';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=78548470';
-import { releaseUrl } from './release-host.js?v=78548470';
+import './state.js?v=876d9a6c';
+import { readJsonWithTimeout } from './read-request.js?v=876d9a6c';
+import { validateVocabularyIndex } from './data-contracts.js?v=876d9a6c';
+import { formatRoute } from './routes.js?v=876d9a6c';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=876d9a6c';
+import { releaseUrl } from './release-host.js?v=876d9a6c';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -211,9 +211,6 @@ function renderResumeLastSetCard() {
     card.setAttribute('aria-modal', 'true');
     card.setAttribute('aria-labelledby', 'resumeEntryGreeting');
     const level = snapshot.levelNumber ? `Level ${snapshot.levelNumber}` : 'Saved level';
-    const rangeLabel = snapshot.rangeLabel
-        || (snapshot.range ? `${snapshot.range.split('-')[0]}–${parseInt(snapshot.range.split('-')[1]) - 1}` : null);
-    const set = rangeLabel || (snapshot.setNumber ? `Set ${snapshot.setNumber}` : 'Saved set');
     const title = snapshot.mode === 'lyrics'
         ? `${snapshot.artistName || 'Lyrics'}${snapshot.artistVocabularyScope === 'extra' ? ' Extra' : ''}`
         : (snapshot.languageName || snapshot.language);
@@ -229,14 +226,14 @@ function renderResumeLastSetCard() {
                 <p class="resume-entry-position">Your last card: <strong id="resumeEntryWord"></strong></p>
             </div>
             <div class="resume-entry-actions">
-                <button type="button" class="resume-entry-primary" id="resumeLastSetBtn">Continue set</button>
+                <button type="button" class="resume-entry-primary" id="resumeLastSetBtn">Continue session</button>
                 <button type="button" class="resume-entry-secondary" id="dismissResumeLastSetBtn">Main menu</button>
             </div>
         </div>`;
     card.querySelector('#resumeEntryGreeting').textContent = currentUser && !currentUser.isGuest
         ? `Welcome back, ${currentUser.username || currentUser.initials || 'learner'}` : 'Welcome back';
     card.querySelector('#resumeEntryDeck').textContent = title;
-    card.querySelector('#resumeEntrySet').textContent = `${level} · ${set}`;
+    card.querySelector('#resumeEntrySet').textContent = `${level} · Saved session`;
     card.querySelector('#resumeEntryWord').textContent = snapshot.currentWord || 'Saved card';
     document.body.appendChild(card);
     document.getElementById('resumeLastSetBtn')?.focus({ preventScroll: true });
@@ -323,6 +320,8 @@ function _writeStudySessionSnapshot() {
         setNumber: stats.setNumber || null,
         levelSetCount: stats.levelSetCount || null,
         studyMode: stats.studyMode || 'new',
+        levelSession: Boolean(stats.levelSession),
+        remainingSessionCards: stats.remainingSessionCards || 0,
         groupSize,
         useLemmaMode,
         excludeCognates,
@@ -368,7 +367,7 @@ async function resumeLastStudySession() {
         window.hideAppLoading?.();
         return;
     }
-    window.showAppLoading?.('Continuing Your Set', 'Returning to the card where you stopped…', true);
+    window.showAppLoading?.('Continuing your session', 'Returning to the card where you stopped…', true);
     try { sessionStorage.setItem('fluency_resume_prompt_seen_v1', snapshot.savedAt); } catch (_) {}
     document.getElementById('resumeLastSetCard')?.remove();
     // Let the spinner paint before rebuilding a cached deck on the main thread.
@@ -2864,6 +2863,36 @@ function buildFilteredVocab(vocabData) {
     return { vocab: result, counts, stableBaseline };
 }
 
+// Guest learning is tab-memory only: "another 20" must advance without syncing answers.
+const guestSessionAnswers = new Map();
+function guestSessionAnswerScope() {
+    return `${studySessionScope({ mode: activeArtist ? 'lyrics' : 'speech',
+        artistSlug: window._urlArtistSlug, artistSlugs: window._selectedArtistSlugs,
+        language: selectedLanguage })}:${activeArtist ? artistVocabularyScope : 'main'}:${window.playlistLiveDeck?.()?.playlistId || ''}`;
+}
+function getGuestSessionLearningState(item) {
+    const state = guestSessionAnswers.get(guestSessionAnswerScope())?.get(getWordId(item));
+    return state || { seen: false, needsReview: false };
+}
+function recordGuestSessionAnswer(card, isCorrect) {
+    if (!currentUser?.isGuest) return;
+    const scope = guestSessionAnswerScope();
+    if (!guestSessionAnswers.has(scope)) guestSessionAnswers.set(scope, new Map());
+    const id = card.fullId.split('::split::')[0];
+    guestSessionAnswers.get(scope).set(id, { seen: true, known: isCorrect,
+        needsReview: !isCorrect, reviewReason: isCorrect ? null : 'mistake' });
+}
+window.getGuestSessionLearningState = getGuestSessionLearningState;
+window.recordGuestSessionAnswer = recordGuestSessionAnswer;
+
+function selectStudySessionCards(cards, limit = 20) {
+    let end = Math.min(cards.length, limit);
+    if (end < cards.length && cards[end - 1]?.splitInfo && cards[end]?.splitInfo
+        && cards[end - 1].targetWord === cards[end].targetWord) end--;
+    return { cards: cards.slice(0, end), remaining: cards.length - end };
+}
+window.selectStudySessionCards = selectStudySessionCards;
+
 async function loadVocabularyData(rangeString, opts = {}) {
     const updateResumeLoading = detail => {
         if (!opts.resumeSnapshot) return;
@@ -2904,6 +2933,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
     window.invalidatePreparedSetupVocabulary?.();
     const includeWordId = opts.includeWordId || null;
     let studyMode = opts.resumeSnapshot ? 'resume' : (opts.studyMode || 'new');
+    const levelSession = Boolean(opts.levelSession || opts.resumeSnapshot?.levelSession);
+    let remainingSessionCards = 0;
+    let remainingUnbuiltItems = 0;
     // Completely clear all previous data and state
     flashcards = [];
     stats = {
@@ -3053,7 +3085,11 @@ async function loadVocabularyData(rangeString, opts = {}) {
             stats.totalAvailableReview = totalInRange;
             allInRange = filteredData.slice();
         } else if (resumeSnapshot?.order?.length) {
-            const orderIndex = new Map(resumeSnapshot.order.map((id, index) => [id, index]));
+            const orderIndex = new Map();
+            resumeSnapshot.order.forEach((id, index) => {
+                const baseId = id.split('::split::')[0];
+                if (!orderIndex.has(baseId)) orderIndex.set(baseId, index);
+            });
             filteredData = filteredData
                 .filter(item => orderIndex.has(getWordId(item)))
                 .sort((a, b) => orderIndex.get(getWordId(a)) - orderIndex.get(getWordId(b)));
@@ -3144,6 +3180,13 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     console.log(`Filtered out ${excludedMastered} cards outside ${studyMode} mode`);
                 }
             }
+        }
+
+        if (levelSession && currentUser?.isGuest && !resumeSnapshot && studyMode !== 'all') {
+            filteredData = filteredData.filter(item => {
+                const state = getGuestSessionLearningState(item);
+                return studyMode === 'review' ? state.needsReview : !state.seen;
+            });
         }
 
         // Resolve an empty selection before attaching examples and building
@@ -3302,7 +3345,13 @@ async function loadVocabularyData(rangeString, opts = {}) {
             item.meanings = item.meanings || [];
         }
 
-        for (const item of filteredData) {
+        for (const [itemIndex, item] of filteredData.entries()) {
+            // Build one card beyond the cap to recognise a boundary companion pair.
+            // Large artist categories should not construct thousands of unused cards.
+            if (levelSession && !resumeSnapshot && flashcards.length >= (opts.sessionLimit || 20) + 1) {
+                remainingUnbuiltItems = filteredData.length - itemIndex;
+                break;
+            }
             const menuSource = useLemmaMode && lemmaHeadwordsOf(item).length === 1
                 ? dedupeLemmaMenu(item.meanings)
                 : item.meanings;
@@ -3651,6 +3700,18 @@ async function loadVocabularyData(rangeString, opts = {}) {
             }
         }
 
+        if (levelSession && !resumeSnapshot) {
+            const batch = selectStudySessionCards(flashcards, opts.sessionLimit || 20);
+            flashcards = batch.cards;
+            remainingSessionCards = batch.remaining + remainingUnbuiltItems;
+        } else if (resumeSnapshot) {
+            // Rebuilding split surfaces can produce both companions; restore exact membership.
+            const order = new Map(resumeSnapshot.order.map((id, index) => [id, index]));
+            flashcards = flashcards.filter(card => order.has(card.fullId))
+                .sort((a, b) => order.get(a.fullId) - order.get(b.fullId));
+            remainingSessionCards = resumeSnapshot.remainingSessionCards || 0;
+        }
+
         if (flashcards.length === 0) {
             // Report rather than dead-end. The auto-continue path passes
             // silentIfEmpty because it has somewhere else to go: a set that
@@ -3667,8 +3728,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // New-card decks report how many cards in the stable set were already
         // seen. Review decks report the queue itself, not every card in the
         // containing level.
-        stats.setSize = studyMode === 'review' ? flashcards.length : totalInRange;
-        stats.previouslyKnown = studyMode === 'new' ? excludedMastered : 0;
+        stats.setSize = levelSession || studyMode === 'review' ? flashcards.length : totalInRange;
+        stats.previouslyKnown = !levelSession && studyMode === 'new' ? excludedMastered : 0;
         if (resumeSnapshot) {
             stats.setSize = resumeSnapshot.setSize || resumeSnapshot.order.length;
             stats.previouslyKnown = resumeSnapshot.previouslyKnown || 0;
@@ -3679,16 +3740,19 @@ async function loadVocabularyData(rangeString, opts = {}) {
         stats.levelSetCount = opts.levelSetCount || resumeSnapshot?.levelSetCount || null;
         stats.studyMode = resumeSnapshot?.studyMode || studyMode;
         stats.levelNumber = opts.levelNumber || resumeSnapshot?.levelNumber || stats.levelNumber || null;
-        const nextSet = stats.studyMode === 'new' && window.getNextStudySetMeta
+        stats.levelSession = levelSession;
+        stats.remainingSessionCards = remainingSessionCards;
+        const nextSet = !levelSession && stats.studyMode === 'new' && window.getNextStudySetMeta
             ? window.getNextStudySetMeta(rangeString)
             : null;
-        stats.nextRange = nextSet?.range || null;
+        stats.nextRange = levelSession
+            ? (stats.studyMode === 'new' && remainingSessionCards > 0 ? rangeString : null)
+            : nextSet?.range || null;
         stats.nextSetNumber = nextSet?.setNumber || null;
         stats.nextRankBasis = nextSet?.rankBasis || rangeBasis;
         prefetchStudySetPayload(langConfig, stats.nextRange);
         // Inclusive label for display, e.g. "475-499" for rangeString "475-500"
         // (rangeEnd is exclusive in the filter above).
-        const rankLabel = `${rangeStart}-${rangeEnd - 1}`;
         stats.rangeLabel = `${rangeStart}–${rangeEnd - 1}`;
         if (opts.setLabel) {
             stats.setLabel = opts.setLabel;
@@ -3707,12 +3771,14 @@ async function loadVocabularyData(rangeString, opts = {}) {
             stats.dailyReviewLimit = opts.limit || 100;
             const remaining = (stats.totalAvailableReview || flashcards.length) - flashcards.length;
             stats.remainingDueCount = Math.max(0, remaining);
+        } else if (levelSession) {
+            stats.setLabel = `Level ${stats.levelNumber || ''} · This session`.replace('Level  · ', '');
         } else {
-            stats.setLabel = stats.studyMode === 'review'
-                ? `Level ${stats.levelNumber || ''} review · ${stats.rangeLabel}`.replace('Level  review · ', 'Level review · ')
-                : stats.rangeLabel;
+            stats.setLabel = stats.levelNumber ? `Level ${stats.levelNumber} · This session` : 'This session';
         }
-        const statsWords = stats.studyMode === 'review' ? filteredData : allInRange;
+        const sessionRanks = new Set(flashcards.map(card => card.rank));
+        const statsWords = levelSession ? filteredData.filter(item => sessionRanks.has(item.rank))
+            : stats.studyMode === 'review' ? filteredData : allInRange;
         stats.allWords = statsWords.map(it => ({
             id: it.id,
             word: it.word,

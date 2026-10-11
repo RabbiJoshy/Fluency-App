@@ -1,36 +1,36 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=78548470';
-import { releaseUrl } from './release-host.js?v=78548470';
-import './theme.js?v=78548470';
-import { installFlagRendering } from './flags.js?v=78548470';
-import { IS_STAGING } from './env.js?v=78548470';
-import './state.js?v=78548470';
-import './offline-db.js?v=78548470';
-import './sync-queue.js?v=78548470';
-import { initOfflineContent } from './offline-content.js?v=78548470';
-import './speech.js?v=78548470';
-import './artist-ui.js?v=78548470';
-import './auth.js?v=78548470';
-import './tutorial.js?v=78548470';
-import './walkthrough.js?v=78548470';
-import './estimation.js?v=78548470';
-import './config.js?v=78548470';
-import './progress.js?v=78548470';
-import './knowledge.js?v=78548470';
-import './ui.js?v=78548470';
-import './vocab.js?v=78548470';
-import './cognates.js?v=78548470';
-import './coverage.js?v=78548470';
-import './fast-mode.js?v=78548470';
-import './extras.js?v=78548470';
-import './review-home.js?v=78548470';
-import './song-sets.js?v=78548470';
-import './playlist-live.js?v=78548470';
-import './spotify-playlist-import.js?v=78548470';
-import './vocabulary-import.js?v=78548470';
-import './flashcards.js?v=78548470';
-import { validateArtistCatalog } from './data-contracts.js?v=78548470';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=876d9a6c';
+import { releaseUrl } from './release-host.js?v=876d9a6c';
+import './theme.js?v=876d9a6c';
+import { installFlagRendering } from './flags.js?v=876d9a6c';
+import { IS_STAGING } from './env.js?v=876d9a6c';
+import './state.js?v=876d9a6c';
+import './offline-db.js?v=876d9a6c';
+import './sync-queue.js?v=876d9a6c';
+import { initOfflineContent } from './offline-content.js?v=876d9a6c';
+import './speech.js?v=876d9a6c';
+import './artist-ui.js?v=876d9a6c';
+import './auth.js?v=876d9a6c';
+import './tutorial.js?v=876d9a6c';
+import './walkthrough.js?v=876d9a6c';
+import './estimation.js?v=876d9a6c';
+import './config.js?v=876d9a6c';
+import './progress.js?v=876d9a6c';
+import './knowledge.js?v=876d9a6c';
+import './ui.js?v=876d9a6c';
+import './vocab.js?v=876d9a6c';
+import './cognates.js?v=876d9a6c';
+import './coverage.js?v=876d9a6c';
+import './fast-mode.js?v=876d9a6c';
+import './extras.js?v=876d9a6c';
+import './review-home.js?v=876d9a6c';
+import './song-sets.js?v=876d9a6c';
+import './playlist-live.js?v=876d9a6c';
+import './spotify-playlist-import.js?v=876d9a6c';
+import './vocabulary-import.js?v=876d9a6c';
+import './flashcards.js?v=876d9a6c';
+import { validateArtistCatalog } from './data-contracts.js?v=876d9a6c';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -84,7 +84,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=78548470').catch(error => {
+    ? import('./spotify.js?v=876d9a6c').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1186,17 +1186,7 @@ async function setArtistVocabularyScope(scope, { autoStart = false } = {}) {
             const firstLevel = document.querySelector('.level-btn.selected')
                 || document.querySelector('.level-selector-buttons .level-btn, #levelSelector > .level-btn');
             if (!firstLevel) return;
-            const firstSet = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'))
-                .find(dot => !dot.disabled && Number(dot.dataset.pct) < 100)
-                || Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'))
-                    .find(dot => !dot.disabled);
-            if (firstSet) {
-                await loadVocabularyData(firstSet.dataset.range, {
-                    rankBasis: firstSet.dataset.rankBasis || 'stable',
-                    setNumber: Number(firstSet.dataset.index) + 1,
-                    levelSetCount: document.querySelectorAll('#rangeSelector .study-set-dot').length,
-                });
-            }
+            await window.startSelectedStudySession?.();
         }
     } finally {
         loading?.classList.remove('visible');
@@ -1767,7 +1757,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=78548470')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=876d9a6c')).catch(() => null);
             window.spotifyLogin?.();
         });
     }

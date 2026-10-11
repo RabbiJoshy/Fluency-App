@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=78548470");
+@import url("./appearance.css?v=876d9a6c");
 
 
         * {
@@ -5460,19 +5460,27 @@
         .ref-tile-count-badge {
             position: absolute;
             top: -2px;
-            right: -6px;
-            min-width: 17px;
-            height: 17px;
-            padding: 0 4px;
-            border-radius: 9px;
-            background: var(--accent-primary, #6366f1);
+            left: -6px;
+            min-width: 20px;
+            min-height: 20px;
+            aspect-ratio: 1;
+            width: max-content;
+            padding: 2px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: transparent;
+            border: 1px solid currentColor;
             color: #fff;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 700;
-            line-height: 17px;
+            line-min-height: 20px;
+            aspect-ratio: 1;
+            width: max-content;
             text-align: center;
             pointer-events: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: none;
         }
         .ref-tile-label {
             font-size: 13.5px;
@@ -22043,11 +22051,11 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .card-ranking .card-stat-unit--below { font-size: 11px; margin-top: -1px; }
 
 /* Commonness meter: a little wider and taller. */
-.sense-prominence-meter { height: 16px; gap: 2.5px; }
-.sense-prominence-meter i { width: 4.5px; border-radius: 1.5px; }
-.sense-prominence-meter i:nth-child(1) { height: 6px; }
-.sense-prominence-meter i:nth-child(2) { height: 11px; }
-.sense-prominence-meter i:nth-child(3) { height: 16px; }
+.sense-prominence-meter { height: 20px; gap: 2.5px; }
+.sense-prominence-meter i { width: 5px; border-radius: 1.5px; }
+.sense-prominence-meter i:nth-child(1) { height: 7px; }
+.sense-prominence-meter i:nth-child(2) { height: 13px; }
+.sense-prominence-meter i:nth-child(3) { height: 20px; }
 
 /* Rectangular flags (js/flags.js) in place of emoji. Sized in em so every
    spot that sized the emoji by font-size keeps its scale. */
@@ -24459,16 +24467,13 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .sense-prominence-detail-heading { display: flex; align-items: center; gap: 8px; }
 .sense-prominence-detail-heading strong { font-size: 16px; font-weight: 700; }
 .sense-prominence-detail-description { display: block; margin-top: 4px; font-size: 14px; font-weight: 400; }
-.prominence-dominant .sense-prominence-detail-heading { color: #38bdf8; }
-.prominence-common .sense-prominence-detail-heading { color: #34d399; }
-.prominence-uncommon .sense-prominence-detail-heading { color: #cbd5e1; }
-.prominence-rare .sense-prominence-detail-heading { color: #fbbf24; }
+.sense-prominence-detail-heading { color: #fff; }
 
-/* The study surface ends above a separate, compact row of card actions. */
+/* Card actions sit directly on the page, like the scrubber above the card. */
 @media (min-width: 360px) {
   .card-face.card-back.has-action-tray {
     padding: 0;
-    gap: 10px;
+    gap: 6px;
     background: transparent !important;
     box-shadow: none !important;
     overflow: visible;
@@ -24486,9 +24491,14 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   .card-back.has-action-tray > .links-section {
     flex: 0 0 auto;
     margin: 0;
-    padding: 6px 4px 4px;
-    border-radius: 14px;
-    background: #000;
+    padding: 2px 4px 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .card-back.has-action-tray > .links-section .ref-tile {
+    min-height: 64px;
+    padding-block: 1px;
+    gap: 4px;
   }
   .card-replica .card-back.has-action-tray > .card-details { padding: 20px 16px 12px; }
   .card-replica .card-back.has-action-tray > .links-section { padding-inline: 16px; }
@@ -24496,7 +24506,6 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   :root[data-theme="light"] .card-back.has-action-tray > .card-details {
     box-shadow: 0 10px 28px rgba(27, 39, 51, 0.12);
   }
-  :root[data-theme="light"] .card-back.has-action-tray > .links-section { background: #edf1f5; }
   body.artist-mode .card-back.has-action-tray > #backContent {
     background-image: linear-gradient(rgba(30, 39, 50, 0.9), rgba(30, 39, 50, 0.9)), var(--card-artwork, none);
     background-size: cover;
@@ -24510,3 +24519,66 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   .card-back.has-action-tray > #backContent,
   .card-back.has-action-tray > .links-section { padding-inline: 16px; }
 }
+
+/* SETWISE: continuous progress by status, with no labels inside the bar. */
+#step4 {
+  --set-known: #06a557;
+  --set-review: #ffcc00;
+  --set-new: #ffffff;
+  --set-skipped: #64748b;
+  --set-estimated: #9f7aea;
+}
+#step4 .study-level-bar {
+  width: 100%;
+  height: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 8px 0;
+  background: linear-gradient(to right,
+    var(--set-new) 0 var(--level-new-end),
+    var(--set-review) var(--level-new-end) var(--level-review-end),
+    var(--set-known) var(--level-review-end) var(--level-known-end),
+    var(--set-estimated) var(--level-known-end) var(--level-estimated-end),
+    var(--set-skipped) var(--level-estimated-end) 100%);
+}
+#step4 .study-set-choice { min-width: 0; }
+#step4 .study-set-current-copy span { color: var(--text-primary); }
+
+.study-set-stat i.is-estimated { background: var(--set-estimated, #77669e); }
+
+/* Commonness explanations escape the card's scroll clipping in the top layer. */
+.sense-prominence-badge,
+.sense-prominence-badge[aria-expanded="true"] { padding: 1px; }
+.sense-prominence-badge .sense-prominence-detail { display: none !important; }
+.sense-prominence-popup {
+  display: block;
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  transform: none;
+  z-index: 10000;
+  color: #fff;
+  font-family: var(--font-reading);
+  max-width: min(240px, calc(100vw / var(--ui-zoom, 1) - 32px));
+  pointer-events: none;
+}
+.sense-prominence-popup[hidden] { display: none; }
+.sense-prominence-popup strong { color: #fff; }
+
+/* Reclaim the old footer margin while keeping the phone's safe area clear. */
+@media (min-width: 360px) and (max-width: 767px) {
+  .card-container:has(#flashcard .has-action-tray) {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  #flashcard:has(.has-action-tray) {
+    height: calc(100vh / var(--ui-zoom, 1) - 82px - max(12px, env(safe-area-inset-bottom)));
+  }
+}
+@media (min-width: 768px) {
+  .container:has(#appContent:not(.hidden) #flashcard .has-action-tray) { padding-bottom: 8px; }
+  .card-container:has(#flashcard .has-action-tray) { padding-bottom: 8px; }
+  #flashcard:has(.has-action-tray) { height: calc(100vh / var(--ui-zoom, 1) - 108px); }
+}
+
+:root[data-theme="light"] .ref-tile-count-badge { color: var(--text-primary); }

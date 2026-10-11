@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=78548470';
-import { sendOrQueue } from './sync-queue.js?v=78548470';
+import './state.js?v=876d9a6c';
+import { sendOrQueue } from './sync-queue.js?v=876d9a6c';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -736,7 +736,7 @@ function knowledgeSectionLabel(item) {
 }
 
 // Meanings the learner can mark for practice, counted exactly as the
-// "Mark a meaning" button counts them. Empty for guests and single-meaning cards.
+// "Flag a meaning" button counts them. Empty for guests and single-meaning cards.
 function getKnowledgeFocusItems(card) {
     if (!currentUser || currentUser.isGuest) return [];
     const items = getCardKnowledgeItems(card);
@@ -768,7 +768,7 @@ function getPracticeMeaningIndices(card) {
     return getPracticeMeaningInfo(card).indices;
 }
 
-// The rows the "Mark a meaning" modal lists: the card's Meanings section (or
+// The rows the "Flag a meaning" modal lists: the card's Meanings section (or
 // the first section), limited to the senses the card shows, in card order.
 // The button's fraction badge counts these same rows.
 function getKnowledgeOverviewRows(card) {
@@ -792,26 +792,25 @@ function getKnowledgeOverviewRows(card) {
     return rows;
 }
 
-// "known/total" over the modal's rows; "?" until any row has been seen.
+// Count the meanings explicitly flagged for future practice, matching the
+// checked rows in the sheet. Known meanings and scheduled reviews do not count.
 function getKnowledgeOverviewFraction(card) {
     const rows = getKnowledgeOverviewRows(card);
-    let known = 0, touched = false;
-    rows.forEach(({ item }) => {
-        const st = getKnowledgeItemState(card, item);
-        if (st.learned) known += 1;
-        if (st.seen || st.learned || st.needsReview) touched = true;
-    });
-    return { known, total: rows.length, touched };
+    const flagged = rows.filter(({ item }) => {
+        const state = getKnowledgeItemState(card, item);
+        return state.needsReview && state.reviewReason === 'incorrect';
+    }).length;
+    return { flagged, total: rows.length };
 }
 
 function renderKnowledgeOverviewButton(card) {
     if (!getKnowledgeFocusItems(card).length) return '';
-    const { known, total, touched } = getKnowledgeOverviewFraction(card);
-    const shown = `${touched ? known : '?'}/${total}`;
-    const aria = touched ? `Mark a meaning, ${known} of ${total} meanings known` : `Mark a meaning, ${total} meanings`;
+    const { flagged, total } = getKnowledgeOverviewFraction(card);
+    const shown = `${flagged}/${total}`;
+    const aria = `Flag a meaning, ${flagged} of ${total} meanings flagged`;
     return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="${aria}" aria-haspopup="dialog" onclick="showKnowledgeOverview(event)">
         <span class="ref-tile-fraction" aria-hidden="true">${shown}</span>
-        <span class="ref-tile-label">Mark a meaning</span>
+        <span class="ref-tile-label">Flag a meaning</span>
     </button>`;
 }
 
@@ -829,7 +828,7 @@ function ensureKnowledgeOverviewModal() {
     modal.innerHTML = `
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
-                <h2 id="knowledgeOverviewTitle" class="visually-hidden">Mark a meaning</h2>
+                <h2 id="knowledgeOverviewTitle" class="visually-hidden">Flag a meaning</h2>
                 <p id="knowledgeOverviewHint" class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>
                 <button type="button" class="knowledge-overview-close" aria-label="Close" onclick="closeKnowledgeOverview(event)">×</button>
             </header>

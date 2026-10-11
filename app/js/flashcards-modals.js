@@ -1414,19 +1414,6 @@ function peekHomograph(siblingId) {
 // initializeApp via lazy stubs.
 // ---------------------------------------------------------------------------
 
-let _deckCompleteAutoTimer = null;
-
-// How long the completion screen holds before advancing itself. Cancelled by
-// any deliberate choice — Main menu, Redo set, or pressing continue early.
-const AUTO_CONTINUE_MS = 7000;
-
-function _cancelDeckCompleteAutoContinue() {
-    document.getElementById('markCompleteBtn')?.classList.remove('is-auto-continuing');
-    if (!_deckCompleteAutoTimer) return;
-    clearTimeout(_deckCompleteAutoTimer);
-    _deckCompleteAutoTimer = null;
-}
-
 function triggerDeckCompleteConfetti() {
     const canvas = document.getElementById('deckCompleteConfetti');
     if (!canvas) return;
@@ -1481,11 +1468,24 @@ function triggerDeckCompleteConfetti() {
     requestAnimationFrame(render);
 }
 
-function showEndOfDeckOptions({ autoContinue = true } = {}) {
-    _cancelDeckCompleteAutoContinue();
+async function showEndOfDeckOptions() {
     // A completed deck is no longer resumable. Starting a follow-up or redo
     // set will create a fresh snapshot on its first rendered card.
     window.clearStudySessionSnapshot?.();
+    if (stats.levelSession && stats.studyMode === 'new') {
+        const completedSession = stats;
+        try {
+            await window.renderRangeSelector?.();
+            if (stats !== completedSession) return;
+            const context = window.__studySessionContext;
+            if (context?.range === stats.rangeString) {
+                stats.remainingSessionCards = context.unseenCount;
+                stats.nextRange = context.unseenCount > 0 ? context.range : null;
+            }
+        } catch (error) {
+            console.warn('Could not refresh level progress after this session:', error);
+        }
+    }
     if (stats.nextRange) {
         window.prefetchStudySetPayload?.(
             config?.languages?.[selectedLanguage],
@@ -1495,21 +1495,17 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
     const nextLevel = !stats.nextRange ? window.getNextStudyLevelMeta?.() : null;
     const isLevelCompletion = Boolean(
         stats.studyMode === 'new' && !stats.nextRange && stats.levelNumber);
-    document.getElementById('deckCompleteEyebrow').textContent = isLevelCompletion ? 'Milestone' : 'Study set';
+    document.getElementById('deckCompleteEyebrow').textContent = isLevelCompletion ? 'Milestone' : 'Study session';
 
     // Update modal content. Ordinary decks are intentionally small stable
     // sets, so completion is a frequent reward inside the larger level.
     const titleEl = document.getElementById('deckCompleteTitle');
-    const rangeLabel = stats.rangeLabel
-        || (stats.rangeString ? `${stats.rangeString.split('-')[0]}–${parseInt(stats.rangeString.split('-')[1]) - 1}` : null);
     if (titleEl) {
         titleEl.textContent = isLevelCompletion
             ? `Level ${stats.levelNumber} complete`
             : stats.studyMode === 'review'
             ? 'Practice complete'
-            : rangeLabel
-            ? `${rangeLabel} complete`
-            : 'Set complete';
+            : 'Session complete';
     }
 
     // A level is a milestone, not a report: the title, a burst of confetti,
@@ -1568,7 +1564,7 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
                 const allKnown = practiceCards === 0;
                 scoreContainer.classList.toggle('is-perfect', allKnown);
                 if (allKnown) {
-                    if (titleEl) titleEl.textContent = '🌟 Perfect Set!';
+                    if (titleEl) titleEl.textContent = '🌟 Perfect session!';
                     triggerDeckCompleteConfetti();
                 }
                 if (ringFill) {
@@ -1608,7 +1604,7 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
                 if (scoreNum) scoreNum.textContent = `${pct}%`;
                 if (pct === 100) {
                     scoreContainer.classList.add('is-perfect');
-                    if (titleEl && !isLevelCompletion) titleEl.textContent = '🌟 Perfect Set!';
+                    if (titleEl && !isLevelCompletion) titleEl.textContent = '🌟 Perfect session!';
                     triggerDeckCompleteConfetti();
                 } else {
                     scoreContainer.classList.remove('is-perfect');
@@ -1638,7 +1634,6 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
     const finishBtn = document.getElementById('markCompleteBtn');
     const finishLabel = document.getElementById('markCompleteLabel');
     const finishIcon = document.getElementById('markCompleteIcon');
-    let hasContinuation = false;
 
     if (finishBtn && finishLabel && finishIcon) {
         // A level can be exhausted before its final physical dot when every
@@ -1654,21 +1649,17 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
                 finishBtn.dataset.action = 'next-daily-review';
                 finishBtn.classList.add('has-next-set');
                 finishBtn.style.display = '';
-                hasContinuation = true;
             } else {
                 finishBtn.classList.remove('has-next-set');
                 finishBtn.style.display = 'none';
             }
         } else if (stats.nextRange) {
-            const nextRangeLabel = stats.nextRange
-                ? `${stats.nextRange.split('-')[0]}–${parseInt(stats.nextRange.split('-')[1]) - 1}`
-                : '';
-            finishLabel.textContent = nextRangeLabel ? `Start ${nextRangeLabel}` : 'Start next cards';
+            finishLabel.textContent = stats.levelSession && stats.remainingSessionCards > 0
+                ? `Another ${Math.min(20, stats.remainingSessionCards)}` : 'Another 20';
             finishIcon.textContent = '→';
             finishBtn.dataset.action = 'next-set';
             finishBtn.classList.add('has-next-set');
             finishBtn.style.display = '';
-            hasContinuation = true;
         } else if (nextLevel) {
             finishLabel.textContent = (nextLevel.scope === 'extra' || nextLevel.label)
                 ? `Start ${nextLevel.label}`
@@ -1677,55 +1668,28 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
             finishBtn.dataset.action = 'next-level';
             finishBtn.classList.add('has-next-set');
             finishBtn.style.display = '';
-            hasContinuation = true;
         } else {
             finishBtn.classList.remove('has-next-set');
             finishBtn.style.display = 'none';
         }
     }
 
-    // Keep the completion beat, then continue without making the learner
-    // reopen setup and hunt through levels. The visible primary action still
-    // works immediately; Main menu or Redo set cancel this timer through the
-    // normal hide path.
-    const shouldAutoContinue = Boolean(
-        autoContinue && hasContinuation && stats.studyMode === 'new' && !isLevelCompletion);
-    messageEl.textContent = shouldAutoContinue
-        ? `${finishLabel.textContent} automatically…`
-        : stats.isDailyReview
+    // Session completion is a stopping point; continuing always requires a tap.
+    messageEl.textContent = stats.isDailyReview
             ? (stats.remainingDueCount > 0
                 ? `${stats.remainingDueCount} more word${stats.remainingDueCount === 1 ? '' : 's'} waiting in this Practice queue.`
                 : 'All caught up on this Practice queue!')
             : isLevelCompletion
-            ? ''
-            : rangeLabel
-                ? `${rangeLabel} finished.`
-                : '';
+            ? 'All new cards explored. Practice remains available.'
+            : `${stats.setSize || stats.total || 0} cards in this session.`;
 
     // Show the modal
     const modal = document.getElementById('deckCompleteModal');
     modal.classList.remove('hidden');
-    if (shouldAutoContinue) {
-        // A countdown long enough to read the result and choose Main menu
-        // instead. The bar filling across the button is the whole signal, so
-        // the wait reads as deliberate rather than as the app hanging.
-        finishBtn.style.setProperty('--auto-continue-ms', `${AUTO_CONTINUE_MS}ms`);
-        finishBtn.classList.add('is-auto-continuing');
-        _deckCompleteAutoTimer = setTimeout(() => {
-            _deckCompleteAutoTimer = null;
-            finishBtn.classList.remove('is-auto-continuing');
-            if (modal.classList.contains('hidden')) return;
-            if (finishBtn.dataset.action
-                && finishBtn.dataset.loading !== 'true'
-                && !finishBtn.disabled) {
-                finishBtn.click();
-            }
-        }, AUTO_CONTINUE_MS);
-    }
+
 }
 
 function hideDeckCompleteModal() {
-    _cancelDeckCompleteAutoContinue();
     document.getElementById('deckCompleteModal').classList.add('hidden');
 }
 

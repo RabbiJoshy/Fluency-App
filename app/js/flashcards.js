@@ -1,30 +1,30 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=78548470';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=78548470';
+import './state.js?v=876d9a6c';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=876d9a6c';
 import { installCardTouch } from './card-touch.js';
-import './speech.js?v=78548470';
-import { goToRoute, routeCodeFor } from './routes.js?v=78548470';
-import { memoryTipTileHTML } from './memory-tips.js?v=78548470';
-import './side-dock.js?v=78548470';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=78548470';
+import './speech.js?v=876d9a6c';
+import { goToRoute, routeCodeFor } from './routes.js?v=876d9a6c';
+import { memoryTipTileHTML } from './memory-tips.js?v=876d9a6c';
+import './side-dock.js?v=876d9a6c';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=876d9a6c';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=78548470';
+} from './example-personalisation.js?v=876d9a6c';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=78548470';
+} from './spanishdict-usage.js?v=876d9a6c';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=78548470';
+} from './reverse-cues.js?v=876d9a6c';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -57,7 +57,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=78548470';
+} from './card-metadata-pills.js?v=876d9a6c';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2123,7 +2123,7 @@ function initializeApp() {
         }
 
         if (flashcards.length === 0) {
-            alert('No study set is currently loaded.');
+            alert('No session is currently loaded.');
             return;
         }
 
@@ -2135,7 +2135,7 @@ function initializeApp() {
             word: card.targetWord
         }));
 
-        const confirmMsg = `This will reset your progress for ${wordsInSet.length} words in the current study set. These words will appear again when you study this set. Continue?`;
+        const confirmMsg = `This will reset your progress for ${wordsInSet.length} words in the current session. These words will appear again when you study this set. Continue?`;
         if (!confirm(confirmMsg)) {
             return;
         }
@@ -2177,7 +2177,7 @@ function initializeApp() {
             });
             cacheItemProgress();
 
-            alert(`Progress reset for ${wordsInSet.length} words. Go back to the menu and re-select this set to study the refreshed words.`);
+            alert(`Progress reset for ${wordsInSet.length} words. Go back to the menu and start another session to study the refreshed words.`);
             hideSettingsModal();
         } catch (error) {
             console.error('Failed to reset progress:', error);
@@ -2204,15 +2204,6 @@ function initializeApp() {
         if (!action) return;
         this.dataset.loading = 'true';
         this.disabled = true;
-        const nextRange = stats.nextRange;
-        const nextRankBasis = stats.nextRankBasis || stats.rangeBasis || 'stable';
-        const nextSetNumber = stats.nextSetNumber;
-        const nextRangeLabel = nextRange
-            ? `${nextRange.split('-')[0]}–${parseInt(nextRange.split('-')[1]) - 1}`
-            : '';
-        const loadingTitle = action === 'next-set' && nextRangeLabel
-            ? `Loading ${nextRangeLabel}`
-            : 'Loading the Next Level';
         hideDeckCompleteModal();
         if (action === 'next-daily-review') {
             window.showAppLoading?.('Loading practice', 'Preparing your next practice cards…');
@@ -2230,24 +2221,8 @@ function initializeApp() {
             return;
         }
         try {
-            // The set dots were counted when setup last rendered, which can be
-            // several sets ago: lemma merging marks siblings seen across sets,
-            // so the set queued as "next" may have finished in the meantime.
-            // loadVocabularyData reports that with false rather than alerting,
-            // and we walk on to the next level instead of stranding the
-            // learner on an empty deck with the modal already dismissed.
-            let advanced = false;
-            if (action === 'next-set' && nextRange) {
-                advanced = await loadVocabularyData(nextRange, {
-                    rankBasis: nextRankBasis,
-                    setNumber: nextSetNumber,
-                    levelSetCount,
-                    silentIfEmpty: true
-                }) !== false;
-            }
-            if (!advanced) {
-                await window.startNextStudyLevelFirstSet?.();
-            }
+            window.showAppLoading?.('Preparing your next session', 'Finding your next cards…');
+            await window.startNextStudyLevelFirstSet?.();
         } catch (error) {
             console.error('Could not continue from completed set:', error);
             // Reopen as a stable state. Retrying automatically would loop when
@@ -2773,6 +2748,9 @@ function recordCardResult(result) {
     // Save progress to Google Sheets or LocalStorage
     const currentCard = flashcards[currentIndex];
     if (currentCard?.previewOnly) return;
+    if (currentCard && !currentCard.isChainChild && cardNavStack.length === 0) {
+        window.recordGuestSessionAnswer?.(currentCard, isCorrect);
+    }
     if (currentCard && currentCard.rank) {
         saveCardAnswer(currentCard, isCorrect);
     }
@@ -2802,6 +2780,7 @@ function showFloatingBtns(show) {
 }
 
 async function goBackToSetup() {
+    hideProminenceTooltip();
     // Rebuilding the level selector takes long enough to notice, and every
     // other transition in the app announces itself. Without this the tap read
     // as the app stalling rather than working — the same overlay Learn New and
@@ -5712,21 +5691,88 @@ function prominenceBadgeHTML(promInfo, extraStyle = '') {
     const label = promInfo.label || 'Rare';
     const blurb = PROMINENCE_BLURBS[key] || PROMINENCE_BLURBS.rare;
     const style = extraStyle ? ` style="${extraStyle}"` : '';
-    return `<span class="sense-prominence-badge prominence-${escapeCardText(key)}"${style} role="button" tabindex="0" aria-expanded="false" aria-label="${escapeCardText(label)}. Tap to explain." onclick="toggleProminenceBadge(event, this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') toggleProminenceBadge(event, this)">${prominenceMeterHTML(key)}<span class="sense-prominence-detail"><span class="sense-prominence-detail-heading">${prominenceMeterHTML(key)}<strong>${escapeCardText(label)}</strong></span><span class="sense-prominence-detail-description">${escapeCardText(blurb)}</span></span></span>`;
+    return `<span class="sense-prominence-badge prominence-${escapeCardText(key)}"${style} role="button" tabindex="0" aria-expanded="false" aria-label="${escapeCardText(label)}. Tap to explain." onpointerenter="if (event.pointerType !== 'touch') showProminenceTooltip(this)" onpointerleave="hideProminenceTooltip(this)" onfocus="showProminenceTooltip(this)" onblur="hideProminenceTooltip()" onclick="toggleProminenceBadge(event, this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') toggleProminenceBadge(event, this)">${prominenceMeterHTML(key)}<span class="sense-prominence-detail"><span class="sense-prominence-detail-heading">${prominenceMeterHTML(key)}<strong>${escapeCardText(label)}</strong></span><span class="sense-prominence-detail-description">${escapeCardText(blurb)}</span></span></span>`;
+}
+
+let prominenceTooltip = null;
+let prominenceTooltipSource = null;
+
+function hideProminenceTooltip(button = null) {
+    if (button && (button !== prominenceTooltipSource
+        || button.getAttribute('aria-expanded') === 'true')) return;
+    prominenceTooltipSource?.setAttribute('aria-expanded', 'false');
+    prominenceTooltipSource?.removeAttribute('aria-describedby');
+    prominenceTooltipSource = null;
+    if (!prominenceTooltip) return;
+    if (prominenceTooltip.hasAttribute('popover')
+        && prominenceTooltip.matches(':popover-open')) prominenceTooltip.hidePopover();
+    prominenceTooltip.hidden = true;
+}
+
+function showProminenceTooltip(button) {
+    const detail = button?.querySelector('.sense-prominence-detail');
+    if (!detail || !button.isConnected) return;
+    if (prominenceTooltipSource !== button) hideProminenceTooltip();
+    if (!prominenceTooltip) {
+        prominenceTooltip = document.createElement('div');
+        prominenceTooltip.id = 'commonnessTooltip';
+        prominenceTooltip.className = 'sense-prominence-detail sense-prominence-popup';
+        prominenceTooltip.setAttribute('role', 'tooltip');
+        // The browser's top layer escapes scrolling and transformed card
+        // ancestors. Older browsers still get a fixed overlay on the body.
+        if (typeof prominenceTooltip.showPopover === 'function') {
+            prominenceTooltip.setAttribute('popover', 'manual');
+        }
+        document.body.append(prominenceTooltip);
+    }
+    prominenceTooltipSource = button;
+    button.setAttribute('aria-describedby', 'commonnessTooltip');
+    prominenceTooltip.innerHTML = detail.innerHTML;
+    prominenceTooltip.hidden = false;
+    if (prominenceTooltip.hasAttribute('popover')
+        && !prominenceTooltip.matches(':popover-open')) prominenceTooltip.showPopover();
+
+    const anchor = button.getBoundingClientRect();
+    const box = prominenceTooltip.getBoundingClientRect();
+    const inset = 8;
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = window.innerHeight;
+    let left = anchor.left - box.width - inset;
+    if (left < inset) left = anchor.right + inset;
+    left = Math.max(inset, Math.min(left, viewportWidth - box.width - inset));
+    const top = Math.max(inset, Math.min(anchor.top + (anchor.height - box.height) / 2,
+        viewportHeight - box.height - inset));
+    // Account for the app's larger-text page zoom when positioning in
+    // viewport coordinates; the tooltip keeps the learner's text size.
+    const scale = box.width / prominenceTooltip.offsetWidth || 1;
+    prominenceTooltip.style.left = `${left / scale}px`;
+    prominenceTooltip.style.top = `${top / scale}px`;
 }
 
 function toggleProminenceBadge(event, button) {
     event?.stopPropagation?.();
     event?.preventDefault?.();
     if (!button) return;
-    const open = button.getAttribute('aria-expanded') === 'true';
-    document.querySelectorAll('.sense-prominence-badge[aria-expanded="true"]').forEach(el => {
-        if (el !== button) el.setAttribute('aria-expanded', 'false');
-    });
-    button.setAttribute('aria-expanded', open ? 'false' : 'true');
+    if (button.getAttribute('aria-expanded') === 'true') {
+        hideProminenceTooltip();
+    } else {
+        showProminenceTooltip(button);
+        button.setAttribute('aria-expanded', 'true');
+    }
 }
+
+document.addEventListener('pointerdown', event => {
+    if (!event.target.closest('.sense-prominence-badge')) hideProminenceTooltip();
+}, true);
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') hideProminenceTooltip();
+});
+document.addEventListener('scroll', () => hideProminenceTooltip(), true);
+window.addEventListener?.('resize', () => hideProminenceTooltip());
 window.prominenceBadgeHTML = prominenceBadgeHTML;
 window.toggleProminenceBadge = toggleProminenceBadge;
+window.showProminenceTooltip = showProminenceTooltip;
+window.hideProminenceTooltip = hideProminenceTooltip;
 
 // True when at least one sense on this card would print a lemma under the
 // word. Read across every meaning rather than the selected one: the point is
@@ -8288,6 +8334,7 @@ function renderCardWikipediaBadge(card) {
             <div class="ref-tile-icon-wrap">
                 <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="currentColor" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.28" stroke-width="0.5" aria-hidden="true">
                     <rect x="3" y="14" width="4.5" height="6" rx="1.5"></rect>
+                    <rect x="3" y="17" width="4.5" height="3" rx="0.75" fill="#fff" fill-opacity="1" stroke="none"></rect>
                     <rect x="10" y="9" width="4.5" height="11" rx="1.5"></rect>
                     <rect x="17" y="4" width="4.5" height="16" rx="1.5"></rect>
                 </svg>
@@ -8407,6 +8454,7 @@ function renderCardWikipediaBadge(card) {
     const renderedBack = document.getElementById('backContent');
     const backDomChanged = renderedBack?._fluencyRenderedHTML !== backHTML;
     if (renderedBack && backDomChanged) {
+        hideProminenceTooltip();
         // The conjugation panel is hosted on <body> while open (it covers the
         // viewport, which it cannot do from inside the clipped, 3D-transformed
         // card). backHTML re-creates its placeholder, so drop any open copy
@@ -8788,6 +8836,7 @@ function maybeShowCardTutorialPrompt() {
 }
 
 function flipCard() {
+    hideProminenceTooltip();
     // Chain children are back-only: there is no front content, so every flip
     // route (tap, keyboard, control button) is a no-op rather than a turn
     // onto a blank face.
@@ -10425,8 +10474,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '78548470';
-const MODALS_ASSET_VERSION = '78548470';
+const ASSET_VERSION = '876d9a6c';
+const MODALS_ASSET_VERSION = '876d9a6c';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

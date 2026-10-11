@@ -13,7 +13,7 @@
 
 import {
     REPLICA_CARDS, esc, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=78548470';
+} from './card-replica.js?v=876d9a6c';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -233,8 +233,8 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         demo: 'openReview',
                         anchor: '.knowledge-overview-trigger',
-                        title: 'Mark a meaning',
-                        text: 'Know the word, but not every meaning? The badge shows how many meanings you know. Tap it to tick the ones you want future reviews to bring back; those move to the top of the card’s back, and the meanings you know fade to the bottom.',
+                        title: 'Flag a meaning',
+                        text: 'Know the word, but not every meaning? The badge shows how many meanings you have flagged for review. Tap it to tick the ones you want future reviews to bring back; those move to the top of the card’s back, and the meanings you know fade to the bottom.',
                     },
                     {
                         side: 'right',
@@ -1167,7 +1167,7 @@ function reviewSheetHTML(card) {
             </span>
             <input type="checkbox" class="knowledge-overview-checkbox" aria-label="Review ${esc(meaning.translation)} later">
         </label>`).join('');
-    return `<div class="knowledge-overview-modal tutorial-demo-sheet" role="dialog" aria-label="Mark a meaning">
+    return `<div class="knowledge-overview-modal tutorial-demo-sheet" role="dialog" aria-label="Flag a meaning">
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
                 <p class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>
@@ -1194,10 +1194,20 @@ function openDemoSheet(kind) {
     closeLookupDemo();
     closeDemoSheet();
     replica.insertAdjacentHTML('beforeend', kind === 'rare' ? rareSheetHTML(card) : reviewSheetHTML(card));
+    if (kind === 'review') updateDemoFlagCount();
     positionRing();
 }
 
 // Tick the second meaning, the way a learner marks one to revisit.
+function updateDemoFlagCount() {
+    const stage = document.getElementById('cardTutorialStage');
+    const rows = stage?.querySelectorAll('.tutorial-demo-sheet [data-demo-row]');
+    if (!rows?.length) return;
+    const flagged = [...rows].filter(row => row.classList.contains('is-selected')).length;
+    const fraction = stage.querySelector('.knowledge-overview-trigger .ref-tile-fraction');
+    if (fraction) fraction.textContent = `${flagged}/${rows.length}`;
+}
+
 function tickReviewRow() {
     const row = document.querySelector('#cardTutorialStage .tutorial-demo-sheet [data-demo-row="1"]')
         || document.querySelector('#cardTutorialStage .tutorial-demo-sheet [data-demo-row="0"]');
@@ -1207,6 +1217,7 @@ function tickReviewRow() {
     if (box) box.checked = true;
     const status = row.querySelector('.knowledge-overview-status');
     if (status) status.setAttribute('aria-label', 'Practice');
+    updateDemoFlagCount();
 }
 
 function openLookupDemo({ arm = false } = {}) {
@@ -1324,6 +1335,7 @@ function onStageClick(event) {
         row.classList.toggle('is-selected', on);
         const box = row.querySelector('input');
         if (box) box.checked = on;
+        updateDemoFlagCount();
         return;
     }
     if (target.closest('.tutorial-demo-sheet')) return;
@@ -1543,7 +1555,7 @@ function finishTutorialLesson() {
     closeCardTutorial();
     const studying = !document.getElementById('appContent')?.classList.contains('hidden');
     const target = studying ? document.getElementById('flipBtn')
-        : document.querySelector('#rangeSelector .study-set-dot:not(:disabled)')
+        : document.querySelector('#studySetStartBtn:not(:disabled)')
             || document.getElementById('standardSourceSpeechBtn');
     target?.scrollIntoView({ block: 'center' });
     target?.focus();

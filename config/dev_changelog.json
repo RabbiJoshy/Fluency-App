@@ -2,6 +2,104 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T23:31:14+01:00",
+   "date": "2026-10-11 23:31 BST",
+   "agent": "Codex",
+   "summary": "Progress uses stronger colours and shows the cards left to study first.",
+   "detail": [
+    "Changed the washed-out palette to the Portuguese level accent green, vivid yellow, white, violet and slate; made legend text more readable.",
+    "The continuous bar and its legend now run New, Practice, Known, Estimated familiar, Skipped, putting the work remaining on the left.",
+    "Session selection, level boundaries, estimation and saved learning progress are unchanged."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-11T23:25:05+01:00",
+   "date": "2026-10-11 23:25 BST",
+   "agent": "Codex",
+   "summary": "Level progress is now one continuous bar with lighter status colours.",
+   "detail": [
+    "Removed the four progress divisions and grouped each learning status into one continuous stretch instead of repeating colours across rank regions.",
+    "Known cards are light green, practice is light yellow, new is white, estimated familiarity is soft lilac and skipped is blue-grey. Legend colours match in both themes.",
+    "Kept 100-card target levels, 20-card sessions, saved progress and within-level estimation unchanged."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-11T23:22:13+01:00",
+   "date": "2026-10-11 23:22 BST",
+   "agent": "Codex",
+   "summary": "Rare uses has a monochrome count in a thin circle instead of a coloured notification badge.",
+   "detail": [
+    "Removed the coloured fill and shadow behind the Rare uses count.",
+    "Count remains above the icon at the top left, with white digits and a thin white ring; light mode uses dark ink.",
+    "Kept the three-bar icon and its half-filled first bar."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-11T23:19:32+01:00",
+   "date": "2026-10-11 23:19 BST",
+   "agent": "Codex",
+   "summary": "Card actions sit directly on the page background, with less padding and more room for card content.",
+   "detail": [
+    "Removed the action row’s coloured background and rounded tray in both themes; it now blends into the page like the scrubber.",
+    "Reduced the gap and button padding, preserving readable labels and usable tap targets.",
+    "Reclaimed footer space: about 30px more card content on desktop and 42px on phones, while respecting the phone safe area."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-11T23:05:37+01:00",
+   "date": "2026-10-11 23:05 BST",
+   "agent": "Codex",
+   "summary": "Commonness tooltips stay above the card without clipping; white text and taller sense meters.",
+   "detail": [
+    "Commonness explanations open in a separate overlay above scrolling and transformed card surfaces, positioned within the screen edges.",
+    "Tooltip text and commonness icon are white. Sense-row meters are taller and slightly wider, with less surrounding padding.",
+    "Hover, tap and keyboard access work; tooltips dismiss when scrolling, flipping, changing cards or returning to the menu."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-11T22:56:24+01:00",
+   "date": "2026-10-11 22:56 BST",
+   "agent": "Codex",
+   "summary": "SETWISE: one level progress bar and short 20-card sessions, with finer starting-level suggestions.",
+   "detail": [
+    "Keep 100-card target levels; four quiet progress segments replace the selectable 25-card boxes. Go starts up to 20 eligible cards across the level.",
+    "Session completion offers Another 20 (or the smaller remaining count) and waits for your choice. New cards and practice remain separate.",
+    "Estimation suggests positions such as around halfway through Level 1 while preserving the saved starting rank. Estimated familiarity is shown separately from answered-card progress.",
+    "Resume retains saved session membership and order, including old sessions and companion cards. Guest sessions advance in memory without syncing answers."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-11T22:48:26+01:00",
+   "date": "2026-10-11 22:48 BST",
+   "agent": "Codex",
+   "summary": "Clearer Rare uses badge and Flag a meaning counter, with a softer card action tray.",
+   "detail": [
+    "Rare uses count moves to the top left with larger digits, and its first bar is half filled in white.",
+    "Mark a meaning becomes Flag a meaning. Its counter starts at zero and counts the meanings flagged for review, matching the checked rows.",
+    "The action tray uses the normal dark background colour instead of pure black; light mode retains its soft grey surface."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-11T22:37:33+01:00",
+   "date": "2026-10-11 22:37 BST",
+   "agent": "Codex",
+   "summary": "Clearer level and set controls, larger centred lookup icons, and a separate card action tray.",
+   "detail": [
+    "Word range sits quietly at the top right; the selected level is wider with larger text and less surrounding padding. The lyrics-frequency sentence is hidden while its calculation remains available.",
+    "Set bars are taller with larger labels; the set summary and progress legend are centred and more subtle.",
+    "Commonness tooltips show a coloured icon and title above the explanation; Rare uses shares the sense meters’ bar proportions.",
+    "Larger lookup icons rise centred above the magnifying glass. Card-back actions sit on a separate black tray with a 10px gap; light mode uses soft grey."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T21:14:00+01:00",
    "date": "2026-10-11 21:14 BST",
    "agent": "Claude",
@@ -277,103 +375,6 @@
     "JOSHUA (profile_028abec8…) can flag cards and open the data and model panel with Cmd/Ctrl+I, but sees no admin settings, changelog modal, provenance pills or scrape inspector. It is allow-listed by profile ID, not display name.",
     "A username now belongs to one profile, compared case-insensitively. The worker refuses a second profile with the same name or with an unclaimed legacy name (needs migration 0007 and a worker deploy).",
     "The sign-in match dialog no longer offers 'No, create an account' for a name that already exists."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T22:14:49+01:00",
-   "date": "2026-10-10 22:14 BST",
-   "agent": "Claude",
-   "summary": "Tutorial: finer-grained steps, new demo words, plural merging in Smart Skip, card always fits",
-   "detail": [
-    "Front: rank and frequency are separate steps. Back: the sense row, then each meaning row, the usage bars, the example, its English, its source, then Rare uses, Review meanings and Look up.",
-    "Demo cards are now quiero (querer, three meanings) in Spanish and parece (parecer, two short meanings) in Portuguese, replacing que and provar.",
-    "Smart Skip shows that singular and plural nouns with identical meanings share a card (Spanish and Portuguese).",
-    "The card no longer scrolls inside itself: on narrow phones it is scaled down (not below 70%) so every row is visible, and the page scrolls the rest."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T21:52:18+01:00",
-   "date": "2026-10-10 21:52 BST",
-   "agent": "Claude",
-   "summary": "Tutorial: back of the card builds up too; spotlight ring follows its element",
-   "detail": [
-    "The back of the card starts blank: meanings, rare uses, review meanings, usage bars, example and look-up each appear as they are explained.",
-    "The spotlight ring is re-measured continuously and corrects for page zoom, so it stays around its element after rows open, flips settle or text size changes."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T20:17:03+01:00",
-   "date": "2026-10-10 20:17 BST",
-   "agent": "Claude",
-   "summary": "Tutorial: one banner, a card that builds up, clearer Speech or music, tighter grading note, whole spotlight ring",
-   "detail": [
-    "Banner now reads Section · Title — Text on one line; the section is no longer repeated beside the title.",
-    "The front of the card starts blank and each element fades in as its note is explained.",
-    "Speech or music explains each source from first principles, including the two ways to choose music (pick artists, or build from a Spotify playlist).",
-    "Grade your answer note cut to one short sentence.",
-    "The yellow spotlight is now a ring drawn over the card and clamped inside it, so it is never clipped or pushed off screen (desktop and phone)."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T19:13:33+01:00",
-   "date": "2026-10-10 19:13 BST",
-   "agent": "Codex",
-   "summary": "Use distinct URLs for the corrected decks’ supporting files",
-   "detail": [
-    "Version the Spanish/Portuguese Merge Lemmas, cognate verdicts, frequencies and estimation pools so browser caches cannot substitute old v23 files.",
-    "Preserve the latest UI and all existing source scores, frequencies and merging rules."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T19:07:01+01:00",
-   "date": "2026-10-10 19:07 BST",
-   "agent": "Codex",
-   "summary": "Make corrected Spanish and Portuguese speech decks the defaults",
-   "detail": [
-    "Default speech decks now use HEADWAY Spanish r4 and Portuguese r2, including déjalo → dejar / Verb; no special review URL is required.",
-    "Refresh deck-bound Merge Lemmas, cognate card decisions, frequency bindings and estimation pools using existing data and existing policies.",
-    "Keep the current staging UI; no new WSD, harvest or model download. Missing coverage assets are explicitly declared absent."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T18:27:55+01:00",
-   "date": "2026-10-10 18:27 BST",
-   "agent": "Codex",
-   "summary": "Plan TAGLINE: evaluate Portuguese sentence tagging and WSD safeguards",
-   "detail": [
-    "Added a named roadmap job to compare contextual POS taggers with a no-tagger baseline, starting with verified Portuguese és classification failures.",
-    "Keep source lemma corrections separate from sentence tagging and app display; use existing frozen evidence before any approved regeneration."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T18:15:00+01:00",
-   "date": "2026-10-10 18:15 BST",
-   "agent": "Antigravity",
-   "summary": "Simpler progress modal, tidier level and set explainers, and you can now step back through companion cards.",
-   "detail": [
-    "Progress modal: single title row with language flag; removed Study history, action buttons and Refresh; coverage says it is based on speech you understand, not cards answered; Skipped box shown when Smart Skip is on",
-    "Level explainer: title is 'Choose where to begin' (centred), levels described as 100 cards, shorter centred estimate box with time hint",
-    "Set explainer: titles removed; New, Rev, Known and Skip pills with coloured labels",
-    "Left arrow/button now steps back between companion cards of a word opened from search or lyrics"
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T17:50:00+01:00",
-   "date": "2026-10-10 17:50 BST",
-   "agent": "Antigravity",
-   "summary": "Log in now asks only for a username; the birthday appears only if the account has one set.",
-   "detail": [
-    "Birthday fields hidden in Log in mode until a matching profile has a birthday password",
-    "Wrong or missing birthday shows an inline message",
-    "Unknown username on Log in says to use Create account instead of silently creating one"
    ],
    "commit": "pending"
   }

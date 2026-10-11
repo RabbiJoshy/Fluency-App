@@ -50,8 +50,8 @@ export const state = {
     selectedLanguage: 'spanish',
     selectedLevel: null,
     selectedRanges: [],
-    // Legacy resume metadata. New study sets use fixed 20-position baseline
-    // chunks so membership does not change with a size preference.
+    // Legacy saved-session metadata. Fresh sessions cap their cards independently
+    // of the whole-level range and its fixed progress milestones.
     groupSize: 20,
 
     // Feature flags
