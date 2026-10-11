@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T11:04:22+01:00",
+      "date": "2026-10-11 11:04 BST",
+      "agent": "Claude",
+      "summary": "Focus meanings rows made uniform; Less common uses sheet is compact with example buttons",
+      "detail": [
+        "Focus meanings: every row is the same box — translation, then context; family headings sit inside each row; head reads 'Verb from decir'.",
+        "Rare uses sheet retitled 'Less common uses of <word>' (one line, no subtitle); rows are meaning + context with an examples icon button on the right."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T09:59:30+01:00",
       "date": "2026-10-11 09:59 BST",
       "agent": "Claude",
@@ -366,16 +377,6 @@
       "summary": "Fix: Memory tip sheet now shows its explanation (the body had collapsed to nothing)",
       "detail": [
         "The sheet's text area had no height, so only the title showed. It now sizes to its content."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T00:05:00+01:00",
-      "date": "2026-10-10 00:05 BST",
-      "agent": "Claude",
-      "summary": "Fix: Memory tip tile now actually appears (it was reading the wrong language variable)",
-      "detail": [
-        "The first release looked up the language by a name that does not exist, so no card ever got a tip. It now uses selectedLanguage."
       ],
       "commit": "pending"
     }
