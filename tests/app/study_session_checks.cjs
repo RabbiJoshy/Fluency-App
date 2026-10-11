@@ -43,7 +43,7 @@ const {createHarness} = require('./estimation_harness.cjs');
         resetSetupStateMemo(){},fetchActiveVocabularyData:async()=>baseline,
         getPreparedSetupVocabulary:()=>({vocab,stableBaseline:baseline}),
         _levelRankAccessor:()=>item=>item.stableRank,buildStableSetRanges:h.buildStableSetRanges,
-        getSetupLearningState:item=>item.rank<=25?{seen:true,estimated:true}:item.rank<=30?{seen:true,needsReview:true,reviewReason:'due'}:{seen:false},
+        getSetupLearningState:item=>item.rank<=25?{seen:true,estimated:true}:item.rank<=30?{seen:true,needsReview:true,reviewReason:'due'}:item.rank<=50?{seen:true,needsReview:false}:{seen:false},
         setActiveSetupStep(){},renderSetupExtrasSection(){},startSelectedStudySession(){},
     };
     // buildStableSetRanges is provided by ui.js, not the estimation harness's defaults.
@@ -54,18 +54,21 @@ const {createHarness} = require('./estimation_harness.cjs');
     vm.runInContext(ui.slice(ui.indexOf('async function renderRangeSelector('),ui.indexOf('function _escapeHtml(')),context);
     await context.renderRangeSelector();
     const html=node('rangeSelector').innerHTML;
-    assert.equal((html.match(/class="study-level-segment"/g)||[]).length,4);
+    assert.equal((html.match(/class="study-level-bar"/g)||[]).length,1);
+    assert.ok(!html.includes('study-level-segment'));
+    assert.match(html,/--set-known-end:20%;--set-review-end:25%;--set-estimated-end:40%;--set-new-end:90%/);
     assert.ok(!html.includes('study-set-dot'));
     assert.match(html,/Go · 20 cards/);
     assert.match(html,/15 Estimated familiar/);
     assert.match(html,/5 Practice/);
     assert.match(html,/10 Skipped/);
-    assert.match(html,/0 Known/);
+    assert.match(html,/20 Known/);
     assert.equal(context.window.__studySessionContext.range,'1-101');
-    assert.equal(context.window.__studySessionContext.unseenCount,70);
+    assert.equal(context.window.__studySessionContext.unseenCount,50);
     vocab=[];
     await context.renderRangeSelector();
     assert.match(node('rangeSelector').innerHTML,/100 Skipped/);
+    assert.match(node('rangeSelector').innerHTML,/--set-known-end:0%;--set-review-end:0%;--set-estimated-end:0%;--set-new-end:0%/);
     assert.match(node('rangeSelector').innerHTML,/disabled>No cards available/);
 
     // Continuation recounts current progress; no practice/replay fallback.

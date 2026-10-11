@@ -1594,11 +1594,11 @@ async function renderExtraCategorySelector(container, language, { preferActionab
 let _smartLevelRangesCache = null;
 
 // Study shape, shared by every level builder and the set slotter: levels of
-// 100-card target levels with 25-position progress milestones and 20-card sessions.
+// 100-card target levels with 25-position estimation regions and 20-card sessions.
 const STUDY_LEVEL_TARGET_CARDS = 100;
 const STUDY_LEVEL_MIN_COUNT = 10;
 const STUDY_LEVEL_MAX_COUNT = 120;
-const STABLE_SET_SLOT_COUNT = 25; // Progress milestones and estimation regions, not sessions.
+const STABLE_SET_SLOT_COUNT = 25; // Internal placement regions, not visible groups or sessions.
 const STUDY_SESSION_LIMIT = 20;
 let _studySessionStarting = false;
 
@@ -2748,8 +2748,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         : null;
     const seenLemmas = await window.buildSeenLemmaSet?.(vocabularyData) || new Set();
 
-    // Fixed rank regions remain progress milestones and estimation boundaries.
-    // Session membership can cross these regions without moving the milestones.
+    // Fixed rank regions retain estimation and legacy-session compatibility.
+    // The visible progress bar aggregates the whole level by learning status.
     const slotRanges = buildStableSetRanges(minWord, maxWord, rankBasis);
     const slotCount = slotRanges.length;
     const slots = Array.from({ length: slotCount }, () => []);
@@ -2839,10 +2839,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         }
     }
 
-    const segmentsHTML = ranges.map(range => `<span class="study-level-segment"
-        style="flex:${range.end - range.start};--set-known-end:${range.knownPct}%;--set-review-end:${range.reviewEndPct}%;--set-estimated-end:${range.estimatedEndPct}%;--set-new-end:${range.newEndPct}%"
-        aria-hidden="true"></span>`).join('');
-
     const levelReviewCount = ranges.reduce((sum, range) => sum + range.reviewCount, 0);
     const levelDueCount = ranges.reduce((sum, range) => sum + range.dueCount, 0);
     const levelUnfinishedCount = Math.max(0, levelReviewCount - levelDueCount);
@@ -2892,6 +2888,13 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     const levelNewCount = ranges.reduce((sum, range) => sum + range.unseenCount, 0);
     const levelEstimatedCount = ranges.reduce((sum, range) => sum + range.estimatedCount, 0);
     const levelSkippedCount = ranges.reduce((sum, range) => sum + range.skippedCount, 0);
+    // Group each status once across the whole level; this bar is not a rank map.
+    const levelTotal = levelCardCount + levelSkippedCount;
+    const percent = count => levelTotal > 0 ? 100 * count / levelTotal : 0;
+    const progressStyle = `--set-known-end:${percent(levelKnownCount)}%;`
+        + `--set-review-end:${percent(levelKnownCount + levelReviewCount)}%;`
+        + `--set-estimated-end:${percent(levelKnownCount + levelReviewCount + levelEstimatedCount)}%;`
+        + `--set-new-end:${percent(levelCardCount)}%`;
     const context = {
         range: `${minWord}-${maxWord}`, rankBasis, levelNumber,
         unseenCount: levelNewCount, reviewCount: levelReviewCount, cardCount: levelCardCount, ranges,
@@ -2906,7 +2909,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     container.innerHTML = `
         <div class="study-set-panel">
             <div class="study-set-choice">
-                <div class="study-level-bar" role="img" aria-label="Level progress: ${description}">${segmentsHTML}</div>
+                <div class="study-level-bar" role="img" aria-label="Level progress: ${description}" style="${progressStyle}"></div>
                 <div class="study-set-current-copy">
                     <span>
                         <b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>

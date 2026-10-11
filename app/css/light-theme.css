@@ -1277,11 +1277,11 @@
     box-shadow: inset 0 0 0 1.5px rgba(var(--sense-match-rgb), 0.5), inset 3px 0 0 rgb(var(--sense-match-rgb)), inset -3px 0 0 rgb(var(--sense-match-rgb)) !important;
 }
 
-/* SETWISE shares the bar and legend palette across the whole level. */
+/* Same light status colours as the dark theme; the bar outline frames white new cards. */
 :root[data-theme="light"] #step4 {
-    --set-known: color-mix(in srgb, var(--success) 58%, var(--bg-card));
-    --set-review: color-mix(in srgb, var(--warning) 66%, var(--bg-card));
-    --set-new: #e3e9ee;
-    --set-skipped: #64748b;
-    --set-estimated: #b6a8d5;
+    --set-known: #a8e4bb;
+    --set-review: #f6df93;
+    --set-new: #ffffff;
+    --set-skipped: #bdc7d5;
+    --set-estimated: #cfc3e6;
 }

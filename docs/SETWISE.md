@@ -1,14 +1,17 @@
 # SETWISE — level progress and short sessions
 
 Approved in the SETWISE chat, 2026-10-11: retain the 100-card target level size,
-replace selectable fixed sets with a single segmented bar, and start sessions of
+replace selectable fixed sets with a single continuous bar, and start sessions of
 up to 20 eligible cards immediately. No session-size picker. Existing small-deck
 and oversized-deck level exceptions remain supported.
 
 ## Behaviour
 
-- Four fixed 25-position regions remain milestones on a typical 100-card level;
-  sessions cross their boundaries. Filters never move the baseline boundaries.
+- The visible bar aggregates the whole level by status: each colour appears once,
+  with no four-way divisions or rank patches. Internal 25-position regions remain
+  for estimation and old-session compatibility. Filters never move level boundaries.
+- Use light green for known, light yellow for practice, white for new, soft lilac
+  for estimated familiarity and blue-grey for skipped. The legend shares this palette.
 - Go selects new cards in existing vocabulary order within the selected level.
   When no new cards remain, offer practice, then clearly labelled Study again.
 - Cap constructed cards at 20; keep companion pairs together, allowing 19 cards

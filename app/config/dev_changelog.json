@@ -2,6 +2,18 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T23:25:05+01:00",
+   "date": "2026-10-11 23:25 BST",
+   "agent": "Codex",
+   "summary": "Level progress is now one continuous bar with lighter status colours.",
+   "detail": [
+    "Removed the four progress divisions and grouped each learning status into one continuous stretch instead of repeating colours across rank regions.",
+    "Known cards are light green, practice is light yellow, new is white, estimated familiarity is soft lilac and skipped is blue-grey. Legend colours match in both themes.",
+    "Kept 100-card target levels, 20-card sessions, saved progress and within-level estimation unchanged."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T23:22:13+01:00",
    "date": "2026-10-11 23:22 BST",
    "agent": "Codex",
@@ -364,17 +376,6 @@
     "Demo cards are now quiero (querer, three meanings) in Spanish and parece (parecer, two short meanings) in Portuguese, replacing que and provar.",
     "Smart Skip shows that singular and plural nouns with identical meanings share a card (Spanish and Portuguese).",
     "The card no longer scrolls inside itself: on narrow phones it is scaled down (not below 70%) so every row is visible, and the page scrolls the rest."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T21:52:18+01:00",
-   "date": "2026-10-10 21:52 BST",
-   "agent": "Claude",
-   "summary": "Tutorial: back of the card builds up too; spotlight ring follows its element",
-   "detail": [
-    "The back of the card starts blank: meanings, rare uses, review meanings, usage bars, example and look-up each appear as they are explained.",
-    "The spotlight ring is re-measured continuously and corrects for page zoom, so it stays around its element after rows open, flips settle or text size changes."
    ],
    "commit": "pending"
   }
