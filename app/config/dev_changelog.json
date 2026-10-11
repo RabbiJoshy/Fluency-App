@@ -2,6 +2,19 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T22:37:33+01:00",
+   "date": "2026-10-11 22:37 BST",
+   "agent": "Codex",
+   "summary": "Clearer level and set controls, larger centred lookup icons, and a separate card action tray.",
+   "detail": [
+    "Word range sits quietly at the top right; the selected level is wider with larger text and less surrounding padding. The lyrics-frequency sentence is hidden while its calculation remains available.",
+    "Set bars are taller with larger labels; the set summary and progress legend are centred and more subtle.",
+    "Commonness tooltips show a coloured icon and title above the explanation; Rare uses shares the sense meters’ bar proportions.",
+    "Larger lookup icons rise centred above the magnifying glass. Card-back actions sit on a separate black tray with a 10px gap; light mode uses soft grey."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T21:14:00+01:00",
    "date": "2026-10-11 21:14 BST",
    "agent": "Claude",
@@ -362,18 +375,6 @@
     "Level explainer: title is 'Choose where to begin' (centred), levels described as 100 cards, shorter centred estimate box with time hint",
     "Set explainer: titles removed; New, Rev, Known and Skip pills with coloured labels",
     "Left arrow/button now steps back between companion cards of a word opened from search or lyrics"
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T17:50:00+01:00",
-   "date": "2026-10-10 17:50 BST",
-   "agent": "Antigravity",
-   "summary": "Log in now asks only for a username; the birthday appears only if the account has one set.",
-   "detail": [
-    "Birthday fields hidden in Log in mode until a matching profile has a birthday password",
-    "Wrong or missing birthday shows an inline message",
-    "Unknown username on Log in says to use Create account instead of silently creating one"
    ],
    "commit": "pending"
   }
