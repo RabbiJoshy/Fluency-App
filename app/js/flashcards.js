@@ -1,29 +1,30 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=cbf78ad8';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=cbf78ad8';
-import './speech.js?v=cbf78ad8';
-import { goToRoute, routeCodeFor } from './routes.js?v=cbf78ad8';
-import { memoryTipTileHTML } from './memory-tips.js?v=cbf78ad8';
-import './side-dock.js?v=cbf78ad8';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=cbf78ad8';
+import './state.js?v=52af77e0';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=52af77e0';
+import { installCardTouch } from './card-touch.js';
+import './speech.js?v=52af77e0';
+import { goToRoute, routeCodeFor } from './routes.js?v=52af77e0';
+import { memoryTipTileHTML } from './memory-tips.js?v=52af77e0';
+import './side-dock.js?v=52af77e0';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=52af77e0';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=cbf78ad8';
+} from './example-personalisation.js?v=52af77e0';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=cbf78ad8';
+} from './spanishdict-usage.js?v=52af77e0';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=cbf78ad8';
+} from './reverse-cues.js?v=52af77e0';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -56,7 +57,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=cbf78ad8';
+} from './card-metadata-pills.js?v=52af77e0';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2304,223 +2305,26 @@ function setSwipeLegendCommit(direction) {
 }
 
 function setupSwipeGestures() {
-    const card = document.getElementById('flashcard');
-    const incorrectIndicator = document.getElementById('incorrectIndicator');
-    const correctIndicator = document.getElementById('correctIndicator');
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let isDragging = false;
-    let hasMoved = false;
-    let touchStartTime = 0;
-    let maxMovement = 0; // Track maximum movement during touch
-    let startedOnCircle = false; // Track if touch started on flip circle
-    let touchZone = null; // Track which zone touch started in
-    let wasFlippedAtStart = false; // Track flip state at touch start
-
-    // Helper to determine touch zone (center vs edges)
-    function getTouchZone(touchX, cardRect) {
-        const relativeX = (touchX - cardRect.left) / cardRect.width;
-        if (relativeX < 0.25) return 'left-edge';
-        if (relativeX > 0.75) return 'right-edge';
-        return 'center';
-    }
-
-    card.addEventListener('touchstart', function(e) {
-        // Don't handle if touch is on buttons, links, or specific interactive elements
-        if (e.target.closest('.nav-btn-inline') ||
-            e.target.closest('.gear-btn') ||
-            e.target.closest('.link-btn') ||
-            e.target.closest('.ref-icon-btn') ||
-            e.target.closest('.card-control-btn') ||
-            e.target.closest('.card-action-small') ||
-            e.target.closest('.desktop-answer-btn') ||
-            // Inline set scrubber (chevrons, pip drag surface, gear) — its
-            // own pointerdown/click handlers own this touch entirely.
-            e.target.closest('.card-back-scrubber') ||
-            e.target.closest('[onclick]')) {
-            return;
-        }
-
-        // Check if touch started on flip button or flip-back-area
-        startedOnCircle = !!(e.target.closest('#flipBtn') || e.target.closest('.flip-back-area'));
-
-        // Track flip state at start of touch
-        wasFlippedAtStart = card.classList.contains('flipped');
-
-        // Get touch zone for zone-based gesture handling
-        const cardRect = card.getBoundingClientRect();
-        touchZone = getTouchZone(e.touches[0].clientX, cardRect);
-
-        // On back side, allow swiping from card-details area (remove the restriction)
-        // Only block actual interactive elements like onclick handlers
-        if (wasFlippedAtStart) {
-            // Back side: allow swipe from anywhere except buttons/links
-            // This enables swiping even from card-details area
-        } else {
-            // Front side: standard handling
-            if (e.target.closest('.card-front') || e.target.closest('#flipBtn')) {
-                // Allow touch to proceed
-            } else {
-                return;
-            }
-        }
-
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        currentX = touchStartX;
-        currentY = touchStartY;
-        isDragging = true;
-        hasMoved = false;
-        maxMovement = 0;
-        touchStartTime = Date.now();
-        card.classList.add('swiping');
-    }, { passive: true });
-
-    card.addEventListener('touchmove', function(e) {
-        if (!isDragging) return;
-
-        currentX = e.touches[0].clientX;
-        currentY = e.touches[0].clientY;
-
-        const diffX = currentX - touchStartX;
-        const diffY = currentY - touchStartY;
-        const totalMovement = Math.abs(diffX) + Math.abs(diffY);
-        maxMovement = Math.max(maxMovement, totalMovement);
-
-        // Only mark as moved if significant movement (raised threshold)
-        if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
-            hasMoved = true;
-        }
-
-        // Horizontal swipes - move card and show indicators
-        if (Math.abs(diffX) > Math.abs(diffY) && hasMoved) {
-            const rotation = diffX / 20; // Rotate based on swipe distance
-
-            // Preserve flip state when moving card
-            const isFlipped = card.classList.contains('flipped');
-            if (isFlipped) {
-                card.style.transform = `translateX(${diffX}px) rotate(${rotation}deg) rotateY(180deg)`;
-            } else {
-                card.style.transform = `translateX(${diffX}px) rotate(${rotation}deg)`;
-            }
-
-            // Show indicators based on swipe direction
-            if (diffX > 50) {
-                correctIndicator.classList.add('visible');
-                incorrectIndicator.classList.remove('visible');
-            } else if (diffX < -50) {
-                incorrectIndicator.classList.add('visible');
-                correctIndicator.classList.remove('visible');
-            } else {
-                correctIndicator.classList.remove('visible');
-                incorrectIndicator.classList.remove('visible');
-            }
-
-            // Swipe legend reacts once the drag passes ~40% of the card's
-            // width — independent of the 50px auto-commit threshold above,
-            // this is purely the visual "you're about to release this" cue.
-            const progress = Math.abs(diffX) / (card.offsetWidth || 1);
-            if (progress > 0.4) {
-                setSwipeLegendCommit(diffX > 0 ? 'correct' : 'incorrect');
-            } else {
-                setSwipeLegendCommit(null);
-            }
-        }
-    }, { passive: true });
-
-    card.addEventListener('touchend', function(e) {
-        if (!isDragging) return;
-        isDragging = false;
-        setSwipeLegendCommit(null);
-
-        const diffX = currentX - touchStartX;
-        const diffY = currentY - touchStartY;
-        const touchDuration = Date.now() - touchStartTime;
-
-        // Check if indicator is visible BEFORE removing it
-        const indicatorWasVisible = correctIndicator.classList.contains('visible') || incorrectIndicator.classList.contains('visible');
-        const swipeDirection = correctIndicator.classList.contains('visible') ? 'correct' : 'incorrect';
-
-        card.classList.remove('swiping');
-        correctIndicator.classList.remove('visible');
-        incorrectIndicator.classList.remove('visible');
-
-        // Reset card transform
-        card.style.transform = '';
-
-        // If indicator was visible, auto-complete the swipe
-        if (indicatorWasVisible) {
-            handleSwipeAction(swipeDirection, { gesture: true });
-            return;
-        }
-
-        // Tap detection
-        const isTap = touchDuration < 250 && maxMovement < 10;
-        const isQuickTap = touchDuration < 350 && maxMovement < 18;
-
-        // ========== FRONT SIDE LOGIC (flip priority) ==========
-        if (!wasFlippedAtStart) {
-            // If touch started on flip circle, only allow flipping
-            if (startedOnCircle) {
-                if (touchDuration < 500 && maxMovement < 100) {
-                    flipCard();
-                }
-                return;
-            }
-
-            // Center zone: flip is priority, ignore swipes
-            if (touchZone === 'center') {
-                // Only flip on clear taps, not on any small movement
-                if (isTap || isQuickTap) {
-                    flipCard();
-                }
-                return;
-            }
-
-            // Edge zones: intentional swipe takes priority
-            const edgeSwipeThreshold = 14;
-            const isEdgeSwipe = Math.abs(diffX) > edgeSwipeThreshold && Math.abs(diffX) > Math.abs(diffY);
-
-            if (isEdgeSwipe) {
-                handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect', { gesture: true });
-            } else if (isTap) {
-                flipCard(); // Tap on edge still flips
-            }
-            return;
-        }
-
-        // ========== BACK SIDE LOGIC (swipe priority) ==========
-        const backSwipeThreshold = 12;
-        const isHorizontalSwipe = Math.abs(diffX) > backSwipeThreshold && Math.abs(diffX) > Math.abs(diffY) * 1.15;
-        const isVerticalSwipe = Math.abs(diffY) > backSwipeThreshold && Math.abs(diffY) > Math.abs(diffX) * 1.15;
-
-        if (isHorizontalSwipe) {
-            // Horizontal swipe - correct/incorrect
-            handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect', { gesture: true });
-        } else if (isVerticalSwipe) {
-            // Vertical swipe - cycle through meanings for multi-meaning cards
+    installCardTouch({
+        card: document.getElementById('flashcard'),
+        incorrectIndicator: document.getElementById('incorrectIndicator'),
+        correctIndicator: document.getElementById('correctIndicator'),
+        grade: direction => handleSwipeAction(direction, { gesture: true }),
+        feedback: setSwipeLegendCommit,
+        busy: () => gradingInProgress,
+        cancelPress: spotifyBtnPressEnd,
+        cycle: step => {
             const currentCard = flashcards[currentIndex];
-            if (currentCard && currentCard.isMultiMeaning) {
-                currentMeaningIndex = stepPractisedMeaningIndex(currentCard, currentMeaningIndex, diffY < 0 ? 1 : -1);
+            if (currentCard?.isMultiMeaning) {
+                currentMeaningIndex = stepPractisedMeaningIndex(currentCard, currentMeaningIndex, step);
                 updateCard();
-            } else if (currentCard && currentCard.sentences) {
-                if (diffY < 0) {
-                    currentSentenceIndex = (currentSentenceIndex + 1) % currentCard.sentences.length;
-                } else {
-                    currentSentenceIndex = (currentSentenceIndex - 1 + currentCard.sentences.length) % currentCard.sentences.length;
-                }
+            } else if (currentCard?.sentences?.length) {
+                currentSentenceIndex = (currentSentenceIndex + step + currentCard.sentences.length)
+                    % currentCard.sentences.length;
                 updateCard();
             }
-        } else if (startedOnCircle && maxMovement < 50) {
-            // Only flip back if specifically tapping the flip area
-            flipCard();
-        } else if (isTap) {
-            // A tap anywhere else on the back flips back to front
-            flipCard();
         }
-    }, { passive: true });
+    });
 }
 
 function pressAnswerBtn(id) {
@@ -2813,8 +2617,12 @@ function advanceAfterFlag() {
 }
 window.advanceAfterFlag = advanceAfterFlag;
 
+let gradingInProgress = false;
+
 function handleSwipeAction(result, { gesture = false } = {}) {
-    if (flashcards[currentIndex]) rememberGradingSwipe();
+    if (gradingInProgress || !flashcards[currentIndex]) return;
+    gradingInProgress = true;
+    if (gesture) rememberGradingSwipe();
     stopExampleAutoplay(true);
     const card = document.getElementById('flashcard');
     const isFlipped = card.classList.contains('flipped');
@@ -2833,7 +2641,12 @@ function handleSwipeAction(result, { gesture = false } = {}) {
         && cardNavStack.length === 0 && result === 'correct';
 
     // Record the result
-    recordCardResult(result);
+    try {
+        recordCardResult(result);
+    } catch (error) {
+        gradingInProgress = false;
+        throw error;
+    }
 
     // Animate the card off screen (maintain flip state during animation)
     if (result === 'correct') {
@@ -2844,36 +2657,40 @@ function handleSwipeAction(result, { gesture = false } = {}) {
 
     // Wait for animation to complete, then move to next card
     setTimeout(async () => {
-        card.classList.remove('swipe-correct', 'swipe-incorrect');
-        card.style.transform = '';
+        try {
+            card.classList.remove('swipe-correct', 'swipe-incorrect');
+            card.style.transform = '';
 
-        // One swipe on a chain child grades that child (phrases only) and
-        // either moves to the next child or returns to the deck.
-        if (isChainChild) {
-            finishPhraseChain(result === 'correct');
-            return;
-        }
-
-        // Starting a chain off the just-graded parent card. Building the plan
-        // awaits a shard fetch the first time a level is opened; it is
-        // memoised after that, and a failed fetch yields an empty plan rather
-        // than blocking the swipe.
-        if (mayChain) {
-            const children = await buildCardChildren(swipedCard);
-            if (children.length > 0) {
-                startCardChain(children);
+            // One swipe on a chain child grades that child (phrases only) and
+            // either moves to the next child or returns to the deck.
+            if (isChainChild) {
+                finishPhraseChain(result === 'correct');
                 return;
             }
-        }
 
-        // If we're on a linked card (nav stack), go back instead of advancing
-        if (stepToSplitSibling()) return;
-        if (cardNavStack.length > 0) {
-            navigateBack();
-            return;
-        }
+            // Starting a chain off the just-graded parent card. Building the plan
+            // awaits a shard fetch the first time a level is opened; it is
+            // memoised after that, and a failed fetch yields an empty plan rather
+            // than blocking the swipe.
+            if (mayChain) {
+                const children = await buildCardChildren(swipedCard);
+                if (children.length > 0) {
+                    startCardChain(children);
+                    return;
+                }
+            }
 
-        advanceToNextDeckCard();
+            // If we're on a linked card (nav stack), go back instead of advancing
+            if (stepToSplitSibling()) return;
+            if (cardNavStack.length > 0) {
+                navigateBack();
+                return;
+            }
+
+            advanceToNextDeckCard();
+        } finally {
+            gradingInProgress = false;
+        }
     }, 300);
 }
 
@@ -10601,8 +10418,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'cbf78ad8';
-const MODALS_ASSET_VERSION = 'cbf78ad8';
+const ASSET_VERSION = '52af77e0';
+const MODALS_ASSET_VERSION = '52af77e0';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

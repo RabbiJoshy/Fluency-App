@@ -1,36 +1,36 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=cbf78ad8';
-import { releaseUrl } from './release-host.js?v=cbf78ad8';
-import './theme.js?v=cbf78ad8';
-import { installFlagRendering } from './flags.js?v=cbf78ad8';
-import { IS_STAGING } from './env.js?v=cbf78ad8';
-import './state.js?v=cbf78ad8';
-import './offline-db.js?v=cbf78ad8';
-import './sync-queue.js?v=cbf78ad8';
-import { initOfflineContent } from './offline-content.js?v=cbf78ad8';
-import './speech.js?v=cbf78ad8';
-import './artist-ui.js?v=cbf78ad8';
-import './auth.js?v=cbf78ad8';
-import './tutorial.js?v=cbf78ad8';
-import './walkthrough.js?v=cbf78ad8';
-import './estimation.js?v=cbf78ad8';
-import './config.js?v=cbf78ad8';
-import './progress.js?v=cbf78ad8';
-import './knowledge.js?v=cbf78ad8';
-import './ui.js?v=cbf78ad8';
-import './vocab.js?v=cbf78ad8';
-import './cognates.js?v=cbf78ad8';
-import './coverage.js?v=cbf78ad8';
-import './fast-mode.js?v=cbf78ad8';
-import './extras.js?v=cbf78ad8';
-import './review-home.js?v=cbf78ad8';
-import './song-sets.js?v=cbf78ad8';
-import './playlist-live.js?v=cbf78ad8';
-import './spotify-playlist-import.js?v=cbf78ad8';
-import './vocabulary-import.js?v=cbf78ad8';
-import './flashcards.js?v=cbf78ad8';
-import { validateArtistCatalog } from './data-contracts.js?v=cbf78ad8';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=52af77e0';
+import { releaseUrl } from './release-host.js?v=52af77e0';
+import './theme.js?v=52af77e0';
+import { installFlagRendering } from './flags.js?v=52af77e0';
+import { IS_STAGING } from './env.js?v=52af77e0';
+import './state.js?v=52af77e0';
+import './offline-db.js?v=52af77e0';
+import './sync-queue.js?v=52af77e0';
+import { initOfflineContent } from './offline-content.js?v=52af77e0';
+import './speech.js?v=52af77e0';
+import './artist-ui.js?v=52af77e0';
+import './auth.js?v=52af77e0';
+import './tutorial.js?v=52af77e0';
+import './walkthrough.js?v=52af77e0';
+import './estimation.js?v=52af77e0';
+import './config.js?v=52af77e0';
+import './progress.js?v=52af77e0';
+import './knowledge.js?v=52af77e0';
+import './ui.js?v=52af77e0';
+import './vocab.js?v=52af77e0';
+import './cognates.js?v=52af77e0';
+import './coverage.js?v=52af77e0';
+import './fast-mode.js?v=52af77e0';
+import './extras.js?v=52af77e0';
+import './review-home.js?v=52af77e0';
+import './song-sets.js?v=52af77e0';
+import './playlist-live.js?v=52af77e0';
+import './spotify-playlist-import.js?v=52af77e0';
+import './vocabulary-import.js?v=52af77e0';
+import './flashcards.js?v=52af77e0';
+import { validateArtistCatalog } from './data-contracts.js?v=52af77e0';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -84,7 +84,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=cbf78ad8').catch(error => {
+    ? import('./spotify.js?v=52af77e0').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1452,7 +1452,7 @@ window.closeRadialPicker = closeRadialPicker;
 
 // Stable choice surfaces for lists that can grow. Options keep a fixed place,
 // remain discoverable, and can briefly explain the consequence of a choice.
-function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', entries, variant = 'list', onBack = null, dock = false, footer = null }) {
+function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', entries, variant = 'list', onBack = null, dock = false, footer = null, separatorText = '' }) {
     const existing = document.getElementById(id);
     if (existing) { closeChoiceSheet(id); return; }
     if (!entries.length) return;
@@ -1505,7 +1505,15 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
 
     const body = document.createElement('div');
     body.className = 'choice-sheet-body';
-    entries.forEach(entry => {
+    entries.forEach((entry, index) => {
+        if (separatorText && index > 0) {
+            const separator = document.createElement('div');
+            separator.className = 'choice-sheet-or';
+            const text = document.createElement('b');
+            text.textContent = separatorText;
+            separator.appendChild(text);
+            body.appendChild(separator);
+        }
         const item = document.createElement('button');
         item.type = 'button';
         item.className = 'choice-sheet-item';
@@ -1697,6 +1705,7 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
         id: 'lyricsSourceSheet',
         ariaLabel: 'Choose how to add music',
         title: 'Which music?',
+        separatorText: 'or',
         intro: 'Your deck is built from the words in the songs you pick.',
         stepLabel: `${languageDisplayName(language)} · Music`,
         onBack: openLearningSourcePicker,
@@ -1758,7 +1767,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=cbf78ad8')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=52af77e0')).catch(() => null);
             window.spotifyLogin?.();
         });
     }

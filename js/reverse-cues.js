@@ -703,10 +703,11 @@ function agreeReflexive(rest, subject) {
     return rest.replace(/\boneself\b/gu, forms[0]).replace(/\bone['’]s\b/gu, forms[1]);
 }
 
-function thirdPersonSubject(meaning, options = {}) {
-    // Clock/weather copulas take dummy it; other 3sg follows the example.
-    if (isDummyItCopulaSense(meaning)) return 'it';
-    return detectExamplePronoun(options?.activeExample || options?.example) || 'he/she';
+// A row describes the word, not the sentence on screen: era is "I/he/she
+// was" on every example, and 3sg is "he/she" (clock and weather copulas
+// take dummy it).
+function thirdPersonSubject(meaning) {
+    return isDummyItCopulaSense(meaning) ? 'it' : 'he/she';
 }
 
 function imperativeSubject(personIdx) {
@@ -755,70 +756,109 @@ function finiteEnglishCue(kind, personIdx, gloss, meaning, options = {}) {
     return body ? `${subject} ${body}` : null;
 }
 
-function exampleEnglishText(options = {}) {
-    const example = options?.activeExample || options?.example;
-    if (!example) return '';
-    if (typeof example === 'string') return example;
-    return String(example.english || example.translation || '');
-}
-
 function sentenceOpening(text) {
     return String(text || '')
         .replace(/^[\s"'“‘«¡¿(\-–—]+/u, '')
         .replace(/^(?:(?:oh|hey|please|now|okay|ok|well|so|just|come on)[,!]?\s+)+/iu, '');
 }
 
-/**
- * When a form is both a statement and a command (parece: "he/she seems" or
- * "seem!"), the command is shown only when the example's English is one.
- * Spanish negative commands are subjunctive forms, so "Don't speak." turns a
- * subjunctive reading into "don't speak!".
- */
-function commandReadingsShownByExample(readings, gloss, options) {
-    const text = sentenceOpening(exampleEnglishText(options));
+// A form that is both a statement and a command (parece: "he/she seems" or
+// "seem!") shows one reading, never both: the statement, unless the card's
+// own sentences are overwhelmingly commands (mira: "look!") or the example
+// on screen is a command for that row's verb ("¡Espera aquí!": "wait!").
+// The cut-off is a judgement, kept here to tune.
+const COMMAND_SHARE_OVERWHELMING = 2 / 3;
+const _commandSharesByCard = new WeakMap();
+
+function cardSentencesEnglish(card) {
+    const seen = new Set();
+    const english = [];
+    for (const meaning of Array.isArray(card?.meanings) ? card.meanings : []) {
+        for (const example of Array.isArray(meaning?.allExamples) ? meaning.allExamples : []) {
+            const text = String(example?.english || example?.translation || '').trim();
+            const key = String(example?.target || example?.spanish || text);
+            if (!text || seen.has(key)) continue;
+            seen.add(key);
+            english.push(text);
+        }
+    }
+    return english;
+}
+
+// How one English sentence uses `head` as a command: "Look, …" (plain),
+// "Let's go" (lets), "Don't worry" (negative), or not at all (null).
+function commandUse(sentence, head) {
+    const lower = sentenceOpening(sentence).toLocaleLowerCase('en');
+    const match = /^(let['’]?s\s+|let us\s+|don['’]?t\s+|do not\s+)?([a-z]+)/u.exec(lower);
+    if (!match || !head || match[2] !== head) return null;
+    if (!match[1]) return 'plain';
+    return /^let/u.test(match[1]) ? 'lets' : 'negative';
+}
+
+function commandShares(card, head) {
+    if (!card || typeof card !== 'object' || !head) return null;
+    const sentences = cardSentencesEnglish(card);
+    if (!sentences.length) return null;
+    let cache = _commandSharesByCard.get(card);
+    if (!cache) {
+        cache = new Map();
+        _commandSharesByCard.set(card, cache);
+    }
+    const key = `${head}\u0000${sentences.length}`;
+    if (cache.has(key)) return cache.get(key);
+    const counts = { plain: 0, lets: 0, negative: 0 };
+    for (const sentence of sentences) {
+        const use = commandUse(sentence, head);
+        if (use) counts[use]++;
+    }
+    const total = sentences.length;
+    const shares = {
+        plain: counts.plain / total,
+        lets: counts.lets / total,
+        negative: counts.negative / total,
+    };
+    cache.set(key, shares);
+    return shares;
+}
+
+// The command reading a use calls for: "let's go!" (lets), "don't worry!"
+// (negative, a subjunctive form in Spanish and Portuguese) or "look!".
+function commandReadingFor(use, readings) {
+    const hortative = readings.find(r => r.kind === 'imperative' && r.personIdx === 3);
+    const addressed = readings.find(r => r.kind === 'imperative' && ![0, 3].includes(r.personIdx));
+    if (use === 'lets') return hortative || null;
+    if (use === 'plain') return addressed || null;
+    const addressee = readings.find(r =>
+        (r.kind === 'imperative_neg' || r.kind === 'subj_present') && ![0, 3].includes(r.personIdx));
+    return addressee ? { kind: 'imperative_neg', personIdx: addressee.personIdx } : null;
+}
+
+function activeExampleEnglish(options = {}) {
+    const example = options?.activeExample || options?.example;
+    if (!example) return '';
+    return typeof example === 'string' ? example : String(example.english || example.translation || '');
+}
+
+function commandReadingForCard(readings, gloss, card, options) {
     const head = lowerVerb(String(gloss?.clauses?.[0]?.head || '').split(/\/| or /u)[0]);
-    if (!text || !head) return null;
-    const lower = text.toLocaleLowerCase('en');
-    if (/\blet['’]?s\b|\blet us\b/u.test(lower)) {
-        const hortative = readings.filter(r => r.kind === 'imperative' && r.personIdx === 3);
-        if (hortative.length) return hortative;
+    if (!head) return null;
+    const onScreen = commandUse(activeExampleEnglish(options), head);
+    if (onScreen) {
+        const reading = commandReadingFor(onScreen, readings);
+        if (reading) return reading;
     }
-    const negative = /^(?:don['’]t|do not)\s+([a-z]+)/u.exec(lower);
-    if (negative && negative[1] === head) {
-        const addressee = readings.find(r =>
-            (r.kind === 'imperative_neg' || r.kind === 'subj_present') && ![0, 3].includes(r.personIdx));
-        if (addressee) return [{ kind: 'imperative_neg', personIdx: addressee.personIdx }];
-    }
-    const firstWord = (/^([a-z]+)/u.exec(lower) || [])[1];
-    if (firstWord === head) {
-        const commands = readings.filter(r => r.kind === 'imperative' && ![0, 3].includes(r.personIdx));
-        if (commands.length) return commands.slice(0, 1);
-    }
-    return null;
+    const shares = commandShares(card, head);
+    if (!shares) return null;
+    const [use, share] = Object.entries(shares).sort((a, b) => b[1] - a[1])[0];
+    return share >= COMMAND_SHARE_OVERWHELMING ? commandReadingFor(use, readings) : null;
 }
 
-const FIRST_PERSON_SUBJECT = /(?:^|[^\p{L}])I(?:['’](?:m|d|ll|ve))?(?![\p{L}])/u;
-
-// 1sg and 3sg share a form in several tenses (era, hablaría, aime). Keep the
-// one the example's English uses; keep both when it does not say.
-function narrowPersonFromExample(readings, options) {
-    const persons = new Set(readings.map(r => r.personIdx));
-    if (!persons.has(0) || !persons.has(2)) return readings;
-    const text = exampleEnglishText(options);
-    if (!text) return readings;
-    const first = FIRST_PERSON_SUBJECT.test(text);
-    const third = Boolean(detectExamplePronoun(text));
-    if (first === third) return readings;
-    const keep = first ? 0 : 2;
-    return readings.filter(r => r.personIdx === keep || (r.personIdx !== 0 && r.personIdx !== 2));
-}
-
-function chooseTableReadings(readings, gloss, options) {
+function chooseTableReadings(readings, gloss, card, options) {
     if (!readings.length) return [];
-    const exampleCommand = commandReadingsShownByExample(readings, gloss, options);
-    let pool = exampleCommand || readings.filter(r => KIND_MOOD[r.kind] !== 'command');
+    let pool = readings.filter(r => KIND_MOOD[r.kind] !== 'command');
     // A form that is only a command (ven, haz, sé) stays a command.
-    if (!pool.length) pool = readings;
+    const onlyCommands = !pool.length;
+    if (onlyCommands) pool = readings;
     const indicative = pool.filter(r => KIND_MOOD[r.kind] === 'indicative');
     if (indicative.length) pool = indicative;
     const kinds = [...new Set(pool.map(r => r.kind))]
@@ -827,7 +867,9 @@ function chooseTableReadings(readings, gloss, options) {
     pool = pool
         .filter(r => kinds.includes(r.kind))
         .sort((a, b) => KIND_RANK[a.kind] - KIND_RANK[b.kind] || a.personIdx - b.personIdx);
-    return narrowPersonFromExample(pool, options);
+    if (onlyCommands) return pool;
+    const command = commandReadingForCard(readings, gloss, card, options);
+    return command ? [command] : pool;
 }
 
 function conjugationTableCue(card, meaning, translation, conjugationData, options = {}) {
@@ -857,7 +899,7 @@ function conjugationTableCue(card, meaning, translation, conjugationData, option
         });
     }
     if (!readings.length && agreeingParticipleMatches(entry.past_participle, surface)) return participleCue();
-    const chosen = chooseTableReadings(readings, gloss, options);
+    const chosen = chooseTableReadings(readings, gloss, card, options);
     const render = rowGloss => {
         const cues = [];
         for (const reading of chosen) {
@@ -866,9 +908,11 @@ function conjugationTableCue(card, meaning, translation, conjugationData, option
         }
         return cues.length ? compressPronounCues(cues) : null;
     };
-    let cue = render(gloss);
-    let rowGloss = gloss;
-    if (cue && cue.includes(' / ') && gloss.clauses.length > 1) {
+    // A command is said with one verb: "stop!", not "stop; cease!".
+    const onlyCommandsChosen = chosen.length && chosen.every(r => KIND_MOOD[r.kind] === 'command');
+    let rowGloss = onlyCommandsChosen ? firstClauseGloss(gloss) : gloss;
+    let cue = render(rowGloss);
+    if (cue && cue.includes(' / ') && rowGloss.clauses.length > 1) {
         rowGloss = firstClauseGloss(gloss);
         cue = render(rowGloss);
     }
@@ -1040,7 +1084,7 @@ export function expandThirdSingular(form, meaning, options = {}) {
         if (/^he'/iu.test(form)) return form.replace(/^he'/iu, "it'");
         return form;
     }
-    const pronoun = detectExamplePronoun(options?.activeExample || options?.example) || 'he/she';
+    const pronoun = 'he/she';
     if (/^he\/she\s/iu.test(form)) return form.replace(/^he\/she\s/iu, `${pronoun} `);
     if (/^he\/she'/iu.test(form)) return form.replace(/^he\/she'/iu, `${pronoun}'`);
     if (/^he\s/iu.test(form)) return form.replace(/^he\s/iu, `${pronoun} `);
@@ -1129,11 +1173,10 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
 
     if (meaning && !meaningIsVerb(meaning)) return null;
 
-    const activeExample = options?.activeExample || options?.example || card?._activeExample || null;
-    const resolvedOptions = { ...options, activeExample };
-
+    // The example on screen can only switch a row to its command reading.
+    const tableOptions = { ...options, activeExample: options?.activeExample || options?.example || card?._activeExample || null };
     const tableCue = meaning
-        ? conjugationTableCue(card, meaning, translation, options.conjugationData, resolvedOptions)
+        ? conjugationTableCue(card, meaning, translation, options.conjugationData, tableOptions)
         : null;
     if (tableCue) return tableCue;
 
@@ -1144,7 +1187,7 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
             const rawMorph = card.mergedLemma ? card._activeExampleMorphology : card.morphology;
             const morphCandidates = (Array.isArray(rawMorph) ? rawMorph : [rawMorph]).filter(Boolean);
             const forms = morphCandidates
-                .map(morph => cueForAnalysis(analysisRows, morph, translation, meaning, resolvedOptions))
+                .map(morph => cueForAnalysis(analysisRows, morph, translation, meaning, options))
                 .filter((form, index, all) => form && all.indexOf(form) === index);
             if (forms.length) {
                 // Some Spanish surfaces genuinely encode more than one supported
@@ -1156,7 +1199,7 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
         }
     }
 
-    return meaning ? grammarProductionCue(card, meaning, translation, resolvedOptions) : null;
+    return meaning ? grammarProductionCue(card, meaning, translation, options) : null;
 }
 
 /**

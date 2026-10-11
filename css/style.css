@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=cbf78ad8");
+@import url("./appearance.css?v=52af77e0");
 
 
         * {
@@ -140,7 +140,8 @@
             transform-style: preserve-3d;
             transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
             cursor: pointer;
-            touch-action: none;
+            /* Vertical scrollports stay native; card-touch owns horizontal grading. */
+            touch-action: pan-y;
             -webkit-user-drag: none;
             z-index: 1;
         }
@@ -2174,13 +2175,8 @@
             gap: 8px;
             margin-top: 6px;
             padding: 0 8px 8px;
-            /* `.card` sets touch-action: none so a drag grades the card.
-               Inheriting that here disabled the browser's own scrolling, which
-               left the scrollbar as the only way to move the list — clickable
-               but not swipeable. pan-y hands vertical drags back to the
-               browser; the horizontal grading swipe still reads touchmove and
-               is unaffected. The bar itself is then redundant, so it is
-               hidden: the gesture is the affordance. */
+            /* Vertical gestures scroll natively; card-touch handles horizontal
+               grading and does not cycle meanings inside scrollports. */
             touch-action: pan-y;
             overscroll-behavior: contain;
             scrollbar-width: none;
@@ -23424,13 +23420,12 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #step4 .study-set-current-copy span { font-size: 14px; font-weight: 400; color: var(--text-primary); }
 .study-set-stat { font-weight: 400; }
 
-/* Set progress, light-on-dark: pale green (known), pale yellow (practice) and
-   white for what is left, so the number reads in black on every segment. The
-   swatches in the counts line use the same three colours. */
+/* Muted progress fills keep set labels readable in white even when a segment
+   boundary crosses the text. The counts line uses the same palette. */
 #step4 {
-  --set-known: #22c55e;
-  --set-review: #f5b800;
-  --set-new: #ffffff;
+  --set-known: #16734b;
+  --set-review: #896318;
+  --set-new: #293849;
 }
 #step4 .study-set-dot {
   background: linear-gradient(
@@ -23439,13 +23434,13 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     var(--set-review) var(--set-known-end) var(--set-review-end),
     var(--set-new) var(--set-review-end) 100%
   );
-  color: #0b0f14;
+  color: #ffffff;
 }
 #step4 .study-set-dot:hover:not(:disabled),
-#step4 .study-set-dot.is-current { color: #0b0f14; }
-.study-set-stat i.is-known { background: var(--set-known, #22c55e); }
-.study-set-stat i.is-review { background: var(--set-review, #f5b800); }
-.study-set-stat i.is-unseen { background: var(--set-new, #ffffff); }
+#step4 .study-set-dot.is-current { color: #ffffff; }
+.study-set-stat i.is-known { background: var(--set-known, #16734b); }
+.study-set-stat i.is-review { background: var(--set-review, #896318); }
+.study-set-stat i.is-unseen { background: var(--set-new, #293849); }
 
 /* The chosen set must be unmistakable: a thick accent ring set off from the
    pill by a dark gap, lifted and enlarged, with no pulse to wash it out. The
@@ -23896,7 +23891,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 
 /* Skipped cards fill each set bar from the right in slate grey, so with Smart
    Skip on a set is already partly done before a card is studied. */
-#step4 { --set-skipped: #7b8797; }
+#step4 { --set-skipped: #566477; }
 #step4 .study-set-dot {
   background: linear-gradient(
     to right,
@@ -23906,7 +23901,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     var(--set-skipped) var(--set-new-end, 100%) 100%
   );
 }
-.study-set-stat i.is-skipped { background: var(--set-skipped, #7b8797); }
+.study-set-stat i.is-skipped { background: var(--set-skipped, #566477); }
 
 /* ===== Tutorial chapters and pages =====
    The chapters sit where the language label was, and open directly. Smart
@@ -24431,3 +24426,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .learning-context-activities .learning-context-choice small { text-transform: none; letter-spacing: normal; font-size: 12px; font-weight: 400; }
 .learning-context-activities .learning-context-choice strong { font-size: 16px; }
 .learning-context-vocabulary .learning-context-choice:hover, .learning-context-activities .learning-context-choice:hover { background: color-mix(in srgb, var(--text-primary) 4%, transparent); }
+
+/* A clear alternative between the two ways to choose music. */
+.choice-sheet-or { display: flex; align-items: center; gap: 14px; margin: 6px 0; }
+.choice-sheet-or::before, .choice-sheet-or::after { content: ''; flex: 1; height: 1px; background: color-mix(in srgb, var(--text-muted) 45%, transparent); }
+.choice-sheet-or > b { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 1.5px solid color-mix(in srgb, var(--accent-primary) 55%, var(--border-color)); border-radius: 50%; background: var(--bg-tertiary); color: var(--text-primary); font: 800 13px/1 var(--font-emphasis); letter-spacing: .08em; text-transform: uppercase; }
+#lyricsSourceSheet .choice-sheet-body { background: transparent; border: 0; }
+#lyricsSourceSheet .choice-sheet-item { border: 0; border-radius: 0; }
