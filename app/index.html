@@ -529,7 +529,7 @@
                         <p class="info-sheet-lead" id="step2LevelDescription">Vocabulary is ordered by frequency, from daily essentials to less common words.</p>
                         <div class="info-sheet-points">
                             <div><span class="info-point-badge">1</span><p><strong>Start anywhere:</strong> Begin at Level 1 or jump ahead to words you don’t know yet.</p></div>
-                            <div><span class="info-point-badge">2</span><p><strong>Bite-sized sets:</strong> Each level is 100 cards, split into four 25-card sets.</p></div>
+                            <div><span class="info-point-badge">2</span><p><strong>Short sessions:</strong> Each level is usually 100 cards. Study up to 20 at a time.</p></div>
                             <div><span class="info-point-badge">3</span><p><strong>Smart Skip:</strong> Related forms and obvious look-alikes are skipped to save time.</p></div>
                         </div>
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
@@ -574,12 +574,12 @@
             <div id="step4" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
                     <span class="step-number" id="rangeStepNumber">3</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sets">Choose a Set <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
-                    <div id="step5Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-label="About study sets"><div class="step-info-tooltip-inner">
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sessions">Your next session <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <div id="step5Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-label="About study sessions"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header is-close-only">
                             <button type="button" class="info-sheet-close" aria-label="Close set information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead" id="step5Description">A set is 25 cards, about 5–10 minutes. Your next unfinished set is highlighted.</p>
+                        <p class="info-sheet-lead" id="step5Description">Go starts up to 20 cards from this level. The four progress segments are milestones, independent of session size. Practice and skipped cards stay distinct from known cards.</p>
                         <div class="info-sheet-points">
                             <div><span class="info-point-badge is-new">New</span><p><strong class="is-new">New:</strong> Fresh words to learn.</p></div>
                             <div><span class="info-point-badge is-practice">Rev</span><p><strong class="is-practice">Practice:</strong> Missed and scheduled cards return for review.</p></div>
@@ -591,7 +591,7 @@
                 <div id="rangeSelector" class="range-selector"></div>
             </div>
 
-            <!-- Practice errors: same header format as Choose a Level / Choose a Set.
+            <!-- Practice errors: same header format as Choose a Level / Your next session.
                  The header and its info sheet are static so setupTooltipHandlers
                  binds them; ui.js fills #reviewDeckBody. -->
             <div id="reviewDeckSection" class="setup-step review-deck-step" hidden>
@@ -716,7 +716,7 @@
                          Desktop only now — see .card-back-scrubber below for the mobile
                          redesign, which sits in this same reserved strip above the card. -->
                     <div id="deckProgressTrack" class="deck-progress-track" aria-label="Card position in active set">
-                        <div id="deckProgressSegments" class="deck-progress-segments" role="group" aria-label="Cards in this set"></div>
+                        <div id="deckProgressSegments" class="deck-progress-segments" role="group" aria-label="Cards in this session"></div>
                         <button type="button" id="studyMenuBtn" class="gear-btn study-menu-btn" aria-label="More actions: main menu and settings" title="More actions" aria-haspopup="dialog">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
                         </button>
@@ -725,7 +725,7 @@
                          this same reserved strip above the card (not on the card face). -->
                     <div class="card-back-scrubber" id="cardBackScrubber" aria-label="Card position in active set">
                         <div class="cbs-strip">
-                            <div class="cbs-scrub" id="cardBackPips" role="slider" aria-valuemin="1" aria-valuenow="1" aria-valuemax="1" aria-label="Card position in this set">
+                            <div class="cbs-scrub" id="cardBackPips" role="slider" aria-valuemin="1" aria-valuenow="1" aria-valuemax="1" aria-label="Card position in this session">
                                 <div class="cbs-track-wrap">
                                     <div class="cbs-track" aria-hidden="true"></div>
                                     <div class="cbs-fill" aria-hidden="true"></div>
@@ -1112,7 +1112,7 @@
         <div class="modal-content deck-complete-content">
             <div class="deck-complete-header">
                 <canvas id="deckCompleteConfetti" class="deck-complete-confetti" aria-hidden="true"></canvas>
-                <span class="deck-complete-eyebrow" id="deckCompleteEyebrow">Study set</span>
+                <span class="deck-complete-eyebrow" id="deckCompleteEyebrow">Study session</span>
                 <div class="deck-complete-score-container" id="deckCompleteScoreContainer" hidden>
                     <div class="deck-score-ring-wrap">
                         <svg class="deck-score-ring" viewBox="0 0 100 100" aria-hidden="true">
@@ -1128,7 +1128,7 @@
                 <div class="deck-complete-icon" id="deckCompleteIcon" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="m7 12 3 3 7-7"></path></svg>
                 </div>
-                <h3 id="deckCompleteTitle">Set Complete!</h3>
+                <h3 id="deckCompleteTitle">Session complete</h3>
                 <div id="completeAccuracy" class="deck-complete-accuracy" hidden></div>
             </div>
             <div class="deck-complete-body">
@@ -1166,7 +1166,7 @@
                             <path d="M4 10a8 8 0 1 1 2.35 7.65"></path>
                             <path d="M4 4v6h6"></path>
                         </svg>
-                        <span>Redo set</span>
+                        <span>Redo session</span>
                     </button>
                 </div>
             </div>
@@ -1607,7 +1607,7 @@
                 <button class="modal-close" id="closeStatsModal">✕</button>
             </div>
             <div class="stats-body active-set-progress-body">
-                <p class="active-set-progress-intro">Every card in this set is shown below. Expand one to see this session’s attempts and all card-history timestamps retained by Progress.</p>
+                <p class="active-set-progress-intro">Every card in this session is shown below. Expand one to see this session’s attempts and all card-history timestamps retained by Progress.</p>
                 <div id="activeSetProgressList" class="active-set-progress-list"></div>
             </div>
         </div>
@@ -2003,7 +2003,7 @@
                 </div>
                 <div class="stat-row" style="cursor: pointer; display: none;" id="refreshSetToggle"
                      title="Resets your saved progress for the words in the set you're currently studying. Other sets are not affected.">
-                    <span>Reset progress for current set</span>
+                    <span>Reset progress for current session</span>
                     <span class="settings-row-action settings-row-action--warning">Reset</span>
                 </div>
             </div>

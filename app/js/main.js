@@ -1186,17 +1186,7 @@ async function setArtistVocabularyScope(scope, { autoStart = false } = {}) {
             const firstLevel = document.querySelector('.level-btn.selected')
                 || document.querySelector('.level-selector-buttons .level-btn, #levelSelector > .level-btn');
             if (!firstLevel) return;
-            const firstSet = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'))
-                .find(dot => !dot.disabled && Number(dot.dataset.pct) < 100)
-                || Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'))
-                    .find(dot => !dot.disabled);
-            if (firstSet) {
-                await loadVocabularyData(firstSet.dataset.range, {
-                    rankBasis: firstSet.dataset.rankBasis || 'stable',
-                    setNumber: Number(firstSet.dataset.index) + 1,
-                    levelSetCount: document.querySelectorAll('#rangeSelector .study-set-dot').length,
-                });
-            }
+            await window.startSelectedStudySession?.();
         }
     } finally {
         loading?.classList.remove('visible');

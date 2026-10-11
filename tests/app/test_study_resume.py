@@ -19,7 +19,7 @@ const cards = [{fullId:'que-id', targetWord:'que', rank:1},
  {fullId:'la-id', targetWord:'la', rank:4}, {isChainChild:true, targetWord:'la'}];
 const context = {
  _saveSnapshotTimer:null, flashcards:cards, currentIndex:2, cardChainReturnIndex:1,
- cardNavStack:[], stats:{rangeString:'1-25',setSize:25},
+ cardNavStack:[], stats:{rangeString:'1-25',setSize:25,levelSession:true,remainingSessionCards:7},
  document:{getElementById:()=>({classList:{contains:key=>key==='flipped'}}),querySelectorAll:()=>[]},
  config:{languages:{Spanish:{name:'Spanish'}}}, selectedLanguage:'Spanish', selectedLevel:'1',
  activeArtist:null, window:{}, selectedSongIds:[], groupSize:25,
@@ -34,6 +34,8 @@ const start = source.indexOf('function _writeStudySessionSnapshot()');
 const end = source.indexOf("if (typeof window !== 'undefined')",start);
 vm.runInNewContext(source.slice(start,end),context);
 context._writeStudySessionSnapshot();
+assert.equal(saved.get('session').levelSession,true);
+assert.equal(saved.get('session').remainingSessionCards,7);
 assert.equal(saved.get('session').currentFullId,'la-id');
 assert.equal(saved.get('session').currentVocabularyRank,4);
 assert.equal(saved.get('session').currentWord,'la');
@@ -75,7 +77,7 @@ vm.runInNewContext(source.slice(source.indexOf('function renderResumeLastSetCard
 context.renderResumeLastSetCard();
 assert.equal(nodes.get('resumeEntryGreeting').textContent,'Welcome back, <Alex>');
 assert.equal(nodes.get('resumeEntryWord').textContent,'<saved word>');
-assert.equal(nodes.get('resumeEntrySet').textContent,'Level 2 · Set 3');
+assert.equal(nodes.get('resumeEntrySet').textContent,'Level 2 · Saved session');
 assert.ok(!card.innerHTML.includes('<Alex>'));
 assert.ok(nodes.get('resumeLastSetBtn').focused);
 nodes.get('resumeLastSetBtn').click();

@@ -2,6 +2,19 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T22:56:24+01:00",
+   "date": "2026-10-11 22:56 BST",
+   "agent": "Codex",
+   "summary": "SETWISE: one level progress bar and short 20-card sessions, with finer starting-level suggestions.",
+   "detail": [
+    "Keep 100-card target levels; four quiet progress segments replace the selectable 25-card boxes. Go starts up to 20 eligible cards across the level.",
+    "Session completion offers Another 20 (or the smaller remaining count) and waits for your choice. New cards and practice remain separate.",
+    "Estimation suggests positions such as around halfway through Level 1 while preserving the saved starting rank. Estimated familiarity is shown separately from answered-card progress.",
+    "Resume retains saved session membership and order, including old sessions and companion cards. Guest sessions advance in memory without syncing answers."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T22:48:26+01:00",
    "date": "2026-10-11 22:48 BST",
    "agent": "Codex",
@@ -363,17 +376,6 @@
     "Default speech decks now use HEADWAY Spanish r4 and Portuguese r2, including déjalo → dejar / Verb; no special review URL is required.",
     "Refresh deck-bound Merge Lemmas, cognate card decisions, frequency bindings and estimation pools using existing data and existing policies.",
     "Keep the current staging UI; no new WSD, harvest or model download. Missing coverage assets are explicitly declared absent."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T18:27:55+01:00",
-   "date": "2026-10-10 18:27 BST",
-   "agent": "Codex",
-   "summary": "Plan TAGLINE: evaluate Portuguese sentence tagging and WSD safeguards",
-   "detail": [
-    "Added a named roadmap job to compare contextual POS taggers with a no-tagger baseline, starting with verified Portuguese és classification failures.",
-    "Keep source lemma corrections separate from sentence tagging and app display; use existing frozen evidence before any approved regeneration."
    ],
    "commit": "pending"
   }

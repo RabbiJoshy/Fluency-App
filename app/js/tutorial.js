@@ -1555,7 +1555,7 @@ function finishTutorialLesson() {
     closeCardTutorial();
     const studying = !document.getElementById('appContent')?.classList.contains('hidden');
     const target = studying ? document.getElementById('flipBtn')
-        : document.querySelector('#rangeSelector .study-set-dot:not(:disabled)')
+        : document.querySelector('#studySetStartBtn:not(:disabled)')
             || document.getElementById('standardSourceSpeechBtn');
     target?.scrollIntoView({ block: 'center' });
     target?.focus();

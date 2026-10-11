@@ -946,16 +946,7 @@ function setupLanguageTabs() {
 
                     if (sessionStorage.getItem('fluencyPendingLiveStudy') === '1' && window.playlistLiveActive?.()) {
                         sessionStorage.removeItem('fluencyPendingLiveStudy');
-                        const dots = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'));
-                        const firstSet = dots.find(dot => !dot.disabled && Number(dot.dataset.pct) < 100)
-                            || dots.find(dot => !dot.disabled);
-                        const range = firstSet?.dataset.range || '1-21';
-                        await loadVocabularyData(range, {
-                            rankBasis: firstSet?.dataset.rankBasis || 'source',
-                            setNumber: firstSet ? (Number(firstSet.dataset.index) + 1) : 1,
-                            levelSetCount: dots.length || 1,
-                            levelNumber: parseInt(firstSet?.dataset.levelNumber) || 1
-                        });
+                        await startSelectedStudySession();
                     }
 
                     progressRefresh.then(changed => {
@@ -1603,16 +1594,18 @@ async function renderExtraCategorySelector(container, language, { preferActionab
 let _smartLevelRangesCache = null;
 
 // Study shape, shared by every level builder and the set slotter: levels of
-// 100 cards split into four 25-card sets (docs/proposals/0005).
+// 100-card target levels with 25-position progress milestones and 20-card sessions.
 const STUDY_LEVEL_TARGET_CARDS = 100;
 const STUDY_LEVEL_MIN_COUNT = 10;
 const STUDY_LEVEL_MAX_COUNT = 120;
-const STABLE_SET_SLOT_COUNT = 25;
+const STABLE_SET_SLOT_COUNT = 25; // Progress milestones and estimation regions, not sessions.
+const STUDY_SESSION_LIMIT = 20;
+let _studySessionStarting = false;
 
 // Build finishable study levels of STUDY_LEVEL_TARGET_CARDS cards each, with
 // ten levels for small decks and a ceiling of STUDY_LEVEL_MAX_COUNT for very
 // large ones. Each level is subdivided into stable STABLE_SET_SLOT_COUNT-position
-// study sets. Every mode (Speech, Lyrics, artist) uses these app-built levels.
+// progress regions. Every mode (Speech, Lyrics, artist) uses these app-built levels.
 //
 // Boundaries always use the form-level corpus frequency baseline. Merge
 // Lemmas anchors a merged card to its highest-frequency form, and every
@@ -2572,7 +2565,8 @@ window.addEventListener('fluency-theme-change', () => {
 
 
 function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = null, estimate = 0 } = {}) {
-    if (!currentUser || currentUser.isGuest || !progressData) return false;
+    if (currentUser?.isGuest) return window.getGuestSessionLearningState?.(item) || false;
+    if (!currentUser || !progressData) return false;
 
     // Only the answer recorded against this card is memoised. Lemma
     // inheritance and the level estimate depend on the caller's options and on
@@ -2664,6 +2658,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     const baseConfig = config.languages[selectedLanguage] || {};
     const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
     const container = document.getElementById('rangeSelector');
+    window.__studySessionContext = null;
     const reviewSection = document.getElementById('reviewDeckSection');
     if (reviewSection) reviewSection.hidden = true;
     let minWord, maxWord;
@@ -2738,7 +2733,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         const rank = rankOf(item);
         return rank >= minWord && rank < maxWord;
     });
-    if (wordsInLevel.length === 0) {
+    if (wordsInLevel.length === 0 && !(preparedVocabulary?.stableBaseline || []).some(item => {
+        const rank = rankOf(item);
+        return rank >= minWord && rank < maxWord;
+    })) {
         container.innerHTML = '<div class="study-set-empty">No cards remain in this level with the current settings.</div>';
         document.getElementById('step4').style.display = 'block';
         return;
@@ -2750,9 +2748,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         : null;
     const seenLemmas = await window.buildSeenLemmaSet?.(vocabularyData) || new Set();
 
-    // Sets use fixed baseline slots. Filters can make a set shorter, but
-    // never refill it from its neighbour; this preserves membership, progress,
-    // and the nearby-rank example neighbourhood across setting changes.
+    // Fixed rank regions remain progress milestones and estimation boundaries.
+    // Session membership can cross these regions without moving the milestones.
     const slotRanges = buildStableSetRanges(minWord, maxWord, rankBasis);
     const slotCount = slotRanges.length;
     const slots = Array.from({ length: slotCount }, () => []);
@@ -2780,6 +2777,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         let seenCount = 0;
         let reviewCount = 0;
         let dueCount = 0;
+        let estimatedCount = 0;
         for (let i = 0; i < words.length; i++) {
             const state = getSetupLearningState(words[i], {
                 seenLemmas,
@@ -2787,12 +2785,13 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 estimate
             });
             if (state?.seen) seenCount++;
+            if (state?.estimated) estimatedCount++;
             if (state?.needsReview) reviewCount++;
             if (state?.reviewReason === 'due') dueCount++;
         }
         const skippedCount = smartSkipOn ? Math.max(0, baselineSlotCounts[slotIdx] - words.length) : 0;
         const slotTotal = words.length + skippedCount;
-        const knownCount = Math.max(0, seenCount - reviewCount);
+        const knownCount = Math.max(0, seenCount - reviewCount - estimatedCount);
         const unseenCount = words.length - seenCount;
         ranges.push({
             range: `${start}-${end}`,
@@ -2805,25 +2804,19 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             unseenCount,
             reviewCount,
             dueCount,
+            estimatedCount,
             skippedCount,
             pct: words.length > 0 ? Math.round(100 * seenCount / words.length) : 100,
             // The bar covers the whole slot: skipped cards take the right-hand
             // share, so a level with Smart Skip on starts partly filled.
             knownPct: slotTotal > 0 ? 100 * knownCount / slotTotal : 100,
             reviewEndPct: slotTotal > 0 ? 100 * (knownCount + reviewCount) / slotTotal : 100,
+            estimatedEndPct: slotTotal > 0 ? 100 * (knownCount + reviewCount + estimatedCount) / slotTotal : 100,
             newEndPct: slotTotal > 0 ? 100 * words.length / slotTotal : 100
         });
     }
-    // Land on the first set that actually has something new, then fall back to
-    // one that has cards due. Testing the rounded percentage instead meant a
-    // large set with a single unseen card rounded to 100 and was skipped, so
-    // that card could never be reached from the setup screen.
     const firstUnseen = ranges.findIndex(range => range.available && range.unseenCount > 0);
-    const firstIncomplete = firstUnseen >= 0
-        ? firstUnseen
-        : ranges.findIndex(range => range.available && range.reviewCount > 0);
-    const lastAvailable = ranges.reduce((last, range, index) => range.available ? index : last, -1);
-    const initialIndex = firstIncomplete >= 0 ? firstIncomplete : Math.max(0, lastAvailable);
+    const initialIndex = Math.max(0, firstUnseen);
 
     // Until a set's row file loads, its cards are counted without their
     // meanings, and the deck builder later drops any card whose meanings have
@@ -2832,7 +2825,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     // set on every fresh load. Load the landing set's rows (the file Start
     // would fetch anyway) and count again before offering it. Capped so a run
     // of such sets cannot hold the screen.
-    const landingWords = slots[initialIndex] || [];
+    const landingWords = wordsInLevel.filter(item => !getSetupLearningState(item, {
+        seenLemmas, estimatedIds, estimate
+    })?.seen).slice(0, STUDY_SESSION_LIMIT);
     if (landingRowsChecked < 3 && ranges[initialIndex]?.unseenCount > 0
         && landingWords.some(item => item._indexRowsPending)) {
         const loaded = await window.ensureIndexRowsForRange?.(
@@ -2844,24 +2839,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         }
     }
 
-    const dotsHTML = ranges.map((range, index) => {
-        const classes = [
-            'study-set-dot',
-            range.pct === 100 && range.available ? 'is-complete' : '',
-            range.pct > 0 && range.pct < 100 && range.available ? 'is-partial' : '',
-            index === initialIndex ? 'is-current' : '',
-            !range.available ? 'is-empty' : ''
-        ].filter(Boolean).join(' ');
-        return `<button type="button" class="${classes}"
-                    data-index="${index}" data-range="${range.range}"
-                    data-rank-basis="${rankBasis}" data-pct="${range.pct}"
-                    data-unseen="${range.unseenCount}" data-review="${range.reviewCount}"
-                    style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%; --set-new-end: ${range.newEndPct}%"
-                    role="radio" aria-checked="${index === initialIndex ? 'true' : 'false'}"
-                    aria-label="${range.start.toLocaleString()} to ${(range.end - 1).toLocaleString()}: ${range.knownCount} known, ${range.reviewCount} to practise, ${range.unseenCount} new"
-                    title="${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()} · ${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new"
-                    ${range.available ? '' : 'disabled'}><span class="set-ranks">${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}</span></button>`;
-    }).join('');
+    const segmentsHTML = ranges.map(range => `<span class="study-level-segment"
+        style="flex:${range.end - range.start};--set-known-end:${range.knownPct}%;--set-review-end:${range.reviewEndPct}%;--set-estimated-end:${range.estimatedEndPct}%;--set-new-end:${range.newEndPct}%"
+        aria-hidden="true"></span>`).join('');
 
     const levelReviewCount = ranges.reduce((sum, range) => sum + range.reviewCount, 0);
     const levelDueCount = ranges.reduce((sum, range) => sum + range.dueCount, 0);
@@ -2909,15 +2889,36 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             </div>`;
     }
 
+    const levelNewCount = ranges.reduce((sum, range) => sum + range.unseenCount, 0);
+    const levelEstimatedCount = ranges.reduce((sum, range) => sum + range.estimatedCount, 0);
+    const levelSkippedCount = ranges.reduce((sum, range) => sum + range.skippedCount, 0);
+    const context = {
+        range: `${minWord}-${maxWord}`, rankBasis, levelNumber,
+        unseenCount: levelNewCount, reviewCount: levelReviewCount, cardCount: levelCardCount, ranges,
+        studyMode: levelNewCount > 0 ? 'new' : levelReviewCount > 0 ? 'review' : 'all'
+    };
+    window.__studySessionContext = context;
+    const nextCount = Math.min(STUDY_SESSION_LIMIT,
+        levelNewCount || levelReviewCount || levelCardCount);
+    const action = nextCount === 0 ? 'No cards available' : context.studyMode === 'new' ? `Go · ${nextCount} cards`
+        : context.studyMode === 'review' ? `Practise · ${nextCount} cards` : `Study again · ${nextCount} cards`;
+    const description = `${levelKnownCount} known, ${levelReviewCount} practice, ${levelNewCount} new, ${levelEstimatedCount} estimated familiar, ${levelSkippedCount} skipped`;
     container.innerHTML = `
         <div class="study-set-panel">
             <div class="study-set-choice">
-                <div class="study-set-dots" role="radiogroup" aria-label="Sets in this level">${dotsHTML}</div>
+                <div class="study-level-bar" role="img" aria-label="Level progress: ${description}">${segmentsHTML}</div>
                 <div class="study-set-current-copy">
-                    <strong id="studySetCurrentTitle"></strong>
-                    <span id="studySetCurrentMeta"></span>
+                    <span>
+                        <b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>
+                        <b class="study-set-stat"><i class="is-review"></i>${levelReviewCount} Practice</b>
+                        <b class="study-set-stat"><i class="is-unseen"></i>${levelNewCount} New</b>
+                        ${levelEstimatedCount > 0 ? `<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated familiar</b>` : ''}
+                        ${levelSkippedCount > 0 ? `<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>` : ''}
+                    </span>
                 </div>
-                <button class="range-btn-new study-set-start" id="studySetStartBtn" type="button"></button>
+                <button class="range-btn-new study-set-start" id="studySetStartBtn" type="button"
+                    data-range="${context.range}" data-rank-basis="${rankBasis}"
+                    data-study-mode="${context.studyMode}" data-level-number="${levelNumber}" ${nextCount === 0 || _studySessionStarting ? 'disabled' : ''}>${action}</button>
             </div>
         </div>`;
     if (reviewSection) {
@@ -2927,120 +2928,23 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
     document.getElementById('step4').style.display = 'block';
     setActiveSetupStep('step4');
-
-    // Kept as the object rather than stringified onto the button's dataset, so the
-    // deck-load progress ring reads numbers instead of re-parsing strings.
-    let selectedRangeStats = null;
-    const selectSet = index => {
-        const range = ranges[index];
-        if (!range?.available) return;
-        selectedRangeStats = range;
-        container.querySelectorAll('.study-set-dot').forEach(dot => {
-            const selected = Number(dot.dataset.index) === index;
-            dot.classList.toggle('is-current', selected);
-            dot.setAttribute('aria-checked', selected ? 'true' : 'false');
-        });
-        // One line: which card range, and what is in it.
-        const rangeLabel = `${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}`;
-        document.getElementById('studySetCurrentTitle').textContent = rangeLabel;
-        // The colours are the legend: each count wears its own swatch.
-        document.getElementById('studySetCurrentMeta').innerHTML =
-            `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} New</b>`
-            + `<b class="study-set-stat"><i class="is-review"></i>${range.reviewCount} Practice</b>`
-            + `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} Known</b>`
-            + (range.skippedCount > 0
-                ? `<b class="study-set-stat"><i class="is-skipped"></i>${range.skippedCount} Skipped</b>`
-                : '');
-        const startBtn = document.getElementById('studySetStartBtn');
-        // Three distinct states, because collapsing the last two is what made
-        // finished sets hand back every card in them. studyMode 'all' keeps no
-        // filter at all, so a set whose new cards were done re-served the
-        // twenty already known — the schedule said nothing was due, but the
-        // button started them anyway. 'all' is now only reached when there is
-        // genuinely nothing new and nothing due, and the label says so.
-        if (range.unseenCount > 0) {
-            startBtn.textContent =
-                `Learn ${range.unseenCount} new card${range.unseenCount === 1 ? '' : 's'}`;
-            startBtn.dataset.studyMode = 'new';
-        } else if (range.reviewCount > 0) {
-            startBtn.textContent =
-                `Practise ${range.reviewCount} card${range.reviewCount === 1 ? '' : 's'}`;
-            startBtn.dataset.studyMode = 'review';
-        } else {
-            startBtn.textContent = `Study ${rangeLabel} again`;
-            startBtn.dataset.studyMode = 'all';
-        }
-        startBtn.dataset.range = range.range;
-        startBtn.dataset.rangeLabel = rangeLabel;
-        startBtn.dataset.rankBasis = rankBasis;
-        startBtn.dataset.setNumber = String(index + 1);
-        startBtn.dataset.levelSetCount = String(ranges.length);
-    };
-    container.querySelectorAll('.study-set-dot').forEach(dot => {
-        dot.addEventListener('click', () => {
-            // First tap selects and explains a set. Tapping that already
-            // selected set again is the compact start action, useful when the
-            // full-width button sits just below the mobile viewport.
-            if (dot.classList.contains('is-current')) {
-                document.getElementById('studySetStartBtn')?.click();
-                return;
-            }
-            selectSet(Number(dot.dataset.index));
-        });
-    });
-    selectSet(initialIndex);
-
     document.getElementById('studySetStartBtn').addEventListener('click', async function() {
-        const selectedRange = this.dataset.range;
-        const rangeLabel = this.dataset.rangeLabel || selectedRange?.replace('-', '–') || '';
-        const loadingMessage = document.getElementById('loadingMessage');
-        loadingMessage.style.display = 'block';
-        loadingMessage.textContent = rangeLabel ? `Loading ${rangeLabel}...` : 'Loading...';
-        // The overlay already covers the atomic swap into #appContent, so the
-        // ring's minimum beat is awaited after the load rather than before it.
-        // showDeckLoading falls back to the plain spinner at 0% progress.
-        const beat = window.showDeckLoading?.(
-            SHOW_SET_PROGRESS_RING ? selectedRangeStats : null,
-            {
-                title: rangeLabel ? `Loading ${rangeLabel}` : 'Loading...',
-                detail: selectedRangeStats?.seenCount > 0
-                    ? 'Picking up where you left off…'
-                    : 'Preparing your next cards…',
-                artist: activeArtist,
-                language: selectedLanguage
-            });
+        if (this.disabled || _studySessionStarting) return;
+        _studySessionStarting = true;
+        this.disabled = true;
+        window.showAppLoading?.('Preparing your session', `Up to ${STUDY_SESSION_LIMIT} cards…`);
         try {
-            // Build the set from current progress, not the cached copy the
-            // screen was drawn from while a refresh was still running.
             await window.progressRefreshSettled?.(5000);
-            const fromButton = button => ({
-                rankBasis: button.dataset.rankBasis,
-                rangeLabel: button.dataset.rangeLabel,
-                setNumber: Number(button.dataset.setNumber),
-                levelSetCount: Number(button.dataset.levelSetCount),
-                studyMode: button.dataset.studyMode,
-                silentIfEmpty: true
-            });
-            const started = await loadVocabularyData(selectedRange, fromButton(this));
-            if (started === false) {
-                // Nothing left to learn in this set by the time it was built.
-                // Recount, and go straight on to the set the recount offers
-                // rather than dropping the learner back on a moved selection.
-                await window.refreshSetupAfterProgress?.();
-                const next = document.getElementById('studySetStartBtn');
-                if (next && next.dataset.studyMode === 'new' && next.dataset.range !== selectedRange) {
-                    const nextRangeLabel = next.dataset.rangeLabel || next.dataset.range?.replace('-', '–') || '';
-                    const note = `${rangeLabel} is already done. Starting ${nextRangeLabel}…`; // is already done. Starting Set
-                    loadingMessage.textContent = note;
-                    const overlayTitle = document.getElementById('appLoadingTitle');
-                    const overlayDetail = document.getElementById('appLoadingDetail');
-                    if (overlayTitle) overlayTitle.textContent = `Loading ${nextRangeLabel}`;
-                    if (overlayDetail) overlayDetail.textContent = note;
-                    await loadVocabularyData(next.dataset.range, fromButton(next));
-                }
-            }
-            await beat;
+            await renderRangeSelector();
+            // Recount after sync, but do not silently turn a new-card action into replay.
+            const fresh = window.__studySessionContext;
+            if (!fresh || (context.studyMode === 'new' && fresh.studyMode !== 'new')) return;
+            await startSelectedStudySession();
         } finally {
+            _studySessionStarting = false;
+            this.disabled = false;
+            const button = document.getElementById('studySetStartBtn');
+            if (button && window.__studySessionContext) button.disabled = !(window.__studySessionContext.cardCount > 0);
             window.hideAppLoading?.();
         }
     });
@@ -3167,28 +3071,28 @@ function _findLevelButtonIndex(buttons, targetLevel) {
     return -1;
 }
 
+// Compatibility accessor for legacy saved sets. Fresh sessions use a whole level.
 function getNextStudySetMeta(rangeString, studyMode = 'new') {
-    const dots = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'));
-    const currentIndex = dots.findIndex(dot => dot.dataset.range === rangeString);
-    if (currentIndex < 0) return null;
-    const remaining = dots.slice(currentIndex + 1).filter(dot => !dot.disabled);
-    let next = null;
-    if (studyMode === 'review') {
-        next = remaining.find(dot => Number(dot.dataset.review || 0) > 0);
-    } else {
-        next = remaining.find(dot => Number(dot.dataset.unseen || 0) > 0)
-            || remaining.find(dot => Number(dot.dataset.review || 0) > 0);
-    }
-    if (!next) return null;
-    return {
-        range: next.dataset.range,
-        rankBasis: next.dataset.rankBasis || (releaseStudyStructure?.levels && !activeArtist ? 'source' : 'stable'),
-        setNumber: Number(next.dataset.index) + 1,
-        levelSetCount: dots.length,
-        hasUnseen: Number(next.dataset.unseen || 0) > 0,
-        hasReview: Number(next.dataset.review || 0) > 0
-    };
+    const context = window.__studySessionContext;
+    if (!context) return null;
+    const end = Number(rangeString.split('-')[1]);
+    const remaining = context.ranges.filter(range => range.start >= end);
+    const next = remaining.find(range => studyMode === 'review' ? range.reviewCount > 0 : range.unseenCount > 0);
+    return next ? { range: context.range, rankBasis: context.rankBasis,
+        setNumber: null, levelSetCount: null, hasUnseen: next.unseenCount > 0,
+        hasReview: next.reviewCount > 0 } : null;
 }
+
+async function startSelectedStudySession({ studyMode } = {}) {
+    const context = window.__studySessionContext;
+    if (!context) return false;
+    return loadVocabularyData(context.range, {
+        rankBasis: context.rankBasis, levelNumber: context.levelNumber,
+        studyMode: studyMode || context.studyMode, levelSession: true,
+        sessionLimit: STUDY_SESSION_LIMIT, silentIfEmpty: true
+    });
+}
+window.startSelectedStudySession = startSelectedStudySession;
 
 function getNextStudyLevelMeta() {
     const buttons = Array.from(document.querySelectorAll(
@@ -3223,33 +3127,12 @@ function getNextStudyLevelMeta() {
 }
 
 async function startNextStudyLevelFirstSet() {
-    // A progress percentage can be stale by the time the final card is
-    // answered (or filters can leave a nominal level with no eligible unseen
-    // set). Verify the rendered sets and keep walking forward until we find
-    // real new cards. Never fall back to replaying a completed set: that made
-    // continuation appear to "stick" and forced the learner back into setup.
-    // Recount the current level first. stats.nextRange and the rendered dots
-    // were captured before the learner answered this set; merged-lemma and
-    // cross-mode progress can finish that queued set while the current deck is
-    // open. A fresh pass also lets us skip a newly-empty set and continue to a
-    // later genuinely unseen set in the same level.
-    const completedRange = stats.rangeString;
+    // Recount after answers/sync; continue within this level before moving on.
+    // Never silently replay a completed level or pull practice into new learning.
+    await window.progressRefreshSettled?.(5000);
     await renderRangeSelector();
-    const refreshedDots = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'));
-    const completedIndex = refreshedDots.findIndex(dot => dot.dataset.range === completedRange);
-    const sameLevelCandidates = (completedIndex >= 0
-        ? refreshedDots.slice(completedIndex + 1)
-        : refreshedDots).filter(dot =>
-        !dot.disabled && Number(dot.dataset.unseen || 0) > 0);
-    for (const dot of sameLevelCandidates) {
-        const built = await loadVocabularyData(dot.dataset.range, {
-            rankBasis: dot.dataset.rankBasis || (releaseStudyStructure?.levels && !activeArtist ? 'source' : 'stable'),
-            setNumber: Number(dot.dataset.index) + 1,
-            levelSetCount: refreshedDots.length,
-            studyMode: 'new',
-            silentIfEmpty: true
-        });
-        if (built !== false) return;
+    if (window.__studySessionContext?.unseenCount > 0) {
+        if (await startSelectedStudySession({ studyMode: 'new' }) !== false) return;
     }
 
     const visitedLevels = new Set();
@@ -3266,35 +3149,18 @@ async function startNextStudyLevelFirstSet() {
         }
         visitedLevels.add(nextMeta.level);
 
-        // Stay in the active study surface and render the candidate level's
-        // stable sets. Clicking updates selectedLevel, so another loop pass
-        // naturally searches only the levels after this candidate.
+        // Render the candidate level before selecting its next eligible batch.
         const next = document.querySelector(
             `.level-btn[data-level="${CSS.escape(nextMeta.level)}"]`);
         if (!next) throw new Error(`Could not find next level ${nextMeta.level}`);
 
         next.click();
         if (!next._rangeRenderPromise) {
-            throw new Error('Next level did not begin rendering its sets');
+            throw new Error('Next level did not begin rendering its progress');
         }
         await next._rangeRenderPromise;
-        const setDots = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'));
-        const firstUnseenSet = setDots.find(dot =>
-            !dot.disabled && Number(dot.dataset.unseen || 0) > 0);
-        if (!firstUnseenSet) continue;
-
-        // Same staleness applies here: the dot said this set had cards, but
-        // the deck build applies lemma merging and the estimate on top and can
-        // still come back empty. Keep walking to the next level rather than
-        // alerting and abandoning the search mid-way.
-        const built = await loadVocabularyData(firstUnseenSet.dataset.range, {
-            rankBasis: firstUnseenSet.dataset.rankBasis || (releaseStudyStructure?.levels && !activeArtist ? 'source' : 'stable'),
-            setNumber: Number(firstUnseenSet.dataset.index) + 1,
-            levelSetCount: setDots.length,
-            levelNumber: nextMeta.levelNumber,
-            studyMode: 'new',
-            silentIfEmpty: true
-        });
+        if (!(window.__studySessionContext?.unseenCount > 0)) continue;
+        const built = await startSelectedStudySession({ studyMode: 'new' });
         if (built === false) continue;
         return;
     }
@@ -3931,7 +3797,7 @@ function renderActiveSetProgress() {
 
     const words = stats.allWords || [];
     if (words.length === 0) {
-        host.appendChild(_studyProgressEl('p', 'active-set-progress-empty', 'No cards are loaded in this set.'));
+        host.appendChild(_studyProgressEl('p', 'active-set-progress-empty', 'No cards are loaded in this session.'));
         return;
     }
 
@@ -3963,7 +3829,7 @@ function renderActiveSetProgress() {
 
         const body = _studyProgressEl('div', 'active-set-card-history');
         const sessionSection = _studyProgressEl('section', 'active-set-history-section');
-        sessionSection.appendChild(_studyProgressEl('h4', '', 'This open set'));
+        sessionSection.appendChild(_studyProgressEl('h4', '', 'This session'));
         const attempts = Array.isArray(session?.attempts) ? session.attempts : [];
         if (attempts.length) {
             attempts.forEach((attempt, index) => {
@@ -3971,7 +3837,7 @@ function renderActiveSetProgress() {
                 _appendStudyProgressDatum(sessionSection, `Attempt ${index + 1} · ${label}`, formatStudyProgressTimestamp(attempt.at), 'active-set-history-time');
             });
         } else {
-            sessionSection.appendChild(_studyProgressEl('p', 'active-set-history-empty', 'No answer recorded in this open set.'));
+            sessionSection.appendChild(_studyProgressEl('p', 'active-set-history-empty', 'No answer recorded in this session.'));
         }
         body.appendChild(sessionSection);
 
@@ -4074,7 +3940,7 @@ function getArtistHelpContent() {
         <p><strong>How are percentages calculated?</strong></p>
         <p>The coverage percentage tells you what fraction of all words in the lyrics you'd recognize. ${get70pctWordCount()} The remaining 30% are rarer words that appear less often.</p>
         <p><strong>How does it work?</strong></p>
-        <p>Choose a numbered level and the app selects its first small set containing unseen cards. Incorrect and partly learned cards collect in a separate review for that level. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions can shorten sets without moving cards between them. Each card shows real lyric examples from the songs where the word appears. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
+        <p>Choose a numbered level and Go starts up to 20 new cards. The level bar tracks progress separately from each session. Incorrect and partly learned cards collect in a separate review for that level. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions reduce the cards available without moving the level boundaries. Each card shows real lyric examples from the songs where the word appears. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
         <p>The progress bar tracks your coverage based on the frequency of words you've learned — learning a common word contributes more to your coverage than a rare one.</p>
     `;
 }
@@ -4086,7 +3952,7 @@ function getNormalHelpContent() {
         <p><strong>Why frequency order?</strong></p>
         <p>Language follows a power law: a small number of words make up the vast majority of everyday speech. In Spanish, the top 1,000 words cover roughly 81% of spoken language, and the top 3,000 cover around 91%. By learning frequent words first, you build practical comprehension faster.</p>
         <p><strong>How does it work?</strong></p>
-        <p>Choose the language you’re learning, then choose whether to learn from Speech or Lyrics. Speech opens the frequency-ranked language release; Lyrics lets you select an artist, playlist, or your own mix before any large vocabulary file is loaded. The app selects a level's first small set containing unseen cards, while incorrect and partly learned cards collect in that level's separate review. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions can shorten sets without moving cards between them. Examples retain source and translation evidence when the active release provides it. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
+        <p>Choose the language you’re learning, then choose whether to learn from Speech or Lyrics. Speech opens the frequency-ranked language release; Lyrics lets you select an artist, playlist, or your own mix before any large vocabulary file is loaded. The app selects a level's first small set containing unseen cards, while incorrect and partly learned cards collect in that level's separate review. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions reduce the cards available without moving the level boundaries. Examples retain source and translation evidence when the active release provides it. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
         <p>The progress bar tracks your coverage based on the frequency of words you've learned — learning a common word contributes more to your coverage than a rare one.</p>
     `;
 }

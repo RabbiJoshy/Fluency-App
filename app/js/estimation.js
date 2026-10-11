@@ -901,7 +901,7 @@ function buildEstimationPlacementRegions(levels) {
     return levels.flatMap(level => {
         const sets = level.number <= ESTIMATION_SET_DETAIL_MAX_LEVEL
             ? window.buildStableSetRanges?.(level.startRank, level.endRank, level.rankBasis) || [] : [];
-        return sets.length > 1 ? sets.map(set => ({ ...level, ...set })) : [{ ...level, setNumber: null }];
+        return sets.length > 1 ? sets.map(set => ({ ...level, ...set, levelStartRank: level.startRank, levelEndRank: level.endRank })) : [{ ...level, setNumber: null }];
     });
 }
 
@@ -951,6 +951,7 @@ function calculateRecognitionPlacement(items, bands, levels, baseline) {
             (level.rankBasis === 'stable' ? levelRankOf(source) : Number(source.rank)) < level.startRank);
         const sourceRank = earlier.reduce((rank, source) => Math.max(rank, Number(source.rank) || 0), 0);
         return { target, levelNumber: level.number, setNumber: level.setNumber, sourceRank,
+            levelStartRank: level.levelStartRank ?? level.startRank, levelEndRank: level.levelEndRank ?? level.endRank,
             startRank: level.startRank, rankBasis: level.rankBasis, probability: level.probability };
     }).filter(Boolean);
     return { profile, choices: choices.filter((choice, index) =>
@@ -966,7 +967,12 @@ function calculateGroupEstimate(bands, maxLevel) {
 }
 
 function estimationChoiceLocation(choice) {
-    return `Level ${choice.levelNumber}${choice.setNumber ? ` · Set ${choice.setNumber}` : ''}`;
+    const fraction = (choice.startRank - (choice.levelStartRank ?? choice.startRank))
+        / Math.max(1, (choice.levelEndRank ?? choice.endRank ?? choice.startRank + 1) - (choice.levelStartRank ?? choice.startRank));
+    const position = fraction >= 0.7 ? 'near the end of'
+        : fraction >= 0.45 ? 'around halfway through'
+        : fraction >= 0.2 ? 'about a quarter of the way through' : 'near the beginning of';
+    return `${position} Level ${choice.levelNumber}`;
 }
 
 function showEstimationResult() {
@@ -991,7 +997,7 @@ function showEstimationResult() {
     document.getElementById('estimationResult').style.display = 'block';
     const levelEl = document.getElementById('estimationResultLevel');
     levelEl.textContent = placement.choices.length > 1 ? 'Choose where to begin'
-        : (isSpeechMode() && first ? `Start at ${estimationChoiceLocation(first)}` : 'Your starting point');
+        : (isSpeechMode() && first ? `Start ${estimationChoiceLocation(first)}` : 'Your starting point');
     const range = `${Math.round(counts.low).toLocaleString()}–${Math.round(counts.high).toLocaleString()}`;
     const shortCheck = estimationState.wordsTestedCount < ESTIMATION_QUESTION_LIMIT
         ? ` The check used ${estimationState.wordsTestedCount} groups.` : '';
@@ -1000,7 +1006,7 @@ function showEstimationResult() {
     const multiple = placement.choices.length > 1;
     document.getElementById('estimationPlacementOptions').innerHTML = placement.choices.map((choice, index) => {
         const percentage = Math.round(choice.probability * 100 / 5) * 5;
-        const title = isSpeechMode() ? `Start at ${estimationChoiceLocation(choice)}` : 'Use this starting point';
+        const title = isSpeechMode() ? `Start ${estimationChoiceLocation(choice)}` : 'Use this starting point';
         const label = multiple ? (index === 0 ? 'Start earlier · More review' : 'Start further ahead · More new vocabulary') : 'Your suggested starting point';
         const detail = multiple ? (index === 0 ? 'More review, with fewer gaps left behind.' : 'More new vocabulary, with less review.') : 'A useful place to begin; you can change levels at any time.';
         return `<button type="button" class="estimation-placement-choice" onclick="useEstimatedLevel(${index})"><span class="estimation-choice-label">${label}</span><strong>${title}</strong><span>Around ${percentage}% of the vocabulary here is likely familiar. ${detail}</span></button>`;
@@ -1040,7 +1046,7 @@ async function useEstimatedLevel(choiceIndex = 0) {
     await window.renderLevelSelector?.(selectedLanguage, { preferActionable: true });
     if (isSpeechMode()) {
         const targetRank = choice?.startRank ?? ((estimationState.estimatedLevelRank || level) + 1);
-        await selectLevelForRank(targetRank, choice?.setNumber);
+        await selectLevelForRank(targetRank);
     }
 }
 
@@ -1052,17 +1058,12 @@ function retryEstimation() {
     startEstimation();
 }
 
-// Set selection must wait for the new level's dots, not accidentally click
-// the previous level's set controls while its replacement is loading.
-async function selectLevelForRank(rank, setNumber = null) {
+// Placement opens the containing level; the saved rank preserves the finer start point.
+async function selectLevelForRank(rank) {
     const target = levelButtonForRank(rank);
     if (!target) return false;
     target.button.click();
     await target.button._rangeRenderPromise;
-    if (Number.isInteger(setNumber) && setNumber > 0) {
-        const dot = document.querySelector(`#rangeSelector .study-set-dot[data-index="${setNumber - 1}"]`);
-        if (dot && !dot.disabled) dot.click();
-    }
     return true;
 }
 

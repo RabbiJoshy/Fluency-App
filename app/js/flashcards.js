@@ -2123,7 +2123,7 @@ function initializeApp() {
         }
 
         if (flashcards.length === 0) {
-            alert('No study set is currently loaded.');
+            alert('No session is currently loaded.');
             return;
         }
 
@@ -2135,7 +2135,7 @@ function initializeApp() {
             word: card.targetWord
         }));
 
-        const confirmMsg = `This will reset your progress for ${wordsInSet.length} words in the current study set. These words will appear again when you study this set. Continue?`;
+        const confirmMsg = `This will reset your progress for ${wordsInSet.length} words in the current session. These words will appear again when you study this set. Continue?`;
         if (!confirm(confirmMsg)) {
             return;
         }
@@ -2177,7 +2177,7 @@ function initializeApp() {
             });
             cacheItemProgress();
 
-            alert(`Progress reset for ${wordsInSet.length} words. Go back to the menu and re-select this set to study the refreshed words.`);
+            alert(`Progress reset for ${wordsInSet.length} words. Go back to the menu and start another session to study the refreshed words.`);
             hideSettingsModal();
         } catch (error) {
             console.error('Failed to reset progress:', error);
@@ -2204,15 +2204,6 @@ function initializeApp() {
         if (!action) return;
         this.dataset.loading = 'true';
         this.disabled = true;
-        const nextRange = stats.nextRange;
-        const nextRankBasis = stats.nextRankBasis || stats.rangeBasis || 'stable';
-        const nextSetNumber = stats.nextSetNumber;
-        const nextRangeLabel = nextRange
-            ? `${nextRange.split('-')[0]}–${parseInt(nextRange.split('-')[1]) - 1}`
-            : '';
-        const loadingTitle = action === 'next-set' && nextRangeLabel
-            ? `Loading ${nextRangeLabel}`
-            : 'Loading the Next Level';
         hideDeckCompleteModal();
         if (action === 'next-daily-review') {
             window.showAppLoading?.('Loading practice', 'Preparing your next practice cards…');
@@ -2230,24 +2221,8 @@ function initializeApp() {
             return;
         }
         try {
-            // The set dots were counted when setup last rendered, which can be
-            // several sets ago: lemma merging marks siblings seen across sets,
-            // so the set queued as "next" may have finished in the meantime.
-            // loadVocabularyData reports that with false rather than alerting,
-            // and we walk on to the next level instead of stranding the
-            // learner on an empty deck with the modal already dismissed.
-            let advanced = false;
-            if (action === 'next-set' && nextRange) {
-                advanced = await loadVocabularyData(nextRange, {
-                    rankBasis: nextRankBasis,
-                    setNumber: nextSetNumber,
-                    levelSetCount,
-                    silentIfEmpty: true
-                }) !== false;
-            }
-            if (!advanced) {
-                await window.startNextStudyLevelFirstSet?.();
-            }
+            window.showAppLoading?.('Preparing your next session', 'Finding your next cards…');
+            await window.startNextStudyLevelFirstSet?.();
         } catch (error) {
             console.error('Could not continue from completed set:', error);
             // Reopen as a stable state. Retrying automatically would loop when
@@ -2773,6 +2748,9 @@ function recordCardResult(result) {
     // Save progress to Google Sheets or LocalStorage
     const currentCard = flashcards[currentIndex];
     if (currentCard?.previewOnly) return;
+    if (currentCard && !currentCard.isChainChild && cardNavStack.length === 0) {
+        window.recordGuestSessionAnswer?.(currentCard, isCorrect);
+    }
     if (currentCard && currentCard.rank) {
         saveCardAnswer(currentCard, isCorrect);
     }

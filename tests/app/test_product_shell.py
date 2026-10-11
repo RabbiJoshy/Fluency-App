@@ -1395,11 +1395,10 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         # builder would drop (no translated meaning) are not advertised.
         self.assertIn("landingWords.some(item => item._indexRowsPending)", ui)
         self.assertIn("return renderRangeSelector({ landingRowsChecked: landingRowsChecked + 1 });", ui)
-        # Start waits for an in-flight progress refresh, and an empty set goes
-        # straight on to the recount's next set instead of back to setup.
+        # Start waits for current progress and never turns new learning into replay.
         self.assertIn("window.progressRefreshSettled = progressRefreshSettled;", auth)
         self.assertIn("await window.progressRefreshSettled?.(5000);", ui)
-        self.assertIn("is already done. Starting Set", ui)
+        self.assertIn("context.studyMode === 'new' && fresh.studyMode !== 'new'", ui)
         self.assertIn("silentIfEmpty: true", ui)
 
     def test_empty_replacement_preserves_the_active_deck_without_an_unseen_popup(self) -> None:
@@ -1409,13 +1408,13 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("if (!opts.silentIfEmpty) await window.refreshSetupAfterProgress?.();", vocab)
         self.assertNotIn("No unseen flashcards remain in this set", vocab)
 
-    def test_completion_recounts_same_level_and_only_autostarts_unseen_cards(self) -> None:
+    def test_completion_recounts_same_level_and_only_continues_with_unseen_cards(self) -> None:
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         continuation = ui[ui.index("async function startNextStudyLevelFirstSet()"):
                           ui.index("function showStatsModal()")]
         self.assertIn("await renderRangeSelector();", continuation)
-        self.assertIn("const sameLevelCandidates", continuation)
-        self.assertIn("Number(dot.dataset.unseen || 0) > 0", continuation)
+        self.assertIn("window.__studySessionContext?.unseenCount > 0", continuation)
+        self.assertIn("startSelectedStudySession({ studyMode: 'new' })", continuation)
         self.assertNotIn("Number(dot.dataset.review || 0) > 0", continuation)
 
     def test_portuguese_variety_selection_is_supported_without_cluttering_ui(self) -> None:
@@ -1634,14 +1633,14 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("spotify-playing-amplitude", css)
         self.assertNotIn("rotate(calc(var(--bar-index)", css)
 
-    def test_perfect_set_celebration_and_confetti(self) -> None:
+    def test_perfect_session_celebration_and_confetti(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         modals = (APP_ROOT / "js" / "flashcards-modals.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn('id="deckCompleteConfetti"', html)
         self.assertIn("triggerDeckCompleteConfetti", modals)
         self.assertIn("scoreContainer.classList.add('is-perfect')", modals)
-        self.assertIn("🌟 Perfect Set!", modals)
+        self.assertIn("🌟 Perfect session!", modals)
         self.assertIn(".deck-complete-confetti", css)
         self.assertIn(".deck-complete-score-container.is-perfect", css)
 
