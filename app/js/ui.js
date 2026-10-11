@@ -2113,7 +2113,9 @@ function updateLevelSliderReadout(i) {
         // Frequency as a full sentence on its own line, then the example
         // words with speech coverage directly after them.
         const wordLabel = `${displayedWordCount.toLocaleString()} word${displayedWordCount === 1 ? '' : 's'}`;
-        const freqHTML = freqValue !== null
+        // Keep frequency calculations available for a future detail view.
+        const showLevelFrequency = false;
+        const freqHTML = showLevelFrequency && freqValue !== null
             ? `<div class="lsw-freq-sentence"><strong>${wordLabel}</strong> appear${displayedWordCount === 1 ? 's' : ''} <strong>${freqValue.toLocaleString()}</strong> ${freqUnit}</div>`
             : '';
         const covHTML = coveragePct

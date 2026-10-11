@@ -696,11 +696,11 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                 <div class="links-section" id="replicaLinksSection">
                     ${hasRareUses(card) ? `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses" title="Rare uses">
                         <div class="ref-tile-icon-wrap">
-                            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <rect x="3.5" y="14" width="4" height="6" rx="1.5"></rect>
-                                <rect x="10" y="9" width="4" height="11" rx="1.5"></rect>
-                                <rect x="16.5" y="4" width="4" height="16" rx="1.5"></rect>
-                            </svg>
+                            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="currentColor" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.28" stroke-width="0.5" aria-hidden="true">
+                    <rect x="3" y="14" width="4.5" height="6" rx="1.5"></rect>
+                    <rect x="10" y="9" width="4.5" height="11" rx="1.5"></rect>
+                    <rect x="17" y="4" width="4.5" height="16" rx="1.5"></rect>
+                </svg>
                             <span class="ref-tile-count-badge">${Array.isArray(card.rareUses) ? card.rareUses.length : 2}</span>
                         </div>
                         <span class="ref-tile-label">Rare uses</span>
@@ -709,14 +709,14 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                         <span class="ref-tile-fraction" aria-hidden="true">?/${Math.max(2, (card.meanings || []).length || 3)}</span>
                         <span class="ref-tile-label">Mark a meaning</span>
                     </button>
-                    <button type="button" class="ref-tile ref-lookup-btn" aria-label="Look up" title="Look up">
+                    <div class="ref-lookup-wrap"><button type="button" class="ref-tile ref-lookup-btn" aria-label="Look up" title="Look up">
                         <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <circle cx="11" cy="11" r="7"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                         <span class="ref-tile-label">Look up</span>
                     </button>
-                    ${lookupSheetHTML(card)}
+                    ${lookupSheetHTML(card)}</div>
                 </div>
             </div>
             <div class="card-tint" aria-hidden="true"></div>

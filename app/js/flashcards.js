@@ -5712,7 +5712,7 @@ function prominenceBadgeHTML(promInfo, extraStyle = '') {
     const label = promInfo.label || 'Rare';
     const blurb = PROMINENCE_BLURBS[key] || PROMINENCE_BLURBS.rare;
     const style = extraStyle ? ` style="${extraStyle}"` : '';
-    return `<span class="sense-prominence-badge prominence-${escapeCardText(key)}"${style} role="button" tabindex="0" aria-expanded="false" aria-label="${escapeCardText(label)}. Tap to explain." onclick="toggleProminenceBadge(event, this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') toggleProminenceBadge(event, this)">${prominenceMeterHTML(key)}<span class="sense-prominence-detail">${escapeCardText(label)} · ${escapeCardText(blurb)}</span></span>`;
+    return `<span class="sense-prominence-badge prominence-${escapeCardText(key)}"${style} role="button" tabindex="0" aria-expanded="false" aria-label="${escapeCardText(label)}. Tap to explain." onclick="toggleProminenceBadge(event, this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') toggleProminenceBadge(event, this)">${prominenceMeterHTML(key)}<span class="sense-prominence-detail"><span class="sense-prominence-detail-heading">${prominenceMeterHTML(key)}<strong>${escapeCardText(label)}</strong></span><span class="sense-prominence-detail-description">${escapeCardText(blurb)}</span></span></span>`;
 }
 
 function toggleProminenceBadge(event, button) {
@@ -8270,7 +8270,7 @@ function renderCardWikipediaBadge(card) {
     // Labelled tiles rather than a strip of near-identical circles — a name
     // under each icon reads faster. Fixed order left to right: rare uses,
     // known, synonyms, conjugate. Look up is emitted last and pinned to the
-    // right edge (see .ref-lookup-btn's auto margin), so its position never
+    // right edge (see .ref-lookup-wrap's auto margin), so its position never
     // shifts with how many of the optional tiles a given card happens to have.
     // The tile row is dropped entirely on small phones (see @media in
     // style.css); the handoff row / example already earn that vertical
@@ -8286,10 +8286,10 @@ function renderCardWikipediaBadge(card) {
         const detail = parts.join(' and ');
         backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
             <div class="ref-tile-icon-wrap">
-                <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="3.5" y="14" width="4" height="6" rx="1.5"></rect>
-                    <rect x="10" y="9" width="4" height="11" rx="1.5"></rect>
-                    <rect x="16.5" y="4" width="4" height="16" rx="1.5"></rect>
+                <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="currentColor" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.28" stroke-width="0.5" aria-hidden="true">
+                    <rect x="3" y="14" width="4.5" height="6" rx="1.5"></rect>
+                    <rect x="10" y="9" width="4.5" height="11" rx="1.5"></rect>
+                    <rect x="17" y="4" width="4.5" height="16" rx="1.5"></rect>
                 </svg>
                 ${rareAndExprItems.length > 0 ? `<span class="ref-tile-count-badge">${rareAndExprItems.length}</span>` : ''}
             </div>
@@ -8347,7 +8347,7 @@ function renderCardWikipediaBadge(card) {
     const lookupLinks = Object.entries(card.links)
         .filter(([key]) => key !== 'wordReference' && key !== 'conjugation');
     if (lookupLinks.length > 0) {
-        backHTML += `<button class="ref-tile ref-lookup-btn" onclick="event.stopPropagation(); toggleLookupSheet(event);">
+        backHTML += `<div class="ref-lookup-wrap"><button class="ref-tile ref-lookup-btn" onclick="event.stopPropagation(); toggleLookupSheet(event);">
             <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="11" cy="11" r="7"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -8362,7 +8362,7 @@ function renderCardWikipediaBadge(card) {
                 `class="lookup-sheet-icon" title="${linkTitles[key] || key}" aria-label="${linkTitles[key] || key}"`,
                 true
             )).join('')}
-        </div>`;
+        </div></div>`;
     }
 
     // Card Data + flag ("Card data" / "Report a card issue") now
