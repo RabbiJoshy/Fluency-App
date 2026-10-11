@@ -412,13 +412,11 @@ const cases = [
     ['dejé', verb('dejar', 'to lend'), plain, 'I lent'],
     ['golpeé', verb('golpear', 'to hit oneself'), plain, 'I hit myself'],
     ['explodiu', verb('explodir', 'to cause/suffer an explosion'), plain, 'he/she caused/suffered an explosion'],
-    // INFLECT-2: a definition in brackets ("(to be able to see; ...)") is an
-    // infinitive; on a row that is already unique it is dropped, never
-    // written twice or cut ("I saw (to be able to see")
-    ['vi', verb('ver', 'to see (to be able to see; not to be blind or blinded)'), plain, 'I saw'],
-    ['pertence', verb('pertencer', 'to belong (to be property (of); to be owned (by))'), plain, 'he/she belongs'],
-    // a bracket that completes the verb is not a definition and stays
-    ['espera', verb('esperar', 'to wait (for a person)'), plain, 'he/she waits (for a person)'],
+    // brackets stay whole and are written once (was: "I saw (to be able to see")
+    ['vi', verb('ver', 'to see (to be able to see; not to be blind or blinded)'), plain,
+        'I saw (to be able to see; not to be blind or blinded)'],
+    ['pertence', verb('pertencer', 'to belong (to be property (of); to be owned (by))'), plain,
+        'he/she belongs (to be property (of); to be owned (by))'],
     // every gloss is kept (was: "I play", "revere! / he/she reveres")
     ['faço', verb('fazer', 'to play; to pretend to be'), plain, 'I play; pretend to be'],
     ['respeita', verb('respeitar', 'to revere, venerate'), plain, 'he/she reveres, venerates'],
@@ -447,56 +445,6 @@ console.log(JSON.stringify(out));
         rows = json.loads(result.stdout)
         for row in rows:
             self.assertEqual(row["actual"], row["expected"], row)
-
-    def test_definition_brackets_stay_only_where_they_tell_rows_apart(self) -> None:
-        """INFLECT-2: pt "he/she went (to move to a destination)" reads as a purpose."""
-        node = shutil.which("node")
-        if not node:
-            self.skipTest("node is required to execute reverse-cues.js")
-        script = r"""
-import { englishProductionCue } from %s;
-
-const tables = {
-    ir: { tenses: { Pretérito: ['fui', 'foste', 'foi', 'fomos', 'fostes', 'foram'] } },
-    ser: { tenses: { Pretérito: ['fui', 'foste', 'foi', 'fomos', 'fostes', 'foram'] } },
-    querer: { tenses: { Presente: ['quero', 'queres', 'quer', 'queremos', 'quereis', 'querem'] } },
-};
-const sense = (headword, translation) => ({ pos: 'verb', translation, headword });
-const plain = { conjugationData: tables };
-const cueOf = (surface, meanings, index) => englishProductionCue(
-    { targetWord: surface, meanings }, meanings[index], null, plain);
-const foi = [
-    sense('ir', 'to go (to begin an action or process)'),
-    sense('ir', 'to go (to move to a destination)'),
-    sense('ser', 'to be'),
-    sense('ser', 'to be (to have the given quality)'),
-    sense('ser', 'to be; to cost (to be worth a given amount of money)'),
-];
-const quero = [
-    sense('querer', 'to want to (to feel the need to do something)'),
-    sense('querer', 'to want'),
-];
-console.log(JSON.stringify([
-    // two rows say the same without the bracket: it stays, as a note ("to" dropped)
-    ['foi 0', 'he/she went (begin an action or process)', cueOf('foi', foi, 0)],
-    ['foi 1', 'he/she went (move to a destination)', cueOf('foi', foi, 1)],
-    // "to be" has no bracket; the quality row would read the same, so keeps its note
-    ['foi 2', 'he/she was', cueOf('foi', foi, 2)],
-    ['foi 3', 'he/she was (have the given quality)', cueOf('foi', foi, 3)],
-    // already different without the bracket: dropped
-    ['foi 4', 'he/she was; cost', cueOf('foi', foi, 4)],
-    ['quero 0', 'I want to', cueOf('quero', quero, 0)],
-    ['quero 1', 'I want', cueOf('quero', quero, 1)],
-]));
-""" % json.dumps(REVERSE_CUES.as_uri())
-        result = subprocess.run(
-            [node, "--input-type=module", "-e", script],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        for name, expected, actual in json.loads(result.stdout):
-            self.assertEqual(actual, expected, name)
 
     def test_reflexive_tables_and_agreeing_participles_inflect(self) -> None:
         """INFLECT pass 2: -se tables are "me siento"; participles agree (feita)."""

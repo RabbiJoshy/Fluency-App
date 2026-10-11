@@ -680,29 +680,9 @@ function eachVerb(head, inflect) {
         .map(part => (part === '/' || part === ' or ' ? part : inflect(part))).join('');
 }
 
-// A Wiktionary definition in brackets after the gloss ("to go (to move to a
-// destination)") is written as an infinitive. Left on a conjugated verb it
-// reads as a purpose, "he/she went (to move to a destination)". As a note
-// it loses the "to": "he/she went (move to a destination)". Only these
-// definitions are touched; a bracket that completes the verb ("pay
-// (attention, respect etc.)", "caught (a transport)") stays as written.
-function isDefinitionBracket(tail) {
-    return /^\(to\s/u.test(String(tail || '').trim());
-}
-
-function bracketAsNote(tail) {
-    return String(tail).trim().replace(/(^\(|;\s+|,\s+)to\s+/gu, '$1');
-}
-
-// `bracketMode` is internal to englishProductionCue: 'drop' leaves a
-// definition off, 'note' rewrites it, and the default keeps it as written.
-function withGlossTail(cue, gloss, options = {}) {
+function withGlossTail(cue, gloss) {
     if (!cue) return null;
-    const tail = gloss?.tail;
-    if (!tail) return cue;
-    const mode = isDefinitionBracket(tail) ? options?.bracketMode : null;
-    if (mode === 'drop') return cue;
-    return `${cue} ${mode === 'note' ? bracketAsNote(tail) : tail}`;
+    return gloss?.tail ? `${cue} ${gloss.tail}` : cue;
 }
 
 const REFLEXIVE_BY_SUBJECT = {
@@ -904,10 +884,10 @@ function conjugationTableCue(card, meaning, translation, conjugationData, option
     if (!gloss) return null;
     if (entry.gerund && gerundMatches(entry.gerund, surface)) {
         return withGlossTail(renderGlossClauses(gloss.clauses,
-            (head, rest, first, lead) => `${lead}${eachVerb(head, englishIng)}${rest}`), gloss, options);
+            (head, rest, first, lead) => `${lead}${eachVerb(head, englishIng)}${rest}`), gloss);
     }
     const participleCue = () => withGlossTail(renderGlossClauses(gloss.clauses,
-        (head, rest, first, lead) => `${lead}${eachVerb(head, verb => englishPastParticiple(verb, rest))}${rest}`), gloss, options);
+        (head, rest, first, lead) => `${lead}${eachVerb(head, verb => englishPastParticiple(verb, rest))}${rest}`), gloss);
     if (entry.past_participle && foldCueForm(entry.past_participle) === foldCueForm(surface)) return participleCue();
     const readings = [];
     for (const [tenseName, forms] of Object.entries(entry.tenses || {})) {
@@ -936,7 +916,7 @@ function conjugationTableCue(card, meaning, translation, conjugationData, option
         rowGloss = firstClauseGloss(gloss);
         cue = render(rowGloss);
     }
-    return withGlossTail(cue, rowGloss, options);
+    return withGlossTail(cue, rowGloss);
 }
 
 function isUsageNoteGloss(translation) {
@@ -965,7 +945,7 @@ export function grammarProductionCue(card, meaning, translation, options = {}) {
 
     const gloss = inflectableGloss(translation, meaning);
     if (!gloss) return null;
-    return withGlossTail(finiteEnglishCue('present', personIdx, gloss, meaning, options), gloss, options);
+    return withGlossTail(finiteEnglishCue('present', personIdx, gloss, meaning, options), gloss);
 }
 
 export function detectExamplePronoun(example) {
@@ -1179,23 +1159,6 @@ function cueForAnalysis(analysisRows, morph, translation, meaning, options = {})
  * card.lemma is only a legacy fallback for decks without sense-level identity.
  */
 export function englishProductionCue(card, meaningOrTranslation, conjugatedEnglishData, options = {}) {
-    const noted = rowProductionCue(card, meaningOrTranslation, conjugatedEnglishData, { ...options, bracketMode: 'note' });
-    if (!noted || typeof meaningOrTranslation !== 'object') return noted;
-    const bare = rowProductionCue(card, meaningOrTranslation, conjugatedEnglishData, { ...options, bracketMode: 'drop' });
-    if (bare === noted) return noted;
-    // The definition is the only thing telling this row from another verb
-    // row of the card ("he/she is" three times on é), so it stays; where the
-    // row already differs without it, the bracket is only noise.
-    for (const sibling of Array.isArray(card?.meanings) ? card.meanings : []) {
-        if (!sibling || sibling === meaningOrTranslation || sibling.exampleOnly || !meaningIsVerb(sibling)) continue;
-        // A copy of this very row (the card back passes spreads) is not another row.
-        if (sibling.headword === meaningOrTranslation.headword && cueText(sibling) === cueText(meaningOrTranslation)) continue;
-        if (rowProductionCue(card, sibling, conjugatedEnglishData, { ...options, bracketMode: 'drop' }) === bare) return noted;
-    }
-    return bare;
-}
-
-function rowProductionCue(card, meaningOrTranslation, conjugatedEnglishData, options = {}) {
     if (!card || !meaningOrTranslation) return null;
     const meaning = typeof meaningOrTranslation === 'object' ? meaningOrTranslation : null;
     const translation = meaning ? cueText(meaning) : String(meaningOrTranslation || '').trim();

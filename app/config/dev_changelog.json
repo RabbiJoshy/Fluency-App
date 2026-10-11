@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T15:40:00+01:00",
+      "date": "2026-10-11 15:40 BST",
+      "agent": "Claude",
+      "summary": "INFLECT-2: reverted the Portuguese bracket change; the card already shows those definitions as sub-rows",
+      "detail": [
+        "Checked on real cards: production vou already shows \"I go\" with \"to begin an action or process\" and \"+ para to move to a destination\" as sub-rows, and quero shows \"I want to\" with \"to feel the need to do something\".",
+        "The earlier INFLECT-2 change removed the \"to\" from those sub-rows and, on quero, removed one entirely, so it is reverted: Portuguese rows are back to the INFLECT build (fa94c9bc).",
+        "Nothing else changed; Spanish was never affected."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T15:05:00+01:00",
       "date": "2026-10-11 15:05 BST",
       "agent": "Antigravity",
@@ -362,34 +374,6 @@
         "Swap button emphasis in frequency intro modal so tutorial is primary and skip intro is secondary.",
         "Streamline account settings with single Connect to Spotify button and native date-of-birth input.",
         "Introduce distinct Log in and Create account entry points on authentication modal with native date picker."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T17:04:09+01:00",
-      "date": "2026-10-10 17:04 BST",
-      "agent": "Codex",
-      "summary": "HEADWAY: Spanish and Portuguese headword candidates ready for staging",
-      "detail": [
-        "Corrected source lemma analyses and carried the supported fixes into new candidate decks, preserving surface identities, source evidence and genuine multiword expressions.",
-        "Candidate staging decks use their own study structure and existing Merge Lemmas data. Production deck choices and merging policy remain unchanged.",
-        "Save existing word-sense results gradually and read sentences and assignments as needed, reducing local memory use."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T16:03:00+01:00",
-      "date": "2026-10-10 16:03 BST",
-      "agent": "Antigravity",
-      "summary": "Active card controls cleanup, prominence meter visual linking, and study options simplification",
-      "detail": [
-        "Permanently remove bottom-middle shortcuts and suggestions on active desktop cards to eliminate pill occlusion.",
-        "Permanently disable swipe onboarding pill ('← Needs practice · Got it →') on desktop devices via CSS and JS platform detection.",
-        "Replace review meanings bookmark icon with a circular redo/review curved arrow icon.",
-        "Replace rare uses tile icon with 0-of-3 empty bars to visually link with the card prominence meter.",
-        "Significantly enlarge the commonness tooltip (16px font, comfortable padding) for clear legibility.",
-        "Simplify card study options sheet: remove redundant 'Study settings' button, rename to 'Speak text', and enlarge menu icons.",
-        "Clean up main Settings Study tab: remove 'Speak the word' and promote Spaced repetition to the top with explainer 'Bring back learned words'."
       ],
       "commit": "pending"
     }

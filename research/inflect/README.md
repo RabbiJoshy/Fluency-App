@@ -33,14 +33,15 @@ report runs without an on-screen example). So `command_listed_with_statement`
 stays 0. The person never follows the example: *era* is "I/he/she was" on every
 example.
 
-A Wiktionary definition in brackets after the gloss ("to go (to move to a
-destination)", Portuguese only in practice) is written as an infinitive and
-read as a purpose after a conjugated verb. Since 2026-10-11 (INFLECT-2) it is
-dropped when the row already differs from every other verb row of the card, and
-kept without the "to" ("he/she went (move to a destination)") only where it is
-what tells two rows apart. A bracket that completes the verb ("pay (attention,
-respect etc.)") is never touched. pt r3: 3,389 rows changed, 0 gained, 0 lost;
-es r5 unchanged.
+**This report reads the cue string, not the card.** The card back lifts a
+trailing definition bracket out of the row and shows it as a sub-row
+(production *vou*: "I go" with "to begin an action or process" and "+ para to
+move to a destination"; *quero*: "I want to" with "to feel the need to do
+something"). A cue such as "he/she went (to move to a destination)" therefore
+does not read as a purpose on the card. INFLECT-2 tried dropping those
+brackets (2026-10-11, `35f1d319`) and reverted it after seeing the real card:
+it only cost sub-rows. Check a change on a staging card before trusting a
+count of cue strings.
 
 Measure the release the app serves (`app/config/config.json`, `indexPath` and
 `conjugationsPath`), not the workspace's `active.json`. Without `--sentences`
