@@ -2,6 +2,31 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T18:15:00+01:00",
+      "date": "2026-10-11 18:15 BST",
+      "agent": "Claude",
+      "summary": "Home-screen app is now Fluency β (staging: Fluency α) with a glowing F mark, not Flashcards with a book emoji",
+      "detail": [
+        "Home-screen name, manifest name and browser tab title are Fluency β on production and Fluency α on staging, so the two installs are told apart.",
+        "Icon is the app's F mark in its neutral periwinkle, on the tinted tile with the soft glow, with a small β (or α) beside the F.",
+        "Placeholder until a real logo is chosen. Phones that already added the app keep the old icon until it is removed and re-added."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T12:00:00+01:00",
+      "date": "2026-10-11 12:00 BST",
+      "agent": "Claude",
+      "summary": "Memory tips cover far more cards and show a step-by-step link from the word to English",
+      "detail": [
+        "Any card whose own English gloss can be reached by a short chain of edits now gets a tip: about 39% of Spanish and 44% of Portuguese speech cards (was 7% and 8%).",
+        "Each tip is tiered: Same word, Regular pattern, Close match, or Loose link (loose ones say to check the meaning).",
+        "The sheet shows the word against its English partner letter by letter, then numbered steps (drop the accent, -ción becomes -tion, swap a letter) with the changed letters highlighted.",
+        "Verb infinitives (informar → inform) and spelling-variant senses are handled; the deck's own lemma is never offered as the English word."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T16:10:00+01:00",
       "date": "2026-10-11 16:10 BST",
       "agent": "Claude",
@@ -347,31 +372,6 @@
         "Connect to Spotify pill is green; Disconnect is red, styled like Log out",
         "Account avatar shows only the first letter of the username",
         "Top bar shows an account icon for named users; guests still see GUEST and tapping it opens log in / create account"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T17:41:00+01:00",
-      "date": "2026-10-10 17:41 BST",
-      "agent": "Antigravity",
-      "summary": "Yearless birthday selects, separate 'Is this you?' modal, centered F logo, and guest button parity",
-      "detail": [
-        "Replace native date picker inputs with day and month dropdown selectors in both the profile login form and account settings, eliminating unwanted year prompts.",
-        "Surface profile collisions in a dedicated 'Is this you?' modal dialog with 'Yes, continue' and 'No, create an account' choices instead of filling up the landing page.",
-        "Remove 'Fluency' title text and center the 'F' app logo and header copy on the authentication landing sheet.",
-        "Give 'Try as guest' identical card formatting and typography to Log in and Create account, with an arrow indicator and temporary guest icon."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T17:38:07+01:00",
-      "date": "2026-10-10 17:38 BST",
-      "agent": "Codex",
-      "summary": "HEADWAY: constrain Portuguese forms to their supported source meanings",
-      "detail": [
-        "Corrected Portuguese form imports that pulled unrelated parts of speech from the base word; preserved genuine separate meanings and left missing evidence unresolved.",
-        "Reprocessed only affected cards using existing frozen sentences. Final candidate decks are reviewed through staging release selection; this checkpoint does not redeploy or replace the staging interface.",
-        "Save release files in chunks to reduce avoidable memory spikes."
       ],
       "commit": "pending"
     }
