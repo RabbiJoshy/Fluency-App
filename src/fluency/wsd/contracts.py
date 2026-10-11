@@ -31,6 +31,7 @@ DECISION_STAGES = frozenset(
         "leaf_repair",
         "calibration",
         "alignment",
+        "ground",
         "commit",
     }
 )
@@ -42,6 +43,7 @@ DECISION_ORDER = (
     "leaf_repair",
     "calibration",
     "alignment",
+    "ground",
     "commit",
 )
 

@@ -1,0 +1,19 @@
+{
+  "config_version": "wsd-model-profile/v1",
+  "profile_id": "es-v25-1",
+  "language": "es",
+  "execution_status": "ready",
+  "extends": "es-v24-1",
+  "derived_from": "es-v24-1",
+  "source_method_id": "provider-neutral-v25-literal-ground",
+  "method_summary": "es-v24-1 plus LITERAL-GROUND: closed-class preposition guards (declared primary leaf with a 0.025 margin floor, governed-verb bypass for de) and translation-overlap specificity (a cue inside a longer cue a sibling leaf matched earns no bonus).",
+  "ground": {
+    "enabled": true,
+    "policy": "config/wsd/closed-class/es.json",
+    "parser": "es_dep_news_trf@3.8.0",
+    "role": "dependency parse of closed-class occurrences only; read by the governed bypass"
+  },
+  "gloss": {
+    "overlap_specificity": true
+  }
+}

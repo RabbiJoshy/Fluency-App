@@ -32,6 +32,7 @@ from fluency.wsd.multiword import (
 )
 from fluency.wsd.disposition import DispositionPolicy
 from fluency.wsd.gloss_scoring import GlossScorer, LeafScore, validated_leaf_scores
+from fluency.wsd.ground import GroundPolicy, TargetSyntax, ground_selection
 from fluency.wsd.languages.base import LanguageAdapter
 from fluency.wsd.menus import MenuAnalysis, require_analysis
 from fluency.wsd.token_prototypes import TokenPrototypeReranker
@@ -52,6 +53,7 @@ class WSDExecutionProfile:
     specialists: bool = False
     commit: CommitPolicy = CommitPolicy()
     active_projection: SelectionProjectionName = "provider_only"
+    ground: GroundPolicy | None = None
 
     def __post_init__(self) -> None:
         if self.tuple_vote_minimum_margin < 0:
@@ -89,6 +91,7 @@ class WSDRequest:
     target_observed_form: str | None = None
     observed_pos: str | None = None
     observed_pos_evidence: Mapping[str, Any] | None = None
+    target_syntax: TargetSyntax | None = None
 
 
 class WSDConfigurationError(ValueError):
@@ -655,6 +658,39 @@ class ClosedMenuWSDRunner:
                     confidence = None
                     decision_path.append("alignment")
 
+        # GROUND. A declared closed-class preposition keeps its primary leaf
+        # unless a rival clears the margin floor, and takes it outright when the
+        # parse shows a governed use. Within the selected analysis only: which
+        # word this is was settled above.
+        ground_reason: str | None = None
+        if self.profile.ground is not None and self.profile.ground.applies_to(
+            request.surface_form
+        ):
+            grounded = ground_selection(
+                self.profile.ground,
+                analysis=selected_analysis,
+                selected_sense_id=selected_sense.sense_id,
+                scores={
+                    item.sense_id: item.score
+                    for item in provider_ranked
+                    if item.menu_analysis_id == selected_analysis.menu_analysis_id
+                },
+                syntax=request.target_syntax,
+            )
+            if grounded is not None:
+                evidence["ground"] = {**grounded.evidence, "reason": grounded.reason}
+                if grounded.reason is not None:
+                    ground_reason = grounded.reason
+                    if grounded.sense_id != selected_sense.sense_id:
+                        selected_sense = selected_analysis.sense(grounded.sense_id)
+                        selected_score = _score_for(
+                            provider_ranked,
+                            selected_analysis.menu_analysis_id,
+                            grounded.sense_id,
+                        )
+                        confidence = None
+                    decision_path.append("ground")
+
         # COMMIT. Decide how specific a claim to publish, and record whether a
         # choice was made at all. A single-candidate menu is a deterministic
         # default, not disambiguation, and must never be reported as though a
@@ -781,6 +817,12 @@ class ClosedMenuWSDRunner:
             ):
                 emitted_level = "tuple"
                 evidence_guard_reasons.append("low_margin_discourse_or_filler_ambiguity")
+        ground_override: str | None = None
+        if ground_reason is not None and emitted_level != "leaf":
+            # A grounded leaf is a declared default, like a one-sense menu:
+            # the cheap choices' disagreement is the noise it exists to absorb.
+            ground_override = emitted_level
+            emitted_level = "leaf"
         evidence["commit"] = {
             "selected_ref": {
                 "menu_analysis_id": selected_analysis.menu_analysis_id,
@@ -817,6 +859,11 @@ class ClosedMenuWSDRunner:
         }
         if commit_decision.cross_analysis is not None:
             evidence["commit"]["cross_analysis"] = commit_decision.cross_analysis
+        if ground_override is not None:
+            evidence["commit"]["ground_override"] = {
+                "reason": ground_reason,
+                "level_before_ground": ground_override,
+            }
         if evidence_guard_reasons:
             evidence["commit"]["evidence_guards"] = evidence_guard_reasons
         if rank_agreement_choices:

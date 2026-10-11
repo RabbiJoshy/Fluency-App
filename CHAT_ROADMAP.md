@@ -35,7 +35,7 @@ These chats directly affect assignments, menus, and deck semantics. Run in this 
 | Step | Codename | Status / Focus |
 |---|---|---|
 | **WSD-1** | **HEADWAY → SEAM** | Complete for Spanish/Portuguese (confirmed by Josh, 2026-10-11). Remaining source adjudications and other-language merging audits are deferred follow-ups; do not repeat the completed campaigns. |
-| **WSD-2** | **LITERAL-GROUND** | Combined surgical WSD safeguards: (1) GROUND: closed-class prepositions/particles (es/pt *de*, *a*, *en*, *por*, *para*) primary sense prior & governed-verb bypass; (2) LITERAL: translation-dependent English gloss alignment on frozen evidence. Verify on ~20 labelled cards, regenerate targeted menus ($0 spend), stage candidate releases (`pt r4`, `es r6`). |
+| **WSD-2** | **LITERAL-GROUND** | Staged 2026-10-11 for review: candidate decks `pt-speech-v25-literal-ground-r4` and `es-speech-v25-literal-ground-r6` (only pt de/do/da/dos/das/em/no/na/nos/nas and es de/del re-run; all other cards identical to r3/r5). On 124 hand-judged changed sentences: 78 better, 7 worse where the card English changes. por/para/es a/al/en left unguarded (measured worse). LITERAL overlap fix verified on the sample, not rolled out deck-wide. Evidence: `research/literal-ground/README.md`. Production approval pending. |
 | **WSD-3** | **Es/Pt Release Review** | Final staging audit of Spanish & Portuguese candidate decks together before production promotion. |
 
 *(TAGLINE completed: Stanza pt tagger, soft evidence gating, single-POS bypass, pt-r3 active in production config, es-r5 and lyrics v20 deployed to staging.)*

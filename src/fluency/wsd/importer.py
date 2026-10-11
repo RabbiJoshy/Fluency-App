@@ -317,7 +317,9 @@ def _validate_method(method: Any) -> dict[str, Any]:
     # the same inputs. Optional rather than required so v6 bundles still import,
     # and named rather than allowing anything so an unknown field is still a
     # contract break.
-    optional = {"constraint_mode"}
+    # v10 adds the closed-class GROUND policy and parser it ran under
+    # (LITERAL-GROUND); absent on every earlier bundle.
+    optional = {"constraint_mode", "ground"}
     fields = set(method)
     if not expected <= fields or not fields <= expected | optional:
         raise WSDAssignmentImportError("WSD method fields do not match the bundle contract")
@@ -330,6 +332,13 @@ def _validate_method(method: Any) -> dict[str, Any]:
         raise WSDAssignmentImportError(
             "WSD method implementation_content_id is invalid"
         ) from error
+    ground = method.get("ground")
+    if ground is not None and (
+        not isinstance(ground, dict)
+        or set(ground) != {"policy_id", "policy_content_id", "parser"}
+        or not all(isinstance(value, str) and value for value in ground.values())
+    ):
+        raise WSDAssignmentImportError("WSD method ground provenance is malformed")
     revisions = method["model_revisions"]
     if not isinstance(revisions, dict) or not revisions or any(
         not isinstance(name, str)

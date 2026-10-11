@@ -34,6 +34,7 @@ from fluency.wsd.commit import CommitPolicy
 from fluency.wsd.companion_gate import CONTRACTION_PARTS
 from fluency.features import MetadataAccounting
 from fluency.wsd.alignment import LiteralGlossAlignmentCorrector, SimAlignWordAligner
+from fluency.wsd.ground import TargetSyntax, load_ground_policy
 from fluency.wsd.contracts import SelectedTuple, SelectionProjection, WSDAssignment
 from fluency.wsd.features import SpecialistFeature
 from fluency.wsd.disposition import DispositionPolicy
@@ -625,6 +626,57 @@ _PRONOUN_EXPANSIONS = {
 }
 
 
+def _overlap_cues(leaf: SenseLeaf) -> list[str]:
+    """The English cues the overlap bonus reads from a leaf, in its own order."""
+
+    raw_trans = (leaf.translation or "").lower().strip()
+    cleaned_trans = re.sub(r"\(.*?\)", "", raw_trans).strip()
+    return [
+        core
+        for core in (
+            c.strip().removeprefix("to ").strip()
+            for c in re.split(r"[,;/]", cleaned_trans)
+        )
+        if core
+    ]
+
+
+def _dominated_overlap_leaves(
+    matched: Sequence[tuple[str, SenseLeaf]], english_sentence: str
+) -> set[tuple[str, str]]:
+    """Leaves whose cue lies inside a longer cue another leaf of the same entry matched.
+
+    "except" and "except for" both occur in "except for your wallet"; only the
+    longer, more literal cue says which leaf the translation chose. Sibling
+    leaves of one analysis only: a different headword ("hablarse" for "talk
+    to") is a different word, not a more literal reading of this one.
+    """
+
+    text_lower = english_sentence.lower()
+    present = {
+        (analysis_id, leaf.sense_id): [
+            cue for cue in _overlap_cues(leaf)
+            if re.search(rf"\b{re.escape(cue)}\b", text_lower)
+        ]
+        for analysis_id, leaf in matched
+    }
+    dominated: set[tuple[str, str]] = set()
+    for analysis_id, leaf in matched:
+        own = _overlap_cues(leaf)
+        for other_id, other in matched:
+            if other_id != analysis_id or other.sense_id == leaf.sense_id:
+                continue
+            longer = present[(other_id, other.sense_id)]
+            if any(
+                cue != big and cue not in longer and re.search(rf"\b{re.escape(cue)}\b", big)
+                for cue in own
+                for big in longer
+            ):
+                dominated.add((analysis_id, leaf.sense_id))
+                break
+    return dominated
+
+
 def _translation_overlap_bonus(
     leaf: SenseLeaf,
     english_sentence: str,
@@ -671,6 +723,55 @@ def _translation_overlap_bonus(
         if any(tok.endswith("'s") or tok == "of" for tok in expanded_tokens):
             return effective_bonus
     return 0.0
+
+
+def target_syntax(
+    work: Sequence[tuple[dict[str, Any], dict[str, Any], str, str, str]],
+    *,
+    applies_to: Any,
+    parser_pin: str,
+    adapter: Any,
+    batch_size: int = 64,
+) -> dict[tuple[str, str], TargetSyntax]:
+    """Parse the closed-class occurrences the GROUND policy covers.
+
+    Only an occurrence located exactly once gets a parse; a repeated target
+    has no single head to read, so it is left without syntax rather than
+    guessed, and the governed bypass simply does not fire for it.
+    """
+
+    items: list[tuple[tuple[str, str], str, int]] = []
+    for card, _menu_card, sentence_id, text, _translation in work:
+        if not applies_to(card["display_form"]):
+            continue
+        if card.get("target_span") is not None:
+            start = int(card["target_span"][0])
+        else:
+            found = adapter.locate(text, card["display_form"])
+            if len(found) != 1:
+                continue
+            start = found[0].start
+        items.append(((card["card_id"], sentence_id), text, start))
+    if not items:
+        return {}
+    parser = load_pinned(parser_pin)
+    parsed: dict[tuple[str, str], TargetSyntax] = {}
+    for (key, _text, start), doc in zip(
+        items, parser.pipe([text for _key, text, _start in items], batch_size=batch_size)
+    ):
+        token = next((item for item in doc if item.idx == start), None)
+        if token is None:
+            continue
+        head = token.head
+        parsed[key] = TargetSyntax(
+            dep=token.dep_,
+            head_pos=head.pos_,
+            head_dep=head.dep_,
+            head_verb_form=",".join(head.morph.get("VerbForm")),
+            governor_pos=head.head.pos_,
+            parser=parser_pin,
+        )
+    return parsed
 
 
 def detect_sentence_variety(sentence: str, target_word: str = "") -> str:
@@ -790,9 +891,16 @@ class ExactTextGlossScorer:
 
     model_revision = EMBED_MODEL
 
-    def __init__(self, vectors: dict[str, Any], *, target_locale: str = "") -> None:
+    def __init__(
+        self,
+        vectors: dict[str, Any],
+        *,
+        target_locale: str = "",
+        overlap_specificity: bool = False,
+    ) -> None:
         self.vectors = vectors
         self.target_locale = target_locale
+        self.overlap_specificity = overlap_specificity
 
     def score(
         self,
@@ -818,6 +926,25 @@ class ExactTextGlossScorer:
 
         import numpy as np
         query = self.vectors.get(sentence)
+        bonuses: dict[tuple[str, str], float] = {}
+        if translation:
+            trans_state = "machine" if translation.startswith("[MT]") else "human"
+            for analysis in analyses:
+                for leaf in analysis.senses:
+                    if _is_conflicting_regional_leaf(leaf, self.target_locale, sentence_variety):
+                        continue
+                    bonus = _translation_overlap_bonus(leaf, translation, state=trans_state)
+                    if bonus:
+                        bonuses[(analysis.menu_analysis_id, leaf.sense_id)] = bonus
+            if self.overlap_specificity and len(bonuses) > 1:
+                matched = [
+                    (analysis.menu_analysis_id, leaf)
+                    for analysis in analyses
+                    for leaf in analysis.senses
+                    if (analysis.menu_analysis_id, leaf.sense_id) in bonuses
+                ]
+                for ref in _dominated_overlap_leaves(matched, translation):
+                    del bonuses[ref]
         scores: list[LeafScore] = []
         for analysis in analyses:
             for leaf in analysis.senses:
@@ -852,9 +979,7 @@ class ExactTextGlossScorer:
                         words_q = set(sentence.lower().split())
                         words_g = set(gloss.lower().split())
                         value = 0.40 if (words_q & words_g) else 0.0
-                if translation and not _is_conflicting_regional_leaf(leaf, self.target_locale, sentence_variety):
-                    trans_state = "machine" if translation.startswith("[MT]") else "human"
-                    value += _translation_overlap_bonus(leaf, translation, state=trans_state)
+                value += bonuses.get((analysis.menu_analysis_id, leaf.sense_id), 0.0)
                 if self.target_locale:
                     value -= _regional_register_penalty(leaf, self.target_locale, sentence_variety)
                 scores.append(
@@ -1014,6 +1139,14 @@ def main() -> None:
     keep_self_reading_pos = frozenset(
         (profile_config.get("constrain") or {}).get("keep_self_reading_pos") or ()
     )
+    ground_config = profile_config.get("ground") or {}
+    ground_policy = None
+    if ground_config.get("enabled"):
+        ground_path = MODEL_PROFILE_DIR.parents[2] / ground_config["policy"]
+        ground_policy = load_ground_policy(
+            ground_path, content_id=file_content_id(ground_path)
+        )
+    gloss_config = profile_config.get("gloss") or {}
     alignment_enabled = args.profile_id in ALIGNMENT_PROFILES
     aligner = (
         LiteralGlossAlignmentCorrector(SimAlignWordAligner())
@@ -1118,6 +1251,7 @@ def main() -> None:
                 )
             ),
         ),
+        ground=ground_policy,
     )
 
     # --- gather every exact text the run needs, then embed the misses ---
@@ -1464,7 +1598,11 @@ def main() -> None:
 
     components = WSDComponents(
         language=language_adapter,
-        gloss=ExactTextGlossScorer(vectors, target_locale=run_locale),
+        gloss=ExactTextGlossScorer(
+            vectors,
+            target_locale=run_locale,
+            overlap_specificity=bool(gloss_config.get("overlap_specificity")),
+        ),
         candidate_policy=SpanishV5CandidatePolicy(
             language=run_language,
             constraint_mode=SUPPORTED_PROFILE_CONSTRAINT_MODES[args.profile_id],
@@ -1490,6 +1628,17 @@ def main() -> None:
         context_model_revisions={"occurrence_pos": pos_pin},
     )
     runner = ClosedMenuWSDRunner(profile, components)
+    syntax_by_key: dict[tuple[str, str], TargetSyntax] = {}
+    if ground_policy is not None:
+        syntax_by_key = target_syntax(
+            work,
+            applies_to=ground_policy.applies_to,
+            parser_pin=str(ground_config["parser"]),
+            adapter=language_adapter,
+            batch_size=args.pos_batch_size,
+        )
+        print(f"ground: {ground_policy.policy_id}, parsed {len(syntax_by_key):,} "
+              f"closed-class occurrences with {ground_config['parser']}")
 
     assignments: list[dict[str, Any]] = []
     counts: dict[str, int] = {}
@@ -1514,6 +1663,7 @@ def main() -> None:
                 tuple(card["target_span"]) if card.get("target_span") is not None else None
             ),
             target_observed_form=card.get("target_observed_form"),
+            target_syntax=syntax_by_key.get(request_key),
         )
         assignment = runner.assign(request)
         counts[assignment.status] = counts.get(assignment.status, 0) + 1
@@ -1749,7 +1899,8 @@ def main() -> None:
         "method": {
             "profile_id": args.profile_id,
             "implementation_version": (
-                "fluency.speech.wsd_execute/v8" if alignment_enabled
+                "fluency.speech.wsd_execute/v10" if ground_policy is not None
+                else "fluency.speech.wsd_execute/v8" if alignment_enabled
                 else "fluency.speech.wsd_execute/v9"
                 if args.profile_id in RANK_AGREEMENT_PROFILES
                 else "fluency.speech.wsd_execute/v7"
@@ -1758,6 +1909,20 @@ def main() -> None:
             "model_revisions": run_model_revisions,
             "constraint_mode": SUPPORTED_PROFILE_CONSTRAINT_MODES[args.profile_id],
             "random_seed": 0,
+            # Recorded on the method, not in each row's model revisions: the
+            # importer requires one revision set per bundle, and a splice
+            # carries rows that never ran GROUND.
+            **(
+                {
+                    "ground": {
+                        "policy_id": ground_policy.policy_id,
+                        "policy_content_id": ground_policy.content_id,
+                        "parser": str(ground_config["parser"]),
+                    }
+                }
+                if ground_policy is not None
+                else {}
+            ),
         },
         "inputs": {
             "inventory": file_content_id(inventory_path),

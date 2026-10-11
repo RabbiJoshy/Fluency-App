@@ -1,0 +1,42 @@
+{
+  "policy_version": "closed-class-ground/v1",
+  "policy_id": "pt-closed-class-ground-1",
+  "language": "pt",
+  "provider": "wiktionary (kaikki enwiktionary-2026-09-13 menus)",
+  "why": "LITERAL-GROUND (2026-10-11). Sentence embeddings cannot separate a preposition's functional use from its rare senses: on the pt r3 deck 'by means of; by' won 11 of 26 'de' sentences and 'in (wearing)' won 'lembrar-se de'. Primary leaves are declared here because the Wiktionary menu is sorted by sense id, not by Wiktionary's own order.",
+  "surfaces": [
+    "de",
+    "do",
+    "da",
+    "dos",
+    "das",
+    "em",
+    "no",
+    "na",
+    "nos",
+    "nas"
+  ],
+  "margin_floor": 0.025,
+  "entries": [
+    {
+      "headword": "de",
+      "part_of_speech": "prep",
+      "primary_sense_id": "en-de-pt-prep-FPYEuswM",
+      "primary_gloss": "of (in relation to)",
+      "governed_bypass": true
+    },
+    {
+      "headword": "em",
+      "part_of_speech": "prep",
+      "primary_sense_id": "en-em-pt-prep-pt:in_a_location",
+      "primary_gloss": "in; at (located in a location)",
+      "governed_bypass": false
+    }
+  ],
+  "not_guarded": {
+    "por": "for / by / through / per are all common; a declared primary would overwrite real uses",
+    "para": "'to' is as common as 'for'; a 'for' primary turned 'mudei para Boston' into 'for' on the pt sample",
+    "a": "'a' + infinitive is the European progressive ('estou a ser'), not 'towards'; and Spanish showed a destination prior overwrites real uses"
+  },
+  "active_card_threshold": "not here: the app moves a sense under 10% of a card's sentences to Rarer uses (MAIN_CARD_MIN_SHARE, app/js/vocab.js), pooled by translation for prepositions"
+}

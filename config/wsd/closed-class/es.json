@@ -1,0 +1,36 @@
+{
+  "policy_version": "closed-class-ground/v1",
+  "policy_id": "es-closed-class-ground-1",
+  "language": "es",
+  "provider": "spanishdict (menus of es-speech-v24-headway-r5)",
+  "why": "LITERAL-GROUND (2026-10-11). Sentence embeddings cannot separate a preposition's functional use from its rare senses. Primary leaves are declared here because SpanishDict's page order puts 'de' = 'from' first.",
+  "surfaces": [
+    "de",
+    "del"
+  ],
+  "margin_floor": 0.025,
+  "entries": [
+    {
+      "headword": "de",
+      "part_of_speech": "ADP",
+      "primary_sense_id": "cc82",
+      "primary_gloss": "of | used to indicate characteristics",
+      "governed_bypass": true
+    },
+    {
+      "headword": "del",
+      "part_of_speech": "CONTRACTION",
+      "primary_sense_id": "6c1",
+      "primary_gloss": "of the | used to indicate relationship or possession",
+      "governed_bypass": true
+    }
+  ],
+  "not_guarded": {
+    "por": "for / by / through / per are all common; a declared primary would overwrite real uses",
+    "para": "'to' is as common as 'for'; a 'for' primary turned 'mudei para Boston' into 'for' on the pt sample",
+    "a": "its verb-object use is the personal 'a' (odio a la gente), a SpanishDict sense of its own; a 'direction' prior overwrote it on 9 of 30 sample rows",
+    "al": "frequency / position / direction split evenly; 'al mando' became 'to the' under a direction prior",
+    "en": "time and mode are real uses ('en junio', 'en francés'); a 'place' prior overwrote them on 8 of 30 sample rows"
+  },
+  "active_card_threshold": "not here: the app moves a sense under 10% of a card's sentences to Rarer uses (MAIN_CARD_MIN_SHARE, app/js/vocab.js), pooled by translation for prepositions"
+}
