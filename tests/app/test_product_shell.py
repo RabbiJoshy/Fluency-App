@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v582"
+EXPECTED_CACHE_NAME = "flashcards-v583"
 
 
 
@@ -938,7 +938,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("error !== 'access_denied'", callback)
         self.assertIn("spotifyWebLogin", callback)
         self.assertIn("/js/spotify.js?v=20260923su", worker)
-        self.assertIn("/js/main.js?v=20260929sense6", worker)
+        self.assertIn("/js/main.js?v=20261011terse2", worker)
         self.assertIn("/js/ui.js?v=20260927pa", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 

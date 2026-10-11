@@ -1,0 +1,4360 @@
+{
+  "baselineRef": "a31031c0",
+  "method": "All released sense rows; canonical example for command reading. Final gloss includes production cues using release conjugation tables. Group layout and renderer redundancy cleanup are assessed separately in browser.",
+  "releases": {
+    "pt": {
+      "release": "pt-speech-v24-headway-r3-10000x30-slim",
+      "cards": 10000,
+      "senseRows": 23949,
+      "metrics": {
+        "storedGloss": {
+          "characters": {
+            "count": 23949,
+            "p50": 26,
+            "p90": 60,
+            "p95": 73,
+            "p99": 113,
+            "max": 306,
+            "over84": 568
+          },
+          "words": {
+            "count": 23949,
+            "p50": 4,
+            "p90": 11,
+            "p95": 13,
+            "p99": 19,
+            "max": 47,
+            "over84": 0
+          }
+        },
+        "storedContext": {
+          "characters": {
+            "count": 23949,
+            "p50": 0,
+            "p90": 22,
+            "p95": 33,
+            "p99": 77,
+            "max": 324,
+            "over84": 109
+          },
+          "words": {
+            "count": 23949,
+            "p50": 0,
+            "p90": 3,
+            "p95": 6,
+            "p99": 14,
+            "max": 50,
+            "over84": 0
+          }
+        },
+        "projectedGloss": {
+          "characters": {
+            "count": 23949,
+            "p50": 26,
+            "p90": 60,
+            "p95": 73,
+            "p99": 112,
+            "max": 306,
+            "over84": 548
+          },
+          "words": {
+            "count": 23949,
+            "p50": 4,
+            "p90": 11,
+            "p95": 13,
+            "p99": 19,
+            "max": 47,
+            "over84": 0
+          }
+        },
+        "beforeGloss": {
+          "characters": {
+            "count": 23949,
+            "p50": 9,
+            "p90": 28,
+            "p95": 36,
+            "p99": 63,
+            "max": 170,
+            "over84": 146
+          },
+          "words": {
+            "count": 23949,
+            "p50": 2,
+            "p90": 5,
+            "p95": 7,
+            "p99": 11,
+            "max": 28,
+            "over84": 0
+          }
+        },
+        "afterGloss": {
+          "characters": {
+            "count": 23949,
+            "p50": 9,
+            "p90": 28,
+            "p95": 38,
+            "p99": 68,
+            "max": 195,
+            "over84": 102
+          },
+          "words": {
+            "count": 23949,
+            "p50": 2,
+            "p90": 5,
+            "p95": 7,
+            "p99": 12,
+            "max": 32,
+            "over84": 0
+          }
+        },
+        "beforeKey": {
+          "characters": {
+            "count": 23949,
+            "p50": 0,
+            "p90": 38,
+            "p95": 46,
+            "p99": 57,
+            "max": 94,
+            "over84": 1
+          },
+          "words": {
+            "count": 23949,
+            "p50": 0,
+            "p90": 7,
+            "p95": 8,
+            "p99": 10,
+            "max": 10,
+            "over84": 0
+          }
+        },
+        "afterKey": {
+          "characters": {
+            "count": 23949,
+            "p50": 0,
+            "p90": 39,
+            "p95": 46,
+            "p99": 57,
+            "max": 94,
+            "over84": 1
+          },
+          "words": {
+            "count": 23949,
+            "p50": 0,
+            "p90": 7,
+            "p95": 8,
+            "p99": 10,
+            "max": 10,
+            "over84": 0
+          }
+        },
+        "finalBeforeGloss": {
+          "characters": {
+            "count": 23949,
+            "p50": 11,
+            "p90": 27,
+            "p95": 35,
+            "p99": 63,
+            "max": 170,
+            "over84": 140
+          },
+          "words": {
+            "count": 23949,
+            "p50": 2,
+            "p90": 5,
+            "p95": 6,
+            "p99": 10,
+            "max": 28,
+            "over84": 0
+          }
+        },
+        "finalAfterGloss": {
+          "characters": {
+            "count": 23949,
+            "p50": 11,
+            "p90": 28,
+            "p95": 36,
+            "p99": 65,
+            "max": 195,
+            "over84": 94
+          },
+          "words": {
+            "count": 23949,
+            "p50": 2,
+            "p90": 5,
+            "p95": 6,
+            "p99": 11,
+            "max": 32,
+            "over84": 0
+          }
+        }
+      },
+      "providers": {
+        "wiktionary": 23138,
+        "mwe-merged": 794,
+        "release": 17
+      },
+      "newlyUnbalancedGlosses": [],
+      "longestGlosses": [
+        {
+          "word": "planta",
+          "headword": "planta",
+          "source": "wiktionary",
+          "gloss": "plant (an organism of the kingdom Plantae, and now specifically, a living organism of the Embryophyta (land plants) or of the Chlorophyta (green algae), a eukaryote that includes double-membraned chloroplasts in its cells containing chlorophyll a and b, or any organism closely related to such an organism)",
+          "context": "botany",
+          "projected": "plant (an organism of the kingdom Plantae, and now specifically, a living organism of the Embryophyta (land plants) or of the Chlorophyta (green algae), a eukaryote that includes double-membraned chloroplasts in its cells containing chlorophyll a and b, or any organism closely related to such an organism)",
+          "before": {
+            "gloss": "plant",
+            "key": "an organism of the kingdom Plantae",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "plant",
+            "key": "an organism of the kingdom Plantae",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "plant",
+            "key": "an organism of the kingdom Plantae",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "plant",
+            "key": "an organism of the kingdom Plantae",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "galáxia",
+          "headword": "galáxia",
+          "source": "wiktionary",
+          "gloss": "galaxy (set of a very large number of stars, other celestial bodies, cosmic dust and gas, with a spiral, elliptical or irregular shape, animated by movement and expansion, which constitutes an astral system)",
+          "context": "astronomy",
+          "projected": "galaxy (set of a very large number of stars, other celestial bodies, cosmic dust and gas, with a spiral, elliptical or irregular shape, animated by movement and expansion, which constitutes an astral system)",
+          "before": {
+            "gloss": "galaxy (set of a very large number of stars, other celestial bodies, cosmic dust and gas, with a spiral, elliptical or irregular shape, animated by movement and expansion",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "galaxy",
+            "key": "set of a very large number of stars",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "galaxy (set of a very large number of stars, other celestial bodies, cosmic dust and gas, with a spiral, elliptical or irregular shape, animated by movement and expansion",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "galaxy",
+            "key": "set of a very large number of stars",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "rios",
+          "headword": "rio",
+          "source": "wiktionary",
+          "gloss": "river (a large and often winding stream which drains a land mass, carrying water down from higher areas to a lower point, oftentimes ending in another body of water, such as an ocean or in an inland sea)",
+          "context": "",
+          "projected": "river (a large and often winding stream which drains a land mass, carrying water down from higher areas to a lower point, oftentimes ending in another body of water, such as an ocean or in an inland sea)",
+          "before": {
+            "gloss": "river",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "river",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "river",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "river",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "antibióticos",
+          "headword": "antibiótico",
+          "source": "wiktionary",
+          "gloss": "antibiotic (substance that prevents or destroys certain vital manifestations of some microorganisms, and is therefore used against the pathogenic action of certain parasites, in defense of the host)",
+          "context": "pharmacy",
+          "projected": "antibiotic (substance that prevents or destroys certain vital manifestations of some microorganisms, and is therefore used against the pathogenic action of certain parasites, in defense of the host)",
+          "before": {
+            "gloss": "antibiotic",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "antibiotic",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "antibiotic",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "antibiotic",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "federais",
+          "headword": "federal",
+          "source": "wiktionary",
+          "gloss": "federal (of or relating to the higher sphere of a country instead of lower, local ones; often used with upper case initials in phrases like Governo Federal, Polícia Federal, Justiça Federal etc.)",
+          "context": "",
+          "projected": "federal (of or relating to the higher sphere of a country instead of lower, local ones; often used with upper case initials in phrases like Governo Federal, Polícia Federal, Justiça Federal etc.)",
+          "before": {
+            "gloss": "federal",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "federal",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "federal",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "federal",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "sopa",
+          "headword": "sopa",
+          "source": "wiktionary",
+          "gloss": "soup (any of various dishes commonly made by combining liquids, such as water or stock, with other ingredients, such as meat and vegetables, that contribute the food value, flavor, and texture)",
+          "context": "",
+          "projected": "soup (any of various dishes commonly made by combining liquids, such as water or stock, with other ingredients, such as meat and vegetables, that contribute the food value, flavor, and texture)",
+          "before": {
+            "gloss": "soup",
+            "key": "any of various dishes commonly made by combining liquids",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "soup",
+            "key": "any of various dishes commonly made by combining liquids",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "soup",
+            "key": "any of various dishes commonly made by combining liquids",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "soup",
+            "key": "any of various dishes commonly made by combining liquids",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "fosse",
+          "headword": "que fosse",
+          "source": "mwe-merged",
+          "gloss": "the past form of que seja: modifies a quantity in past negative or past potential contexts  or counterfactuals to express that the quantity is small but would have been sufficient: even; only",
+          "context": "",
+          "projected": "the past form of que seja: modifies a quantity in past negative or past potential contexts  or counterfactuals to express that the quantity is small but would have been sufficient: even; only",
+          "before": {
+            "gloss": "only",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "even; only",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "only",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "even; only",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "certidão",
+          "headword": "certidão",
+          "source": "wiktionary",
+          "gloss": "certificate (copy extracted from a separate document filed in a public office, issued by the respective service, which is an authentic document intended to prove the acts contained therein)",
+          "context": "",
+          "projected": "certificate (copy extracted from a separate document filed in a public office, issued by the respective service, which is an authentic document intended to prove the acts contained therein)",
+          "before": {
+            "gloss": "certificate (copy extracted from a separate document filed in a public office, issued by the respective service",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "certificate",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "certificate (copy extracted from a separate document filed in a public office, issued by the respective service",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "certificate",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "dom",
+          "headword": "dom",
+          "source": "wiktionary",
+          "gloss": "Sir (an honorific title usually used before an adult man's given name, historically used by members of the high nobility, royalty, and certain religious categories in Portugal and Brazil)",
+          "context": "",
+          "projected": "Sir (an honorific title usually used before an adult man's given name, historically used by members of the high nobility, royalty, and certain religious categories in Portugal and Brazil)",
+          "before": {
+            "gloss": "Sir",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "Sir",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "Sir",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "Sir",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "correctamente",
+          "headword": "correctamente",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of corretamente; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of corretamente; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of corretamente",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of corretamente",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "electricidade",
+          "headword": "electricidade",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of eletricidade; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of eletricidade; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of eletricidade",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of eletricidade",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "directamente",
+          "headword": "directamente",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of diretamente; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of diretamente; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of diretamente",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of diretamente",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "espectacular",
+          "headword": "espectacular",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of espetacular; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of espetacular; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of espetacular",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of espetacular",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "actualmente",
+          "headword": "actualmente",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of atualmente; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of atualmente; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of atualmente",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of atualmente",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "exactamente",
+          "headword": "exactamente",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of exatamente; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of exatamente; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of exatamente",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of exatamente",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "actividades",
+          "headword": "actividade",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of atividade; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of atividade; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of atividade",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of atividade",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "distracção",
+          "headword": "distracção",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of distração; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of distração; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of distração",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of distração",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "correcção",
+          "headword": "correcção",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of correção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of correção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of correção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of correção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "detectives",
+          "headword": "detective",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of detetive; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of detetive; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of detetive",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of detetive",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "inspecção",
+          "headword": "inspecção",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of inspeção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of inspeção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of inspeção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of inspeção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "inspector",
+          "headword": "inspector",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of inspetor; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of inspetor; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of inspetor",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of inspetor",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "objectivos",
+          "headword": "objectivo",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of objetivo; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of objetivo; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of objetivo",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of objetivo",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "optimista",
+          "headword": "optimista",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of otimista; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of otimista; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of otimista",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of otimista",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "protecção",
+          "headword": "protecção",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of proteção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of proteção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of proteção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of proteção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "protector",
+          "headword": "protector",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of protetor; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of protetor; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of protetor",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of protetor",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "activado",
+          "headword": "activado",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of ativado; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of ativado; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of ativado",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of ativado",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "actuação",
+          "headword": "actuação",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of atuação; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of atuação; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of atuação",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of atuação",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "colecção",
+          "headword": "colecção",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of coleção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of coleção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of coleção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of coleção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "correcta",
+          "headword": "correcto",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of correto; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of correto; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of correto",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of correto",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "direcção",
+          "headword": "direcção",
+          "source": "wiktionary",
+          "gloss": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of direção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "context": "",
+          "projected": "pre-reform spelling (used until 1943 in Brazil and 1990 in Portugal) of direção; still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+          "before": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pre-reform spelling of direção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "still used where the agreement hasn’t come into effect and may occur as a sporadic misspelling",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pre-reform spelling of direção",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        }
+      ],
+      "longestContexts": [
+        {
+          "word": "o",
+          "headword": "o",
+          "source": "wiktionary",
+          "gloss": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "context": "...because it is presumed to be definitely known in context or from shared knowledge; when stressed; indicates that it describes something which is considered to be best or exclusively worthy of attention; when stressed; indicates that it describes something which is considered to be best or exclusively worthy of attention",
+          "projected": "the",
+          "before": {
+            "gloss": "the",
+            "key": "when stressed",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "the",
+            "key": "when stressed",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "the",
+            "key": "when stressed",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "the",
+            "key": "when stressed",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "o",
+          "headword": "o",
+          "source": "wiktionary",
+          "gloss": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "context": "...because it has already been mentioned; is to be completely specified in the same sentence; or very shortly thereafter; ...because it has already been mentioned; is to be completely specified in the same sentence; or very shortly thereafter",
+          "projected": "the",
+          "before": {
+            "gloss": "the",
+            "key": "because it has already been mentioned",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "the",
+            "key": "because it has already been mentioned",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "the",
+            "key": "because it has already been mentioned",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "the",
+            "key": "because it has already been mentioned",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "pelos",
+          "headword": "por",
+          "source": "wiktionary",
+          "gloss": "for its own sake; without a motive",
+          "context": "where X is a clause and Y the infinitive of the verb in the clause; or of a synonym; where X is a clause and Y the infinitive of the verb in the clause; or of a synonym",
+          "projected": "for its own sake; without a motive",
+          "before": {
+            "gloss": "for its own sake; without a motive",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "for its own sake; without a motive",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "for its own sake; without a motive",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "for its own sake; without a motive",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "o",
+          "headword": "o",
+          "source": "wiktionary",
+          "gloss": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "context": "...because it is presumed to be definitely known in context or from shared knowledge; or of which there is only one at a time; or of which there is only one at a time",
+          "projected": "the",
+          "before": {
+            "gloss": "the",
+            "key": "or of which there is only one at a time",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "the",
+            "key": "or of which there is only one at a time",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "the",
+            "key": "or of which there is only one at a time",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "the",
+            "key": "or of which there is only one at a time",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "análises",
+          "headword": "análise",
+          "source": "wiktionary",
+          "gloss": "analysis",
+          "context": "qualitative and quantitative examination of certain substances in the body, based on samples (blood, urine, feces, etc.), which allows a diagnosis to be made",
+          "projected": "analysis",
+          "before": {
+            "gloss": "analysis",
+            "key": "qualitative and quantitative examination of certain substances in the body",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "analysis",
+            "key": "qualitative and quantitative examination of certain substances in the body",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "analysis",
+            "key": "qualitative and quantitative examination of certain substances in the body",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "analysis",
+            "key": "qualitative and quantitative examination of certain substances in the body",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "darmos",
+          "headword": "dar",
+          "source": "wiktionary",
+          "gloss": "to give",
+          "context": "[transitive with a or para or indirect object pronoun] | to transfer one’s possession of something to someone without anything in return",
+          "projected": "to give",
+          "before": {
+            "gloss": "to give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "we give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "we give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "tabaco",
+          "headword": "tabaco",
+          "source": "wiktionary",
+          "gloss": "Nicotiana tabacum",
+          "context": "common name, extended to other plants of the genus Nicotiana, whose leaves are used in the production of cigarettes, cigars, etc.",
+          "projected": "Nicotiana tabacum",
+          "before": {
+            "gloss": "Nicotiana tabacum",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "Nicotiana tabacum",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "Nicotiana tabacum",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "Nicotiana tabacum",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "porquê",
+          "headword": "porquê",
+          "source": "wiktionary",
+          "gloss": "why",
+          "context": "ending a question; a standalone sentence; or with an infinitive; ending a question; a standalone sentence; or with an infinitive",
+          "projected": "why",
+          "before": {
+            "gloss": "why",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "why",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "why",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "why",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "máquinas",
+          "headword": "máquina",
+          "source": "wiktionary",
+          "gloss": "machine",
+          "context": "person or organisation that seemingly acts like a machine, being particularly efficient, single-minded, or unemotional",
+          "projected": "machine",
+          "before": {
+            "gloss": "machine",
+            "key": "person or organisation that seemingly acts like a machine",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "machine",
+            "key": "person or organisation that seemingly acts like a machine",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "machine",
+            "key": "person or organisation that seemingly acts like a machine",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "machine",
+            "key": "person or organisation that seemingly acts like a machine",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "sinais",
+          "headword": "sinal",
+          "source": "wiktionary",
+          "gloss": "signal (a visual or audible indication made to give notice of some occurrence, command or danger)",
+          "context": "sign; gesture (a motion of the hands or body used to express something) | sign (a linguistic unit of a sign language)",
+          "projected": "signal (a visual or audible indication made to give notice of some occurrence, command or danger)",
+          "before": {
+            "gloss": "signal",
+            "key": "sign",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "signal",
+            "key": "sign",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "signal",
+            "key": "sign",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "signal",
+            "key": "sign",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "darmos",
+          "headword": "dar",
+          "source": "wiktionary",
+          "gloss": "to give",
+          "context": "[transitive with a or para or indirect object pronoun] | to hand over (to pass something into someone’s hand)",
+          "projected": "to give",
+          "before": {
+            "gloss": "to give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "we give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "we give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "sexo",
+          "headword": "sexo",
+          "source": "wiktionary",
+          "gloss": "sex",
+          "context": "another category, especially for humans and often separable, based on non-physical traits or roles; gender",
+          "projected": "sex",
+          "before": {
+            "gloss": "sex",
+            "key": "gender",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "sex",
+            "key": "gender",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "sex",
+            "key": "gender",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "sex",
+            "key": "gender",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "não",
+          "headword": "não",
+          "source": "wiktionary",
+          "gloss": "not; don't; haven't (negates the meaning of the verb or adverb)",
+          "context": "isn't (used to ask whether a person agrees with the proposition, rather than to ask for an unknown fact)",
+          "projected": "not; don't; haven't (negates the meaning of the verb or adverb)",
+          "before": {
+            "gloss": "not; don't; haven't",
+            "key": "negates the meaning of the verb or adverb",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "not; don't; haven't",
+            "key": "negates the meaning of the verb or adverb",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "not; don't; haven't",
+            "key": "negates the meaning of the verb or adverb",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "not; don't; haven't",
+            "key": "negates the meaning of the verb or adverb",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "ovos",
+          "headword": "ovo",
+          "source": "wiktionary",
+          "gloss": "egg (rounded body produced by oviparous females consisting of a membrane and outer shell that contains the embryo)",
+          "context": "this body, particularly that of chickens, when it has not yet been fertilized and is intended for food",
+          "projected": "egg (rounded body produced by oviparous females consisting of a membrane and outer shell that contains the embryo)",
+          "before": {
+            "gloss": "egg",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "egg (rounded body produced by oviparous females consisting of a membrane and outer shell that contains the embryo)",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "egg",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "egg (rounded body produced by oviparous females consisting of a membrane and outer shell that contains the embryo)",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "tribos",
+          "headword": "tribo",
+          "source": "wiktionary",
+          "gloss": "tribe (cohesive group of people)",
+          "context": "tribe (society larger than a band but smaller than a state) | one of the three original tribes of Rome",
+          "projected": "tribe (cohesive group of people)",
+          "before": {
+            "gloss": "tribe",
+            "key": "cohesive group of people",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "tribe",
+            "key": "cohesive group of people",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "tribe",
+            "key": "cohesive group of people",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "tribe",
+            "key": "cohesive group of people",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "derem",
+          "headword": "dar",
+          "source": "wiktionary",
+          "gloss": "to give",
+          "context": "[transitive with a or para or indirect object pronoun] | to administer (to cause to take (medicine))",
+          "projected": "to give",
+          "before": {
+            "gloss": "to give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "they give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "they give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "darmos",
+          "headword": "dar",
+          "source": "wiktionary",
+          "gloss": "to give",
+          "context": "[transitive with em or indirect object pronoun] | to carry out a physical interaction with something",
+          "projected": "to give",
+          "before": {
+            "gloss": "to give",
+            "key": "+ em",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to give",
+            "key": "+ em",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "we give",
+            "key": "+ em",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "we give",
+            "key": "+ em",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "monstro",
+          "headword": "monstro",
+          "source": "wiktionary",
+          "gloss": "monster",
+          "context": "a fictional creature with hideous traits, often evil, dangerous and associated with horror fiction",
+          "projected": "monster",
+          "before": {
+            "gloss": "monster",
+            "key": "a fictional creature with hideous traits",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "monster",
+            "key": "a fictional creature with hideous traits",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "monster",
+            "key": "a fictional creature with hideous traits",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "monster",
+            "key": "a fictional creature with hideous traits",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "sé",
+          "headword": "sé",
+          "source": "wiktionary",
+          "gloss": "a toponym indicating the presence of a see:",
+          "context": "a neighborhood of the city of Porto; a former civil parish of the municipality of Porto, Portugal",
+          "projected": "a toponym indicating the presence of a see:",
+          "before": {
+            "gloss": "a toponym indicating the presence of a see:",
+            "key": "a neighborhood of the city of Porto",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "a toponym indicating the presence of a see:",
+            "key": "a neighborhood of the city of Porto",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "a toponym indicating the presence of a see:",
+            "key": "a neighborhood of the city of Porto",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "a toponym indicating the presence of a see:",
+            "key": "a neighborhood of the city of Porto",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "pirâmide",
+          "headword": "pirâmide",
+          "source": "wiktionary",
+          "gloss": "pyramid",
+          "context": "any structure or diagram with many members at the bottom and progressively fewer towards the top",
+          "projected": "pyramid",
+          "before": {
+            "gloss": "pyramid",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "pyramid",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "pyramid",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "pyramid",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "tribos",
+          "headword": "tribo",
+          "source": "wiktionary",
+          "gloss": "tribe (cohesive group of people)",
+          "context": "tribe (society larger than a band but smaller than a state) | one of the twelve tribes of Israel",
+          "projected": "tribe (cohesive group of people)",
+          "before": {
+            "gloss": "tribe",
+            "key": "cohesive group of people",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "tribe",
+            "key": "cohesive group of people",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "tribe",
+            "key": "cohesive group of people",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "tribe",
+            "key": "cohesive group of people",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "cesta",
+          "headword": "cesta",
+          "source": "wiktionary",
+          "gloss": "basket",
+          "context": "a lightweight container, generally round, open at the top, and tapering toward the bottom",
+          "projected": "basket",
+          "before": {
+            "gloss": "basket",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "basket",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "basket",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "basket",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "nos",
+          "headword": "o",
+          "source": "wiktionary",
+          "gloss": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "context": "sometimes after lhe, especially when referring to a body part, a family member, or a pet.",
+          "projected": "the",
+          "before": {
+            "gloss": "the",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "the",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "the",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "the",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "literatura",
+          "headword": "literatura",
+          "source": "wiktionary",
+          "gloss": "literature (a body of written works collectively)",
+          "context": "literature (written material considered historically important or artistically superior)",
+          "projected": "literature (a body of written works collectively)",
+          "before": {
+            "gloss": "literature",
+            "key": "a body of written works collectively",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "literature",
+            "key": "a body of written works collectively",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "literature",
+            "key": "a body of written works collectively",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "literature",
+            "key": "a body of written works collectively",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "gays",
+          "headword": "gay",
+          "source": "wiktionary",
+          "gloss": "gay",
+          "context": "homosexual (involving or relating to same-sex relationships, especially between males)",
+          "projected": "gay",
+          "before": {
+            "gloss": "gay",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "gay",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "gay",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "gay",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "sinais",
+          "headword": "sinal",
+          "source": "wiktionary",
+          "gloss": "sign; mark; trace (a visible or otherwise perceivable indication of something)",
+          "context": "mark (a blemish, stain, scratch, scar or similar on a surface, especially on the skin)",
+          "projected": "sign; mark; trace (a visible or otherwise perceivable indication of something)",
+          "before": {
+            "gloss": "sign; mark; trace",
+            "key": "a visible or otherwise perceivable indication of something",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "sign; mark; trace",
+            "key": "a visible or otherwise perceivable indication of something",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "sign; mark; trace",
+            "key": "a visible or otherwise perceivable indication of something",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "sign; mark; trace",
+            "key": "a visible or otherwise perceivable indication of something",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "missões",
+          "headword": "missão",
+          "source": "wiktionary",
+          "gloss": "mission (set of tasks that fulfills a purpose or duty; an assignment)",
+          "context": "quest (task that a player may complete in order to gain a reward or advance the story)",
+          "projected": "mission (set of tasks that fulfills a purpose or duty; an assignment)",
+          "before": {
+            "gloss": "mission",
+            "key": "set of tasks that fulfills a purpose or duty",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "mission",
+            "key": "set of tasks that fulfills a purpose or duty",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "mission",
+            "key": "set of tasks that fulfills a purpose or duty",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "mission",
+            "key": "set of tasks that fulfills a purpose or duty",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "darão",
+          "headword": "dar",
+          "source": "wiktionary",
+          "gloss": "to give",
+          "context": "[transitive with a or para or indirect object pronoun] | to make a present or gift of",
+          "projected": "to give",
+          "before": {
+            "gloss": "to give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "they will give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "they will give",
+            "key": "+ a / para",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "braço",
+          "headword": "braço",
+          "source": "wiktionary",
+          "gloss": "arm (part of an object designed to be used with the arm)",
+          "context": "arm; sleeve (part of an item of clothing for the upper body that goes around the arm)",
+          "projected": "arm (part of an object designed to be used with the arm)",
+          "before": {
+            "gloss": "arm",
+            "key": "sleeve",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "arm",
+            "key": "sleeve",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "arm",
+            "key": "sleeve",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "arm",
+            "key": "sleeve",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "tendes",
+          "headword": "ter",
+          "source": "wiktionary",
+          "gloss": "to have",
+          "context": "to have (to be related in some way to, with the object identifying the relationship)",
+          "projected": "to have",
+          "before": {
+            "gloss": "to have",
+            "key": "to be related in some way to",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to have",
+            "key": "to be related in some way to",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "you (pl) have",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "you (pl) have",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        }
+      ]
+    },
+    "es": {
+      "release": "es-speech-v24-headway-r5-10000x30-slim",
+      "cards": 10000,
+      "senseRows": 32604,
+      "metrics": {
+        "storedGloss": {
+          "characters": {
+            "count": 32604,
+            "p50": 7,
+            "p90": 12,
+            "p95": 14,
+            "p99": 20,
+            "max": 100,
+            "over84": 6
+          },
+          "words": {
+            "count": 32604,
+            "p50": 2,
+            "p90": 3,
+            "p95": 3,
+            "p99": 4,
+            "max": 17,
+            "over84": 0
+          }
+        },
+        "storedContext": {
+          "characters": {
+            "count": 32604,
+            "p50": 11,
+            "p90": 24,
+            "p95": 30,
+            "p99": 39,
+            "max": 98,
+            "over84": 3
+          },
+          "words": {
+            "count": 32604,
+            "p50": 2,
+            "p90": 4,
+            "p95": 5,
+            "p99": 8,
+            "max": 16,
+            "over84": 0
+          }
+        },
+        "projectedGloss": {
+          "characters": {
+            "count": 32604,
+            "p50": 7,
+            "p90": 12,
+            "p95": 14,
+            "p99": 20,
+            "max": 100,
+            "over84": 6
+          },
+          "words": {
+            "count": 32604,
+            "p50": 2,
+            "p90": 3,
+            "p95": 3,
+            "p99": 4,
+            "max": 17,
+            "over84": 0
+          }
+        },
+        "beforeGloss": {
+          "characters": {
+            "count": 32604,
+            "p50": 7,
+            "p90": 12,
+            "p95": 14,
+            "p99": 20,
+            "max": 100,
+            "over84": 5
+          },
+          "words": {
+            "count": 32604,
+            "p50": 2,
+            "p90": 3,
+            "p95": 3,
+            "p99": 4,
+            "max": 17,
+            "over84": 0
+          }
+        },
+        "afterGloss": {
+          "characters": {
+            "count": 32604,
+            "p50": 7,
+            "p90": 12,
+            "p95": 14,
+            "p99": 20,
+            "max": 100,
+            "over84": 5
+          },
+          "words": {
+            "count": 32604,
+            "p50": 2,
+            "p90": 3,
+            "p95": 3,
+            "p99": 4,
+            "max": 17,
+            "over84": 0
+          }
+        },
+        "beforeKey": {
+          "characters": {
+            "count": 32604,
+            "p50": 7,
+            "p90": 19,
+            "p95": 22,
+            "p99": 29,
+            "max": 47,
+            "over84": 0
+          },
+          "words": {
+            "count": 32604,
+            "p50": 1,
+            "p90": 4,
+            "p95": 4,
+            "p99": 5,
+            "max": 8,
+            "over84": 0
+          }
+        },
+        "afterKey": {
+          "characters": {
+            "count": 32604,
+            "p50": 7,
+            "p90": 19,
+            "p95": 22,
+            "p99": 29,
+            "max": 47,
+            "over84": 0
+          },
+          "words": {
+            "count": 32604,
+            "p50": 1,
+            "p90": 4,
+            "p95": 4,
+            "p99": 5,
+            "max": 8,
+            "over84": 0
+          }
+        },
+        "finalBeforeGloss": {
+          "characters": {
+            "count": 32604,
+            "p50": 8,
+            "p90": 15,
+            "p95": 18,
+            "p99": 25,
+            "max": 100,
+            "over84": 5
+          },
+          "words": {
+            "count": 32604,
+            "p50": 2,
+            "p90": 3,
+            "p95": 3,
+            "p99": 5,
+            "max": 17,
+            "over84": 0
+          }
+        },
+        "finalAfterGloss": {
+          "characters": {
+            "count": 32604,
+            "p50": 8,
+            "p90": 15,
+            "p95": 18,
+            "p99": 25,
+            "max": 100,
+            "over84": 5
+          },
+          "words": {
+            "count": 32604,
+            "p50": 2,
+            "p90": 3,
+            "p95": 3,
+            "p99": 5,
+            "max": 17,
+            "over84": 0
+          }
+        }
+      },
+      "providers": {
+        "spanishdict": 31671,
+        "mwe-merged": 845,
+        "release": 88
+      },
+      "newlyUnbalancedGlosses": [],
+      "longestGlosses": [
+        {
+          "word": "imperio",
+          "headword": "imperio otomano",
+          "source": "mwe-merged",
+          "gloss": "Ottoman Empire (a large former Turkish empire centered in modern Turkey that ruled over much of S...",
+          "context": "",
+          "projected": "Ottoman Empire (a large former Turkish empire centered in modern Turkey that ruled over much of S...",
+          "before": {
+            "gloss": "Ottoman Empire (a large former Turkish empire centered in modern Turkey that ruled over much of S...",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "Ottoman Empire (a large former Turkish empire centered in modern Turkey that ruled over much of S...",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "Ottoman Empire (a large former Turkish empire centered in modern Turkey that ruled over much of S...",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "Ottoman Empire (a large former Turkish empire centered in modern Turkey that ruled over much of S...",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "malformed upstream"
+        },
+        {
+          "word": "contrario",
+          "headword": "por el contrario",
+          "source": "mwe-merged",
+          "gloss": "on the contrary, conversely, to the contrary, contrariwise, on the other hand, in contrast, instead",
+          "context": "",
+          "projected": "on the contrary, conversely, to the contrary, contrariwise, on the other hand, in contrast, instead",
+          "before": {
+            "gloss": "on the contrary, conversely, to the contrary, contrariwise, on the other hand, in contrast, instead",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "on the contrary, conversely, to the contrary, contrariwise, on the other hand, in contrast, instead",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "on the contrary, conversely, to the contrary, contrariwise, on the other hand, in contrast, instead",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "on the contrary, conversely, to the contrary, contrariwise, on the other hand, in contrast, instead",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "puerto",
+          "headword": "puerto rico",
+          "source": "mwe-merged",
+          "gloss": "Puerto Rico (a commonwealth, island and dependent territory of the United States in the Caribbean",
+          "context": "",
+          "projected": "Puerto Rico (a commonwealth, island and dependent territory of the United States in the Caribbean",
+          "before": {
+            "gloss": "Puerto Rico (a commonwealth, island and dependent territory of the United States in the Caribbean",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "Puerto Rico (a commonwealth, island and dependent territory of the United States in the Caribbean",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "Puerto Rico (a commonwealth, island and dependent territory of the United States in the Caribbean",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "Puerto Rico (a commonwealth, island and dependent territory of the United States in the Caribbean",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "malformed upstream"
+        },
+        {
+          "word": "tiene",
+          "headword": "qué tiene",
+          "source": "mwe-merged",
+          "gloss": "Used to downplay a situation, especially as a way of showing deprecation or dismissiveness.",
+          "context": "",
+          "projected": "Used to downplay a situation, especially as a way of showing deprecation or dismissiveness.",
+          "before": {
+            "gloss": "Used to downplay a situation",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "Used to downplay a situation",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "Used to downplay a situation",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "Used to downplay a situation",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "aire",
+          "headword": "en el aire",
+          "source": "mwe-merged",
+          "gloss": "Used other than figuratively or idiomatically: see en, el, aire. in the air, up in the air",
+          "context": "",
+          "projected": "Used other than figuratively or idiomatically: see en, el, aire. in the air, up in the air",
+          "before": {
+            "gloss": "Used other than figuratively or idiomatically: see en, el, aire. in the air, up in the air",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "Used other than figuratively or idiomatically: see en, el, aire. in the air, up in the air",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "Used other than figuratively or idiomatically: see en, el, aire. in the air, up in the air",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "Used other than figuratively or idiomatically: see en, el, aire. in the air, up in the air",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "justo",
+          "headword": "justo a tiempo",
+          "source": "mwe-merged",
+          "gloss": "just in time; right on time; right on cue, in the nick of time, right on schedule",
+          "context": "",
+          "projected": "just in time; right on time; right on cue, in the nick of time, right on schedule",
+          "before": {
+            "gloss": "just in time; right on time; right on cue, in the nick of time, right on schedule",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "just in time; right on time; right on cue, in the nick of time, right on schedule",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "just in time; right on time; right on cue, in the nick of time, right on schedule",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "just in time; right on time; right on cue, in the nick of time, right on schedule",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "pasa",
+          "headword": "qué pasa",
+          "source": "mwe-merged",
+          "gloss": "what's up?; what’s the matter?; what is the problem?; what is wrong?; what's up?",
+          "context": "",
+          "projected": "what's up?; what’s the matter?; what is the problem?; what is wrong?; what's up?",
+          "before": {
+            "gloss": "what's up?; what’s the matter?; what is the problem?; what is wrong?; what's up?",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "what's up?; what’s the matter?; what is the problem?; what is wrong?; what's up?",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "what's up?; what’s the matter?; what is the problem?; what is wrong?; what's up?",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "what's up?; what’s the matter?; what is the problem?; what is wrong?; what's up?",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "peso",
+          "headword": "perder peso",
+          "source": "mwe-merged",
+          "gloss": "to lose weight, to shed weight, to reduce weight, to cut weight, to drop weight",
+          "context": "",
+          "projected": "to lose weight, to shed weight, to reduce weight, to cut weight, to drop weight",
+          "before": {
+            "gloss": "to lose weight, to shed weight, to reduce weight, to cut weight, to drop weight",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to lose weight, to shed weight, to reduce weight, to cut weight, to drop weight",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "to lose weight, to shed weight, to reduce weight, to cut weight, to drop weight",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "to lose weight, to shed weight, to reduce weight, to cut weight, to drop weight",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "amor",
+          "headword": "por el amor de dios",
+          "source": "mwe-merged",
+          "gloss": "for God's sake, for the love of God, for Christ's sake, for crying out loud",
+          "context": "",
+          "projected": "for God's sake, for the love of God, for Christ's sake, for crying out loud",
+          "before": {
+            "gloss": "for God's sake, for the love of God, for Christ's sake, for crying out loud",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "for God's sake, for the love of God, for Christ's sake, for crying out loud",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "for God's sake, for the love of God, for Christ's sake, for crying out loud",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "for God's sake, for the love of God, for Christ's sake, for crying out loud",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "si",
+          "headword": "que si",
+          "source": "mwe-merged",
+          "gloss": "Used other than figuratively or idiomatically: see que, si.; if only",
+          "context": "",
+          "projected": "Used other than figuratively or idiomatically: see que, si.; if only",
+          "before": {
+            "gloss": "if only",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "if only",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "if only",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "if only",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "partir",
+          "headword": "a partir de",
+          "source": "mwe-merged",
+          "gloss": "from, as of, starting from, beginning, starting in, beginning in",
+          "context": "",
+          "projected": "from, as of, starting from, beginning, starting in, beginning in",
+          "before": {
+            "gloss": "from, as of, starting from, beginning, starting in, beginning in",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "from, as of, starting from, beginning, starting in, beginning in",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "from, as of, starting from, beginning, starting in, beginning in",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "from, as of, starting from, beginning, starting in, beginning in",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "ya",
+          "headword": "ya no",
+          "source": "mwe-merged",
+          "gloss": "no longer, no more, not anymore, not any more, not any longer",
+          "context": "",
+          "projected": "no longer, no more, not anymore, not any more, not any longer",
+          "before": {
+            "gloss": "no longer, no more, not anymore, not any more, not any longer",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "no longer, no more, not anymore, not any more, not any longer",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "no longer, no more, not anymore, not any more, not any longer",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "no longer, no more, not anymore, not any more, not any longer",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "es",
+          "headword": "es que",
+          "source": "mwe-merged",
+          "gloss": "Used for explanations: it's just that, because; it's not that",
+          "context": "",
+          "projected": "Used for explanations: it's just that, because; it's not that",
+          "before": {
+            "gloss": "Used for explanations: it's just that, because",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "it's just that, because; it's not that",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "Used for explanations: it's just that, because",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "it's just that, because; it's not that",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "vete",
+          "headword": "vete a la mierda",
+          "source": "mwe-merged",
+          "gloss": "fuck you, fuck off, get fucked, go fuck yourself, go to hell",
+          "context": "",
+          "projected": "fuck you, fuck off, get fucked, go fuck yourself, go to hell",
+          "before": {
+            "gloss": "fuck you, fuck off, get fucked, go fuck yourself, go to hell",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "fuck you, fuck off, get fucked, go fuck yourself, go to hell",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "fuck you, fuck off, get fucked, go fuck yourself, go to hell",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "fuck you, fuck off, get fucked, go fuck yourself, go to hell",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "supone",
+          "headword": "se supone",
+          "source": "mwe-merged",
+          "gloss": "it is supposed, it is assumed; it is supposed to be that way",
+          "context": "",
+          "projected": "it is supposed, it is assumed; it is supposed to be that way",
+          "before": {
+            "gloss": "it is supposed, it is assumed",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "it is supposed, it is assumed; it is supposed to be that way",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "it is supposed, it is assumed",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "it is supposed, it is assumed; it is supposed to be that way",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "cago",
+          "headword": "me cago en todo",
+          "source": "mwe-merged",
+          "gloss": "synonym of me cago en la leche; fuck everything, holy fuck",
+          "context": "",
+          "projected": "synonym of me cago en la leche; fuck everything, holy fuck",
+          "before": {
+            "gloss": "synonym of me cago en la leche; fuck everything, holy fuck",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "synonym of me cago en la leche; fuck everything, holy fuck",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "synonym of me cago en la leche; fuck everything, holy fuck",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "synonym of me cago en la leche; fuck everything, holy fuck",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "máximo",
+          "headword": "como máximo",
+          "source": "mwe-merged",
+          "gloss": "at most, at the most, maximum, up to, tops, at best, max",
+          "context": "",
+          "projected": "at most, at the most, maximum, up to, tops, at best, max",
+          "before": {
+            "gloss": "at most, at the most, maximum, up to, tops, at best, max",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "at most, at the most, maximum, up to, tops, at best, max",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "at most, at the most, maximum, up to, tops, at best, max",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "at most, at the most, maximum, up to, tops, at best, max",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "momento",
+          "headword": "de momento",
+          "source": "mwe-merged",
+          "gloss": "at the moment, at present, for now, for the time being",
+          "context": "",
+          "projected": "at the moment, at present, for now, for the time being",
+          "before": {
+            "gloss": "at the moment, at present, for now, for the time being",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "at the moment, at present, for now, for the time being",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "at the moment, at present, for now, for the time being",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "at the moment, at present, for now, for the time being",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "medida",
+          "headword": "en gran medida",
+          "source": "mwe-merged",
+          "gloss": "largely, greatly, to a large extent, to a great extent",
+          "context": "",
+          "projected": "largely, greatly, to a large extent, to a great extent",
+          "before": {
+            "gloss": "largely, greatly, to a large extent, to a great extent",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "largely, greatly, to a large extent, to a great extent",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "largely, greatly, to a large extent, to a great extent",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "largely, greatly, to a large extent, to a great extent",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "borde",
+          "headword": "al borde de",
+          "source": "mwe-merged",
+          "gloss": "on the verge of, on the brink of, on the precipice of",
+          "context": "",
+          "projected": "on the verge of, on the brink of, on the precipice of",
+          "before": {
+            "gloss": "on the verge of, on the brink of, on the precipice of",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "on the verge of, on the brink of, on the precipice of",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "on the verge of, on the brink of, on the precipice of",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "on the verge of, on the brink of, on the precipice of",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "espalda",
+          "headword": "dar la espalda",
+          "source": "mwe-merged",
+          "gloss": "to turn one's back; to refuse to help or aid somebody",
+          "context": "",
+          "projected": "to turn one's back; to refuse to help or aid somebody",
+          "before": {
+            "gloss": "to turn one's back; to refuse to help or aid somebody",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to turn one's back; to refuse to help or aid somebody",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "to turn one's back; to refuse to help or aid somebody",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "to turn one's back; to refuse to help or aid somebody",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "además",
+          "headword": "además de",
+          "source": "mwe-merged",
+          "gloss": "as well as; in addition to, besides, along with",
+          "context": "",
+          "projected": "as well as; in addition to, besides, along with",
+          "before": {
+            "gloss": "as well as; in addition to, besides, along with",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "as well as; in addition to, besides, along with",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "as well as; in addition to, besides, along with",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "as well as; in addition to, besides, along with",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "huevo",
+          "headword": "a huevo",
+          "source": "mwe-merged",
+          "gloss": "forcedly having no choice and with great effort",
+          "context": "",
+          "projected": "forcedly having no choice and with great effort",
+          "before": {
+            "gloss": "forcedly having no choice and with great effort",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "forcedly having no choice and with great effort",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "forcedly having no choice and with great effort",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "forcedly having no choice and with great effort",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "plazo",
+          "headword": "a corto plazo",
+          "source": "mwe-merged",
+          "gloss": "short-term, in the short term, in the short run",
+          "context": "",
+          "projected": "short-term, in the short term, in the short run",
+          "before": {
+            "gloss": "short-term, in the short term, in the short run",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "short-term, in the short term, in the short run",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "short-term, in the short term, in the short run",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "short-term, in the short term, in the short run",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "hecho",
+          "headword": "de hecho",
+          "source": "mwe-merged",
+          "gloss": "in fact, actually, indeed, as a matter of fact",
+          "context": "",
+          "projected": "in fact, actually, indeed, as a matter of fact",
+          "before": {
+            "gloss": "in fact, actually, indeed, as a matter of fact",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "in fact, actually, indeed, as a matter of fact",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "in fact, actually, indeed, as a matter of fact",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "in fact, actually, indeed, as a matter of fact",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "curso",
+          "headword": "en curso",
+          "source": "mwe-merged",
+          "gloss": "ongoing, under way, underway, current, present",
+          "context": "",
+          "projected": "ongoing, under way, underway, current, present",
+          "before": {
+            "gloss": "ongoing, under way, underway, current, present",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "ongoing, under way, underway, current, present",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "ongoing, under way, underway, current, present",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "ongoing, under way, underway, current, present",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "hora",
+          "headword": "por hora",
+          "source": "mwe-merged",
+          "gloss": "per hour, an hour; hourly; on an hourly basis",
+          "context": "",
+          "projected": "per hour, an hour; hourly; on an hourly basis",
+          "before": {
+            "gloss": "per hour, an hour; hourly; on an hourly basis",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "per hour, an hour; hourly; on an hourly basis",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "per hour, an hour; hourly; on an hourly basis",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "per hour, an hour; hourly; on an hourly basis",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "pasó",
+          "headword": "qué pasó",
+          "source": "mwe-merged",
+          "gloss": "what's happening?, what's up?; what happened?",
+          "context": "",
+          "projected": "what's happening?, what's up?; what happened?",
+          "before": {
+            "gloss": "what's happening?, what's up?; what happened?",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "what's happening?, what's up?; what happened?",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "what's happening?, what's up?; what happened?",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "what's happening?, what's up?; what happened?",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "voluntad",
+          "headword": "a voluntad",
+          "source": "mwe-merged",
+          "gloss": "freely; under one's own free will; willingly",
+          "context": "",
+          "projected": "freely; under one's own free will; willingly",
+          "before": {
+            "gloss": "freely; under one's own free will; willingly",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "freely; under one's own free will; willingly",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "freely; under one's own free will; willingly",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "freely; under one's own free will; willingly",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        },
+        {
+          "word": "verdad",
+          "headword": "verdad es que",
+          "source": "mwe-merged",
+          "gloss": "it may be true that; it may be the case that",
+          "context": "",
+          "projected": "it may be true that; it may be the case that",
+          "before": {
+            "gloss": "it may be true that",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "it may be true that; it may be the case that",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalBefore": {
+            "gloss": "it may be true that",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "it may be true that; it may be the case that",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "outcome": "retained"
+        }
+      ],
+      "longestContexts": [
+        {
+          "word": "hago",
+          "headword": "hacer",
+          "source": "spanishdict",
+          "gloss": "I'm making",
+          "context": "I'm producing or creating; used to express a specific action in the present; first person singular",
+          "projected": "I'm making",
+          "before": {
+            "gloss": "I'm making",
+            "key": "I'm producing or creating",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "I'm making",
+            "key": "I'm producing or creating",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "I'm making",
+            "key": "I'm producing or creating",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "I'm making",
+            "key": "I'm producing or creating",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "pongámonos",
+          "headword": "ponerse",
+          "source": "spanishdict",
+          "gloss": "let's get",
+          "context": "used to encourage to do something; often used with \"a\" and an infinitive; first person plural",
+          "projected": "let's get",
+          "before": {
+            "gloss": "let's get",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "let's get",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "let's get",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "let's get",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "hago",
+          "headword": "hacer",
+          "source": "spanishdict",
+          "gloss": "I'm doing",
+          "context": "I'm completing; used to express a specific action in the present; first person singular",
+          "projected": "I'm doing",
+          "before": {
+            "gloss": "I'm doing",
+            "key": "I'm completing",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "I'm doing",
+            "key": "I'm completing",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "I'm doing",
+            "key": "I'm completing",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "I'm doing",
+            "key": "I'm completing",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "estan",
+          "headword": "estar",
+          "source": "spanishdict",
+          "gloss": "to remain to be",
+          "context": "used to express that something is yet to be known; used with \"por\" and infinitive",
+          "projected": "to remain to be",
+          "before": {
+            "gloss": "to remain to be",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to remain to be",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "to remain to be",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "to remain to be",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "hago",
+          "headword": "hacer",
+          "source": "spanishdict",
+          "gloss": "I make",
+          "context": "I produce or create; used to express a habitual action; first person singular",
+          "projected": "I make",
+          "before": {
+            "gloss": "I make",
+            "key": "I produce or create",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "I make",
+            "key": "I produce or create",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "I make",
+            "key": "I produce or create",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "I make",
+            "key": "I produce or create",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "ponme",
+          "headword": "poner",
+          "source": "spanishdict",
+          "gloss": "put me down",
+          "context": "used to refer to the act of placing; imperative; second person singular",
+          "projected": "put me down",
+          "before": {
+            "gloss": "put me down",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "put me down",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "put me down",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "put me down",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "ponme",
+          "headword": "poner",
+          "source": "spanishdict",
+          "gloss": "I'd like",
+          "context": "used when ordering food or a drink; imperative; second person singular",
+          "projected": "I'd like",
+          "before": {
+            "gloss": "I'd like",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "I'd like",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "I'd like",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "I'd like",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "hago",
+          "headword": "hacer",
+          "source": "spanishdict",
+          "gloss": "I do",
+          "context": "I complete; used to express a habitual action; first person singular",
+          "projected": "I do",
+          "before": {
+            "gloss": "I do",
+            "key": "I complete",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "I do",
+            "key": "I complete",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "I do",
+            "key": "I complete",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "I do",
+            "key": "I complete",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "disculpe",
+          "headword": "disculpe",
+          "source": "spanishdict",
+          "gloss": "excuse me",
+          "context": "used as a stand-alone statement; imperative; second person singular",
+          "projected": "excuse me",
+          "before": {
+            "gloss": "excuse me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "excuse me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "excuse me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "excuse me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "contigo",
+          "headword": "contigo",
+          "source": "spanishdict",
+          "gloss": "with you",
+          "context": "with the person you're talking to; personal; second person singular",
+          "projected": "with you",
+          "before": {
+            "gloss": "with you",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "with you",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "with you",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "with you",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "consigo",
+          "headword": "consigo",
+          "source": "spanishdict",
+          "gloss": "on you",
+          "context": "in his, her, or one's possession; personal; third person singular",
+          "projected": "on you",
+          "before": {
+            "gloss": "on you",
+            "key": "in his; her",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "on you",
+            "key": "in his; her",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "on you",
+            "key": "in his; her",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "on you",
+            "key": "in his; her",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "perdona",
+          "headword": "perdonar",
+          "source": "spanishdict",
+          "gloss": "excuse me",
+          "context": "used to ask for something to be repeated; second person singular",
+          "projected": "excuse me",
+          "before": {
+            "gloss": "excuse me",
+            "key": "asks for something to be repeated",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "excuse me",
+            "key": "asks for something to be repeated",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "excuse me",
+            "key": "asks for something to be repeated",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "excuse me",
+            "key": "asks for something to be repeated",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "venían",
+          "headword": "venir",
+          "source": "spanishdict",
+          "gloss": "to pick up",
+          "context": "to stop by for someone or something; used with \"por\" or \"a por\"",
+          "projected": "to pick up",
+          "before": {
+            "gloss": "to pick up",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to pick up",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "they picked up",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "they picked up",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "este",
+          "headword": "este",
+          "source": "spanishdict",
+          "gloss": "um",
+          "context": "used to express lack of certainty about what's going to be said",
+          "projected": "um",
+          "before": {
+            "gloss": "um",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "um",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "um",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "um",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "déjale",
+          "headword": "dejar",
+          "source": "spanishdict",
+          "gloss": "let her",
+          "context": "used to express permission; imperative; second person singular",
+          "projected": "let her",
+          "before": {
+            "gloss": "let her",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "let her",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "let her",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "let her",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "dándole",
+          "headword": "dar",
+          "source": "spanishdict",
+          "gloss": "giving you",
+          "context": "handing over, lending, or generating; second person; singular",
+          "projected": "giving you",
+          "before": {
+            "gloss": "giving you",
+            "key": "handing over; lending",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "giving you",
+            "key": "handing over; lending",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "giving you",
+            "key": "handing over; lending",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "giving you",
+            "key": "handing over; lending",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "parece",
+          "headword": "parecer",
+          "source": "spanishdict",
+          "gloss": "looks like",
+          "context": "he or she has a physical similarity to; third person singular",
+          "projected": "looks like",
+          "before": {
+            "gloss": "looks like",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "looks like",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "looks like",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "looks like",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "ponme",
+          "headword": "poner",
+          "source": "spanishdict",
+          "gloss": "send me",
+          "context": "used to refer to messages; imperative; second person singular",
+          "projected": "send me",
+          "before": {
+            "gloss": "send me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "send me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "send me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "send me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "déjale",
+          "headword": "dejar",
+          "source": "spanishdict",
+          "gloss": "leave ... for him",
+          "context": "used to express location; imperative; second person singular",
+          "projected": "leave ... for him",
+          "before": {
+            "gloss": "leave ... for him",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "leave ... for him",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "leave ... for him",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "leave ... for him",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "llegaba",
+          "headword": "llegar",
+          "source": "spanishdict",
+          "gloss": "to reach",
+          "context": "used to indicate distance or level; used with \"a\" or \"hasta\"",
+          "projected": "to reach",
+          "before": {
+            "gloss": "to reach",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "to reach",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "I/he/she reached",
+            "key": "",
+            "note": false,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "I/he/she reached",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "tai",
+          "headword": "tai",
+          "source": "spanishdict",
+          "gloss": "tai",
+          "context": "part of names: Tai Chi; tai-i (Japanese army rank, captain)",
+          "projected": "tai",
+          "before": {
+            "gloss": "tai",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "tai",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "tai",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "tai",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "muévase",
+          "headword": "moverse",
+          "source": "spanishdict",
+          "gloss": "move",
+          "context": "imperative; second person singular; change a body position",
+          "projected": "move",
+          "before": {
+            "gloss": "move",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "move",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "move",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "move",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "off",
+          "headword": "off",
+          "source": "spanishdict",
+          "gloss": "off",
+          "context": "English loanword: voz en off (voice-over), off the record",
+          "projected": "off",
+          "before": {
+            "gloss": "off",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "off",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "off",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "off",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "hágalo",
+          "headword": "hacer",
+          "source": "spanishdict",
+          "gloss": "make it",
+          "context": "force him or it to do; imperative; second person singular",
+          "projected": "make it",
+          "before": {
+            "gloss": "make it",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "make it",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "make it",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "make it",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "sube",
+          "headword": "subir",
+          "source": "spanishdict",
+          "gloss": "raise",
+          "context": "imperative; second person singular; put at a higher level",
+          "projected": "raise",
+          "before": {
+            "gloss": "raise",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "raise",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "raise",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "raise",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "consigo",
+          "headword": "consigo",
+          "source": "spanishdict",
+          "gloss": "with her",
+          "context": "accompanying him or her; personal; third person singular",
+          "projected": "with her",
+          "before": {
+            "gloss": "with her",
+            "key": "accompanying him or her",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "with her",
+            "key": "accompanying him or her",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "with her",
+            "key": "accompanying him or her",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "with her",
+            "key": "accompanying him or her",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "pensé",
+          "headword": "pensar",
+          "source": "spanishdict",
+          "gloss": "I thought",
+          "context": "I reflected; preterite indicative; first person singular",
+          "projected": "I thought",
+          "before": {
+            "gloss": "I thought",
+            "key": "I reflected",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "I thought",
+            "key": "I reflected",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "I thought",
+            "key": "I reflected",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "I thought",
+            "key": "I reflected",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "muévase",
+          "headword": "moverse",
+          "source": "spanishdict",
+          "gloss": "move",
+          "context": "imperative; second person singular; change your location",
+          "projected": "move",
+          "before": {
+            "gloss": "move",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "move",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "move",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "move",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "perdone",
+          "headword": "perdone",
+          "source": "spanishdict",
+          "gloss": "excuse me",
+          "context": "used to call someone's attention; second person singular",
+          "projected": "excuse me",
+          "before": {
+            "gloss": "excuse me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "excuse me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "excuse me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "excuse me",
+            "key": "",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        },
+        {
+          "word": "háganlo",
+          "headword": "hacer",
+          "source": "spanishdict",
+          "gloss": "make it",
+          "context": "force him or it to do; imperative; second person plural",
+          "projected": "make it",
+          "before": {
+            "gloss": "make it",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "after": {
+            "gloss": "make it",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "finalBefore": {
+            "gloss": "make it",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": false
+          },
+          "finalAfter": {
+            "gloss": "make it",
+            "key": "imperative",
+            "note": true,
+            "originalRecoverable": true
+          },
+          "outcome": "projected"
+        }
+      ]
+    }
+  }
+}

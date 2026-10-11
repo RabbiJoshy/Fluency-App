@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TERSE-2 mobile sense review</title>
+<link rel="stylesheet" href="../../app/css/style.css">
+<style>
+body { overflow:auto; padding:16px; background:#f5f7f9; color:#243442; }
+main { max-width:390px; margin:auto; }
+article { margin:12px 0; padding:14px; border-radius:12px; background:white; }
+h1 { font-size:22px; } h2 { font-size:18px; margin:0 0 10px; }
+.meaning-row { margin:8px 0; padding:8px; border:1px solid #dce2e8; border-radius:8px; }
+.meaning-row-sub { margin-top:6px; color:#586873; }
+.meaning-row-sub .sense-note-trigger { color:#243442; opacity:1; position:static; transform:none; margin-left:8px; } .sense-metadata-list { display:inline-flex; }
+.meaning-row-group { border:2px solid #a5bfc8; }
+small { display:block; margin-top:8px; color:#586873; }
+</style>
+<main><h1>TERSE-2 mobile review</h1><p>Shared sense renderer; longest 30 glosses per language. Information buttons expose original text.</p><div id="cards"></div></main>
+<script type="module">
+import * as ui from '../../app/js/card-metadata-pills.js';
+window.openSenseNote = ui.openSenseNote;
+const audit = await (await fetch('./audit.json')).json();
+for (const [language, deck] of Object.entries(audit.releases)) {
+ for (const row of deck.longestGlosses) {
+  const meaning = { translation:row.gloss, context:row.context, pos:'noun' };
+  const p = ui.learnerSensePresentation(meaning, true, {ignoreBudget:true, allowInactivePrimary:true, cardMeanings:[meaning]});
+  const article = document.createElement('article');
+  article.innerHTML = `<h2>${ui.escapeCardText(language + ' · ' + row.word)}</h2><div class="meaning-row meaning-row-regular"><strong>${ui.escapeCardText(p.gloss)}</strong><div class="meaning-row-sub">${ui.escapeCardText(p.key.text)}<span class="sense-metadata-list">${ui.senseNoteHTML(p)}</span></div></div><small>Before: ${ui.escapeCardText(row.before.gloss)}</small>`;
+  document.querySelector('#cards').append(article);
+ }
+}
+const peers = [
+ {translation:'bank (a financial institution serving local people and businesses)',pos:'noun'},
+ {translation:'bank (the sloping land bordering a body of water in the countryside)',pos:'noun'},
+];
+const group = document.createElement('article');
+group.innerHTML = '<h2>Grouped senses · bank</h2>' + peers.map(m => {
+ const p = ui.learnerSensePresentation(m, true, {ignoreBudget:true,cardMeanings:peers});
+ return `<div class="meaning-row meaning-row-group"><strong>${ui.escapeCardText(p.gloss)}</strong><div class="meaning-row-sub">${ui.escapeCardText(p.key.text)}<span class="sense-metadata-list">${ui.senseNoteHTML(p)}</span></div></div>`;
+}).join('');
+document.querySelector('#cards').prepend(group);
+</script></html>

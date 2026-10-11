@@ -72,7 +72,8 @@ assert.deepEqual(show(parece,1,true).visible,['+ com']);
 const uma=card('pt','uma');
 assert.equal(show(uma,0).visibleContext,'');assert.equal(show(uma,1).visibleContext,'a bit of');
 assert.equal(show(uma,2).visibleContext,'quite a; quite the');assert(show(uma,2).detailContext.includes('quite a'));
-assert.equal(show(uma,2).hasSenseNote,false);
+// Shortened dictionary text is recoverable even when it only explains the cue.
+assert.equal(show(uma,2).hasSenseNote,true);
 const talvez=show(card('pt','talvez'),0,true);
 assert.deepEqual(talvez.visible,[]);assert.deepEqual(talvez.details,[]);
 

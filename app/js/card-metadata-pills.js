@@ -1127,7 +1127,7 @@ function glossDistinctionKey(source, visibleGloss) {
 // verb: "(to cause to die)" is a definition.
 const GLOSS_SLOT_PARENTHETICAL = /^(?:some(?:one|thing|body|where)|oneself|one's|its|their|his|her|with|of|from|for|at|on|in|by|about|to (?:some(?:one|thing|body|where)|oneself|one's|a|an|the|him|her|them|me|us))\b/i;
 const GLOSS_PLACEHOLDER = /\b(?:some(?:one|thing|body|where)|any(?:one|thing|body)|oneself|one's|one|a person|people|it|them)\b/i;
-const GLOSS_RESTRICTING_PARENTHETICAL = /^(?:said of|of (?:a|an|the)\b|in the (?:plural|singular)\b|when\b|especially\b|usually\b|chiefly\b|often\b|figuratively\b|informal|colloquial|slang|vulgar|dated|archaic|obsolete)/i;
+const GLOSS_RESTRICTING_PARENTHETICAL = /^(?:only\b|not\b|except\b|said of|of (?:a|an|the)\b|in the (?:plural|singular)\b|when\b|especially\b|usually\b|chiefly\b|often\b|figuratively\b|informal|colloquial|slang|vulgar|dated|archaic|obsolete)/i;
 const FUNCTION_WORD_POS = /^(?:adp|prep|preposition|postp|det|determiner|article|pron|pronoun|part|particle|conj|cconj|sconj|conjunction)$/i;
 
 function splitDefinitionParenthetical(text) {
@@ -1186,11 +1186,36 @@ export function isLabelLikeText(value) {
 // ("second-person singular personal pronoun, formal or informal in Brazil").
 function isDescriptiveGlossClause(value) {
     const text = String(value || '').trim();
-    return DEFINITION_MARKERS.test(text) || DEFINITION_OPENERS.test(text)
+    // Words such as 'that' occur in complete translations ('it’s not that').
+    // They identify definitions in context labels, not in translation clauses.
+    return /^(?:\.\.\.|…)/.test(text) || DEFINITION_OPENERS.test(text)
         || /\b(?:pronoun|article|determiner|conjunction|preposition|particle|suffix|prefix|possessive|spelling|form of)\b/i.test(text);
 }
 
-const EDITORIAL_SUFFIX = /,\s*(?:especially|contrasting|which|where|when|usually|chiefly|literally|figuratively|as opposed|rather than|used|indicates?|introduces?|describes?|expresses?|refers?|denotes?|forms?|serves?|makes?)\b.*$/i;
+const EDITORIAL_SUFFIX = /^\s*(?:especially|which|used|indicates?|introduces?|describes?|expresses?|refers?|denotes?|forms?|serves?|makes?)\b.*$/i;
+// An editorial comma is detachable only outside every bracket. Never turn
+// "galaxy (…, which …)" into an unfinished parenthetical.
+function withoutEditorialSuffix(value) {
+    let depth = 0;
+    for (let index = 0; index < value.length; index++) {
+        const character = value[index];
+        if ('([{'.includes(character)) depth++;
+        else if (')]}'.includes(character) && depth) depth--;
+        else if (character === ',' && !depth && EDITORIAL_SUFFIX.test(value.slice(index + 1))) {
+            const prefix = value.slice(0, index).trim();
+            // A dangling preposition or conjunction cannot stand as a gloss.
+            if (prefix && !/\b(?:of|to|with|for|from|and|or|than|as|by|in|on|at)$/i.test(prefix)) return prefix;
+        }
+    }
+    return value;
+}
+
+function spellingRelationship(value) {
+    // Dates describe the spelling's history; the target identifies it.
+    const match = /^(pre-reform spelling|alternative spelling|alternative form|obsolete spelling|archaic spelling)\s*(?:\([^()]*\)\s*)?of\s+([^;,()]+)$/iu.exec(value);
+    return match ? `${match[1]} of ${match[2].trim()}` : '';
+}
+
 // "first-person plural nominative personal pronoun: we" → "we".
 const PRONOUN_DESCRIPTION = /^(?:[\w-]+\s+){1,6}?pronoun\b:?\s+(?:used in all positions\s+)?(?!,)(.+)$/i;
 
@@ -1234,10 +1259,31 @@ function ruleBasedGloss(meaning, source, options) {
     const partOfSpeech = String(meaning?.pos || meaning?.part_of_speech || '');
     let key = '';
     const removed = [];
+    const rules = new Set();
+    const sourceClauses = splitLearnerContextClauses(source);
+    const relationship = spellingRelationship(sourceClauses[0] || '');
+    if (relationship && sourceClauses.slice(1).every(clause => /^(?:still used|used until|may occur)\b/i.test(clause))) {
+        if (relationship === source) return null;
+        return { visibleGloss: relationship, visibleKey: '', removed: [source], rules: ['spelling-relationship'] };
+    }
     const rewritten = splitLearnerContextClauses(source).map(clause => {
-        let text = clause.replace(EDITORIAL_SUFFIX, '').trim() || clause;
+        let text = withoutEditorialSuffix(clause);
+        if (text !== clause) rules.add('editorial-suffix');
+        // Some release-composed definitions explicitly introduce the English
+        // translation after a colon. Keep every translation, including negation.
+        if (/^(?:the past form of |used for explanations:)/i.test(text)) {
+            const tail = text.slice(text.lastIndexOf(':') + 1).trim();
+            if (text.includes(':') && tail && tail.split(/\s+/).length <= 8 && !isDescriptiveGlossClause(tail)) {
+                removed.push(text);
+                text = tail;
+                rules.add('explicit-translation');
+            }
+        }
         const described = text.match(PRONOUN_DESCRIPTION);
-        if (described && !isDescriptiveGlossClause(described[1])) text = described[1].trim();
+        if (described && !isDescriptiveGlossClause(described[1])) {
+            text = described[1].trim();
+            rules.add('pronoun-description');
+        }
         const split = splitDefinitionParenthetical(text);
         if (!split || !split.before || split.before.length < 2) return text;
         const { before, inside } = split;
@@ -1247,7 +1293,7 @@ function ruleBasedGloss(meaning, source, options) {
         if (GLOSS_SLOT_PARENTHETICAL.test(inside) && inside.split(/\s+/).length <= LABEL_MAX_WORDS
             && (inside.split(/\s+/).length === 1 || GLOSS_PLACEHOLDER.test(inside)
                 || !/^(?:with|of|from|for|at|on|in|by|about)\b/i.test(inside))) return text;
-        if (GLOSS_RESTRICTING_PARENTHETICAL.test(inside) && isLabelLikeText(inside)) return text;
+        if (GLOSS_RESTRICTING_PARENTHETICAL.test(inside)) return text;
         // "to allow to (to give permission to)" restates the verb: a bracket
         // that opens with another infinitive is a definition, not a slot.
         const restatesVerb = /^to\s+\p{L}/iu.test(inside);
@@ -1262,14 +1308,17 @@ function ruleBasedGloss(meaning, source, options) {
         // note.
         if (!key) key = semanticRoleLabel(inside) || definitionLabel(inside);
         removed.push(inside);
+        rules.add('definition-parenthetical');
         return before;
     });
     // Describing clauses give way when the gloss also has a real translation:
     // "second-person singular personal pronoun, …; you" → "you".
     // When every clause describes, the first one says it; the rest are notes.
-    const translations = rewritten.filter(clause => !isDescriptiveGlossClause(clause));
+    const translations = rewritten.filter(clause => spellingRelationship(clause) || !isDescriptiveGlossClause(clause));
     const kept = translations.length ? translations : rewritten.slice(0, 1);
-    removed.push(...rewritten.filter(clause => !kept.includes(clause)));
+    const hiddenClauses = rewritten.filter(clause => !kept.includes(clause));
+    if (hiddenClauses.length) rules.add('descriptive-clause');
+    removed.push(...hiddenClauses);
     const visibleGloss = kept.join('; ');
     // Two senses must never read alike. If this gloss now matches another
     // sense on the card, the row carries one distinguishing label: the head
@@ -1302,7 +1351,15 @@ function ruleBasedGloss(meaning, source, options) {
         key = (labels[0] || candidates[0] || '');
     }
     if (foldMetadataComparable(visibleGloss) === foldMetadataComparable(source) && !key) return null;
-    return { visibleGloss, visibleKey: key, removed };
+    // If no usable cue can distinguish siblings, keep the complete meaning.
+    const indistinguishable = collides && (!key || (options.cardMeanings || []).some(peer => {
+        if (peer === meaning || !senseSharesTranslation(meaning, glossBase(peer), { cardMeanings: [meaning] })) return false;
+        const peerBracket = splitDefinitionParenthetical(projectWiktionaryGloss(peer, peer.meaning || peer.translation || '').display);
+        const peerKey = peerBracket ? semanticRoleLabel(peerBracket.inside) || definitionLabel(peerBracket.inside) : '';
+        return peerKey && foldMetadataComparable(peerKey) === foldMetadataComparable(key);
+    }));
+    if (indistinguishable && removed.length) return null;
+    return { visibleGloss, visibleKey: key, removed, rules: [...rules] };
 }
 
 // Source-preserving projection for the bold learner-facing meaning. It never
@@ -1564,7 +1621,7 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         ...((glossPresentation.noteGloss || noteContext || supportingItems.length >= 2)
             ? supportingItems : []),
     ];
-    const hasSenseNote = Boolean(glossPresentation.noteGloss || noteContext || noteItems.length);
+    let hasSenseNote = Boolean(glossPresentation.noteGloss || noteContext || noteItems.length);
     // Canonical learner-facing contract. Dictionary/provider fields are input;
     // every language leaves this selector as exactly three presentation tiers:
     // a required gloss, an optional compact key, and an optional curated note.
@@ -1580,13 +1637,34 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         text: bracketKey || contextPresentation.visibleContext || glossPresentation.visibleKey || '',
         items: visibleWithRoom,
     };
+    const originalGloss = String(meaning?.meaning || meaning?.translation || '');
+    const originalContext = String(meaning?.context || '');
+    const dictionaryProjection = projectWiktionaryGloss(meaning, originalGloss).display;
+    const inputGloss = String(options.gloss ?? dictionaryProjection).trim();
+    // Renderers may supply an already shortened or inflected display gloss.
+    // Recover the dictionary transformation independently of that display input.
+    const dictionaryRules = inputGloss === dictionaryProjection
+        ? glossPresentation : ruleBasedGloss(meaning, dictionaryProjection, options);
+    const appliedRules = [...(glossPresentation.rules || []), ...(dictionaryRules?.rules || [])];
+    if (dictionaryProjection !== originalGloss.trim()) appliedRules.unshift('dictionary-metadata-projection');
+    if (gloss !== inputGloss && !appliedRules.length) appliedRules.push('complete-clause-projection');
+    if (originalContext && key.text !== originalContext.trim()) appliedRules.push('context-projection');
+    const transformation = appliedRules.length ? {
+        policy: 'learner-card-trimming/v1',
+        rules: [...new Set(appliedRules)],
+        originalGloss,
+        originalContext,
+    } : null;
+    hasSenseNote ||= Boolean(transformation);
     const note = {
         gloss: glossPresentation.noteGloss,
         context: bracketKey ? fullContext : noteContext,
         items: noteItems,
         available: hasSenseNote,
+        original: transformation,
     };
     return {
+        transformation,
         gloss,
         key,
         note,
@@ -1724,6 +1802,8 @@ export function senseNoteHTML(presentation, options = {}) {
         senseNoteSectionHTML('How it is used', production, 'production'),
         senseNoteSectionHTML('Grammar', grammar.length
             ? [[...new Set(grammar)].join(', ').replace(/^./u, c => c.toLocaleUpperCase('en'))] : [], 'grammar'),
+        senseNoteSectionHTML('Original dictionary text', note.original
+            ? [note.original.originalGloss, note.original.originalContext] : [], 'original'),
     ].join('');
     if (!body) return '';
     return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}">${body}</div></template>`;
