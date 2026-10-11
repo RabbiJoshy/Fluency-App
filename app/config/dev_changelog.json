@@ -2,6 +2,18 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T23:19:32+01:00",
+   "date": "2026-10-11 23:19 BST",
+   "agent": "Codex",
+   "summary": "Card actions sit directly on the page background, with less padding and more room for card content.",
+   "detail": [
+    "Removed the action row’s coloured background and rounded tray in both themes; it now blends into the page like the scrubber.",
+    "Reduced the gap and button padding, preserving readable labels and usable tap targets.",
+    "Reclaimed footer space: about 30px more card content on desktop and 42px on phones, while respecting the phone safe area."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T23:05:37+01:00",
    "date": "2026-10-11 23:05 BST",
    "agent": "Codex",
@@ -365,17 +377,6 @@
     "Speech or music explains each source from first principles, including the two ways to choose music (pick artists, or build from a Spotify playlist).",
     "Grade your answer note cut to one short sentence.",
     "The yellow spotlight is now a ring drawn over the card and clamped inside it, so it is never clipped or pushed off screen (desktop and phone)."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T19:13:33+01:00",
-   "date": "2026-10-10 19:13 BST",
-   "agent": "Codex",
-   "summary": "Use distinct URLs for the corrected decks’ supporting files",
-   "detail": [
-    "Version the Spanish/Portuguese Merge Lemmas, cognate verdicts, frequencies and estimation pools so browser caches cannot substitute old v23 files.",
-    "Preserve the latest UI and all existing source scores, frequencies and merging rules."
    ],
    "commit": "pending"
   }

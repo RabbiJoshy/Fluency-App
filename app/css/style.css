@@ -24461,11 +24461,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .sense-prominence-detail-description { display: block; margin-top: 4px; font-size: 14px; font-weight: 400; }
 .sense-prominence-detail-heading { color: #fff; }
 
-/* The study surface ends above a separate, compact row of card actions. */
+/* Card actions sit directly on the page, like the scrubber above the card. */
 @media (min-width: 360px) {
   .card-face.card-back.has-action-tray {
     padding: 0;
-    gap: 10px;
+    gap: 6px;
     background: transparent !important;
     box-shadow: none !important;
     overflow: visible;
@@ -24483,9 +24483,14 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   .card-back.has-action-tray > .links-section {
     flex: 0 0 auto;
     margin: 0;
-    padding: 6px 4px 4px;
-    border-radius: 14px;
-    background: var(--bg-secondary);
+    padding: 2px 4px 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .card-back.has-action-tray > .links-section .ref-tile {
+    min-height: 64px;
+    padding-block: 1px;
+    gap: 4px;
   }
   .card-replica .card-back.has-action-tray > .card-details { padding: 20px 16px 12px; }
   .card-replica .card-back.has-action-tray > .links-section { padding-inline: 16px; }
@@ -24493,7 +24498,6 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   :root[data-theme="light"] .card-back.has-action-tray > .card-details {
     box-shadow: 0 10px 28px rgba(27, 39, 51, 0.12);
   }
-  :root[data-theme="light"] .card-back.has-action-tray > .links-section { background: #edf1f5; }
   body.artist-mode .card-back.has-action-tray > #backContent {
     background-image: linear-gradient(rgba(30, 39, 50, 0.9), rgba(30, 39, 50, 0.9)), var(--card-artwork, none);
     background-size: cover;
@@ -24550,3 +24554,18 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .sense-prominence-popup[hidden] { display: none; }
 .sense-prominence-popup strong { color: #fff; }
+
+/* Reclaim the old footer margin while keeping the phone's safe area clear. */
+@media (min-width: 360px) and (max-width: 767px) {
+  .card-container:has(#flashcard .has-action-tray) {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  #flashcard:has(.has-action-tray) {
+    height: calc(100vh / var(--ui-zoom, 1) - 82px - max(12px, env(safe-area-inset-bottom)));
+  }
+}
+@media (min-width: 768px) {
+  .container:has(#appContent:not(.hidden) #flashcard .has-action-tray) { padding-bottom: 8px; }
+  .card-container:has(#flashcard .has-action-tray) { padding-bottom: 8px; }
+  #flashcard:has(.has-action-tray) { height: calc(100vh / var(--ui-zoom, 1) - 108px); }
+}
