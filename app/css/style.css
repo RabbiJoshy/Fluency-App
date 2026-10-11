@@ -140,7 +140,8 @@
             transform-style: preserve-3d;
             transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
             cursor: pointer;
-            touch-action: none;
+            /* Vertical scrollports stay native; card-touch owns horizontal grading. */
+            touch-action: pan-y;
             -webkit-user-drag: none;
             z-index: 1;
         }
@@ -2174,13 +2175,8 @@
             gap: 8px;
             margin-top: 6px;
             padding: 0 8px 8px;
-            /* `.card` sets touch-action: none so a drag grades the card.
-               Inheriting that here disabled the browser's own scrolling, which
-               left the scrollbar as the only way to move the list — clickable
-               but not swipeable. pan-y hands vertical drags back to the
-               browser; the horizontal grading swipe still reads touchmove and
-               is unaffected. The bar itself is then redundant, so it is
-               hidden: the gesture is the affordance. */
+            /* Vertical gestures scroll natively; card-touch handles horizontal
+               grading and does not cycle meanings inside scrollports. */
             touch-action: pan-y;
             overscroll-behavior: contain;
             scrollbar-width: none;
