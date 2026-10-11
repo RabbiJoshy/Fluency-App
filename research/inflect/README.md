@@ -43,6 +43,12 @@ brackets (2026-10-11, `35f1d319`) and reverted it after seeing the real card:
 it only cost sub-rows. Check a change on a staging card before trusting a
 count of cue strings.
 
+Since 2026-10-11 (INFLECT-2) a verb only a thing can do takes "it" and has no
+"I"/"you" reading (*pasa* "it happens", *vale* "it costs", *basta* "it is
+enough"), and *gustar*-type verbs describe the thing (*gusta* "it pleases",
+*encanta* "it delights", *duele* "it hurts"). es r5: 115 rows changed, pt r3:
+64, none gained or lost. Open cases are in `CHAT_ROADMAP.md` under INFLECT-3.
+
 Measure the release the app serves (`app/config/config.json`, `indexPath` and
 `conjugationsPath`), not the workspace's `active.json`. Without `--sentences`
 no row shows a command.

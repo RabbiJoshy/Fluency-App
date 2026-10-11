@@ -446,6 +446,55 @@ console.log(JSON.stringify(out));
         for row in rows:
             self.assertEqual(row["actual"], row["expected"], row)
 
+    def test_verbs_only_a_thing_can_do_take_it(self) -> None:
+        """INFLECT-2: pasa is "it happens", gusta "it pleases"; people keep he/she."""
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required to execute reverse-cues.js")
+        script = r"""
+import { englishProductionCue } from %s;
+
+const tables = {
+    pasar: { past_participle: 'pasado', tenses: {
+        Presente: ['paso', 'pasas', 'pasa', 'pasamos', 'pasáis', 'pasan'],
+        Imperfecto: ['pasaba', 'pasabas', 'pasaba', 'pasábamos', 'pasabais', 'pasaban'],
+    } },
+    gustar: { past_participle: 'gustado', tenses: {
+        Presente: ['gusto', 'gustas', 'gusta', 'gustamos', 'gustáis', 'gustan'],
+    } },
+    encantar: { tenses: { Presente: ['encanto', 'encantas', 'encanta', 'encantamos', 'encantáis', 'encantan'] } },
+    valer: { tenses: { Presente: ['valgo', 'vales', 'vale', 'valemos', 'valéis', 'valen'] } },
+    hablar: { tenses: { Presente: ['hablo', 'hablas', 'habla', 'hablamos', 'habláis', 'hablan'] } },
+};
+const verb = (headword, translation) => ({ pos: 'verb', translation, headword });
+const plain = { conjugationData: tables };
+const cases = [
+    ['pasa', verb('pasar', 'to happen'), 'it happens'],
+    ['pasa', verb('pasar', 'to spend'), 'he/she spends'],
+    ['pasan', verb('pasar', 'to happen'), 'they happen'],
+    ['pasaba', verb('pasar', 'to happen'), 'it happened'],
+    ['vale', verb('valer', 'to cost'), 'it costs'],
+    ['vale', verb('valer', 'to be worth'), 'it is worth'],
+    ['gusta', verb('gustar', 'to like'), 'it pleases'],
+    ['gustan', verb('gustar', 'to like'), 'they please'],
+    ['gustado', verb('gustar', 'to like'), 'liked'],
+    ['encanta', verb('encantar', 'to love'), 'it delights'],
+    ['habla', verb('hablar', 'to speak'), 'he/she speaks'],
+];
+console.log(JSON.stringify(cases.map(([surface, sense, expected]) => ({
+    surface, expected,
+    actual: englishProductionCue({ targetWord: surface, meanings: [sense] }, sense, null, plain),
+}))));
+""" % json.dumps(REVERSE_CUES.as_uri())
+        result = subprocess.run(
+            [node, "--input-type=module", "-e", script],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        for row in json.loads(result.stdout):
+            self.assertEqual(row["actual"], row["expected"], row)
+
     def test_reflexive_tables_and_agreeing_participles_inflect(self) -> None:
         """INFLECT pass 2: -se tables are "me siento"; participles agree (feita)."""
         node = shutil.which("node")
