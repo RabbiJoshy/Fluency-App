@@ -1,8 +1,8 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=4ffd0219';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=4ffd0219';
-import { readFastTrack } from './fast-track-preferences.js?v=4ffd0219';
+import './state.js?v=1fcca724';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=1fcca724';
+import { readFastTrack } from './fast-track-preferences.js?v=1fcca724';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -537,10 +537,12 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     }
     const lyricsViewRow = document.getElementById('learningContextLyricsViewBtn');
     if (lyricsViewRow) {
-        const lyricsActive = Boolean(activeArtist) || modeKey === 'lyrics' || selectedLanguage === 'spanish';
+        const lyricsActive = modeKey === 'lyrics' || modeKey === 'live';
         lyricsViewRow.hidden = !lyricsActive;
         lyricsViewRow.dataset.href = 'lyrics-view/';
     }
+    const activities = document.getElementById('learningContextActivities');
+    if (activities) activities.hidden = Boolean(verbsRow?.hidden && lyricsViewRow?.hidden);
     // No vocabulary chosen yet means no deck to measure.
     const progressButton = document.getElementById('topBarProgressBtn');
     if (progressButton) progressButton.hidden = !modeKey;
@@ -968,6 +970,7 @@ function setupLanguageTabs() {
                     await deckOverviewHold;
                     window.hideAppLoading?.();
                 }
+                window.renderResumeLastSetCard?.();
                 if (!window.maybeShowKnownLanguagesIntro?.(newLanguage)) {
                     if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
                 }
@@ -3360,7 +3363,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=4ffd0219')
+        import('./spotify.js?v=1fcca724')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

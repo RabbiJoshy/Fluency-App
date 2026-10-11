@@ -1,49 +1,21 @@
+/* Map drill-specific roles to Fluency's shared appearance tokens. */
 :root {
-  --bg: #f6f5f2;
-  --surface: #ffffff;
-  --surface-2: #f0efeb;
-  --ink: #1c1b19;
-  --ink-2: #57544e;
-  --ink-3: #8d8a83;
-  --line: #dedbd4;
-  --accent: #2f5d50;
-  --accent-ink: #ffffff;
-
-  --c0: #3f7d62;  /* regular */
-  --c1: #b07a2a;  /* spelling change */
-  --c2: #b4622f;  /* stem change */
-  --c3: #9e3b3b;  /* irregular */
-  --c4: #8d8a83;  /* unclassified */
-
-  --radius: 12px;
-  --gutter: 16px;
-
-  /* The study app's three fonts, so a conjugation card reads like a
-     flashcard: DM Sans for prose, Space Grotesk for the words being
-     learned, JetBrains Mono wherever digits line up. */
-  --font-reading: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-emphasis: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-data: 'JetBrains Mono', monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #171917;
-    --surface: #202320;
-    --surface-2: #272a27;
-    --ink: #eceae5;
-    --ink-2: #b3afa7;
-    --ink-3: #807d76;
-    --line: #34382f;
-    --accent: #7fb79f;
-    --accent-ink: #12211c;
-
-    --c0: #79c3a0;
-    --c1: #dcb264;
-    --c2: #e0925f;
-    --c3: #e07e7e;
-    --c4: #918d85;
-  }
+  --bg: var(--bg-primary);
+  --surface: var(--bg-card);
+  --surface-2: var(--bg-secondary);
+  --ink: var(--text-primary);
+  --ink-2: var(--text-secondary);
+  --ink-3: var(--text-muted);
+  --line: var(--border-color);
+  --accent: var(--accent-blue);
+  --accent-ink: #fff;
+  --c0: var(--accent-green);
+  --c1: var(--accent-amber);
+  --c2: var(--accent-orange);
+  --c3: var(--error);
+  --c4: var(--text-muted);
+  --radius: 16px;
+  --gutter: 20px;
 }
 
 * { box-sizing: border-box; }
@@ -51,6 +23,7 @@
 body {
   margin: 0;
   background: var(--bg);
+  background-image: radial-gradient(ellipse at top, var(--bg-secondary), transparent 50%);
   color: var(--ink);
   font: 16px/1.5 var(--font-reading);
   -webkit-text-size-adjust: 100%;
@@ -400,3 +373,37 @@ code {
 .pdot.is-missed { background: var(--c3); }
 #progress-reset[hidden] { display: none; }
 .grade-hit kbd { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.35); color: #fff; opacity: 1; }
+
+/* Match the study screen's panel and control hierarchy. */
+.topbar, main { max-width: 800px; }
+.topbar { padding-top: calc(16px + env(safe-area-inset-top, 0px)); }
+.back-to-study { color: var(--ink-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; background: var(--surface); }
+.tabs { border: 1px solid var(--line); border-radius: 10px; padding: 4px; }
+.tab { border-radius: 7px; font-weight: 600; }
+.tab.is-active { background: var(--surface); color: var(--ink); }
+.setup-intro { padding: 18px 0; }
+.section > summary { padding: 16px; }
+.section[open] > summary { border-bottom: 1px solid var(--line); }
+.section-body { padding-top: 12px; }
+.card { box-shadow: 0 18px 48px rgb(0 0 0 / 16%); }
+button, a, input, select, summary { transition: background-color .15s, border-color .15s; }
+button.secondary:hover, .back-to-study:hover, .check:hover { background: var(--bg-card-hover); }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 3px; }
+@media (max-width: 620px) { :root { --gutter: 12px; } .topbar { gap: 8px; } .tab { padding: 6px 10px; } }
+
+/* Settings read as a flat list, with chrome reserved for the study card. */
+.back-to-study { background: transparent; border: 0; min-height: 48px; padding: 8px 0; }
+.tabs { background: transparent; border: 0; padding: 0; border-radius: 0; gap: 16px; }
+.tab { min-height: 48px; border-radius: 0; padding: 8px 0; border-bottom: 2px solid transparent; }
+.tab.is-active { background: transparent; box-shadow: none; border-bottom-color: var(--accent); }
+.section { background: transparent; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
+.section > summary { min-height: 56px; padding: 16px 0; }
+.section-body { padding: 12px 0 20px; }
+.section-body-nested { padding: 0; gap: 0; }
+.section-body-nested .section { background: transparent; }
+.section-body-nested .section > summary { padding: 14px 0; }
+.check { min-height: 44px; background: transparent; padding: 8px 0; border: 0; border-radius: 0; }
+.check:has(input:checked) { background: transparent; }
+.check:hover { background: transparent; }
+.summary { border: 0; border-top: 1px solid var(--line); border-radius: 0; background: var(--bg-primary); box-shadow: none; padding: 16px 0; }
+@media (max-width: 620px) { .tab { padding: 8px 0; } .summary-actions button { min-height: 48px; } }

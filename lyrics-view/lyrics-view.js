@@ -1,4 +1,5 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=4ffd0219';
+import { linePlaybackTarget, restartLyricLine } from './line-playback.js?v=1fcca724';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=1fcca724';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -213,6 +214,20 @@ function loadSavedCustomSongs() {
 // ───────────────────────────────────────────────
 async function init() {
   try {
+    // Use the same Spotify account, player, and callback as vocabulary mode.
+    try {
+      const response = await fetch(new URL('../config/config.json', import.meta.url));
+      if (!response.ok) throw new Error('Spotify configuration unavailable');
+      const config = await response.json();
+      window._spotifyClientId = config.publicServices?.spotifyClientId || '';
+      window._spotifyRedirectUris = { ...config.publicServices?.spotifyRedirectUris };
+      // The fallback must resolve from the app root, not this nested mode.
+      window._spotifyRedirectUris[window.location.origin] ||= new URL('../callback.html', import.meta.url).href;
+    } catch (error) {
+      console.warn('Could not initialize Spotify configuration:', error);
+    }
+    await import('../js/spotify.js?v=1fcca724');
+
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');
 
@@ -564,7 +579,11 @@ function renderLyrics(song) {
     toggleEnglishBtn.style.display = hasAnyEnglish ? 'inline-flex' : 'none';
   }
 
-  const songHasTimestamps = song.lines.some(l => l.isSynced && l.timestamp_ms != null);
+  const sourceSong = allSongs[currentSongIndex];
+  const playbackStatus = document.getElementById('linePlaybackStatus');
+  const unavailable = song.lines.map(line => linePlaybackTarget(sourceSong, line)).find(target => !target.available);
+  playbackStatus.textContent = unavailable ? unavailable.reason : '';
+  playbackStatus.hidden = !unavailable;
 
   song.lines.forEach((line, lineIdx) => {
     const lineItem = document.createElement('div');
@@ -574,21 +593,41 @@ function renderLyrics(song) {
     const englishGloss = buildLineEnglishGloss(line);
     const hasLineTranslation = Boolean(englishGloss);
 
-    // 1. Left Gutter: Timestamp stacked with AI actions
+    // Spotify replaces the time label; timing stays in the playback request.
     const gutter = document.createElement('div');
     gutter.className = 'lyric-line-gutter';
-
-    if (songHasTimestamps) {
-      if (line.isSynced && line.timestamp_ms != null) {
-        const totalSec = Math.floor(line.timestamp_ms / 1000);
-        const m = Math.floor(totalSec / 60);
-        const s = totalSec % 60;
-        const timeSpan = document.createElement('span');
-        timeSpan.className = 'lyric-line-timestamp';
-        timeSpan.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
-        gutter.appendChild(timeSpan);
+    const target = linePlaybackTarget(sourceSong, line);
+    const listenButton = document.createElement('button');
+    listenButton.type = 'button';
+    listenButton.className = 'lyric-listen-btn';
+    listenButton.disabled = !target.available;
+    listenButton.title = target.available ? 'Play from this line on Spotify' : target.reason;
+    listenButton.setAttribute('aria-label', target.available
+      ? `Play from line ${lineIdx + 1} on Spotify: ${line.text}`
+      : `Line ${lineIdx + 1} playback unavailable. ${target.reason}`);
+    listenButton.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24Zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.57-1.04 8.5-.59 11.66 1.34.35.22.46.68.25 1.03Zm1.47-3.27a.94.94 0 0 1-1.29.3c-3.23-1.99-8.16-2.57-11.98-1.41a.94.94 0 1 1-.54-1.8c4.36-1.32 9.8-.67 13.5 1.62.45.27.59.85.31 1.29Zm.13-3.41C15.23 8.32 8.85 8.11 5.16 9.23a1.13 1.13 0 0 1-.65-2.16c4.23-1.28 11.28-1.03 15.74 1.62a1.13 1.13 0 0 1-1.15 1.93Z"/></svg>`;
+    listenButton.addEventListener('click', async () => {
+      listenButton.disabled = true;
+      listenButton.setAttribute('aria-busy', 'true');
+      listenButton.classList.add('is-loading');
+      playbackStatus.hidden = false;
+      playbackStatus.textContent = 'Connecting to Spotify…';
+      try {
+        const started = await restartLyricLine(target, window.spotifyPlayTrack);
+        if (listenButton.isConnected) {
+          playbackStatus.textContent = started ? '' : 'Playback did not start. Connect Spotify Premium and try again.';
+          playbackStatus.hidden = Boolean(started);
+        }
+      } catch (error) {
+        if (listenButton.isConnected) playbackStatus.textContent = 'Could not start Spotify. Please try again.';
+        console.warn('Line playback failed:', error);
+      } finally {
+        listenButton.disabled = false;
+        listenButton.removeAttribute('aria-busy');
+        listenButton.classList.remove('is-loading');
       }
-    }
+    });
+    gutter.appendChild(listenButton);
 
     // AI Look up Action: Single circular "AI" button
     // Pressing it pulls up Claude & ChatGPT icons in a sheet directly above it (exact flashcard lookup pattern).

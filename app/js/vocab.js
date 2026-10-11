@@ -1,12 +1,12 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=4ffd0219';
-import { readJsonWithTimeout } from './read-request.js?v=4ffd0219';
-import { validateVocabularyIndex } from './data-contracts.js?v=4ffd0219';
-import { formatRoute } from './routes.js?v=4ffd0219';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=4ffd0219';
-import { releaseUrl } from './release-host.js?v=4ffd0219';
+import './state.js?v=1fcca724';
+import { readJsonWithTimeout } from './read-request.js?v=1fcca724';
+import { validateVocabularyIndex } from './data-contracts.js?v=1fcca724';
+import { formatRoute } from './routes.js?v=1fcca724';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=1fcca724';
+import { releaseUrl } from './release-host.js?v=1fcca724';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -122,20 +122,26 @@ function studySessionScope({ mode, artistSlug, artistSlugs, language }) {
         || `${mode || 'speech'}:${artistSlug || language || ''}`;
 }
 
-// The deck the learner has explicitly opened, or null on a bare landing.
-// Only an artist counts as explicit: arriving with no parameters is the
-// landing, where offering whatever was studied last is the desired behaviour.
-// A restored `selectedLanguage` is not an explicit choice and must not scope
-// the prompt, or landing would stop offering a saved Lyrics set.
+// Explicit deck choices scope resumes; a bare landing can still offer the
+// most recently studied deck. Speech must not fall back into a Lyrics set.
 function activeStudySessionScope() {
-    if (!activeArtist) return null;
-    return studySessionScope({
-        mode: 'lyrics',
-        artistSlug: window._urlArtistSlug || null,
-        artistSlugs: (window._selectedArtistSlugs || []).slice(),
-        songIds: activeArtist ? selectedSongIds.slice() : [],
-        language: activeArtist.language || selectedLanguage
-    });
+    if (activeArtist) {
+        return studySessionScope({
+            mode: 'lyrics',
+            artistSlug: window._urlArtistSlug || null,
+            artistSlugs: (window._selectedArtistSlugs || []).slice(),
+            songIds: selectedSongIds.slice(),
+            language: activeArtist.language || selectedLanguage
+        });
+    }
+    let pendingSpeech = null;
+    try { pendingSpeech = sessionStorage.getItem('fluencyPendingSpeechLanguage'); } catch (_) {}
+    const explicitSpeech = pendingSpeech
+        || document.getElementById('step1')?.classList.contains('source-speech-active')
+        || window.fluencyRoute?.kind === 'language';
+    return explicitSpeech
+        ? studySessionScope({ mode: 'speech', language: pendingSpeech || selectedLanguage })
+        : null;
 }
 
 function currentLyricsReleaseId() {

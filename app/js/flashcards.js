@@ -1,29 +1,29 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=4ffd0219';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=4ffd0219';
-import './speech.js?v=4ffd0219';
-import { goToRoute, routeCodeFor } from './routes.js?v=4ffd0219';
-import { memoryTipTileHTML } from './memory-tips.js?v=4ffd0219';
-import './side-dock.js?v=4ffd0219';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=4ffd0219';
+import './state.js?v=1fcca724';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=1fcca724';
+import './speech.js?v=1fcca724';
+import { goToRoute, routeCodeFor } from './routes.js?v=1fcca724';
+import { memoryTipTileHTML } from './memory-tips.js?v=1fcca724';
+import './side-dock.js?v=1fcca724';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=1fcca724';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=4ffd0219';
+} from './example-personalisation.js?v=1fcca724';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=4ffd0219';
+} from './spanishdict-usage.js?v=1fcca724';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=4ffd0219';
+} from './reverse-cues.js?v=1fcca724';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -56,7 +56,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=4ffd0219';
+} from './card-metadata-pills.js?v=1fcca724';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -4832,13 +4832,31 @@ const RARE_SENSE_EXAMPLE_LIMIT = 3;
 
 // Rarer uses lists every sense at once; a sense's examples stay folded until
 // asked for, so the list reads as one short overview.
-function foldedExamplesHTML(examplesHTML, count) {
-    if (!examplesHTML) return '';
-    return `<details class="rare-use-examples" onclick="event.stopPropagation()">
-            <summary>Examples · ${count}</summary>
-            ${examplesHTML}
-        </details>`;
+// One compact row: the text (centred) with a speech-bubble button and count
+// at its right edge; the examples open below the row inside the same box.
+function rareRowHTML(textHTML, examplesHTML, count) {
+    if (!examplesHTML) return textHTML ? `<div class="rare-row"><div class="rare-row-text">${textHTML}</div></div>` : '';
+    return `<div class="rare-row">
+            <div class="rare-row-text">${textHTML}</div>
+            <button type="button" class="rare-ex-btn" aria-expanded="false" aria-label="Show ${count} example${count === 1 ? '' : 's'}" data-count="${count}" onclick="toggleRareExamples(event, this)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.5-4.6A8 8 0 1 1 21 12z"/></svg>
+                <span class="rare-ex-count">${count}</span>
+            </button>
+        </div>
+        <div class="rare-ex-panel" hidden>${examplesHTML}</div>`;
 }
+
+function toggleRareExamples(event, btn) {
+    event?.stopPropagation?.();
+    const panel = btn.closest('.rare-row')?.nextElementSibling;
+    if (!panel || !panel.classList.contains('rare-ex-panel')) return;
+    const open = panel.hidden;
+    panel.hidden = !open;
+    const n = Number(btn.dataset.count || 0);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.setAttribute('aria-label', open ? 'Hide examples' : `Show ${n} example${n === 1 ? '' : 's'}`);
+}
+if (typeof window !== 'undefined') window.toggleRareExamples = toggleRareExamples;
 
 function rareSenseLeafHTML(item, posAccentRgb, { hideGloss = false, hideContext = false } = {}) {
     const gloss = item.translation || item.expression || '';
@@ -4851,7 +4869,7 @@ function rareSenseLeafHTML(item, posAccentRgb, { hideGloss = false, hideContext 
     const ctxHTML = (!hideContext && item.context)
         ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : '';
     if (!glossHTML && !ctxHTML && !examples.length) return '';
-    return `<div class="other-uses-leaf">${glossHTML}${ctxHTML}${foldedExamplesHTML(examples.join(''), examples.length)}</div>`;
+    return `<div class="other-uses-leaf">${rareRowHTML(glossHTML + ctxHTML, examples.join(''), examples.length)}</div>`;
 }
 
 function cycleRarerShade(event, clusterKey, count, delta) {
@@ -4900,10 +4918,10 @@ function renderRareSenseCluster(group, pos, posAccentRgb, clusterId) {
                 <button type="button" aria-label="Next matching sense" onclick="event.stopPropagation(); cycleRarerShade(event, '${clusterId}', ${group.length}, 1)">›</button>
                </div>`
             : '';
+        const headHTML = `<div class="other-uses-gloss">${escapeCardText(sharedGloss)}</div>`
+            + (sharedContext ? `<div class="phrase-context">${escapeCardText(sharedContext)}</div>` : '');
         return `<div class="rarer-uses-cluster" style="--sense-match-rgb: ${posAccentRgb};">
-            <div class="other-uses-gloss">${escapeCardText(sharedGloss)}</div>
-            ${sharedContext ? `<div class="phrase-context">${escapeCardText(sharedContext)}</div>` : ''}
-            ${foldedExamplesHTML(compactPhraseExampleHTML((item.examples || [])[0], posAccentRgb) + pager, group.length)}
+            ${rareRowHTML(headHTML, compactPhraseExampleHTML((item.examples || [])[0], posAccentRgb) + pager, group.length)}
         </div>`;
     }
 
@@ -4954,12 +4972,12 @@ function renderPhraseRow(item) {
     // Expressions share the phrase accent with the set scrubber's phrase pip.
     const exampleHTML = compactPhraseExampleHTML(example, 'var(--accent-phrases-rgb)');
     const sourcePill = phraseSourcePillHTML(item);
+    const textHTML = `<div class="phrase-expression">${escapeCardText(item.expression)}</div>`
+        + (item.translation ? `<div class="phrase-translation">${escapeCardText(item.translation)}</div>` : '')
+        + (item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : '');
     return `<div class="phrase-summary-item">
         ${sourcePill ? `<div class="phrase-badge-row">${sourcePill}</div>` : ''}
-        <div class="phrase-expression">${escapeCardText(item.expression)}</div>
-        ${item.translation ? `<div class="phrase-translation">${escapeCardText(item.translation)}</div>` : ''}
-        ${item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : ''}
-        ${exampleHTML}
+        ${rareRowHTML(textHTML, exampleHTML, 1)}
     </div>`;
 }
 
@@ -4998,15 +5016,13 @@ function phraseSummaryContent(items) {
 
     const rareCount = rareItems.length;
     const phraseCount = items.length - rareCount;
-    let subtitle;
-    if (rareCount && !phraseCount) {
-        subtitle = "Less common meanings. They won't come up in your reviews.";
-    } else if (phraseCount && !rareCount) {
-        subtitle = 'Expressions that use this word.';
-    } else {
-        subtitle = "Less common meanings and expressions. They won't come up in your reviews.";
-    }
-    return { subtitle, bodyHTML: `${rareHTML}${phraseHTML}${cliticHTML}` };
+    // The sheet carries its own one-line title; the subtitle is only for the
+    // expressions child card.
+    const subtitle = (phraseCount && !rareCount)
+        ? 'Expressions with this word.'
+        : 'Less common uses of this word.';
+    const onlyExpressions = Boolean(phraseCount && !rareCount);
+    return { subtitle, onlyExpressions, bodyHTML: `${rareHTML}${phraseHTML}${cliticHTML}` };
 }
 
 function renderPhraseSummaryBack(card) {
@@ -5041,7 +5057,6 @@ function ensureRareUsesModal() {
             <header class="knowledge-overview-header">
                 <div>
                     <h2 id="rareUsesTitle"></h2>
-                    <p class="rare-uses-subtitle" id="rareUsesSubtitle"></p>
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close rare uses" onclick="closeRareUsesModal(event)">×</button>
             </header>
@@ -5309,7 +5324,7 @@ function openRareAndExpressionsCard(event) {
 
     _rareUsesItems = items;
     const modal = ensureRareUsesModal();
-    modal.querySelector('#rareUsesTitle').innerHTML = `Rare uses of <span class="rare-uses-word">${escapeCardText(parentCard.displaySurface || parentCard.targetWord || '')}</span>`;
+    modal.dataset.word = parentCard.displaySurface || parentCard.targetWord || '';
     renderRareUsesBody();
     modal.querySelector('#rareUsesBody').scrollTop = 0;
     modal.hidden = false;
@@ -5323,8 +5338,8 @@ window.openRareAndExpressionsCard = openRareAndExpressionsCard;
 function renderRareUsesBody() {
     const modal = document.getElementById('rareUsesModal');
     if (!modal || !_rareUsesItems.length) return;
-    const { subtitle, bodyHTML } = phraseSummaryContent(_rareUsesItems);
-    modal.querySelector('#rareUsesSubtitle').textContent = subtitle;
+    const { onlyExpressions, bodyHTML } = phraseSummaryContent(_rareUsesItems);
+    modal.querySelector('#rareUsesTitle').innerHTML = `${onlyExpressions ? 'Expressions with' : 'Less common uses of'} <span class="rare-uses-word">${escapeCardText(modal.dataset.word || '')}</span>`;
     const body = modal.querySelector('#rareUsesBody');
     const top = body.scrollTop;
     body.innerHTML = bodyHTML;
@@ -10422,8 +10437,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '4ffd0219';
-const MODALS_ASSET_VERSION = '4ffd0219';
+const ASSET_VERSION = '1fcca724';
+const MODALS_ASSET_VERSION = '1fcca724';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

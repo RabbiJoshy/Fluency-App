@@ -13,7 +13,7 @@
 
 import {
     REPLICA_CARDS, esc, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=4ffd0219';
+} from './card-replica.js?v=1fcca724';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -1128,14 +1128,16 @@ function rareSheetHTML(card) {
         const accent = posAccentRgb(pos);
         const leaves = byPos.get(pos).map(item => {
             const example = item.example
-                ? `<details class="rare-use-examples"><summary>Examples · 1</summary>
+                ? `<button type="button" class="rare-ex-btn" aria-expanded="false" aria-label="Show 1 example" data-count="1" onclick="toggleRareExamples(event, this)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.5-4.6A8 8 0 1 1 21 12z"/></svg><span class="rare-ex-count">1</span></button>` : '';
+            const panel = item.example
+                ? `<div class="rare-ex-panel" hidden>
                     <div class="phrase-example phrase-example--compact" style="--sense-match-rgb: ${accent};">
                         <div class="phrase-example-target">${esc(item.example.target)}</div>
                         <div class="phrase-example-translation">${esc(item.example.english)}</div>
-                    </div></details>` : '';
+                    </div></div>` : '';
             return `<div class="other-uses-gloss-group"><div class="other-uses-leaf">
-                <div class="other-uses-gloss">${esc(item.translation)}</div>
-                ${item.context ? `<div class="phrase-context">${esc(item.context)}</div>` : ''}${example}
+                <div class="rare-row"><div class="rare-row-text"><div class="other-uses-gloss">${esc(item.translation)}</div>
+                ${item.context ? `<div class="phrase-context">${esc(item.context)}</div>` : ''}</div>${example}</div>${panel}
             </div></div>`;
         }).join('');
         return `<section class="other-uses-pos" style="--sense-match-rgb: ${accent};"><h4 class="other-uses-pos-heading">${esc(posName(pos).replace(/^./, c => c.toUpperCase()))}</h4>${leaves}</section>`;
@@ -1144,8 +1146,7 @@ function rareSheetHTML(card) {
         <div class="knowledge-overview-sheet rare-uses-sheet">
             <header class="knowledge-overview-header">
                 <div>
-                    <h2>Rare uses of <span class="rare-uses-word">${esc(card.word)}</span></h2>
-                    <p class="rare-uses-subtitle">Less common meanings. They won't come up in your reviews.</p>
+                    <h2>Less common uses of <span class="rare-uses-word">${esc(card.word)}</span></h2>
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close rare uses" data-demo-close>×</button>
             </header>
@@ -1173,8 +1174,8 @@ function reviewSheetHTML(card) {
             <div class="knowledge-overview-list"><section class="knowledge-overview-section">
                 <div class="knowledge-overview-group" style="--sense-match-rgb: ${accent};">
                     <div class="knowledge-overview-group-head">
-                        <span class="knowledge-overview-group-pos">${esc(posName(card.pos))}</span>
-                        <span class="knowledge-overview-group-lemma">${esc(card.lemma || card.word)}</span>
+                        <span class="knowledge-overview-group-pos">${esc(posName(card.pos).replace(/^./, c => c.toUpperCase()))}</span>
+                        ${card.lemma && String(card.lemma).toLowerCase() !== String(card.word || '').toLowerCase() ? `<span class="knowledge-overview-group-from">from</span><span class="knowledge-overview-group-lemma">${esc(card.lemma)}</span>` : ''}
                         <span class="knowledge-overview-group-count">0/${rows.length}</span>
                     </div>
                     <div class="knowledge-overview-rows">${list}</div>

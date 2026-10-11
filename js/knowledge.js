@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=4ffd0219';
-import { sendOrQueue } from './sync-queue.js?v=4ffd0219';
+import './state.js?v=1fcca724';
+import { sendOrQueue } from './sync-queue.js?v=1fcca724';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -820,13 +820,25 @@ function knowledgeOverviewRowsHTML(card, rows, { groupedByPos = false } = {}) {
         const detail = display
             ? (display.label ? display.detail : item.detail)
             : [item.detail, item.isRare ? item.example : ''].filter(Boolean).join(' · ');
+        // Every row is one box: line 1 the translation, line 2 the context. A
+        // card-family member leads with its family heading and carries its own
+        // label (and detail) beneath, so no row sits outside a box.
+        const family = String(display?.family || '').trim();
+        const rowLabel = String(label || '').trim();
+        let lead = rowLabel;
+        let sub = detail || '';
+        if (family) {
+            lead = family;
+            const own = rowLabel && rowLabel.toLowerCase() !== family.toLowerCase() ? rowLabel : '';
+            sub = [own, detail].filter(Boolean).join(' · ');
+        }
         const copy = `<span class="knowledge-overview-status" aria-label="${statusText}"></span>
-            <span class="knowledge-overview-copy">${pos}<strong>${escapeKnowledgeHTML(label)}</strong>${detail ? `<small>${escapeKnowledgeHTML(detail)}</small>` : ''}</span>`;
+            <span class="knowledge-overview-copy">${pos}<strong>${escapeKnowledgeHTML(lead)}</strong>${sub ? `<small>${escapeKnowledgeHTML(sub)}</small>` : ''}</span>`;
         const selected = state.needsReview && state.reviewReason === 'incorrect';
         return `<label class="knowledge-overview-row${selected ? ' is-selected' : ''}">
             <span class="knowledge-overview-focus is-static">${copy}</span>
             <input type="checkbox" class="knowledge-overview-checkbox" data-knowledge-index="${index}" ${selected ? 'checked' : ''}
-                aria-label="Review ${escapeKnowledgeHTML(label)} later" onchange="toggleKnowledgeOverviewReview(event, ${index})">
+                aria-label="Review ${escapeKnowledgeHTML([lead, family ? sub : ''].filter(Boolean).join(', '))} later" onchange="toggleKnowledgeOverviewReview(event, ${index})">
         </label>`;
     }).join('');
 }
@@ -887,33 +899,25 @@ function knowledgeOverviewMeaningGroupsHTML(card, rows) {
         if (!groups.has(key)) groups.set(key, { pos, headword, rows: [] });
         groups.get(key).rows.push(row);
     });
-    const posName = pos => (window.posDisplayName ? window.posDisplayName(pos) : pos);
+    const posName = pos => {
+        const n = String(window.posDisplayName ? window.posDisplayName(pos) : pos);
+        return n.charAt(0).toUpperCase() + n.slice(1).toLowerCase();
+    };
+    const fold = v => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const cardWord = fold(card.targetWord || card.word);
     return Array.from(groups.values()).map(group => {
         const accent = window.getPosAccentRgb?.(group.pos) || '150, 160, 180';
         const known = group.rows.filter(({ item }) => getKnowledgeItemState(card, item).learned).length;
+        const showLemma = group.headword && fold(group.headword) !== cardWord;
         return `<div class="knowledge-overview-group" style="--sense-match-rgb: ${accent};">
             <div class="knowledge-overview-group-head">
                 <span class="knowledge-overview-group-pos">${escapeKnowledgeHTML(posName(group.pos))}</span>
-                ${group.headword ? `<span class="knowledge-overview-group-lemma">${escapeKnowledgeHTML(group.headword)}</span>` : ''}
+                ${showLemma ? `<span class="knowledge-overview-group-from">from</span><span class="knowledge-overview-group-lemma">${escapeKnowledgeHTML(group.headword)}</span>` : ''}
                 <span class="knowledge-overview-group-count">${known}/${group.rows.length}</span>
             </div>
-            ${knowledgeOverviewFamilyRunsHTML(card, group.rows)}
+            <div class="knowledge-overview-rows">${knowledgeOverviewRowsHTML(card, group.rows, { groupedByPos: true })}</div>
         </div>`;
     }).join('');
-}
-
-// A family row on the card ("if" over "whether" / "introduces a relevance
-// conditional") keeps its heading here, with its sub-senses beneath it.
-function knowledgeOverviewFamilyRunsHTML(card, rows) {
-    const runs = [];
-    for (const row of rows) {
-        const family = card._senseDisplay?.get(row.item.meaningIndex)?.family || '';
-        const last = runs[runs.length - 1];
-        if (last && last.family === family) last.rows.push(row);
-        else runs.push({ family, rows: [row] });
-    }
-    return runs.map(run => `${run.family
-        ? `<div class="knowledge-overview-family">${escapeKnowledgeHTML(run.family)}</div>` : ''}<div class="knowledge-overview-rows${run.family ? ' is-family' : ''}">${knowledgeOverviewRowsHTML(card, run.rows, { groupedByPos: true })}</div>`).join('');
 }
 
 function selectKnowledgeOverviewTab(event, label) {

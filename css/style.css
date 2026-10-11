@@ -1,52 +1,5 @@
-        :root {
-            /* Dark industrial base palette */
-            --bg-primary: #0a0e14;
-            --bg-secondary: #121820;
-            --bg-tertiary: #1a222d;
-            --bg-card: #1e2732;
-            --bg-card-hover: #252f3c;
+@import url("./appearance.css?v=1fcca724");
 
-            /* Text colors - high contrast */
-            --text-primary: #ffffff;
-            --text-secondary: #e0e4ea;
-            --text-muted: #c5ccd6;
-            --text-subtle: #c5ccd6;
-
-            /* Accent colors - industrial/energy */
-            --accent-orange: #ff6b35;
-            --accent-amber: #f5a623;
-            --accent-blue: #4a9eff;
-            --accent-green: #00d4aa;
-            /* Phrase/clitic chain identity — deliberately not a language accent
-               (those change per language) and not a result colour. */
-            --accent-phrases: #a78bfa;
-            --accent-phrases-rgb: 167, 139, 250;
-
-            /* Language-specific theme colors (dynamically updated) */
-            --accent-primary: #C8102E;
-            --accent-secondary: #FFCC00;
-            --accent-primary-text: #ffffff;
-            --accent-secondary-text: #1a1a2e;
-
-            /* Semantic colors */
-            --success: #00d4aa;
-            --error: #ff5252;
-            --warning: #f5a623;
-
-            /* Borders and dividers */
-            --border-color: #2a3441;
-            --border-light: #3a4553;
-
-            /* Glow effects */
-            --glow-orange: rgba(255, 107, 53, 0.3);
-            --glow-blue: rgba(74, 158, 255, 0.3);
-            --glow-green: rgba(0, 212, 170, 0.3);
-
-            /* Fonts */
-            --font-reading: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-emphasis: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-data: 'JetBrains Mono', monospace;
-        }
 
         * {
             margin: 0;
@@ -7473,18 +7426,25 @@
         }
         .knowledge-overview-group-head {
             display: flex;
-            align-items: baseline;
-            gap: 8px;
+            align-items: center;
+            gap: 7px;
+            min-height: 38px;
             margin: 0 0 7px;
-            padding: 6px 10px;
+            padding: 7px 10px;
             border-left: 3px solid rgb(var(--sense-match-rgb));
             border-radius: 6px;
-            background: rgba(var(--sense-match-rgb), 0.1);
+            background: rgba(var(--sense-match-rgb), 0.10);
         }
         .knowledge-overview-group-pos {
+            flex-shrink: 0;
             color: rgb(var(--sense-match-rgb));
-            font: 800 12px/1.2 var(--font-emphasis);
-            letter-spacing: 0.04em;
+            font: 750 17px/1.2 var(--font-emphasis);
+        }
+        .knowledge-overview-group-from {
+            flex-shrink: 0;
+            margin-left: -2px;
+            color: var(--text-muted);
+            font: 500 15px/1.2 var(--font-reading);
         }
         .knowledge-overview-group-lemma {
             min-width: 0;
@@ -7492,7 +7452,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             color: color-mix(in srgb, rgb(var(--sense-match-rgb)) 58%, var(--text-primary));
-            font: 700 15px/1.2 var(--font-emphasis);
+            font: 700 17px/1.2 var(--font-emphasis);
         }
         .knowledge-overview-group-count {
             margin-left: auto;
@@ -7548,6 +7508,7 @@
             display: flex;
             align-items: baseline;
             flex-wrap: wrap;
+            align-content: center;
             gap: 2px 6px;
             min-width: 0;
         }
@@ -7558,7 +7519,8 @@
         .knowledge-overview-copy small {
             flex-basis: 100%;
             color: var(--text-muted);
-            font: 500 11px/1.3 var(--font-reading);
+            font: 500 12px/1.3 var(--font-reading);
+            font-style: normal;
         }
         .knowledge-overview-pos {
             color: var(--accent-secondary);
@@ -20248,7 +20210,7 @@ body.rare-uses-open { overflow: hidden; }
   padding: 0 20px 20px;
 }
 #rareUsesModal[data-dock] .rare-uses-body { padding: 0 16px 16px; }
-.rare-uses-sheet .rare-uses-body { gap: 14px; text-align: center; }
+.rare-uses-sheet .rare-uses-body { gap: 10px; text-align: center; }
 .rare-uses-sheet .other-uses-pos { align-items: stretch; gap: 8px; text-align: center; }
 .rare-uses-sheet .other-uses-pos-heading {
   margin: 6px 0 0;
@@ -20270,14 +20232,14 @@ body.rare-uses-open { overflow: hidden; }
   gap: 4px;
   width: 100%;
   margin: 0;
-  padding: 10px 12px;
+  padding: 10px 0;
   border: none;
   border-radius: 12px;
   background: color-mix(in srgb, var(--text-primary) 5%, transparent);
   text-align: center;
 }
 /* Inside a cluster the container is the card; its rows are plain. */
-.rare-uses-sheet .rarer-uses-cluster { gap: 6px; }
+.rare-uses-sheet .rarer-uses-cluster { gap: 4px; }
 .rare-uses-sheet .rarer-uses-cluster .other-uses-leaf {
   padding: 6px 0;
   background: none;
@@ -20302,11 +20264,65 @@ body.rare-uses-open { overflow: hidden; }
   color: var(--text-muted);
   text-align: center;
 }
-.rare-uses-sheet .rare-use-examples { margin-top: 2px; width: 100%; }
-.rare-uses-sheet .rare-use-examples > summary {
+/* Compact row: centred text, symmetric 44px gutters, the examples button
+   pinned to the right and vertically centred on the text. */
+.rare-uses-sheet .rare-row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  font: 600 13px/1.3 var(--font-reading);
+  gap: 2px;
+  width: 100%;
+  min-height: 28px;
+  padding-inline: 44px;
 }
+/* Greedy: meaning and context share one line when they fit; the context
+   drops beneath as a whole when they don't. */
+.rare-uses-sheet .rare-row-text {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  column-gap: 8px;
+  row-gap: 2px;
+  min-width: 0;
+}
+.rare-uses-sheet .rare-row-text > * {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+.rare-uses-sheet .rare-ex-btn {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 36px;
+  height: 32px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-muted);
+  font: 650 12.5px/1 var(--font-data);
+  cursor: pointer;
+}
+.rare-uses-sheet .rare-ex-btn:hover,
+.rare-uses-sheet .rare-ex-btn[aria-expanded="true"] {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+.rare-uses-sheet .rare-ex-panel {
+  width: 100%;
+  margin-top: 6px;
+  padding-inline: 12px;
+}
+.rare-uses-sheet .rare-ex-panel[hidden] { display: none; }
+.rare-uses-sheet .rare-ex-panel .rarer-uses-pager { margin-top: 6px; }
+.rare-uses-sheet .phrase-summary-item .phrase-badge-row { justify-content: center; }
 .rare-uses-sheet .phrase-example { text-align: center; }
 .rare-uses-sheet .phrase-example.phrase-example--compact {
   border-left-width: 1px;
@@ -22200,13 +22216,6 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     line-height: 1.3;
 }
 
-/* Meanings overview: a card family row's heading, its sub-senses beneath. */
-.knowledge-overview-family {
-    margin: 8px 0 4px;
-    color: var(--text-primary);
-    font: 650 14px/1.3 var(--font-reading);
-}
-.knowledge-overview-rows.is-family { padding-left: 12px; }
 /* Phone: the sense note sits by its ⓘ button rather than at the bottom. */
 .sense-note-overlay.is-anchored {
     align-items: flex-start !important;
@@ -24236,7 +24245,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 #knowledgeOverviewModal .knowledge-overview-row {
     cursor: pointer;
-    min-height: 48px;
+    align-items: center;
+    min-height: 58px;
     gap: 12px;
 }
 #knowledgeOverviewModal .knowledge-overview-row.is-selected {
@@ -24245,6 +24255,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 #knowledgeOverviewModal .knowledge-overview-focus {
     cursor: inherit;
+    align-self: stretch;
+    padding-block: 8px;
     min-width: 0;
     flex: 1;
 }
@@ -24389,3 +24401,16 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     pointer-events: none;
     opacity: 0.9;
 }
+
+/* Learning choices share one surface; activities sit on the sheet itself. */
+.learning-context-vocabulary { background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 14px; gap: 0; padding: 0 12px; }
+.learning-context-vocabulary .learning-context-choice { border: 0; border-radius: 0; background: transparent; padding: 12px 0; }
+.learning-context-vocabulary .learning-context-choice + .learning-context-choice { border-top: 1px solid var(--border-color); }
+.learning-context-activities { margin-top: 24px; }
+.learning-context-activities[hidden] { display: none; }
+.learning-context-activities h3 { font: 700 18px/1.3 var(--font-emphasis); color: var(--text-primary); margin: 0; }
+.learning-context-activities > p { color: var(--text-muted); font-size: 13px; margin: 4px 0 12px; }
+.learning-context-activities .learning-context-choice { background: transparent; border: 0; border-radius: 0; padding: 12px 0; min-height: 64px; }
+.learning-context-activities .learning-context-choice small { text-transform: none; letter-spacing: normal; font-size: 12px; font-weight: 400; }
+.learning-context-activities .learning-context-choice strong { font-size: 16px; }
+.learning-context-vocabulary .learning-context-choice:hover, .learning-context-activities .learning-context-choice:hover { background: color-mix(in srgb, var(--text-primary) 4%, transparent); }
