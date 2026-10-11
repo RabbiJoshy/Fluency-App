@@ -600,26 +600,27 @@
    lower-opacity wash. This keeps each part of speech distinct without the
    neon-on-charcoal treatment of the dark cards. */
 :root[data-theme="light"] .pos-noun { background: rgba(74, 158, 255, 0.12); border-color: rgba(23, 100, 168, 0.36); color: #1764a8 !important; }
-:root[data-theme="light"] .pos-propn { background: rgba(14, 165, 233, 0.12); border-color: rgba(8, 116, 154, 0.36); color: #08749a !important; }
-:root[data-theme="light"] .pos-verb { background: rgba(0, 212, 170, 0.11); border-color: rgba(8, 127, 104, 0.36); color: #087f68 !important; }
-:root[data-theme="light"] .pos-aux { background: rgba(45, 212, 191, 0.11); border-color: rgba(13, 117, 109, 0.36); color: #0d756d !important; }
-:root[data-theme="light"] .pos-adj { background: rgba(245, 166, 35, 0.13); border-color: rgba(138, 90, 0, 0.36); color: #8a5a00 !important; }
-:root[data-theme="light"] .pos-adv { background: rgba(168, 85, 247, 0.11); border-color: rgba(116, 52, 179, 0.34); color: #7434b3 !important; }
-:root[data-theme="light"] .pos-prep { background: rgba(236, 72, 153, 0.1); border-color: rgba(168, 45, 107, 0.34); color: #a82d6b !important; }
-:root[data-theme="light"] .pos-conj { background: rgba(20, 184, 166, 0.1); border-color: rgba(8, 123, 112, 0.34); color: #087b70 !important; }
-:root[data-theme="light"] .pos-cconj { background: rgba(34, 197, 94, 0.1); border-color: rgba(21, 125, 56, 0.34); color: #157d38 !important; }
-:root[data-theme="light"] .pos-sconj { background: rgba(132, 204, 22, 0.12); border-color: rgba(82, 124, 13, 0.35); color: #527c0d !important; }
-:root[data-theme="light"] .pos-pron { background: rgba(99, 102, 241, 0.1); border-color: rgba(76, 79, 178, 0.34); color: #4c4fb2 !important; }
-:root[data-theme="light"] .pos-det { background: rgba(244, 63, 94, 0.1); border-color: rgba(183, 47, 75, 0.34); color: #b72f4b !important; }
-:root[data-theme="light"] .pos-int { background: rgba(234, 179, 8, 0.13); border-color: rgba(125, 97, 0, 0.36); color: #7d6100 !important; }
-:root[data-theme="light"] .pos-num { background: rgba(6, 182, 212, 0.11); border-color: rgba(8, 123, 145, 0.35); color: #087b91 !important; }
-:root[data-theme="light"] .pos-mwe { background: rgba(251, 191, 36, 0.13); border-color: rgba(140, 98, 0, 0.36); color: #8c6200 !important; }
-:root[data-theme="light"] .pos-clitic { background: rgba(249, 115, 22, 0.11); border-color: rgba(169, 73, 11, 0.35); color: #a9490b !important; }
-:root[data-theme="light"] .pos-part { background: rgba(192, 132, 252, 0.11); border-color: rgba(120, 62, 177, 0.34); color: #783eb1 !important; }
-:root[data-theme="light"] .pos-prefix { background: rgba(163, 230, 53, 0.12); border-color: rgba(82, 122, 15, 0.35); color: #527a0f !important; }
-:root[data-theme="light"] .pos-suffix { background: rgba(74, 222, 128, 0.1); border-color: rgba(22, 116, 67, 0.34); color: #167443 !important; }
-:root[data-theme="light"] .pos-contraction { background: rgba(248, 113, 113, 0.1); border-color: rgba(170, 61, 61, 0.34); color: #aa3d3d !important; }
-:root[data-theme="light"] .pos-other { background: rgba(148, 163, 184, 0.13); border-color: rgba(82, 97, 112, 0.34); color: #526170 !important; }
+:root[data-theme="light"] .pos-propn { background: rgba(34, 211, 238, 0.12); border-color: rgba(14, 116, 144, 0.36); color: #0e7490 !important; }
+:root[data-theme="light"] .pos-verb { background: rgba(0, 212, 170, 0.12); border-color: rgba(8, 127, 104, 0.36); color: #087f68 !important; }
+:root[data-theme="light"] .pos-aux { background: rgba(0, 212, 170, 0.12); border-color: rgba(8, 127, 104, 0.36); color: #087f68 !important; }
+:root[data-theme="light"] .pos-adj { background: rgba(245, 166, 35, 0.12); border-color: rgba(138, 90, 0, 0.36); color: #8a5a00 !important; }
+:root[data-theme="light"] .pos-adv { background: rgba(192, 90, 245, 0.12); border-color: rgba(133, 39, 184, 0.36); color: #8527b8 !important; }
+:root[data-theme="light"] .pos-prep { background: rgba(236, 72, 153, 0.12); border-color: rgba(168, 45, 107, 0.36); color: #a82d6b !important; }
+:root[data-theme="light"] .pos-conj { background: rgba(34, 197, 94, 0.12); border-color: rgba(21, 125, 56, 0.36); color: #157d38 !important; }
+:root[data-theme="light"] .pos-cconj { background: rgba(34, 197, 94, 0.12); border-color: rgba(21, 125, 56, 0.36); color: #157d38 !important; }
+:root[data-theme="light"] .pos-sconj { background: rgba(34, 197, 94, 0.12); border-color: rgba(21, 125, 56, 0.36); color: #157d38 !important; }
+:root[data-theme="light"] .pos-pron { background: rgba(108, 92, 246, 0.12); border-color: rgba(74, 63, 196, 0.36); color: #4a3fc4 !important; }
+:root[data-theme="light"] .pos-det { background: rgba(239, 68, 68, 0.12); border-color: rgba(179, 38, 38, 0.36); color: #b32626 !important; }
+:root[data-theme="light"] .pos-int { background: rgba(250, 224, 50, 0.12); border-color: rgba(118, 96, 0, 0.36); color: #766000 !important; }
+:root[data-theme="light"] .pos-num { background: rgba(163, 230, 53, 0.12); border-color: rgba(82, 124, 13, 0.36); color: #527c0d !important; }
+:root[data-theme="light"] .pos-mwe { background: rgba(245, 166, 35, 0.12); border-color: rgba(138, 90, 0, 0.36); color: #8a5a00 !important; }
+:root[data-theme="light"] .pos-clitic { background: rgba(205, 130, 60, 0.12); border-color: rgba(143, 90, 30, 0.36); color: #8f5a1e !important; }
+:root[data-theme="light"] .pos-part { background: rgba(217, 70, 239, 0.12); border-color: rgba(154, 45, 176, 0.36); color: #9a2db0 !important; }
+:root[data-theme="light"] .pos-prefix { background: rgba(125, 211, 252, 0.12); border-color: rgba(11, 106, 150, 0.36); color: #0b6a96 !important; }
+:root[data-theme="light"] .pos-suffix { background: rgba(252, 165, 165, 0.12); border-color: rgba(163, 58, 58, 0.36); color: #a33a3a !important; }
+:root[data-theme="light"] .pos-contraction { background: rgba(251, 120, 50, 0.12); border-color: rgba(176, 74, 8, 0.36); color: #b04a08 !important; }
+:root[data-theme="light"] .pos-abbr { background: rgba(176, 148, 120, 0.12); border-color: rgba(122, 92, 58, 0.36); color: #7a5c3a !important; }
+:root[data-theme="light"] .pos-other { background: rgba(148, 163, 184, 0.12); border-color: rgba(82, 97, 112, 0.36); color: #526170 !important; }
 
 :root[data-theme="light"] .pos-info-overlay {
     background: rgba(23, 31, 39, 0.38);
@@ -917,6 +918,14 @@
     color: var(--text-primary);
     border-color: color-mix(in srgb, var(--accent-primary) 70%, #17212b);
     text-shadow: none;
+}
+
+:root[data-theme="light"] .deck-progress-segment[data-pair-pos]::after {
+    border-color: rgba(23, 33, 43, 0.22);
+}
+
+:root[data-theme="light"] .deck-progress-segment.is-pair-active[data-pair-pos]::after {
+    border-color: color-mix(in srgb, var(--accent-primary) 70%, transparent);
 }
 
 :root[data-theme="light"] .deck-progress-segment.is-current.is-phrases {

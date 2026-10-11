@@ -1909,7 +1909,7 @@
             height: 100%;
             /* Left inset is half the thumb, so it never clips at card 1. The
                right side only needs to keep the thumb off the gear icon. */
-            margin: 0 6px 0 16px;
+            margin: 0 6px 0 19px;
         }
         .cbs-track,
         .cbs-fill {
@@ -1934,12 +1934,12 @@
             left: calc(var(--cbs-t, 0) * 100%);
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 32px;
-            height: 32px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             background: #ffffff;
             color: #1a1f26;
-            font: 750 13px/1 var(--font-reading);
+            font: 750 15px/1 var(--font-reading);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2650,9 +2650,26 @@
             flex-shrink: 0;
             color: rgb(var(--sense-match-rgb));
             font-family: var(--font-emphasis);
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0.04em;
+            font-size: 17px;
+            font-weight: 750;
+            letter-spacing: 0;
+        }
+        .pos-collapsible .pos-lemma-from {
+            flex-shrink: 0;
+            margin-left: -2px;
+            color: var(--text-muted);
+            font-family: var(--font-reading);
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .pos-collapsible .pos-lemma-se {
+            flex-shrink: 0;
+            margin-left: -2px;
+            padding-left: 6px;
+            border-left: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+            color: color-mix(in srgb, rgb(var(--sense-match-rgb)) 58%, var(--text-primary));
+            font-size: 13px;
+            font-weight: 700;
         }
         /* The group summary is the primary scan layer. It contains as many
            complete sense glosses as actually fit; JS measures the row and
@@ -2694,7 +2711,7 @@
             flex-shrink: 0;
             color: color-mix(in srgb, rgb(var(--sense-match-rgb)) 58%, var(--text-primary));
             font-family: var(--font-emphasis);
-            font-size: 15px;
+            font-size: 17px;
             font-weight: 700;
         }
         /* How many further meanings sit behind this pill. Makes the expand
@@ -2907,7 +2924,8 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            font-style: italic;
+            font-style: normal;
+            color: var(--text-muted);
         }
         body.is-spotify-playing .sentence .example-word-highlight,
         body.is-speaking-active .sentence .example-word-highlight {
@@ -4384,29 +4402,34 @@
             display: inline-block;
         }
 
-        /* Part of speech colours. Data aliases (for example ADJ/ADJECTIVE)
-           intentionally share a semantic theme; genuinely different POS and
-           special row types each receive their own accent. */
+        /* Part of speech colours. Each shipped POS has its own distinct hue:
+           noun blue, propn cyan, verb teal (aux shares it), adj amber,
+           adv violet, pron indigo, prep magenta, intj yellow, det red,
+           contraction orange, num lime, conj/cconj/sconj green, abbr tan.
+           Data aliases (ADJ/ADJECTIVE, conj/cconj/sconj) share a theme;
+           mwe/phrase borrows adj amber. Keep style.css, light-theme.css,
+           getPosAccentRgb and card-replica.js POS_ACCENT_RGB in step. */
         .pos-noun { background: rgba(74, 158, 255, 0.45); border-color: rgba(74, 158, 255, 0.6); color: #8fc2ff; }
-        .pos-propn { background: rgba(14, 165, 233, 0.45); border-color: rgba(14, 165, 233, 0.6); color: #7dd3fc; }
+        .pos-propn { background: rgba(34, 211, 238, 0.45); border-color: rgba(34, 211, 238, 0.6); color: #67e8f9; }
         .pos-verb { background: rgba(0, 212, 170, 0.45); border-color: rgba(0, 212, 170, 0.6); color: #66e4cc; }
-        .pos-aux { background: rgba(45, 212, 191, 0.45); border-color: rgba(45, 212, 191, 0.6); color: #87eee0; }
+        .pos-aux { background: rgba(0, 212, 170, 0.45); border-color: rgba(0, 212, 170, 0.6); color: #66e4cc; }
         .pos-adj { background: rgba(245, 166, 35, 0.45); border-color: rgba(245, 166, 35, 0.6); color: #f9c96e; }
-        .pos-adv { background: rgba(168, 85, 247, 0.45); border-color: rgba(168, 85, 247, 0.6); color: #c9a0f9; }
+        .pos-adv { background: rgba(192, 90, 245, 0.45); border-color: rgba(192, 90, 245, 0.6); color: #dba6fa; }
         .pos-prep { background: rgba(236, 72, 153, 0.45); border-color: rgba(236, 72, 153, 0.6); color: #f291be; }
-        .pos-conj { background: rgba(20, 184, 166, 0.45); border-color: rgba(20, 184, 166, 0.6); color: #6dd4c8; }
+        .pos-conj { background: rgba(34, 197, 94, 0.45); border-color: rgba(34, 197, 94, 0.6); color: #86efac; }
         .pos-cconj { background: rgba(34, 197, 94, 0.45); border-color: rgba(34, 197, 94, 0.6); color: #86efac; }
-        .pos-sconj { background: rgba(132, 204, 22, 0.45); border-color: rgba(132, 204, 22, 0.6); color: #bef264; }
-        .pos-pron { background: rgba(99, 102, 241, 0.45); border-color: rgba(99, 102, 241, 0.6); color: #9b9df6; }
-        .pos-det { background: rgba(244, 63, 94, 0.45); border-color: rgba(244, 63, 94, 0.6); color: #f88da5; }
-        .pos-int { background: rgba(234, 179, 8, 0.45); border-color: rgba(234, 179, 8, 0.6); color: #f2d166; }
-        .pos-num { background: rgba(6, 182, 212, 0.45); border-color: rgba(6, 182, 212, 0.6); color: #66d4e6; }
-        .pos-mwe { background: rgba(251, 191, 36, 0.45); border-color: rgba(251, 191, 36, 0.6); color: #fcd57a; }
-        .pos-clitic { background: rgba(249, 115, 22, 0.45); border-color: rgba(249, 115, 22, 0.6); color: #fdba74; }
-        .pos-part { background: rgba(192, 132, 252, 0.45); border-color: rgba(192, 132, 252, 0.6); color: #d8b4fe; }
-        .pos-prefix { background: rgba(163, 230, 53, 0.45); border-color: rgba(163, 230, 53, 0.6); color: #d9f99d; }
-        .pos-suffix { background: rgba(74, 222, 128, 0.45); border-color: rgba(74, 222, 128, 0.6); color: #a7f3d0; }
-        .pos-contraction { background: rgba(248, 113, 113, 0.45); border-color: rgba(248, 113, 113, 0.6); color: #fecaca; }
+        .pos-sconj { background: rgba(34, 197, 94, 0.45); border-color: rgba(34, 197, 94, 0.6); color: #86efac; }
+        .pos-pron { background: rgba(108, 92, 246, 0.45); border-color: rgba(108, 92, 246, 0.6); color: #aaa0fb; }
+        .pos-det { background: rgba(239, 68, 68, 0.45); border-color: rgba(239, 68, 68, 0.6); color: #fca5a5; }
+        .pos-int { background: rgba(250, 224, 50, 0.45); border-color: rgba(250, 224, 50, 0.6); color: #fde96b; }
+        .pos-num { background: rgba(163, 230, 53, 0.45); border-color: rgba(163, 230, 53, 0.6); color: #bef264; }
+        .pos-mwe { background: rgba(245, 166, 35, 0.45); border-color: rgba(245, 166, 35, 0.6); color: #f9c96e; }
+        .pos-clitic { background: rgba(205, 130, 60, 0.45); border-color: rgba(205, 130, 60, 0.6); color: #e5b98a; }
+        .pos-part { background: rgba(217, 70, 239, 0.45); border-color: rgba(217, 70, 239, 0.6); color: #f0abfc; }
+        .pos-prefix { background: rgba(125, 211, 252, 0.45); border-color: rgba(125, 211, 252, 0.6); color: #bae6fd; }
+        .pos-suffix { background: rgba(252, 165, 165, 0.45); border-color: rgba(252, 165, 165, 0.6); color: #fecaca; }
+        .pos-contraction { background: rgba(251, 120, 50, 0.45); border-color: rgba(251, 120, 50, 0.6); color: #fdba8c; }
+        .pos-abbr { background: rgba(176, 148, 120, 0.45); border-color: rgba(176, 148, 120, 0.6); color: #d6c3ad; }
         .pos-other { background: rgba(148, 163, 184, 0.45); border-color: rgba(148, 163, 184, 0.6); color: #cbd5e1; }
 
 
@@ -4486,25 +4509,26 @@
            border picks up the colour; background/text stay dark so
            the reading is comfortable. */
         .pos-info-popover.pos-noun { border-color: rgba(74, 158, 255, 0.7); }
-        .pos-info-popover.pos-propn { border-color: rgba(14, 165, 233, 0.7); }
+        .pos-info-popover.pos-propn { border-color: rgba(34, 211, 238, 0.7); }
         .pos-info-popover.pos-verb { border-color: rgba(0, 212, 170, 0.7); }
-        .pos-info-popover.pos-aux { border-color: rgba(45, 212, 191, 0.7); }
-        .pos-info-popover.pos-adj  { border-color: rgba(245, 166, 35, 0.7); }
-        .pos-info-popover.pos-adv  { border-color: rgba(168, 85, 247, 0.7); }
+        .pos-info-popover.pos-aux { border-color: rgba(0, 212, 170, 0.7); }
+        .pos-info-popover.pos-adj { border-color: rgba(245, 166, 35, 0.7); }
+        .pos-info-popover.pos-adv { border-color: rgba(192, 90, 245, 0.7); }
         .pos-info-popover.pos-prep { border-color: rgba(236, 72, 153, 0.7); }
-        .pos-info-popover.pos-conj { border-color: rgba(20, 184, 166, 0.7); }
+        .pos-info-popover.pos-conj { border-color: rgba(34, 197, 94, 0.7); }
         .pos-info-popover.pos-cconj { border-color: rgba(34, 197, 94, 0.7); }
-        .pos-info-popover.pos-sconj { border-color: rgba(132, 204, 22, 0.7); }
-        .pos-info-popover.pos-pron { border-color: rgba(99, 102, 241, 0.7); }
-        .pos-info-popover.pos-det  { border-color: rgba(244, 63, 94, 0.7); }
-        .pos-info-popover.pos-int  { border-color: rgba(234, 179, 8, 0.7); }
-        .pos-info-popover.pos-num  { border-color: rgba(6, 182, 212, 0.7); }
-        .pos-info-popover.pos-mwe  { border-color: rgba(251, 191, 36, 0.7); }
-        .pos-info-popover.pos-clitic { border-color: rgba(249, 115, 22, 0.7); }
-        .pos-info-popover.pos-part { border-color: rgba(192, 132, 252, 0.7); }
-        .pos-info-popover.pos-prefix { border-color: rgba(163, 230, 53, 0.7); }
-        .pos-info-popover.pos-suffix { border-color: rgba(74, 222, 128, 0.7); }
-        .pos-info-popover.pos-contraction { border-color: rgba(248, 113, 113, 0.7); }
+        .pos-info-popover.pos-sconj { border-color: rgba(34, 197, 94, 0.7); }
+        .pos-info-popover.pos-pron { border-color: rgba(108, 92, 246, 0.7); }
+        .pos-info-popover.pos-det { border-color: rgba(239, 68, 68, 0.7); }
+        .pos-info-popover.pos-int { border-color: rgba(250, 224, 50, 0.7); }
+        .pos-info-popover.pos-num { border-color: rgba(163, 230, 53, 0.7); }
+        .pos-info-popover.pos-mwe { border-color: rgba(245, 166, 35, 0.7); }
+        .pos-info-popover.pos-clitic { border-color: rgba(205, 130, 60, 0.7); }
+        .pos-info-popover.pos-part { border-color: rgba(217, 70, 239, 0.7); }
+        .pos-info-popover.pos-prefix { border-color: rgba(125, 211, 252, 0.7); }
+        .pos-info-popover.pos-suffix { border-color: rgba(252, 165, 165, 0.7); }
+        .pos-info-popover.pos-contraction { border-color: rgba(251, 120, 50, 0.7); }
+        .pos-info-popover.pos-abbr { border-color: rgba(176, 148, 120, 0.7); }
         .pos-info-popover.pos-other { border-color: rgba(148, 163, 184, 0.7); }
 
         .pos-info-name {
@@ -4790,6 +4814,54 @@
             text-shadow: 0 0 12px rgba(var(--accent-primary-rgb), 0.5);
             animation: deck-scrubber-lens 300ms cubic-bezier(0.2, 0.85, 0.25, 1.25);
             margin-inline: 8px;
+        }
+        /* Companion cards of a split word (7A, 7B) sit as one joined pair:
+           touching halves, a thin divider, a bracket round the unit. The
+           active pair's bracket takes the accent; the current half is already
+           the stronger one (.is-current), so the sibling reads as the other
+           half of an A|B toggle. */
+        .deck-progress-segment[data-pair-pos][data-distance] { z-index: 1; }
+        .deck-progress-segment.is-current[data-pair-pos] { z-index: 2; }
+        .deck-progress-segment[data-pair-pos="start"][data-distance] {
+            margin-inline-end: -1px;
+            border-start-end-radius: 3px;
+            border-end-end-radius: 3px;
+        }
+        .deck-progress-segment[data-pair-pos="end"][data-distance] {
+            margin-inline-start: -1px;
+            border-start-start-radius: 3px;
+            border-end-start-radius: 3px;
+        }
+        .deck-progress-segment[data-pair-pos="middle"][data-distance] {
+            margin-inline: -1px;
+            border-radius: 3px;
+        }
+        .deck-progress-segment[data-pair-pos]::after {
+            content: '';
+            position: absolute;
+            inset: -4px 0;
+            border: 1px solid rgba(170, 174, 184, 0.34);
+            border-inline-width: 0;
+            pointer-events: none;
+            transition: border-color 260ms ease;
+        }
+        .deck-progress-segment[data-pair-pos="start"]::after {
+            inset-inline-start: -4px;
+            border-inline-start-width: 1px;
+            border-start-start-radius: 14px;
+            border-end-start-radius: 14px;
+        }
+        .deck-progress-segment[data-pair-pos="end"]::after {
+            inset-inline-end: -4px;
+            border-inline-end-width: 1px;
+            border-start-end-radius: 14px;
+            border-end-end-radius: 14px;
+        }
+        .deck-progress-segment.is-pair-active[data-pair-pos]::after {
+            border-color: color-mix(in srgb, var(--accent-primary) 70%, transparent);
+        }
+        .deck-progress-segment.is-pair-active:not(.is-current) {
+            --scrubber-marker-text: rgba(255, 255, 255, 0.78);
         }
         @keyframes deck-scrubber-lens {
             0% { transform: scale(0.82); }
@@ -23557,7 +23629,7 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-label { color: var(--warning); }
 
 /* Seek-bar thumb: a circle for "25", a pill for "25A" so the letter fits. */
-.cbs-thumb { width: auto; min-width: 32px; padding: 0 6px; border-radius: 999px; box-sizing: border-box; }
+.cbs-thumb { width: auto; min-width: 38px; padding: 0 6px; border-radius: 999px; box-sizing: border-box; }
 
 /* Split words: "Card 1 of 2" sits on its own pill instead of a "Flashcard 1 of 2"
    line floating between the two, so the count can only mean that card. The
@@ -24204,3 +24276,51 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .level-estimate-modal-callout { align-items: center; text-align: center; }
 .level-estimate-modal-body { text-align: center; }
 .level-estimate-modal-btn { align-self: center; text-align: center; }
+
+/* ===== Focus meanings: cards with meanings marked for practice ============
+   Front: a count-only badge (never says which meanings) and a faint amber
+   top edge on the card. Back: the marked meaning rows carry a small target
+   marker. Set by flashcards.js updateCard from getPracticeMeaningInfo(). */
+.front-practice-badge {
+    align-self: center;
+    margin: -4px auto 0;
+    padding: 3px 10px 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--accent-amber, #e0a63a);
+    background: color-mix(in srgb, var(--accent-amber, #e0a63a) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-amber, #e0a63a) 38%, transparent);
+    pointer-events: none;
+}
+.front-practice-badge[hidden] { display: none; }
+.front-practice-badge::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    box-shadow: inset 0 0 0 1.5px transparent, 0 0 0 0 currentColor;
+    background: radial-gradient(circle, currentColor 0 1.5px, transparent 2px);
+    vertical-align: -0.5px;
+}
+.card.has-practice-meanings:not(.flipped) {
+    box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--accent-amber, #e0a63a) 55%, transparent);
+}
+.meaning-row.is-practice-meaning { position: relative; }
+.meaning-row.is-practice-meaning::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 7px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent-amber, #e0a63a);
+    background: radial-gradient(circle, var(--accent-amber, #e0a63a) 0 1.5px, transparent 2px);
+    pointer-events: none;
+    opacity: 0.9;
+}

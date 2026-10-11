@@ -6363,6 +6363,20 @@ function renderCardWikipediaBadge(card) {
         frontPOSEl.style.display = 'none';
     }
 
+    // Cards with meanings marked for practice: a count only, never which.
+    {
+        const practiceInfo = typeof window.getPracticeMeaningInfo === 'function'
+            ? window.getPracticeMeaningInfo(card) : null;
+        const hasPractice = Boolean(practiceInfo && practiceInfo.practising > 0 && !flippedFrontMeanings);
+        const practiceBadgeEl = document.getElementById('frontPracticeBadge');
+        document.getElementById('flashcard')?.classList.toggle('has-practice-meanings', hasPractice);
+        if (practiceBadgeEl) {
+            practiceBadgeEl.hidden = !hasPractice;
+            practiceBadgeEl.textContent = hasPractice
+                ? `Practising ${practiceInfo.practising} of ${practiceInfo.total} meanings` : '';
+        }
+    }
+
     // Display lemma on front if different from target word and the POS map
     // is not already naming that lemma.
     const frontLemmaEl = document.getElementById('frontLemma');
@@ -6489,23 +6503,10 @@ function renderCardWikipediaBadge(card) {
 
     let backWordText = backWord;
     let wordDisplay = backWordText;
-    let backHeadwordPairClass = '';
     let backCitationHTML = '';
     let backDerivationHTML = '';
-    // Surface stays the large answer; the lemma is a compact chip on its
-    // right — the same pairing as the front, without wrapping the title in
-    // a second filled capsule. Skip transparent plurals/elisions.
-    const showBackLemmaPair = Boolean(citationForm)
-        && foldSurfaceForm(citationForm) !== foldSurfaceForm(backWordText)
-        && !isTrivialCanonicalRelation(backWordText, citationForm);
-    if (showBackLemmaPair) {
-        backHeadwordPairClass = ' back-surface-pair';
-        const lemmaAlreadySe = /se$/i.test(String(citationForm).replace(/[\s-]+/g, ''));
-        const seMark = formNote && !lemmaAlreadySe
-            ? `<span class="back-lemma-se" title="${escapeCardText(formNote)}">se</span>`
-            : '';
-        wordDisplay = `<span class="back-surface-name">${escapeCardText(backWordText)}</span><span class="back-lemma-chip">${escapeCardText(citationForm)}${seMark}</span>`;
-    }
+    // The back title is the surface word alone. The lemma (and the `se`
+    // marker) now live in each sense-row head: "verb from estar".
     const derivation = card.derivationRelation;
     if (derivation?.base_lemma) {
         const relationLabel = derivation.relation === 'diminutive'
@@ -6651,7 +6652,7 @@ function renderCardWikipediaBadge(card) {
         <div class="back-header">
             <div class="flip-back-area" id="flipBackArea">
                 <div class="back-headword-row">
-                    <span class="back-headword${backHeadwordPairClass}" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: ${showBackLemmaPair ? 1 : 1.1};">${wordDisplay}</span>${backSplitBadgeHTML}${renderCardWikipediaBadge(card)}
+                    <span class="back-headword" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: 1.1;">${wordDisplay}</span>${backSplitBadgeHTML}${renderCardWikipediaBadge(card)}
                     ${backPosLegendHTML}
                 </div>
                 ${notableSurfaceRelation
@@ -6741,6 +6742,20 @@ function renderCardWikipediaBadge(card) {
                 : null;
             card._expandedPos = new Set(cur ? [cur] : []);
         }
+        // Groups holding a meaning marked for practice start open (once per
+        // set of marked meanings, so the learner can still fold them).
+        const practiceIndices = typeof window.getPracticeMeaningIndices === 'function'
+            ? window.getPracticeMeaningIndices(card) : new Set();
+        const practiceSignature = [...practiceIndices].sort((a, b) => a - b).join(',');
+        if (practiceIndices.size && card._practiceExpandedFor !== practiceSignature) {
+            practiceIndices.forEach(index => {
+                const pm = card.meanings?.[index];
+                if (!pm || pm.exampleOnly) return;
+                const ppos = pm.pos === 'SENSE_CYCLE' ? (pm.cycle_pos || 'X') : pm.pos;
+                card._expandedPos.add(ppos + '\u0000' + (pm.headword || ''));
+            });
+        }
+        card._practiceExpandedFor = practiceSignature;
         const activeLemmaPosKey = lemmaPosGroupKeyForMeaning(currentMeaning);
         const activeGroupSense = senseSummaryText(displayLearnerGloss(card, currentMeaning, true));
 
@@ -6767,8 +6782,20 @@ function renderCardWikipediaBadge(card) {
                 // The surface form already identifies an identical lemma in
                 // the centred card header; repeat the lemma only when it adds
                 // information (for example, an inflected surface).
-                const hw = g.headword
-                    ? `<span class="pos-pill-lemma">${escapeCardText(g.headword)}</span>` : '';
+                // `se` (formerly on the back-title chip) joins the lemma it
+                // belongs to — "from irse", not "from ir se". Verbs only,
+                // unless the lemma already ends in se.
+                const baseLemma = String(g.headword || '').trim();
+                const showSe = Boolean(formNote) && isVerbPos(pos)
+                    && Boolean(baseLemma) && !/se$/i.test(baseLemma.replace(/[\s-]+/g, ''));
+                const rowLemma = showSe ? `${baseLemma}se` : baseLemma;
+                const lemmaDiffers = Boolean(rowLemma)
+                    && foldSurfaceForm(rowLemma) !== foldSurfaceForm(backWordText)
+                    && !isTrivialCanonicalRelation(backWordText, rowLemma);
+                const hw = lemmaDiffers
+                    ? `<span class="pos-lemma-from">from</span><span class="pos-pill-lemma"${showSe ? ` title="${escapeCardText(formNote)}"` : ''}>${escapeCardText(rowLemma)}</span>`
+                    : '';
+                const headAria = `${posDisplayName(pos).toLowerCase()}${lemmaDiffers ? ' from ' + rowLemma : ''}`;
                 const visibleSenses = rows.summarySenses || [];
                 const summarySense = key === activeLemmaPosKey && visibleSenses.includes(activeGroupSense)
                     ? activeGroupSense
@@ -6818,9 +6845,9 @@ function renderCardWikipediaBadge(card) {
                 <section class="meaning-pos-section pos-collapsible${open ? ' is-open' : ''}"
                          data-pos="${pos}" data-group-key="${escapeCardText(key.replace(/\u0000/g, '~~'))}" style="${accent}">
                     <button type="button" class="pos-section-head"
-                            aria-label="${escapeCardText(`${pos} ${g.headword}: ${summarySenses.join('; ')}`)}"
+                            aria-label="${escapeCardText(`${headAria}: ${summarySenses.join('; ')}`)}"
                             onclick="selectLemmaPosGroup(event, '${key.replace(/\u0000/g, '~~')}', ${g.firstMeaningIndex})">
-                        <span class="pos-section-label">${escapeCardText(posDisplayName(pos))}</span>
+                        <span class="pos-section-label">${escapeCardText(posDisplayName(pos).toLowerCase())}</span>
                         ${hw}
                         ${collapsedSummary}
                         <span class="pos-section-chevron">${open ? '\u25BE' : '\u25B8'}</span>
@@ -7100,7 +7127,8 @@ function renderCardWikipediaBadge(card) {
             if (m.exampleOnly) return;
             if (singletonFoldFollowers.has(idx)) return;
             const isSelected = idx === currentMeaningIndex;
-            const rowStateClasses = isSelected ? ' is-current-sense' : '';
+            const rowStateClasses = (isSelected ? ' is-current-sense' : '')
+                + ((m.allSenses || [m]).some(sense => practiceIndices.has(card.meanings.indexOf(sense))) ? ' is-practice-meaning' : '');
             // One flat fill for every row, matching the POS header above them
             // and the active row below. Activeness is the outline, not a
             // different shade.
@@ -7406,7 +7434,8 @@ function renderCardWikipediaBadge(card) {
                     const anyMemberSelected = orderedMembers.some(mi => mi === currentMeaningIndex);
                     const groupIsCurrent = groupSelected || anyMemberSelected;
                     recordSectionMeanings(target, orderedMembers.map(i => card.meanings[i]));
-                    const groupStateClasses = groupIsCurrent ? ' is-current-sense' : '';
+                    const groupStateClasses = (groupIsCurrent ? ' is-current-sense' : '')
+                        + (orderedMembers.some(mi => practiceIndices.has(mi)) ? ' is-practice-meaning' : '');
                     const cardBg = 'rgba(var(--sense-match-rgb), 0.08)';
                     // The outer row is the complete-family selection marker.
                     // Do not repeat it on the shared cell: an inner marker is
@@ -7796,6 +7825,7 @@ function renderCardWikipediaBadge(card) {
                         ? foldInfo.allIndices.every(index => card.meanings[index]?.isKnownSense)
                         : Boolean(m.isKnownSense);
                     const knownRowClass = rowKnown ? ' meaning-row-known' : '';
+                    const practiceRowClass = (isFoldedLeader ? foldInfo.allIndices : [idx]).some(index => practiceIndices.has(index)) ? ' is-practice-meaning' : '';
                     const pctTail = rowKnown
                         ? knownSenseTagHTML('position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
                         : useProminenceLabels
@@ -7805,7 +7835,7 @@ function renderCardWikipediaBadge(card) {
                             : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''));
                     const sidePad = rowKnown ? '52px' : (useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px'));
                     target.push(`
-                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}${knownRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
+                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}${knownRowClass}${practiceRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
                         <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${sidePad} 2px ${sidePad};">
                             <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${visibleMeaningHTML}</span>
@@ -8553,7 +8583,28 @@ function renderCardWikipediaBadge(card) {
                 return segment;
             }));
         }
+        // Companion cards of one split word are drawn as a joined pair (A|B).
+        // Each card has its own segment, so pairing is just a data attribute.
+        const pairOf = i => {
+            const sp = flashcards[i]?.splitInfo;
+            if (!sp || !(sp.total > 1) || i >= segmentCount) return null;
+            const start = i - (sp.index - 1);
+            if (start < 0 || start + sp.total > segmentCount) return null;
+            const first = flashcards[start]?.splitInfo;
+            if (!first || first.index !== 1) return null;
+            return { start, pos: sp.index === 1 ? 'start' : (sp.index === sp.total ? 'end' : 'middle') };
+        };
+        const currentPair = pairOf(scrubIndex);
         Array.from(progressSegments.children).forEach((segment, i) => {
+            const pair = pairOf(i);
+            if (pair) {
+                segment.dataset.pair = String(pair.start);
+                segment.dataset.pairPos = pair.pos;
+            } else {
+                delete segment.dataset.pair;
+                delete segment.dataset.pairPos;
+            }
+            segment.classList.toggle('is-pair-active', Boolean(pair && currentPair && pair.start === currentPair.start));
             const distance = Math.abs(i - scrubIndex);
             const result = stats.cardStats[i] || null;
             const hasCorrect = Number(result?.correct || 0) > 0;
@@ -9246,6 +9297,10 @@ function flipDirection() {
 function getPosColorClass(pos) {
     if (!pos) return 'pos-other';
     const posLower = String(pos).trim().toLowerCase().replace(/[\s-]+/g, '_');
+    // Portuguese deck labels and abbreviations first, before the substring checks.
+    if (posLower === 'name') return 'pos-propn';
+    if (posLower === 'article') return 'pos-det';
+    if (posLower === 'abbreviation' || posLower === 'abbr') return 'pos-abbr';
     if (posLower === 'propn' || posLower === 'proper_noun' || posLower === 'propernoun') return 'pos-propn';
     if (posLower.includes('noun') || posLower === 'n' || posLower === 'nn') return 'pos-noun';
     if (posLower === 'aux' || posLower === 'auxiliary') return 'pos-aux';
@@ -9272,25 +9327,26 @@ function getPosColorClass(pos) {
 function getPosAccentRgb(pos) {
     const accents = {
         'pos-noun': '74, 158, 255',
-        'pos-propn': '14, 165, 233',
+        'pos-propn': '34, 211, 238',
         'pos-verb': '0, 212, 170',
-        'pos-aux': '45, 212, 191',
+        'pos-aux': '0, 212, 170',
         'pos-adj': '245, 166, 35',
-        'pos-adv': '168, 85, 247',
+        'pos-adv': '192, 90, 245',
         'pos-prep': '236, 72, 153',
-        'pos-conj': '20, 184, 166',
+        'pos-conj': '34, 197, 94',
         'pos-cconj': '34, 197, 94',
-        'pos-sconj': '132, 204, 22',
-        'pos-pron': '99, 102, 241',
-        'pos-det': '244, 63, 94',
-        'pos-int': '234, 179, 8',
-        'pos-num': '6, 182, 212',
-        'pos-mwe': '251, 191, 36',
-        'pos-clitic': '249, 115, 22',
-        'pos-part': '192, 132, 252',
-        'pos-prefix': '163, 230, 53',
-        'pos-suffix': '74, 222, 128',
-        'pos-contraction': '248, 113, 113',
+        'pos-sconj': '34, 197, 94',
+        'pos-pron': '108, 92, 246',
+        'pos-det': '239, 68, 68',
+        'pos-int': '250, 224, 50',
+        'pos-num': '163, 230, 53',
+        'pos-mwe': '245, 166, 35',
+        'pos-clitic': '205, 130, 60',
+        'pos-part': '217, 70, 239',
+        'pos-prefix': '125, 211, 252',
+        'pos-suffix': '252, 165, 165',
+        'pos-contraction': '251, 120, 50',
+        'pos-abbr': '176, 148, 120',
         'pos-other': '148, 163, 184'
     };
     return accents[getPosColorClass(pos)] || 'var(--accent-primary-rgb)';

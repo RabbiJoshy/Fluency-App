@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T09:40:38+01:00",
+      "date": "2026-10-11 09:40 BST",
+      "agent": "Claude",
+      "summary": "Card back: clearer sense rows, distinct POS colours, Focus meanings and practice cards, paired companion segments",
+      "detail": [
+        "Sense row reads 'verb from estar' with POS and lemma at the same size; the lemma chip at the top of the back is removed (reflexive shows as 'from irse').",
+        "Every shipped part of speech has its own colour; Portuguese name/article/abbreviation no longer fall to grey.",
+        "Example source line is upright and muted; the example slider thumb is 20% larger.",
+        "'Review meaning(s)' is now 'Focus meanings' with a target icon.",
+        "Cards with meanings marked for practice show 'Practising N of M meanings' on the front; those rows open and carry a target dot on the back.",
+        "Companion (A/B) cards are joined as one bracketed pair in the deck scrubber."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T23:05:47+01:00",
       "date": "2026-10-10 23:05 BST",
       "agent": "Codex",
@@ -361,18 +376,6 @@
         "New Memory tip tile beside Rarer uses; opens a small sheet naming the shift, e.g. -mente becomes -ly, -ción becomes -tion.",
         "Spanish, Portuguese and French endings; a tip appears only when the card's own English gloss really wears the English ending, so false friends such as actualmente and chica get none.",
         "Shown on any matching card, not only with Smart Skip off."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T23:20:00+01:00",
-      "date": "2026-10-09 23:20 BST",
-      "agent": "Codex",
-      "summary": "Noun forms merge only when every dictionary sense matches and both words have one noun entry",
-      "detail": [
-        "Keep ser/seres and poder/poderes separate: noun and verb entries remain distinct even when their headword spelling matches.",
-        "Compare complete original SpanishDict and Wiktionary menus before filtering or display inflection; reject missing evidence and number-specific senses.",
-        "Invalidate earlier noun approvals and preserve the same decision in Smart Skip, deck grouping and early-loading indexes. Existing releases need refreshed source metadata to approve noun pairs."
       ],
       "commit": "pending"
     }

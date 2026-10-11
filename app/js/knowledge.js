@@ -735,19 +735,47 @@ function knowledgeSectionLabel(item) {
     return 'Meanings';
 }
 
-function renderKnowledgeOverviewButton(card) {
-    if (!currentUser || currentUser.isGuest) return '';
+const FOCUS_MEANINGS_ICON = `<svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <circle cx="12" cy="12" r="5"></circle>
+            <circle cx="12" cy="12" r="1"></circle>
+        </svg>`;
+
+// Meanings the learner can mark for practice, counted exactly as the
+// "Focus meanings" button counts them. Empty for guests and single-meaning cards.
+function getKnowledgeFocusItems(card) {
+    if (!currentUser || currentUser.isGuest) return [];
     const items = getCardKnowledgeItems(card);
-    // Show only meanings in the trigger count, matching the modal.
     const meaningItems = items.filter(item => knowledgeSectionLabel(item) === 'Meanings');
     const displayItems = meaningItems.length > 0 ? meaningItems : items;
-    if (displayItems.length <= 1) return '';
-    return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Review meaning(s)" aria-haspopup="dialog" onclick="showKnowledgeOverview(event)">
-        <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
-            <path d="M21 3v5h-5"></path>
-        </svg>
-        <span class="ref-tile-label">Review meaning(s)</span>
+    return displayItems.length <= 1 ? [] : displayItems;
+}
+
+// { indices: Set<meaningIndex>, practising, total } for meanings marked for
+// practice (needsReview, reason incorrect). Never names which meanings in text.
+function getPracticeMeaningInfo(card) {
+    const focusItems = getKnowledgeFocusItems(card);
+    const indices = new Set();
+    let practising = 0;
+    focusItems.forEach(item => {
+        const state = getKnowledgeItemState(card, item);
+        if (state.needsReview && state.reviewReason === 'incorrect') {
+            practising += 1;
+            if (Number.isInteger(item.meaningIndex)) indices.add(item.meaningIndex);
+        }
+    });
+    return { indices, practising, total: focusItems.length };
+}
+
+function getPracticeMeaningIndices(card) {
+    return getPracticeMeaningInfo(card).indices;
+}
+
+function renderKnowledgeOverviewButton(card) {
+    if (!getKnowledgeFocusItems(card).length) return '';
+    return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Focus meanings" aria-haspopup="dialog" onclick="showKnowledgeOverview(event)">
+        ${FOCUS_MEANINGS_ICON}
+        <span class="ref-tile-label">Focus meanings</span>
     </button>`;
 }
 
@@ -765,7 +793,7 @@ function ensureKnowledgeOverviewModal() {
     modal.innerHTML = `
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
-                <h2 id="knowledgeOverviewTitle" class="visually-hidden">Review meaning(s)</h2>
+                <h2 id="knowledgeOverviewTitle" class="visually-hidden">Focus meanings</h2>
                 <p id="knowledgeOverviewHint" class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>
                 <button type="button" class="knowledge-overview-close" aria-label="Close" onclick="closeKnowledgeOverview(event)">×</button>
             </header>
@@ -1037,6 +1065,8 @@ window.beginKnowledgeCardVisit = beginKnowledgeCardVisit;
 window.saveWholeCardKnowledgeAnswer = saveWholeCardKnowledgeAnswer;
 window.renderKnowledgeControl = renderKnowledgeControl;
 window.renderKnowledgeOverviewButton = renderKnowledgeOverviewButton;
+window.getPracticeMeaningIndices = getPracticeMeaningIndices;
+window.getPracticeMeaningInfo = getPracticeMeaningInfo;
 window.markCurrentKnowledge = markCurrentKnowledge;
 window.showKnowledgeOverview = showKnowledgeOverview;
 window.findRareSenseKnowledgeItem = findRareSenseKnowledgeItem;

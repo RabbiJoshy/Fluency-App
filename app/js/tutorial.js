@@ -233,7 +233,7 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         demo: 'openReview',
                         anchor: '.knowledge-overview-trigger',
-                        title: 'Review meanings',
+                        title: 'Focus meanings',
                         text: 'Know the word, but not every meaning? Opens a list of its meanings; tick the ones you want future review sessions to focus on and the rest are left alone.',
                     },
                     {
@@ -1164,7 +1164,7 @@ function reviewSheetHTML(card) {
             </span>
             <input type="checkbox" class="knowledge-overview-checkbox" aria-label="Review ${esc(meaning.translation)} later">
         </label>`).join('');
-    return `<div class="knowledge-overview-modal tutorial-demo-sheet" role="dialog" aria-label="Review meanings">
+    return `<div class="knowledge-overview-modal tutorial-demo-sheet" role="dialog" aria-label="Focus meanings">
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
                 <p class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>

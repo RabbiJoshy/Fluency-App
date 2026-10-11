@@ -339,7 +339,9 @@ const POS_CLASS = {
     VERB: 'pos-verb', NOUN: 'pos-noun', ADJ: 'pos-adj', ADV: 'pos-adv',
     PREP: 'pos-prep', ADP: 'pos-prep', CONJ: 'pos-conj', CCONJ: 'pos-cconj',
     SCONJ: 'pos-sconj', PRON: 'pos-pron', DET: 'pos-det', INT: 'pos-int',
-    INTJ: 'pos-int', NUM: 'pos-num', MWE: 'pos-mwe',
+    INTJ: 'pos-int', NUM: 'pos-num', MWE: 'pos-mwe', PROPN: 'pos-propn',
+    AUX: 'pos-aux', NAME: 'pos-propn', ARTICLE: 'pos-det', ABBREVIATION: 'pos-abbr',
+    ABBR: 'pos-abbr', CONTRACTION: 'pos-contraction',
 };
 
 // Every colour on the back of a card comes from one custom property. The live
@@ -350,20 +352,27 @@ const POS_CLASS = {
 // resolved to nothing and the card came out grey. These are the live values.
 const POS_ACCENT_RGB = {
     'pos-noun': '74, 158, 255',
-    'pos-propn': '14, 165, 233',
+    'pos-propn': '34, 211, 238',
     'pos-verb': '0, 212, 170',
-    'pos-aux': '45, 212, 191',
+    'pos-aux': '0, 212, 170',
     'pos-adj': '245, 166, 35',
-    'pos-adv': '168, 85, 247',
+    'pos-adv': '192, 90, 245',
     'pos-prep': '236, 72, 153',
-    'pos-conj': '20, 184, 166',
+    'pos-conj': '34, 197, 94',
     'pos-cconj': '34, 197, 94',
-    'pos-sconj': '132, 204, 22',
-    'pos-pron': '99, 102, 241',
-    'pos-det': '244, 63, 94',
-    'pos-int': '234, 179, 8',
-    'pos-num': '6, 182, 212',
-    'pos-mwe': '251, 191, 36',
+    'pos-sconj': '34, 197, 94',
+    'pos-pron': '108, 92, 246',
+    'pos-det': '239, 68, 68',
+    'pos-int': '250, 224, 50',
+    'pos-num': '163, 230, 53',
+    'pos-mwe': '245, 166, 35',
+    'pos-clitic': '205, 130, 60',
+    'pos-part': '217, 70, 239',
+    'pos-prefix': '125, 211, 252',
+    'pos-suffix': '252, 165, 165',
+    'pos-contraction': '251, 120, 50',
+    'pos-abbr': '176, 148, 120',
+    'pos-other': '148, 163, 184',
 };
 
 export const posAccentRgb = pos => POS_ACCENT_RGB[posClass(pos)] || '148, 163, 184';
@@ -373,7 +382,9 @@ const POS_NAME = {
     PREP: 'preposition', ADP: 'preposition', CONJ: 'conjunction',
     CCONJ: 'conjunction', SCONJ: 'conjunction', PRON: 'pronoun',
     DET: 'determiner', INT: 'interjection', INTJ: 'interjection',
-    NUM: 'number', MWE: 'expression',
+    NUM: 'number', MWE: 'expression', PROPN: 'proper noun', AUX: 'auxiliary verb',
+    NAME: 'proper noun', ARTICLE: 'article', ABBREVIATION: 'abbreviation',
+    ABBR: 'abbreviation', CONTRACTION: 'contraction',
 };
 
 const posClass = (pos) => POS_CLASS[String(pos || '').toUpperCase()] || '';
@@ -560,12 +571,14 @@ function renderMeaningRows(card, selectedIdx) {
     const more = hiddenCount > 0
         ? `<span class="pos-pill-more" aria-label="${hiddenCount} more senses">+${hiddenCount}</span>`
         : '';
+    const replicaLemma = card.lemma && card.lemma.toLowerCase() !== String(card.word || '').toLowerCase()
+        ? `<span class="pos-lemma-from">from</span><span class="pos-pill-lemma">${esc(card.lemma)}</span>` : '';
     return `
         <section class="meaning-pos-section pos-collapsible is-open" data-pos="${esc(card.pos)}"
                  style="--sense-match-rgb: ${posAccentRgb(card.pos)};">
-            <button type="button" class="pos-section-head" aria-expanded="true" aria-label="${esc(`${posName(card.pos)}: ${ordered.map(({ meaning }) => replicaSenseSummary(meaning.translation)).join('; ')}`)}">
-                <span class="pos-section-label">${esc(posName(card.pos))}</span>
-                <span class="pos-pill-lemma">${esc(card.lemma || card.word)}</span>
+            <button type="button" class="pos-section-head" aria-expanded="true" aria-label="${esc(`${posName(card.pos).toLowerCase()}${replicaLemma ? ' from ' + card.lemma : ''}: ${ordered.map(({ meaning }) => replicaSenseSummary(meaning.translation)).join('; ')}`)}">
+                <span class="pos-section-label">${esc(posName(card.pos).toLowerCase())}</span>
+                ${replicaLemma}
                 <span class="pos-section-summary">${summaries}${more}</span>
                 <span class="pos-section-chevron">▾</span>
             </button>
@@ -691,12 +704,13 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                         </div>
                         <span class="ref-tile-label">Rare uses</span>
                     </button>` : ''}
-                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Review meaning(s)" aria-haspopup="dialog">
+                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Focus meanings" aria-haspopup="dialog">
                         <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
-                            <path d="M21 3v5h-5"></path>
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <circle cx="12" cy="12" r="1"></circle>
                         </svg>
-                        <span class="ref-tile-label">Review meaning(s)</span>
+                        <span class="ref-tile-label">Focus meanings</span>
                     </button>
                     <button type="button" class="ref-tile ref-lookup-btn" aria-label="Look up" title="Look up">
                         <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
