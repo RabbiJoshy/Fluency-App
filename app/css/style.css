@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=1fcca724");
+@import url("./appearance.css?v=cbf78ad8");
 
 
         * {
@@ -2874,11 +2874,8 @@
             font-style: normal;
             color: var(--text-muted);
         }
-        body.is-spotify-playing .sentence .example-word-highlight,
-        body.is-speaking-active .sentence .example-word-highlight {
-            animation: word-audio-pulse 1.25s ease-in-out infinite alternate;
-            box-shadow: 0 0 12px rgba(var(--sense-match-rgb, 99, 102, 241), 0.6), inset 0 -3px 0 rgb(var(--sense-match-rgb, 99, 102, 241));
-        }
+        /* No pulse or boxed glow while audio plays: the word keeps its
+           underline and the soft permanent glow set on the highlight. */
 
         .pos-collapsible .pos-pill-unassigned {
             flex-shrink: 0;
@@ -5089,13 +5086,13 @@
             color: color-mix(in srgb, rgb(var(--sense-match-rgb)) 55%, white);
             background: transparent;
             box-shadow: inset 0 -3px 0 rgb(var(--sense-match-rgb));
+            /* A soft glow in the word's own colour, always on; a text shadow
+               so it follows the letters rather than drawing a box. */
+            text-shadow: 0 0 10px rgba(var(--sense-match-rgb), 0.35);
         }
 
         .example-word-highlight.example-pooled-form {
-            background: rgba(var(--sense-match-rgb), 0.2);
-            box-shadow:
-                inset 0 -2px 0 rgba(var(--sense-match-rgb), 0.88),
-                0 0 0 1px rgba(var(--sense-match-rgb), 0.16);
+            box-shadow: inset 0 -2px 0 rgba(var(--sense-match-rgb), 0.88);
         }
 
         /* A form this app worked out rather than one the data recorded: the
@@ -5103,7 +5100,6 @@
            most resembles the card's surface. Dashed, because a solid rule
            here would claim evidence the pipeline never produced. */
         .example-word-highlight.example-inferred-form {
-            background: rgba(var(--sense-match-rgb), 0.12);
             box-shadow: none;
             border-bottom: 2px dashed rgba(var(--sense-match-rgb), 0.85);
         }
@@ -20210,11 +20206,11 @@ body.rare-uses-open { overflow: hidden; }
   padding: 0 20px 20px;
 }
 #rareUsesModal[data-dock] .rare-uses-body { padding: 0 16px 16px; }
-.rare-uses-sheet .rare-uses-body { gap: 10px; text-align: center; }
-.rare-uses-sheet .other-uses-pos { align-items: stretch; gap: 8px; text-align: center; }
-.rare-uses-sheet .other-uses-pos-heading {
+.uses-list { gap: 10px; text-align: center; }
+.uses-list .other-uses-pos { align-items: stretch; gap: 8px; text-align: center; }
+.uses-list .other-uses-pos-heading {
   margin: 6px 0 0;
-  padding-bottom: 5px;
+  padding: 0;
   border-bottom: 1px solid rgba(var(--sense-match-rgb), 0.35);
   color: rgb(var(--sense-match-rgb));
   font: 750 17px/1.2 var(--font-emphasis);
@@ -20222,10 +20218,10 @@ body.rare-uses-open { overflow: hidden; }
   text-transform: none;
   text-align: center;
 }
-.rare-uses-sheet .other-uses-gloss-group { padding-bottom: 0; }
-.rare-uses-sheet .other-uses-leaf,
-.rare-uses-sheet .rarer-uses-cluster,
-.rare-uses-sheet .phrase-summary-item {
+.uses-list .other-uses-gloss-group { padding-bottom: 0; }
+.uses-list .other-uses-leaf,
+.uses-list .rarer-uses-cluster,
+.uses-list .phrase-summary-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20239,26 +20235,26 @@ body.rare-uses-open { overflow: hidden; }
   text-align: center;
 }
 /* Inside a cluster the container is the card; its rows are plain. */
-.rare-uses-sheet .rarer-uses-cluster { gap: 4px; }
-.rare-uses-sheet .rarer-uses-cluster .other-uses-leaf {
+.uses-list .rarer-uses-cluster { gap: 4px; }
+.uses-list .rarer-uses-cluster .other-uses-leaf {
   padding: 6px 0;
   background: none;
   border-radius: 0;
 }
-.rare-uses-sheet .rarer-uses-cluster .other-uses-leaf + .other-uses-leaf {
+.uses-list .rarer-uses-cluster .other-uses-leaf + .other-uses-leaf {
   border-top: 1px solid color-mix(in srgb, var(--text-primary) 8%, transparent);
 }
-.rare-uses-sheet .phrase-summary-item { gap: 4px; }
-.rare-uses-sheet .other-uses-gloss,
-.rare-uses-sheet .phrase-expression {
+.uses-list .phrase-summary-item { gap: 4px; }
+.uses-list .other-uses-gloss,
+.uses-list .phrase-expression {
   font: 650 18px/1.25 var(--font-reading);
   color: var(--text-primary);
 }
-.rare-uses-sheet .phrase-translation {
+.uses-list .phrase-translation {
   font: 500 15px/1.3 var(--font-reading);
   color: var(--text-secondary);
 }
-.rare-uses-sheet .phrase-context {
+.uses-list .phrase-context {
   font: 500 14px/1.3 var(--font-reading);
   font-style: normal;
   color: var(--text-muted);
@@ -20266,7 +20262,7 @@ body.rare-uses-open { overflow: hidden; }
 }
 /* Compact row: centred text, symmetric 44px gutters, the examples button
    pinned to the right and vertically centred on the text. */
-.rare-uses-sheet .rare-row {
+.uses-list .rare-row {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -20279,7 +20275,7 @@ body.rare-uses-open { overflow: hidden; }
 }
 /* Greedy: meaning and context share one line when they fit; the context
    drops beneath as a whole when they don't. */
-.rare-uses-sheet .rare-row-text {
+.uses-list .rare-row-text {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -20288,11 +20284,11 @@ body.rare-uses-open { overflow: hidden; }
   row-gap: 2px;
   min-width: 0;
 }
-.rare-uses-sheet .rare-row-text > * {
+.uses-list .rare-row-text > * {
   flex: 0 1 auto;
   max-width: 100%;
 }
-.rare-uses-sheet .rare-ex-btn {
+.uses-list .rare-ex-btn {
   position: absolute;
   top: 50%;
   right: 6px;
@@ -20310,28 +20306,73 @@ body.rare-uses-open { overflow: hidden; }
   font: 650 12.5px/1 var(--font-data);
   cursor: pointer;
 }
-.rare-uses-sheet .rare-ex-btn:hover,
-.rare-uses-sheet .rare-ex-btn[aria-expanded="true"] {
+.uses-list .rare-ex-btn:hover,
+.uses-list .rare-ex-btn[aria-expanded="true"] {
   color: var(--text-primary);
   background: color-mix(in srgb, var(--text-primary) 8%, transparent);
 }
-.rare-uses-sheet .rare-ex-panel {
+.uses-list .rare-ex-panel {
   width: 100%;
   margin-top: 6px;
   padding-inline: 12px;
 }
-.rare-uses-sheet .rare-ex-panel[hidden] { display: none; }
-.rare-uses-sheet .rare-ex-panel .rarer-uses-pager { margin-top: 6px; }
-.rare-uses-sheet .phrase-summary-item .phrase-badge-row { justify-content: center; }
-.rare-uses-sheet .phrase-example { text-align: center; }
-.rare-uses-sheet .phrase-example.phrase-example--compact {
+.uses-list .rare-ex-panel[hidden] { display: none; }
+.uses-list .rare-ex-panel .rarer-uses-pager { margin-top: 6px; }
+.uses-list .phrase-summary-item .phrase-badge-row { justify-content: center; }
+.uses-list .phrase-example { text-align: center; }
+.uses-list .phrase-example.phrase-example--compact {
   border-left-width: 1px;
   border-left-color: rgba(var(--sense-match-rgb), 0.45);
   border-color: rgba(var(--sense-match-rgb), 0.3);
 }
-.rare-uses-sheet .rarer-uses-pager,
-.rare-uses-sheet .rarer-uses-pager button { font-family: var(--font-reading); }
-.rare-uses-sheet .rarer-uses-pager { justify-content: center; }
+.uses-list .rarer-uses-pager,
+.uses-list .rarer-uses-pager button { font-family: var(--font-reading); }
+.uses-list .rarer-uses-pager { justify-content: center; }
+/* Collapsible POS / Expressions / Attached-forms sections. */
+.uses-list .uses-section-toggle {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 0 0 5px;
+  border: none;
+  border-bottom: 1px solid rgba(var(--sense-match-rgb), 0.35);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.uses-list .uses-section-count {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 14px;
+}
+.uses-list .uses-section-chevron {
+  align-self: center;
+  color: var(--text-muted);
+  transition: transform 150ms ease;
+}
+.uses-list .uses-section-toggle[aria-expanded="true"] .uses-section-chevron { transform: rotate(180deg); }
+.uses-list .uses-section-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.uses-list .uses-section-rows[hidden] { display: none; }
+.other-uses-header .uses-title {
+  margin: 0;
+  font: 600 18px/1.2 var(--font-emphasis);
+  text-align: center;
+}
+.other-uses-header .rare-uses-word {
+  font-family: var(--font-reading);
+  font-weight: 750;
+}
+
 
 
 /* Setup header: flag and language name sit side by side on one line — the
@@ -24354,52 +24395,28 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .level-estimate-modal-body { text-align: center; }
 .level-estimate-modal-btn { align-self: center; text-align: center; }
 
-/* ===== Focus meanings: cards with meanings marked for practice ============
-   Front: a count-only badge (never says which meanings) and a faint amber
-   top edge on the card. Back: the marked meaning rows carry a small target
-   marker. Set by flashcards.js updateCard from getPracticeMeaningInfo(). */
+/* ===== Mark a meaning: cards with meanings brought back for review =======
+   Front: a quiet count line. Back: practice rows lead in full colour, rows the
+   learner already knows sink to the bottom, greyed. */
 .front-practice-badge {
     align-self: center;
     margin: -4px auto 0;
-    padding: 3px 10px 3px 8px;
-    border-radius: 999px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.02em;
-    color: var(--accent-amber, #e0a63a);
-    background: color-mix(in srgb, var(--accent-amber, #e0a63a) 14%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent-amber, #e0a63a) 38%, transparent);
+    color: var(--text-muted);
     pointer-events: none;
 }
 .front-practice-badge[hidden] { display: none; }
-.front-practice-badge::before {
-    content: "";
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    margin-right: 6px;
-    border-radius: 50%;
-    border: 1.5px solid currentColor;
-    box-shadow: inset 0 0 0 1.5px transparent, 0 0 0 0 currentColor;
-    background: radial-gradient(circle, currentColor 0 1.5px, transparent 2px);
-    vertical-align: -0.5px;
-}
-.card.has-practice-meanings:not(.flipped) {
-    box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--accent-amber, #e0a63a) 55%, transparent);
-}
-.meaning-row.is-practice-meaning { position: relative; }
-.meaning-row.is-practice-meaning::before {
-    content: "";
-    position: absolute;
-    left: 7px;
-    top: 7px;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    border: 1.5px solid var(--accent-amber, #e0a63a);
-    background: radial-gradient(circle, var(--accent-amber, #e0a63a) 0 1.5px, transparent 2px);
-    pointer-events: none;
-    opacity: 0.9;
+.meaning-row.is-known-meaning { opacity: 0.45; filter: saturate(0.2); }
+.ref-tile-fraction {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 39px;
+    font: 700 24px/1 var(--font-emphasis, inherit);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
 }
 
 /* Learning choices share one surface; activities sit on the sheet itself. */

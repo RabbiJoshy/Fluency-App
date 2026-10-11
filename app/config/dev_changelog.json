@@ -2,6 +2,43 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-11T12:12:26+01:00",
+      "date": "2026-10-11 12:12 BST",
+      "agent": "Codex",
+      "summary": "SEAM: keep recovered Speech dictionary examples scoped to Speech",
+      "detail": [
+        "Artist and live-lyrics cards cannot inherit Speech dictionary alternatives or Speech form-group lists.",
+        "Current Spanish/Portuguese Speech examples still match the studied form. Staging only; no production promotion."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T12:11:40+01:00",
+      "date": "2026-10-11 12:11 BST",
+      "agent": "Claude",
+      "summary": "Mark a meaning: known/total badge, reviewed meanings first and known ones faded; collapsible uses lists; calmer example word",
+      "detail": [
+        "Less common uses: part-of-speech sections start collapsed when there are several; examples open by default when they all fit.",
+        "Expressions page uses the same layout and collapsible sections as Less common uses.",
+        "'Focus meanings' is now 'Mark a meaning', showing known/total meaning rows (? until any are marked) instead of a target icon.",
+        "Cards with meanings brought back: those meanings sit at the top in colour; known meanings fade to the bottom. Amber target styling removed; front shows 'N meanings to review'.",
+        "Example sentence word: no pulse or boxed glow during audio and no tinted box; underline plus a soft permanent glow."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-11T12:06:17+01:00",
+      "date": "2026-10-11 12:06 BST",
+      "agent": "Codex",
+      "summary": "SEAM: dictionary examples now match the studied form; retained alternatives recovered",
+      "detail": [
+        "Non-merged cards choose a dictionary sentence containing the exact surface, including attached pronouns and accents. Other-form dictionary sentences stay out of the study and Less common uses sequences.",
+        "Merged dictionary examples use an allowed group form; the header, sentence highlight and In this example cue agree.",
+        "Recovered existing frozen dictionary alternatives for Spanish r4 and current Portuguese r3 without editing releases, senses, merging rules or saved progress. No production promotion."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-11T11:29:24+01:00",
       "date": "2026-10-11 11:29 BST",
       "agent": "Claude",
@@ -342,41 +379,6 @@
         "Select meanings using one checkbox per row; retain selections automatically without Save or Next Card buttons.",
         "Center the dialog on mobile and desktop, with scrolling for long lists and keyboard focus handling.",
         "Preserve individually marked meanings when answering the whole card; keep the existing review-card presentation."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T12:13:00+01:00",
-      "date": "2026-10-10 12:13 BST",
-      "agent": "Claude",
-      "summary": "Merge Lemmas works again in Czech and Finnish before a set opens",
-      "detail": [
-        "Czech, Finnish and French Merge Lemmas lists rebuilt for their live decks. The app had ignored them (Czech's was built for v21; Finnish's and French's predated the plural/singular rule), so nothing merged until a set's senses loaded.",
-        "Verb forms merge from the start again: 4,179 Czech cards (into být, jít…) and 862 Finnish (into olla, saada…). Nouns stay separate until the plural/singular check runs for those languages (roadmap CONVOY).",
-        "French has nothing to merge yet: its 200-card deck carries no headwords.",
-        "A new app test stops any deploy whose live deck lacks a list built for it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T11:35:14+01:00",
-      "date": "2026-10-10 11:35 BST",
-      "agent": "Codex",
-      "summary": "Activate verified noun merges in Spanish and Portuguese Speech decks",
-      "detail": [
-        "Publish matching v23 metadata for 314 Spanish and 335 Portuguese noun groups, shared by Smart Skip, the level estimator and deck grouping.",
-        "Recover SpanishDict evidence for 773 candidate spellings and Wiktionary entry tags from the saved dump; keep changed, incomplete or ambiguous menus separate.",
-        "Preserve card IDs, saved progress, definitions and examples; verify all 20,000 full and early-loading decisions agree."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-10T00:35:00+01:00",
-      "date": "2026-10-10 00:35 BST",
-      "agent": "Claude",
-      "summary": "Memory tip sheet text gets side padding",
-      "detail": [
-        "Text no longer touches the sheet's left edge."
       ],
       "commit": "pending"
     }

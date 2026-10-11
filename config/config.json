@@ -88,7 +88,8 @@
       "speechLang": "es-ES",
       "cognatesPath": "cognates/es/cognates-headway-r4.json",
       "mergeExceptionsPath": "data/merge-exceptions/es-headway-r4-seam-v1.json",
-      "coveragePath": null
+      "coveragePath": null,
+      "dictionaryExamplesPath": "data/dictionary-examples/es-es-speech-v24-headway-r4-10000x30-slim-v1.json"
     },
     "swedish": {
       "name": "Swedish",
@@ -500,14 +501,14 @@
     },
     "portuguese": {
       "name": "Portuguese",
-      "indexPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/vocabulary.index.json",
-      "estimationPoolPath": "data/estimation-pools/portuguese-headway-r2-seam-v1.json",
-      "frequencyPath": "data/speech-frequency/pt-headway-r2.json",
-      "examplesPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/study-structure.json",
-      "releaseManifestPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/manifest.json",
-      "releaseCompositionPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/composition.json",
-      "conjugationsPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/conjugations.json",
+      "indexPath": "releases/pt/speech/pt-speech-v24-headway-r3-10000x30-slim/app/vocabulary.index.json",
+      "estimationPoolPath": "data/estimation-pools/portuguese-headway-r3-seam-v1.json",
+      "frequencyPath": "data/speech-frequency/pt-headway-r3.json",
+      "examplesPath": "releases/pt/speech/pt-speech-v24-headway-r3-10000x30-slim/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/pt/speech/pt-speech-v24-headway-r3-10000x30-slim/app/study-structure.json",
+      "releaseManifestPath": "releases/pt/speech/pt-speech-v24-headway-r3-10000x30-slim/manifest.json",
+      "releaseCompositionPath": "releases/pt/speech/pt-speech-v24-headway-r3-10000x30-slim/composition.json",
+      "conjugationsPath": "releases/pt/speech/pt-speech-v24-headway-r3-10000x30-slim/app/conjugations.json",
       "exampleTargetField": "example_portuguese",
       "exampleEnglishField": "example_english",
       "hasData": true,
@@ -571,9 +572,10 @@
       "conjugationDrill": "pt",
       "shortCode": "PT",
       "speechLang": "pt-PT",
-      "cognatesPath": "cognates/pt/cognates-headway-r2.json",
-      "mergeExceptionsPath": "data/merge-exceptions/pt-headway-r2-seam-v1.json",
-      "coveragePath": null
+      "cognatesPath": "cognates/pt/cognates-headway-r3.json",
+      "mergeExceptionsPath": "data/merge-exceptions/pt-headway-r3-seam-v1.json",
+      "coveragePath": null,
+      "dictionaryExamplesPath": "data/dictionary-examples/pt-pt-speech-v24-headway-r3-10000x30-slim-v1.json"
     },
     "portuguese_brazilian": {
       "name": "Brazilian Portuguese",

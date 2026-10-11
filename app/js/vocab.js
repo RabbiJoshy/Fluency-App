@@ -1,12 +1,12 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=1fcca724';
-import { readJsonWithTimeout } from './read-request.js?v=1fcca724';
-import { validateVocabularyIndex } from './data-contracts.js?v=1fcca724';
-import { formatRoute } from './routes.js?v=1fcca724';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=1fcca724';
-import { releaseUrl } from './release-host.js?v=1fcca724';
+import './state.js?v=cbf78ad8';
+import { readJsonWithTimeout } from './read-request.js?v=cbf78ad8';
+import { validateVocabularyIndex } from './data-contracts.js?v=cbf78ad8';
+import { formatRoute } from './routes.js?v=cbf78ad8';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=cbf78ad8';
+import { releaseUrl } from './release-host.js?v=cbf78ad8';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1428,7 +1428,9 @@ function buildCardFormModel(item, meanings = [], options = {}) {
         citationForm,
         productionAnswer,
         isPronominal,
-        mergedLemma
+        mergedLemma,
+        dictionaryExamples: item?._dictionaryExamples || null,
+        mergedSurfaces: item?._dictionaryMergedSurfaces || null
     };
 }
 
@@ -2036,6 +2038,7 @@ async function loadEstimationVocabulary(langConfig, onProgress = () => {}) {
             }
             validateVocabularyIndex(data, { source: path });
             await stampContractions(data, langConfig, { detached: true });
+            await stampDictionaryExamples(data, langConfig);
             return data;
         })().catch(error => {
             estimationVocabularyCache.delete(path);
@@ -2124,7 +2127,39 @@ async function fetchActiveVocabularyData(langConfig) {
         await globalThis.loadCoverage?.(langConfig);
     }
     await stampContractions(vocabulary, langConfig);
+    await stampDictionaryExamples(vocabulary,
+        activeArtist || window.playlistLiveActive?.() ? null : langConfig);
     return vocabulary;
+}
+
+// Supplemental dictionary illustrations are release-bound display evidence,
+// never corpus observations or additions to the dictionary sense menu.
+const dictionaryExampleLoads = new Map();
+async function stampDictionaryExamples(vocabulary, langConfig) {
+    const path = langConfig?.dictionaryExamplesPath;
+    let payload = null;
+    if (path) {
+        if (!dictionaryExampleLoads.has(path)) {
+            dictionaryExampleLoads.set(path, readJsonWithTimeout(path).then(({response, data}) => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return data;
+            }).catch(error => {
+                dictionaryExampleLoads.delete(path);
+                console.warn('Dictionary example alternatives unavailable:', error);
+                return null;
+            }));
+        }
+        payload = await dictionaryExampleLoads.get(path);
+    }
+    const sameRelease = payload?.release_id && String(langConfig?.indexPath || '')
+        .includes(`/${payload.release_id}/`);
+    for (const item of vocabulary || []) {
+        delete item._dictionaryExamples;
+        delete item._dictionaryMergedSurfaces;
+        if (!sameRelease) continue;
+        item._dictionaryExamples = payload.examples || {};
+        item._dictionaryMergedSurfaces = payload.groups?.[lemmaGroupKey(item)] || null;
+    }
 }
 
 // A small per-language file carries what Merge Lemmas cannot read from a card

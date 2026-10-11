@@ -13,7 +13,7 @@
 
 import {
     REPLICA_CARDS, esc, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=1fcca724';
+} from './card-replica.js?v=cbf78ad8';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -233,8 +233,8 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         demo: 'openReview',
                         anchor: '.knowledge-overview-trigger',
-                        title: 'Focus meanings',
-                        text: 'Know the word, but not every meaning? Opens a list of its meanings; tick the ones you want future review sessions to focus on and the rest are left alone.',
+                        title: 'Mark a meaning',
+                        text: 'Know the word, but not every meaning? The badge shows how many meanings you know. Tap it to tick the ones you want future reviews to bring back; those move to the top of the card’s back, and the meanings you know fade to the bottom.',
                     },
                     {
                         side: 'right',
@@ -1140,7 +1140,9 @@ function rareSheetHTML(card) {
                 ${item.context ? `<div class="phrase-context">${esc(item.context)}</div>` : ''}</div>${example}</div>${panel}
             </div></div>`;
         }).join('');
-        return `<section class="other-uses-pos" style="--sense-match-rgb: ${accent};"><h4 class="other-uses-pos-heading">${esc(posName(pos).replace(/^./, c => c.toUpperCase()))}</h4>${leaves}</section>`;
+        const label = esc(posName(pos).replace(/^./, c => c.toUpperCase()));
+        const collapsed = order.length > 1;
+        return `<section class="other-uses-pos uses-section${collapsed ? ' is-collapsed' : ''}" style="--sense-match-rgb: ${accent};"><h4 class="other-uses-pos-heading"><button type="button" class="uses-section-toggle" aria-expanded="${!collapsed}" aria-controls="tutUses-${pos}" data-section-key="tut-${pos}" onclick="toggleUsesSection(event, this)"><span class="uses-section-label">${label}</span><span class="uses-section-count">· ${byPos.get(pos).length}</span><svg class="uses-section-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></h4><div class="uses-section-rows" id="tutUses-${pos}"${collapsed ? ' hidden' : ''}>${leaves}</div></section>`;
     }).join('');
     return `<div class="knowledge-overview-modal rare-uses-modal tutorial-demo-sheet" role="dialog" aria-label="Rare uses">
         <div class="knowledge-overview-sheet rare-uses-sheet">
@@ -1150,7 +1152,7 @@ function rareSheetHTML(card) {
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close rare uses" data-demo-close>×</button>
             </header>
-            <div class="phrase-summary-scroll rare-uses-body">${body}</div>
+            <div class="phrase-summary-scroll rare-uses-body uses-list">${body}</div>
         </div>
     </div>`;
 }
@@ -1165,7 +1167,7 @@ function reviewSheetHTML(card) {
             </span>
             <input type="checkbox" class="knowledge-overview-checkbox" aria-label="Review ${esc(meaning.translation)} later">
         </label>`).join('');
-    return `<div class="knowledge-overview-modal tutorial-demo-sheet" role="dialog" aria-label="Focus meanings">
+    return `<div class="knowledge-overview-modal tutorial-demo-sheet" role="dialog" aria-label="Mark a meaning">
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
                 <p class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>
