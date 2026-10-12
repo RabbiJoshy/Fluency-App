@@ -116,6 +116,7 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
     return result;
 }
 function refresh() {
+    window.forgetSmartSkipExtras?.();
     const container = document.getElementById('bridgeToggleContainer');
     if (container) container.hidden = !bundle || window.bridgeSourceLanguages().length === 0;
     const toggle = document.getElementById('bridgeToggle');

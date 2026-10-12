@@ -243,7 +243,38 @@ function representativesByLemma(items) {
     return hosts;
 }
 
+// Every Smart Skip caller asked for this afresh, and opening one deck asked
+// about a dozen times: each a full pass over ~10,000 words. Within one pass of
+// work the answer cannot change except through the inputs fingerprinted here
+// or the item rewrites that call forgetSmartSkipExtras(), so it is reused
+// until the pass ends (the next microtask).
+let _extrasCache = null;
+function forgetSmartSkipExtras() { _extrasCache = null; }
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('language-profile-change', forgetSmartSkipExtras);
+    window.addEventListener('fast-track-preference-change', forgetSmartSkipExtras);
+}
+
+function smartSkipExtrasInputs() {
+    const s = g();
+    return [s.setupVocabularySnapshot || s.cachedVocabularyData, s.activeArtist, s.excludeCognates,
+        s.cognateFieldAvailable, s.cognateThreshold, s.useLemmaMode, s.lemmaFieldAvailable,
+        s.excludeGrammarParticles, s.excludeSlang, s.excludeProperNouns];
+}
+
 function collectExtras() {
+    const inputs = smartSkipExtrasInputs();
+    if (_extrasCache && _extrasCache.inputs.every((value, i) => value === inputs[i])) return _extrasCache.extras;
+    const extras = computeExtras();
+    // An unloaded deck is not cached: "not looked yet" must be asked again.
+    if (extras.ready) {
+        _extrasCache = { inputs, extras };
+        Promise.resolve().then(forgetSmartSkipExtras);
+    }
+    return extras;
+}
+
+function computeExtras() {
     // `ready` separates "we looked and found none" from "we have not looked
     // yet". Without it a caller cannot tell the two apart, and the buttons
     // announced a verified zero while the vocabulary was still loading.
@@ -1577,6 +1608,7 @@ globalThis.renderSavedWords = renderSavedWords;
 globalThis.toggleSavedWord = toggleSavedWord;
 globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;
+globalThis.forgetSmartSkipExtras = forgetSmartSkipExtras;
 // The English side of a look-alike, for the Smart Skip row's example words.
 globalThis.cognateEnglishWord = item => cognateEnglish(item).word;
 globalThis.startFastTrackSkippedSet = startFastTrackSkippedSet;

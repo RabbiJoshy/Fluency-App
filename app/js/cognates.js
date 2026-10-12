@@ -340,6 +340,7 @@ function matchedKnownWord(item) {
 // Attach shipped scores to the loaded vocabulary. Called once per deck load,
 // before any filtering, so buildFilteredVocab sees a complete item.
 function applyCognateScores(vocabularyData, languageCode) {
+    globalThis.forgetSmartSkipExtras?.();
     if (!Array.isArray(vocabularyData) || !cognateScores) return;
     // A map for another language would score words that merely look alike
     // across the two.

@@ -295,6 +295,7 @@ async function updateExclusionBars() {
     // deck is built), so publish the array Extras needs rather than making it
     // re-fetch and re-filter what was just computed here.
     globalThis.setupVocabularySnapshot = vocabularyData;
+    globalThis.forgetSmartSkipExtras?.();
     globalThis.refreshExtrasButton?.();
     globalThis.refreshFastMode?.();
 

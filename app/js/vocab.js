@@ -2525,6 +2525,7 @@ function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Se
 // pass. The smallest stable rank is the highest-frequency available surface,
 // with source rank as a deterministic final tie-breaker.
 function selectLemmaModeRepresentatives(items) {
+    globalThis.forgetSmartSkipExtras?.();
     const representativeByLemma = new Map();
     for (const item of items) {
         item._lemmaModeRepresentative = false;
@@ -2661,6 +2662,7 @@ globalThis.isGrammarParticleItem = isGrammarParticleItem;
 globalThis.isSlangItem = isSlangItem;
 
 function buildFilteredVocab(vocabData) {
+    globalThis.forgetSmartSkipExtras?.();
     // Deck construction attaches examples and prunes senses in place. Restore
     // the joined master template only after a deck actually mutated it.
     // Setup calls this function several times; cloning every sense tree on
