@@ -72,6 +72,7 @@ const urlsToCache = [
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20260927pa',
   `/js/progress-overview.js?v=${ASSET_VERSION}`,
+  '/js/session-plan.js?v=1',
   '/js/ui.js?v=20260927pa',
   '/js/fast-track-preferences.js?v=20260920a',
   '/js/vocab.js?v=20260927pa',

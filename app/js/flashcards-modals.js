@@ -1468,6 +1468,22 @@ function triggerDeckCompleteConfetti() {
     requestAnimationFrame(render);
 }
 
+// A finished level is a milestone: every word met, not every word mastered.
+function levelCompletionMessage(sessionStats) {
+    const context = window.__studySessionContext;
+    const sameLevel = context && context.range === sessionStats.rangeString;
+    const level = sessionStats.levelNumber ? `Level ${sessionStats.levelNumber}` : 'This level';
+    const met = sameLevel ? Number(context.cardCount) || 0 : 0;
+    const waiting = sameLevel ? Number(context.reviewCount) || 0 : 0;
+    const head = met > 0 ? `${level} complete: all ${met.toLocaleString()} words met.` : `${level} complete: every word met.`;
+    // Guest answers are not saved, so nothing is scheduled to come back.
+    if (typeof currentUser === 'undefined' || !currentUser || currentUser.isGuest) return head;
+    if (waiting > 0) {
+        return `${head} ${waiting.toLocaleString()} ${waiting === 1 ? 'is' : 'are'} waiting in Practise; the rest come back when they're due.`;
+    }
+    return `${head} They'll come back for review when they're due.`;
+}
+
 async function showEndOfDeckOptions() {
     // A completed deck is no longer resumable. Starting a follow-up or redo
     // set will create a fresh snapshot on its first rendered card.
@@ -1649,8 +1665,11 @@ async function showEndOfDeckOptions() {
         } else if (stats.isDailyReview) {
             const remaining = Number(stats.remainingDueCount || 0);
             if (remaining > 0) {
-                const batchSize = Math.min(stats.dailyReviewLimit || 100, remaining);
-                finishLabel.textContent = `Practise next ${batchSize}`;
+                const length = window.SessionPlan?.sessionLengthInfo?.();
+                const batchSize = Math.min(window.SessionPlan?.sessionCardLimit?.('practice') || stats.dailyReviewLimit || 100, remaining);
+                finishLabel.textContent = remaining <= batchSize
+                    ? `Keep practising · last ${remaining}`
+                    : `Keep practising · ${length?.label || `${batchSize} cards`}`;
                 finishIcon.textContent = '→';
                 finishBtn.dataset.action = 'next-daily-review';
                 finishBtn.classList.add('has-next-set');
@@ -1660,8 +1679,13 @@ async function showEndOfDeckOptions() {
                 finishBtn.style.display = 'none';
             }
         } else if (stats.nextRange) {
-            finishLabel.textContent = stats.levelSession && stats.remainingSessionCards > 0
-                ? `Another ${Math.min(20, stats.remainingSessionCards)}` : 'Another 20';
+            // Sessions are chosen as time (SETWISE-2); a short tail says how many are left.
+            const length = window.SessionPlan?.sessionLengthInfo?.();
+            const cap = window.SessionPlan?.sessionCardLimit?.('new') || 20;
+            const left = stats.levelSession ? Number(stats.remainingSessionCards) || 0 : 0;
+            finishLabel.textContent = left > 0 && left < cap
+                ? `Keep going · last ${left}`
+                : `Keep going · ${length?.label || '20 cards'}`;
             finishIcon.textContent = '→';
             finishBtn.dataset.action = 'next-set';
             finishBtn.classList.add('has-next-set');
@@ -1686,8 +1710,9 @@ async function showEndOfDeckOptions() {
                 ? `${stats.remainingDueCount} more word${stats.remainingDueCount === 1 ? '' : 's'} waiting in this Practice queue.`
                 : 'All caught up on this Practice queue!')
             : isLevelCompletion
-            ? 'All new cards explored. Practice remains available.'
-            : `${stats.setSize || stats.total || 0} cards in this session.`;
+            ? levelCompletionMessage(stats)
+            : `${stats.setSize || stats.total || 0} cards in this session.${typeof currentUser !== 'undefined' && currentUser && !currentUser.isGuest
+                ? " They'll come back for review when they're due." : ''}`;
 
     // Show the modal
     const modal = document.getElementById('deckCompleteModal');

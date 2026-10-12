@@ -2221,7 +2221,7 @@ function initializeApp() {
             try {
                 await window.loadDailyReviewDeck?.({
                     urgencyTier: stats.dailyReviewTier,
-                    limit: stats.dailyReviewLimit
+                    limit: window.SessionPlan?.sessionCardLimit?.('practice') || stats.dailyReviewLimit
                 });
             } catch (error) {
                 console.error('Could not continue daily review:', error);

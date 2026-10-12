@@ -2,6 +2,22 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T23:35:32+01:00",
+   "date": "2026-10-12 23:35 BST",
+   "agent": "Claude",
+   "summary": "Sessions are now chosen by time, and Go explains what to do when a level has little or nothing new left",
+   "detail": [
+    "Go and Practise share one session length: 5 min, 10 min or No limit. Tap the clock chip to change it; it is remembered on this device.",
+    "Time becomes cards at a fixed assumed pace (about 15 s per new card, 10 s per practice card): 5 min = 20 new or 30 practice cards.",
+    "When more of a level waits in Practise than is new (at least 10), Go asks: practise these, or learn the new ones. It asks once per level until the app reloads.",
+    "When a level has no new words left, Go shows either 'No new words left' (practise, next level, or redo) or 'You've mastered all the words' (next level, or redo).",
+    "Practice Errors is now Practise. It says how many words are waiting and when the next ones come back, e.g. 'Nothing to practise. 12 words come back tomorrow, 30 more this week.'",
+    "The level badge shows the word range only; the level total appears while you scrub the bar, and the deck size is in the Choose a Level help.",
+    "End of session: 'Keep going · 5 min' replaces 'Another 20'; finishing a level says how many words are waiting in Practise."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T23:58:00+01:00",
    "date": "2026-10-12 23:58 BST",
    "agent": "Claude",
@@ -369,20 +385,6 @@
     "Cancelled and multiple-touch gestures reset without activating buttons on release; grading transitions reject duplicate grades.",
     "Touch taps use the existing click path once; the first-swipe hint only dismisses after touch grading.",
     "Layout, button positions, card identities and saved progress are unchanged. Physical-phone feel remains unverified."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T13:00:00+01:00",
-   "date": "2026-10-11 13:00 BST",
-   "agent": "Claude",
-   "summary": "Verb rows show one reading: the statement, or the command when the word is almost always one or the example on screen is one",
-   "detail": [
-    "No more 'look! / he/she looks' double rows: each row shows one reading.",
-    "The command shows when two-thirds of the card's own sentences use it: mira 'look!', olhe 'look!', esqueça 'don't forget!' (Não se esqueça), juguemos 'let's play!'. 14 es and 29 pt rows.",
-    "Otherwise the statement, switching to the command only while the example on screen is a command for that row's verb: espera 'he/she waits', and 'wait!' on '¡Espera aquí!'.",
-    "A command uses one verb: pare 'stop!' (not 'stop; cease!'), vejamos 'let's see!'.",
-    "The person still never follows the example: era is 'I/he/she was' on every example."
    ],
    "commit": "pending"
   }

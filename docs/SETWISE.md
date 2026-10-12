@@ -49,3 +49,42 @@ Browser verification (local full app, real Spanish release): 390px landing and
 completion followed by Another 20 beginning at source rank 21. Guest test only:
 no real learner account or cloud answers were changed. Physical-device feel and
 two-device sync remain unverified.
+
+## SETWISE-2 — Learn New vs Practise, chosen by time (2026-10-12)
+
+Agreed with Josh 2026-10-12, built the same night for staging review.
+
+- **Session length, not card count.** Go and Practise share one remembered length:
+  5 min, 10 min or No limit (`app/js/session-plan.js`, `localStorage`
+  `fluencySessionLengthV1`, default 5 min). Time becomes a card count at a fixed
+  assumed pace — 15 s per new card, 10 s per practice card — so 5 min is 20 new or
+  30 practice cards. No learner's speed is measured or stored (Josh's call).
+- **Go has four level states** (`levelState` on `__studySessionContext`):
+  `new` starts at once; `choice` (Practise words outnumber new words left, and at
+  least `LEVEL_CHOICE_MIN_PRACTICE` = 10, a guess to check) asks "practise these
+  or learn the new", once per level until reload; `met` (no new words, some in
+  Practise) offers practise, next level, or a quiet "Redo anyway"; `done` (no new,
+  nothing waiting) offers next level or redo, and says when the first words come
+  back. Practise here means the level's own cards (`studyMode: 'review'`).
+- **Redo** is only reachable from those screens, as a text link. Most learners will
+  never see them: Learn New moves forward and never lands on a finished level.
+- **Practise** (was Practice Errors) is the language-wide queue. It shows
+  "14 waiting · 12 more tomorrow", or when empty "Nothing to practise. 12 words come
+  back tomorrow, 30 more this week." Return times are rough (`in 3 hours`,
+  `tomorrow`, `on Thursday`) because a due time is only last-correct plus N days.
+  With the schedule paused it says only mistakes come back.
+- **Completion**: "Keep going · 5 min" (or "· last N") replaces "Another 20";
+  finishing a level reports how many words wait in Practise. Guests are not told
+  words come back, since their answers are not saved.
+- **Badge**: word range only ("Words 1–100" with a small label); "of N levels"
+  replaces it while scrubbing and for a second after; the deck size moved to the
+  Choose a Level help.
+
+Not changed: Smart Skip decks still build 20 cards; Smart Skipped and estimated
+cards never enter Practise; SRS rules, sync and card identities are untouched.
+
+Validation: app unittest suite (270) including session-plan unit checks and the
+four level states in `tests/app/study_session_checks.cjs`. Local browser (guest,
+real Spanish release, simulated progress — nothing written): all three screens,
+10 min → 40-card session, completion label, Practise with and without a queue,
+375 px width with no overflow.

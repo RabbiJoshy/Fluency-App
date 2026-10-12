@@ -985,7 +985,9 @@ class ProductShellTests(unittest.TestCase):
         # Quick practice starts from the setup screen; the sheet only explains
         # the queue.
         self.assertNotIn('data-action="quick-practice"', practice)
-        self.assertIn("Math.min(globalTotal, QUICK_REVIEW_LIMIT)", ui)
+        # SETWISE-2: Practise runs for the chosen length, at the assumed practice pace.
+        self.assertIn("window.SessionPlan?.sessionCardLimit?.('practice') || QUICK_REVIEW_LIMIT", ui)
+        self.assertIn("Math.min(Number(summary?.total) || 0, cap)", ui)
         self.assertIn('id="practiceTooltip"', html)
         self.assertNotIn("startTier", practice)
         self.assertNotIn("startLevelReview", practice)
@@ -1399,7 +1401,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         # Start waits for current progress and never turns new learning into replay.
         self.assertIn("window.progressRefreshSettled = progressRefreshSettled;", auth)
         self.assertIn("await window.progressRefreshSettled?.(5000);", ui)
-        self.assertIn("context.studyMode === 'new' && fresh.studyMode !== 'new'", ui)
+        self.assertIn("if (studyMode === 'new' && !(fresh.unseenCount > 0)) return;", ui)
         self.assertIn("silentIfEmpty: true", ui)
 
     def test_empty_replacement_preserves_the_active_deck_without_an_unseen_popup(self) -> None:

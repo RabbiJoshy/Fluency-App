@@ -3,6 +3,7 @@
 import './state.js?v=20260825ak';
 import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=20260927pa';
 import { readFastTrack } from './fast-track-preferences.js?v=20260920a';
+import './session-plan.js?v=1';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1050,7 +1051,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    description.textContent = `Each session contains up to ${STUDY_SESSION_LIMIT} cards from your selected level. Go starts new cards. When there are no new cards left, Practise reviews cards that need attention, or Study Again revisits the level. The progress bar shows your progress across the whole level.`;
+    description.textContent = 'Go starts new words from your selected level, for as long as you choose: 5 minutes, 10 minutes or no limit. When the level has no new words left, Go shows what to do next. The progress bar shows your progress across the whole level.';
 }
 
 // Annotates every level control with its completion percentage and returns
@@ -1364,7 +1365,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
                         const segLabel = `${i + 1}`;
                         const metrics = _levelBandMetrics(lv);
                         const wordRange = `${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}`;
-                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" aria-label="Level ${i + 1} of ${percentageRanges.length}, words ${wordRange}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label"><span class="lsw-seg-heading"><span class="lsw-seg-eyebrow">Level</span><span class="lsw-seg-num">${segLabel}</span></span><span class="lsw-seg-words">Words ${wordRange}</span><span class="lsw-seg-total">of ${percentageRanges.length} levels</span></span></button>`;
+                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" aria-label="Level ${i + 1} of ${percentageRanges.length}, words ${wordRange}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label"><span class="lsw-seg-heading"><span class="lsw-seg-eyebrow">Level</span><span class="lsw-seg-num">${segLabel}</span></span><span class="lsw-seg-words"><small>Words</small> ${wordRange}</span><span class="lsw-seg-total">of ${percentageRanges.length.toLocaleString()} levels</span></span></button>`;
                     }).join('')}
                 </div>
                 <div class="lsw-ticks lsw-ticks--hidden">${ticksHTML}</div>
@@ -1372,6 +1373,15 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             </div>
             <div class="level-selector-buttons" style="display:none">${buttonsHTML}</div>
         `;
+        // The deck's size lives in the level help, not on the badge (SETWISE-2).
+        const deckTotalEl = document.getElementById('step2DeckTotal');
+        if (deckTotalEl) {
+            const deckWords = percentageRanges.reduce((sum, lv) => sum + (_levelBandMetrics(lv).count || 0), 0);
+            deckTotalEl.textContent = deckWords > 0
+                ? `This deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'}.`
+                : '';
+            deckTotalEl.hidden = !(deckWords > 0);
+        }
 
     // Add click handlers for level buttons
     document.querySelectorAll('.level-btn').forEach(btn => {
@@ -1605,12 +1615,19 @@ async function renderExtraCategorySelector(container, language, { preferActionab
 let _smartLevelRangesCache = null;
 
 // Study shape, shared by every level builder and the set slotter: levels of
-// 100-card target levels with 25-position estimation regions and 20-card sessions.
+// 100-card target levels with 25-position estimation regions. Sessions are
+// chosen as time and built as a card count (session-plan.js, SETWISE-2).
 const STUDY_LEVEL_TARGET_CARDS = 100;
 const STUDY_LEVEL_MIN_COUNT = 10;
 const STUDY_LEVEL_MAX_COUNT = 120;
 const STABLE_SET_SLOT_COUNT = 25; // Internal placement regions, not visible groups or sessions.
 const STUDY_SESSION_LIMIT = 20;
+// Go asks "practise or learn new?" only when a level's Practise words outnumber
+// its new words left and there are at least this many of them (a guess, to be
+// checked against real progress). Once declined, it stays quiet for that level
+// until the app reloads.
+const LEVEL_CHOICE_MIN_PRACTICE = 10;
+const _levelChoiceDeclined = new Set();
 let _studySessionStarting = false;
 
 // Build finishable study levels of STUDY_LEVEL_TARGET_CARDS cards each, with
@@ -1988,7 +2005,16 @@ function wireLevelScrubber(segBar, buttons) {
             btn.click(); // → renderRangeSelector (resets the set options)
         }
     };
+    // While the learner scrubs, the badge swaps its word range for the level
+    // total, and keeps it for a second after the bar stops (SETWISE-2).
+    let totalTimer = null;
+    const showTotalWhileScrubbing = () => {
+        segBar.classList.add('is-scrubbing');
+        clearTimeout(totalTimer);
+        totalTimer = setTimeout(() => segBar.classList.remove('is-scrubbing'), 1000);
+    };
     segBar.addEventListener('scroll', () => {
+        if (userScrubbing) showTotalWhileScrubbing();
         const i = _levelCenteredIdx(segBar);
         if (+segBar.dataset.value !== i) setLevelSegmentSelection(i); // live magnify + readout
         if (_levelProgrammaticScroll || !userScrubbing) return;
@@ -2776,6 +2802,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         if (slotIdx >= 0 && slotIdx < slotCount) baselineSlotCounts[slotIdx]++;
     }
     const ranges = [];
+    const levelUpcomingTimes = [];
+    const upcomingNow = Date.now();
     for (let slotIdx = 0; slotIdx < slotCount; slotIdx++) {
         const { startRank: start, endRank: end } = slotRanges[slotIdx];
         const words = slots[slotIdx];
@@ -2793,6 +2821,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             if (state?.estimated) estimatedCount++;
             if (state?.needsReview) reviewCount++;
             if (state?.reviewReason === 'due') dueCount++;
+            if (state && !state.needsReview && state.nextReviewAt > upcomingNow) levelUpcomingTimes.push(state.nextReviewAt);
         }
         const skippedCount = smartSkipOn ? Math.max(0, baselineSlotCounts[slotIdx] - words.length) : 0;
         const slotTotal = words.length + skippedCount;
@@ -2871,14 +2900,28 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         levelCardCount
     };
 
+    // SETWISE-2: Practise is the language-wide queue, with its own length chip.
+    const plan = window.SessionPlan;
+    const lengthInfo = plan?.sessionLengthInfo?.() || { label: `${STUDY_SESSION_LIMIT} cards`, spoken: `${STUDY_SESSION_LIMIT} cards` };
+    const lengthChip = () => `<button type="button" class="session-length-chip" data-session-length-toggle
+            aria-label="Session length: ${lengthInfo.spoken}. Tap to change.">${lengthInfo.label}</button>`;
     let reviewHTML = '';
     if (currentUser && !currentUser.isGuest) {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
         const globalTotal = Number(summary?.total) || 0;
-        const reviewMeta = globalTotal === 0
-            ? 'No cards need practice right now.'
-            : `${globalTotal.toLocaleString()} card${globalTotal === 1 ? '' : 's'} ready to practise`;
-        const quickCount = Math.min(globalTotal, QUICK_REVIEW_LIMIT);
+        const srsOn = typeof spacedRepetitionEnabled === 'undefined' || spacedRepetitionEnabled !== false;
+        const upcoming = plan?.summariseUpcoming?.(window.getUpcomingReviewTimes?.(selectedLanguage) || []) || null;
+        const upcomingText = plan?.describeUpcoming?.(upcoming) || '';
+        let reviewMeta;
+        if (globalTotal > 0) {
+            const later = upcoming?.nextCount
+                ? ` · ${upcoming.nextCount.toLocaleString()} more ${upcoming.nextLabel}` : '';
+            reviewMeta = `${globalTotal.toLocaleString()} waiting${later}`;
+        } else if (!srsOn) {
+            reviewMeta = 'Nothing to practise. Review schedule paused: only mistakes come back.';
+        } else {
+            reviewMeta = upcomingText ? `Nothing to practise. ${upcomingText}` : 'Nothing to practise yet.';
+        }
         reviewHTML = `<div class="review-deck-content">
                 <button class="review-deck-summary" type="button" id="openReviewHomeBtn">
                     <span class="review-deck-summary-copy">
@@ -2886,7 +2929,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     </span>
                     <span class="review-deck-summary-chevron" aria-hidden="true">›</span>
                 </button>
-                <button class="study-set-review" type="button" id="quickReviewBtn" aria-label="Quick practice: ${quickCount || QUICK_REVIEW_LIMIT} cards" ${quickCount > 0 ? '' : 'disabled'}>Quick ${quickCount || QUICK_REVIEW_LIMIT}</button>
+                <div class="session-action-pill is-practice${globalTotal > 0 ? '' : ' is-disabled'}">
+                    <button class="study-set-review" type="button" id="quickReviewBtn" ${globalTotal > 0 ? '' : 'disabled'}>Practise</button>
+                    ${lengthChip()}
+                </div>
             </div>`;
     }
 
@@ -2900,9 +2946,21 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         + `--level-review-end:${percent(levelNewCount + levelReviewCount)}%;`
         + `--level-known-end:${percent(levelNewCount + levelReviewCount + levelKnownCount)}%;`
         + `--level-estimated-end:${percent(levelCardCount)}%`;
+    // What Go does for this level (SETWISE-2):
+    //   new     new words left, Practise small: start straight away
+    //   choice  new words left, but more of the level waits in Practise
+    //   met     every word met, some waiting in Practise
+    //   done    every word met and up to date
+    const levelKey = `${selectedLanguage}|${minWord}-${maxWord}`;
+    const levelState = levelNewCount > 0
+        ? (levelReviewCount >= LEVEL_CHOICE_MIN_PRACTICE && levelReviewCount > levelNewCount
+            && !_levelChoiceDeclined.has(levelKey) ? 'choice' : 'new')
+        : levelReviewCount > 0 ? 'met' : 'done';
     const context = {
-        range: `${minWord}-${maxWord}`, rankBasis, levelNumber,
+        range: `${minWord}-${maxWord}`, rankBasis, levelNumber, levelKey, levelState,
         unseenCount: levelNewCount, reviewCount: levelReviewCount, cardCount: levelCardCount, ranges,
+        knownCount: levelKnownCount,
+        levelUpcoming: plan?.summariseUpcoming?.(levelUpcomingTimes) || null,
         studyMode: levelNewCount > 0 ? 'new' : levelReviewCount > 0 ? 'review' : 'all'
     };
     window.__studySessionContext = context;
@@ -2915,9 +2973,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         const baseConfig = config.languages[selectedLanguage] || {};
         window.prefetchStudySetPayload?.(activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig, context.range);
     }
-    const action = nextCount === 0 ? 'No cards available' : context.studyMode === 'new' ? `Go · ${nextCount} cards`
-        : context.studyMode === 'review' ? `Practise · ${nextCount} cards` : `Study again · ${nextCount} cards`;
     const description = `${levelNewCount} new, ${levelReviewCount} practice, ${levelKnownCount} known, ${levelEstimatedCount} estimated familiar, ${levelSkippedCount} skipped`;
+    const goDisabled = nextCount === 0 || _studySessionStarting;
     container.innerHTML = `
         <div class="study-set-panel">
             <div class="study-set-choice">
@@ -2931,9 +2988,14 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                         ${levelSkippedCount > 0 ? `<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>` : ''}
                     </span>
                 </div>
-                <button class="range-btn-new study-set-start" id="studySetStartBtn" type="button"
-                    data-range="${context.range}" data-rank-basis="${rankBasis}"
-                    data-study-mode="${context.studyMode}" data-level-number="${levelNumber}" ${nextCount === 0 || _studySessionStarting ? 'disabled' : ''}>${action}</button>
+                ${nextCount === 0
+                    ? `<button class="range-btn-new study-set-start" id="studySetStartBtn" type="button" disabled>No cards available</button>`
+                    : `<div class="session-action-pill">
+                    <button class="range-btn-new study-set-start" id="studySetStartBtn" type="button"
+                        data-range="${context.range}" data-rank-basis="${rankBasis}" data-level-state="${levelState}"
+                        data-study-mode="${context.studyMode}" data-level-number="${levelNumber}" ${goDisabled ? 'disabled' : ''}>Go</button>
+                    ${lengthChip()}
+                </div>`}
             </div>
         </div>`;
     if (reviewSection) {
@@ -2945,39 +3007,165 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     setActiveSetupStep('step4');
     document.getElementById('studySetStartBtn').addEventListener('click', async function() {
         if (this.disabled || _studySessionStarting) return;
-        _studySessionStarting = true;
-        this.disabled = true;
-        window.showAppLoading?.('Preparing your session', `Up to ${STUDY_SESSION_LIMIT} cards…`);
-        try {
-            await window.progressRefreshSettled?.(5000);
-            await renderRangeSelector();
-            // Recount after sync, but do not silently turn a new-card action into replay.
-            const fresh = window.__studySessionContext;
-            if (!fresh || (context.studyMode === 'new' && fresh.studyMode !== 'new')) return;
-            await startSelectedStudySession();
-        } finally {
-            _studySessionStarting = false;
-            this.disabled = false;
-            const button = document.getElementById('studySetStartBtn');
-            if (button && window.__studySessionContext) button.disabled = !(window.__studySessionContext.cardCount > 0);
-            window.hideAppLoading?.();
+        if (window.__studySessionContext?.levelState && window.__studySessionContext.levelState !== 'new') {
+            openLevelChoice(window.__studySessionContext);
+            return;
         }
+        await runLevelSession(this, 'new');
     });
     reviewSection?.querySelector('#openReviewHomeBtn')?.addEventListener('click', () => {
         window.openReviewHome?.();
     });
     reviewSection?.querySelector('#quickReviewBtn')?.addEventListener('click', async () => {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
-        const limit = Math.min(Number(summary?.total) || 0, QUICK_REVIEW_LIMIT);
+        const cap = window.SessionPlan?.sessionCardLimit?.('practice') || QUICK_REVIEW_LIMIT;
+        const limit = Math.min(Number(summary?.total) || 0, cap);
         if (limit <= 0) return;
         const loadingMessage = document.getElementById('loadingMessage');
         loadingMessage.style.display = 'block';
         loadingMessage.textContent = `Loading ${limit} practice card${limit === 1 ? '' : 's'}...`;
         await startDailyReview({ limit, urgencyTier: 'all' });
     });
+    document.querySelectorAll('#step4 [data-session-length-toggle], #reviewDeckSection [data-session-length-toggle]')
+        .forEach(chip => chip.addEventListener('click', () => {
+            window.SessionPlan?.cycleSessionLength?.();
+            refreshSessionLengthChips();
+        }));
 
     renderSetupExtrasSection();
 }
+
+function refreshSessionLengthChips() {
+    const info = window.SessionPlan?.sessionLengthInfo?.();
+    if (!info) return;
+    document.querySelectorAll('[data-session-length-toggle]').forEach(chip => {
+        chip.textContent = info.label;
+        chip.setAttribute('aria-label', `Session length: ${info.spoken}. Tap to change.`);
+    });
+}
+
+// Recount after sync, then start the level session the learner asked for.
+// A recount that removes the cards (answers synced from another device) only
+// re-renders; it never swaps one kind of session for another.
+async function runLevelSession(button, studyMode) {
+    if (_studySessionStarting) return;
+    _studySessionStarting = true;
+    if (button) button.disabled = true;
+    const kind = studyMode === 'review' ? 'practice' : 'new';
+    const length = window.SessionPlan?.sessionLengthInfo?.();
+    window.showAppLoading?.('Preparing your session', length?.minutes
+        ? `About ${length.label} of ${kind === 'practice' ? 'practice' : 'cards'}…` : 'Loading your cards…');
+    try {
+        await window.progressRefreshSettled?.(5000);
+        await renderRangeSelector();
+        const fresh = window.__studySessionContext;
+        if (!fresh) return;
+        if (studyMode === 'new' && !(fresh.unseenCount > 0)) return;
+        if (studyMode === 'review' && !(fresh.reviewCount > 0)) return;
+        await startSelectedStudySession({ studyMode });
+    } finally {
+        _studySessionStarting = false;
+        const current = document.getElementById('studySetStartBtn');
+        if (current && window.__studySessionContext) current.disabled = !(window.__studySessionContext.cardCount > 0);
+        window.hideAppLoading?.();
+    }
+}
+
+function closeLevelChoice() {
+    document.getElementById('levelChoiceModal')?.classList.add('hidden');
+}
+
+let _levelChoiceWired = false;
+function wireLevelChoice() {
+    if (_levelChoiceWired) return;
+    _levelChoiceWired = true;
+    document.getElementById('closeLevelChoiceModal')?.addEventListener('click', closeLevelChoice);
+    document.getElementById('levelChoiceModal')?.addEventListener('click', event => {
+        if (event.target?.id === 'levelChoiceModal') closeLevelChoice();
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeLevelChoice();
+    });
+    document.getElementById('levelChoiceActions')?.addEventListener('click', async event => {
+        const action = event.target.closest('[data-level-choice]')?.dataset.levelChoice;
+        if (!action) return;
+        closeLevelChoice();
+        const context = window.__studySessionContext;
+        if (action === 'practise') {
+            await runLevelSession(document.getElementById('studySetStartBtn'), 'review');
+        } else if (action === 'learn-new') {
+            if (context?.levelKey) _levelChoiceDeclined.add(context.levelKey);
+            await runLevelSession(document.getElementById('studySetStartBtn'), 'new');
+        } else if (action === 'redo') {
+            await runLevelSession(document.getElementById('studySetStartBtn'), 'all');
+        } else if (action === 'next-level') {
+            window.showAppLoading?.('Preparing your next session', 'Finding your next cards…');
+            try {
+                await startNextStudyLevelFirstSet();
+            } catch (error) {
+                console.warn('Could not open the next level:', error);
+            } finally {
+                window.hideAppLoading?.();
+            }
+        }
+    });
+}
+
+// The screen Go opens when a level has little or nothing new to give.
+function openLevelChoice(context) {
+    const modal = document.getElementById('levelChoiceModal');
+    if (!modal || !context) return;
+    wireLevelChoice();
+    const plan = window.SessionPlan;
+    const length = plan?.sessionLengthInfo?.();
+    const practiseCap = plan?.sessionCardLimit?.('practice') || STUDY_SESSION_LIMIT;
+    const level = context.levelNumber > 0 ? `Level ${context.levelNumber}` : 'this level';
+    const Level = context.levelNumber > 0 ? `Level ${context.levelNumber}` : 'This level';
+    const words = count => `${count.toLocaleString()} word${count === 1 ? '' : 's'}`;
+    const review = Number(context.reviewCount) || 0;
+    const fresh = Number(context.unseenCount) || 0;
+    const practiseLabel = review <= practiseCap || !length?.minutes
+        ? `Practise ${review === 1 ? 'this word' : `these ${review.toLocaleString()}`}`
+        : `Practise · ${length.label}`;
+    const next = getNextStudyLevelMeta();
+    const nextLabel = next ? (next.label ? `Go to ${next.label}` : `Go to Level ${next.levelNumber}`) : '';
+    const upcoming = context.levelUpcoming;
+    const button = (action, label, kind) => `<button type="button" class="level-choice-btn is-${kind}" data-level-choice="${action}">${_escapeHtml(label)}</button>`;
+
+    let title = '';
+    let text = '';
+    let actions = '';
+    if (context.levelState === 'choice') {
+        title = `${Level}: ${fresh.toLocaleString()} new ${fresh === 1 ? 'word' : 'words'} left, ${review.toLocaleString()} waiting in Practise.`;
+        text = 'Practise first to keep what you have met, or carry on with the new words.';
+        actions = button('practise', practiseLabel, 'practice')
+            + button('learn-new', `Learn the ${fresh === 1 ? 'new one' : `${fresh.toLocaleString()} new`}`, 'secondary');
+    } else if (context.levelState === 'met') {
+        title = `No new words left in ${level}.`;
+        const later = plan?.describeUpcoming?.(upcoming) || '';
+        text = `${words(review)} ${review === 1 ? 'is' : 'are'} waiting in Practise. ${later || 'The rest come back when they are due.'}`;
+        actions = button('practise', practiseLabel, 'practice')
+            + (next ? button('next-level', nextLabel, 'secondary') : '')
+            + button('redo', `Redo ${level} anyway`, 'link');
+    } else {
+        const answered = Number(context.knownCount) > 0;
+        title = answered ? `You've mastered all the words in ${level}.` : `Nothing new in ${level}.`;
+        const when = upcoming?.nextLabel ? ` The first ones come back ${upcoming.nextLabel}.` : '';
+        text = answered
+            ? `They'll come back for review when they're due.${when}`
+            : 'Every word here is marked familiar or skipped.';
+        if (!next) text += ` You've finished the deck.`;
+        actions = (next ? button('next-level', nextLabel, 'primary') : '')
+            + button('redo', `Redo ${level} anyway`, 'link');
+    }
+    document.getElementById('levelChoiceEyebrow').textContent = 'Your next session';
+    document.getElementById('levelChoiceTitle').textContent = title;
+    document.getElementById('levelChoiceText').textContent = text;
+    document.getElementById('levelChoiceActions').innerHTML = actions;
+    modal.classList.remove('hidden');
+    modal.querySelector('.level-choice-btn')?.focus();
+}
+window.openLevelChoice = openLevelChoice;
 
 function _escapeHtml(value) {
     return String(value ?? '').replace(/[&<>"']/g, c => ({
@@ -3032,7 +3220,9 @@ async function startSelectedStudySession({ studyMode } = {}) {
     return loadVocabularyData(context.range, {
         rankBasis: context.rankBasis, levelNumber: context.levelNumber,
         studyMode: studyMode || context.studyMode, levelSession: true,
-        sessionLimit: STUDY_SESSION_LIMIT, silentIfEmpty: true
+        sessionLimit: window.SessionPlan?.sessionCardLimit?.(
+            (studyMode || context.studyMode) === 'review' ? 'practice' : 'new') || STUDY_SESSION_LIMIT,
+        silentIfEmpty: true
     });
 }
 window.startSelectedStudySession = startSelectedStudySession;
@@ -3886,8 +4076,8 @@ function getArtistHelpContent() {
 }
 
 function getSharedStudyHelpContent() {
-    return `<p>Choose a level, then Go starts a session of up to 20 new cards. The level bar shows New, Practice, Known, Estimated familiar and Skipped words. When no new cards remain, you can practise or study the level again.</p>
-        <p>Practice collects incorrect, partly learned and due cards across the language. Quick Practice starts a short session; open the practice summary for more choices. Spaced repetition in Study settings schedules future practice.</p>
+    return `<p>Choose a level, then Go starts new cards for as long as you choose: 5 minutes, 10 minutes or no limit. The level bar shows New, Practice, Known, Estimated familiar and Skipped words. When a level has few or no new words left, Go explains what to do next.</p>
+        <p>Practise collects incorrect, partly learned and due cards across the language, and says when the next ones come back. It runs for the same length you chose for Go. Spaced repetition in Study settings schedules future practice.</p>
         <p>Smart Skip changes which cards you study while keeping the level boundaries stable. An unfinished session can be restored from the Welcome back prompt, with its card order and settings.</p>`;
 }
 

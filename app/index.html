@@ -531,9 +531,10 @@
                             <button type="button" class="info-sheet-close" aria-label="Close level information">&#10005;</button>
                         </div>
                         <p class="info-sheet-lead" id="step2LevelDescription">Vocabulary is ordered by frequency, from daily essentials to less common words.</p>
+                        <p class="info-sheet-lead level-deck-total" id="step2DeckTotal" hidden></p>
                         <div class="info-sheet-points">
                             <div><span class="info-point-badge">1</span><p><strong>Start anywhere:</strong> Begin at Level 1 or jump ahead to words you don’t know yet.</p></div>
-                            <div><span class="info-point-badge">2</span><p><strong>Short sessions:</strong> Each level is usually 100 cards. Study up to 20 at a time.</p></div>
+                            <div><span class="info-point-badge">2</span><p><strong>Short sessions:</strong> Each level is usually 100 cards. Study for 5 minutes, 10 minutes or as long as you like.</p></div>
                             <div><span class="info-point-badge">3</span><p><strong>Smart Skip:</strong> Related forms and obvious look-alikes are skipped to save time.</p></div>
                         </div>
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
@@ -584,7 +585,7 @@
                             <div><h3 id="nextSessionHelpTitle">Your Next Session</h3></div>
                             <button type="button" class="info-sheet-close" aria-label="Close session information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead" id="step5Description">Each session contains up to 20 cards from your selected level. Go starts new cards. When there are no new cards left, Practise reviews cards that need attention, or Study Again revisits the level. The progress bar shows your progress across the whole level.</p>
+                        <p class="info-sheet-lead" id="step5Description">Go starts new words from your selected level, for as long as you choose: 5 minutes, 10 minutes or no limit. When the level has no new words left, Go shows what to do next. The progress bar shows your progress across the whole level.</p>
                         <div class="info-sheet-points">
                             <div><span class="info-point-badge is-new">New</span><p><strong class="is-new">New:</strong> Words you have not studied yet.</p></div>
                             <div><span class="info-point-badge is-practice">Practise</span><p><strong class="is-practice">Practise:</strong> Cards you missed or that are due for review.</p></div>
@@ -602,13 +603,13 @@
                  binds them; ui.js fills #reviewDeckBody. -->
             <div id="reviewDeckSection" class="setup-step review-deck-step" hidden>
                 <div class="step-header step-header-with-help">
-                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice">Practice Errors <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice">Practise <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div id="practiceTooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="practiceHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
-                            <div><span class="info-sheet-eyebrow">Practice</span><h3 id="practiceHelpTitle">Practice Errors</h3></div>
+                            <div><span class="info-sheet-eyebrow">Practice</span><h3 id="practiceHelpTitle">Practise</h3></div>
                             <button type="button" class="info-sheet-close" aria-label="Close practice information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead">Cards you missed or scheduled for review collect here. Quick Practice reviews top cards by priority:</p>
+                        <p class="info-sheet-lead">Words you missed or that are due for review collect here, from every level. Practise works through them in this order, for as long as you choose:</p>
                         <div class="info-sheet-points">
                             <div><span class="info-point-badge">1</span><p><strong>Mistakes:</strong> Words you recently missed or haven't mastered yet.</p></div>
                             <div><span class="info-point-badge">2</span><p><strong>Due for review:</strong> Words scheduled for spaced repetition.</p></div>
@@ -1693,6 +1694,24 @@
 
     <!-- What spaced repetition is, in the words a learner would use. No
          intervals, no algorithm: the rule and the reason for it. -->
+    <!-- SETWISE-2: what Go offers when a level has little or nothing new left.
+         ui.js (openLevelChoice) fills the title, text and actions. -->
+    <div id="levelChoiceModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="levelChoiceTitle">
+        <div class="modal-content level-choice-content">
+            <div class="modal-header">
+                <div>
+                    <span class="product-modal-eyebrow" id="levelChoiceEyebrow">Level</span>
+                    <h3 id="levelChoiceTitle"></h3>
+                </div>
+                <button class="modal-close" id="closeLevelChoiceModal" aria-label="Close">✕</button>
+            </div>
+            <div class="level-choice-body">
+                <p class="level-choice-text" id="levelChoiceText"></p>
+                <div class="level-choice-actions" id="levelChoiceActions"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="spacedRepetitionInfoModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="spacedRepetitionInfoTitle">
         <div class="modal-content">
             <div class="modal-header">

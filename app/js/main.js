@@ -18,6 +18,7 @@ import './estimation.js?v=20261010pool';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260927pa';
 import './knowledge.js?v=20260927pa';
+import './session-plan.js?v=1';
 import './ui.js?v=20260927pa';
 import './vocab.js?v=20260927pa';
 import './language-profile.js?v=1';
