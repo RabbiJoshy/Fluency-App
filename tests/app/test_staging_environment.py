@@ -157,6 +157,23 @@ class StagingBuildTests(unittest.TestCase):
             self.assertEqual(env_data["environment"], "staging")
             self.assertEqual(env_data["version"], "stg-test1234")
 
+            # A real 404 page stops Cloudflare's index.html fallback, whose
+            # relative modulepreload Link header recursed without end.
+            not_found = (site / "404.html").read_text(encoding="utf-8")
+            self.assertNotIn("modulepreload", not_found)
+            self.assertNotIn("<script", not_found)
+            self.assertNotIn("<link", not_found)
+
+    def test_production_build_has_no_404_page(self) -> None:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("build_pages_site", ROOT / "scripts/build_pages_site.py")
+        build_pages_site = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(build_pages_site)
+        with tempfile.TemporaryDirectory() as tmp:
+            site = Path(tmp)
+            build_pages_site.build(site, "HEAD", version="abc12345")
+            self.assertFalse((site / "404.html").exists())
+
     def test_env_badge_hidden_in_css(self) -> None:
         css = (APP / "css/style.css").read_text(encoding="utf-8")
         self.assertIn(".env-badge[hidden]", css)

@@ -90,6 +90,13 @@ STAGING_NAME_SWAPS = (
 )
 
 
+STAGING_NOT_FOUND = (
+    b'<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8">'
+    b"<title>Not found</title></head>\n"
+    b'<body><p>Not found. <a href="/">Open Fluency</a></p></body></html>\n'
+)
+
+
 def staging_identity(rel: str, content: bytes) -> bytes:
     if rel not in STAGING_IDENTITY_FILES:
         return content
@@ -134,6 +141,16 @@ def build(dest: Path, ref: str, version: str | None = None, env: str = "producti
             target.write_bytes(env_meta)
             written += 1
         extra_shipped.update({"config/app_environment.json", "app/config/app_environment.json"})
+        # Without a top-level 404.html, Cloudflare Pages answers every missing
+        # path with index.html, carrying a Link header that preloads its 37
+        # modules by *relative* URL. A missing file such as
+        # Artists/spotify_tracks.json then preloads Artists/js/main.js, which is
+        # missing too, and so on one folder deeper, forever: ~500 requests a
+        # minute per open tab. A real 404 ends it, as GitHub Pages does in
+        # production. It must not preload anything itself.
+        (dest / "404.html").write_bytes(STAGING_NOT_FOUND)
+        written += 1
+        extra_shipped.add("404.html")
 
     shipped = {".nojekyll"} | {rel for _, rel in files} | {f"app/{rel}" for _, rel in files} | extra_shipped
     for path in sorted(p for p in dest.rglob("*") if p.is_file() and ".git" not in p.relative_to(dest).parts):
