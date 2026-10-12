@@ -17,7 +17,9 @@ import unittest
 
 from fluency.core.identity import create_card_record
 from fluency.sense_menu.config import load_sense_menu_language_policy
-from fluency.sense_menu.kaikki import KaikkiSenseMenuAdapter
+from fluency.sense_menu.kaikki import KaikkiHeadwordSource, KaikkiSenseMenuAdapter
+from fluency.surfaces.declared import Context, DeclaredRegistry
+from fluency.surfaces.resolver import ModePolicy, Resolver
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 
@@ -36,6 +38,9 @@ ROWS = [
     {"word": "m'n", "lang_code": "nl", "pos": "pron", "senses": [{
         "glosses": ["contraction of mijn"], "tags": ["abbreviation", "alt-of", "contraction"],
         "alt_of": [{"word": "mijn"}]}]},
+    {"word": "ander", "lang_code": "nl", "pos": "adj", "senses": [{"id": "nl-ander-adj", "glosses": ["other"]}]},
+    {"word": "anderen", "lang_code": "nl", "pos": "noun", "senses": [{
+        "glosses": ["plural of ander; others"], "tags": ["form-of", "plural"], "form_of": [{"word": "ander"}]}]},
     {"word": "met", "lang_code": "nl", "pos": "prep", "senses": [{"id": "nl-met-prep", "glosses": ["with"]}]},
     {"word": "ermee", "lang_code": "nl", "pos": "adv", "senses": [{
         "glosses": ["pronominal adverb form of met + het (“with it”)"],
@@ -106,6 +111,27 @@ class DutchLookupTests(unittest.TestCase):
 
     def test_nl_v1_still_stops_m_n_at_the_part_of_speech_mismatch(self):
         self.assertEqual(self.menus("m'n")["m'n"], [])
+
+    def test_a_declared_headword_is_not_narrowed_by_the_dictionary_redirect(self):
+        """anderen is a noun 'plural of ander'; ander is an adjective. The declaration wins."""
+
+        folder = Path(self.temporary.name) / "declared" / "nl"
+        folder.mkdir(parents=True)
+        (folder / "test.json").write_text(json.dumps({
+            "schema": "declared-entries/v1", "language": "nl", "entries": [{
+                "entry_id": "nl-anderen", "kind": "headwords", "surface": "anderen",
+                "payload": {"headwords": ["ander"]}, "reason": "test", "author": "test",
+                "created_at": "2026-10-12"}]}), encoding="utf-8")
+        adapter = KaikkiSenseMenuAdapter(self.snapshot, language_code="nl", language_policy=self.policy)
+        adapter.resolver = Resolver(
+            KaikkiHeadwordSource(), DeclaredRegistry.load(folder.parent, "nl"),
+            Context(language="nl", mode="speech"),
+            ModePolicy.load(REPOSITORY_ROOT / "config/surfaces/strategy.json", "speech"))
+        adapter.resolver_surfaces = frozenset({"anderen"})
+        menu, _ = adapter.build([create_card_record("nl", "anderen").to_dict()], snapshot_id="fixture")
+        analyses = menu["cards"][0]["analyses"]
+        self.assertEqual([(a["headword"], a["part_of_speech"]) for a in analyses], [("ander", "adj")])
+        self.assertEqual(self.menus("anderen")["anderen"], [])  # without the declaration
 
 
 if __name__ == "__main__":

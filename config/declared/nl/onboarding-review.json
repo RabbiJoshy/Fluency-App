@@ -1,5 +1,1468 @@
 {
   "schema": "declared-entries/v1",
   "language": "nl",
-  "entries": []
+  "entries": [
+    {
+      "entry_id": "nl-review-schitterende",
+      "kind": "headwords",
+      "surface": "schitterende",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "schitterend"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of schitterend (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-getrouwde",
+      "kind": "headwords",
+      "surface": "getrouwde",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "getrouwd"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of getrouwd (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-briljante",
+      "kind": "headwords",
+      "surface": "briljante",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "briljant"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of briljant (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-almachtige",
+      "kind": "headwords",
+      "surface": "almachtige",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "almachtig"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of almachtig (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-fatsoenlijke",
+      "kind": "headwords",
+      "surface": "fatsoenlijke",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "fatsoenlijk"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of fatsoenlijk (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-nette",
+      "kind": "headwords",
+      "surface": "nette",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "net"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of net (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-ganse",
+      "kind": "headwords",
+      "surface": "ganse",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "gans"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of gans (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-linkse",
+      "kind": "headwords",
+      "surface": "linkse",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "links"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of links (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-nobele",
+      "kind": "headwords",
+      "surface": "nobele",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "nobel"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of nobel (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-gewelddadige",
+      "kind": "headwords",
+      "surface": "gewelddadige",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "gewelddadig"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of gewelddadig (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-brave",
+      "kind": "headwords",
+      "surface": "brave",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "braaf"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of braaf (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-vervloekte",
+      "kind": "headwords",
+      "surface": "vervloekte",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "vervloekt"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of vervloekt (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-levenden",
+      "kind": "headwords",
+      "surface": "levenden",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "levend"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of levend (attributive -e/-en ending); the form has no page of its own",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-persoonlijks",
+      "kind": "headwords",
+      "surface": "persoonlijks",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "persoonlijk"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of persoonlijk (partitive -s, as in 'iets persoonlijks')",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-verkeerds",
+      "kind": "headwords",
+      "surface": "verkeerds",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "verkeerd"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of verkeerd (partitive -s, as in 'iets verkeerds')",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-vreselijks",
+      "kind": "headwords",
+      "surface": "vreselijks",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "vreselijk"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of vreselijk (partitive -s, as in 'iets vreselijks')",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-misdaan",
+      "kind": "headwords",
+      "surface": "misdaan",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "misdoen"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of misdoen (past participle)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-verlamd",
+      "kind": "headwords",
+      "surface": "verlamd",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "verlammen"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of verlammen (past participle)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-gedeisd",
+      "kind": "headwords",
+      "surface": "gedeisd",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "deizen"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of deizen (past participle)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-afgesneden",
+      "kind": "headwords",
+      "surface": "afgesneden",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "afsnijden"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of afsnijden (past participle)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-nagetrokken",
+      "kind": "headwords",
+      "surface": "nagetrokken",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "natrekken"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of natrekken (past participle)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-ingerukt",
+      "kind": "headwords",
+      "surface": "ingerukt",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "inrukken"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of inrukken (past participle)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-relax",
+      "kind": "headwords",
+      "surface": "relax",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "relaxen"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of relaxen (imperative/first person)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-orders",
+      "kind": "headwords",
+      "surface": "orders",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "order"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of order (plural)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-vampieren",
+      "kind": "headwords",
+      "surface": "vampieren",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "vampier"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "plural of vampier; Wiktionary has no page for the plural",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-anderen",
+      "kind": "headwords",
+      "surface": "anderen",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "ander"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: noun 'plural of ander; others'; ander is filed as adj/pron, so the noun->noun redirect dropped it",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-meeste",
+      "kind": "headwords",
+      "surface": "meeste",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "meest"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: adj 'inflection of meest'; meest is filed as det/adv, so the adj->adj redirect dropped it",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-meesten",
+      "kind": "headwords",
+      "surface": "meesten",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "meest"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: adj 'inflection of meest'; meest is filed as det/adv, so the adj->adj redirect dropped it",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-besten",
+      "kind": "headwords",
+      "surface": "besten",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "best"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of best (plural, 'de besten')",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-asjeblieft",
+      "kind": "headwords",
+      "surface": "asjeblieft",
+      "payload": {
+        "class": "interjection",
+        "headwords": [
+          "alsjeblieft"
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: intj 'alternative form of alsjeblieft' (colloquial, Northern); alsjeblieft is filed as adv",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-eén",
+      "kind": "expansion",
+      "surface": "eén",
+      "payload": {
+        "class": "vocabulary",
+        "expands_to": "een"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "stress accents on een for emphasis (eén = 'one', not 'a'); the same word, spelled for emphasis",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-èèn",
+      "kind": "expansion",
+      "surface": "èèn",
+      "payload": {
+        "class": "vocabulary",
+        "expands_to": "een"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "stress accents on een for emphasis (eén = 'one', not 'a'); the same word, spelled for emphasis",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-zó",
+      "kind": "expansion",
+      "surface": "zó",
+      "payload": {
+        "class": "vocabulary",
+        "expands_to": "zo"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "stress accents on zo for emphasis (eén = 'one', not 'a'); the same word, spelled for emphasis",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-vóór",
+      "kind": "expansion",
+      "surface": "vóór",
+      "payload": {
+        "class": "vocabulary",
+        "expands_to": "voor"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "stress accents on voor for emphasis (eén = 'one', not 'a'); the same word, spelled for emphasis",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-écht",
+      "kind": "expansion",
+      "surface": "écht",
+      "payload": {
+        "class": "vocabulary",
+        "expands_to": "echt"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "stress accents on echt for emphasis (eén = 'one', not 'a'); the same word, spelled for emphasis",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-da",
+      "kind": "expansion",
+      "surface": "da",
+      "payload": {
+        "class": "vocabulary",
+        "expands_to": "dat"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "colloquial spelling of dat in subtitles ('Da moet je me niet zeggen')",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-ns",
+      "kind": "expansion",
+      "surface": "ns",
+      "payload": {
+        "class": "vocabulary",
+        "expands_to": "eens"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "'ns (eens, 'just, once') with its apostrophe lost: 'Kom 'ns kijken'",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-aub",
+      "kind": "expansion",
+      "surface": "aub",
+      "payload": {
+        "class": "abbreviation",
+        "expands_to": "alstublieft"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "a.u.b. = alstublieft 'please', written without stops",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-ok",
+      "kind": "expansion",
+      "surface": "ok",
+      "payload": {
+        "class": "interjection",
+        "expands_to": "oké"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "the everyday Dutch interjection, written in the English or phonetic spelling; Wiktionary's only 'OK' is operatiekamer",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-okay",
+      "kind": "expansion",
+      "surface": "okay",
+      "payload": {
+        "class": "interjection",
+        "expands_to": "oké"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "the everyday Dutch interjection, written in the English or phonetic spelling; Wiktionary's only 'OK' is operatiekamer",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-okee",
+      "kind": "expansion",
+      "surface": "okee",
+      "payload": {
+        "class": "interjection",
+        "expands_to": "oké"
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "the everyday Dutch interjection, written in the English or phonetic spelling; Wiktionary's only 'OK' is operatiekamer",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-da's",
+      "kind": "gloss",
+      "surface": "da's",
+      "payload": {
+        "class": "inflection",
+        "senses": [
+          {
+            "translation": "that's",
+            "definition": "contraction of dat + is",
+            "pos": "contraction"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: 'contraction of dat + is'; no single headword holds both words",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-dankjewel",
+      "kind": "gloss",
+      "surface": "dankjewel",
+      "payload": {
+        "class": "interjection",
+        "senses": [
+          {
+            "translation": "thank you very much",
+            "pos": "intj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: alternative spelling of 'dank je wel' (phrase 'thank you very much'); the builder will not give a one-word card a three-word headword",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-dankje",
+      "kind": "gloss",
+      "surface": "dankje",
+      "payload": {
+        "class": "interjection",
+        "senses": [
+          {
+            "translation": "thank you, thanks",
+            "pos": "intj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: alternative spelling of 'dank je' ('thank you, thanks')",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-hoelang",
+      "kind": "gloss",
+      "surface": "hoelang",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "how long",
+            "pos": "adv"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: alternative form of 'hoe lang' ('how long')",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-weleens",
+      "kind": "gloss",
+      "surface": "weleens",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "occasionally, sometimes; ever",
+            "pos": "adv"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: alternative form of 'wel eens' ('occasionally, sometimes')",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-ofzo",
+      "kind": "gloss",
+      "surface": "ofzo",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "or something, or so",
+            "pos": "intj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: 'of zo' ('or something, or so'); ofzo is its solid spelling",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-zachtjes",
+      "kind": "gloss",
+      "surface": "zachtjes",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "softly, gently, quietly",
+            "pos": "adv"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: 'diminutive of zacht; softly, gently, quietly' -- filed as form-of, so the gloss was discarded",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-achteren",
+      "kind": "gloss",
+      "surface": "achteren",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "back, behind",
+            "definition": "only after a preposition: naar achteren 'backwards', van achteren 'from behind'",
+            "pos": "adv"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: 'alternative form of achter, always found with a preposition'",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-ziens",
+      "kind": "gloss",
+      "surface": "ziens",
+      "payload": {
+        "class": "name_fragment",
+        "senses": [
+          {
+            "translation": "see you; goodbye",
+            "definition": "in tot ziens",
+            "pos": "phrase"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "only occurs in 'tot ziens' (Wiktionary: 'see you; bye'); its own entry is an archaic genitive of zien",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-se",
+      "kind": "gloss",
+      "surface": "se",
+      "payload": {
+        "class": "name_fragment",
+        "senses": [
+          {
+            "translation": "necessarily, really, at all costs",
+            "definition": "in per se",
+            "pos": "phrase"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "only occurs in 'per se' in the harvested sentences",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-schei",
+      "kind": "gloss",
+      "surface": "schei",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "stop it, cut it out",
+            "definition": "in schei uit",
+            "pos": "verb"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "imperative of scheiden, used in 'schei uit!' ('cut it out'); the harvested sentences are all this phrase",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-lazer",
+      "kind": "gloss",
+      "surface": "lazer",
+      "payload": {
+        "class": "slang",
+        "senses": [
+          {
+            "translation": "get lost, piss off",
+            "definition": "in lazer op (vulgar)",
+            "pos": "verb"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "imperative of lazeren, used in 'lazer op!'; vulgar",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-goddank",
+      "kind": "gloss",
+      "surface": "goddank",
+      "payload": {
+        "class": "interjection",
+        "senses": [
+          {
+            "translation": "thank God",
+            "pos": "intj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "fused 'God dank'; no Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-welnu",
+      "kind": "gloss",
+      "surface": "welnu",
+      "payload": {
+        "class": "interjection",
+        "senses": [
+          {
+            "translation": "well, well then, now then",
+            "pos": "intj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "no Wiktionary entry; formal discourse marker",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-minst",
+      "kind": "gloss",
+      "surface": "minst",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "least; fewest",
+            "pos": "adj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: 'superlative degree of weinig' (form-of only)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-minste",
+      "kind": "gloss",
+      "surface": "minste",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "least; the least",
+            "pos": "adj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary: 'inflection of minst, the superlative degree of weinig' (form-of only)",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-bestwil",
+      "kind": "gloss",
+      "surface": "bestwil",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "own good",
+            "definition": "in voor je eigen bestwil 'for your own good'",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "no Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-moordzaken",
+      "kind": "gloss",
+      "surface": "moordzaken",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "homicide (police department)",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "no Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-congreslid",
+      "kind": "gloss",
+      "surface": "congreslid",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "congressman, member of Congress",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "no Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-gekkenwerk",
+      "kind": "gloss",
+      "surface": "gekkenwerk",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "madness, lunacy",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "no Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-voorbestemd",
+      "kind": "gloss",
+      "surface": "voorbestemd",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "predestined, destined",
+            "pos": "adj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "no Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-vice-president",
+      "kind": "gloss",
+      "surface": "vice-president",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "vice president",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "no Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-shock",
+      "kind": "gloss",
+      "surface": "shock",
+      "payload": {
+        "class": "loanword",
+        "senses": [
+          {
+            "translation": "shock",
+            "definition": "in shock 'in shock'",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "established Dutch loanword (in shock); no Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-hey",
+      "kind": "gloss",
+      "surface": "hey",
+      "payload": {
+        "class": "interjection",
+        "senses": [
+          {
+            "translation": "hey",
+            "pos": "intj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "interjection used in Dutch speech; no Dutch Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-hmm",
+      "kind": "gloss",
+      "surface": "hmm",
+      "payload": {
+        "class": "interjection",
+        "senses": [
+          {
+            "translation": "hmm",
+            "pos": "intj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "interjection",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-aha",
+      "kind": "gloss",
+      "surface": "aha",
+      "payload": {
+        "class": "interjection",
+        "senses": [
+          {
+            "translation": "aha",
+            "pos": "intj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "interjection",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-ho",
+      "kind": "gloss",
+      "surface": "ho",
+      "payload": {
+        "class": "interjection",
+        "senses": [
+          {
+            "translation": "whoa, stop",
+            "pos": "intj"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "interjection ('Ho, ik groeide op met die man' = 'Whoa')",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-satan",
+      "kind": "gloss",
+      "surface": "satan",
+      "payload": {
+        "class": "vocabulary",
+        "senses": [
+          {
+            "translation": "Satan, the devil",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "kept at review (religious word); Wiktionary has no lowercase or title-case Dutch entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-madame",
+      "kind": "gloss",
+      "surface": "madame",
+      "payload": {
+        "class": "loanword",
+        "senses": [
+          {
+            "translation": "madam, ma'am",
+            "definition": "French form of address",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "kept at review as a form of address",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-monsieur",
+      "kind": "gloss",
+      "surface": "monsieur",
+      "payload": {
+        "class": "loanword",
+        "senses": [
+          {
+            "translation": "sir, monsieur",
+            "definition": "French form of address",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "form of address, pairs with madame",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-gin",
+      "kind": "gloss",
+      "surface": "gin",
+      "payload": {
+        "class": "loanword",
+        "senses": [
+          {
+            "translation": "gin (drink)",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "loanword; no Dutch Wiktionary entry",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-martini",
+      "kind": "gloss",
+      "surface": "martini",
+      "payload": {
+        "class": "loanword",
+        "senses": [
+          {
+            "translation": "martini (cocktail)",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "loanword",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-jeep",
+      "kind": "gloss",
+      "surface": "jeep",
+      "payload": {
+        "class": "loanword",
+        "senses": [
+          {
+            "translation": "jeep",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "loanword; Wiktionary's table hit (the name Jaap) is wrong",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-km",
+      "kind": "gloss",
+      "surface": "km",
+      "payload": {
+        "class": "abbreviation",
+        "senses": [
+          {
+            "translation": "km, kilometre(s)",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "unit abbreviation",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-cm",
+      "kind": "gloss",
+      "surface": "cm",
+      "payload": {
+        "class": "abbreviation",
+        "senses": [
+          {
+            "translation": "cm, centimetre(s)",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "unit abbreviation",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-dna",
+      "kind": "gloss",
+      "surface": "dna",
+      "payload": {
+        "class": "abbreviation",
+        "senses": [
+          {
+            "translation": "DNA",
+            "pos": "noun"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "Wiktionary files it as all-caps DNA, which exact matching rightly skips",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-vs",
+      "kind": "gloss",
+      "surface": "vs",
+      "payload": {
+        "class": "abbreviation",
+        "senses": [
+          {
+            "translation": "versus, vs.",
+            "pos": "prep"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "speech"
+      },
+      "reason": "versus; Wiktionary's VS (Verenigde Staten) is a different word",
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-ellendige",
+      "kind": "headwords",
+      "surface": "ellendige",
+      "payload": {
+        "class": "inflection",
+        "headwords": [
+          "ellendig"
+        ]
+      },
+      "reason": "Wiktionary's own inflection table lists it as a form of ellendig (attributive -e ending); the form has no page of its own",
+      "scope": {
+        "mode": "speech"
+      },
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    },
+    {
+      "entry_id": "nl-review-mm",
+      "kind": "gloss",
+      "surface": "mm",
+      "payload": {
+        "class": "interjection",
+        "senses": [
+          {
+            "translation": "mm, hmm",
+            "pos": "intj"
+          }
+        ]
+      },
+      "reason": "interjection",
+      "scope": {
+        "mode": "speech"
+      },
+      "author": "Claude",
+      "created_at": "2026-10-12"
+    }
+  ]
 }

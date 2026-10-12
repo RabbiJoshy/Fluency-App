@@ -33,7 +33,7 @@ from fluency.sense_menu.noun_merge import stamp_noun_merge
 from fluency.surfaces import trust as _trust
 from fluency.surfaces.resolver import (
     ABSENT, COMPLETE_DUMP, DECLARED_GLOSS, ENTITY, EXPANSION, HEADWORDS, MENU,
-    NO_MENU, Headword, ProviderDeclaration, Resolution,
+    NO_MENU, OVERRIDE, Headword, ProviderDeclaration, Resolution,
 )
 
 
@@ -919,9 +919,18 @@ class KaikkiSenseMenuAdapter:
                 records = {h.headword: {"headword_provenance": h.provenance, "headword_trust": h.trust,
                                         "headword_detail": h.detail or None}
                            for h in resolution.headwords}
+                # A hand-written headwords entry names the entry it means; the
+                # dictionary's own form-of edge must not then narrow it back.
+                # anderen is a noun "plural of ander" but ander is filed as
+                # adj/pron, so the noun->noun restriction emptied the menu the
+                # declaration asked for.
+                allowed = dict(allowed_positions.get(target, {}))
+                for head in resolution.headwords:
+                    if head.relation == OVERRIDE:
+                        allowed[head.headword] = None
                 analyses = self._card_analyses(
                     card, surface, [h.headword for h in resolution.headwords], rows_by_word,
-                    paths.get(target, {}), allowed_positions.get(target, {}), surface_grammar,
+                    paths.get(target, {}), allowed, surface_grammar,
                     stamp=resolution.stamp(), headword_records=records)
             elif resolution.strategy == DECLARED_GLOSS:
                 analyses = declared_gloss_analyses(card["card_id"], surface, resolution)

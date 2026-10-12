@@ -344,7 +344,12 @@ def main() -> int:
     counts = collections.Counter(s["verdict"] for s in surfaces.values())
     run_id = run.name if run is not None else None
     covered = sum(1 for s in surfaces.values() if s.get("supply"))
-    keep = sum(1 for s in surfaces.values() if s["verdict"] == KEEP_VERDICT)
+    # Only cards count. A row the current inventory does not rank is left from
+    # an earlier list (Dutch moved from FrequencyWords to SUBTLEX-NL and kept
+    # `sms`, which now ranks outside the deck); it is not a card, so missing
+    # supply for it is not a thin deck.
+    keep = sum(1 for s in surfaces.values()
+               if s["verdict"] == KEEP_VERDICT and (s.get("rank") or not ranks))
 
     # The ledger is two documents sharing a filename. The durable half --
     # verdict, reason codes, tags, lemma -- is folded from events and belongs to
