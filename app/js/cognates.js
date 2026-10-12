@@ -100,6 +100,7 @@ function readSelected() {
 }
 
 function writeSelected(codes, labels) {
+    forgetActiveKnownLanguages();
     if (globalThis.saveLanguageProfile) { globalThis.saveLanguageProfile(codes, labels); return; }
     selectedKnownLanguages = codes.slice();
     try {
@@ -123,10 +124,25 @@ function availableKnownLanguages() {
     return relevant ? loaded.filter(code => relevant.includes(code)) : loaded;
 }
 
+// Asked once per word, and a deck render asks ~140,000 times; each answer
+// re-read two saved settings from localStorage and rebuilt the same lists, a
+// half-second freeze on opening a deck. Inputs cannot change mid-pass except
+// through the events below, so the answer holds until the pass ends (the next
+// microtask) or one of them fires.
+let activeKnownCache = null;
+function forgetActiveKnownLanguages() { activeKnownCache = null; }
+if (typeof window !== 'undefined') {
+    window.addEventListener('language-profile-change', forgetActiveKnownLanguages);
+    window.addEventListener('fast-track-preference-change', forgetActiveKnownLanguages);
+}
+
 function activeKnownLanguages() {
+    if (activeKnownCache) return activeKnownCache;
     const available = new Set(availableKnownLanguages());
     const ignored = new Set(globalThis.readKnownLanguageSourceExclusions?.() || []);
-    return readSelected().filter(code => available.has(code) && !ignored.has(code));
+    activeKnownCache = readSelected().filter(code => available.has(code) && !ignored.has(code));
+    Promise.resolve().then(forgetActiveKnownLanguages);
+    return activeKnownCache;
 }
 
 const LOOKALIKE_FLOOR = 0.55;
@@ -401,6 +417,7 @@ function knownLemmas(item) {
 }
 
 async function loadCognateScores(langConfig) {
+    forgetActiveKnownLanguages();
     cognateScores = null;
     cognateMatches = null;
     cognateLanguages = [];
@@ -426,6 +443,7 @@ async function loadCognateScores(langConfig) {
         cognateLanguages = Array.isArray(payload.known_languages)
             ? payload.known_languages.slice()
             : Object.keys(Object.values(scores)[0] || {});
+        forgetActiveKnownLanguages();
         if (isLemmaRouted(cognateSchema) && !Array.isArray(payload.known_languages)) {
             // v2's first value is a lemma map, so its keys are lemmas, not
             // languages. Only a declared list is trustworthy here.

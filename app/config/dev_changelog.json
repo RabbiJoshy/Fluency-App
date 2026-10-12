@@ -2,6 +2,18 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T23:41:00+01:00",
+   "date": "2026-10-12 23:41 BST",
+   "agent": "Claude",
+   "summary": "Opening a deck freezes the screen for less time: Smart Skip stops re-reading your language settings for every word",
+   "detail": [
+    "Smart Skip asked which languages you read once per word (~140,000 times when a deck opened), re-reading and re-parsing two saved settings each time.",
+    "The answer is now worked out once per pass and dropped the moment either setting changes.",
+    "Czech, timed locally: Smart Skip refresh 817 ms to 214 ms; Smart Skip button 239 ms to 101 ms; skipped-word list 74 ms to 24 ms."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T23:10:20+01:00",
    "date": "2026-10-12 23:10 BST",
    "agent": "Claude",
@@ -371,17 +383,6 @@
     "The person on a verb row describes the word, not the sentence being shown: era is 'I/he/she was' on every example (was 'I was' or 'he was' depending on the example), habla is 'he/she speaks'.",
     "A form that is both a statement and a command shows the command when at least one in five of the card's sentences use it, first when most do: mira 'look! / he/she looks' (19 of 26 sentences), deja 'he/she leaves / leave!', no te preocupes → preocupes 'don't worry! / you worry'. quiere, sabe, parece stay 'he/she …'.",
     "Decided once per card from all its sentences, so the row is stable while browsing. 324 es and 366 pt rows gain a command (v24 decks); no row lost its English."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:12:26+01:00",
-   "date": "2026-10-11 12:12 BST",
-   "agent": "Codex",
-   "summary": "SEAM: keep recovered Speech dictionary examples scoped to Speech",
-   "detail": [
-    "Artist and live-lyrics cards cannot inherit Speech dictionary alternatives or Speech form-group lists.",
-    "Current Spanish/Portuguese Speech examples still match the studied form. Staging only; no production promotion."
    ],
    "commit": "pending"
   }
