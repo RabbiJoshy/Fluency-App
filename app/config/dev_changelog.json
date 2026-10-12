@@ -2,6 +2,19 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T21:30:44+01:00",
+   "date": "2026-10-12 21:30 BST",
+   "agent": "Codex",
+   "summary": "Simpler language picker and consistent modal close buttons",
+   "detail": [
+    "Centre Save text and replace duplicate modal Cancel actions with the standard header X.",
+    "Remove Add another language; use only listed profile choices.",
+    "Label listed languages without study decks Coming soon while keeping them selectable as languages you know.",
+    "Preserve existing saved language profiles and Smart Skip’s relevant-pair filtering."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T21:22:57+01:00",
    "date": "2026-10-12 21:22 BST",
    "agent": "Codex",
@@ -365,17 +378,6 @@
    "summary": "Less common uses rows put meaning and context on one line when they fit",
    "detail": [
     "Rare uses sheet: meaning and context share a line when there is room; the context drops beneath as a whole when there isn't."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T11:04:22+01:00",
-   "date": "2026-10-11 11:04 BST",
-   "agent": "Claude",
-   "summary": "Focus meanings rows made uniform; Less common uses sheet is compact with example buttons",
-   "detail": [
-    "Focus meanings: every row is the same box — translation, then context; family headings sit inside each row; head reads 'Verb from decir'.",
-    "Rare uses sheet retitled 'Less common uses of <word>' (one line, no subtitle); rows are meaning + context with an examples icon button on the right."
    ],
    "commit": "pending"
   }

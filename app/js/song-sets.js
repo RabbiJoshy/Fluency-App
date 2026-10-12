@@ -310,7 +310,6 @@ function setupSongSetPicker() {
         });
     });
     document.getElementById('closeSongSetModal')?.addEventListener('click', hideSongSetPicker);
-    document.getElementById('cancelSongSetBtn')?.addEventListener('click', hideSongSetPicker);
     modal.addEventListener('click', event => {
         if (event.target === modal) hideSongSetPicker();
     });

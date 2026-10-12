@@ -38,15 +38,17 @@ bundles already fit the approved list, so this change does not add mapping data.
 Smart Skip shows only relevant profile languages; unmapped relevant choices are
 disabled and marked **Coming soon**. Its Languages you know editor shows the
 curated target list, preserves unrelated saved languages, and links to the full
-profile in Settings. The full profile and onboarding remain unrestricted through
-an Add another language field. Recognised language names/codes use standard
-codes; other names get an account-profile label and stable custom ID. Custom
-names are escaped when rendered and never imply a supported mapping.
+profile in Settings. Following Josh’s picker refinement, onboarding and general
+Settings offer only the fixed catalogue; there is no free-text Add language action.
+Languages without an app study deck are labelled **Coming soon** in the full
+profile, but remain selectable as known languages. English remains the app’s
+translation language. Existing saved custom labels remain readable and preserved,
+but are not offered as new picker choices.
 
-The browser check added Japanese to the profile, opened the French-specific
-editor and verified that Japanese and Polish were hidden, Italian was disabled
-with Coming soon, and saving preserved all unrelated declarations. Unit checks
-cover ready/missing/irrelevant pair classification and arbitrary profile labels.
+The language picker uses a header X that discards unsaved edits and a centred
+Save button. Dismissing first-run onboarding confirms the existing choices rather
+than saving a draft. Song selection, playlist import, dictionary-leaving confirmation
+and the word-saving popup also use an X without a duplicate Cancel action.
 
 ## Knowledge evidence
 

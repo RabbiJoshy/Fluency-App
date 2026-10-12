@@ -2389,15 +2389,13 @@ function openKnownLanguagesSettings() {
     introSelectedCodes = new Set(window.readKnownLanguages?.() || []);
     introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
     knownLanguagesScoped = Boolean(fromFast);
-    document.getElementById('knownLanguagesAddForm').hidden = knownLanguagesScoped;
     document.getElementById('knownLanguagesManageAllBtn').hidden = !knownLanguagesScoped;
     document.getElementById('knownLanguagesModalIntro').textContent = knownLanguagesScoped
         ? 'Only useful pairs for this learning language appear here. Coming soon means the mapping is not available yet. Your other languages stay saved in Settings.'
-        : 'Save any languages you can comfortably read. Smart Skip uses only useful, supported language pairs. You can change this list at any time.';
+        : 'Choose from the listed languages you can comfortably read. Coming soon marks study languages we have not added yet. Smart Skip uses only useful, supported language pairs.';
     renderKnownLanguagesModalChoices(knownLanguagesScoped ? (window.relevantSmartSkipLanguages?.() || []) : getKnownLanguagesForTarget());
     document.getElementById('knownLanguagesModalTitle').textContent = 'Languages you know';
     document.getElementById('continueKnownLanguagesBtn').textContent = 'Save';
-    document.getElementById('cancelKnownLanguagesBtn').hidden = false;
     modal.classList.remove('hidden');
     modal.querySelector('button')?.focus();
 }
@@ -2414,7 +2412,11 @@ function renderKnownLanguagesModalChoices(availableCodes) {
     if (!container) return;
     container.innerHTML = '';
 
-    const codes = knownLanguagesScoped ? availableCodes : [...new Set([...availableCodes, ...introSelectedCodes])];
+    const codes = availableCodes;
+    // English is the app’s translation language; deck availability comes from config.
+    const studyLanguages = new Set(['en', ...Object.values(config.languages || {})
+        .filter(language => language.hasData !== false && (language.indexPath || language.dataPath))
+        .map(language => String(language.speechLang || '').split('-')[0])]);
     const ready = new Set(window.availableKnownLanguages?.() || []);
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     codes.forEach(code => {
@@ -2430,8 +2432,8 @@ function renderKnownLanguagesModalChoices(availableCodes) {
 
         const flag = window.knownLanguageFlag?.(code) || '🌐';
         const label = introLanguageLabels[code] || window.knownLanguageLabel?.(code) || code.toUpperCase();
-        const comingSoon = knownLanguagesScoped && !ready.has(code);
-        button.disabled = comingSoon;
+        const comingSoon = knownLanguagesScoped ? !ready.has(code) : !studyLanguages.has(code);
+        button.disabled = knownLanguagesScoped && comingSoon;
 
         button.innerHTML = `
             <span class="known-language-choice-flag" aria-hidden="true">${flag}</span>
@@ -2485,28 +2487,16 @@ function maybeShowKnownLanguagesIntro(targetLang) {
     knownLanguagesEditorReturn = null;
     knownLanguagesScoped = false;
     introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
-    document.getElementById('knownLanguagesAddForm').hidden = false;
     document.getElementById('knownLanguagesManageAllBtn').hidden = true;
-    document.getElementById('knownLanguagesModalIntro').textContent = 'Choose languages where most everyday words are already familiar. Saved for every language you study; you can change this in Settings. Smart Skip uses only useful, supported language pairs.';
+    document.getElementById('knownLanguagesModalIntro').textContent = 'Choose languages where most everyday words are already familiar. Saved for every language you study; you can change this in Settings. Coming soon marks study languages we have not added yet.';
     document.getElementById('knownLanguagesModalTitle').textContent = 'Which languages can you comfortably read?';
     document.getElementById('continueKnownLanguagesBtn').textContent = 'Continue';
-    document.getElementById('cancelKnownLanguagesBtn').hidden = true;
     renderKnownLanguagesModalChoices(available);
     modal.classList.remove('hidden');
     return true;
 }
 
 function setupKnownLanguagesIntro() {
-    document.getElementById('knownLanguagesAddForm')?.addEventListener('submit', event => {
-        event.preventDefault();
-        const input = document.getElementById('knownLanguagesAddInput');
-        const language = window.resolveProfileLanguage?.(input.value);
-        if (!language) return;
-        introSelectedCodes.add(language.code);
-        introLanguageLabels[language.code] = language.label;
-        input.value = '';
-        renderKnownLanguagesModalChoices(getKnownLanguagesForTarget());
-    });
     document.getElementById('knownLanguagesManageAllBtn')?.addEventListener('click', () => {
         closeKnownLanguagesModal();
         knownLanguagesEditorReturn = null;
@@ -2536,23 +2526,25 @@ function setupKnownLanguagesIntro() {
         });
     }
 
-    const cancel = () => {
-        if (!knownLanguagesEditorReturn) return;
+    const dismiss = () => {
         closeKnownLanguagesModal();
         const back = knownLanguagesEditorReturn;
         knownLanguagesEditorReturn = null;
-        back();
+        if (back) back();
+        else {
+            // Dismissing onboarding keeps the saved choices and confirms the prompt once.
+            window.writeKnownLanguages?.(window.readKnownLanguages?.() || [], window.readLanguageProfile?.().labels || {});
+        }
     };
-    document.getElementById('cancelKnownLanguagesBtn')?.addEventListener('click', cancel);
+    document.getElementById('closeKnownLanguagesModal')?.addEventListener('click', dismiss);
     document.getElementById('knownLanguagesModal')?.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && knownLanguagesEditorReturn) {
-            event.stopPropagation(); cancel();
+        if (event.key === 'Escape') {
+            event.stopPropagation(); dismiss();
         }
     });
     document.getElementById('knownLanguagesModal')?.addEventListener('click', event => {
         if (event.target === event.currentTarget) {
-            if (knownLanguagesEditorReturn) cancel();
-            else continueBtn?.click();
+            dismiss();
         }
     });
 

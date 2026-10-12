@@ -3,7 +3,9 @@
 Design recorded 2026-10-12. Josh subsequently requested BRIDGE implementation
 in this chat. The shared profile and opt-in BRIDGE control are now implemented;
 see `BRIDGE_IMPLEMENTATION.md` for verified behaviour, data limits and rollout.
-The text below preserves the design rationale.
+The text below preserves the design rationale. Latest picker refinement: the
+profile uses fixed listed choices, with no free-text addition. Languages without
+a study deck carry a Coming soon reminder but can still be declared known.
 
 ## The product model
 

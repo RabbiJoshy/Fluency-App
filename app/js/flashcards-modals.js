@@ -693,7 +693,7 @@ function showSaveOffer(rowIndex) {
             ${saved
                 ? `<button type="button" class="smart-skip-preview-close" data-breakdown-action="save" data-row="${rowIndex}">Remove</button>
                    <button type="button" class="smart-skip-preview-open" data-breakdown-popup-close>OK</button>`
-                : `<button type="button" class="smart-skip-preview-close" data-breakdown-popup-close>Cancel</button>
+                : `<button type="button" class="modal-close word-by-word-popup-close" aria-label="Close" data-breakdown-popup-close>✕</button>
                    <button type="button" class="smart-skip-preview-open" data-breakdown-action="save" data-row="${rowIndex}">Save</button>`}
         </div>`, row.text);
 }

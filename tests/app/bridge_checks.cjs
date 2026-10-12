@@ -60,8 +60,8 @@ function harness() {
     assert(sources.includes('it') && !sources.includes('ja'), 'only predefined useful pairs may appear');
     const choices = pairs.pairChoices(policy,'es',['en','it','ja'],['en','pt','fr']);
     assert.equal(JSON.stringify(choices),JSON.stringify([{code:'en',ready:true},{code:'it',ready:false}]));
-    assert.equal(p.resolveProfileLanguage('Japanese').code,'ja');
-    const other = p.resolveProfileLanguage('My community language');
+    // Older saved custom labels remain readable even though the picker is now fixed.
+    const other = {code:'x-legacy',label:'My community language'};
     p.saveLanguageProfile(['ja',other.code],{[other.code]:other.label});
     assert(p.readLanguageProfile().languages.includes('ja'));
     assert.equal(p.readLanguageProfile().labels[other.code],'My community language');

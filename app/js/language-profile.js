@@ -69,22 +69,3 @@ function remote(rows, {full = false} = {}) {
 window.readLanguageProfile = read;
 window.saveLanguageProfile = save;
 window.applyRemoteLanguageProfile = remote;
-
-window.resolveProfileLanguage = text => {
-    const label = String(text || '').trim().slice(0,100);
-    if (!label) return null;
-    const names = new Intl.DisplayNames(['en'], {type: 'language'});
-    const lower = label.toLocaleLowerCase();
-    if (/^[a-z]{2,3}$/.test(lower)) {
-        const name = names.of(lower);
-        if (name && name !== lower) return {code: lower, label: name};
-    }
-    for (let a = 97; a <= 122; a++) for (let b = 97; b <= 122; b++) {
-        const code = String.fromCharCode(a,b);
-        const name = names.of(code);
-        if (name?.toLocaleLowerCase() === lower) return {code, label: name};
-    }
-    let hash = 2166136261;
-    for (const ch of lower.normalize('NFC')) {hash ^= ch.codePointAt(0); hash = Math.imul(hash,16777619);}
-    return {code: `x-${(hash >>> 0).toString(16)}`, label};
-};

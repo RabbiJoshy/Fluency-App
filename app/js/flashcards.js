@@ -9542,12 +9542,11 @@ function ensureSynLeaveConfirmModal() {
                     <span class="knowledge-overview-kicker">Leaving this app</span>
                     <h2 id="synLeaveConfirmTitle">No card for “<span class="syn-leave-word"></span>”</h2>
                 </div>
-                <button type="button" class="knowledge-overview-close" aria-label="Cancel" data-syn-leave="cancel">&times;</button>
+                <button type="button" class="knowledge-overview-close" aria-label="Close" data-syn-leave="cancel">&times;</button>
             </div>
             <p class="syn-leave-body">This word isn't in your deck, so there's no card to open.
                 Continuing leaves the app and opens <span class="syn-leave-destination">the dictionary</span> in a new tab.</p>
             <div class="syn-leave-actions">
-                <button type="button" class="auth-cancel-btn" data-syn-leave="cancel">Cancel</button>
                 <button type="button" class="auth-submit-btn" data-syn-leave="continue">Continue</button>
             </div>
         </div>`;
@@ -9562,7 +9561,7 @@ function ensureSynLeaveConfirmModal() {
             if (url) window.open(url, '_blank', 'noopener');
             return;
         }
-        // Cancel button, close button, or a tap on the backdrop itself.
+        // Close button or a tap on the backdrop itself.
         if (action === 'cancel' || event.target === modal) closeSynLeaveConfirm();
     });
     document.body.appendChild(modal);

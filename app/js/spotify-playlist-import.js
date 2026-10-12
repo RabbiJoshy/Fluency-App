@@ -160,14 +160,11 @@ function setDismissLock(ms = DISMISS_LOCK_MS) {
     _ignoreBackdropUntil = Date.now() + ms;
     const modal = element('spotifyPlaylistModal');
     modal?.classList.add('is-dismiss-locked');
-    const cancel = element('cancelSpotifyPlaylistBtn');
     const close = element('closeSpotifyPlaylistModal');
-    if (cancel) cancel.disabled = true;
     if (close) close.disabled = true;
     window.clearTimeout(setDismissLock._timer);
     setDismissLock._timer = window.setTimeout(() => {
         modal?.classList.remove('is-dismiss-locked');
-        if (cancel) cancel.disabled = false;
         if (close) close.disabled = false;
     }, ms);
 }
@@ -752,7 +749,6 @@ function closeSpotifyPlaylistImport() {
     _importAbort?.abort();
     _importAbort = null;
     setImportBusy(false);
-    element('cancelSpotifyPlaylistBtn') && (element('cancelSpotifyPlaylistBtn').disabled = false);
     element('closeSpotifyPlaylistModal') && (element('closeSpotifyPlaylistModal').disabled = false);
     element('spotifyPlaylistModal')?.classList.add('hidden');
     _matchState = null;
@@ -833,7 +829,6 @@ function setupSpotifyPlaylistImport() {
     if (!modal || modal.dataset.listenersReady === '1') return;
     modal.dataset.listenersReady = '1';
     element('closeSpotifyPlaylistModal')?.addEventListener('click', closeSpotifyPlaylistImport);
-    element('cancelSpotifyPlaylistBtn')?.addEventListener('click', closeSpotifyPlaylistImport);
     element('reconnectSpotifyPlaylistBtn')?.addEventListener('click', reconnectSpotifyForPlaylist);
     element('useSpotifyMatchesBtn')?.addEventListener('click', confirmSpotifyMatches);
     element('useSpotifyLiveBtn')?.addEventListener('click', confirmSpotifyLiveDeck);
