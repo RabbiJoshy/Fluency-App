@@ -80,14 +80,21 @@ def tracked_app_files(ref: str) -> list[tuple[str, str]]:
 
 
 # Staging installs alongside production on a home screen, so it gets its own
-# name and icon: "Fluency α" and app/icons/staging/ instead of "Fluency β".
+# name and icon: "Fluency β" (Fβ, app/icons/staging/) instead of "Fluency" (Fλ).
 STAGING_IDENTITY_FILES = ("index.html", "manifest.json", "service-worker.js")
+STAGING_NAME_SWAPS = (
+    ('<meta name="apple-mobile-web-app-title" content="Fluency">', '<meta name="apple-mobile-web-app-title" content="Fluency β">'),
+    ("<title>Fluency</title>", "<title>Fluency β</title>"),
+    ('"name": "Fluency"', '"name": "Fluency β"'),
+    ('"short_name": "Fluency"', '"short_name": "Fluency β"'),
+)
 
 
 def staging_identity(rel: str, content: bytes) -> bytes:
     if rel not in STAGING_IDENTITY_FILES:
         return content
-    content = content.replace("Fluency β".encode("utf-8"), "Fluency α".encode("utf-8"))
+    for old, new in STAGING_NAME_SWAPS:
+        content = content.replace(old.encode("utf-8"), new.encode("utf-8"))
     content = content.replace(b"icons/apple-touch-icon.png", b"icons/staging/apple-touch-icon.png")
     return content.replace(b"icons/icon-", b"icons/staging/icon-")
 

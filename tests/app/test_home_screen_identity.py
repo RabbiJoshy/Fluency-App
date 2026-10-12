@@ -26,8 +26,8 @@ class HomeScreenIdentityTests(unittest.TestCase):
 
     def test_manifest_names_the_app_and_points_at_png_icons(self) -> None:
         manifest = json.loads((APP_ROOT / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(manifest["name"], "Fluency β")
-        self.assertEqual(manifest["short_name"], "Fluency β")
+        self.assertEqual(manifest["name"], "Fluency")
+        self.assertEqual(manifest["short_name"], "Fluency")
         sizes = {}
         for icon in manifest["icons"]:
             self.assertEqual(icon["type"], "image/png")
@@ -39,7 +39,7 @@ class HomeScreenIdentityTests(unittest.TestCase):
 
     def test_ios_tags_use_the_same_name_and_a_png_touch_icon(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn('<meta name="apple-mobile-web-app-title" content="Fluency β">', html)
+        self.assertIn('<meta name="apple-mobile-web-app-title" content="Fluency">', html)
         self.assertIn('<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">', html)
         self.assertEqual(png_size(APP_ROOT / "icons/apple-touch-icon.png"), (180, 180))
         self.assertNotIn("Flashcards</title>", html)
@@ -54,17 +54,22 @@ class HomeScreenIdentityTests(unittest.TestCase):
         for name in ("apple-touch-icon.png", "icon-192.png", "icon-512.png"):
             self.assertIn(f"'/icons/{name}'", worker)
 
-    def test_staging_build_renames_to_alpha_and_swaps_every_icon(self) -> None:
+    def test_staging_build_renames_to_beta_and_swaps_every_icon(self) -> None:
         for rel in build_pages_site.STAGING_IDENTITY_FILES:
             original = (APP_ROOT / rel).read_bytes()
             staged = build_pages_site.staging_identity(rel, original).decode("utf-8")
-            self.assertNotIn("Fluency β", staged, rel)
+            if rel != "service-worker.js":
+                self.assertIn("Fluency β", staged, rel)
             for name in ("apple-touch-icon.png", "icon-192.png", "icon-512.png"):
                 if f"icons/{name}" in original.decode("utf-8"):
                     self.assertIn(f"icons/staging/{name}", staged, rel)
                     self.assertNotIn(f"'/icons/{name}'", staged, rel)
         manifest = json.loads(build_pages_site.staging_identity("manifest.json", (APP_ROOT / "manifest.json").read_bytes()))
-        self.assertEqual(manifest["short_name"], "Fluency α")
+        self.assertEqual(manifest["name"], "Fluency β")
+        self.assertEqual(manifest["short_name"], "Fluency β")
+        staged_html = build_pages_site.staging_identity("index.html", (APP_ROOT / "index.html").read_bytes()).decode("utf-8")
+        self.assertIn('content="Fluency β">', staged_html)
+        self.assertIn("<title>Fluency β</title>", staged_html)
         for icon in manifest["icons"]:
             self.assertEqual(png_size(APP_ROOT / icon["src"]), tuple(map(int, icon["sizes"].split("x"))))
         self.assertEqual(png_size(APP_ROOT / "icons/staging/apple-touch-icon.png"), (180, 180))
