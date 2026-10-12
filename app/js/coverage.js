@@ -80,7 +80,10 @@ function sumBand(samples, startRank, endRank) {
     for (const sample of samples || []) {
         const rank = Number(sample?.stableRank ?? sample?.rank);
         if (Number.isFinite(rank) && rank >= startRank && rank < endRank) {
-            total += shareOf(sample.word);
+            // Shares are keyed by the observed surface. A setup sample's
+            // `word` is its display headword (ten for the card "to"), which
+            // read the wrong share for 6,286 of 10,000 Czech cards.
+            total += shareOf(sample.item?.word ?? sample.word);
         }
     }
     return total;
