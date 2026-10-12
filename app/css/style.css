@@ -24574,6 +24574,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 
 /* Keep the vocabulary explanation easy to scan at every screen size. */
 .vocabulary-choice-bullets {
+  text-align: left;
   margin: 0;
   padding-left: 20px;
   color: var(--text-secondary);
