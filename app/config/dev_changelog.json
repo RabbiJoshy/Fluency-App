@@ -2,6 +2,19 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-13T00:08:00+01:00",
+   "date": "2026-10-13 00:08 BST",
+   "agent": "Claude",
+   "summary": "Smart Skip is one line on every screen, and the level picker takes the language's (or artist's) colour",
+   "detail": [
+    "Smart Skip on: the count moves up beside the name and the examples follow it, e.g. 'Smart Skip  3,115 skipped  e.g. idea, familia, minutos, importante, capitán'. The second 'N words skipped' line is gone.",
+    "At most five examples, set in the same type and colour as the level box's 'e.g.' line, and no trailing '...'. A narrow row shows fewer words, or none, rather than a cut-off list.",
+    "Phones get the same single line: name and Recommended badge when off, name and count when on (the 'Fewer cards, same coverage' line no longer has room and is dropped). Row height is 66px in every state; checked at 320, 375 and 800 wide in Speech and in Lyrics.",
+    "The selected level badge and its glow were fixed blue; they now use the language colour (Spanish red) or the artist's colour (Bad Bunny blue)."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T23:56:52+01:00",
    "date": "2026-10-12 23:56 BST",
    "agent": "Claude",
