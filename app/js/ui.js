@@ -1050,7 +1050,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    description.textContent = `A set is ${STABLE_SET_SLOT_COUNT} cards, about 5–10 minutes. Your next unfinished set is highlighted.`;
+    description.textContent = `Each session contains up to ${STUDY_SESSION_LIMIT} cards from your selected level. Go starts new cards. When there are no new cards left, Practise reviews cards that need attention, or Study Again revisits the level. The progress bar shows your progress across the whole level.`;
 }
 
 // Annotates every level control with its completion percentage and returns

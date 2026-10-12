@@ -24804,3 +24804,16 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
       display: block;
     }
 }
+
+
+/* Session help uses the same five statuses and colours as level progress. */
+#step5Tooltip .info-point-badge { min-width: 64px; }
+#step5Tooltip .info-point-badge.is-new { background: rgba(148, 163, 184, .16); color: var(--text-primary); }
+#step5Tooltip .info-sheet-points strong.is-new { color: var(--text-primary); }
+#step5Tooltip .info-point-badge.is-practice { background: rgba(255, 204, 0, .16); color: var(--study-practice-color); }
+#step5Tooltip .info-sheet-points strong.is-practice { color: var(--study-practice-color); }
+#step5Tooltip .info-point-badge.is-done { background: rgba(6, 165, 87, .16); color: #06a557; }
+#step5Tooltip .info-sheet-points strong.is-done { color: #06a557; }
+#step5Tooltip .info-point-badge.is-estimated { background: rgba(159, 122, 234, .16); color: #9f7aea; }
+#step5Tooltip .info-sheet-points strong.is-estimated { color: #9f7aea; }
+#step5Tooltip .info-point-badge.is-skip { background: rgba(100, 116, 139, .16); color: var(--text-secondary); }
