@@ -17184,17 +17184,6 @@
   letter-spacing: -0.01em;
   text-transform: none;
 }
-.standard-source-choice-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent-primary) 8%, var(--bg-tertiary));
-  border: 1px solid color-mix(in srgb, var(--accent-primary) 22%, var(--border-color));
-  color: var(--text-secondary);
-  font: 600 12px/1.2 var(--font-emphasis);
-  letter-spacing: 0.02em;
-}
 .standard-source-choice-intro p {
   width: 100%;
   max-width: 100%;
@@ -24582,3 +24571,17 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 
 :root[data-theme="light"] .ref-tile-count-badge { color: var(--text-primary); }
+
+/* Keep the vocabulary explanation easy to scan at every screen size. */
+.vocabulary-choice-bullets {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+  font: 400 14px/1.5 var(--font-reading);
+}
+.vocabulary-choice-bullets li + li { margin-top: 8px; }
+.vocabulary-choice-reassurance {
+  margin: 12px 0 0;
+  color: var(--text-secondary);
+  font: 400 13px/1.5 var(--font-reading);
+}

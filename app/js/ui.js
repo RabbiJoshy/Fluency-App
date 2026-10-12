@@ -723,18 +723,22 @@ function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
         title: 'Choose your vocabulary',
-        intro: 'You learn words in order of how often they appear in real life. Because people use different vocabulary when speaking than in song lyrics, your flashcards and example sentences are tailored to what you pick. You can switch between them at any time.',
+        intro: [
+            'Learn the most common words first.',
+            'What’s common varies by region and between Speech and Music.',
+            'Your choice shapes your flashcards and example sentences.'
+        ],
         speech: {
-            label: 'Everyday speech',
-            description: 'Words and examples from films and TV shows — how people actually talk.',
+            label: 'Speech',
+            description: 'Words and examples come from films and TV shows.',
             bestFor: ['Starting a new language', 'Understanding everyday conversations'],
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
-            label: 'Your music',
+            label: 'Music',
             description: lyricsCatalog
-                ? 'Words and examples from songs, artists, and your Spotify playlists.'
-                : 'Words and examples from your Spotify playlists.',
+                ? 'Words and examples come from songs, artists, and your Spotify playlists.'
+                : 'Words and examples come from your Spotify playlists.',
             bestFor: ['Understanding your favourite artists', 'Learning by listening to music'],
             iconHTML: MODE_ICON_MUSIC
         }
@@ -849,7 +853,13 @@ function setupLanguageTabs() {
             const choiceTitle = document.getElementById('standardSourceChoiceTitle');
             const choiceIntro = document.getElementById('standardSourceChoiceIntro');
             if (choiceTitle) choiceTitle.textContent = modeCopy.title;
-            if (choiceIntro) choiceIntro.textContent = modeCopy.intro;
+            if (choiceIntro) {
+                choiceIntro.replaceChildren(...modeCopy.intro.map(text => {
+                    const item = document.createElement('li');
+                    item.textContent = text;
+                    return item;
+                }));
+            }
             window.renderSpotifyStatus?.(document.getElementById('standardSourceSpotify'));
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;

@@ -1482,8 +1482,17 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
     heading.textContent = title;
     headingGroup.appendChild(heading);
     if (intro) {
-        const introduction = document.createElement('p');
-        introduction.textContent = intro;
+        const introduction = document.createElement(Array.isArray(intro) ? 'ul' : 'p');
+        if (Array.isArray(intro)) {
+            introduction.className = 'vocabulary-choice-bullets';
+            intro.forEach(text => {
+                const item = document.createElement('li');
+                item.textContent = text;
+                introduction.appendChild(item);
+            });
+        } else {
+            introduction.textContent = intro;
+        }
         headingGroup.appendChild(introduction);
     }
     const close = document.createElement('button');
