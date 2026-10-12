@@ -103,6 +103,8 @@ new French deck.
   split cards, additional merged meanings, master-off behaviour, mismatched verb
   forms and release changes. It also evaluates the actual generated assets and
   verifies that filtering never changes learning progress.
+- Both profile and Fast Track preference writers use the isolated staging sync
+  identity, verified by regression checks.
 - Profile tests cover empty answers, account isolation, stale remote metadata,
   guest migration and preserving languages independently of a target.
 - `tests/features/test_verb_forms.py` covers finite/infinitive compatibility,

@@ -2,6 +2,17 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T19:21:41+01:00",
+   "date": "2026-10-12 19:21 BST",
+   "agent": "Codex",
+   "summary": "Keep language-profile and BRIDGE preferences isolated during staging review",
+   "detail": [
+    "Language-profile and Smart Skip preference writes now use the staging account namespace.",
+    "Added regression checks for both preference writers so staging review cannot update production preferences."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T19:16:50+01:00",
    "date": "2026-10-12 19:16 BST",
    "agent": "Codex",
@@ -365,18 +376,6 @@
     "Search cards judge Examples only from the loaded menu; unloaded search results no longer claim their meanings are absent.",
     "Restored complete-menu evidence for Spanish and Portuguese noun pairs; row loading retains that evidence. Matching estimator pools and cache-safe supporting URLs updated.",
     "Existing merging policy and saved learner progress are preserved; staging review only."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T22:57:57+01:00",
-   "date": "2026-10-10 22:57 BST",
-   "agent": "Codex",
-   "summary": "Stalled progress and deck downloads now time out with a way to retry",
-   "detail": [
-    "Progress reads stop after 12 seconds per request; capability checks stop after 5 seconds. Failed reads retain cached progress and queued answers, and offer Retry progress load.",
-    "Deck JSON downloads stop after 20 seconds per request, including a stalled response body. Failed deck loads explain how to retry.",
-    "A partial progress refresh retains its previous sync watermark so retrying can recover the missing rows."
    ],
    "commit": "pending"
   }

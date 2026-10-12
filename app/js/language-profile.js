@@ -1,5 +1,6 @@
 // One language background per account, independent of any deck's skip policy.
 import { sendOrQueue } from './sync-queue.js?v=20260825ak';
+import { getIsolatedSyncUser } from './env.js?v=20261010airlock';
 
 const PREFIX = 'fluency_language_profile_v1';
 const LEGACY = 'fluency_known_languages_v1';
@@ -37,9 +38,10 @@ function store(profile, source = 'local') {
 }
 function queue(profile) {
     if (account() === 'guest') return;
-    sendOrQueue({action: 'saveMeta', user: account(), metaKey: 'language-profile', metaId: 'profile',
+    const syncUser = getIsolatedSyncUser(account());
+    sendOrQueue({action: 'saveMeta', user: syncUser, metaKey: 'language-profile', metaId: 'profile',
         mode: 'all', language: 'all', value: JSON.stringify(profile),
-        lastSeen: new Date(profile.updatedAt).toISOString()}, `meta|language-profile|${account()}`).catch(error =>
+        lastSeen: new Date(profile.updatedAt).toISOString()}, `meta|language-profile|${syncUser}`).catch(error =>
         console.warn('Could not queue language profile', error));
 }
 function save(languages) {

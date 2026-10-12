@@ -17,6 +17,7 @@ function harness() {
         addEventListener: (name, fn) => (events[name] ||= []).push(fn),
         dispatchEvent: event => (events[event.type] || []).forEach(fn => fn(event)),
         CustomEvent: class {constructor(type, options) {this.type = type; Object.assign(this, options);}},
+        getIsolatedSyncUser: user => `stg_${user}`,
         sendOrQueue: async payload => {writes.push(payload);},
     };
     c.window = c; c.globalThis = c;
@@ -31,6 +32,7 @@ function harness() {
     assert.deepEqual(Array.from(p.readLanguageProfile().languages), ['en','pl']);
     assert(p.readLanguageProfile().confirmed);
     p.saveLanguageProfile([]);
+    assert.equal(p.writes[0].user, 'stg_ONE', 'staging profile writes must be isolated');
     assert(p.readLanguageProfile().confirmed);
     assert.equal(p.readLanguageProfile().languages.length, 0);
     p.currentUser = {initials: 'TWO'};
@@ -44,6 +46,12 @@ function harness() {
     p.currentUser = {initials:'THREE'};
     p.applyRemoteLanguageProfile([], {full:true});
     assert.deepEqual(Array.from(p.readLanguageProfile().languages), ['pl'], 'guest profile carries into a new account');
+
+    const f = harness();
+    load(f, 'app/js/fast-track-preferences.js');
+    vm.runInContext(fs.readFileSync(`${root}/app/js/fast-track-preferences.js`, 'utf8').replace(/^import .*$/mg,'').replace(/^export /mg,''), f);
+    f.saveFastTrack('spanish', {enabled:true, bridge:true});
+    assert.equal(f.writes[0].user,'stg_ONE','BRIDGE preference writes must use staging identity too');
 
     const h = harness();
     let identity = fs.readFileSync(`${root}/app/js/progress-identity.js`,'utf8').replace(/^export /mg,'');

@@ -1,6 +1,7 @@
 // One Fast Track choice per language. The legacy global study defaults seed a
 // language until it has its own choice; they are never changed by this module.
 import { sendOrQueue } from './sync-queue.js?v=20260825ak';
+import { getIsolatedSyncUser } from './env.js?v=20261010airlock';
 
 const PREFIX = 'fluency_fast_track_v1';
 const LEGACY_KEY = 'fluency_global_study_defaults_v1';
@@ -73,11 +74,12 @@ export function saveFastTrack(language, changes) {
     const previous = readFastTrack(language);
     const preference = writeLocal(language, { ...previous, ...changes, updatedAt: Date.now() });
     if (preference && currentUser && !currentUser.isGuest) {
+        const syncUser = getIsolatedSyncUser(currentUser.initials);
         sendOrQueue({
-            action: 'saveMeta', user: currentUser.initials, metaKey: META_KEY,
+            action: 'saveMeta', user: syncUser, metaKey: META_KEY,
             metaId: language, mode: 'all', language, value: JSON.stringify(preference),
             lastSeen: new Date(preference.updatedAt).toISOString()
-        }, `meta|fast-track|${currentUser.initials}|${language}`).catch(error =>
+        }, `meta|fast-track|${syncUser}|${language}`).catch(error =>
             console.warn('Could not queue Fast Track preference', error));
     }
     return preference;
