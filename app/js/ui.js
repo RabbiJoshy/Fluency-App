@@ -1748,6 +1748,8 @@ function _setupVocabularySignature(language) {
         useLemmaMode,
         excludeCognates,
         cognateThreshold,
+        Boolean(window.isBridgeEnabled?.()),
+        window.isBridgeEnabled?.() ? (window.__progressEpoch || 0) : 0,
         // Which languages the learner reads changes which words count as
         // cognates, so it changes the deck. Without it here the prepared
         // vocabulary is reused across a selection change and the setup counts
@@ -3319,6 +3321,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     settingsBackBtn.setAttribute('aria-label', settingsBackHandler ? 'Back' : 'Back to Settings');
     settingsModal.querySelector('.settings-modal-content').scrollTop = 0;
     syncStudyPreferenceControls();
+    window.refreshBridge?.();
 
     // Data-freshness footer: newest Last-Modified across the vocab files
     // (set in vocab.js trackDataFreshness). An old date = the service

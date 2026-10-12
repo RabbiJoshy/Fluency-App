@@ -353,7 +353,7 @@ function mergeKnowledgeProgress(parent, item) {
 function getSpecificItemProgress(item) {
     if (!item?.itemId) return null;
     const candidateIds = new Set([item.itemId, ...(item.legacyItemIds || [])]);
-    const parentIds = window.getProgressRecordIdsForCard?.(item.parentWordId) || [];
+    const parentIds = window.getProgressRecordIdsForCard?.(item.parentWordId, '', item.language || selectedLanguage) || [];
     for (const parentId of parentIds) {
         for (const itemId of Array.from(candidateIds)) {
             const separator = itemId.indexOf('~');
@@ -1126,3 +1126,6 @@ document.addEventListener('focusin', event => {
         modal.querySelector('.knowledge-overview-close')?.focus();
     }
 });
+
+window.getSpecificItemProgress = getSpecificItemProgress;
+window.mergeKnowledgeProgress = mergeKnowledgeProgress;

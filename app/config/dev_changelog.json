@@ -2,6 +2,22 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T19:16:50+01:00",
+   "date": "2026-10-12 19:16 BST",
+   "agent": "Codex",
+   "summary": "BRIDGE and shared known-language settings, with safer verb matching and centred mobile dialogs",
+   "detail": [
+    "Languages you know now live in Settings → App, save across the account and are asked once; Polish is always offered.",
+    "Smart Skip source-language choices no longer overwrite the shared profile.",
+    "BRIDGE is opt-in per learning language and uses known matching source meanings without writing target progress; skipped words remain browsable.",
+    "Cross-language verbs require compatible dictionary forms, including person, number, tense, mood and lexical aspect. Infinitives do not imply knowing conjugated forms.",
+    "Spanish/French/Portuguese mappings are tied to exact releases. French currently has 200 cards, so verified BRIDGE eligibility is limited.",
+    "Mobile dialogs are vertically centred; desktop panels fit the side gutter or centre when there is insufficient space.",
+    "Smart Skip title, Recommended badge, info icon and larger toggle share a line, with smaller explanation below."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T23:36:00+01:00",
    "date": "2026-10-11 23:36 BST",
    "agent": "Claude",
@@ -361,19 +377,6 @@
     "Progress reads stop after 12 seconds per request; capability checks stop after 5 seconds. Failed reads retain cached progress and queued answers, and offer Retry progress load.",
     "Deck JSON downloads stop after 20 seconds per request, including a stalled response body. Failed deck loads explain how to retry.",
     "A partial progress refresh retains its previous sync watermark so retrying can recover the missing rows."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T22:25:52+01:00",
-   "date": "2026-10-10 22:25 BST",
-   "agent": "Claude",
-   "summary": "Tutorial: the tour now performs changing a meaning, cycling examples and opening Rare uses, Review meanings and Look up",
-   "detail": [
-    "Back of card: new steps where the tour taps another meaning (the example changes), cycles through a meaning's examples, opens the Rare uses sheet (and unfolds an example), opens Review meanings (and ticks one), opens the Look up column and arms a site's Visit button.",
-    "The sheets are the live app's own Rare uses and Review meanings markup, drawn over the replica card from the demo word's real rare senses.",
-    "Smart Skip: look-alikes now come before merged word forms and merged singular/plural.",
-    "Portuguese demo word is now devia (dever): should / ought, with two real rare senses."
    ],
    "commit": "pending"
   }

@@ -1,0 +1,18 @@
+{
+  "target_language": "fr",
+  "known_language": "es",
+  "surface_scorer": "learner-align/v1",
+  "cognet_pairs": "cognet/pairs/fra-spa.tsv",
+  "cognet_target_column": 0,
+  "target_skeleton": [],
+  "known_skeleton": [],
+  "ending_rules": [],
+  "minimum_length": 3,
+  "length_guard": 0.7,
+  "gloss_maximum_words": 6,
+  "meaning_floor": 0.75,
+  "meaning_weight": 0.25,
+  "candidate_budget": 400,
+  "default_threshold": 0.8,
+  "notes": "BRIDGE initial conservative pair policy. Uses the existing v4 sense/pivot, CogNet, primary-reading and learner-align safeguards. Threshold 0.80; no pair-specific rewrite rules or comprehensive calibration claimed."
+}

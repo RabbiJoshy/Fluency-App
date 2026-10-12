@@ -271,7 +271,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("Smart Skip Primer", html)
         self.assertNotIn("Languages you know:", html)
         self.assertIn("Languages you already know", html)
-        self.assertIn("Look out for Smart Skip in your study settings", html)
+        self.assertIn("Saved for every language you study; you can change this in Settings", html)
         self.assertIn('class="product-primary-action frequency-intro-tutorial"', html)
         self.assertIn('class="frequency-intro-skip"', html)
         self.assertIn(".lsw-segments.lsw-scrubber .lsw-seg.selected::after {\n  display: none !important;\n}", css)
@@ -658,7 +658,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="smartSkipPreview"', html)
         self.assertIn("globalThis.popupFoundWord", extras)
         self.assertIn("onClose: comeBack", extras)
-        self.assertIn("#settingsModal.product-modal { align-items: flex-start; }", css)
+        self.assertIn("#settingsModal.product-modal { align-items: center; }", css)
 
     def test_wsd_publication_view_is_user_selectable(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -788,13 +788,14 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn(".choice-sheet-overlay[data-dock]", css)
         self.assertIn(".conj-match-tense", css)
 
-    def test_mobile_modals_share_a_top_edge(self) -> None:
+    def test_mobile_modals_share_a_vertical_centre(self) -> None:
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        self.assertIn("Mobile overlays all follow one spatial rule", css)
-        self.assertIn("align-items: flex-start !important", css)
-        self.assertIn("border-radius: 0 0 24px 24px", css)
-        self.assertIn(".choice-sheet-overlay {\n    align-items: flex-start", css)
-        self.assertIn("transform: translateY(-28px)", css)
+        mobile = css.split("/* Mobile overlays all follow one spatial rule", 1)[1].split("\n/*", 1)[0]
+        self.assertIn("align-items: center !important", mobile)
+        self.assertIn("border-radius: 22px", mobile)
+        self.assertIn(".choice-sheet-overlay {\n    align-items: center", mobile)
+        self.assertIn("transform: scale(0.98)", mobile)
+        self.assertNotIn("flex-start", mobile)
 
     def test_multi_pos_controls_use_bounded_grid_without_reordering_senses(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")

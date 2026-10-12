@@ -181,7 +181,7 @@ function registerProgressCardSurface(fullId, surface) {
     return fullId;
 }
 
-function getProgressRecordsForCard(fullId, surface = '') {
+function getProgressRecordsForCard(fullId, surface = '', language = selectedLanguage) {
     const source = progressData || {};
     // O(1) staleness check: object identity catches a wholesale replacement,
     // the epoch catches in-place writes. Counting keys here was the single
@@ -204,7 +204,7 @@ function getProgressRecordsForCard(fullId, surface = '') {
         surface || progressSurfaceById.get(fullId)
     );
     const indexedIds = normalizedSurface
-        ? (progressIdsBySurface.get(`${selectedLanguage}|${normalizedSurface}`) || [])
+        ? (progressIdsBySurface.get(`${language}|${normalizedSurface}`) || [])
         : [];
     const candidates = {};
     for (const id of [fullId, crossModeProgressId(fullId), ...indexedIds]) {
@@ -213,13 +213,13 @@ function getProgressRecordsForCard(fullId, surface = '') {
     return matchingProgressRecords(candidates, {
         fullId,
         surface,
-        language: selectedLanguage,
+        language,
         surfaceById: progressSurfaceById
     });
 }
 
-function getProgressRecordIdsForCard(fullId, surface = '') {
-    return getProgressRecordsForCard(fullId, surface).map(record => record.id);
+function getProgressRecordIdsForCard(fullId, surface = '', language = selectedLanguage) {
+    return getProgressRecordsForCard(fullId, surface, language).map(record => record.id);
 }
 
 function getMergedWordProgress(fullId, surface = '') {

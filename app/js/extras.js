@@ -33,7 +33,8 @@ function cognateExtra(item) {
     const known = decide
         ? Boolean(decide(item))
         : Number(item.cognate_score || 0) >= g().cognateThreshold;
-    return g().excludeCognates && g().cognateFieldAvailable && known;
+    return Boolean(g().bridgeVerdict?.(item, {useProfile: g().excludeCognates}))
+        || (g().excludeCognates && g().cognateFieldAvailable && known);
 }
 
 function lemmaExtra(item) {
@@ -193,7 +194,7 @@ function cognateEnglish(item) {
             || (isSenseItem(item) ? g().cardSenseCognate?.(item, _activeCognateFilterLang)?.word : null);
         if (word) matched = { code: _activeCognateFilterLang, word: String(word) };
     }
-    if (!matched) matched = g().matchedKnownWord?.(item);
+    if (!matched) matched = g().bridgeVerdict?.(item, {useProfile: g().excludeCognates}) || g().matchedKnownWord?.(item);
 
     if (matched?.word) {
         const res = { word: String(matched.word), obvious: true };
@@ -392,11 +393,13 @@ function escapeHtml(value) {
 // With more than one known language a bare number says nothing about why the
 // word is free, so name the language that made it so.
 function cognateNote(item) {
-    const strongest = g().strongestKnownLanguage?.(item);
+    const bridge = g().bridgeVerdict?.(item, {useProfile: g().excludeCognates});
+    const strongest = g().strongestKnownLanguage?.(item) || bridge;
     const fallbackCode = g().activeKnownLanguages?.()[0] || 'en';
     const code = strongest?.code || fallbackCode;
     const label = g().knownLanguageLabel ? g().knownLanguageLabel(code) : code;
-    const matched = g().matchedKnownWord?.(item);
+    const matched = bridge || g().matchedKnownWord?.(item);
+    if (bridge?.basis === 'progress') return `From your learned ${label}: ${bridge.word}`;
     return `Looks like ${label}${matched?.word ? ` ${matched.word}` : ''}`;
 }
 
@@ -675,7 +678,7 @@ function skipEntriesFor(extras, category) {
         const lang = _activeCognateFilterLang;
         const check = g().isCognateKnownForLanguage;
         if (check) {
-            return entries.filter(({ item }) => check(item, lang));
+            return entries.filter(({ item }) => check(item, lang) || g().bridgeVerdict?.(item, {useProfile: g().excludeCognates})?.evidence.some(e => e.code === lang));
         }
     }
     return entries;
@@ -1176,7 +1179,7 @@ function refreshExtrasButtons() {
         text: 'No forms share a word here, so nothing was combined.',
     });
     applyNoneLine(document.getElementById('cognateNoneLine'), {
-        active: Boolean(g().excludeCognates && g().cognateFieldAvailable),
+        active: Boolean((g().excludeCognates && g().cognateFieldAvailable) || g().isBridgeEnabled?.()),
         ready,
         count: cognates.length,
         text: 'No word in this deck was close enough to skip.',

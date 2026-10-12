@@ -21,10 +21,12 @@ function normalize(value) {
     const skipGrammar = value.skipGrammar === true;
     const skipSlang = value.skipSlang === true;
     const skipEntities = value.skipEntities === true;
-    const anyActive = merge || skip || skipGrammar || skipSlang || skipEntities;
+    const bridge = value.bridge === true;
+    const excludedKnownLanguages = Array.isArray(value.excludedKnownLanguages) ? value.excludedKnownLanguages.filter(c => typeof c === 'string') : [];
+    const anyActive = merge || skip || bridge || skipGrammar || skipSlang || skipEntities;
     return {
         enabled: value.enabled === true && anyActive,
-        merge, skip,
+        merge, skip, bridge, excludedKnownLanguages,
         skipGrammar, skipSlang, skipEntities,
         updatedAt: Number(value.updatedAt) || 0
     };
@@ -105,3 +107,12 @@ export function applyRemoteFastTrack(metaRows, { full = false } = {}) {
         if (local.updatedAt || local.enabled) saveFastTrack(language, local);
     }
 }
+
+window.readKnownLanguageSourceExclusions = () => readFastTrack(selectedLanguage).excludedKnownLanguages || [];
+window.toggleKnownLanguageSource = code => {
+    const previous = readFastTrack(selectedLanguage);
+    const ignored = new Set(previous.excludedKnownLanguages || []);
+    ignored.has(code) ? ignored.delete(code) : ignored.add(code);
+    saveFastTrack(selectedLanguage, {excludedKnownLanguages: [...ignored]});
+    window.invalidatePreparedSetupVocabulary?.();
+};

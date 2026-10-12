@@ -1028,6 +1028,7 @@ async function loadUserProgressFromSheetNow() {
             ? (progressResult.data?.levelEstimates || {})
             : levelEstimates;
         applyRemoteFastTrack(progressResult.data?.meta, { full: !gotDelta });
+        window.applyRemoteLanguageProfile?.(progressResult.data?.meta, { full: !gotDelta });
 
         // Overlay any still-queued (un-synced) local writes on top of the
         // freshly-loaded sheet data — those answers are newer than what Sheets

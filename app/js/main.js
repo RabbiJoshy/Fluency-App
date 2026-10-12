@@ -20,6 +20,8 @@ import './progress.js?v=20260927pa';
 import './knowledge.js?v=20260927pa';
 import './ui.js?v=20260927pa';
 import './vocab.js?v=20260927pa';
+import './language-profile.js?v=1';
+import './bridge.js?v=1';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260923ft';
@@ -2411,53 +2413,37 @@ function maybeShowFrequencyIntro() {
 // Known languages intro (Smart Skip primer shown after picking a language)
 // ---------------------------------------------------------------------------
 
-const KNOWN_LANGUAGES_SEEN_KEY = 'fluencySeenKnownLanguagesIntroV1';
-let currentKnownLanguagesIntroTarget = null;
 let introSelectedCodes = new Set();
 
-function getKnownLanguagesForTarget(targetLang) {
-    const fromCognates = window.availableKnownLanguages?.();
-    if (Array.isArray(fromCognates) && fromCognates.length > 0) return fromCognates;
+function getKnownLanguagesForTarget() {
+    return window.knownLanguageOptions?.() || ['en', 'es', 'fr', 'pt', 'pl', 'de', 'it', 'ru', 'sk', 'uk', 'nl', 'sv', 'cs', 'fi'];
+}
 
-    const mapping = {
-        portuguese: ['en', 'es'],
-        pt: ['en', 'es'],
-        czech: ['en', 'pl'],
-        cs: ['en', 'pl'],
-        spanish: ['en'],
-        es: ['en'],
-        french: ['en'],
-        fr: ['en'],
-        finnish: ['en'],
-        fi: ['en'],
-        dutch: ['en'],
-        nl: ['en']
+function hasSeenKnownLanguagesIntro() {
+    return window.readLanguageProfile?.().confirmed === true;
+}
+
+let knownLanguagesEditorReturn = null;
+function openKnownLanguagesSettings() {
+    const modal = document.getElementById('knownLanguagesModal');
+    if (!modal) return;
+    const fast = document.getElementById('fastModeModal');
+    const fromFast = fast && !fast.classList.contains('hidden');
+    if (fromFast) fast.classList.add('hidden');
+    else document.getElementById('settingsModal')?.classList.add('hidden');
+    knownLanguagesEditorReturn = () => {
+        if (fromFast) window.openFastModePage?.();
+        else window.showSettingsModalWithTab?.('appearance');
     };
-    const key = String(targetLang || '').toLowerCase();
-    return mapping[key] || ['en'];
+    introSelectedCodes = new Set(window.readKnownLanguages?.() || []);
+    renderKnownLanguagesModalChoices(getKnownLanguagesForTarget());
+    document.getElementById('knownLanguagesModalTitle').textContent = 'Languages you know';
+    document.getElementById('continueKnownLanguagesBtn').textContent = 'Save';
+    document.getElementById('cancelKnownLanguagesBtn').hidden = false;
+    modal.classList.remove('hidden');
+    modal.querySelector('button')?.focus();
 }
-
-function hasSeenKnownLanguagesIntro(lang) {
-    try {
-        const raw = localStorage.getItem(KNOWN_LANGUAGES_SEEN_KEY);
-        if (!raw) return false;
-        const list = JSON.parse(raw);
-        return Array.isArray(list) && list.includes(lang);
-    } catch (_) {
-        return false;
-    }
-}
-
-function markKnownLanguagesIntroSeen(lang) {
-    try {
-        const raw = localStorage.getItem(KNOWN_LANGUAGES_SEEN_KEY);
-        let list = [];
-        try { list = JSON.parse(raw) || []; } catch (_) {}
-        if (!Array.isArray(list)) list = [];
-        if (lang && !list.includes(lang)) list.push(lang);
-        localStorage.setItem(KNOWN_LANGUAGES_SEEN_KEY, JSON.stringify(list));
-    } catch (_) {}
-}
+window.openKnownLanguagesSettings = openKnownLanguagesSettings;
 
 function closeKnownLanguagesModal() {
     const modal = document.getElementById('knownLanguagesModal');
@@ -2530,13 +2516,13 @@ function maybeShowKnownLanguagesIntro(targetLang) {
     window.closeChoiceSheet?.('languageChoiceSheet');
     window.closeChoiceSheet?.('portugueseVarietyChoiceSheet');
 
-    currentKnownLanguagesIntroTarget = lang;
     const existingSelected = window.readKnownLanguages?.() || ['en'];
     introSelectedCodes = new Set(existingSelected.filter(c => available.includes(c)));
-    if (introSelectedCodes.size === 0 && available.includes('en')) {
-        introSelectedCodes.add('en');
-    }
 
+    knownLanguagesEditorReturn = null;
+    document.getElementById('knownLanguagesModalTitle').textContent = 'Which languages can you comfortably read?';
+    document.getElementById('continueKnownLanguagesBtn').textContent = 'Continue';
+    document.getElementById('cancelKnownLanguagesBtn').hidden = true;
     renderKnownLanguagesModalChoices(available);
     modal.classList.remove('hidden');
     return true;
@@ -2553,10 +2539,13 @@ function setupKnownLanguagesIntro() {
             window.updateLevelSelector?.();
             window.refreshFastMode?.();
 
-            if (currentKnownLanguagesIntroTarget) {
-                markKnownLanguagesIntroSeen(currentKnownLanguagesIntroTarget);
-            }
             closeKnownLanguagesModal();
+            if (knownLanguagesEditorReturn) {
+                const back = knownLanguagesEditorReturn;
+                knownLanguagesEditorReturn = null;
+                back();
+                return;
+            }
 
             if (!maybeShowFrequencyIntro()) {
                 window.openFirstRunCardTutorial?.();
@@ -2564,9 +2553,23 @@ function setupKnownLanguagesIntro() {
         });
     }
 
+    const cancel = () => {
+        if (!knownLanguagesEditorReturn) return;
+        closeKnownLanguagesModal();
+        const back = knownLanguagesEditorReturn;
+        knownLanguagesEditorReturn = null;
+        back();
+    };
+    document.getElementById('cancelKnownLanguagesBtn')?.addEventListener('click', cancel);
+    document.getElementById('knownLanguagesModal')?.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && knownLanguagesEditorReturn) {
+            event.stopPropagation(); cancel();
+        }
+    });
     document.getElementById('knownLanguagesModal')?.addEventListener('click', event => {
         if (event.target === event.currentTarget) {
-            continueBtn?.click();
+            if (knownLanguagesEditorReturn) cancel();
+            else continueBtn?.click();
         }
     });
 

@@ -1,0 +1,68 @@
+// One language background per account, independent of any deck's skip policy.
+import { sendOrQueue } from './sync-queue.js?v=20260825ak';
+
+const PREFIX = 'fluency_language_profile_v1';
+const LEGACY = 'fluency_known_languages_v1';
+const OWNER = 'fluency_language_profile_legacy_owner_v1';
+const memory = new Map();
+const account = () => typeof currentUser !== 'undefined' && currentUser && !currentUser.isGuest
+    ? String(currentUser.initials) : 'guest';
+const key = () => `${PREFIX}|${account()}`;
+function get(key) { try { return localStorage.getItem(key); } catch (_) { return null; } }
+function parse(raw) { try { return JSON.parse(raw); } catch (_) { return null; } }
+function normalize(value) {
+    if (!value || !Array.isArray(value.languages)) return null;
+    return { schema: 1, languages: [...new Set(value.languages.filter(c => typeof c === 'string' && /^[a-z]{2,3}$/.test(c)))],
+        confirmed: value.confirmed === true, updatedAt: Number(value.updatedAt) || 0 };
+}
+function read() {
+    const saved = normalize(parse(get(key()))) || memory.get(key());
+    if (saved) return saved;
+    // Adopt the old browser preference once; never seed unrelated accounts.
+    const owner = get(OWNER);
+    const legacy = parse(get(LEGACY));
+    if (Array.isArray(legacy) && (!owner || owner === account())) {
+        const migrated = normalize({languages: legacy, confirmed: true, updatedAt: 0});
+        store(migrated);
+        try { localStorage.setItem(OWNER, account()); } catch (_) {}
+        return migrated;
+    }
+    return {schema: 1, languages: ['en'], confirmed: false, updatedAt: 0};
+}
+function store(profile, source = 'local') {
+    memory.set(key(), profile);
+    try { localStorage.setItem(key(), JSON.stringify(profile)); } catch (_) {}
+    window.dispatchEvent(new CustomEvent('language-profile-change', {detail: {source}}));
+    return profile;
+}
+function queue(profile) {
+    if (account() === 'guest') return;
+    sendOrQueue({action: 'saveMeta', user: account(), metaKey: 'language-profile', metaId: 'profile',
+        mode: 'all', language: 'all', value: JSON.stringify(profile),
+        lastSeen: new Date(profile.updatedAt).toISOString()}, `meta|language-profile|${account()}`).catch(error =>
+        console.warn('Could not queue language profile', error));
+}
+function save(languages) {
+    const profile = store(normalize({languages, confirmed: true, updatedAt: Date.now()}));
+    queue(profile);
+    return profile;
+}
+function remote(rows, {full = false} = {}) {
+    if (account() === 'guest' || !Array.isArray(rows)) return;
+    const row = rows.find(r => r.metaKey === 'language-profile' && r.metaId === 'profile');
+    const received = row && normalize(parse(row.value));
+    let local = read();
+    if (!received && full && !local.confirmed) {
+        const guest = normalize(parse(get(`${PREFIX}|guest`)));
+        if (guest?.confirmed) local = {...guest, updatedAt: Date.now()};
+    }
+    if (received && received.updatedAt >= local.updatedAt) store(received, 'remote');
+    else if (local.confirmed && (received || full)) {
+        const stamped = local.updatedAt ? local : {...local, updatedAt: Date.now()};
+        store(stamped);
+        queue(stamped);
+    }
+}
+window.readLanguageProfile = read;
+window.saveLanguageProfile = save;
+window.applyRemoteLanguageProfile = remote;

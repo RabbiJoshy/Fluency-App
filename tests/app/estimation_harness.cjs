@@ -22,6 +22,7 @@ function createHarness(overrides = {}) {
             querySelector: () => buttons[0],
             getElementById(id) {
                 if (!elements.has(id)) elements.set(id, { textContent: '', hidden: false, style: {},
+                    querySelectorAll: () => [], querySelector: () => null,
                     classList: { add() {}, remove() {}, contains: () => false } });
                 return elements.get(id);
             }
