@@ -6002,6 +6002,12 @@
             pointer-events: none;
         }
 
+        /* visibility: hidden keeps an animation running: without this the
+           spinner turned forever behind every open tab. */
+        .app-loading-screen.is-hidden .app-loading-spinner {
+            animation-play-state: paused;
+        }
+
         .app-loading-card {
             display: grid;
             justify-items: center;
