@@ -1,0 +1,250 @@
+{
+ "_readme": "Human English translations for catalogue songs, keyed by Spotify track id. Copied from app/lyrics-audit/data (which the site build excludes) so deployed builds can show them.",
+ "songs": {
+  "2JPLbjOn0wPCngEot2STUS": {
+   "source": "genius",
+   "lines": [
+    {
+     "text": "Yeah-yeah-yeah-yeah",
+     "english": "King"
+    },
+    {
+     "text": "Yeah-yeah-yeah-yeah-yeah-yeah",
+     "english": "Yeh-yeh-yeh"
+    },
+    {
+     "text": "Yeah-yeah-yeah-eh, yeah",
+     "english": "Yeah-yeah-yeah-eh, yeah"
+    },
+    {
+     "text": "Una noche más y copas de más",
+     "english": "One more night and too many drinks"
+    },
+    {
+     "text": "Aunque sé que no debo, ey",
+     "english": "Even though I know that I shouldn't, ayy"
+    },
+    {
+     "text": "Pensar en ti, bebé, pero cuando bebo",
+     "english": "Think of you, baby, but when I drink"
+    },
+    {
+     "text": "Me viene tu nombre, tu cara, tu risa y tu pelo, ey",
+     "english": "Your name, your face, your laugh, and your hair come to mind, ey"
+    },
+    {
+     "text": "Dime dónde tú está', que yo por ti cojo un vuelo",
+     "english": "Tell me where you are, 'cause I'll fly for you"
+    },
+    {
+     "text": "Y a Yonaguni le llego, oh",
+     "english": "And I'm reaching Yonaguni, oh"
+    },
+    {
+     "text": "Aunque sé que no debo, ey",
+     "english": "Even though I know that I shouldn't, ayy"
+    },
+    {
+     "text": "Pensar en ti, bebé, pero cuando bebo",
+     "english": "Think of you, baby, but when I drink"
+    },
+    {
+     "text": "Me viene tu nombre, tu cara, tu risa y tu pelo, ey",
+     "english": "Your name, your face, your laugh, and your hair come to mind, ey"
+    },
+    {
+     "text": "Dime dónde tú está', que yo por ti cojo un vuelo",
+     "english": "Tell me where you are, 'cause I'll fly for you"
+    },
+    {
+     "text": "Y a Yonaguni le llego, ey",
+     "english": "And to Yonaguni I'll make it, ayy"
+    },
+    {
+     "text": "No me busque' en Instagram, mami, búscame en casa",
+     "english": "Don't look for me on Instagram, baby, look for me at home"
+    },
+    {
+     "text": "Pa' que vea' lo que pasa, ey",
+     "english": "So you can see what happens, ey"
+    },
+    {
+     "text": "Si tú me prueba', te casa', ey",
+     "english": "If you try me, you'll get married, ey"
+    },
+    {
+     "text": "Ese cabrón ni te abraza",
+     "english": "That motherfucker doesn't even hug you"
+    },
+    {
+     "text": "Y yo loco por tocarte",
+     "english": "And I'm crazy to touch you"
+    },
+    {
+     "text": "Pero ni me atrevo a textearte",
+     "english": "But I don't even dare to text you"
+    },
+    {
+     "text": "Tú con cualquier outfit la parte'",
+     "english": "You rock any outfit"
+    },
+    {
+     "text": "Mami, tú ere' aparte",
+     "english": "Shorty, you're something else"
+    },
+    {
+     "text": "Shorty, tiene' un culo bien grande, eh",
+     "english": "Shorty, you have a really big ass, eh"
+    },
+    {
+     "text": "De-Demasia'o grande",
+     "english": "Too big"
+    },
+    {
+     "text": "Y yo lo tengo estudia'o, ya mismo me gradúo",
+     "english": "And I've studied it, I'm about to graduate"
+    },
+    {
+     "text": "Y en la cara me lo tatúo",
+     "english": "And I'm tattooing it on my face"
+    },
+    {
+     "text": "Vi que viste mi story y subiste una pa' mí",
+     "english": "I saw you saw my story and you posted one for me"
+    },
+    {
+     "text": "Yo que me iba a dormir, ey",
+     "english": "Me, who was about to go to sleep, hey"
+    },
+    {
+     "text": "En la disco habían mil",
+     "english": "There were a thousand in the club"
+    },
+    {
+     "text": "Y yo bailando contigo en mi mente",
+     "english": "And I'm dancing with you in my mind"
+    },
+    {
+     "text": "Aunque sé que no debo",
+     "english": "Even though I know that I shouldn't"
+    },
+    {
+     "text": "Pensar en ti, bebé, pero cuando bebo",
+     "english": "Think of you, baby, but when I drink"
+    },
+    {
+     "text": "Me viene tu nombre, tu cara, tu risa y tu pelo, ey",
+     "english": "Your name, your face, your laugh, and your hair come to mind, ey"
+    },
+    {
+     "text": "Dime dónde tú está', que yo por ti cojo un vuelo",
+     "english": "Tell me where you are, 'cause I'll fly for you"
+    },
+    {
+     "text": "Y a Yonaguni le llego",
+     "english": "And to Yonaguni I'll make it"
+    },
+    {
+     "text": "Si me da' tu dirección, yo te mando mil carta'",
+     "english": "If you give me your address, I'll send you a thousand letters"
+    },
+    {
+     "text": "Si me da' tu cuenta de banco, un millón de peso'",
+     "english": "If you give me your bank account, a million pesos"
+    },
+    {
+     "text": "To'a la noche arrodillado a Dio' le rezo",
+     "english": "All night long, kneeling, I pray to God"
+    },
+    {
+     "text": "Pa' que ante' que se acabe el año tú me de' un beso",
+     "english": "So that before the year ends you give me a kiss"
+    },
+    {
+     "text": "Y empezar el 2023 bien cabrón",
+     "english": "And start 2023 off real strong"
+    },
+    {
+     "text": "Contigo y un blunt",
+     "english": "With you and a blunt"
+    },
+    {
+     "text": "Tú te ve' asesina con ese mahón (¡Wuh!)",
+     "english": "You look killer in those jeans (Wuh!)"
+    },
+    {
+     "text": "Me matas sin un pistolón",
+     "english": "You kill me without a gun"
+    },
+    {
+     "text": "Y yo te compro un Banshee",
+     "english": "And I'll buy you a Banshee"
+    },
+    {
+     "text": "Gucci, Givenchy",
+     "english": "Gucci, Givenchy"
+    },
+    {
+     "text": "Un poodle, un frenchie",
+     "english": "A poodle, a frenchie"
+    },
+    {
+     "text": "El pasto, lo' munchie'",
+     "english": "The weed, the munchies"
+    },
+    {
+     "text": "Te canto un mariachi",
+     "english": "I'll sing you a mariachi"
+    },
+    {
+     "text": "Me convierto en Itachi, eh",
+     "english": "I turn into Itachi, eh"
+    },
+    {
+     "text": "Yeah-yeah-yeah-yeah",
+     "english": "King"
+    },
+    {
+     "text": "Bad Bunny, baby, bebé",
+     "english": "Bad Bunny, baby, baby"
+    },
+    {
+     "text": "Bad Bunny, baby, bebé",
+     "english": "Bad Bunny, baby, baby"
+    },
+    {
+     "text": "今日はセックスしたい",
+     "english": "I want to have sex today"
+    },
+    {
+     "text": "でもあなたとだけ",
+     "english": "But only with you"
+    },
+    {
+     "text": "どこにいますか？",
+     "english": "Where are you?"
+    },
+    {
+     "text": "どこにいますか？",
+     "english": "Where are you?"
+    },
+    {
+     "text": "今日はセックスしたい",
+     "english": "I want to have sex today"
+    },
+    {
+     "text": "でもあなたとだけ",
+     "english": "But only with you"
+    },
+    {
+     "text": "どこにいますか？",
+     "english": "Where are you?"
+    },
+    {
+     "text": "どこにいますか？Eh",
+     "english": "Where are you? Eh"
+    }
+   ]
+  }
+ }
+}

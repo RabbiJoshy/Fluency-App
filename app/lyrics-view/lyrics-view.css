@@ -43,10 +43,11 @@ body {
   max-width: 760px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
 }
+.topbar-actions { display: flex; align-items: center; }
 .header-icon {
   display: flex;
   align-items: center;
@@ -414,12 +415,14 @@ main {
   gap: 5px;
   background: color-mix(in srgb, var(--text-primary) 8.0%, transparent);
   border: 1px solid color-mix(in srgb, var(--text-primary) 22.0%, transparent);
-  border-radius: var(--radius-full);
-  padding: 1px 9px 1px 7px;
+  border-radius: 4px;
+  padding: 0 6px 0 3px;
   margin: 0 2px;
   color: var(--text-primary);
   font-weight: 600;
   vertical-align: baseline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .lyric-token.token-entity:hover {
@@ -427,21 +430,22 @@ main {
   border-color: color-mix(in srgb, var(--text-primary) 40.0%, transparent);
 }
 
-/* Authentic Wiktionary Icon: White circle with black 'W' */
+/* Wiktionary mark: the serif W, at the start of the entity it opens. */
 .entity-wiktionary-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+  width: 1.05em;
+  height: 1.05em;
+  border-radius: 2px;
   background: #ffffff;
   color: #000000;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 9px;
-  font-weight: 900;
+  font-family: "Linux Libertine", "Libertinus Serif", "Linux Libertine G", Georgia, "Times New Roman", serif;
+  font-size: 0.62em;
+  font-weight: 700;
+  font-style: normal;
   line-height: 1;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.04em;
   flex-shrink: 0;
   user-select: none;
 }
@@ -1636,3 +1640,57 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   background: color-mix(in srgb, var(--lyric-sung) 7%, transparent);
 }
 .lyric-line-item.is-active .lyric-token.is-sung { color: var(--lyric-sung); }
+
+/* ───────────────────────── PLAY BAR, PLAYABLE LINES, ENGLISH TOGGLE ───────────────────────── */
+.header-icon-text { font: 700 13px/1 var(--font-emphasis); letter-spacing: 0.02em; }
+.header-icon-text[aria-pressed="false"] { color: var(--text-muted); text-decoration: line-through; text-decoration-thickness: 2px; }
+.header-icon-text[aria-pressed="true"] { color: var(--text-primary); }
+
+.lyric-line-item.is-playable { cursor: pointer; }
+.lyric-line-item.is-playable .lyric-token { cursor: pointer; }
+.lyric-line-item.is-looping { box-shadow: inset 3px 0 0 var(--lyric-sung); }
+
+.play-bar {
+  position: fixed;
+  left: 50%;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-card, #1c2530) 92%, transparent);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.play-bar[hidden] { display: none; }
+.play-bar-btn {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.play-bar-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.play-bar-main {
+  width: 52px;
+  height: 52px;
+  background: var(--lyric-sung);
+  color: #04130a;
+}
+.play-bar-main:hover { background: var(--lyric-sung); filter: brightness(1.08); color: #04130a; }
+.play-bar .icon-pause, .play-bar.is-playing .icon-play { display: none; }
+.play-bar.is-playing .icon-pause { display: block; }
+.play-bar-repeat[aria-pressed="true"] { color: var(--lyric-sung); background: color-mix(in srgb, var(--lyric-sung) 14%, transparent); }
+body.has-play-bar main { padding-bottom: 140px; }
+@media (prefers-reduced-motion: reduce) { .play-bar { backdrop-filter: none; } }
+:root[data-theme="light"] .play-bar-main, :root[data-theme="light"] .play-bar-main:hover { color: #ffffff; }

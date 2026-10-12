@@ -1,6 +1,6 @@
 // Spotify OAuth PKCE + Web Playback SDK for in-browser playback.
 // Key functions: spotifyLogin(), spotifyPlayTrack(trackId, positionMs), isSpotifyConnected().
-import './state.js?v=e72ac9e7';
+import './state.js?v=db6ceea7';
 
 const SPOTIFY_SCOPES = 'streaming user-modify-playback-state user-read-playback-state user-read-email user-read-private playlist-read-private playlist-read-collaborative';
 const _isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -825,21 +825,15 @@ async function initSpotifyPlayer() {
             && !!_currentTrackId && stateTrackId === _currentTrackId;
         _setPlaying(playing);
         if (playing) _endButtonLoading();
-        // Position source for the lyrics reader's karaoke fill. The SDK only
-        // reports on change (play, pause, seek, track), so the listener
-        // interpolates from `at`.
         if (state) {
-            window.dispatchEvent(new CustomEvent('fluency:spotify-state', {
-                detail: {
-                    trackId: stateTrackId,
-                    // A relinked track reports the regional id; the catalogue holds the original.
-                    linkedFromId: state.track_window?.current_track?.linked_from?.id || '',
-                    positionMs: state.position,
-                    durationMs: state.duration,
-                    paused: state.paused !== false,
-                    at: performance.now()
-                }
-            }));
+            _emitPlaybackState({
+                trackId: stateTrackId,
+                // A relinked track reports the regional id; the catalogue holds the original.
+                linkedFromId: state.track_window?.current_track?.linked_from?.id || '',
+                positionMs: state.position,
+                durationMs: state.duration,
+                paused: state.paused !== false
+            });
         }
     });
 
@@ -1192,6 +1186,90 @@ async function _playViaConnect(trackId, positionMs, token, retry = {}) {
     }
 }
 
+// Position source for the lyrics reader (karaoke fill, play bar). The SDK
+// reports only on change (play, pause, seek, track), so listeners interpolate
+// from `at`. Connect playback never reaches the SDK, so it is polled instead,
+// and only while a reader has asked to follow (window.fluencySpotifyFollow).
+function _emitPlaybackState(detail) {
+    window.dispatchEvent(new CustomEvent('fluency:spotify-state', {
+        detail: { ...detail, at: performance.now() }
+    }));
+}
+
+let _connectPollTimer = null;
+function _stopConnectStatePoll() {
+    if (_connectPollTimer) clearTimeout(_connectPollTimer);
+    _connectPollTimer = null;
+}
+function _startConnectStatePoll() {
+    if (_connectPollTimer || !window.fluencySpotifyFollow) return;
+    const poll = async () => {
+        _connectPollTimer = null;
+        if (_playbackBackend !== 'connect' || !window.fluencySpotifyFollow) return;
+        try {
+            const token = await getSpotifyToken();
+            const response = token && await fetch('https://api.spotify.com/v1/me/player', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response && response.ok) {
+                const state = await response.json();
+                if (state?.item?.id) {
+                    _emitPlaybackState({
+                        trackId: state.item.id,
+                        linkedFromId: state.item.linked_from?.id || '',
+                        positionMs: state.progress_ms,
+                        durationMs: state.item.duration_ms,
+                        paused: !state.is_playing
+                    });
+                    _connectPollTimer = setTimeout(poll, state.is_playing ? 1500 : 4000);
+                    return;
+                }
+            }
+        } catch (error) {
+            _debugLog('Connect state poll failed: ' + error.message);
+        }
+    };
+    _connectPollTimer = setTimeout(poll, 400);
+}
+
+// Pause/resume and seek of whatever this page last started, for the reader's
+// play bar. Same two backends as spotifyPlayTrack: browser SDK, or Connect.
+async function _transportRequest(path, query = '') {
+    const token = await getSpotifyToken();
+    if (!token) return false;
+    const device = _connectDeviceId ? `device_id=${encodeURIComponent(_connectDeviceId)}` : '';
+    const qs = [query, device].filter(Boolean).join('&');
+    const response = await fetch(`https://api.spotify.com/v1/me/player/${path}${qs ? '?' + qs : ''}`, {
+        method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.status === 204 || response.status === 202;
+}
+const spotifyTransport = {
+    async toggle() {
+        try {
+            if (_playbackBackend !== 'connect' && _player) { await _player.togglePlay(); return true; }
+            if (_playbackBackend === 'connect') {
+                const ok = await _transportRequest(_isPlaying ? 'pause' : 'play');
+                if (ok) { _setPlaying(!_isPlaying); _startConnectStatePoll(); }
+                return ok;
+            }
+        } catch (error) { _debugLog('Transport toggle failed: ' + error.message); }
+        return false;
+    },
+    async seek(positionMs) {
+        const target = Math.max(0, Math.round(positionMs));
+        try {
+            if (_playbackBackend !== 'connect' && _player) { await _player.seek(target); return true; }
+            if (_playbackBackend === 'connect') {
+                const ok = await _transportRequest('seek', `position_ms=${target}`);
+                if (ok) _startConnectStatePoll();
+                return ok;
+            }
+        } catch (error) { _debugLog('Transport seek failed: ' + error.message); }
+        return false;
+    }
+};
+
 async function _confirmConnectPlayback(trackId, deviceId, token) {
     const deadline = Date.now() + 4000;
     while (Date.now() < deadline) {
@@ -1208,6 +1286,7 @@ async function _confirmConnectPlayback(trackId, deviceId, token) {
                         && (!deviceId || !activeDeviceId || activeDeviceId === deviceId)) {
                     _setPlaying(true);
                     _debugLog('Connect: playback confirmed');
+                    _startConnectStatePoll();
                     return true;
                 }
             }
@@ -1809,6 +1888,7 @@ window.spotifyAutoplayPreference = _getAutoplayPref;
 window.spotifyLogin = spotifyLogin;
 window.spotifyTryIphoneAppLogin = spotifyTryIphoneAppLogin;
 window.spotifyPlayTrack = _playTrackWithLoadingState;
+window.spotifyTransport = spotifyTransport;
 window.spotifyPlaySnippet = spotifyPlaySnippet;
 window.cancelSpotifySnippet = cancelSpotifySnippet;
 window.spotifySnippetSupported = spotifySnippetSupported;

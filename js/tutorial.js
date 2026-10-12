@@ -13,7 +13,7 @@
 
 import {
     REPLICA_CARDS, esc, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=e72ac9e7';
+} from './card-replica.js?v=db6ceea7';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -820,25 +820,40 @@ function tutorialCardHeight() {
     }
     const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
     const coach = document.getElementById('cardTutorialMobileCoach');
-    if (!pane || !coach?.cloneNode) return pane ? Math.min(440, Math.max(160, pane.clientHeight - 18)) : 440;
+    if (!pane || !coach?.cloneNode) return pane ? Math.min(760, Math.max(160, pane.clientHeight - 18)) : 440;
     if (state.cardHeight !== null) return state.cardHeight;
     // Reserve the tallest explanation once, so changing steps cannot move
-    // the card's bottom or the navigation on a phone.
+    // the card's bottom or the navigation on a phone. The coach is measured
+    // at the width it really has (the body less its padding, not the pane's),
+    // and the last note of a chapter is measured in its two-button layout.
+    const body = document.getElementById('cardTutorialBody');
+    const bodyStyle = getComputedStyle(body);
+    const coachWidth = body.clientWidth - parseFloat(bodyStyle.paddingLeft) - parseFloat(bodyStyle.paddingRight);
     const probe = coach.cloneNode(true);
     probe.hidden = false;
     Object.assign(probe.style, {position: 'fixed', visibility: 'hidden', left: '-10000px',
-        top: '0', bottom: 'auto', right: 'auto', width: `${pane.clientWidth}px`, height: 'auto'});
+        top: '0', bottom: 'auto', right: 'auto', width: `${coachWidth}px`, height: 'auto', minHeight: '0'});
     probe.querySelector('#cardTutorialMobileBack').hidden = false;
     coach.parentElement.appendChild(probe);
     let tallest = 0;
-    tutorialSteps().forEach(step => stepNotes(step).forEach(note => {
-        probe.querySelector('#cardTutorialMobileProgress').textContent = 'Step 13 of 13 · back of card';
-        probe.querySelector('#cardTutorialMobileTitle').textContent = note.title;
-        probe.querySelector('#cardTutorialMobileText').innerHTML = tutorialText(note.text);
-        tallest = Math.max(tallest, probe.offsetHeight);
-    }));
+    const steps = tutorialSteps();
+    steps.forEach((step, i) => {
+        const notes = stepNotes(step);
+        const endsChapter = steps[i + 1]?.chapter !== step.chapter;
+        notes.forEach((note, n) => {
+            probe.dataset.end = endsChapter && n === notes.length - 1 ? '1' : '';
+            probe.querySelector('#cardTutorialMobileProgress').textContent = 'Step 13 of 13 · back of card';
+            probe.querySelector('#cardTutorialMobileTitle').textContent = note.title;
+            probe.querySelector('#cardTutorialMobileText').innerHTML = tutorialText(note.text);
+            tallest = Math.max(tallest, probe.offsetHeight);
+        });
+    });
     probe.remove();
-    state.cardHeight = Math.min(440, Math.max(160, pane.clientHeight + coach.offsetHeight - tallest - 18));
+    body.style.setProperty('--tutorial-coach-h', `${Math.ceil(tallest)}px`);
+    const paneStyle = getComputedStyle(pane);
+    const panePadding = parseFloat(paneStyle.paddingTop) + parseFloat(paneStyle.paddingBottom);
+    const coachNow = coach.hidden ? 0 : coach.offsetHeight;
+    state.cardHeight = Math.min(760, Math.max(160, pane.clientHeight + coachNow - Math.max(tallest, coachNow) - panePadding));
     return state.cardHeight;
 }
 
@@ -862,27 +877,49 @@ function fitCardToContent() {
         intro.style.minHeight = `${tallest}px`;
     }
     let height = tutorialCardHeight();
-    inner.style.setProperty('--replica-card-h', `${height}px`);
     // Everything on a face must be on screen. If a face's content is taller
     // than the box it has (a narrow phone wraps rows), shrink the whole card
     // to fit rather than cut a row off; below 70% the page scrolls instead.
+    const measureNeed = () => {
+        let need = 0;
+        inner.querySelectorAll('.card-face, .tutorial-page').forEach(face => {
+            // The back's details box scrolls on its own, so its overflow does not
+            // reach the face: add what is hidden in it to the face's own height.
+            const details = face.querySelector('.card-details');
+            const hidden = details ? Math.max(0, details.scrollHeight - details.clientHeight) : 0;
+            need = Math.max(need, face.scrollHeight + hidden);
+            face.scrollTop = 0;
+            if (details) details.scrollTop = 0;
+        });
+        return need;
+    };
+    // A card that must shrink is laid out at stage width ÷ scale, so after the
+    // transform it still spans the stage rather than sitting in a narrow
+    // strip with empty margins. A wider card wraps fewer rows and so needs
+    // less height, which can raise the scale: settle the two together.
+    const phoneStage = window.innerWidth <= 700 ? document.getElementById('cardTutorialStage') : null;
+    const stageWidth = phoneStage?.clientWidth || 0;
     let need = 0;
-    inner.querySelectorAll('.card-face, .tutorial-page').forEach(face => {
-        // The back's details box scrolls on its own, so its overflow does not
-        // reach the face: add what is hidden in it to the face's own height.
-        const details = face.querySelector('.card-details');
-        const hidden = details ? Math.max(0, details.scrollHeight - details.clientHeight) : 0;
-        need = Math.max(need, face.scrollHeight + hidden);
-        face.scrollTop = 0;
-        if (details) details.scrollTop = 0;
-    });
+    let scale = 1;
+    inner.style.setProperty('--replica-card-scale', '1');
+    for (let pass = 0; pass < (stageWidth ? 4 : 1); pass++) {
+        if (stageWidth) inner.style.setProperty('--replica-layout-w', `${Math.round(stageWidth / scale)}px`);
+        inner.style.setProperty('--replica-card-h', `${height}px`);
+        need = measureNeed();
+        const next = need > height + 1 ? Math.max(0.7, height / need) : 1;
+        if (Math.abs(next - scale) < 0.01) break;
+        scale = next;
+    }
     inner.style.setProperty('--replica-card-scale', '1');
     if (need > height + 1) {
         // Give the card the room its content needs, then shrink the whole
         // card back down to the room there is (never below 70%).
-        const scale = Math.max(0.7, height / need);
+        const finalScale = Math.max(0.7, height / need);
         inner.style.setProperty('--replica-card-h', `${Math.ceil(need)}px`);
-        inner.style.setProperty('--replica-card-scale', String(scale));
+        inner.style.setProperty('--replica-card-scale', String(finalScale));
+        if (stageWidth) inner.style.setProperty('--replica-layout-w', `${Math.round(stageWidth / finalScale)}px`);
+    } else if (stageWidth) {
+        inner.style.setProperty('--replica-layout-w', `${stageWidth}px`);
     }
     const compactDesktop = window.innerWidth > 700 && window.innerWidth <= 1180;
     const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
@@ -1195,6 +1232,9 @@ function openDemoSheet(kind) {
     closeDemoSheet();
     replica.insertAdjacentHTML('beforeend', kind === 'rare' ? rareSheetHTML(card) : reviewSheetHTML(card));
     if (kind === 'review') updateDemoFlagCount();
+    // The sheet covers the card from its top edge: on a short phone the pane
+    // may be scrolled down to the links row, which would cut the sheet's head.
+    keepInView(replica);
     positionRing();
 }
 
@@ -1399,6 +1439,7 @@ function renderMobileCoach() {
     back.hidden = at.chapterEnd || (state.stepIndex === 0 && index === 0);
     back.disabled = false;
     if (finish) finish.hidden = !at.chapterEnd;
+    coach.dataset.end = at.chapterEnd ? '1' : '';
     next.textContent = !at.lastNote ? 'Next'
         : at.finished ? 'Start studying'
         : at.chapterEnd ? `${nextChapter().label} →`
@@ -1498,7 +1539,10 @@ function renderSequenceProgress() {
     const step = currentStep();
     if (!step) return;
     const chapter = chapterById(step.chapter);
-    host.innerHTML = `<div class="card-tutorial-chapters" aria-label="Tutorial section"><span class="card-tutorial-chapter is-current">${esc(chapter.label)}</span></div>`;
+    // Phones show the count here, beside the chapter, instead of in the coach.
+    const pos = tutorialStepPosition();
+    host.innerHTML = `<div class="card-tutorial-chapters" aria-label="Tutorial section"><span class="card-tutorial-chapter is-current">${esc(chapter.label)}</span></div>`
+        + `<span class="card-tutorial-phone-count" aria-label="Step ${pos.current} of ${pos.total}">${pos.current}/${pos.total}</span>`;
 }
 
 function goToChapter(id) {

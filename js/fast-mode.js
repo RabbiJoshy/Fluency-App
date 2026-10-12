@@ -16,19 +16,19 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=e72ac9e7';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=e72ac9e7';
+import './state.js?v=db6ceea7';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=db6ceea7';
 
-// Measure the available desktop space and remove whole words until it fits.
-// ResizeObserver also refits after a window resize or the mobile row reappears.
+// Measure the space the row has left and drop whole words until the rest fit.
+// Fewer words is the honest answer on a narrow row; an ellipsis would only say
+// the list was cut. ResizeObserver refits after a window resize or rotation.
 function fitSmartSkipExamples(element) {
     const { words = [], prefix = '' } = element._exampleList || {};
     if (!words.length) { element.innerHTML = ''; return; }
     if (!element.clientWidth) return;
     for (let count = words.length; count >= 0; count--) {
-        element.innerHTML = (count ? prefix : '') + words.slice(0, count)
-            .map(word => `<em>${escapeExample(word)}</em>`).join(', ')
-            + (count < words.length ? (count ? ', ...' : '...') : '');
+        element.innerHTML = count ? prefix + words.slice(0, count)
+            .map(word => `<em>${escapeExample(word)}</em>`).join(', ') : '';
         if (element.scrollWidth <= element.clientWidth) break;
     }
 }
@@ -227,20 +227,21 @@ function refresh() {
         // what turning it on does, then what it is doing.
         hubSummary.classList.toggle('is-slogan', !on);
         hubSummary.textContent = !on ? 'Fewer cards, same coverage'
-            : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} ${skippedCardsCount === 1 ? 'word' : 'words'} skipped`
-            : 'No words skipped';
+            : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} skipped`
+            : 'None skipped';
     }
     const hubExamples = document.getElementById('fastTrackHubExamples');
     if (hubExamples) {
-        // Wide screens only (CSS hides it on phones). Off, it names the
-        // commonest look-alikes Smart Skip would set aside; on, the look-alikes
-        // (cognates) it is setting aside. Empty, it takes no room.
+        // After the count, in the level box's "e.g." voice: on, a few of the
+        // look-alikes Smart Skip is setting aside; off, the commonest ones it
+        // would. A handful of strong, familiar words says it better than a
+        // long list, and the row shows fewer still where it is narrow.
         // Target language words (e.g. Spanish) as the level box examples are.
         const targetWord = item => item?.word || '';
         const words = [...new Set((on
             ? (extras.cognates || []).map(entry => entry.item)
-            : lookAlikeCandidates()).slice(0, 12).map(targetWord).filter(Boolean))];
-        hubExamples._exampleList = { words, prefix: on ? 'Skipping ' : 'Look-alikes like ' };
+            : lookAlikeCandidates()).slice(0, 12).map(targetWord).filter(Boolean))].slice(0, 5);
+        hubExamples._exampleList = { words, prefix: on ? 'e.g. ' : 'Look-alikes like ' };
         hubExamples.innerHTML = words.length ? hubExamples._exampleList.prefix
             + words.map(word => `<em>${escapeExample(word)}</em>`).join(', ') : '';
         if (!hubExamples._fitObserver && typeof ResizeObserver !== 'undefined') {
