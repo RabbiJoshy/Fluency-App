@@ -99,8 +99,8 @@ function readSelected() {
     return selectedKnownLanguages;
 }
 
-function writeSelected(codes) {
-    if (globalThis.saveLanguageProfile) { globalThis.saveLanguageProfile(codes); return; }
+function writeSelected(codes, labels) {
+    if (globalThis.saveLanguageProfile) { globalThis.saveLanguageProfile(codes, labels); return; }
     selectedKnownLanguages = codes.slice();
     try {
         localStorage.setItem(SELECTED_KEY, JSON.stringify(selectedKnownLanguages));
@@ -108,13 +108,19 @@ function writeSelected(codes) {
 }
 
 function languageLabel(code) {
-    return KNOWN_LANGUAGE_NAMES[code] || String(code || '').toUpperCase();
+    if (KNOWN_LANGUAGE_NAMES[code]) return KNOWN_LANGUAGE_NAMES[code];
+    const custom = globalThis.readLanguageProfile?.().labels?.[code];
+    if (custom) return custom;
+    try { return new Intl.DisplayNames(['en'], {type: 'language'}).of(code); }
+    catch (_) { return String(code || '').toUpperCase(); }
 }
 
 // The scores a release actually shipped. A language with no scores is never
 // offered, so the picker cannot promise a filter that would do nothing.
 function availableKnownLanguages() {
-    return [...new Set([...cognateLanguages, ...(globalThis.bridgeSourceLanguages?.() || [])])];
+    const loaded = [...new Set([...cognateLanguages, ...(globalThis.bridgeSourceLanguages?.() || [])])];
+    const relevant = globalThis.relevantSmartSkipLanguages?.();
+    return relevant ? loaded.filter(code => relevant.includes(code)) : loaded;
 }
 
 function activeKnownLanguages() {
@@ -476,13 +482,17 @@ function renderKnownLanguagePicker() {
     const selector = document.getElementById('knownLanguagesSelector');
     if (!container || !selector) return;
     container.style.display = 'block';
-    const available = readSelected().filter(code => availableKnownLanguages().includes(code));
+    const ready = availableKnownLanguages();
+    const choices = globalThis.smartSkipLanguageChoices?.(readSelected(), ready)
+        || readSelected().filter(code => ready.includes(code)).map(code => ({code, ready: true}));
     const active = new Set(activeKnownLanguages());
-    selector.innerHTML = available.map(code => `
+    const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    selector.innerHTML = choices.map(({code, ready}) => `
         <button type="button" class="known-language-btn${active.has(code) ? ' selected' : ''}"
-                data-known-language="${code}" aria-pressed="${active.has(code)}">
-            ${active.has(code) ? '✓ ' : ''}${languageLabel(code)}
-        </button>`).join('') + '<button type="button" class="known-language-btn" data-edit-language-profile>Edit languages you know</button>';
+                data-known-language="${code}" aria-pressed="${active.has(code)}" ${ready ? '' : 'disabled'}>
+            ${active.has(code) ? '✓ ' : ''}${escape(languageLabel(code))}${ready ? '' : ' <small>Coming soon</small>'}
+        </button>`).join('') + (choices.length ? '' : '<small class="known-languages-empty">None of your saved languages have a useful pair here yet.</small>')
+        + '<button type="button" class="known-language-btn" data-edit-language-profile>Languages you know</button>';
     selector.querySelectorAll('[data-known-language]').forEach(button => {
         button.addEventListener('click', () => toggleKnownLanguage(button.dataset.knownLanguage));
     });

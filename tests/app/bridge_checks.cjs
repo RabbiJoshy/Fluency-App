@@ -53,6 +53,19 @@ function harness() {
     f.saveFastTrack('spanish', {enabled:true, bridge:true});
     assert.equal(f.writes[0].user,'stg_ONE','BRIDGE preference writes must use staging identity too');
 
+    const policy = JSON.parse(fs.readFileSync(`${root}/app/config/smart-skip-pairs.json`,'utf8'));
+    const pairs = harness();
+    vm.runInContext(fs.readFileSync(`${root}/app/js/smart-skip-pairs.js`,'utf8').replace(/^export /mg,''), pairs);
+    const sources = pairs.relevantSources(policy, 'es');
+    assert(sources.includes('it') && !sources.includes('ja'), 'only predefined useful pairs may appear');
+    const choices = pairs.pairChoices(policy,'es',['en','it','ja'],['en','pt','fr']);
+    assert.equal(JSON.stringify(choices),JSON.stringify([{code:'en',ready:true},{code:'it',ready:false}]));
+    assert.equal(p.resolveProfileLanguage('Japanese').code,'ja');
+    const other = p.resolveProfileLanguage('My community language');
+    p.saveLanguageProfile(['ja',other.code],{[other.code]:other.label});
+    assert(p.readLanguageProfile().languages.includes('ja'));
+    assert.equal(p.readLanguageProfile().labels[other.code],'My community language');
+
     const h = harness();
     let identity = fs.readFileSync(`${root}/app/js/progress-identity.js`,'utf8').replace(/^export /mg,'');
     vm.runInContext(identity, h);
@@ -121,6 +134,7 @@ function harness() {
     h.config = JSON.parse(fs.readFileSync(`${root}/app/config/config.json`, 'utf8'));
     for (const [code, language] of [['fr','french'],['es','spanish'],['pt','portuguese']]) {
         const real = JSON.parse(fs.readFileSync(`${root}/app/data/bridge/${code}.json`, 'utf8'));
+        assert(Object.keys(real.thresholds).every(source=>policy.targets[code].includes(source)), 'bundles may only contain approved pairs');
         h.selectedLanguage = language;
         h.progressData = {}; h.itemProgressData = {}; h.__progressEpoch++;
         for (const words of Object.values(real.sources)) for (const cards of Object.values(words)) for (const card of cards)
@@ -135,5 +149,7 @@ function harness() {
         h.bridgeVerdict({word:qualifying[0]});
         assert.equal(JSON.stringify(h.progressData),progressBefore,'target filtering never writes learning progress');
     }
+    h.relevantSmartSkipLanguages = () => ['fr'];
+    assert.equal(h.bridgeVerdict({word:'anos'}),null,'a removed source pair cannot survive in the verdict cache');
     console.log('BRIDGE profile, per-sense knowledge, mistakes, aliases, switches, morphology and release checks passed');
 })();

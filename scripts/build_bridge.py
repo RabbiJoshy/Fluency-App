@@ -30,6 +30,7 @@ def compact_meaning(m):
 
 def build(workspace, config_path, extracts, output):
     config = json.loads(config_path.read_text())
+    pairs = json.loads((config_path.parent.parent / config['smartSkipPairsPath']).read_text())
     forms = {code: read_verb_forms(_extract_entries(extract)) for code, extract in extracts.items()}
     releases = {}
     for name, cfg in config['languages'].items():
@@ -44,7 +45,7 @@ def build(workspace, config_path, extracts, output):
             releases[code] = (name, cfg, rows)
     for target, (name, cfg, rows) in releases.items():
         known = {code: extract for code, extract in extracts.items()
-                 if code != target and (Path('config/cognates') / f'{target}-{code}.json').exists()}
+                 if code in pairs['targets'].get(target, []) and code != target and (Path('config/cognates') / f'{target}-{code}.json').exists()}
         if not known:
             continue
         release_id = Path(cfg['indexPath']).parent.parent.name

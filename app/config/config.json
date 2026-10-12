@@ -6,6 +6,7 @@
     },
     "progressSyncUrl": "https://fluency-api.rabbijoshy.workers.dev"
   },
+  "smartSkipPairsPath": "config/smart-skip-pairs.json",
   "sourceTitlesPath": "data/source_titles.json",
   "languages": {
     "spanish": {

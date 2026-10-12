@@ -31,7 +31,7 @@ async function load(langConfig) {
 }
 function enabled() {
     const preference = readFastTrack(selectedLanguage);
-    return Boolean(bundle && Object.keys(bundle.sources).length && preference.enabled && preference.bridge);
+    return Boolean(bundle && window.bridgeSourceLanguages().length && preference.enabled && preference.bridge);
 }
 function compatible(source, requirement, targetMeaning) {
     const [code, word, pivot] = requirement;
@@ -85,7 +85,7 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
     if (!profile.size && !useProgress) return null;
     const preference = readFastTrack(selectedLanguage);
     const epoch = [revision, window.__progressEpoch || 0, preference.updatedAt,
-        window.readLanguageProfile?.().updatedAt || 0, useProfile, forceProgress].join('|');
+        window.readLanguageProfile?.().updatedAt || 0, (window.relevantSmartSkipLanguages?.() || Object.keys(bundle.sources)).join(','), useProfile, forceProgress].join('|');
     if (cacheEpoch !== epoch) {cacheEpoch = epoch; verdictCache.clear();}
     if (verdictCache.has(word)) return verdictCache.get(word);
     const evidence = [];
@@ -93,6 +93,7 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
         let match = null;
         for (const candidate of requirement) {
             const [code, sourceWord, pivot] = candidate;
+            if (window.relevantSmartSkipLanguages && !window.relevantSmartSkipLanguages().includes(code)) continue;
             if (profile.has(code) && (!target.meanings[index]?.verb || bundle.verb_compatible?.[word]?.[code] === true)) {
                 match = {code, word: sourceWord, pivot, basis: 'profile'};
                 break;
@@ -116,11 +117,11 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
 }
 function refresh() {
     const container = document.getElementById('bridgeToggleContainer');
-    if (container) container.hidden = !bundle || Object.keys(bundle.sources).length === 0;
+    if (container) container.hidden = !bundle || window.bridgeSourceLanguages().length === 0;
     const toggle = document.getElementById('bridgeToggle');
     if (toggle) toggle.setAttribute('aria-checked', String(enabled()));
     const text = document.getElementById('bridgeSourcesSummary');
-    if (text) text.textContent = bundle ? `Uses your saved ${Object.keys(bundle.sources)
+    if (text) text.textContent = bundle ? `Uses your saved ${window.bridgeSourceLanguages()
         .map(code => window.knownLanguageLabel?.(code) || code.toUpperCase()).join(' and ')} progress. Only matching meanings you know are used.` : '';
     const settingsSummary = document.getElementById('settingsKnownLanguagesSummary');
     if (settingsSummary) settingsSummary.textContent = (window.readKnownLanguages?.() || [])
@@ -155,7 +156,11 @@ function init() {
 window.loadBridge = load;
 window.bridgeVerdict = verdict;
 window.isBridgeEnabled = enabled;
-window.bridgeSourceLanguages = () => Object.keys(bundle?.sources || {});
+window.bridgeSourceLanguages = () => {
+    const codes = Object.keys(bundle?.sources || {});
+    const relevant = window.relevantSmartSkipLanguages?.();
+    return relevant ? codes.filter(code => relevant.includes(code)) : codes;
+};
 window.refreshBridge = refresh;
 window.bridgeVerbCompatible = (item, code) => {
     const word = normalize(item?.word || item?.targetWord);

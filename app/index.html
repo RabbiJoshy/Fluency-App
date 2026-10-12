@@ -957,11 +957,16 @@
                 <h2 id="knownLanguagesModalTitle">Languages you already know</h2>
             </div>
             <div class="known-languages-modal-selection">
+                <form id="knownLanguagesAddForm" class="known-languages-add-form">
+                    <label for="knownLanguagesAddInput">Add another language</label>
+                    <div><input id="knownLanguagesAddInput" type="text" maxlength="100" placeholder="e.g. Japanese" autocomplete="off"><button type="submit">Add</button></div>
+                </form>
                 <div id="knownLanguagesModalChoices" class="known-languages-choice-grid" role="group" aria-label="Languages you already know"></div>
             </div>
             <p class="known-languages-modal-intro" id="knownLanguagesModalIntro">
                 Choose languages where most everyday words are already familiar. Saved for every language you study; you can change this in Settings. You do not need to add a language just because you are studying it here.
             </p>
+            <button type="button" id="knownLanguagesManageAllBtn" class="known-languages-manage-all" hidden>Manage all languages in Settings</button>
             <div class="known-languages-modal-actions">
                 <button class="product-secondary-action" id="cancelKnownLanguagesBtn" type="button" hidden>Cancel</button>
                 <button class="product-primary-action" id="continueKnownLanguagesBtn" type="button">
@@ -1199,7 +1204,7 @@
                             <div id="knownLanguagesContainer" class="known-languages-context" style="display: none;">
                                 <div class="known-languages-header">
                                     <strong>Use for this language</strong>
-                                    <small>Choose which profile languages to use for look-alikes:</small>
+                                    <small>Only useful language pairs appear here. Greyed-out pairs are coming soon; your full language list stays in Settings.</small>
                                 </div>
                                 <div id="knownLanguagesSelector" class="known-languages-selector"></div>
                             </div>

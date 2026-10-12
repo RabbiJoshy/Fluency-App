@@ -21,6 +21,7 @@ import './knowledge.js?v=20260927pa';
 import './ui.js?v=20260927pa';
 import './vocab.js?v=20260927pa';
 import './language-profile.js?v=1';
+import './smart-skip-pairs.js?v=1';
 import './bridge.js?v=1';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
@@ -2414,6 +2415,8 @@ function maybeShowFrequencyIntro() {
 // ---------------------------------------------------------------------------
 
 let introSelectedCodes = new Set();
+let introLanguageLabels = {};
+let knownLanguagesScoped = false;
 
 function getKnownLanguagesForTarget() {
     return window.knownLanguageOptions?.() || ['en', 'es', 'fr', 'pt', 'pl', 'de', 'it', 'ru', 'sk', 'uk', 'nl', 'sv', 'cs', 'fi'];
@@ -2436,7 +2439,14 @@ function openKnownLanguagesSettings() {
         else window.showSettingsModalWithTab?.('appearance');
     };
     introSelectedCodes = new Set(window.readKnownLanguages?.() || []);
-    renderKnownLanguagesModalChoices(getKnownLanguagesForTarget());
+    introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
+    knownLanguagesScoped = Boolean(fromFast);
+    document.getElementById('knownLanguagesAddForm').hidden = knownLanguagesScoped;
+    document.getElementById('knownLanguagesManageAllBtn').hidden = !knownLanguagesScoped;
+    document.getElementById('knownLanguagesModalIntro').textContent = knownLanguagesScoped
+        ? 'Only useful pairs for this learning language appear here. Coming soon means the mapping is not available yet. Your other languages stay saved in Settings.'
+        : 'Save any languages you can comfortably read. Smart Skip uses only useful, supported language pairs. You can change this list at any time.';
+    renderKnownLanguagesModalChoices(knownLanguagesScoped ? (window.relevantSmartSkipLanguages?.() || []) : getKnownLanguagesForTarget());
     document.getElementById('knownLanguagesModalTitle').textContent = 'Languages you know';
     document.getElementById('continueKnownLanguagesBtn').textContent = 'Save';
     document.getElementById('cancelKnownLanguagesBtn').hidden = false;
@@ -2456,7 +2466,10 @@ function renderKnownLanguagesModalChoices(availableCodes) {
     if (!container) return;
     container.innerHTML = '';
 
-    availableCodes.forEach(code => {
+    const codes = knownLanguagesScoped ? availableCodes : [...new Set([...availableCodes, ...introSelectedCodes])];
+    const ready = new Set(window.availableKnownLanguages?.() || []);
+    const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    codes.forEach(code => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'known-language-choice-btn';
@@ -2468,11 +2481,13 @@ function renderKnownLanguagesModalChoices(availableCodes) {
         button.setAttribute('aria-checked', isSelected ? 'true' : 'false');
 
         const flag = window.knownLanguageFlag?.(code) || '🌐';
-        const label = window.knownLanguageLabel?.(code) || code.toUpperCase();
+        const label = introLanguageLabels[code] || window.knownLanguageLabel?.(code) || code.toUpperCase();
+        const comingSoon = knownLanguagesScoped && !ready.has(code);
+        button.disabled = comingSoon;
 
         button.innerHTML = `
             <span class="known-language-choice-flag" aria-hidden="true">${flag}</span>
-            <span class="known-language-choice-label">${label}</span>
+            <span class="known-language-choice-label">${escape(label)}${comingSoon ? '<small class="known-language-coming-soon">Coming soon</small>' : ''}</span>
             <span class="known-language-choice-check" aria-hidden="true">${isSelected ? '✓' : ''}</span>
         `;
 
@@ -2520,6 +2535,11 @@ function maybeShowKnownLanguagesIntro(targetLang) {
     introSelectedCodes = new Set(existingSelected.filter(c => available.includes(c)));
 
     knownLanguagesEditorReturn = null;
+    knownLanguagesScoped = false;
+    introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
+    document.getElementById('knownLanguagesAddForm').hidden = false;
+    document.getElementById('knownLanguagesManageAllBtn').hidden = true;
+    document.getElementById('knownLanguagesModalIntro').textContent = 'Choose languages where most everyday words are already familiar. Saved for every language you study; you can change this in Settings. Smart Skip uses only useful, supported language pairs.';
     document.getElementById('knownLanguagesModalTitle').textContent = 'Which languages can you comfortably read?';
     document.getElementById('continueKnownLanguagesBtn').textContent = 'Continue';
     document.getElementById('cancelKnownLanguagesBtn').hidden = true;
@@ -2529,11 +2549,26 @@ function maybeShowKnownLanguagesIntro(targetLang) {
 }
 
 function setupKnownLanguagesIntro() {
+    document.getElementById('knownLanguagesAddForm')?.addEventListener('submit', event => {
+        event.preventDefault();
+        const input = document.getElementById('knownLanguagesAddInput');
+        const language = window.resolveProfileLanguage?.(input.value);
+        if (!language) return;
+        introSelectedCodes.add(language.code);
+        introLanguageLabels[language.code] = language.label;
+        input.value = '';
+        renderKnownLanguagesModalChoices(getKnownLanguagesForTarget());
+    });
+    document.getElementById('knownLanguagesManageAllBtn')?.addEventListener('click', () => {
+        closeKnownLanguagesModal();
+        knownLanguagesEditorReturn = null;
+        window.showSettingsModalWithTab?.('appearance');
+    });
     const continueBtn = document.getElementById('continueKnownLanguagesBtn');
     if (continueBtn) {
         continueBtn.addEventListener('click', () => {
             const selectedArr = Array.from(introSelectedCodes);
-            window.writeKnownLanguages?.(selectedArr);
+            window.writeKnownLanguages?.(selectedArr, introLanguageLabels);
             window.updateKnownLanguageCopy?.();
             window.updateExclusionBars?.();
             window.updateLevelSelector?.();

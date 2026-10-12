@@ -78,6 +78,8 @@ const urlsToCache = [
   '/js/grammar-cards.js?v=20260923gn',
   '/js/language-profile.js?v=1',
   '/js/bridge.js?v=1',
+  '/js/smart-skip-pairs.js?v=1',
+  '/config/smart-skip-pairs.json',
   '/data/bridge/es.json',
   '/data/bridge/fr.json',
   '/data/bridge/pt.json',

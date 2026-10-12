@@ -23,6 +23,31 @@ separate from staging review.
   such as “From your learned Spanish: años”. Target answers, SRS stages and
   recorded coverage are never written by BRIDGE.
 
+## Curated pairs and full language profiles
+
+2026-10-12 follow-up: `app/config/smart-skip-pairs.json` explicitly declares
+useful source languages for each target. Josh confirmed the initial Romance,
+Czech/Polish/Slovak and close Germanic direction, retaining existing English
+mappings. Finnish/Estonian and Russian/Ukrainian/Belarusian are also declared
+close-pair candidates. A listed pair does not promise that its mapping exists.
+
+Both runtime filtering and the offline builder honour this list. Adding a
+policy file alone cannot generate an unapproved cross-combination. Existing
+bundles already fit the approved list, so this change does not add mapping data.
+
+Smart Skip shows only relevant profile languages; unmapped relevant choices are
+disabled and marked **Coming soon**. Its Languages you know editor shows the
+curated target list, preserves unrelated saved languages, and links to the full
+profile in Settings. The full profile and onboarding remain unrestricted through
+an Add another language field. Recognised language names/codes use standard
+codes; other names get an account-profile label and stable custom ID. Custom
+names are escaped when rendered and never imply a supported mapping.
+
+The browser check added Japanese to the profile, opened the French-specific
+editor and verified that Japanese and Polish were hidden, Italian was disabled
+with Coming soon, and saving preserved all unrelated declarations. Unit checks
+cover ready/missing/irrelevant pair classification and arbitrary profile labels.
+
 ## Knowledge evidence
 
 Use the existing `getProgressState(...).known` contract: at least one correct
