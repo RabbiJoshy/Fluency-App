@@ -2,6 +2,19 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-13T00:15:06+01:00",
+   "date": "2026-10-13 00:15 BST",
+   "agent": "Claude",
+   "summary": "The tutorial fills a phone screen: the card spans the full width and the explanation never moves the card",
+   "detail": [
+    "Phone tutorial is full-bleed: no modal inset or rounded corners; title and exit share one row.",
+    "The tallest explanation's height is reserved once (measured at the coach's real width, including a chapter's two-button last note), so changing steps cannot move the card or the navigation.",
+    "A card that has to shrink is laid out at stage width ÷ scale, so it still spans the stage instead of sitting in a narrow strip; height cap raised to 760 px.",
+    "Work left uncommitted by the tutorial (SHOWCASE) chat; committed and staged on Josh's instruction after a phone-width smoke check."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-13T00:11:41+01:00",
    "date": "2026-10-13 00:11 BST",
    "agent": "Claude",
@@ -378,18 +391,6 @@
     "gustar-type verbs describe the thing, not a person: gusta \"it pleases\" (was \"he/she likes\"), gustan \"they please\", encanta \"it delights\", duele \"it hurts\".",
     "The participle gustado stays \"liked\"; verbs a person can do (pasa \"he/she spends\") keep \"he/she\".",
     "Measured on es r5 and pt r3: 115 and 64 rows changed, 0 gained, 0 lost, all error classes 0."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T15:40:00+01:00",
-   "date": "2026-10-11 15:40 BST",
-   "agent": "Claude",
-   "summary": "INFLECT-2: reverted the Portuguese bracket change; the card already shows those definitions as sub-rows",
-   "detail": [
-    "Checked on real cards: production vou already shows \"I go\" with \"to begin an action or process\" and \"+ para to move to a destination\" as sub-rows, and quero shows \"I want to\" with \"to feel the need to do something\".",
-    "The earlier INFLECT-2 change removed the \"to\" from those sub-rows and, on quero, removed one entirely, so it is reverted: Portuguese rows are back to the INFLECT build (fa94c9bc).",
-    "Nothing else changed; Spanish was never affected."
    ],
    "commit": "pending"
   }

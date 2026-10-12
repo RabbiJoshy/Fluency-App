@@ -20989,32 +20989,49 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 }
 
 @media (max-width: 700px) {
+    /* Full-bleed: the generic .modal inset (12px) and the content's rounded
+       corners cost a phone width and height it cannot spare. */
+    #walkthroughModal.modal { padding: 0 !important; }
+    .walkthrough-modal { border-radius: 0; }
+
+    /* Title and exit share one row; the lead sits beneath. The dots would
+       need a row of their own and the footer already counts "2 of 3". */
     .walkthrough-head {
-        grid-template-columns: 1fr auto;
-        padding: 14px 16px 4px;
-        row-gap: 8px;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+        padding: max(10px, env(safe-area-inset-top, 0px)) 12px 2px 16px;
+        row-gap: 2px;
+        column-gap: 8px;
     }
 
-    .walkthrough-copy {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        text-align: left;
-    }
+    .walkthrough-dots { display: none; }
+
+    .walkthrough-copy { display: contents; }
 
     .walkthrough-title {
-        font-size: 20px;
+        grid-column: 1;
+        grid-row: 1;
+        align-self: center;
+        margin: 0;
+        font-size: 18px;
     }
 
+    .walkthrough-close { grid-column: 2; grid-row: 1; }
+
     .walkthrough-lead {
-        font-size: 14px;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        padding-right: 4px;
+        font-size: 13.5px;
+        line-height: 1.4;
     }
 
     .walkthrough-body {
-        padding: 22px 16px 12px;
+        padding: 12px 12px 6px;
     }
 
     .walkthrough-foot {
-        padding: 10px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+        padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
     }
 
     .walkthrough-next {
@@ -23644,6 +23661,67 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
     #cardTutorialStage .card-face { font-size: 16px; }
 }
 
+/* The scaled card keeps its unscaled height in layout unless the stage is a
+   block formatting context: the replica's negative bottom margin (which
+   collapses the box down to the scaled size) otherwise collapsed through the
+   stage and left a ghost of the full-size card, so the pane scrolled over
+   empty space and the ringed row could end up above the top edge. */
+#cardTutorialStage { display: flow-root; }
+
+/* Phone: give the card the height. The coach is the only thing that has to
+   share the screen with it, so it is as slim as its text allows — the title
+   and Back/Next share one row, the step count lives in the top bar, and its
+   height is reserved once (--tutorial-coach-h, set by tutorial.js from the
+   longest note) so the card and the buttons never move between notes. */
+.card-tutorial-phone-count { display: none; }
+@media (max-width: 700px) {
+    #cardTutorialModal.modal { padding: 0 !important; }
+    #cardTutorialModal .card-tutorial-modal { border-radius: 0; }
+    #cardTutorialBody {
+        gap: 6px;
+        padding: 8px 8px max(8px, env(safe-area-inset-bottom));
+    }
+    #cardTutorialBody .card-tutorial-topbar { align-items: center; }
+    #cardTutorialBody .card-tutorial-columns { padding: 0 0 6px; scrollbar-gutter: auto; }
+    /* tutorial.js lays the card out at stage width ÷ scale, so once scaled it
+       spans the stage; the negative margin keeps the wider box centred. */
+    #cardTutorialStage .card-replica {
+        width: var(--replica-layout-w, 100%);
+        max-width: none;
+        margin-left: calc((100% - var(--replica-layout-w, 100%)) / 2);
+    }
+    .card-tutorial-phone-count {
+        display: inline-block;
+        margin-left: 8px;
+        color: var(--text-secondary);
+        font: 600 12.5px/1 var(--font-data);
+        letter-spacing: 0.04em;
+        font-variant-numeric: tabular-nums;
+        vertical-align: middle;
+    }
+    #cardTutorialBody .card-tutorial-sequence { display: flex; align-items: center; }
+    #cardTutorialMobileCoach:not([hidden]) {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: auto minmax(0, 1fr);
+        align-content: start;
+        gap: 2px 10px;
+        padding: 8px 12px 12px;
+        min-height: var(--tutorial-coach-h, 0px);
+        border-radius: 14px;
+    }
+    #cardTutorialMobileCoach .card-tutorial-mobile-progress { display: none; }
+    #cardTutorialMobileCoach > strong { grid-column: 1; grid-row: 1; align-self: center; font-size: 16px; line-height: 1.2; }
+    #cardTutorialMobileCoach > p { grid-column: 1 / -1; grid-row: 2; font-size: 13.5px; line-height: 1.4; }
+    #cardTutorialMobileCoach .card-tutorial-mobile-actions { grid-column: 2; grid-row: 1; gap: 6px; }
+    #cardTutorialMobileCoach .card-tutorial-mobile-actions button { min-width: 0; padding: 8px 16px; font-size: 14.5px; }
+    /* At a chapter's end the two ways on are long labels; they take a row of
+       their own rather than squeezing the title to a sliver. */
+    #cardTutorialMobileCoach[data-end="1"] { grid-template-rows: auto auto minmax(0, 1fr); }
+    #cardTutorialMobileCoach[data-end="1"] > p { grid-row: 2; }
+    #cardTutorialMobileCoach[data-end="1"] .card-tutorial-mobile-actions { grid-column: 1 / -1; grid-row: 3; align-self: end; margin-top: 6px; }
+    #cardTutorialMobileCoach[data-end="1"] .card-tutorial-mobile-actions button { flex: 1 1 0; }
+}
+
 /* Your music is one card: the option on top, Spotify as its footer, so the
    connect button reads as part of that choice rather than a stray pill under
    the page. The wrapper draws the card; the option inside it goes flat. */
@@ -24607,26 +24685,47 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   overflow: visible;
 }
 #setupOptions .fast-track-hub-copy .streamline-rec-badge {
-  font-size: 13px;
-  padding: 4px 8px;
+  font-size: 14px;
+  padding: 5px 9px;
   text-transform: none;
   letter-spacing: 0;
 }
+/* The count is the level box's coverage figure: bold, in the language colour. */
 #setupOptions .fast-track-hub-state {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  font-size: 13px;
+  grid-column: 2;
+  grid-row: 1;
+  order: 0;
+  flex-basis: auto;
+  color: var(--accent-primary);
+  font: 700 14px/1.2 var(--font-emphasis);
+  white-space: nowrap;
 }
-#setupOptions .fast-track-hub-meta { grid-column: 3; grid-row: 1; }
+/* Off, the badge already makes the pitch; the slogan has no room on one line. */
+#setupOptions .fast-track-hub-state.is-slogan { display: none; }
+#setupOptions .fast-track-hub-meta { grid-column: 4; grid-row: 1; }
 #setupOptions .fast-track-hub-info { width: 26px; height: 26px; }
 #setupOptions .fast-track-hub-switch-cell {
-  align-items: flex-start;
-  padding: 13px 16px 0 4px;
+  align-items: center;
+  padding: 0 16px 0 4px;
 }
 #setupOptions .fast-mode-master-switch { width: 54px; height: 32px; }
 #setupOptions .fast-mode-master-switch i { width: 24px; height: 24px; }
 #setupOptions .fast-mode-master-switch.selected i { transform: translateX(22px); }
-#setupOptions .fast-track-hub-examples { grid-column: 2; grid-row: 1; max-width: 180px; }
+/* Same type as the level box's example line (.lsw-egs). fast-mode.js drops
+   whole words until they fit, so a narrow row simply shows fewer. */
+#setupOptions .fast-track-hub-examples {
+  display: block;
+  grid-column: 3;
+  grid-row: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  font: 500 14px/1.3 var(--font-emphasis);
+  text-align: left;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+#setupOptions .fast-track-hub-examples em { color: inherit; font-style: normal; }
 #setupOptions .fast-mode-master-icon { display: none; }
 @media (max-width: 767px) {
   #setupOptions .fast-track-hub-btn { column-gap: 6px; padding-left: 12px; }
