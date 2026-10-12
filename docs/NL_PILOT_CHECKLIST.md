@@ -113,7 +113,11 @@ How the surface ledger was used to settle all 6,000 words:
 1. **Word list.** FrequencyWords had removed every apostrophe; SUBTLEX-NL keeps
    them (`'t` 58, `m'n` 79, `'n` 81, `z'n` 125). The adapter splits `_` units back
    into words, joins full-stop tokens, repairs apostrophe stand-ins.
-2. **Exclusions (719), all recorded as ledger events with reasons:** personal names,
+2. **Exclusions (721), all recorded as ledger events with a reason and a
+   `category` (proper_name 550, english 92, foreign_place 38, ocr_damage 16,
+   letter 9, abbreviation 7, foreign_word 6, subtitle_credit 2,
+   tokenization_damage 1). Review keeps carry one too (country_or_nationality,
+   exonym, religious, interjection, vocabulary). Kinds: personal names,
    English and foreign words, foreign place names, isolated letters, OCR damage
    (capital I read as l: `lk ls ln lets ledereen lemand ltalië lrak lerse ...`),
    tokenization damage (`datje`), subtitle credits. Rule as fi/es/pt: keep countries,
@@ -136,10 +140,16 @@ How the surface ledger was used to settle all 6,000 words:
 
 ## Open, in order (none blocks starting CASCADE-WSD)
 
-1. **Curated function-word menus** (Spanish `el`/`la` model) for about 10-20 words:
-   `de het een er te om op aan`.
-2. **Hand-labelled benchmark**, a few hundred sentences, deliberately including
-   separable verbs (B) and er-splits (C). Stanza already separates them:
+1. **How Dutch function words are handled: not decided.** Two proposals exist and
+   are not the same thing: `docs/LANGUAGE_ONBOARDING.md` asks for small curated menus
+   (the Spanish `el`/`la` model); Josh's declared function-word class (CHAT_ROADMAP
+   TURBO-STREAM row, 2026-10-12) gives those words a fixed card summary plus phrase
+   senses, no per-example WSD online, and disambiguates them offline instead. Josh
+   decides; CASCADE-WSD should not assume either. Dutch candidates: `de het een er te
+   om op aan`.
+2. **Hand-labelled benchmark**: a few hundred real sentences with the correct menu
+   sense marked by hand, used only to score the cascade. Deliberately include hard
+   cases: separable verbs (B) and er-splits (C). Stanza already separates them:
    `ik bel je op` gives `op` `compound:prt`; `op de tafel` gives `op` `case`.
 3. **Glosses written by hand** (about 30 in the declarations) are Claude's, labelled
    `author: Claude`; review them with the cards.
