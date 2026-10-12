@@ -6,6 +6,7 @@
     },
     "progressSyncUrl": "https://fluency-api.rabbijoshy.workers.dev"
   },
+  "smartSkipPairsPath": "config/smart-skip-pairs.json",
   "sourceTitlesPath": "data/source_titles.json",
   "languages": {
     "spanish": {
@@ -88,6 +89,7 @@
       "speechLang": "es-ES",
       "cognatesPath": "cognates/es/cognates-literal-ground-r6.json",
       "mergeExceptionsPath": "data/merge-exceptions/es-literal-ground-r6-seam-v1.json",
+      "bridgePath": "data/bridge/es.json",
       "coveragePath": null,
       "dictionaryExamplesPath": "data/dictionary-examples/es-es-speech-v25-literal-ground-r6-10000x30-slim-v1.json"
     },
@@ -379,6 +381,7 @@
       "speechLang": "fr-FR",
       "cognatesPath": "cognates/fr/cognates.json",
       "mergeExceptionsPath": "data/merge-exceptions/fr.json",
+      "bridgePath": "data/bridge/fr.json",
       "coveragePath": null
     },
     "russian": {
@@ -574,6 +577,7 @@
       "speechLang": "pt-PT",
       "cognatesPath": "cognates/pt/cognates-literal-ground-r4.json",
       "mergeExceptionsPath": "data/merge-exceptions/pt-literal-ground-r4-seam-v1.json",
+      "bridgePath": "data/bridge/pt.json",
       "coveragePath": null,
       "dictionaryExamplesPath": "data/dictionary-examples/pt-pt-speech-v25-literal-ground-r4-10000x30-slim-v1.json"
     },
@@ -665,6 +669,7 @@
       "releaseCompositionPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/composition.json",
       "cognatesPath": "cognates/cs/cognates.json",
       "mergeExceptionsPath": "data/merge-exceptions/cs.json",
+      "bridgePath": "data/bridge/cs.json",
       "coveragePath": "coverage/cs/coverage.json"
     }
   },

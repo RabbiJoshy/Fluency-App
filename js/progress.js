@@ -1,10 +1,10 @@
-import './state.js?v=796d671d';
+import './state.js?v=e52e9ad6';
 import {
     crossModeProgressId,
     matchingProgressRecords,
     mergeProgressRecords,
     normalizeProgressSurface
-} from './progress-identity.js?v=796d671d';
+} from './progress-identity.js?v=e52e9ad6';
 
 const SRS_DAY_MS = 24 * 60 * 60 * 1000;
 const SRS_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60, 120, 240, 365];
@@ -181,7 +181,7 @@ function registerProgressCardSurface(fullId, surface) {
     return fullId;
 }
 
-function getProgressRecordsForCard(fullId, surface = '') {
+function getProgressRecordsForCard(fullId, surface = '', language = selectedLanguage) {
     const source = progressData || {};
     // O(1) staleness check: object identity catches a wholesale replacement,
     // the epoch catches in-place writes. Counting keys here was the single
@@ -204,7 +204,7 @@ function getProgressRecordsForCard(fullId, surface = '') {
         surface || progressSurfaceById.get(fullId)
     );
     const indexedIds = normalizedSurface
-        ? (progressIdsBySurface.get(`${selectedLanguage}|${normalizedSurface}`) || [])
+        ? (progressIdsBySurface.get(`${language}|${normalizedSurface}`) || [])
         : [];
     const candidates = {};
     for (const id of [fullId, crossModeProgressId(fullId), ...indexedIds]) {
@@ -213,13 +213,13 @@ function getProgressRecordsForCard(fullId, surface = '') {
     return matchingProgressRecords(candidates, {
         fullId,
         surface,
-        language: selectedLanguage,
+        language,
         surfaceById: progressSurfaceById
     });
 }
 
-function getProgressRecordIdsForCard(fullId, surface = '') {
-    return getProgressRecordsForCard(fullId, surface).map(record => record.id);
+function getProgressRecordIdsForCard(fullId, surface = '', language = selectedLanguage) {
+    return getProgressRecordsForCard(fullId, surface, language).map(record => record.id);
 }
 
 function getMergedWordProgress(fullId, surface = '') {

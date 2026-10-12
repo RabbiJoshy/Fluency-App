@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=796d671d';
-import { sendOrQueue } from './sync-queue.js?v=796d671d';
+import './state.js?v=e52e9ad6';
+import { sendOrQueue } from './sync-queue.js?v=e52e9ad6';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -353,7 +353,7 @@ function mergeKnowledgeProgress(parent, item) {
 function getSpecificItemProgress(item) {
     if (!item?.itemId) return null;
     const candidateIds = new Set([item.itemId, ...(item.legacyItemIds || [])]);
-    const parentIds = window.getProgressRecordIdsForCard?.(item.parentWordId) || [];
+    const parentIds = window.getProgressRecordIdsForCard?.(item.parentWordId, '', item.language || selectedLanguage) || [];
     for (const parentId of parentIds) {
         for (const itemId of Array.from(candidateIds)) {
             const separator = itemId.indexOf('~');
@@ -1126,3 +1126,6 @@ document.addEventListener('focusin', event => {
         modal.querySelector('.knowledge-overview-close')?.focus();
     }
 });
+
+window.getSpecificItemProgress = getSpecificItemProgress;
+window.mergeKnowledgeProgress = mergeKnowledgeProgress;

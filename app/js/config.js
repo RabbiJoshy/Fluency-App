@@ -1,6 +1,6 @@
-import './state.js?v=796d671d';
-import { releaseUrl } from './release-host.js?v=796d671d';
-import { IS_STAGING, getCandidateDeckOverrides } from './env.js?v=796d671d';
+import './state.js?v=e52e9ad6';
+import { releaseUrl } from './release-host.js?v=e52e9ad6';
+import { IS_STAGING, getCandidateDeckOverrides } from './env.js?v=e52e9ad6';
 
 async function loadConfig() {
     try {
@@ -10,6 +10,16 @@ async function loadConfig() {
         ]);
         config = await configResponse.json();
         cefrLevelsConfig = await cefrResponse.json();
+        config.smartSkipPairs = {targets: {}};
+        if (config.smartSkipPairsPath) {
+            try {
+                const response = await fetch(config.smartSkipPairsPath, {cache: 'no-store'});
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const policy = await response.json();
+                if (policy.schema !== 'smart-skip-pairs/v1') throw new Error('Unsupported language-pair policy');
+                config.smartSkipPairs = policy;
+            } catch (error) {console.warn('Smart Skip pair list unavailable; keeping cards:', error);}
+        }
 
         // Release payloads (~1 GB) are served by the published release site
         // (repo Fluency-Releases via release-host.js), mapped by releaseUrl().

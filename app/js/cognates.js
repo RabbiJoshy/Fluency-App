@@ -19,7 +19,7 @@
 //
 // The old scalar still works. Where a release predates this, `cognate_score`
 // is read as the English entry, so Spanish is untouched.
-import './state.js?v=796d671d';
+import './state.js?v=e52e9ad6';
 
 const SELECTED_KEY = 'fluency_known_languages_v1';
 
@@ -38,6 +38,8 @@ const KNOWN_LANGUAGE_NAMES = {
     uk: 'Ukrainian',
     nl: 'Dutch',
     sv: 'Swedish',
+    cs: 'Czech',
+    fi: 'Finnish',
 };
 
 // surface (lowercased) -> { known language: score }
@@ -79,6 +81,7 @@ let cognateSurfaceScorers = {};
 let selectedKnownLanguages = null;
 
 function readSelected() {
+    if (globalThis.readLanguageProfile) return globalThis.readLanguageProfile().languages;
     if (selectedKnownLanguages) return selectedKnownLanguages;
     try {
         const saved = JSON.parse(localStorage.getItem(SELECTED_KEY) || 'null');
@@ -96,7 +99,8 @@ function readSelected() {
     return selectedKnownLanguages;
 }
 
-function writeSelected(codes) {
+function writeSelected(codes, labels) {
+    if (globalThis.saveLanguageProfile) { globalThis.saveLanguageProfile(codes, labels); return; }
     selectedKnownLanguages = codes.slice();
     try {
         localStorage.setItem(SELECTED_KEY, JSON.stringify(selectedKnownLanguages));
@@ -104,18 +108,25 @@ function writeSelected(codes) {
 }
 
 function languageLabel(code) {
-    return KNOWN_LANGUAGE_NAMES[code] || String(code || '').toUpperCase();
+    if (KNOWN_LANGUAGE_NAMES[code]) return KNOWN_LANGUAGE_NAMES[code];
+    const custom = globalThis.readLanguageProfile?.().labels?.[code];
+    if (custom) return custom;
+    try { return new Intl.DisplayNames(['en'], {type: 'language'}).of(code); }
+    catch (_) { return String(code || '').toUpperCase(); }
 }
 
 // The scores a release actually shipped. A language with no scores is never
 // offered, so the picker cannot promise a filter that would do nothing.
 function availableKnownLanguages() {
-    return cognateLanguages.slice();
+    const loaded = [...new Set([...cognateLanguages, ...(globalThis.bridgeSourceLanguages?.() || [])])];
+    const relevant = globalThis.relevantSmartSkipLanguages?.();
+    return relevant ? loaded.filter(code => relevant.includes(code)) : loaded;
 }
 
 function activeKnownLanguages() {
-    const available = new Set(cognateLanguages);
-    return readSelected().filter(code => available.has(code));
+    const available = new Set(availableKnownLanguages());
+    const ignored = new Set(globalThis.readKnownLanguageSourceExclusions?.() || []);
+    return readSelected().filter(code => available.has(code) && !ignored.has(code));
 }
 
 const LOOKALIKE_FLOOR = 0.55;
@@ -251,6 +262,7 @@ function isCognateKnown(item) {
     if (!item) return false;
     if (isSenseItem(item)) {
         for (const code of activeKnownLanguages()) {
+            if (code !== 'en' && globalThis.bridgeVerbCompatible?.(item, code) === false) continue;
             const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
             if (cognateScoreFor(item, code) >= cutoff) return true;
         }
@@ -264,10 +276,11 @@ function isCognateKnown(item) {
     // Preferring the map would have silently narrowed Spanish Lyrics to
     // whichever of its words happened to appear in the Speech map.
     const legacy = Number(item.cognate_score || 0);
-    if (legacy > 0 && legacy >= Number(globalThis.cognateThreshold || 0)) return true;
+    if (activeKnownLanguages().includes('en') && legacy > 0 && legacy >= Number(globalThis.cognateThreshold || 0)) return true;
     const perLanguage = item.cognate_scores;
     if (!perLanguage) return false;
     for (const code of activeKnownLanguages()) {
+        if (code !== 'en' && globalThis.bridgeVerbCompatible?.(item, code) === false) continue;
         const score = Number(perLanguage[code] || 0);
         const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
         if (score >= cutoff) return true;
@@ -395,6 +408,7 @@ async function loadCognateScores(langConfig) {
     cognateLanguage = null;
     cognateSchema = 'cognate-score/v1';
     cognateCards = null;
+    await globalThis.loadBridge?.(langConfig);
     const path = langConfig && langConfig.cognatesPath;
     if (!path) return;
     try {
@@ -467,39 +481,28 @@ function renderKnownLanguagePicker() {
     const container = document.getElementById('knownLanguagesContainer');
     const selector = document.getElementById('knownLanguagesSelector');
     if (!container || !selector) return;
-    const available = availableKnownLanguages();
-    // One language is not a choice — with English alone this is the old
-    // behaviour and the picker would only be noise.
-    if (available.length < 2) {
-        container.style.display = 'none';
-        return;
-    }
     container.style.display = 'block';
+    const ready = availableKnownLanguages();
+    const choices = globalThis.smartSkipLanguageChoices?.(readSelected(), ready)
+        || readSelected().filter(code => ready.includes(code)).map(code => ({code, ready: true}));
     const active = new Set(activeKnownLanguages());
-    selector.innerHTML = available.map(code => `
+    const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    selector.innerHTML = choices.map(({code, ready}) => `
         <button type="button" class="known-language-btn${active.has(code) ? ' selected' : ''}"
-                data-known-language="${code}" aria-pressed="${active.has(code)}">
-            ${active.has(code) ? '✓ ' : ''}${languageLabel(code)}
-        </button>`).join('');
-    selector.querySelectorAll('.known-language-btn').forEach(button => {
+                data-known-language="${code}" aria-pressed="${active.has(code)}" ${ready ? '' : 'disabled'}>
+            ${active.has(code) ? '✓ ' : ''}${escape(languageLabel(code))}${ready ? '' : ' <small>Coming soon</small>'}
+        </button>`).join('') + (choices.length ? '' : '<small class="known-languages-empty">None of your saved languages have a useful pair here yet.</small>')
+        + '<button type="button" class="known-language-btn" data-edit-language-profile>Languages you know</button>';
+    selector.querySelectorAll('[data-known-language]').forEach(button => {
         button.addEventListener('click', () => toggleKnownLanguage(button.dataset.knownLanguage));
     });
+    selector.querySelector('[data-edit-language-profile]')?.addEventListener('click', () => globalThis.openKnownLanguagesSettings?.());
 }
 
 function toggleKnownLanguage(code) {
     if (!code) return;
-    const current = new Set(activeKnownLanguages());
-    if (current.has(code)) {
-        current.delete(code);
-    } else {
-        current.add(code);
-    }
-    writeSelected(availableKnownLanguages().filter(item => current.has(item)));
+    globalThis.toggleKnownLanguageSource?.(code);
     renderKnownLanguagePicker();
-    // The deck composition just changed, so every count on the setup screen is
-    // now stale. These are the same refreshes a cognate-toggle click performs.
-    // The explainer copy names the selected languages, so it is as stale as the
-    // counts are until it is told.
     globalThis.updateKnownLanguageCopy?.();
     globalThis.updateExclusionBars?.();
     globalThis.updateLevelSelector?.();
@@ -529,6 +532,7 @@ const KNOWN_LANGUAGE_FLAGS = {
     nl: '🇳🇱',
     sv: '🇸🇪',
     cs: '🇨🇿',
+    fi: '🇫🇮',
 };
 
 function knownLanguageFlag(code) {
@@ -538,6 +542,7 @@ function knownLanguageFlag(code) {
 function isCognateKnownForLanguage(item, code) {
     if (!item || !code) return false;
     const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
+    if (code !== 'en' && globalThis.bridgeVerbCompatible?.(item, code) === false) return false;
     if (isSenseItem(item)) {
         return cognateScoreFor(item, code) >= cutoff;
     }
@@ -564,3 +569,7 @@ globalThis.getCognateAlgorithmInfo = getCognateAlgorithmInfo;
 globalThis.cardSenseCognate = cardSenseCognate;
 globalThis.writeKnownLanguages = writeSelected;
 globalThis.readKnownLanguages = readSelected;
+
+globalThis.knownLanguageOptions = () => Object.keys(KNOWN_LANGUAGE_NAMES);
+
+globalThis.cognateSenseAlternatives = senseAlternatives;

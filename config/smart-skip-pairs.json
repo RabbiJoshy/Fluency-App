@@ -1,0 +1,18 @@
+{
+  "schema": "smart-skip-pairs/v1",
+  "note": "Explicit useful source languages per learning language. Listing a pair does not claim a mapping exists; missing mappings appear as Coming soon. No all-language Cartesian product is built.",
+  "targets": {
+    "es": ["en", "pt", "fr", "it"],
+    "pt": ["en", "es", "fr", "it"],
+    "fr": ["en", "es", "pt", "it"],
+    "it": ["en", "es", "pt", "fr"],
+    "cs": ["en", "pl", "sk"],
+    "pl": ["en", "cs", "sk", "uk"],
+    "sk": ["en", "cs", "pl"],
+    "nl": ["en", "de", "af"],
+    "de": ["en", "nl"],
+    "sv": ["en", "da", "no"],
+    "ru": ["uk", "be"],
+    "fi": ["en", "et"]
+  }
+}

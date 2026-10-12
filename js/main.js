@@ -1,36 +1,39 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=796d671d';
-import { releaseUrl } from './release-host.js?v=796d671d';
-import './theme.js?v=796d671d';
-import { installFlagRendering } from './flags.js?v=796d671d';
-import { IS_STAGING } from './env.js?v=796d671d';
-import './state.js?v=796d671d';
-import './offline-db.js?v=796d671d';
-import './sync-queue.js?v=796d671d';
-import { initOfflineContent } from './offline-content.js?v=796d671d';
-import './speech.js?v=796d671d';
-import './artist-ui.js?v=796d671d';
-import './auth.js?v=796d671d';
-import './tutorial.js?v=796d671d';
-import './walkthrough.js?v=796d671d';
-import './estimation.js?v=796d671d';
-import './config.js?v=796d671d';
-import './progress.js?v=796d671d';
-import './knowledge.js?v=796d671d';
-import './ui.js?v=796d671d';
-import './vocab.js?v=796d671d';
-import './cognates.js?v=796d671d';
-import './coverage.js?v=796d671d';
-import './fast-mode.js?v=796d671d';
-import './extras.js?v=796d671d';
-import './review-home.js?v=796d671d';
-import './song-sets.js?v=796d671d';
-import './playlist-live.js?v=796d671d';
-import './spotify-playlist-import.js?v=796d671d';
-import './vocabulary-import.js?v=796d671d';
-import './flashcards.js?v=796d671d';
-import { validateArtistCatalog } from './data-contracts.js?v=796d671d';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=e52e9ad6';
+import { releaseUrl } from './release-host.js?v=e52e9ad6';
+import './theme.js?v=e52e9ad6';
+import { installFlagRendering } from './flags.js?v=e52e9ad6';
+import { IS_STAGING } from './env.js?v=e52e9ad6';
+import './state.js?v=e52e9ad6';
+import './offline-db.js?v=e52e9ad6';
+import './sync-queue.js?v=e52e9ad6';
+import { initOfflineContent } from './offline-content.js?v=e52e9ad6';
+import './speech.js?v=e52e9ad6';
+import './artist-ui.js?v=e52e9ad6';
+import './auth.js?v=e52e9ad6';
+import './tutorial.js?v=e52e9ad6';
+import './walkthrough.js?v=e52e9ad6';
+import './estimation.js?v=e52e9ad6';
+import './config.js?v=e52e9ad6';
+import './progress.js?v=e52e9ad6';
+import './knowledge.js?v=e52e9ad6';
+import './ui.js?v=e52e9ad6';
+import './vocab.js?v=e52e9ad6';
+import './language-profile.js?v=e52e9ad6';
+import './smart-skip-pairs.js?v=e52e9ad6';
+import './bridge.js?v=e52e9ad6';
+import './cognates.js?v=e52e9ad6';
+import './coverage.js?v=e52e9ad6';
+import './fast-mode.js?v=e52e9ad6';
+import './extras.js?v=e52e9ad6';
+import './review-home.js?v=e52e9ad6';
+import './song-sets.js?v=e52e9ad6';
+import './playlist-live.js?v=e52e9ad6';
+import './spotify-playlist-import.js?v=e52e9ad6';
+import './vocabulary-import.js?v=e52e9ad6';
+import './flashcards.js?v=e52e9ad6';
+import { validateArtistCatalog } from './data-contracts.js?v=e52e9ad6';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -84,7 +87,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=796d671d').catch(error => {
+    ? import('./spotify.js?v=e52e9ad6').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1482,8 +1485,17 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
     heading.textContent = title;
     headingGroup.appendChild(heading);
     if (intro) {
-        const introduction = document.createElement('p');
-        introduction.textContent = intro;
+        const introduction = document.createElement(Array.isArray(intro) ? 'ul' : 'p');
+        if (Array.isArray(intro)) {
+            introduction.className = 'vocabulary-choice-bullets';
+            intro.forEach(text => {
+                const item = document.createElement('li');
+                item.textContent = text;
+                introduction.appendChild(item);
+            });
+        } else {
+            introduction.textContent = intro;
+        }
         headingGroup.appendChild(introduction);
     }
     const close = document.createElement('button');
@@ -1757,7 +1769,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=796d671d')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=e52e9ad6')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
@@ -2402,53 +2414,46 @@ function maybeShowFrequencyIntro() {
 // Known languages intro (Smart Skip primer shown after picking a language)
 // ---------------------------------------------------------------------------
 
-const KNOWN_LANGUAGES_SEEN_KEY = 'fluencySeenKnownLanguagesIntroV1';
-let currentKnownLanguagesIntroTarget = null;
 let introSelectedCodes = new Set();
+let introLanguageLabels = {};
+let knownLanguagesScoped = false;
 
-function getKnownLanguagesForTarget(targetLang) {
-    const fromCognates = window.availableKnownLanguages?.();
-    if (Array.isArray(fromCognates) && fromCognates.length > 0) return fromCognates;
+function getKnownLanguagesForTarget() {
+    return window.knownLanguageOptions?.() || ['en', 'es', 'fr', 'pt', 'pl', 'de', 'it', 'ru', 'sk', 'uk', 'nl', 'sv', 'cs', 'fi'];
+}
 
-    const mapping = {
-        portuguese: ['en', 'es'],
-        pt: ['en', 'es'],
-        czech: ['en', 'pl'],
-        cs: ['en', 'pl'],
-        spanish: ['en'],
-        es: ['en'],
-        french: ['en'],
-        fr: ['en'],
-        finnish: ['en'],
-        fi: ['en'],
-        dutch: ['en'],
-        nl: ['en']
+function hasSeenKnownLanguagesIntro() {
+    return window.readLanguageProfile?.().confirmed === true;
+}
+
+let knownLanguagesEditorReturn = null;
+function openKnownLanguagesSettings() {
+    const modal = document.getElementById('knownLanguagesModal');
+    if (!modal) return;
+    const fast = document.getElementById('fastModeModal');
+    const fromFast = fast && !fast.classList.contains('hidden');
+    if (fromFast) fast.classList.add('hidden');
+    else document.getElementById('settingsModal')?.classList.add('hidden');
+    knownLanguagesEditorReturn = () => {
+        if (fromFast) window.openFastModePage?.();
+        else window.showSettingsModalWithTab?.('appearance');
     };
-    const key = String(targetLang || '').toLowerCase();
-    return mapping[key] || ['en'];
+    introSelectedCodes = new Set(window.readKnownLanguages?.() || []);
+    introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
+    knownLanguagesScoped = Boolean(fromFast);
+    document.getElementById('knownLanguagesAddForm').hidden = knownLanguagesScoped;
+    document.getElementById('knownLanguagesManageAllBtn').hidden = !knownLanguagesScoped;
+    document.getElementById('knownLanguagesModalIntro').textContent = knownLanguagesScoped
+        ? 'Only useful pairs for this learning language appear here. Coming soon means the mapping is not available yet. Your other languages stay saved in Settings.'
+        : 'Save any languages you can comfortably read. Smart Skip uses only useful, supported language pairs. You can change this list at any time.';
+    renderKnownLanguagesModalChoices(knownLanguagesScoped ? (window.relevantSmartSkipLanguages?.() || []) : getKnownLanguagesForTarget());
+    document.getElementById('knownLanguagesModalTitle').textContent = 'Languages you know';
+    document.getElementById('continueKnownLanguagesBtn').textContent = 'Save';
+    document.getElementById('cancelKnownLanguagesBtn').hidden = false;
+    modal.classList.remove('hidden');
+    modal.querySelector('button')?.focus();
 }
-
-function hasSeenKnownLanguagesIntro(lang) {
-    try {
-        const raw = localStorage.getItem(KNOWN_LANGUAGES_SEEN_KEY);
-        if (!raw) return false;
-        const list = JSON.parse(raw);
-        return Array.isArray(list) && list.includes(lang);
-    } catch (_) {
-        return false;
-    }
-}
-
-function markKnownLanguagesIntroSeen(lang) {
-    try {
-        const raw = localStorage.getItem(KNOWN_LANGUAGES_SEEN_KEY);
-        let list = [];
-        try { list = JSON.parse(raw) || []; } catch (_) {}
-        if (!Array.isArray(list)) list = [];
-        if (lang && !list.includes(lang)) list.push(lang);
-        localStorage.setItem(KNOWN_LANGUAGES_SEEN_KEY, JSON.stringify(list));
-    } catch (_) {}
-}
+window.openKnownLanguagesSettings = openKnownLanguagesSettings;
 
 function closeKnownLanguagesModal() {
     const modal = document.getElementById('knownLanguagesModal');
@@ -2461,7 +2466,10 @@ function renderKnownLanguagesModalChoices(availableCodes) {
     if (!container) return;
     container.innerHTML = '';
 
-    availableCodes.forEach(code => {
+    const codes = knownLanguagesScoped ? availableCodes : [...new Set([...availableCodes, ...introSelectedCodes])];
+    const ready = new Set(window.availableKnownLanguages?.() || []);
+    const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    codes.forEach(code => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'known-language-choice-btn';
@@ -2473,11 +2481,13 @@ function renderKnownLanguagesModalChoices(availableCodes) {
         button.setAttribute('aria-checked', isSelected ? 'true' : 'false');
 
         const flag = window.knownLanguageFlag?.(code) || '🌐';
-        const label = window.knownLanguageLabel?.(code) || code.toUpperCase();
+        const label = introLanguageLabels[code] || window.knownLanguageLabel?.(code) || code.toUpperCase();
+        const comingSoon = knownLanguagesScoped && !ready.has(code);
+        button.disabled = comingSoon;
 
         button.innerHTML = `
             <span class="known-language-choice-flag" aria-hidden="true">${flag}</span>
-            <span class="known-language-choice-label">${label}</span>
+            <span class="known-language-choice-label">${escape(label)}${comingSoon ? '<small class="known-language-coming-soon">Coming soon</small>' : ''}</span>
             <span class="known-language-choice-check" aria-hidden="true">${isSelected ? '✓' : ''}</span>
         `;
 
@@ -2521,33 +2531,56 @@ function maybeShowKnownLanguagesIntro(targetLang) {
     window.closeChoiceSheet?.('languageChoiceSheet');
     window.closeChoiceSheet?.('portugueseVarietyChoiceSheet');
 
-    currentKnownLanguagesIntroTarget = lang;
     const existingSelected = window.readKnownLanguages?.() || ['en'];
     introSelectedCodes = new Set(existingSelected.filter(c => available.includes(c)));
-    if (introSelectedCodes.size === 0 && available.includes('en')) {
-        introSelectedCodes.add('en');
-    }
 
+    knownLanguagesEditorReturn = null;
+    knownLanguagesScoped = false;
+    introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
+    document.getElementById('knownLanguagesAddForm').hidden = false;
+    document.getElementById('knownLanguagesManageAllBtn').hidden = true;
+    document.getElementById('knownLanguagesModalIntro').textContent = 'Choose languages where most everyday words are already familiar. Saved for every language you study; you can change this in Settings. Smart Skip uses only useful, supported language pairs.';
+    document.getElementById('knownLanguagesModalTitle').textContent = 'Which languages can you comfortably read?';
+    document.getElementById('continueKnownLanguagesBtn').textContent = 'Continue';
+    document.getElementById('cancelKnownLanguagesBtn').hidden = true;
     renderKnownLanguagesModalChoices(available);
     modal.classList.remove('hidden');
     return true;
 }
 
 function setupKnownLanguagesIntro() {
+    document.getElementById('knownLanguagesAddForm')?.addEventListener('submit', event => {
+        event.preventDefault();
+        const input = document.getElementById('knownLanguagesAddInput');
+        const language = window.resolveProfileLanguage?.(input.value);
+        if (!language) return;
+        introSelectedCodes.add(language.code);
+        introLanguageLabels[language.code] = language.label;
+        input.value = '';
+        renderKnownLanguagesModalChoices(getKnownLanguagesForTarget());
+    });
+    document.getElementById('knownLanguagesManageAllBtn')?.addEventListener('click', () => {
+        closeKnownLanguagesModal();
+        knownLanguagesEditorReturn = null;
+        window.showSettingsModalWithTab?.('appearance');
+    });
     const continueBtn = document.getElementById('continueKnownLanguagesBtn');
     if (continueBtn) {
         continueBtn.addEventListener('click', () => {
             const selectedArr = Array.from(introSelectedCodes);
-            window.writeKnownLanguages?.(selectedArr);
+            window.writeKnownLanguages?.(selectedArr, introLanguageLabels);
             window.updateKnownLanguageCopy?.();
             window.updateExclusionBars?.();
             window.updateLevelSelector?.();
             window.refreshFastMode?.();
 
-            if (currentKnownLanguagesIntroTarget) {
-                markKnownLanguagesIntroSeen(currentKnownLanguagesIntroTarget);
-            }
             closeKnownLanguagesModal();
+            if (knownLanguagesEditorReturn) {
+                const back = knownLanguagesEditorReturn;
+                knownLanguagesEditorReturn = null;
+                back();
+                return;
+            }
 
             if (!maybeShowFrequencyIntro()) {
                 window.openFirstRunCardTutorial?.();
@@ -2555,9 +2588,23 @@ function setupKnownLanguagesIntro() {
         });
     }
 
+    const cancel = () => {
+        if (!knownLanguagesEditorReturn) return;
+        closeKnownLanguagesModal();
+        const back = knownLanguagesEditorReturn;
+        knownLanguagesEditorReturn = null;
+        back();
+    };
+    document.getElementById('cancelKnownLanguagesBtn')?.addEventListener('click', cancel);
+    document.getElementById('knownLanguagesModal')?.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && knownLanguagesEditorReturn) {
+            event.stopPropagation(); cancel();
+        }
+    });
     document.getElementById('knownLanguagesModal')?.addEventListener('click', event => {
         if (event.target === event.currentTarget) {
-            continueBtn?.click();
+            if (knownLanguagesEditorReturn) cancel();
+            else continueBtn?.click();
         }
     });
 

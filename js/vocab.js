@@ -1,12 +1,12 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=796d671d';
-import { readJsonWithTimeout } from './read-request.js?v=796d671d';
-import { validateVocabularyIndex } from './data-contracts.js?v=796d671d';
-import { formatRoute } from './routes.js?v=796d671d';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=796d671d';
-import { releaseUrl } from './release-host.js?v=796d671d';
+import './state.js?v=e52e9ad6';
+import { readJsonWithTimeout } from './read-request.js?v=e52e9ad6';
+import { validateVocabularyIndex } from './data-contracts.js?v=e52e9ad6';
+import { formatRoute } from './routes.js?v=e52e9ad6';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=e52e9ad6';
+import { releaseUrl } from './release-host.js?v=e52e9ad6';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -2561,7 +2561,8 @@ function selectLemmaModeRepresentatives(items) {
 // decks that predate the per-language contract.
 function isCognateAlreadyKnown(item) {
     const decide = globalThis.isCognateKnown;
-    if (decide) return Boolean(decide(item));
+    if (globalThis.bridgeVerdict?.(item, {useProfile: excludeCognates})) return true;
+    if (decide) return excludeCognates && Boolean(decide(item));
     return Number(item?.cognate_score || 0) >= cognateThreshold;
 }
 
@@ -2585,7 +2586,7 @@ function getVocabularyExclusionReason(item) {
             }
         }
     }
-    if (excludeCognates && isCognateAlreadyKnown(item)) {
+    if ((excludeCognates || globalThis.isBridgeEnabled?.()) && isCognateAlreadyKnown(item)) {
         return 'cognate';
     }
     // Election happens at runtime in selectLemmaModeRepresentatives, over the
@@ -2781,7 +2782,7 @@ function buildFilteredVocab(vocabData) {
         // Cognates: dropped in Main/normal per the toggle, but KEPT in Extra so
         // they populate the Cognates category (the toggle is hidden there and
         // only decides which group cognates land in, not deck inclusion).
-        if (!isExtraScope && excludeCognates && cognateFieldAvailable && isCognateAlreadyKnown(item)) {
+        if (!isExtraScope && (excludeCognates || globalThis.isBridgeEnabled?.()) && (cognateFieldAvailable || globalThis.isBridgeEnabled?.()) && isCognateAlreadyKnown(item)) {
             counts.cognates++;
             continue;
         }

@@ -1,8 +1,8 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=796d671d';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=796d671d';
-import { readFastTrack } from './fast-track-preferences.js?v=796d671d';
+import './state.js?v=e52e9ad6';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=e52e9ad6';
+import { readFastTrack } from './fast-track-preferences.js?v=e52e9ad6';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -723,18 +723,22 @@ function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
         title: 'Choose your vocabulary',
-        intro: 'You learn words in order of how often they appear in real life. Because people use different vocabulary when speaking than in song lyrics, your flashcards and example sentences are tailored to what you pick. You can switch between them at any time.',
+        intro: [
+            'Learn the most common words first.',
+            'What’s common varies by region and between Speech and Music.',
+            'Your choice shapes your flashcards and example sentences.'
+        ],
         speech: {
-            label: 'Everyday speech',
-            description: 'Words and examples from films and TV shows — how people actually talk.',
+            label: 'Speech',
+            description: 'Words and examples come from films and TV shows.',
             bestFor: ['Starting a new language', 'Understanding everyday conversations'],
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
-            label: 'Your music',
+            label: 'Music',
             description: lyricsCatalog
-                ? 'Words and examples from songs, artists, and your Spotify playlists.'
-                : 'Words and examples from your Spotify playlists.',
+                ? 'Words and examples come from songs, artists, and your Spotify playlists.'
+                : 'Words and examples come from your Spotify playlists.',
             bestFor: ['Understanding your favourite artists', 'Learning by listening to music'],
             iconHTML: MODE_ICON_MUSIC
         }
@@ -849,7 +853,13 @@ function setupLanguageTabs() {
             const choiceTitle = document.getElementById('standardSourceChoiceTitle');
             const choiceIntro = document.getElementById('standardSourceChoiceIntro');
             if (choiceTitle) choiceTitle.textContent = modeCopy.title;
-            if (choiceIntro) choiceIntro.textContent = modeCopy.intro;
+            if (choiceIntro) {
+                choiceIntro.replaceChildren(...modeCopy.intro.map(text => {
+                    const item = document.createElement('li');
+                    item.textContent = text;
+                    return item;
+                }));
+            }
             window.renderSpotifyStatus?.(document.getElementById('standardSourceSpotify'));
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
@@ -1738,6 +1748,8 @@ function _setupVocabularySignature(language) {
         useLemmaMode,
         excludeCognates,
         cognateThreshold,
+        Boolean(window.isBridgeEnabled?.()),
+        window.isBridgeEnabled?.() ? (window.__progressEpoch || 0) : 0,
         // Which languages the learner reads changes which words count as
         // cognates, so it changes the deck. Without it here the prepared
         // vocabulary is reused across a selection change and the setup counts
@@ -3234,7 +3246,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=796d671d')
+        import('./spotify.js?v=e52e9ad6')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -3309,6 +3321,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     settingsBackBtn.setAttribute('aria-label', settingsBackHandler ? 'Back' : 'Back to Settings');
     settingsModal.querySelector('.settings-modal-content').scrollTop = 0;
     syncStudyPreferenceControls();
+    window.refreshBridge?.();
 
     // Data-freshness footer: newest Last-Modified across the vocab files
     // (set in vocab.js trackDataFreshness). An old date = the service

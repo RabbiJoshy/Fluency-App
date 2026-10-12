@@ -25,16 +25,13 @@
 // other modules can use it without importing it under a second ?v= tag (a
 // module imported under two URLs executes twice).
 
-// Panel width. In a study session a panel sits in the gutter beside the card,
-// centred between the screen edge and the card, up to 400px. A narrower
-// window shrinks the panels, down to 300px; below that they are too cramped
-// to read, so nothing docks and sheets stay centred. The card's width is
-// measured, not assumed, so resizing the card never breaks this.
+// Measure the visible centre column in CSS layout units. Body zoom scales
+// both the card and fixed sheets, so mixing offsetWidth with innerWidth lets
+// an apparently fitting panel spill over the card.
 const PANEL_MAX = 400;
-const PANEL_MIN = 300;
+const PANEL_MIN = 280;
 const EDGE = 16;
 const GAP = 16;
-// The setup page has no card to keep in view: sheets sit over the page.
 const SETUP_MIN_WINDOW = 900;
 const SETUP_PANEL_MAX = 440;
 
@@ -43,45 +40,51 @@ function studyViewOpen() {
     return Boolean(app && !app.classList.contains('hidden'));
 }
 
-function cardWidth() {
-    // offsetWidth ignores transforms, so a flip or a nav animation in
-    // progress does not read as a narrower card.
-    const measured = document.getElementById('flashcard')?.offsetWidth;
-    if (measured) return measured;
-    const container = document.querySelector('.card-container');
-    const declared = container && parseFloat(getComputedStyle(container).getPropertyValue('--study-card-max-width'));
-    return declared || 513;
+function layoutZoom() {
+    return parseFloat(getComputedStyle(document.body).zoom) || 1;
+}
+
+function centreBounds() {
+    // The container does not flip or shrink during card navigation.
+    const centre = document.querySelector(studyViewOpen() ? '.card-container' : '#setupPanel');
+    const rect = centre?.getBoundingClientRect();
+    const zoom = layoutZoom();
+    if (rect?.width) {
+        const card = studyViewOpen() && document.getElementById('flashcard');
+        if (card?.offsetWidth) {
+            const midpoint = (rect.left + rect.right) / (2 * zoom);
+            return { left: midpoint - card.offsetWidth / 2, right: midpoint + card.offsetWidth / 2 };
+        }
+        return { left: rect.left / zoom, right: rect.right / zoom };
+    }
+    const width = window.innerWidth / zoom;
+    return { left: (width - 513) / 2, right: (width + 513) / 2 };
+}
+
+function gutterWidth() {
+    const bounds = centreBounds();
+    return Math.max(0, Math.min(bounds.left, window.innerWidth / layoutZoom() - bounds.right));
 }
 
 function panelWidth() {
-    if (!studyViewOpen()) return Math.min(SETUP_PANEL_MAX, Math.floor(window.innerWidth * 0.4));
-    const margin = (window.innerWidth - cardWidth()) / 2;
-    return Math.min(PANEL_MAX, Math.floor(margin - EDGE - GAP));
+    return Math.min(studyViewOpen() ? PANEL_MAX : SETUP_PANEL_MAX,
+        Math.floor(gutterWidth() - EDGE - GAP));
 }
 
-// Publish the width for the CSS. Never below the minimum: a panel already
-// docked when the window narrows keeps a readable width rather than
-// collapsing.
 function applyPanelWidth() {
-    const width = Math.max(PANEL_MIN, panelWidth());
+    const width = Math.max(0, panelWidth());
     document.body.style.setProperty('--dock-w', `${width}px`);
-    let inset = EDGE;
-    if (studyViewOpen()) {
-        const margin = (window.innerWidth - cardWidth()) / 2;
-        inset = Math.max(EDGE, Math.round((margin - width) / 2));
-    }
-    document.body.style.setProperty('--dock-inset', `${inset}px`);
+    document.body.style.setProperty('--dock-inset', `${Math.max(EDGE, Math.floor((gutterWidth() - width) / 2))}px`);
     document.body.classList.toggle('can-dock-card', canDockCard());
     document.body.classList.toggle('can-dock-sheet', canDockSheet());
 }
 
-// Card panels need room beside the card; sheets can also dock over the
-// setup page.
 function canDockCard() {
     return studyViewOpen() && panelWidth() >= PANEL_MIN;
 }
 function canDockSheet() {
-    return studyViewOpen() ? panelWidth() >= PANEL_MIN : window.innerWidth >= SETUP_MIN_WINDOW;
+    return panelWidth() >= PANEL_MIN
+        && (studyViewOpen() || window.innerWidth / layoutZoom() >= SETUP_MIN_WINDOW);
 }
 
 const isShown = el => !el.classList.contains('hidden') && !el.hidden;
@@ -378,9 +381,35 @@ function watchModals() {
 function init() {
     watchModals();
     let resizeFrame = 0;
-    window.addEventListener('resize', () => {
+    function refreshPlacement() {
+        applyPanelWidth();
+        const open = OCCUPANTS.filter(isOpen);
+        // Clear invalid slots together before trying to dock again. Preserve
+        // valid slots, especially sheets stacked over settings, on a resize.
+        for (const occupant of open) {
+            const el = elementOf(occupant);
+            const fits = occupant.panel ? canDockCard() : canDockSheet();
+            if (!fits || occupant.centred?.(el)) {
+                if (occupant.panel) stowCardPanel(el);
+                else mark(el, null);
+            }
+        }
+        for (const occupant of open.filter(isOpen)) {
+            const el = elementOf(occupant);
+            const side = sideOf(occupant) || place(occupant);
+            if (occupant.panel && side) hostCardPanel(el);
+        }
+    }
+    function schedulePlacement() {
         cancelAnimationFrame(resizeFrame);
-        resizeFrame = requestAnimationFrame(applyPanelWidth);
+        resizeFrame = requestAnimationFrame(refreshPlacement);
+    }
+    window.addEventListener('resize', schedulePlacement);
+    const centreObserver = new ResizeObserver(schedulePlacement);
+    for (const el of document.querySelectorAll('.card-container, #flashcard, #setupPanel')) centreObserver.observe(el);
+    // Text size can change without a window resize.
+    new MutationObserver(schedulePlacement).observe(document.documentElement, {
+        attributes: true, attributeFilter: ['data-text-size'],
     });
     // knowledgeOverviewModal and rareUsesModal are created on first use; catch
     // them when they land.

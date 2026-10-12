@@ -1,6 +1,7 @@
 // One Fast Track choice per language. The legacy global study defaults seed a
 // language until it has its own choice; they are never changed by this module.
-import { sendOrQueue } from './sync-queue.js?v=796d671d';
+import { sendOrQueue } from './sync-queue.js?v=e52e9ad6';
+import { getIsolatedSyncUser } from './env.js?v=e52e9ad6';
 
 const PREFIX = 'fluency_fast_track_v1';
 const LEGACY_KEY = 'fluency_global_study_defaults_v1';
@@ -21,10 +22,12 @@ function normalize(value) {
     const skipGrammar = value.skipGrammar === true;
     const skipSlang = value.skipSlang === true;
     const skipEntities = value.skipEntities === true;
-    const anyActive = merge || skip || skipGrammar || skipSlang || skipEntities;
+    const bridge = value.bridge === true;
+    const excludedKnownLanguages = Array.isArray(value.excludedKnownLanguages) ? value.excludedKnownLanguages.filter(c => typeof c === 'string') : [];
+    const anyActive = merge || skip || bridge || skipGrammar || skipSlang || skipEntities;
     return {
         enabled: value.enabled === true && anyActive,
-        merge, skip,
+        merge, skip, bridge, excludedKnownLanguages,
         skipGrammar, skipSlang, skipEntities,
         updatedAt: Number(value.updatedAt) || 0
     };
@@ -71,11 +74,12 @@ export function saveFastTrack(language, changes) {
     const previous = readFastTrack(language);
     const preference = writeLocal(language, { ...previous, ...changes, updatedAt: Date.now() });
     if (preference && currentUser && !currentUser.isGuest) {
+        const syncUser = getIsolatedSyncUser(currentUser.initials);
         sendOrQueue({
-            action: 'saveMeta', user: currentUser.initials, metaKey: META_KEY,
+            action: 'saveMeta', user: syncUser, metaKey: META_KEY,
             metaId: language, mode: 'all', language, value: JSON.stringify(preference),
             lastSeen: new Date(preference.updatedAt).toISOString()
-        }, `meta|fast-track|${currentUser.initials}|${language}`).catch(error =>
+        }, `meta|fast-track|${syncUser}|${language}`).catch(error =>
             console.warn('Could not queue Fast Track preference', error));
     }
     return preference;
@@ -105,3 +109,12 @@ export function applyRemoteFastTrack(metaRows, { full = false } = {}) {
         if (local.updatedAt || local.enabled) saveFastTrack(language, local);
     }
 }
+
+window.readKnownLanguageSourceExclusions = () => readFastTrack(selectedLanguage).excludedKnownLanguages || [];
+window.toggleKnownLanguageSource = code => {
+    const previous = readFastTrack(selectedLanguage);
+    const ignored = new Set(previous.excludedKnownLanguages || []);
+    ignored.has(code) ? ignored.delete(code) : ignored.add(code);
+    saveFastTrack(selectedLanguage, {excludedKnownLanguages: [...ignored]});
+    window.invalidatePreparedSetupVocabulary?.();
+};

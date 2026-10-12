@@ -2,6 +2,46 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T19:43:28+01:00",
+   "date": "2026-10-12 19:43 BST",
+   "agent": "Codex",
+   "summary": "Smart Skip offers useful language pairs, with missing maps marked Coming soon",
+   "detail": [
+    "An explicit pair list now limits both runtime filtering and offline mapping generation.",
+    "Smart Skip shows only relevant languages; relevant unmapped pairs are greyed out as Coming soon.",
+    "The filtered Languages you know editor preserves unrelated profile languages and links to the full list in Settings.",
+    "Onboarding and general Settings can save other languages by name or code without creating unnecessary mappings."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-12T19:21:41+01:00",
+   "date": "2026-10-12 19:21 BST",
+   "agent": "Codex",
+   "summary": "Keep language-profile and BRIDGE preferences isolated during staging review",
+   "detail": [
+    "Language-profile and Smart Skip preference writes now use the staging account namespace.",
+    "Added regression checks for both preference writers so staging review cannot update production preferences."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-12T19:16:50+01:00",
+   "date": "2026-10-12 19:16 BST",
+   "agent": "Codex",
+   "summary": "BRIDGE and shared known-language settings, with safer verb matching and centred mobile dialogs",
+   "detail": [
+    "Languages you know now live in Settings → App, save across the account and are asked once; Polish is always offered.",
+    "Smart Skip source-language choices no longer overwrite the shared profile.",
+    "BRIDGE is opt-in per learning language and uses known matching source meanings without writing target progress; skipped words remain browsable.",
+    "Cross-language verbs require compatible dictionary forms, including person, number, tense, mood and lexical aspect. Infinitives do not imply knowing conjugated forms.",
+    "Spanish/French/Portuguese mappings are tied to exact releases. French currently has 200 cards, so verified BRIDGE eligibility is limited.",
+    "Mobile dialogs are vertically centred; desktop panels fit the side gutter or centre when there is insufficient space.",
+    "Smart Skip title, Recommended badge, info icon and larger toggle share a line, with smaller explanation below."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-11T23:36:00+01:00",
    "date": "2026-10-11 23:36 BST",
    "agent": "Claude",
@@ -336,44 +376,6 @@
     "'Review meaning(s)' is now 'Focus meanings' with a target icon.",
     "Cards with meanings marked for practice show 'Practising N of M meanings' on the front; those rows open and carry a target dot on the back.",
     "Companion (A/B) cards are joined as one bracketed pair in the deck scrubber."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T23:05:47+01:00",
-   "date": "2026-10-10 23:05 BST",
-   "agent": "Codex",
-   "summary": "SEAM: correct kept-apart titles, hydrated search cues and checked noun merging",
-   "detail": [
-    "Kept-apart forms use their surface title; merged titles and answers follow the existing merge key.",
-    "Search cards judge Examples only from the loaded menu; unloaded search results no longer claim their meanings are absent.",
-    "Restored complete-menu evidence for Spanish and Portuguese noun pairs; row loading retains that evidence. Matching estimator pools and cache-safe supporting URLs updated.",
-    "Existing merging policy and saved learner progress are preserved; staging review only."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T22:57:57+01:00",
-   "date": "2026-10-10 22:57 BST",
-   "agent": "Codex",
-   "summary": "Stalled progress and deck downloads now time out with a way to retry",
-   "detail": [
-    "Progress reads stop after 12 seconds per request; capability checks stop after 5 seconds. Failed reads retain cached progress and queued answers, and offer Retry progress load.",
-    "Deck JSON downloads stop after 20 seconds per request, including a stalled response body. Failed deck loads explain how to retry.",
-    "A partial progress refresh retains its previous sync watermark so retrying can recover the missing rows."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T22:25:52+01:00",
-   "date": "2026-10-10 22:25 BST",
-   "agent": "Claude",
-   "summary": "Tutorial: the tour now performs changing a meaning, cycling examples and opening Rare uses, Review meanings and Look up",
-   "detail": [
-    "Back of card: new steps where the tour taps another meaning (the example changes), cycles through a meaning's examples, opens the Rare uses sheet (and unfolds an example), opens Review meanings (and ticks one), opens the Look up column and arms a site's Visit button.",
-    "The sheets are the live app's own Rare uses and Review meanings markup, drawn over the replica card from the demo word's real rare senses.",
-    "Smart Skip: look-alikes now come before merged word forms and merged singular/plural.",
-    "Portuguese demo word is now devia (dever): should / ought, with two real rare senses."
    ],
    "commit": "pending"
   }

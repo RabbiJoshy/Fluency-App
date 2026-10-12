@@ -1,30 +1,30 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=796d671d';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=796d671d';
+import './state.js?v=e52e9ad6';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=e52e9ad6';
 import { installCardTouch } from './card-touch.js';
-import './speech.js?v=796d671d';
-import { goToRoute, routeCodeFor } from './routes.js?v=796d671d';
-import { memoryTipTileHTML } from './memory-tips.js?v=796d671d';
-import './side-dock.js?v=796d671d';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=796d671d';
+import './speech.js?v=e52e9ad6';
+import { goToRoute, routeCodeFor } from './routes.js?v=e52e9ad6';
+import { memoryTipTileHTML } from './memory-tips.js?v=e52e9ad6';
+import './side-dock.js?v=e52e9ad6';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=e52e9ad6';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=796d671d';
+} from './example-personalisation.js?v=e52e9ad6';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=796d671d';
+} from './spanishdict-usage.js?v=e52e9ad6';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=796d671d';
+} from './reverse-cues.js?v=e52e9ad6';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -57,7 +57,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=796d671d';
+} from './card-metadata-pills.js?v=e52e9ad6';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -10474,8 +10474,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '796d671d';
-const MODALS_ASSET_VERSION = '796d671d';
+const ASSET_VERSION = 'e52e9ad6';
+const MODALS_ASSET_VERSION = 'e52e9ad6';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=796d671d';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=796d671d';
+import './state.js?v=e52e9ad6';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=e52e9ad6';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -70,14 +70,14 @@ function shortcutOn(kind) {
 function applyFastMode(on) {
     const previous = readFastTrack(selectedLanguage);
     const isArtist = Boolean(globalThis.activeArtist);
-    const hasChoices = previous.merge || previous.skip || previous.skipGrammar || previous.skipSlang || previous.skipEntities;
+    const hasChoices = previous.merge || previous.skip || previous.bridge || previous.skipGrammar || previous.skipSlang || previous.skipEntities;
     let merge = hasChoices ? previous.merge : lemmaAvailable();
     let skip = hasChoices ? previous.skip : cognateAvailable();
     let skipGrammar = hasChoices ? (previous.skipGrammar ?? false) : false;
     let skipSlang = hasChoices ? (previous.skipSlang ?? true) : true;
     let skipEntities = hasChoices ? (previous.skipEntities ?? true) : true;
 
-    if (on && !isArtist && !((merge && lemmaAvailable()) || (skip && cognateAvailable()))) {
+    if (on && !isArtist && !((merge && lemmaAvailable()) || (skip && cognateAvailable()) || (previous.bridge && window.bridgeSourceLanguages?.().length))) {
         if (lemmaAvailable()) merge = true;
         else if (cognateAvailable()) skip = true;
         else { showUnavailableMessage('all'); return; }
@@ -117,6 +117,7 @@ function closeAdvancedSkip() {
 }
 
 function refresh() {
+    window.refreshBridge?.();
     const wrapper = document.getElementById('setupOptions');
     if (!wrapper) return;
     const isArtist = Boolean(globalThis.activeArtist);
@@ -540,7 +541,7 @@ function init() {
                     const previous = readFastTrack(selectedLanguage);
                     const merge = lemmaAvailable() ? lemmaOn() : previous.merge;
                     const skip = cognateAvailable() ? cognatesExcluded() : previous.skip;
-                    saveFastTrack(selectedLanguage, { enabled: merge || skip, merge, skip });
+                    saveFastTrack(selectedLanguage, { enabled: merge || skip || previous.bridge || previous.skipGrammar || previous.skipSlang || previous.skipEntities, merge, skip });
                 }
                 refresh();
             }, 0);
@@ -587,7 +588,7 @@ function init() {
             setToggleState('grammar', btn.dataset.grammar);
             globalThis.excludeGrammarParticles = exclude;
             const prev = readFastTrack(selectedLanguage);
-            saveFastTrack(selectedLanguage, { ...prev, skipGrammar: exclude, enabled: prev.merge || prev.skip || exclude || prev.skipSlang || prev.skipEntities });
+            saveFastTrack(selectedLanguage, { ...prev, skipGrammar: exclude, enabled: prev.merge || prev.skip || prev.bridge || exclude || prev.skipSlang || prev.skipEntities });
             window.invalidatePreparedSetupVocabulary?.();
             refresh();
         });
@@ -598,7 +599,7 @@ function init() {
             setToggleState('slang', btn.dataset.slang);
             globalThis.excludeSlang = exclude;
             const prev = readFastTrack(selectedLanguage);
-            saveFastTrack(selectedLanguage, { ...prev, skipSlang: exclude, enabled: prev.merge || prev.skip || prev.skipGrammar || exclude || prev.skipEntities });
+            saveFastTrack(selectedLanguage, { ...prev, skipSlang: exclude, enabled: prev.merge || prev.skip || prev.bridge || prev.skipGrammar || exclude || prev.skipEntities });
             window.invalidatePreparedSetupVocabulary?.();
             refresh();
         });
@@ -609,7 +610,7 @@ function init() {
             setToggleState('entity', btn.dataset.entity);
             globalThis.excludeProperNouns = exclude;
             const prev = readFastTrack(selectedLanguage);
-            saveFastTrack(selectedLanguage, { ...prev, skipEntities: exclude, enabled: prev.merge || prev.skip || prev.skipGrammar || prev.skipSlang || exclude });
+            saveFastTrack(selectedLanguage, { ...prev, skipEntities: exclude, enabled: prev.merge || prev.skip || prev.bridge || prev.skipGrammar || prev.skipSlang || exclude });
             window.invalidatePreparedSetupVocabulary?.();
             refresh();
         });
