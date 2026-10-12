@@ -2,6 +2,21 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T22:25:43+01:00",
+   "date": "2026-10-12 22:25 BST",
+   "agent": "Codex",
+   "summary": "Smart Skip is easier to browse; lyric credits put the song above the artist",
+   "detail": [
+    "Keep the cognate explanation open initially; other explanations stay folded. Mobile groups secondary controls under Other settings.",
+    "Group category, search and known-language filters; show live match counts and the exact number of words the supplementary study button will load.",
+    "Use a direct language picker instead of cycling. Empty comparisons remain selectable so learners can switch back.",
+    "Keep desktop settings and browser controls accessible while scrolling; add preview chevrons to word rows.",
+    "Render song titles without italics, above artist or vocalist credits, in both live cards and tutorial replicas.",
+    "All 268 app tests passed; desktop scrolling, phone layout, five-match study counts and two-line card credits checked in the browser."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T21:39:36+01:00",
    "date": "2026-10-12 21:39 BST",
    "agent": "Codex",
@@ -370,18 +385,6 @@
     "'Focus meanings' is now 'Mark a meaning', showing known/total meaning rows (? until any are marked) instead of a target icon.",
     "Cards with meanings brought back: those meanings sit at the top in colour; known meanings fade to the bottom. Amber target styling removed; front shows 'N meanings to review'.",
     "Example sentence word: no pulse or boxed glow during audio and no tinted box; underline plus a soft permanent glow."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:06:17+01:00",
-   "date": "2026-10-11 12:06 BST",
-   "agent": "Codex",
-   "summary": "SEAM: dictionary examples now match the studied form; retained alternatives recovered",
-   "detail": [
-    "Non-merged cards choose a dictionary sentence containing the exact surface, including attached pronouns and accents. Other-form dictionary sentences stay out of the study and Less common uses sequences.",
-    "Merged dictionary examples use an allowed group form; the header, sentence highlight and In this example cue agree.",
-    "Recovered existing frozen dictionary alternatives for Spanish r4 and current Portuguese r3 without editing releases, senses, merging rules or saved progress. No production promotion."
    ],
    "commit": "pending"
   }

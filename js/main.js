@@ -1,39 +1,39 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=0c2193ac';
-import { releaseUrl } from './release-host.js?v=0c2193ac';
-import './theme.js?v=0c2193ac';
-import { installFlagRendering } from './flags.js?v=0c2193ac';
-import { IS_STAGING } from './env.js?v=0c2193ac';
-import './state.js?v=0c2193ac';
-import './offline-db.js?v=0c2193ac';
-import './sync-queue.js?v=0c2193ac';
-import { initOfflineContent } from './offline-content.js?v=0c2193ac';
-import './speech.js?v=0c2193ac';
-import './artist-ui.js?v=0c2193ac';
-import './auth.js?v=0c2193ac';
-import './tutorial.js?v=0c2193ac';
-import './walkthrough.js?v=0c2193ac';
-import './estimation.js?v=0c2193ac';
-import './config.js?v=0c2193ac';
-import './progress.js?v=0c2193ac';
-import './knowledge.js?v=0c2193ac';
-import './ui.js?v=0c2193ac';
-import './vocab.js?v=0c2193ac';
-import './language-profile.js?v=0c2193ac';
-import './smart-skip-pairs.js?v=0c2193ac';
-import './bridge.js?v=0c2193ac';
-import './cognates.js?v=0c2193ac';
-import './coverage.js?v=0c2193ac';
-import './fast-mode.js?v=0c2193ac';
-import './extras.js?v=0c2193ac';
-import './review-home.js?v=0c2193ac';
-import './song-sets.js?v=0c2193ac';
-import './playlist-live.js?v=0c2193ac';
-import './spotify-playlist-import.js?v=0c2193ac';
-import './vocabulary-import.js?v=0c2193ac';
-import './flashcards.js?v=0c2193ac';
-import { validateArtistCatalog } from './data-contracts.js?v=0c2193ac';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=479c3553';
+import { releaseUrl } from './release-host.js?v=479c3553';
+import './theme.js?v=479c3553';
+import { installFlagRendering } from './flags.js?v=479c3553';
+import { IS_STAGING } from './env.js?v=479c3553';
+import './state.js?v=479c3553';
+import './offline-db.js?v=479c3553';
+import './sync-queue.js?v=479c3553';
+import { initOfflineContent } from './offline-content.js?v=479c3553';
+import './speech.js?v=479c3553';
+import './artist-ui.js?v=479c3553';
+import './auth.js?v=479c3553';
+import './tutorial.js?v=479c3553';
+import './walkthrough.js?v=479c3553';
+import './estimation.js?v=479c3553';
+import './config.js?v=479c3553';
+import './progress.js?v=479c3553';
+import './knowledge.js?v=479c3553';
+import './ui.js?v=479c3553';
+import './vocab.js?v=479c3553';
+import './language-profile.js?v=479c3553';
+import './smart-skip-pairs.js?v=479c3553';
+import './bridge.js?v=479c3553';
+import './cognates.js?v=479c3553';
+import './coverage.js?v=479c3553';
+import './fast-mode.js?v=479c3553';
+import './extras.js?v=479c3553';
+import './review-home.js?v=479c3553';
+import './song-sets.js?v=479c3553';
+import './playlist-live.js?v=479c3553';
+import './spotify-playlist-import.js?v=479c3553';
+import './vocabulary-import.js?v=479c3553';
+import './flashcards.js?v=479c3553';
+import { validateArtistCatalog } from './data-contracts.js?v=479c3553';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -87,7 +87,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=0c2193ac').catch(error => {
+    ? import('./spotify.js?v=479c3553').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1717,7 +1717,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=0c2193ac')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=479c3553')).catch(() => null);
             window.spotifyLogin?.();
         });
     }

@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=0c2193ac';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=0c2193ac';
+import './state.js?v=479c3553';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=479c3553';
 
 // Measure the available desktop space and remove whole words until it fits.
 // ResizeObserver also refits after a window resize or the mobile row reappears.
@@ -190,13 +190,14 @@ function refresh() {
         const active = shortcutOn(kind);
         const toggle = document.querySelector(`[data-ss-toggle="${kind}"]`);
         if (toggle) toggle.setAttribute('aria-checked', String(active));
-        // A shortcut that is on shows what it skips; one that is off stays
-        // folded — until the learner opens or closes it themselves.
+        // The look-alike explanation opens first, independently of its switch.
+        // Learners can expand or collapse any explanation themselves.
         const shortcut = toggle?.closest('.smart-skip-shortcut');
         const detail = shortcut?.querySelector('.smart-skip-shortcut-detail');
         if (detail && !shortcut.dataset.userExpanded) {
-            detail.hidden = !active;
-            shortcut.querySelector('.smart-skip-shortcut-name')?.setAttribute('aria-expanded', String(active));
+            const expanded = kind === (cognateAvailable() ? 'cognate' : 'lemma');
+            detail.hidden = !expanded;
+            shortcut.querySelector('.smart-skip-shortcut-name')?.setAttribute('aria-expanded', String(expanded));
         }
         const count = document.querySelector(`[data-ss-count="${kind}"]`);
         if (count) {
@@ -249,6 +250,11 @@ function refresh() {
         requestAnimationFrame(() => fitSmartSkipExamples(hubExamples));
     }
 
+    const secondaryState = document.getElementById('smartSkipSecondaryState');
+    if (secondaryState) {
+        const activeCount = Number(lemmaOn()) + advancedOn + Number(Boolean(globalThis.isBridgeEnabled?.()));
+        secondaryState.textContent = activeCount ? `${activeCount} on` : 'Combine forms · Advanced';
+    }
     updateMappingStatus();
     updateStreamlineRecCallout();
     updateStreamlineLanguageExamples();
@@ -510,7 +516,9 @@ function openFastModePage({ section } = {}) {
     returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
     markFastTrackPageSeen();
     if (!section) globalThis.resetSkippedCategory?.();
-    // Each visit starts from the defaults: open what is on, fold the rest.
+    // Cognates explain the benefit immediately; other explanations stay folded.
+    const secondary = document.getElementById('smartSkipSecondarySettings');
+    if (secondary) secondary.open = !window.matchMedia('(max-width: 899px)').matches || !cognateAvailable();
     closeAdvancedSkip();
     document.querySelectorAll('.smart-skip-shortcut').forEach(el => { delete el.dataset.userExpanded; });
     refresh();
@@ -531,6 +539,10 @@ function closeFastModePage({ reopenSettings = true } = {}) {
 }
 
 function init() {
+    window.matchMedia('(max-width: 899px)').addEventListener('change', event => {
+        const secondary = document.getElementById('smartSkipSecondarySettings');
+        if (secondary) secondary.open = !event.matches || !cognateAvailable();
+    });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
     document.getElementById('fastTrackHubSwitch')?.addEventListener('click', () => applyFastMode(currentState() !== 'on'));
     document.getElementById('dismissStreamlineRecBtn')?.addEventListener('click', (e) => {

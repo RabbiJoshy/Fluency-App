@@ -1,30 +1,31 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=0c2193ac';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=0c2193ac';
+import './state.js?v=479c3553';
+import { songCreditHTML } from './song-credit.js?v=479c3553';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=479c3553';
 import { installCardTouch } from './card-touch.js';
-import './speech.js?v=0c2193ac';
-import { goToRoute, routeCodeFor } from './routes.js?v=0c2193ac';
-import { memoryTipTileHTML } from './memory-tips.js?v=0c2193ac';
-import './side-dock.js?v=0c2193ac';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=0c2193ac';
+import './speech.js?v=479c3553';
+import { goToRoute, routeCodeFor } from './routes.js?v=479c3553';
+import { memoryTipTileHTML } from './memory-tips.js?v=479c3553';
+import './side-dock.js?v=479c3553';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=479c3553';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=0c2193ac';
+} from './example-personalisation.js?v=479c3553';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=0c2193ac';
+} from './spanishdict-usage.js?v=479c3553';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=0c2193ac';
+} from './reverse-cues.js?v=479c3553';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -57,7 +58,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=0c2193ac';
+} from './card-metadata-pills.js?v=479c3553';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -8001,7 +8002,7 @@ function renderCardWikipediaBadge(card) {
                 songName = example.song_name || null;
                 vocalistCredit = Array.isArray(example.vocalists) && example.vocalists.length
                     ? example.vocalists.join(' & ')
-                    : null;
+                    : (example.artist_name || window._allArtistsConfig?.[example.artist]?.name || activeArtist?.name || null);
                 positionMs = example.timestamp_ms ?? 60000;
                 endPositionMs = example.end_timestamp_ms ?? null;
 
@@ -8009,14 +8010,6 @@ function renderCardWikipediaBadge(card) {
                 spotifyTrackId = getSpotifyTrackIdForExample(example);
                 if (spotifyTrackId) {
                     spotifyUrl = `https://open.spotify.com/track/${spotifyTrackId}`;
-                }
-
-                if (songName && example.artist) {
-                    const allConfigs = window._allArtistsConfig;
-                    const selectedSlugs = window._selectedArtistSlugs || [];
-                    if (selectedSlugs.length > 1 && allConfigs && allConfigs[example.artist]) {
-                        songName = allConfigs[example.artist].name + ' \u2014 ' + songName;
-                    }
                 }
             }
 
@@ -8174,7 +8167,7 @@ function renderCardWikipediaBadge(card) {
             // Spotify link at all.
             const autoplayBtn = spotifyTrackId ? '' : cardAutoplayButton;
             const creditStart = songName
-                ? `<span class="example-song-credit">— ${songName}${vocalistCredit ? `<span class="example-vocalist-credit"> · ${vocalistCredit}</span>` : ''}</span>`
+                ? songCreditHTML(songName, vocalistCredit)
                 : (exampleSourceLabel
                     ? `<span class="example-song-credit">${exampleSourceLabel}</span>`
                     : '');
@@ -10489,8 +10482,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '0c2193ac';
-const MODALS_ASSET_VERSION = '0c2193ac';
+const ASSET_VERSION = '479c3553';
+const MODALS_ASSET_VERSION = '479c3553';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
