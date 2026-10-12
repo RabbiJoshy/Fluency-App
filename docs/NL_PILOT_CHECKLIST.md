@@ -140,16 +140,25 @@ How the surface ledger was used to settle all 6,000 words:
 
 ## Open, in order (none blocks starting CASCADE-WSD)
 
-1. **How Dutch function words are handled: not decided.** Two proposals exist and
-   are not the same thing: `docs/LANGUAGE_ONBOARDING.md` asks for small curated menus
-   (the Spanish `el`/`la` model); Josh's declared function-word class (CHAT_ROADMAP
-   TURBO-STREAM row, 2026-10-12) gives those words a fixed card summary plus phrase
-   senses, no per-example WSD online, and disambiguates them offline instead. Josh
-   decides; CASCADE-WSD should not assume either. Dutch candidates: `de het een er te
-   om op aan`.
+1. **What CASCADE-WSD has to answer (Josh, 2026-10-12).** Not "what to do about
+   function words" but, in this order:
+   - **Do cheap embeddings work** for the middle tier?
+   - **When to raise to an LLM**: what signal says a sentence is too hard for them?
+   - **Which words systematically cause WSD trouble.** Found from the data (per-word
+     error and escalation rates on the benchmark), not assumed. Likely, but not
+     necessarily, function words and clitics.
+   - **For those words, a presentation decision:** (a) a new kind of card
+     presentation instead of WSD, so no LLM at all; or (b) a new presentation, with
+     the LLM kept only for the hardest cases. Two older ideas feed in and are not
+     adopted: the onboarding doc's small curated menus (Spanish `el`/`la`), and the
+     declared function-word class in the CHAT_ROADMAP TURBO-STREAM row.
+   - Why it matters: offline the per-card cap makes these words small (33 common
+     Dutch function words x 10 = 330 of 60,000 WSD units); in Turbo every
+     occurrence counts, and those 33 words are 37% of running tokens in SUBTLEX-NL.
 2. **Hand-labelled benchmark**: a few hundred real sentences with the correct menu
-   sense marked by hand, used only to score the cascade. Deliberately include hard
-   cases: separable verbs (B) and er-splits (C). Stanza already separates them:
+   sense marked by hand, used only to score the cascade. Built so per-word trouble is
+   measurable: enough sentences per suspected word, and keep the suspected words in
+   rather than removing them first. Deliberately include hard cases: separable verbs (B) and er-splits (C). Stanza already separates them:
    `ik bel je op` gives `op` `compound:prt`; `op de tafel` gives `op` `case`.
 3. **Glosses written by hand** (about 30 in the declarations) are Claude's, labelled
    `author: Claude`; review them with the cards.
