@@ -24876,3 +24876,39 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 #cardTutorialStage .example-song-credit--stacked { display: grid; }
 .smart-skip-browser-controls .smart-skip-toolbar[hidden] { display: none; }
 @media (min-width: 900px) { #smartSkipLyricsIntro { display: none; } }
+
+/* Desktop vocabulary choices fit their content; Spotify is an inset add-on. */
+@media (min-width: 900px) {
+  #step1.language-summary-active #standardSourceCard .vocabulary-choice-reassurance {
+    width: 100%;
+    text-align: center;
+  }
+  #step1.language-summary-active #standardSourceCard .choice-sheet-item,
+  #step1.language-summary-active #standardSourceCard .standard-source-music {
+    align-self: start;
+  }
+  #step1.language-summary-active #standardSourceCard .standard-source-music > .choice-sheet-item {
+    flex: none;
+    width: 100%;
+  }
+  #step1.language-summary-active #standardSourceCard .choice-sheet-bestfor {
+    justify-items: center;
+    text-align: center;
+    gap: 6px;
+  }
+  #step1.language-summary-active #standardSourceCard .choice-sheet-bestfor span {
+    width: fit-content;
+    max-width: 100%;
+  }
+  #step1.language-summary-active #standardSourceCard .standard-source-music .standard-source-spotify {
+    margin: 0 14px 14px;
+    border: 1px solid color-mix(in srgb, #1DB954 28%, var(--border-color));
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  #step1.language-summary-active #standardSourceCard .standard-source-music .spotify-status {
+    min-height: 44px;
+    padding: 10px 12px;
+    background: color-mix(in srgb, #1DB954 10%, transparent);
+  }
+}
