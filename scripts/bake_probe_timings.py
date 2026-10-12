@@ -19,6 +19,15 @@ duration at play time and stops the fill when they disagree.
 
     python scripts/bake_probe_timings.py --workspace ../Fluency-Workspace --dry-run
     python scripts/bake_probe_timings.py --workspace ../Fluency-Workspace
+
+``--extend`` adds the rest of the lyrics release's songs (every song with a
+Spotify track id that is not already in the catalogue) as
+``app/turbo/catalogue/index.json`` plus one ``songs/<spotifyId>.json`` each, so
+the reader fetches a song's lyrics only when it is opened. There is no
+catalogue text to compare against, so a record must instead match the title
+and artist, not be a remix/live/sped-up variant the title did not ask for, and
+have a duration its own timestamps can sit inside. Songs with no such record
+are left out: with no lyrics in the release, they would open as an empty page.
 """
 
 from __future__ import annotations
@@ -174,6 +183,132 @@ def choose(song: dict, records: list[dict], min_overlap: float) -> dict:
             "rivals": [(round(c[0]["duration"]), len(c)) for c in clusters[1:4]]}
 
 
+VARIANT_WORDS = re.compile(
+    r"\b(remix|live|en vivo|acoustic|ac[uú]stic[oa]|sped|slowed|instrumental|karaoke|cover|demo|remaster(?:ed)?|"
+    r"edit|version|versi[oó]n|mix)\b", re.I)
+MIN_TIMED_LINES = 8
+
+
+def record_matches(title: str, artist: str, record: dict) -> bool:
+    """Same song by the same artist, and not a variant the title did not ask for."""
+    got = record.get("trackName") or ""
+    if VARIANT_WORDS.search(got) and not VARIANT_WORDS.search(title):
+        return False
+    heads = {fold(v) for v in title_variants(title)}
+    got_fold = fold(got)
+    if got_fold not in heads and not any(h and h in got_fold for h in heads):
+        return False
+    primary = fold(artist.split(",")[0])
+    return bool(primary) and primary in fold(record.get("artistName") or "")
+
+
+def find_record(title: str, artist: str) -> dict:
+    """LRCLIB's dominant credible synced cut of a song, or {}."""
+    primary = artist.split(",")[0].strip()
+    found: dict[int, dict] = {}
+
+    def usable() -> list[dict]:
+        return [r for r in found.values()
+                if (r.get("syncedLyrics") or "").strip() and not r.get("instrumental")
+                and record_matches(title, artist, r) and credible(r)
+                and len(LRC_TAG.findall(r["syncedLyrics"])) >= MIN_TIMED_LINES]
+
+    attempts = [{"track_name": v, "artist_name": primary} for v in title_variants(title)]
+    attempts.append({"q": f"{title_variants(title)[-1]} {primary}"})
+    for params in attempts:
+        for record in get_json("search", params) or []:
+            if isinstance(record, dict) and record.get("id") is not None:
+                found.setdefault(record["id"], record)
+        if usable():
+            break
+    tier = usable()
+    if not tier:
+        return {}
+    clusters: list[list[dict]] = []
+    for record in sorted(tier, key=lambda r: r["duration"]):
+        if clusters and record["duration"] - clusters[-1][-1]["duration"] <= 2:
+            clusters[-1].append(record)
+        else:
+            clusters.append([record])
+    clusters.sort(key=lambda c: (-len(c), c[0]["duration"]))
+    cluster = clusters[0]
+    stamps = [round(last_timestamp(r)) for r in cluster]
+    modal = max(set(stamps), key=lambda v: (stamps.count(v), -v))
+    record = min((r for r in cluster if round(last_timestamp(r)) == modal), key=lambda r: r["id"])
+    durations = sorted(r["duration"] for r in cluster)
+    return {"lrclibId": record["id"], "syncedLyrics": record["syncedLyrics"],
+            "lrclibDurationMs": int(round(durations[len(durations) // 2] * 1000)),
+            "agreeing": len(cluster), "rivals": [(round(c[0]["duration"]), len(c)) for c in clusters[1:4]]}
+
+
+def release_songs(release_dir: Path) -> list[dict]:
+    """Every (title, artist, spotifyTrackId) the release carries, once per track."""
+    seen: dict[str, dict] = {}
+    for path in sorted((release_dir / "app" / "Artists" / "es").glob("*/songs.json")):
+        payload = json.loads(path.read_text("utf-8"))
+        for song in payload["songs"] if isinstance(payload, dict) else payload:
+            track = song.get("spotifyTrackId") or ""
+            if TRACK_ID.match(track) and song.get("title"):
+                seen.setdefault(track, {"id": track, "title": song["title"], "artist": song.get("artist", "")})
+    return list(seen.values())
+
+
+def extend(args, release_dir: Path, probe_ids: set[str]) -> int:
+    out_dir = args.catalogue
+    songs_dir = out_dir / "songs"
+    cache_dir = args.workspace / "cache" / "lyrics-view-bake"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    wanted = [s for s in release_songs(release_dir) if s["id"] not in probe_ids]
+    wanted.sort(key=lambda s: (fold(s["artist"]), fold(s["title"])))
+    if args.limit:
+        wanted = wanted[: args.limit]
+    print(f"{len(wanted)} release songs not already in the catalogue")
+
+    index, skipped = [], []
+    for n, song in enumerate(wanted, 1):
+        cache = cache_dir / f"{song['id']}.json"
+        if cache.exists():
+            result = json.loads(cache.read_text("utf-8"))
+        else:
+            try:
+                result = find_record(song["title"], song["artist"])
+            except (urllib.error.URLError, TimeoutError) as err:
+                print(f"  LRCLIB unreachable for {song['title']!r}: {err}", file=sys.stderr)
+                continue
+            cache.write_text(json.dumps(result, ensure_ascii=False), "utf-8")
+            time.sleep(args.pause)
+        if result:
+            index.append({"id": song["id"], "title": song["title"], "artist": song["artist"],
+                          "lrclibDurationMs": result["lrclibDurationMs"], "agreeing": result["agreeing"],
+                          "rivals": result["rivals"], "_record": result})
+        else:
+            skipped.append(song)
+        if n % 25 == 0 or n == len(wanted):
+            print(f"  {n}/{len(wanted)}: {len(index)} timed, {len(skipped)} without a matching timed record", flush=True)
+
+    weak = [s for s in index if s["agreeing"] < 2]
+    print(f"\n{len(index)} of {len(wanted)} songs have an accepted timed record; "
+          f"{len(weak)} rest on a single LRCLIB record (listen first).")
+    if args.dry_run:
+        print("dry run: nothing written")
+        return 0
+    songs_dir.mkdir(parents=True, exist_ok=True)
+    keep = set()
+    for entry in index:
+        record = entry.pop("_record")
+        keep.add(entry["id"])
+        (songs_dir / f"{entry['id']}.json").write_text(json.dumps(
+            {"syncedLyrics": record["syncedLyrics"], "lrclibId": record["lrclibId"],
+             "lrclibDurationMs": record["lrclibDurationMs"]}, ensure_ascii=False, separators=(",", ":")) + "\n", "utf-8")
+        entry.pop("agreeing"); entry.pop("rivals")
+    for stale in songs_dir.glob("*.json"):
+        if stale.stem not in keep:
+            stale.unlink()
+    (out_dir / "index.json").write_text(json.dumps(index, ensure_ascii=False, separators=(",", ":")) + "\n", "utf-8")
+    print(f"wrote {out_dir / 'index.json'} and {len(index)} song files")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--workspace", required=True, type=Path)
@@ -182,9 +317,16 @@ def main() -> int:
     parser.add_argument("--min-overlap", type=float, default=0.6)
     parser.add_argument("--pause", type=float, default=0.4, help="seconds between songs")
     parser.add_argument("--dry-run", action="store_true", help="report only; do not write")
+    parser.add_argument("--extend", action="store_true",
+                        help="also bake the rest of the release's songs into --catalogue")
+    parser.add_argument("--catalogue", type=Path, default=REPO / "app" / "turbo" / "catalogue")
+    parser.add_argument("--limit", type=int, default=0, help="with --extend: only the first N songs (testing)")
     args = parser.parse_args()
 
     release_dir = args.workspace / "releases" / "lyrics" / args.release
+    if args.extend:
+        probe_ids = {s.get("spotifyId") for s in json.loads(args.probe.read_text("utf-8"))}
+        return extend(args, release_dir, probe_ids - {None})
     ids = load_ids(release_dir)
     songs = json.loads(args.probe.read_text("utf-8"))
 

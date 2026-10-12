@@ -1,5 +1,5 @@
 import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=20261011play';
-import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches } from './line-follow.js?v=20261011play';
+import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=20261011play';
 import { TurboEngine } from '../turbo/turbo-engine.js?v=20261009L';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
@@ -111,13 +111,17 @@ function formatElisionToken(raw, fullWord) {
 }
 
 let engine = null;
-let probeSongs = [];
+let probeSongs = [];       // the curated 30, full text in one file
+let extraSongs = [];       // the rest of the catalogue: index only, lyrics fetched when opened
+let catalogueSongs = [];   // curated first, then the rest by artist
 let customSongs = [];
 let allSongs = [];
 let annotatedCache = new Map(); // songCacheKey -> annotatedSong
 let currentSongIndex = 0;
 let currentAnnotatedSong = null;
-let showEnglishUnderneath = true;
+let showEnglishUnderneath = (() => {
+  try { return localStorage.getItem('fluency_lyrics_show_english') !== '0'; } catch (_) { return true; }
+})();
 
 // Flat list of all tokens in current song for modal next/previous stepping
 let songTokensFlatList = [];
@@ -127,10 +131,6 @@ let currentModalTokenIndex = -1;
 const backToLibraryBtn = document.getElementById('backToLibraryBtn');
 const topbarSongTitle = document.getElementById('topbarSongTitle');
 const topbarSongArtist = document.getElementById('topbarSongArtist');
-const songSelectorBtn = document.getElementById('songSelectorBtn');
-const topbarTurboBtn = document.getElementById('topbarTurboBtn');
-const prevSongBtn = document.getElementById('prevSongBtn');
-const nextSongBtn = document.getElementById('nextSongBtn');
 const toggleEnglishBtn = document.getElementById('toggleEnglishBtn');
 
 const loadingBox = document.getElementById('loadingBox');
@@ -271,42 +271,56 @@ async function init() {
     if (!songsResp.ok) throw new Error(`HTTP ${songsResp.status} loading offline songs`);
     probeSongs = await songsResp.json();
     probeSongs.forEach((s, idx) => {
-      s.id = `offline_${idx}`;
+      // The Spotify track is the song's identity in links; the position is not.
+      s.id = s.spotifyId || `offline_${idx}`;
       s.isOffline = true;
     });
 
-    // Hydrate offline curated songs with verified human English translations from the local audit catalog
+    // The wider catalogue: an index of title, artist and track. A song's
+    // timed lyrics are fetched when it is opened.
     try {
-      const yonResp = await fetch('../lyrics-audit/data/yonaguni.json');
-      if (yonResp.ok) {
-        const yonData = await yonResp.json();
-        const yLines = yonData.song?.lines || [];
-        const yonProbe = probeSongs.find(s => (s.title || '').toLowerCase() === 'yonaguni');
-        if (yonProbe && yLines.length > 0) {
-          if (yonProbe.syncedLyrics) {
-            // Timed lines are LRCLIB's, not the audit's, so index order no longer lines up.
-            yonProbe.englishByText = yLines
-              .filter(l => l.text && l.translation?.english)
-              .map(l => ({ key: lineTextKey(l.text), words: new Set(lineTextKey(l.text).split(' ')), english: l.translation.english }));
-          } else {
-            yonProbe.englishLines = yLines.map(l => l.translation?.english || null);
-          }
-          yonProbe.translationSource = 'genius';
-        }
+      const indexResp = await fetch(new URL('../turbo/catalogue/index.json?v=20261009M', import.meta.url));
+      if (indexResp.ok) {
+        extraSongs = (await indexResp.json()).map(entry => ({
+          ...entry, spotifyId: entry.id, isCatalogue: true, needsDetail: true
+        }));
+      }
+    } catch (_) { /* the curated 30 still work */ }
+    catalogueSongs = [...probeSongs, ...extraSongs];
+
+    // Human English translations for curated songs, matched to their timed
+    // lines by text (the timed lines are LRCLIB's, not the translator's).
+    try {
+      const trResp = await fetch(new URL('../turbo/probe_translations.json?v=20261009M', import.meta.url));
+      if (trResp.ok) {
+        const { songs = {} } = await trResp.json();
+        probeSongs.forEach(song => {
+          const entry = songs[song.spotifyId];
+          if (!entry) return;
+          song.englishByText = entry.lines.map(l => ({
+            key: lineTextKey(l.text), words: new Set(lineTextKey(l.text).split(' ')), english: l.english
+          }));
+          song.translationSource = entry.source;
+        });
       }
     } catch (_) {}
 
     // Load session-generated songs
     customSongs = loadSavedCustomSongs();
-    allSongs = [...customSongs, ...probeSongs];
+    allSongs = [...customSongs, ...catalogueSongs];
 
     renderSongPickerItems(allSongs);
 
     // If a specific song was requested in URL query, load it; otherwise open the library modal
     if (paramSong) {
-      const parsedIdx = parseInt(paramSong, 10);
-      if (!isNaN(parsedIdx) && parsedIdx >= 0 && parsedIdx < allSongs.length) {
-        currentSongIndex = parsedIdx;
+      // A song's id first; then the old numeric links (a position in the
+      // curated list); then a title or artist fragment.
+      const byId = allSongs.findIndex(s => s.id === paramSong);
+      const legacy = /^\d+$/.test(paramSong) ? probeSongs[parseInt(paramSong, 10)] : null;
+      if (byId >= 0) {
+        currentSongIndex = byId;
+      } else if (legacy) {
+        currentSongIndex = allSongs.indexOf(legacy);
       } else {
         const foundIdx = allSongs.findIndex(s =>
           (s.title || '').toLowerCase().includes(paramSong.toLowerCase()) ||
@@ -344,26 +358,33 @@ async function selectSong(index, syncUrl = true) {
     topbarSongArtist.textContent = (song.artist || '') + (song.isOnline ? ' · Online' : '');
   }
 
-  // Also populate compatibility anchors if present
-  const mainSongTitle = document.getElementById('mainSongTitle');
-  if (mainSongTitle) mainSongTitle.textContent = song.title || '';
-  const mainSongArtist = document.getElementById('mainSongArtist');
-  if (mainSongArtist) mainSongArtist.textContent = song.artist || '';
-
-  if (prevSongBtn) prevSongBtn.disabled = (index === 0);
-  if (nextSongBtn) nextSongBtn.disabled = (index === allSongs.length - 1);
 
   // Sync URL query without reloading (if requested)
   if (syncUrl) {
     try {
       const newUrl = new URL(window.location.href);
-      newUrl.searchParams.set('song', index);
+      newUrl.searchParams.set('song', song.id || index);
       window.history.replaceState({}, '', newUrl.toString());
     } catch (_) {}
   }
 
   if (lyricsFlow) lyricsFlow.style.display = 'none';
-  if (loadingBox) loadingBox.style.display = 'block';
+  if (loadingBox) {
+    loadingBox.style.display = 'block';
+    loadingBox.querySelector('p').textContent = 'Loading lyrics…';
+  }
+
+  if (song.needsDetail) {
+    try {
+      const detailResp = await fetch(new URL(`../turbo/catalogue/songs/${song.id}.json?v=20261009M`, import.meta.url));
+      if (!detailResp.ok) throw new Error(`HTTP ${detailResp.status}`);
+      Object.assign(song, await detailResp.json(), { needsDetail: false });
+    } catch (error) {
+      console.warn('Could not load song lyrics:', error);
+      if (loadingBox) loadingBox.querySelector('p').textContent = 'Could not load this song. Check your connection and try again.';
+      return;
+    }
+  }
 
   const cacheKey = songCacheKey(song);
   let annotatedSong = annotatedCache.get(cacheKey);
@@ -615,7 +636,8 @@ function renderLyrics(song) {
 
   const hasAnyEnglish = song.lines.some(l => l.english && typeof l.english === 'string' && l.english.trim());
   if (toggleEnglishBtn) {
-    toggleEnglishBtn.style.display = hasAnyEnglish ? 'inline-flex' : 'none';
+    toggleEnglishBtn.style.display = hasAnyEnglish ? 'flex' : 'none';
+    toggleEnglishBtn.setAttribute('aria-pressed', String(showEnglishUnderneath));
   }
 
   const sourceSong = allSongs[currentSongIndex];
@@ -628,6 +650,11 @@ function renderLyrics(song) {
   playbackStatus.textContent = unavailable ? unavailable.reason : '';
   playbackStatus.hidden = !unavailable;
   resetFollow();
+  if (playBar) {
+    playBar.hidden = !hasPlayback;
+    document.body.classList.toggle('has-play-bar', hasPlayback);
+    syncPlayBar();
+  }
 
   song.lines.forEach((line, lineIdx) => {
     const lineItem = document.createElement('div');
@@ -651,9 +678,11 @@ function renderLyrics(song) {
       ? `Play from line ${lineIdx + 1} on Spotify: ${line.text}`
       : `Line ${lineIdx + 1} playback unavailable. ${target.reason}`);
     listenButton.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24Zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.57-1.04 8.5-.59 11.66 1.34.35.22.46.68.25 1.03Zm1.47-3.27a.94.94 0 0 1-1.29.3c-3.23-1.99-8.16-2.57-11.98-1.41a.94.94 0 1 1-.54-1.8c4.36-1.32 9.8-.67 13.5 1.62.45.27.59.85.31 1.29Zm.13-3.41C15.23 8.32 8.85 8.11 5.16 9.23a1.13 1.13 0 0 1-.65-2.16c4.23-1.28 11.28-1.03 15.74 1.62a1.13 1.13 0 0 1-1.15 1.93Z"/></svg>`;
-    listenButton.addEventListener('click', async () => {
+    const playLine = async () => {
+      if (listenButton.disabled) return;
       listenButton.disabled = true;
       followPausedUntil = 0; // playing a line brings the view back to it
+      if (repeatMode) setRepeatLine(lineIdx);
       listenButton.setAttribute('aria-busy', 'true');
       listenButton.classList.add('is-loading');
       playbackStatus.hidden = false;
@@ -672,7 +701,18 @@ function renderLyrics(song) {
         listenButton.removeAttribute('aria-busy');
         listenButton.classList.remove('is-loading');
       }
-    });
+    };
+    listenButton.addEventListener('click', event => { event.stopPropagation(); playLine(); });
+    // The whole line plays too; its words (word card), the gutter and a text
+    // selection keep their own meaning.
+    if (hasPlayback && target.available) {
+      lineItem.classList.add('is-playable');
+      lineItem.addEventListener('click', event => {
+        if (event.target.closest('.lyric-token, .lyric-line-gutter, button, a')) return;
+        if (String(window.getSelection?.() || '').length) return;
+        playLine();
+      });
+    }
     gutter.appendChild(listenButton);
 
     // AI Look up Action: Single circular "AI" button
@@ -783,7 +823,8 @@ function renderLyrics(song) {
       if (token.type === 'entity') {
         span.classList.add('token-entity');
         span.title = `Entity: ${token.word} (${token.translation || 'Cultural referent'})`;
-        span.innerHTML = `${escapeHtml(token.raw)}<span class="entity-wiktionary-icon" aria-hidden="true" title="Wiktionary / Cultural Entity">W</span>`;
+        span.dataset.fillText = token.raw;
+        span.innerHTML = `<span class="entity-wiktionary-icon" aria-hidden="true" title="Wiktionary / Cultural Entity">W</span>${escapeHtml(token.raw)}`;
       } else if (token.type === 'mwe') {
         span.classList.add('token-mwe');
         span.title = `Idiom: ${token.word} (${token.translation || 'Idiom'})`;
@@ -818,7 +859,7 @@ function renderLyrics(song) {
     // English Line Underneath (Only if genuine hand-translated line exists)
     if (englishGloss) {
       const englishLine = document.createElement('div');
-      englishLine.className = 'lyric-line-english';
+      englishLine.className = `lyric-line-english${showEnglishUnderneath ? '' : ' is-hidden'}`;
 
       const textSpan = document.createElement('span');
       textSpan.textContent = englishGloss;
@@ -847,6 +888,86 @@ let followActive = -1;
 let followSung = 0;
 let followPausedUntil = 0;     // the reader scrolled; leave the view alone until then
 const FOLLOW_SCROLL_PAUSE_MS = 4000;
+let repeatMode = false;        // loop one line
+let repeatLineIndex = -1;      // which; -1 until a line is playing or tapped
+let repeatSeekAt = 0;
+
+const playBar = document.getElementById('playBar');
+const playBarToggle = document.getElementById('playBarToggle');
+const playBarPrev = document.getElementById('playBarPrev');
+const playBarNext = document.getElementById('playBarNext');
+const playBarRepeat = document.getElementById('playBarRepeat');
+
+function openTrackId() { return songTrackId(allSongs[currentSongIndex]); }
+
+// Spotify is on this song, so a seek or pause acts on it rather than starting it.
+function trackIsLoaded() {
+  const trackId = openTrackId();
+  return Boolean(trackId && followState && (followState.trackId === trackId || followState.linkedFromId === trackId));
+}
+
+function syncPlayBar() {
+  if (!playBar) return;
+  const playing = trackIsLoaded() && !followState.paused;
+  playBar.classList.toggle('is-playing', playing);
+  if (playBarToggle) {
+    const label = playing ? 'Pause' : (trackIsLoaded() ? 'Resume' : 'Play from the start');
+    playBarToggle.setAttribute('aria-label', label);
+    playBarToggle.title = label;
+  }
+}
+
+function setRepeatLine(index) {
+  repeatLineIndex = index;
+  followLines.forEach(({ item }, i) => item.classList.toggle('is-looping', repeatMode && i === index));
+}
+
+async function seekTo(positionMs) {
+  followPausedUntil = 0;
+  let ok = false;
+  if (trackIsLoaded() && window.spotifyTransport) ok = await window.spotifyTransport.seek(positionMs);
+  if (ok) {
+    // The player will confirm in a moment; do not let the clock run on past it.
+    followState = { ...followState, positionMs, at: performance.now() };
+    startFollow();
+    return true;
+  }
+  const trackId = openTrackId();
+  if (!trackId || !window.spotifyPlayTrack) return false;
+  return restartLyricLine({ available: true, trackId, positionMs }, window.spotifyPlayTrack);
+}
+
+async function togglePlayBar() {
+  const trackId = openTrackId();
+  if (!trackId) return;
+  if (trackIsLoaded() && window.spotifyTransport && await window.spotifyTransport.toggle()) return;
+  // Nothing of this song is playing: start it from the top.
+  if (window.spotifyPlayTrack) await restartLyricLine({ available: true, trackId, positionMs: 0 }, window.spotifyPlayTrack);
+}
+
+function stepLine(direction) {
+  const song = currentAnnotatedSong;
+  if (!song) return;
+  const position = trackIsLoaded() ? playbackPositionMs(followState, performance.now()) : -1;
+  const target = adjacentLineStart(song.lines, position, direction);
+  if (target === null) return;
+  const index = song.lines.findIndex(l => l.isSynced && l.timestamp_ms === target);
+  if (repeatMode && index >= 0) setRepeatLine(index);
+  seekTo(target);
+}
+
+if (playBar) {
+  playBarToggle.addEventListener('click', togglePlayBar);
+  playBarPrev.addEventListener('click', () => stepLine(-1));
+  playBarNext.addEventListener('click', () => stepLine(1));
+  playBarRepeat.addEventListener('click', () => {
+    repeatMode = !repeatMode;
+    playBarRepeat.setAttribute('aria-pressed', String(repeatMode));
+    playBar.classList.toggle('is-repeating', repeatMode);
+    // Loop the line being sung; with nothing playing, the next line played.
+    setRepeatLine(repeatMode ? followActive : -1);
+  });
+}
 
 function resetFollow() {
   if (followRaf) cancelAnimationFrame(followRaf);
@@ -854,6 +975,8 @@ function resetFollow() {
   followLines = [];
   followActive = -1;
   followSung = 0;
+  repeatLineIndex = -1;
+  window.fluencySpotifyFollow = true; // lets spotify.js poll Connect playback for us
 }
 
 function clearFollowClasses() {
@@ -894,6 +1017,16 @@ function followTick() {
 
   const position = playbackPositionMs(state, performance.now());
   const index = activeLineIndex(song.lines, position);
+  syncPlayBar();
+  if (repeatMode && !state.paused) {
+    if (repeatLineIndex < 0 && index >= 0) setRepeatLine(index);
+    const loopLine = song.lines[repeatLineIndex];
+    const loopEnd = repeatEndMs(loopLine);
+    if (loopEnd !== null && position >= loopEnd && performance.now() - repeatSeekAt > 800) {
+      repeatSeekAt = performance.now();
+      seekTo(loopLine.timestamp_ms);
+    }
+  }
   if (index !== followActive) {
     followLines.forEach(({ item, tokenEls }, i) => {
       item.classList.toggle('is-active', i === index);
@@ -909,7 +1042,7 @@ function followTick() {
   }
   if (index >= 0) {
     const { tokenEls } = followLines[index];
-    const fills = tokenFills(tokenEls.map(el => el.textContent), lineProgress(song.lines[index], position));
+    const fills = tokenFills(tokenEls.map(el => el.dataset.fillText ?? el.textContent), lineProgress(song.lines[index], position));
     const sung = fills.filter(f => f > 0).length;
     if (sung !== followSung) {
       tokenEls.forEach((el, i) => el.classList.toggle('is-sung', i < sung));
@@ -921,6 +1054,7 @@ function followTick() {
 
 window.addEventListener('fluency:spotify-state', event => {
   followState = event.detail;
+  syncPlayBar();
   startFollow();
 });
 
@@ -1251,8 +1385,8 @@ function openSongPicker(initialQuery = '') {
   if (initialQuery) {
     filterCatalog(initialQuery);
   } else {
-    // Show curated catalog songs only (without cluttering with old session imports)
-    renderSongPickerItems(probeSongs);
+    // Catalogue only, without the old session imports
+    renderSongPickerItems(catalogueSongs);
   }
 
   if (songPickerModal) songPickerModal.classList.add('open');
@@ -1270,7 +1404,7 @@ function filterCatalog(query) {
   if (songSearchClearBtn) songSearchClearBtn.style.display = q ? 'block' : 'none';
 
   if (!q) {
-    renderSongPickerItems(probeSongs);
+    renderSongPickerItems(catalogueSongs);
     return;
   }
 
@@ -1287,7 +1421,7 @@ function filterCatalog(query) {
   }
 
   const lower = q.toLowerCase();
-  const filtered = probeSongs.filter(s =>
+  const filtered = catalogueSongs.filter(s =>
     (s.title || '').toLowerCase().includes(lower) ||
     (s.artist || '').toLowerCase().includes(lower) ||
     (s.lyrics || '').toLowerCase().includes(lower)
@@ -1531,7 +1665,7 @@ async function handleRunTurbo(options = {}) {
       sessionStorage.setItem('fluency_turbo_custom_songs', JSON.stringify(customSongs));
     } catch (_) {}
 
-    allSongs = [...customSongs, ...probeSongs];
+    allSongs = [...customSongs, ...catalogueSongs];
     annotatedCache.set(songCacheKey(songData), annotatedSong);
 
     hideTurboStatus();
@@ -1559,8 +1693,6 @@ async function handleRunTurbo(options = {}) {
 // Event Listeners
 // ───────────────────────────────────────────────
 if (backToLibraryBtn) backToLibraryBtn.addEventListener('click', () => openSongPicker());
-if (songSelectorBtn) songSelectorBtn.addEventListener('click', () => openSongPicker());
-if (topbarTurboBtn) topbarTurboBtn.addEventListener('click', () => openSongPicker());
 if (closeSongPickerBtn) closeSongPickerBtn.addEventListener('click', closeSongPicker);
 
 if (openManualPasteBtn) {
@@ -1605,22 +1737,11 @@ if (songPickerModal) {
   });
 }
 
-if (prevSongBtn) {
-  prevSongBtn.addEventListener('click', () => {
-    if (currentSongIndex > 0) selectSong(currentSongIndex - 1);
-  });
-}
-
-if (nextSongBtn) {
-  nextSongBtn.addEventListener('click', () => {
-    if (currentSongIndex < allSongs.length - 1) selectSong(currentSongIndex + 1);
-  });
-}
-
 if (toggleEnglishBtn) {
   toggleEnglishBtn.addEventListener('click', () => {
     showEnglishUnderneath = !showEnglishUnderneath;
-    toggleEnglishBtn.classList.toggle('active', showEnglishUnderneath);
+    toggleEnglishBtn.setAttribute('aria-pressed', String(showEnglishUnderneath));
+    try { localStorage.setItem('fluency_lyrics_show_english', showEnglishUnderneath ? '1' : '0'); } catch (_) {}
     document.querySelectorAll('.lyric-line-english').forEach(el => {
       el.classList.toggle('is-hidden', !showEnglishUnderneath);
     });

@@ -23,9 +23,12 @@
         <h1 id="topbarSongTitle">Loading songs…</h1>
         <p id="topbarSongArtist">Offline</p>
       </div>
-      <button class="header-icon" id="backToLibraryBtn" type="button" aria-label="Choose song" aria-haspopup="dialog" title="Song library">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h11M4 11h7M4 16h5M17 14V4l4 1"/><circle cx="14.5" cy="16" r="2.5"/></svg>
-      </button>
+      <div class="topbar-actions">
+        <button class="header-icon header-icon-text" id="toggleEnglishBtn" type="button" aria-pressed="true" aria-label="Show English translation" title="English translation" style="display:none"><span>EN</span></button>
+        <button class="header-icon" id="backToLibraryBtn" type="button" aria-label="Choose song" aria-haspopup="dialog" title="Song library">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h11M4 11h7M4 16h5M17 14V4l4 1"/><circle cx="14.5" cy="16" r="2.5"/></svg>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -198,16 +201,21 @@
     </div>
   </div>
 
-  <!-- Compatibility anchors for cached scripts -->
-  <div style="display:none;" aria-hidden="true">
-    <span id="mainSongTitle"></span>
-    <span id="mainSongArtist"></span>
-    <span id="songsCountPill"></span>
-    <span id="entitiesCountBadge"></span>
-    <span id="mwesCountBadge"></span>
-    <span id="interjectionsCountBadge"></span>
-    <span id="totalLinesText"></span>
-    <span id="totalTokensText"></span>
+  <!-- Transport: shown only for a song that can play -->
+  <div class="play-bar" id="playBar" role="group" aria-label="Playback" hidden>
+    <button type="button" class="play-bar-btn" id="playBarPrev" aria-label="Previous line" title="Previous line">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9.5 12z"/></svg>
+    </button>
+    <button type="button" class="play-bar-btn play-bar-main" id="playBarToggle" aria-label="Play from the start" title="Play from the start">
+      <svg class="icon-play" viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      <svg class="icon-pause" viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+    </button>
+    <button type="button" class="play-bar-btn" id="playBarNext" aria-label="Next line" title="Next line">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l10.5-7z"/></svg>
+    </button>
+    <button type="button" class="play-bar-btn play-bar-repeat" id="playBarRepeat" aria-pressed="false" aria-label="Repeat this line" title="Repeat this line">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+    </button>
   </div>
 
   <script type="module" src="./lyrics-view.js?v=20261011play"></script>

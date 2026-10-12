@@ -33,6 +33,25 @@ class CatalogueBake(unittest.TestCase):
                 else:
                     self.assertNotIn("lrclibDurationMs", song)
 
+    def test_catalogue_index_matches_its_song_files(self):
+        import json, re
+        root = Path(__file__).parents[2] / "app/turbo/catalogue"
+        index = json.loads((root / "index.json").read_text("utf-8"))
+        self.assertGreater(len(index), 100)
+        ids = [entry["id"] for entry in index]
+        self.assertEqual(len(ids), len(set(ids)), "one entry per track")
+        curated = {s["spotifyId"] for s in json.loads(
+            (Path(__file__).parents[2] / "app/turbo/probe_songs.json").read_text("utf-8"))}
+        self.assertFalse(curated & set(ids), "a song is in the curated list or the index, not both")
+        for entry in index:
+            with self.subTest(song=entry["title"]):
+                self.assertRegex(entry["id"], r"^[A-Za-z0-9]{22}$")
+                self.assertTrue(entry["title"] and entry["artist"])
+                detail = json.loads((root / "songs" / f"{entry['id']}.json").read_text("utf-8"))
+                self.assertGreaterEqual(len(re.findall(r"^\[\d+:\d+", detail["syncedLyrics"], re.M)), 8)
+                self.assertEqual(detail["lrclibDurationMs"], entry["lrclibDurationMs"])
+        self.assertEqual(len(list((root / "songs").glob("*.json"))), len(index), "no orphan song files")
+
 
 if __name__ == "__main__":
     unittest.main()

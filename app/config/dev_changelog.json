@@ -2,6 +2,23 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-13T00:11:41+01:00",
+   "date": "2026-10-13 00:11 BST",
+   "agent": "Claude",
+   "summary": "Song translation: a play bar, tap-a-line to play, an English toggle, 389 more songs, and a tidier entity box",
+   "detail": [
+    "Play bar at the bottom: previous line, play/pause, next line, and repeat this line. Repeat loops the line being sung, or the next one you tap. On a phone using Spotify's app, the highlight is kept in step by polling Spotify about every 1.5 s.",
+    "Tap anywhere on a line to play it from there (tapping a word still opens its card; the Spotify button still works).",
+    "EN button in the header hides or shows the English under each line; it is remembered on this device.",
+    "The song list grows from 30 to 419 songs: all of Bad Bunny, Rosalía and Young Miko in the lyrics release that LRCLIB has timed lyrics for (389 of 401). Search covers all of them; a song's lyrics are fetched when it is opened. 10 of them rest on a single LRCLIB record, so their timing is the least certain.",
+    "Song links now carry the song's Spotify id instead of its position in the list, so a saved link no longer shifts after importing a song. Old numeric links still open the song they used to.",
+    "Entity boxes are now a tight rectangle (4 px corners) that wraps the name, and the Wiktionary mark is a serif W at the start of the entity instead of the end.",
+    "Yonaguni's human translations load on the deployed site now: the build excluded the folder they were read from, so they never appeared there. They now match 51 of 60 lines.",
+    "Removed unused wiring: previous/next-song buttons, the compatibility anchors and the count badges."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-13T00:08:00+01:00",
    "date": "2026-10-13 00:08 BST",
    "agent": "Claude",
@@ -373,31 +390,6 @@
     "Checked on real cards: production vou already shows \"I go\" with \"to begin an action or process\" and \"+ para to move to a destination\" as sub-rows, and quero shows \"I want to\" with \"to feel the need to do something\".",
     "The earlier INFLECT-2 change removed the \"to\" from those sub-rows and, on quero, removed one entirely, so it is reverted: Portuguese rows are back to the INFLECT build (fa94c9bc).",
     "Nothing else changed; Spanish was never affected."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T15:05:00+01:00",
-   "date": "2026-10-11 15:05 BST",
-   "agent": "Antigravity",
-   "summary": "Artist mode: updated to es-lyrics-v24-1 with soft evidence gating and Transformer POS tagging",
-   "detail": [
-    "Inherits soft evidence gating (pos_penalty=0.06), Transformer POS tagger (es_dep_news_trf@3.8.0), and multiword phrases from the es-v24-1 engine via the unified LyricsWSDAdapter.",
-    "Planted across all artists (spanish-test-playlist, bad-bunny, rosalia, young-miko): 20,232 cards and 54,221 WSD assignments completed with 0 fallback assignments.",
-    "Packaged and published validated lyrics release bundle to Fluency-Releases-lyrics (lyrics-all-artists-v20)."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T15:02:01+01:00",
-   "date": "2026-10-11 15:02 BST",
-   "agent": "Claude",
-   "summary": "INFLECT-2: Portuguese verb rows no longer read as \"he went (to move to a destination)\"",
-   "detail": [
-    "A Wiktionary definition in brackets after a conjugated verb is dropped when the row already differs from its siblings on the card: foi \"he/she went (to move to a destination)\" is now \"he/she went\" where nothing else on the card says the same.",
-    "Where the bracket is the only thing telling two rows apart it stays, without the infinitive \"to\": é \"he/she is (have the given quality)\", foi \"he/she went (move to a destination)\".",
-    "A bracket that completes the verb (\"pay (attention, respect etc.)\", \"waits (for a person)\") is untouched.",
-    "Measured on pt-speech-v24-headway-r3: 3,389 rows changed (2,227 brackets dropped, 1,162 rewritten), 0 gained, 0 lost, no new identical rows on any card; Spanish is unchanged."
    ],
    "commit": "pending"
   }

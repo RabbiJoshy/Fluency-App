@@ -7,7 +7,7 @@ const load = async name => {
 };
 const follow = await load('line-follow.js');
 const playback = await load('line-playback.js');
-const { activeLineIndex, lineProgress, tokenFills, playbackPositionMs, timingMatches } = follow;
+const { activeLineIndex, lineProgress, tokenFills, playbackPositionMs, timingMatches, adjacentLineStart, repeatEndMs, lineWindowMs } = follow;
 
 const line = (start, end, text = 'una noche mas') => ({ timestamp_ms: start, end_timestamp_ms: end, isSynced: true, text });
 const lines = [line(1000, 4000), line(4000, 8000), line(8000, 12000)];
@@ -67,6 +67,21 @@ assert.equal(timingMatches(189000, 189400), true);
 assert.equal(timingMatches(189000, 198000), false);
 assert.equal(timingMatches(undefined, 198000), null);
 assert.equal(timingMatches(189000, undefined), null);
+
+// Previous / next line, as a player does it.
+assert.equal(adjacentLineStart(lines, 5000, 1), 8000, 'next from inside line 2');
+assert.equal(adjacentLineStart(lines, 9000, 1), null, 'no line after the last');
+assert.equal(adjacentLineStart(lines, 0, 1), 1000, 'next before the first line is the first');
+assert.equal(adjacentLineStart(lines, 6500, -1), 4000, 'previous restarts a line that is well under way');
+assert.equal(adjacentLineStart(lines, 4400, -1), 1000, 'previous goes back a line just after it began');
+assert.equal(adjacentLineStart(lines, 1200, -1), 1000, 'previous on the first line restarts it');
+assert.equal(adjacentLineStart(lines, 0, -1), 1000);
+assert.equal(adjacentLineStart([], 0, 1), null);
+// Looping a line jumps back at the end of its window, not after a long gap.
+assert.equal(repeatEndMs(line(4000, 8000)), 8000);
+assert.equal(repeatEndMs(line(0, 60000, 'una noche mas')), lineWindowMs(line(0, 60000, 'una noche mas')));
+assert.ok(repeatEndMs(line(0, 60000, 'una noche mas')) <= 6000);
+assert.equal(repeatEndMs({ isSynced: false }), null);
 
 // Whether a song offers playback at all.
 const track = '1234567890123456789012';

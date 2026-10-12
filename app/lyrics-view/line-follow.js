@@ -42,18 +42,47 @@ export function activeLineIndex(lines, positionMs) {
   return found;
 }
 
-// How far through the line the singer is, 0..1. The window is the gap to the
-// next line, or, when that gap is long (an instrumental break), an estimate
-// from the line's length, never more than MAX_LINE_WINDOW_MS.
-export function lineProgress(line, positionMs) {
+// How long the line is sung for: the gap to the next line, or, when that gap
+// is long (an instrumental break), an estimate from the line's length, never
+// more than MAX_LINE_WINDOW_MS.
+export function lineWindowMs(line) {
   const start = line?.timestamp_ms;
-  if (!Number.isFinite(start) || !Number.isFinite(positionMs)) return 0;
+  if (!Number.isFinite(start)) return 0;
   const end = Number.isFinite(line.end_timestamp_ms) ? line.end_timestamp_ms : start + 4000;
   const gap = Math.max(1, end - start);
   const chars = String(line.text || '').length;
   const estimate = Math.min(MAX_LINE_WINDOW_MS, Math.max(1500, chars * 85));
-  const window = gap <= MAX_LINE_WINDOW_MS ? gap : estimate;
-  return Math.min(1, Math.max(0, (positionMs - start) / window));
+  return gap <= MAX_LINE_WINDOW_MS ? gap : estimate;
+}
+
+// How far through the line the singer is, 0..1.
+export function lineProgress(line, positionMs) {
+  const start = line?.timestamp_ms;
+  if (!Number.isFinite(start) || !Number.isFinite(positionMs)) return 0;
+  return Math.min(1, Math.max(0, (positionMs - start) / lineWindowMs(line)));
+}
+
+// Where to seek for the previous / next timed line. "Previous" restarts the
+// current line unless it has only just begun (under 1.5 s in), as a music
+// player does; null when there is nowhere to go.
+export function adjacentLineStart(lines, positionMs, direction) {
+  const timed = (lines || []).map((line, index) => ({ index, start: line?.isSynced ? line.timestamp_ms : null }))
+    .filter(l => Number.isFinite(l.start));
+  if (!timed.length) return null;
+  const current = activeLineIndex(lines, positionMs);
+  const at = timed.findIndex(l => l.index === current);
+  if (direction > 0) {
+    const next = at === -1 ? timed[0] : timed[at + 1];
+    return next ? next.start : null;
+  }
+  if (at === -1) return timed[0].start;
+  if (positionMs - timed[at].start > 1500 || at === 0) return timed[at].start;
+  return timed[at - 1].start;
+}
+
+// The moment a looped line should jump back to its start.
+export function repeatEndMs(line) {
+  return Number.isFinite(line?.timestamp_ms) ? line.timestamp_ms + lineWindowMs(line) : null;
 }
 
 // Per word, 0..1: how much of it has been sung, weighting by character count.
