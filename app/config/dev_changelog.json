@@ -50,6 +50,7 @@
    "detail": [
     "Icon is a white F with a smaller λ beside it on a deep indigo to violet gradient (Manrope). Placeholder until a real logo is chosen.",
     "Production is named Fluency; staging is Fluency β with Fβ, so the two installs are told apart.",
+    "The iPhone home-screen icon is the 512-pixel render, so it stays sharp when iOS scales it.",
     "Phones that already added the app keep the old icon and name until it is removed and re-added."
    ],
    "commit": "pending"

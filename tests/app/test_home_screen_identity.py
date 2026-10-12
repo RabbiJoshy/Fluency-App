@@ -41,7 +41,8 @@ class HomeScreenIdentityTests(unittest.TestCase):
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn('<meta name="apple-mobile-web-app-title" content="Fluency">', html)
         self.assertIn('<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">', html)
-        self.assertEqual(png_size(APP_ROOT / "icons/apple-touch-icon.png"), (180, 180))
+        # 512 rather than 180: iOS scales it down, and it stays sharp on larger icon grids.
+        self.assertEqual(png_size(APP_ROOT / "icons/apple-touch-icon.png"), (512, 512))
         self.assertNotIn("Flashcards</title>", html)
 
     def test_manifest_link_is_versioned_so_an_old_worker_cannot_serve_it_stale(self) -> None:
@@ -72,7 +73,7 @@ class HomeScreenIdentityTests(unittest.TestCase):
         self.assertIn("<title>Fluency β</title>", staged_html)
         for icon in manifest["icons"]:
             self.assertEqual(png_size(APP_ROOT / icon["src"]), tuple(map(int, icon["sizes"].split("x"))))
-        self.assertEqual(png_size(APP_ROOT / "icons/staging/apple-touch-icon.png"), (180, 180))
+        self.assertEqual(png_size(APP_ROOT / "icons/staging/apple-touch-icon.png"), (512, 512))
 
 
 if __name__ == "__main__":
