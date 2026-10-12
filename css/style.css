@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=c0491f46");
+@import url("./appearance.css?v=0c2193ac");
 
 
         * {
@@ -24520,7 +24520,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 /* SETWISE: continuous progress by status, with no labels inside the bar. */
 #step4 {
   --set-known: #06a557;
-  --set-review: #ffcc00;
+  --set-review: var(--study-practice-color);
   --set-new: #ffffff;
   --set-skipped: #64748b;
   --set-estimated: #9f7aea;
@@ -24749,3 +24749,71 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .smart-skip-language .flag-img { height: 15px; width: auto; }
 .smart-skip-head { height: auto; min-height: 30px; padding-top: 8px; padding-bottom: 8px; }
 @media (min-width: 900px) { .smart-skip-head { min-height: 38px; } }
+
+
+/* The selected level carries its word band and the size of the level ladder. */
+.lsw-segments.lsw-scrubber .lsw-seg.selected {
+  --accent-primary: var(--accent-blue);
+  width: 172px;
+  height: 94px;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent-blue) 35%, transparent),
+    0 4px 14px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(255, 255, 255, .15);
+}
+.lsw-seg-heading { display: flex; align-items: baseline; justify-content: center; gap: 7px; }
+.lsw-segments.lsw-scrubber .lsw-seg.selected .lsw-seg-eyebrow {
+  font-size: 17px;
+  margin-bottom: 0;
+}
+.lsw-seg-words, .lsw-seg-total { display: none; white-space: nowrap; }
+.lsw-segments.lsw-scrubber .lsw-seg.selected .lsw-seg-words {
+  display: block;
+  margin-top: 7px;
+  font: 650 14px/1.2 var(--font-reading);
+  color: var(--accent-primary);
+}
+.lsw-segments.lsw-scrubber .lsw-seg.selected .lsw-seg-total {
+  display: block;
+  margin-top: 5px;
+  font: 500 11px/1.2 var(--font-reading);
+  color: var(--text-secondary);
+}
+
+/* A single shared Practise colour for progress and the quick-practice action. */
+:root { --study-practice-color: #ffcc00; }
+#reviewDeckBody .study-set-review,
+#reviewDeckBody .study-set-review:not([disabled]):hover {
+  background: var(--study-practice-color);
+  border-color: var(--study-practice-color);
+  color: #242000;
+  box-shadow: none;
+}
+
+/* Desktop examples sit directly after Recommended; mobile keeps its subtitle. */
+@media (min-width: 768px) {
+    #setupOptions .fast-track-hub-btn { grid-template-columns: auto minmax(0, 1fr) auto; }
+    #setupOptions .fast-track-hub-copy .streamline-rec-badge { font-size: 14px; padding: 5px 9px; }
+    #setupOptions .fast-track-hub-state.is-slogan { display: none; }
+    #setupOptions .fast-track-hub-btn:has(.fast-track-hub-state.is-slogan) {
+      grid-template-rows: 34px;
+      min-height: 66px;
+    }
+    #setupOptions .fast-track-hub-examples {
+      text-align: left;
+      max-width: none;
+      text-overflow: clip;
+      display: block;
+    }
+}
+
+
+/* Session help uses the same five statuses and colours as level progress. */
+#step5Tooltip .info-point-badge { min-width: 64px; }
+#step5Tooltip .info-point-badge.is-new { background: rgba(148, 163, 184, .16); color: var(--text-primary); }
+#step5Tooltip .info-sheet-points strong.is-new { color: var(--text-primary); }
+#step5Tooltip .info-point-badge.is-practice { background: rgba(255, 204, 0, .16); color: var(--study-practice-color); }
+#step5Tooltip .info-sheet-points strong.is-practice { color: var(--study-practice-color); }
+#step5Tooltip .info-point-badge.is-done { background: rgba(6, 165, 87, .16); color: #06a557; }
+#step5Tooltip .info-sheet-points strong.is-done { color: #06a557; }
+#step5Tooltip .info-point-badge.is-estimated { background: rgba(159, 122, 234, .16); color: #9f7aea; }
+#step5Tooltip .info-sheet-points strong.is-estimated { color: #9f7aea; }
+#step5Tooltip .info-point-badge.is-skip { background: rgba(100, 116, 139, .16); color: var(--text-secondary); }
