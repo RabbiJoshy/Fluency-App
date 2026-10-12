@@ -14,7 +14,7 @@ class LyricsSmartSkipTests(unittest.TestCase):
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
 const nodes = new Map();
 const node = id => {
- if (!nodes.has(id)) nodes.set(id, {hidden:true,disabled:false,value:'',classList:{add(){},remove(){}}});
+ if (!nodes.has(id)) nodes.set(id, {hidden:true,disabled:false,value:'',setAttribute(k,v){this[k]=v;},classList:{add(){},remove(){}}});
  return nodes.get(id);
 };
 const ctx = {console, document:{readyState:'loading',addEventListener(){},getElementById:node},
@@ -59,8 +59,12 @@ assert(options.some(o=>o.id==='song:english'));
  assert.equal(loaded.opts.fastTrackCards.length,20);
  assert.equal(loaded.opts.sessionLimit,20);
  assert.equal(loaded.opts.isFastTrack,true);
+ vm.runInNewContext("updateSupplementaryStudyButton(collectExtras(),'song:all','')",ctx);
+ assert.equal(node('smartSkipStudySongsBtn').textContent,'Study 20 words');
  assert.equal(ctx.artistVocabularyScope,undefined); // study never switches the main deck
  vm.runInNewContext("_ssQuery='songword34';",ctx);
+ vm.runInNewContext("updateSupplementaryStudyButton(collectExtras(),'song:all','songword34')",ctx);
+ assert.equal(node('smartSkipStudySongsBtn').textContent,'Study 1 match');
  await vm.runInNewContext('studySupplementarySongWords()',ctx);
  assert.equal(loaded.opts.fastTrackCards.length,1);
  assert.equal(loaded.opts.fastTrackCards[0].id,'song34');

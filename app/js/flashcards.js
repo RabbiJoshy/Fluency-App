@@ -2,6 +2,7 @@
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
+import { songCreditHTML } from './song-credit.js?v=1';
 import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=2';
 import { installCardTouch } from './card-touch.js';
 import './speech.js?v=20260825ak';
@@ -8001,7 +8002,7 @@ function renderCardWikipediaBadge(card) {
                 songName = example.song_name || null;
                 vocalistCredit = Array.isArray(example.vocalists) && example.vocalists.length
                     ? example.vocalists.join(' & ')
-                    : null;
+                    : (example.artist_name || window._allArtistsConfig?.[example.artist]?.name || activeArtist?.name || null);
                 positionMs = example.timestamp_ms ?? 60000;
                 endPositionMs = example.end_timestamp_ms ?? null;
 
@@ -8009,14 +8010,6 @@ function renderCardWikipediaBadge(card) {
                 spotifyTrackId = getSpotifyTrackIdForExample(example);
                 if (spotifyTrackId) {
                     spotifyUrl = `https://open.spotify.com/track/${spotifyTrackId}`;
-                }
-
-                if (songName && example.artist) {
-                    const allConfigs = window._allArtistsConfig;
-                    const selectedSlugs = window._selectedArtistSlugs || [];
-                    if (selectedSlugs.length > 1 && allConfigs && allConfigs[example.artist]) {
-                        songName = allConfigs[example.artist].name + ' \u2014 ' + songName;
-                    }
                 }
             }
 
@@ -8174,7 +8167,7 @@ function renderCardWikipediaBadge(card) {
             // Spotify link at all.
             const autoplayBtn = spotifyTrackId ? '' : cardAutoplayButton;
             const creditStart = songName
-                ? `<span class="example-song-credit">— ${songName}${vocalistCredit ? `<span class="example-vocalist-credit"> · ${vocalistCredit}</span>` : ''}</span>`
+                ? songCreditHTML(songName, vocalistCredit)
                 : (exampleSourceLabel
                     ? `<span class="example-song-credit">${exampleSourceLabel}</span>`
                     : '');

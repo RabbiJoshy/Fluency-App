@@ -1,3 +1,4 @@
+import { songCreditHTML } from './song-credit.js?v=1';
 // The replica card: real demo entries and the markup that draws them.
 //
 // Two features show a flashcard without the app having loaded a deck, and they
@@ -623,13 +624,10 @@ function renderCredit(card, meaning, example, exampleIdx) {
                 data-track-id="${esc(example.trackId)}" data-position-ms="${example.positionMs}"
                 title="Play in Spotify" style="cursor:pointer; margin:0; position:relative; z-index:999;"
                 data-replica-spotify="1">${SPOTIFY_SVG}</button>`;
-        const vocalists = example.vocalists
-            ? `<span class="example-vocalist-credit"> · ${esc(example.vocalists)}</span>`
-            : '';
         return `
             <div class="example-credit-row is-lyric">
                 <span class="example-credit-start">
-                    <span class="example-song-credit">— ${esc(example.song)}${vocalists}</span>
+                    ${songCreditHTML(example.song, example.vocalists || card.artist || '')}
                 </span>
                 <span class="example-credit-end">${replicaExampleTicks(exampleIdx, meaning.examples.length)}${btn}</span>
             </div>`;

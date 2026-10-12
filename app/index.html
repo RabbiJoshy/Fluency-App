@@ -1216,6 +1216,9 @@
                             <button class="cognate-toggle-btn selected" data-cognate="include">Include</button>
                         </div>
                     </div>
+                    <details id="smartSkipSecondarySettings" class="smart-skip-secondary-settings" open>
+                        <summary>Other settings <span id="smartSkipSecondaryState">Combine forms · Advanced</span></summary>
+                        <div class="smart-skip-secondary-controls">
                     <div id="bridgeToggleContainer" class="smart-skip-shortcut" hidden>
                         <div class="smart-skip-shortcut-row">
                             <strong class="bridge-shortcut-title">Use words I’ve learned in other languages</strong>
@@ -1244,28 +1247,33 @@
                         </div>
                     </div>
                     <button type="button" id="smartSkipMoreOptions" class="smart-skip-more-options" aria-haspopup="dialog" hidden><span>Advanced options</span><span class="smart-skip-more-state" id="smartSkipMoreState"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
+                        </div>
+                    </details>
                 </div>
 
                 <section class="fast-mode-section smart-skip-words" data-section="decks">
-                    <label id="smartSkipSourcePicker" class="smart-skip-source-picker" hidden>
-                        <span>Browse</span>
-                        <select id="smartSkipSourceSelect">
-                            <option value="settings">Skipped by your settings</option>
-                            <option value="songs">Supplementary song vocabulary</option>
-                        </select>
-                    </label>
-                    <p id="smartSkipListExplanation" class="fast-mode-explainer"></p>
-                    <div class="smart-skip-browser-actions">
-                        <input type="search" id="smartSkipWordSearch" class="extras-search" placeholder="Search words or meanings" aria-label="Search Smart Skip words" autocomplete="off">
-                        <button type="button" id="smartSkipStudySongsBtn" class="range-btn-new" hidden>Study up to 20</button>
-                    </div>
-                    <div class="smart-skip-toolbar">
-                        <span class="smart-skip-label" id="skippedWordsLabel">Skipped words</span>
-                        <div class="smart-skip-select-wrap">
-                            <select id="skippedCategorySelect" aria-labelledby="skippedWordsLabel"></select>
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                    <div class="smart-skip-browser-controls">
+                        <label id="smartSkipSourcePicker" class="smart-skip-source-picker" hidden>
+                            <span>Browse</span>
+                            <select id="smartSkipSourceSelect">
+                                <option value="settings">Skipped by your settings</option>
+                                <option value="songs">Supplementary song vocabulary</option>
+                            </select>
+                        </label>
+                        <p id="smartSkipListExplanation" class="fast-mode-explainer"></p>
+                        <div class="smart-skip-toolbar">
+                            <span class="smart-skip-label" id="skippedWordsLabel">Skipped words</span>
+                            <div class="smart-skip-select-wrap">
+                                <select id="skippedCategorySelect" aria-labelledby="skippedWordsLabel"></select>
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                            </div>
+                            <input type="search" id="smartSkipWordSearch" class="extras-search" placeholder="Search words or meanings" aria-label="Search Smart Skip words" autocomplete="off">
+                            <select id="smartSkipCognateLangFilter" class="smart-skip-lang-btn" hidden aria-label="Filter look-alikes by language"></select>
                         </div>
-                        <button type="button" id="smartSkipCognateLangFilter" class="smart-skip-lang-btn" hidden aria-label="Filter look-alikes by language"></button>
+                        <div class="smart-skip-browser-actions">
+                            <span id="smartSkipResultsCount" class="smart-skip-results-count" role="status" aria-live="polite"></span>
+                            <button type="button" id="smartSkipStudySongsBtn" class="range-btn-new" hidden>Study 20 words</button>
+                        </div>
                     </div>
                     <div class="extras-deck-card" id="fastTrackDeckCard">
                         <div id="skippedWordsBody"></div>

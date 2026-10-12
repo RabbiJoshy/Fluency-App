@@ -706,7 +706,7 @@ function smartSkipMenu(extras) {
     }
     const skips = SKIP_KINDS
         .map(kind => ({ ...kind, count: skipEntriesFor(extras, kind.id).length }))
-        .filter(kind => kind.count > 0);
+        .filter(kind => kind.count > 0 || (kind.id === 'cognate' && (extras.cognates?.length || 0) > 0));
     const options = [];
     // "All" only earns its place when there is more than one thing to mix.
     if (skips.length > 1) {
@@ -728,7 +728,8 @@ function entryMatches(entry, needle) {
             .toLocaleLowerCase().includes(needle);
     }
     const item = entry.item || entry;
-    return `${item.word} ${firstTranslation(item)}`.toLocaleLowerCase().includes(needle);
+    const matchedWord = entry.category === 'cognate' ? cognateEnglish(item).word : '';
+    return `${item.word} ${firstTranslation(item)} ${matchedWord}`.toLocaleLowerCase().includes(needle);
 }
 
 function levelLabel(range, index) {
@@ -902,8 +903,8 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     if (intro) intro.hidden = !artist;
     const explanation = document.getElementById('smartSkipListExplanation');
     if (explanation) explanation.textContent = _ssSource === 'songs'
-        ? 'Loanwords, names, fillers and words needing classification from your selected songs. These sit outside the main deck; your Smart Skip switches do not hide them.'
-        : 'Words skipped or combined by your settings. Change the switches above to bring them back into the main deck.';
+        ? 'Supplementary words from your selected songs, available with any skip settings.'
+        : 'Words skipped or combined by your settings.';
     const listLabel = document.getElementById('skippedWordsLabel');
     if (listLabel) listLabel.textContent = _ssSource === 'songs' ? 'Song vocabulary' : 'Skipped words';
     const studyButton = document.getElementById('smartSkipStudySongsBtn');
@@ -928,13 +929,14 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     if (langBtn) {
         langBtn.hidden = !showLangBtn;
         if (showLangBtn) {
-            const label = _activeCognateFilterLang === 'all'
-                ? 'All languages'
-                : (g().knownLanguageLabel?.(_activeCognateFilterLang) || _activeCognateFilterLang);
-            langBtn.innerHTML = _activeCognateFilterLang === 'all'
-                ? '<span>All</span>' : smartSkipLanguageHTML(_activeCognateFilterLang);
-            langBtn.title = `Filtered by ${label} (click to switch)`;
-            langBtn.setAttribute('aria-label', `Filtered by ${label}`);
+            langBtn.innerHTML = `<option value="all">All languages</option>` + activeKnown.map(code => {
+                const flag = g().knownLanguageFlag?.(code) || '';
+                const shownFlag = /^[\u{1F1E6}-\u{1F1FF}]{2}$/u.test(flag) ? flag + ' ' : '';
+                const label = g().knownLanguageLabel?.(code) || code.toUpperCase();
+                return `<option value="${escapeHtml(code)}">${escapeHtml(shownFlag + code.toUpperCase() + ' · ' + label)}</option>`;
+            }).join('');
+            langBtn.value = _activeCognateFilterLang;
+            langBtn.title = 'Choose which known language to compare';
         }
     }
 
@@ -943,10 +945,11 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
         g().selectedLanguage, g().activeArtist?.slug, g().selectedSongIds, _ssSource, category, _activeCognateFilterLang, activeKnown.join(','), needle, extras.ready,
         options.map(option => option.label), (g().getActiveLevelRanges?.() || []).length,
     ]);
+    updateSupplementaryStudyButton(extras, category, needle);
     if (!force && signature === _ssSignature) return extras.cognates;
     _ssSignature = signature;
     _activeSkippedCategory = category;
-    if (studyButton) studyButton.disabled = !skipEntriesFor(extras, category).some(entry => entryMatches(entry, needle));
+    const resultsCount = document.getElementById('smartSkipResultsCount');
 
     if (select) {
         select.innerHTML = options.map(option =>
@@ -959,6 +962,7 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
 
     if (!options.length) {
         _ssItems = []; _ssRows = []; _ssLevels = [];
+        if (resultsCount) resultsCount.textContent = '';
         body.innerHTML = extras.ready
             ? (_ssSource === 'songs' ? '<p class="smart-skip-empty">No supplementary vocabulary in these songs.</p>' : '<p class="smart-skip-empty">No words skipped by your current settings.</p>')
             : '';
@@ -966,8 +970,15 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     }
 
     ({ items: _ssItems, rows: _ssRows, levels: _ssLevels } = buildSmartSkipItems(extras, category, combined, needle));
+    if (resultsCount) resultsCount.textContent = needle
+        ? `${_ssRows.length.toLocaleString()} ${_ssRows.length === 1 ? 'match' : 'matches'}`
+        : `${_ssRows.length.toLocaleString()} ${category === 'lemma' ? (_ssRows.length === 1 ? 'group' : 'groups') : (_ssRows.length === 1 ? 'word' : 'words')}${_ssRows.length ? ' · Tap a word to preview' : ''}`;
     if (!_ssItems.length) {
-        body.innerHTML = `<p class="smart-skip-empty">No matches for “${escapeHtml(_ssQuery.trim())}”.</p>`;
+        const emptyText = needle ? `No matches for “${_ssQuery.trim()}”.`
+            : category === 'cognate' && _activeCognateFilterLang !== 'all'
+                ? `No skipped look-alikes match ${g().knownLanguageLabel?.(_activeCognateFilterLang) || _activeCognateFilterLang.toUpperCase()}.`
+                : 'No words in this category.';
+        body.innerHTML = `<p class="smart-skip-empty">${escapeHtml(emptyText)}</p>`;
         return extras.cognates;
     }
     body.innerHTML = `<div class="smart-skip-table${category === 'all' || category === 'song:all' ? ' has-tag' : ''}" data-cat="${escapeHtml(category)}">${smartSkipHeadHtml(category)}<ul class="smart-skip-list" id="extrasRowsList"><li class="smart-skip-sentinel" aria-hidden="true"></li></ul></div>`;
@@ -1301,15 +1312,34 @@ function restoreSection(kind) {
     }, 0);
 }
 
+function supplementaryStudySelection(extras, category, needle) {
+    const entries = skipEntriesFor(extras, category).filter(entry => entryMatches(entry, needle));
+    const state = item => g().getWordProgressState?.(g().getWordId?.(item), item.word);
+    const unseen = entries.filter(({item}) => !state(item)?.seen);
+    const practice = entries.filter(({item}) => g().getWordKnowledgeReviewInfo?.(g().getWordId?.(item), item.word)?.needsReview);
+    return {
+        cards: (unseen.length ? unseen : practice.length ? practice : entries).slice(0, 20).map(({item}) => item),
+        priority: unseen.length ? 'new words' : practice.length ? 'practice words' : 'words to revisit'
+    };
+}
+
+function updateSupplementaryStudyButton(extras, category, needle) {
+    const button = document.getElementById('smartSkipStudySongsBtn');
+    if (!button || !category.startsWith('song:')) return;
+    const {cards, priority} = supplementaryStudySelection(extras, category, needle);
+    button.disabled = cards.length === 0;
+    const noun = needle ? (cards.length === 1 ? 'match' : 'matches') : (cards.length === 1 ? 'word' : 'words');
+    button.textContent = cards.length ? `Study ${cards.length} ${noun}` : needle ? 'No matches' : 'No words';
+    const scope = `${songCategoryLabel(category)}${needle ? ` matching “${_ssQuery.trim()}”` : ''}`;
+    button.title = `${cards.length} ${priority} from ${scope}`;
+    button.setAttribute('aria-label', button.title);
+}
+
 async function studySupplementarySongWords() {
     const button = document.getElementById('smartSkipStudySongsBtn');
     if (!g().activeArtist || !g().loadVocabularyData || button?.disabled) return;
     const needle = _ssQuery.trim().toLocaleLowerCase();
-    const entries = skipEntriesFor(collectExtras(), _activeSkippedCategory).filter(entry => entryMatches(entry, needle));
-    const state = item => g().getWordProgressState?.(g().getWordId?.(item), item.word);
-    const unseen = entries.filter(({item}) => !state(item)?.seen);
-    const practice = entries.filter(({item}) => g().getWordKnowledgeReviewInfo?.(g().getWordId?.(item), item.word)?.needsReview);
-    const cards = (unseen.length ? unseen : practice.length ? practice : entries).slice(0, 20).map(({item}) => item);
+    const { cards } = supplementaryStudySelection(collectExtras(), _activeSkippedCategory, needle);
     if (!cards.length) return;
     button.disabled = true;
     closeSmartSkipPreview();
@@ -1345,13 +1375,8 @@ function initExtras() {
         renderSkippedWords(_ssSource === 'songs' ? 'song:all' : 'cognate', {force: true});
     });
     document.getElementById('smartSkipStudySongsBtn')?.addEventListener('click', studySupplementarySongWords);
-    document.getElementById('smartSkipCognateLangFilter')?.addEventListener('click', () => {
-        const activeKnown = g().activeKnownLanguages?.() || [];
-        if (activeKnown.length <= 1) return;
-        const cycle = ['all', ...activeKnown];
-        const currentIndex = cycle.indexOf(_activeCognateFilterLang);
-        const nextIndex = (currentIndex + 1) % cycle.length;
-        _activeCognateFilterLang = cycle[nextIndex];
+    document.getElementById('smartSkipCognateLangFilter')?.addEventListener('change', event => {
+        _activeCognateFilterLang = event.currentTarget.value;
         closeSmartSkipPreview();
         renderSkippedWords('cognate', { force: true });
     });
