@@ -1259,7 +1259,7 @@ class FastModeSurfaceTests(unittest.TestCase):
         self.assertIn("if (cognateAvailable() && cognatesExcluded()", self.script)
 
     def test_master_switch_is_independent_and_details_explain_missing_mappings(self) -> None:
-        self.assertIn("saveFastTrack(selectedLanguage, { enabled: on, merge, skip })", self.script)
+        self.assertIn("saveFastTrack(selectedLanguage, { enabled: on, merge, skip, skipGrammar, skipSlang, skipEntities })", self.script)
         self.assertNotIn("if (!lemmaAvailable() && !cognateAvailable())", self.script)
         self.assertIn("updateMappingStatus()", self.script)
         self.assertIn('id="lemmaMappingStatus"', self.html)
@@ -1486,7 +1486,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         speech_btn_block = main[main.index("speechBtn.onclick ="):
                                 main.index("window.renderSetupExtrasSection?.();")]
         self.assertIn("sessionStorage.setItem('fluencyPendingSpeechLanguage', targetLang);", speech_btn_block)
-        self.assertIn("window.location.href = window.location.pathname;", speech_btn_block)
+        self.assertIn("goToRoute({ kind: 'language', language: routeCodeFor(targetLang, config.languages) }, { keepSearch: false });", speech_btn_block)
 
     def test_language_aware_streamline_examples_adapt_to_active_language(self) -> None:
         fast_mode = (APP_ROOT / "js" / "fast-mode.js").read_text(encoding="utf-8")

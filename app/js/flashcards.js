@@ -2205,6 +2205,16 @@ function initializeApp() {
         this.dataset.loading = 'true';
         this.disabled = true;
         hideDeckCompleteModal();
+        if (action === 'smart-skip') {
+            try {
+                await goBackToSetup();
+                window.openFastModePage?.({ section: 'decks' });
+            } finally {
+                this.dataset.loading = 'false';
+                this.disabled = false;
+            }
+            return;
+        }
         if (action === 'next-daily-review') {
             window.showAppLoading?.('Loading practice', 'Preparing your next practice cards…');
             try {
@@ -6462,8 +6472,8 @@ function renderCardWikipediaBadge(card) {
         // size; the wording, units and the total-vocabulary denominator are
         // context and stay muted.
         if (activeArtist && card.corpusCount) {
-            freqHtml = cardStatHTML('card-freq-label', 'Song Lines',
-                Number(card.corpusCount).toLocaleString());
+            freqHtml = `<button type="button" class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-unit="song_lines" data-frequency-pooled="${card.corpusCountIsPooled ? '1' : '0'}" aria-label="Song line frequency information">`
+                + `<span class="card-stat-label">Song Lines</span><span class="card-stat-line"><strong class="card-stat-value">${Number(card.corpusCount).toLocaleString()}</strong></span></button>`;
         } else if (!activeArtist && Number(card.sourceFrequency) > 0) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
             const source = escapeCardText(card.sourceFrequencySource || 'Published frequency list');
@@ -10327,6 +10337,12 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
             : '';
     tip.innerHTML = `${head}. ${basis}Counts how often the spelling appears in the source, `
         + `not this sense. Harvested example sentences are not counted.${rows}`;
+    if (button?.dataset.frequencyUnit === 'song_lines') {
+        const pooled = button.dataset.frequencyPooled === '1';
+        tip.innerHTML = `Lines in your selected songs containing ${pooled ? 'one of the combined forms on this card' : 'this word'}. `
+            + `${pooled ? 'Repeated copies of the same pooled example line count once. ' : ''}`
+            + 'This is a word-level count, rather than the count for the selected meaning. Changing your songs can change this figure.';
+    }
     tip.classList.toggle('freq-tooltip-wide', showList);
 
     const rect = button.getBoundingClientRect();

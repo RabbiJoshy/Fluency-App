@@ -69,7 +69,7 @@ function renderTutorialLanguageChoices() {
         button.className = 'tutorial-language-choice';
         if (key === inheritedLanguage) button.classList.add('is-current');
         button.innerHTML = `<span class="tutorial-language-flag" aria-hidden="true">${flags[key] || '🌐'}</span>` +
-            `<span><strong>${language}</strong><small>${profile?.lyrics && window.getCardTutorialMode?.() === 'lyrics' ? 'Lyrics tutorial' : 'Speech tutorial'}</small></span>` +
+            `<span><strong>${language}</strong><small>${profile?.lyrics && window.getCardTutorialMode?.() === 'lyrics' ? 'Music tutorial' : 'Speech tutorial'}</small></span>` +
             '<span class="tutorial-language-arrow" aria-hidden="true">→</span>';
         button.addEventListener('click', () => startCardTutorial(key));
         container.appendChild(button);
@@ -527,35 +527,11 @@ function bindArtistCatalogToRelease(catalog, requestedReleaseId = '') {
 // Slugs of artists currently selected for multi-artist merge
 let selectedArtistSlugs = [];
 const CUSTOM_ARTIST_SLUG = 'custom';
-const ARTIST_EXTRA_UNLOCK_KEY = 'fluency_artist_extra_unlocked_v1';
-const ARTIST_EXTRA_UNLOCK_PCT = 60;
-
-function readArtistExtraUnlocks() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(ARTIST_EXTRA_UNLOCK_KEY) || '[]');
-        return new Set(Array.isArray(saved) ? saved : []);
-    } catch (_) {
-        return new Set();
-    }
-}
-
-function isArtistExtraUnlocked(slug = window._urlArtistSlug) {
-    return !!slug && readArtistExtraUnlocks().has(slug);
-}
-
+// Compatibility for older callers: supplementary song vocabulary is always available.
+function isArtistExtraUnlocked() { return Boolean(activeArtist); }
 function updateArtistExtraUnlock(coveragePct) {
-    if (!activeArtist || artistVocabularyScope !== 'main') return;
-    const pct = Math.max(0, Number(coveragePct) || 0);
-    window._artistMainCoveragePct = pct;
-    const slug = window._urlArtistSlug;
-    if (slug && pct >= ARTIST_EXTRA_UNLOCK_PCT && !isArtistExtraUnlocked(slug)) {
-        const unlocks = readArtistExtraUnlocks();
-        unlocks.add(slug);
-        try { localStorage.setItem(ARTIST_EXTRA_UNLOCK_KEY, JSON.stringify(Array.from(unlocks))); } catch (_) {}
-    }
-    renderArtistSourceSummary();
+    window._artistMainCoveragePct = Math.max(0, Number(coveragePct) || 0);
 }
-
 window.isArtistExtraUnlocked = isArtistExtraUnlocked;
 window.updateArtistExtraUnlock = updateArtistExtraUnlock;
 
@@ -638,9 +614,8 @@ async function resolveArtist() {
             // Store the URL artist slug — this is the immutable primary artist
             window._urlArtistSlug = artistSlug;
             const requestedExtra = route.scope === 'extra';
-            artistVocabularyScope = requestedExtra && isArtistExtraUnlocked(artistSlug)
-                ? 'extra'
-                : 'main';
+            artistVocabularyScope = 'main';
+            window._openSupplementarySongWords = requestedExtra;
             if (requestedExtra && artistVocabularyScope === 'main') {
                 replaceRoute({ ...route, scope: 'main' });
             }
@@ -1008,7 +983,8 @@ loadConfig().then(async () => {
         if (!window.maybeShowKnownLanguagesIntro?.(activeArtist.language || 'spanish')) {
             if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
         }
-        if (promptForCustomSongs) window.showSongSetPicker?.();
+        if (window._openSupplementarySongWords) window.openSkippedWords?.('song:all');
+        else if (promptForCustomSongs) window.showSongSetPicker?.();
         perfMark('after artist init');
     } else {
         const pendingSpeechLanguage = sessionStorage.getItem('fluencyPendingSpeechLanguage');
@@ -1128,9 +1104,9 @@ function renderArtistSourceSummary() {
     };
     speechBtn.onclick = () => {
         const targetLang = activeArtist?.language || selectedLanguage || 'spanish';
-        window.showAppLoading?.('Switching to Speech', 'Preparing your language and progress…', true);
+        window.showAppLoading?.('Switching to Speech vocabulary', 'Preparing your language and progress…', true);
         sessionStorage.setItem('fluencyPendingSpeechLanguage', targetLang);
-        window.location.href = window.location.pathname;
+        goToRoute({ kind: 'language', language: routeCodeFor(targetLang, config.languages) }, { keepSearch: false });
     };
 
     window.renderSetupExtrasSection?.();
@@ -1164,7 +1140,10 @@ window.addEventListener('fluency-song-selection-changed', async () => {
 
 async function setArtistVocabularyScope(scope, { autoStart = false } = {}) {
     if (!activeArtist || !['main', 'extra'].includes(scope)) return;
-    if (scope === 'extra' && !isArtistExtraUnlocked()) return;
+    if (scope === 'extra') {
+        window.openSkippedWords?.('song:all');
+        return;
+    }
     const changed = artistVocabularyScope !== scope;
     artistVocabularyScope = scope;
     if (window._urlArtistSlug && window._urlArtistSlug !== CUSTOM_ARTIST_SLUG) {
@@ -1198,40 +1177,9 @@ async function setArtistVocabularyScope(scope, { autoStart = false } = {}) {
 
 window.setArtistVocabularyScope = setArtistVocabularyScope;
 
-// Extra explainer/confirm modal. Extra is supplementary and reorganises the
-// study interface, so entering it requires an explicit confirmation rather than
-// a one-tap toggle.
-function openExtraScopeModal() {
-    const modal = document.getElementById('extraScopeModal');
-    if (!modal) { setArtistVocabularyScope('extra'); return; }
-    const nameEl = document.getElementById('extraScopeArtistName');
-    if (nameEl) {
-        nameEl.textContent = activeArtist?.name
-            ? `${activeArtist.name} Extra`
-            : 'Extra';
-    }
-    modal.classList.remove('hidden');
-}
-
-function closeExtraScopeModal() {
-    document.getElementById('extraScopeModal')?.classList.add('hidden');
-}
-
-function wireExtraScopeModal() {
-    const modal = document.getElementById('extraScopeModal');
-    if (!modal) return;
-    document.getElementById('closeExtraScopeModal')?.addEventListener('click', closeExtraScopeModal);
-    document.getElementById('cancelExtraScopeBtn')?.addEventListener('click', closeExtraScopeModal);
-    document.getElementById('confirmExtraScopeBtn')?.addEventListener('click', () => {
-        closeExtraScopeModal();
-        setArtistVocabularyScope('extra');
-    });
-    // Dismiss when tapping the backdrop.
-    modal.addEventListener('click', event => {
-        if (event.target === modal) closeExtraScopeModal();
-    });
-}
-
+// Older links open the same Smart Skip browser, without a second mode or gate.
+function openExtraScopeModal() { window.openSkippedWords?.('song:all'); }
+function wireExtraScopeModal() {}
 window.openExtraScopeModal = openExtraScopeModal;
 
 // Shared radial "clock of pictures" picker used by artists and languages.
@@ -1821,9 +1769,9 @@ function openLearningSourcePicker() {
                         return;
                     }
                     if (activeArtist) {
-                        showAppLoading('Switching to speech vocabulary', 'Preparing your language and progress…', true);
+                        showAppLoading('Switching to Speech vocabulary', 'Preparing your language and progress…', true);
                         sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
-                        window.location.href = window.location.pathname;
+                        goToRoute({ kind: 'language', language: routeCodeFor(language, config.languages) }, { keepSearch: false });
                     } else {
                         document.getElementById('standardSourceSpeechBtn')?.click();
                     }
@@ -1939,7 +1887,7 @@ function showLanguagePicker(languages) {
                     if (key === (activeArtist.language || 'spanish')) return;
                     try { localStorage.setItem('fluencyPreferredLanguageV1', key); } catch (_) {}
                     showAppLoading('Switching language', 'Preparing your language and progress…', true);
-                    window.location.href = window.location.pathname;
+                    goToRoute({ kind: 'language', language: routeCodeFor(key, languages) }, { keepSearch: false });
                     return;
                 }
                 if (isPortuguese) {

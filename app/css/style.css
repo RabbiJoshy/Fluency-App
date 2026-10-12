@@ -24693,3 +24693,50 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 #cancelKnownLanguagesBtn { appearance: none; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 12px; background: transparent; color: var(--text-secondary); font: 600 14px/1.2 var(--font-reading); cursor: pointer; }
 .known-language-choice-btn:disabled.selected { background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-muted); box-shadow: none; }
 .known-language-choice-btn:disabled.selected .known-language-choice-check { background: var(--bg-secondary); border-color: var(--border-color); color: var(--text-muted); }
+
+/* Lyrics extends the shared Smart Skip browser, without a separate Extras page. */
+.smart-skip-source-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.smart-skip-source-picker[hidden], .smart-skip-browser-actions > [hidden] { display: none; }
+.smart-skip-source-picker select {
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font: inherit;
+}
+.smart-skip-browser-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+.smart-skip-browser-actions .extras-search { flex: 1 1 180px; min-width: 0; margin: 0; }
+.smart-skip-browser-actions .range-btn-new { flex: 0 0 auto; padding: 10px 14px; }
+
+.smart-skip-browser-actions .extras-search {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 9px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
+}
+.smart-skip-browser-actions .extras-search:focus-visible,
+.smart-skip-source-picker select:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}

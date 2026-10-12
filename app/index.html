@@ -459,7 +459,7 @@
 
             <div id="artistSourceStep" class="setup-step artist-source-step" style="display: none;">
                 <div class="step-header artist-source-header">
-                    <span class="step-title">Lyrics</span>
+                    <span class="step-title">Music</span>
                 </div>
                 <div class="artist-source-card" id="artistSourceCard">
                     <button type="button" id="artistSourceLanguageBtn" class="artist-source-picker artist-source-language-btn" aria-haspopup="dialog">
@@ -1191,6 +1191,7 @@
             <button class="modal-close fast-mode-close" id="closeFastModeModal" aria-label="Close">✕</button>
             <div class="fast-mode-page-body smart-skip-body">
                 <h2>Smart Skip</h2>
+                <p id="smartSkipLyricsIntro" class="fast-mode-explainer" hidden>Adjust your main song deck, or explore supplementary vocabulary below.</p>
 
                 <div class="fast-mode-controls smart-skip-shortcuts" id="fastModeFineTune">
                     <div id="cognateToggleContainer" class="smart-skip-shortcut" data-ss-kind="cognate" style="display: none;">
@@ -1248,6 +1249,18 @@
                 </div>
 
                 <section class="fast-mode-section smart-skip-words" data-section="decks">
+                    <label id="smartSkipSourcePicker" class="smart-skip-source-picker" hidden>
+                        <span>Browse</span>
+                        <select id="smartSkipSourceSelect">
+                            <option value="settings">Skipped by your settings</option>
+                            <option value="songs">Supplementary song vocabulary</option>
+                        </select>
+                    </label>
+                    <p id="smartSkipListExplanation" class="fast-mode-explainer"></p>
+                    <div class="smart-skip-browser-actions">
+                        <input type="search" id="smartSkipWordSearch" class="extras-search" placeholder="Search words or meanings" aria-label="Search Smart Skip words" autocomplete="off">
+                        <button type="button" id="smartSkipStudySongsBtn" class="range-btn-new" hidden>Study up to 20</button>
+                    </div>
                     <div class="smart-skip-toolbar">
                         <span class="smart-skip-label" id="skippedWordsLabel">Skipped words</span>
                         <div class="smart-skip-select-wrap">
@@ -1591,30 +1604,6 @@
                 </div>
                 <div id="findWordStatus" class="find-word-status"></div>
                 <div id="findWordResults" class="find-word-results"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Extra vocabulary explainer / confirm modal -->
-    <div id="extraScopeModal" class="modal hidden">
-        <div class="modal-content extra-scope-modal-content" style="max-width: 520px;">
-            <div class="modal-header">
-                <h3>Switch to Extra vocabulary?</h3>
-                <button class="modal-close" id="closeExtraScopeModal" aria-label="Close">✕</button>
-            </div>
-            <div class="extra-scope-body">
-                <p class="extra-scope-lead"><strong id="extraScopeArtistName">Extra</strong> is a second, supplementary set of vocabulary — separate from the Main deck you've been studying.</p>
-                <p>It collects the words that don't recur across the lyrics:</p>
-                <ul class="extra-scope-points">
-                    <li>Words that appear only once</li>
-                    <li>Loanwords and English code-switches</li>
-                    <li>Names, places, and slang</li>
-                </ul>
-                <p class="extra-scope-note">It's grouped by kind rather than by frequency, and it's best tackled once you've mostly finished Main. Your Main progress stays exactly where it is — you can switch back any time.</p>
-            </div>
-            <div class="extra-scope-actions">
-                <button type="button" class="extra-scope-cancel" id="cancelExtraScopeBtn">Stay on Main</button>
-                <button type="button" class="range-btn-new extra-scope-confirm" id="confirmExtraScopeBtn">Switch to Extra mode</button>
             </div>
         </div>
     </div>

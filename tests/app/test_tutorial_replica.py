@@ -165,7 +165,7 @@ assert(tutorialText(skip[2].text).startsWith('“falo”, “falou” and “fal
 assert(TUTORIAL_PAGES.smartSkip.html(tutorialAdapter()).includes('falou'));
 // Portuguese has no music catalogue, so the artist/playlist note is absent.
 assert.equal(stepNotes(tutorialSteps()[3]).length, 3);
-assert(TUTORIAL_PAGES.modes.html(tutorialAdapter()).includes('Your music'));
+assert(TUTORIAL_PAGES.modes.html(tutorialAdapter()).includes('Music'));
 state.stepIndex = 2;
 assert.deepEqual(tutorialStepPosition(0), {current: 1, total: 4});
 state.stepIndex = 0;

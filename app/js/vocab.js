@@ -321,6 +321,7 @@ function _writeStudySessionSnapshot() {
         levelSetCount: stats.levelSetCount || null,
         studyMode: stats.studyMode || 'new',
         levelSession: Boolean(stats.levelSession),
+        isFastTrack: Boolean(stats.isFastTrack),
         remainingSessionCards: stats.remainingSessionCards || 0,
         groupSize,
         useLemmaMode,
@@ -361,6 +362,17 @@ if (typeof window !== 'undefined') {
     window.addEventListener('pagehide', () => saveStudySessionSnapshot({ immediate: true }));
 }
 
+// Exact saved membership wins over current skip settings and main/extra scope.
+function resumeVocabularyEntries(vocabularyData, snapshot) {
+    const order = new Map();
+    (snapshot.order || []).forEach((id, index) => {
+        const baseId = id.split('::split::')[0];
+        if (!order.has(baseId)) order.set(baseId, index);
+    });
+    return vocabularyData.filter(item => order.has(getWordId(item)))
+        .sort((a, b) => order.get(getWordId(a)) - order.get(getWordId(b)));
+}
+
 async function resumeLastStudySession() {
     const snapshot = getLastStudySession();
     if (!snapshot) {
@@ -391,16 +403,6 @@ async function resumeLastStudySession() {
         return;
     }
 
-    const requestedExtra = snapshot.mode === 'lyrics' && snapshot.artistVocabularyScope === 'extra';
-    if (requestedExtra && !window.isArtistExtraUnlocked?.(snapshot.artistSlug)) {
-        clearStudySessionSnapshot();
-        artistVocabularyScope = 'main';
-        window.renderArtistSourceSummary?.();
-        window.hideAppLoading?.();
-        alert('Artist Extra unlocks after you understand 60% of this artist\'s main lyrics vocabulary.');
-        return;
-    }
-
     selectedLanguage = snapshot.language;
     window.applyLanguageColorTheme?.();
     selectedLevel = snapshot.selectedLevel;
@@ -408,7 +410,7 @@ async function resumeLastStudySession() {
     useLemmaMode = !!snapshot.useLemmaMode;
     excludeCognates = !!snapshot.excludeCognates;
     hideSingleOccurrence = snapshot.hideSingleOccurrence !== false;
-    artistVocabularyScope = requestedExtra ? 'extra' : 'main';
+    artistVocabularyScope = 'main';
     excludeProperNouns = snapshot.excludeProperNouns !== false;
     excludeNoise = snapshot.excludeNoise !== false;
     if (typeof snapshot.excludeSlang === 'boolean') excludeSlang = snapshot.excludeSlang;
@@ -2323,13 +2325,18 @@ function artistLemmaEvidenceCount(item) {
 const ARTIST_EXTRA_CATEGORIES = new Set(
     ['loanword', 'english', 'proper_noun', 'cognate', 'noise', 'unresolved']);
 const ARTIST_MIN_SENSE_FREQ = 0.05;
+function isArtistSupplementaryItem(item) {
+    return ARTIST_EXTRA_CATEGORIES.has(String(item?.extra_category || '').toLowerCase());
+}
+window.isArtistSupplementaryItem = isArtistSupplementaryItem;
+window.extraCategoryLabelFor = extraCategoryLabelFor;
+
 function artistItemMatchesScope(item) {
     if (!activeArtist) return true;
-    const cat = String(item?.extra_category || '').toLowerCase();
     // Backward-compatible fallback for old unstamped entries. New routing must
     // stamp uncertainty explicitly as `unresolved`; absence is not new proof
     // that a token is core Spanish.
-    const isExtra = ARTIST_EXTRA_CATEGORIES.has(cat);
+    const isExtra = isArtistSupplementaryItem(item);
     return artistVocabularyScope === 'extra' ? isExtra : !isExtra;
 }
 
@@ -2500,7 +2507,7 @@ function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Se
         // surface form inside a recurring lemma stays in Main and receives the
         // same fallback treatment, so it must also keep its stable slot.
         return hasTranslation || (!detached && activeArtist && (
-            artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
+            artistVocabularyScope === 'extra' || isArtistSupplementaryItem(item) || Number(item.corpus_count) <= 1
         ));
     });
     const hasCorpusFrequency = candidates.some(item => item.hasOwnProperty('corpus_count'));
@@ -2704,7 +2711,7 @@ function buildFilteredVocab(vocabData) {
             continue;
         }
         const allowsRawArtistCard = activeArtist && (
-            artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
+            artistVocabularyScope === 'extra' || isArtistSupplementaryItem(item) || Number(item.corpus_count) <= 1
         );
         // Skinny index columns ship with empty meanings until the study-set
         // row shard lands. Search hydrates one card; set setup must still
@@ -3086,14 +3093,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
             stats.totalAvailableReview = totalInRange;
             allInRange = filteredData.slice();
         } else if (resumeSnapshot?.order?.length) {
-            const orderIndex = new Map();
-            resumeSnapshot.order.forEach((id, index) => {
-                const baseId = id.split('::split::')[0];
-                if (!orderIndex.has(baseId)) orderIndex.set(baseId, index);
-            });
-            filteredData = filteredData
-                .filter(item => orderIndex.has(getWordId(item)))
-                .sort((a, b) => orderIndex.get(getWordId(a)) - orderIndex.get(getWordId(b)));
+            filteredData = resumeVocabularyEntries(vocabularyData, resumeSnapshot);
             totalInRange = resumeSnapshot.setSize || filteredData.length;
             allInRange = filteredData.slice();
         } else {
@@ -3235,7 +3235,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         filteredData = filteredData.filter(item => {
             if (window.playlistLiveActive?.()) return true;
             const allowsRawArtistCard = activeArtist && (
-                artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
+                artistVocabularyScope === 'extra' || isArtistSupplementaryItem(item) || Number(item.corpus_count) <= 1
             );
             if (item._indexRowsPending && !allowsRawArtistCard) return false;
             if (!allowsRawArtistCard) {
@@ -3311,8 +3311,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     !m.shared_fallback && parseFloat(m.frequency) >= ARTIST_MIN_SENSE_FREQ);
                 const supportedFallbacks = item.meanings.filter(m =>
                     m.shared_fallback && Array.isArray(m.examples) && m.examples.length > 0);
-                if (artistVocabularyScope === 'extra') {
-                    // Extra may have no artist-side assignment at all. Prefer
+                if (artistVocabularyScope === 'extra' || isArtistSupplementaryItem(item)) {
+                    // Supplementary song vocabulary may have no artist-side assignment at all. Prefer
                     // shared senses that carry Speech evidence, then retain a
                     // small dictionary menu even when only the lyric exists.
                     item.meanings = artistMeanings.length > 0
@@ -3337,7 +3337,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
             filteredData = filteredData.filter(item =>
                 item.meanings.length > 0
                 || (item.extra_raw_examples?.length && (
-                    artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
+                    artistVocabularyScope === 'extra' || isArtistSupplementaryItem(item) || Number(item.corpus_count) <= 1
                 )));
         }
 
@@ -3349,7 +3349,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         for (const [itemIndex, item] of filteredData.entries()) {
             // Build one card beyond the cap to recognise a boundary companion pair.
             // Large artist categories should not construct thousands of unused cards.
-            if (levelSession && !resumeSnapshot && flashcards.length >= (opts.sessionLimit || 20) + 1) {
+            if ((levelSession || opts.isFastTrack) && !resumeSnapshot && flashcards.length >= (opts.sessionLimit || 20) + 1) {
                 remainingUnbuiltItems = filteredData.length - itemIndex;
                 break;
             }
@@ -3596,8 +3596,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 id: item.id,
                 fullId: getWordId(item),
                 rank: item.rank,
-                vocabularyRank: item.displayRank,
-                vocabularySize: configurationVocabSize,
+                vocabularyRank: activeArtist && isArtistSupplementaryItem(item) ? item.rank : item.displayRank,
+                vocabularySize: activeArtist && isArtistSupplementaryItem(item) ? vocabularyData.length : configurationVocabSize,
                 sourceFrequency: displayedOwnFrequency ?? groupFrequencyTotal ?? representativeFrequency,
                 sourceFrequencyGroupTotal: groupFrequencyTotal,
                 sourceFrequencyIsGroupTotal: showsGroupTotal,
@@ -3622,8 +3622,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 // Lemma mode uses the same unique pooled example-line basis
                 // as the examples attached above. Raw token totals stay on
                 // item.lemma_total_count for diagnostics only.
-                corpusCount: artistVocabularyScope === 'extra'
-                    ? (item.lemma_example_count || item.corpus_count || null)
+                corpusCountIsPooled: Boolean(activeArtist && !isArtistSupplementaryItem(item) && useLemmaMode && item.pooled_frequency != null),
+                corpusCount: artistVocabularyScope === 'extra' || (activeArtist && isArtistSupplementaryItem(item))
+                    ? (item.corpus_count || null)
                     : (useLemmaMode
                         ? (item.pooled_frequency ?? item.lemma_example_count ?? null)
                         : (item.corpus_count || null)),
@@ -3701,7 +3702,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
             }
         }
 
-        if (levelSession && !resumeSnapshot) {
+        if ((levelSession || opts.isFastTrack) && !resumeSnapshot) {
             const batch = selectStudySessionCards(flashcards, opts.sessionLimit || 20);
             flashcards = batch.cards;
             remainingSessionCards = batch.remaining + remainingUnbuiltItems;
@@ -3755,9 +3756,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // Inclusive label for display, e.g. "475-499" for rangeString "475-500"
         // (rangeEnd is exclusive in the filter above).
         stats.rangeLabel = `${rangeStart}–${rangeEnd - 1}`;
+        stats.isFastTrack = Boolean(opts.isFastTrack || resumeSnapshot?.isFastTrack || resumeSnapshot?.artistVocabularyScope === 'extra');
         if (opts.setLabel) {
             stats.setLabel = opts.setLabel;
-            stats.isFastTrack = Boolean(opts.isFastTrack);
         } else if (opts.isDailyReview) {
             const tierNames = {
                 never_right: 'Never Mastered',

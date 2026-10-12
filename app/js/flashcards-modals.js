@@ -1492,7 +1492,7 @@ async function showEndOfDeckOptions() {
             stats.nextRange,
         );
     }
-    const nextLevel = !stats.nextRange ? window.getNextStudyLevelMeta?.() : null;
+    const nextLevel = !stats.isFastTrack && !stats.nextRange ? window.getNextStudyLevelMeta?.() : null;
     const isLevelCompletion = Boolean(
         stats.studyMode === 'new' && !stats.nextRange && stats.levelNumber);
     document.getElementById('deckCompleteEyebrow').textContent = isLevelCompletion ? 'Milestone' : 'Study session';
@@ -1640,7 +1640,13 @@ async function showEndOfDeckOptions() {
         // later set was completed previously. In that case advance directly
         // to the next actionable level instead of hiding the continuation.
         finishBtn.dataset.action = '';
-        if (stats.isDailyReview) {
+        if (stats.isFastTrack) {
+            finishLabel.textContent = 'Back to Smart Skip';
+            finishIcon.textContent = '←';
+            finishBtn.dataset.action = 'smart-skip';
+            finishBtn.classList.remove('has-next-set');
+            finishBtn.style.display = '';
+        } else if (stats.isDailyReview) {
             const remaining = Number(stats.remainingDueCount || 0);
             if (remaining > 0) {
                 const batchSize = Math.min(stats.dailyReviewLimit || 100, remaining);

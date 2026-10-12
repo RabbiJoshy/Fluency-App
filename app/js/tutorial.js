@@ -347,13 +347,13 @@ const TUTORIAL_PAGES = {
             {
                 side: 'left',
                 anchor: '.tutorial-page-source:nth-of-type(1)',
-                title: 'Everyday speech',
+                title: 'Speech',
                 text: 'Words are ranked by how often people actually say them, counted across thousands of films and TV series. It is the fastest route to the words you need for ordinary conversation, and the examples are lines of real dialogue.',
             },
             {
                 side: 'left',
                 anchor: '.tutorial-page-source:nth-of-type(2)',
-                title: 'Your music',
+                title: 'Music',
                 text: 'You choose the songs, and the words are ranked by how often they appear in those lyrics. Song lyrics use different vocabulary from speech, so the deck changes with your taste, and every example is a real line from one of your songs, with the artist and a button to play it in Spotify.',
             },
             {
@@ -418,8 +418,8 @@ function smartSkipPageHTML(adapter) {
 // copy cannot drift from the picker it shows. The fallback is for tests.
 function modesPageHTML(adapter) {
     const copy = window.learningModeCopy?.(tutorialLanguageKey()) || {
-        speech: { label: 'Everyday speech', description: 'From films and TV shows.' },
-        lyrics: { label: 'Your music', description: 'The words in the songs you choose.' },
+        speech: { label: 'Speech', description: 'From films and TV shows.' },
+        lyrics: { label: 'Music', description: 'The words in the songs you choose.' },
     };
     const current = state.mode === 'lyrics' ? 'lyrics' : 'speech';
     const source = id => `
@@ -524,8 +524,8 @@ function deckById(id) {
     const credit = shared.findIndex(note => note.anchor === '.example-song-credit');
     const back = [...shared.slice(0, credit + 1), ...lyrics.faces.back.notes, ...shared.slice(credit + 1)];
     return { ...lyrics, faces: {
-        front: { ...speech.faces.front, title: 'The front of a Lyrics card', notes: speech.faces.front.notes.map(forLyrics) },
-        back: { ...speech.faces.back, title: 'The back of a Lyrics card',
+        front: { ...speech.faces.front, title: 'The front of a Music card', notes: speech.faces.front.notes.map(forLyrics) },
+        back: { ...speech.faces.back, title: 'The back of a Music card',
             blurb: 'The meanings and examples come from the songs you chose.', notes: back },
     } };
 }
