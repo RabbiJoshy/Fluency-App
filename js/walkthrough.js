@@ -23,7 +23,7 @@
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
     measureReplicaCard, fitReplicaCard,
-} from './card-replica.js?v=e52e9ad6';
+} from './card-replica.js?v=c0491f46';
 
 // ---------------------------------------------------------------------------
 // Content
@@ -71,7 +71,7 @@ const LYRICS_LABELS = [
 function buildScreens(pair) {
     const lyrics = {
         id: 'lyrics',
-        title: 'Lyrics mode',
+        title: 'Music mode',
         lead: 'Pick an artist and the whole deck is built from the words they sing. '
             + 'Every example is a real lyric you can play.',
         cards: [{ key: 'cielo', face: 'back', labels: LYRICS_LABELS }],
@@ -285,7 +285,7 @@ function renderProgress() {
         const after = state.screens[state.index + 1];
         next.textContent = !after ? 'Back to About'
             : after.id === 'back' ? 'Turn it over →'
-            : after.id === 'lyrics' ? 'Lyrics mode →'
+            : after.id === 'lyrics' ? 'Music mode →'
             : 'Next →';
         next.classList.toggle('is-final', !after);
     }

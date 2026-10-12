@@ -1,8 +1,8 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=e52e9ad6';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=e52e9ad6';
-import { readFastTrack } from './fast-track-preferences.js?v=e52e9ad6';
+import './state.js?v=c0491f46';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=c0491f46';
+import { readFastTrack } from './fast-track-preferences.js?v=c0491f46';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -86,6 +86,7 @@ function applyGlobalStudyDefaults() {
     // reload silently undid them.
     excludeGrammarParticles = fastTrack.enabled && fastTrack.skipGrammar;
     excludeSlang = fastTrack.enabled && fastTrack.skipSlang;
+    excludeProperNouns = fastTrack.enabled && fastTrack.skipEntities;
     isFlipped = saved.directionFlipped === true;
     speechEnabled = saved.speechEnabled !== false;
     spacedRepetitionEnabled = saved.spacedRepetitionEnabled !== false;
@@ -113,6 +114,9 @@ function syncStudyPreferenceControls() {
         button.classList.toggle('selected', (button.dataset.grammar === 'exclude') === Boolean(excludeGrammarParticles)));
     document.querySelectorAll('.slang-toggle-btn').forEach(button =>
         button.classList.toggle('selected', (button.dataset.slang === 'exclude') === Boolean(excludeSlang)));
+
+    document.querySelectorAll('.entity-toggle-btn').forEach(button =>
+        button.classList.toggle('selected', (button.dataset.entity === 'exclude') === Boolean(excludeProperNouns)));
 
     const saved = readGlobalStudyDefaults();
     const fastTrack = readFastTrack(selectedLanguage);
@@ -504,9 +508,9 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     const mode = modeKey === 'live'
         ? `Live · ${window.playlistLiveDeck?.()?.playlistName || 'playlist'}`
         : modeKey === 'lyrics'
-            ? 'Your music'
+            ? 'Music'
             : modeKey === 'speech'
-                ? 'Everyday speech'
+                ? 'Speech'
                 : 'Choose…';
     const flag = languageConfig.flag || LEARNING_CONTEXT_FLAGS[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
 
@@ -2986,82 +2990,10 @@ function _escapeHtml(value) {
 }
 
 function renderSetupExtrasSection() {
+    // All excluded and supplementary vocabulary now lives in Smart Skip.
     const section = document.getElementById('extrasDeckSection');
-    const card = document.getElementById('extrasDeckCard');
-    if (!section || !card) return;
-
-    // Never show the extras/supplementary section while choosing between
-    // Speech and Lyrics, or before level selection has become active.
-    const step1 = document.getElementById('step1');
-    const isSpeechActive = Boolean(step1?.classList.contains('source-speech-active'));
-    const isArtistActive = Boolean(activeArtist);
-    const step2 = document.getElementById('step2');
-    const step2Visible = Boolean(step2 && step2.style.display !== 'none');
-    const step4 = document.getElementById('step4');
-    const step4Visible = Boolean(step4 && step4.style.display !== 'none');
-
-    if ((!isSpeechActive && !isArtistActive) || (!step2Visible && !step4Visible)) {
-        section.style.display = 'none';
-        return;
-    }
-
-    if (activeArtist) {
-        card.onclick = null;
-        card.style.cursor = 'default';
-        const artistName = activeArtist.name || 'Artist';
-        const extraUnlocked = window.isArtistExtraUnlocked?.();
-        const coveragePct = Number(window._artistMainCoveragePct || 0);
-        section.style.display = 'block';
-
-        if (extraUnlocked) {
-            const isCurrentlyInExtra = artistVocabularyScope === 'extra';
-            card.innerHTML = `
-                <div class="extras-deck-content">
-                    <div class="extras-deck-status">
-                        <span class="extras-deck-badge is-unlocked">Unlocked</span>
-                        <div class="extras-deck-info">
-                            <strong>Supplementary ${_escapeHtml(artistName)} vocabulary</strong>
-                            <p>One-off words, loanwords, slang, and names from these lyrics outside the main frequent deck.</p>
-                        </div>
-                    </div>
-                    <div class="extras-deck-actions">
-                        <button type="button" class="extras-deck-toggle-btn ${isCurrentlyInExtra ? 'is-active' : ''}" id="toggleArtistExtraBtn">
-                            ${isCurrentlyInExtra ? '← Back to Main levels' : `Study ${_escapeHtml(artistName)} Extras →`}
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.getElementById('toggleArtistExtraBtn')?.addEventListener('click', () => {
-                if (isCurrentlyInExtra) {
-                    window.setArtistVocabularyScope?.('main');
-                } else {
-                    window.setArtistVocabularyScope?.('extra');
-                }
-            });
-        } else {
-            const needed = Math.max(0, 60 - coveragePct).toFixed(1);
-            card.innerHTML = `
-                <div class="extras-deck-content is-locked">
-                    <div class="extras-deck-status">
-                        <span class="extras-deck-badge is-locked">🔒 Unlocks at 60%</span>
-                        <div class="extras-deck-info">
-                            <strong>Supplementary ${_escapeHtml(artistName)} vocabulary</strong>
-                            <p>Focuses on core song words first. Unlocks at 60% lyrics understood (${coveragePct.toFixed(1)}% now, ${needed}% to go).</p>
-                        </div>
-                    </div>
-                    <div class="extras-deck-progress-track">
-                        <div class="extras-deck-progress-fill" style="width: ${Math.min(100, (coveragePct / 60) * 100)}%"></div>
-                    </div>
-                </div>
-            `;
-        }
-    } else {
-        // Speech's skipped-word decks are no longer a second card on the setup
-        // screen; they render inside the Fast Track sheet. This slot stays for
-        // the artist branch alone.
-        section.style.display = 'none';
-        renderFastTrackSkippedDecks();
-    }
+    if (section) section.style.display = 'none';
+    renderFastTrackSkippedDecks();
 }
 
 // The Smart Skip page's word list. extras.js owns it; this only hands over the
@@ -3119,16 +3051,7 @@ function getNextStudyLevelMeta() {
         const completion = Number(button.dataset.progressPct || 0);
         return completion < 100 || currentIndex < 0;
     }) || null;
-    if (!next) {
-        if (activeArtist && artistVocabularyScope === 'main') {
-            return {
-                scope: 'extra',
-                levelNumber: 1,
-                label: `${activeArtist.name || 'Artist'} Extra`,
-            };
-        }
-        return null;
-    }
+    if (!next) return null;
     const nextIndex = buttons.indexOf(next);
     return {
         level: next.dataset.level,
@@ -3246,7 +3169,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=e52e9ad6')
+        import('./spotify.js?v=c0491f46')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -3716,10 +3639,14 @@ async function showTotalStatsModal() {
     const smartSkipOn = Boolean(window.isFastTrackOn?.());
     const options = {
         flag: langConfig?.flag || LEARNING_CONTEXT_FLAGS[language] || '',
+        identity: artist ? {
+            image: artist.pickerImage || artist.image || artist.defaultAlbumArt || '',
+            fallback: artist.customSongSource ? '♫' : learningContextInitials(artist.name)
+        } : null,
         contentNoun: mode === 'speech' ? 'everyday speech' : mode === 'live' ? 'your playlist' : 'lyrics',
         smartSkipOn,
         source: artist?.name || langConfig?.name || language,
-        mode: mode === 'speech' ? 'Everyday speech' : mode === 'live' ? 'Your playlist' : scope === 'extra' ? 'Extra vocabulary' : 'Your music',
+        mode: mode === 'speech' ? 'Speech' : mode === 'live' ? 'Your playlist' : 'Music',
         coverageLabel: mode === 'live' ? 'Estimated playlist coverage' : artist ? (scope === 'extra' ? 'Extra vocabulary explored' : 'Estimated lyrics coverage') : 'Estimated speech coverage',
         isCurrent: () => selectedLanguage === language && activeArtist === artist && artistVocabularyScope === scope && currentLearningMode() === mode && currentUser === user,
         loadVocabulary: async () => {
@@ -3857,13 +3784,13 @@ function renderActiveSetProgress() {
         }
         body.appendChild(sessionSection);
 
-        const modeIds = [{ id: fullId, label: activeArtist ? 'Lyrics card' : 'Speech card' }];
+        const modeIds = [{ id: fullId, label: activeArtist ? 'Music card' : 'Speech card' }];
         const crossModeId = getCrossModeId(fullId);
-        if (crossModeId) modeIds.push({ id: crossModeId, label: activeArtist ? 'Speech card' : 'Lyrics card' });
+        if (crossModeId) modeIds.push({ id: crossModeId, label: activeArtist ? 'Speech card' : 'Music card' });
         const savedRecords = getProgressRecordsForCard(fullId, w.word).map(({ id, progress }) => ({
             id,
             progress,
-            label: id[2] === '1' ? 'Lyrics card' : 'Speech card'
+            label: id[2] === '1' ? 'Music card' : 'Speech card'
         }));
         const savedSection = _studyProgressEl('section', 'active-set-history-section');
         savedSection.appendChild(_studyProgressEl('h4', '', 'Saved card progress'));
@@ -3947,29 +3874,37 @@ function get70pctWordCount() {
 }
 
 function getArtistHelpContent() {
-    const name = activeArtist.name || 'this artist';
+    const language = config.languages[activeArtist.language || selectedLanguage]?.name || 'your language';
+    const name = _escapeHtml(activeArtist.name || 'your selected songs');
     return `
         <p><strong>What is this?</strong></p>
-        <p><strong>Lyrics</strong> teaches you Spanish vocabulary from ${name}'s lyrics, starting with the most frequent words.</p>
+        <p><strong>Music</strong> teaches ${_escapeHtml(language)} vocabulary from ${name}'s selected songs, starting with the most frequent words.</p>
         <p><strong>Why frequency order?</strong></p>
-        <p>Language follows a power law: a small number of words make up the vast majority of speech. By learning the most frequent words first, you understand more lyrics faster.</p>
-        <p><strong>How are percentages calculated?</strong></p>
-        <p>The coverage percentage tells you what fraction of all words in the lyrics you'd recognize. ${get70pctWordCount()} The remaining 30% are rarer words that appear less often.</p>
+        <p>Learning common words first helps you understand more of your selected lyrics sooner. Changing your songs changes the vocabulary and its order.</p>
         <p><strong>How does it work?</strong></p>
-        <p>Choose a numbered level and Go starts up to 20 new cards. The level bar tracks progress separately from each session. Incorrect and partly learned cards collect in a separate review for that level. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions reduce the cards available without moving the level boundaries. Each card shows real lyric examples from the songs where the word appears. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
-        <p>The progress bar tracks your coverage based on the frequency of words you've learned — learning a common word contributes more to your coverage than a rare one.</p>
+        ${getSharedStudyHelpContent()}
+        <p>Each card uses real song lines, with song credits and Spotify playback where available. Song Lines counts lines containing the word; tap the figure for details.</p>
+        <p><strong>Smart Skip</strong> combines related forms and can skip familiar words. Its word browser also includes supplementary song vocabulary, such as loanwords, names and fillers. You can search, preview and study these words at any time.</p>
+        <p>Estimated lyrics coverage measures words you recognise in your selected songs, weighted by how often they occur. It does not measure comprehension of every song.</p>
     `;
+}
+
+function getSharedStudyHelpContent() {
+    return `<p>Choose a level, then Go starts a session of up to 20 new cards. The level bar shows New, Practice, Known, Estimated familiar and Skipped words. When no new cards remain, you can practise or study the level again.</p>
+        <p>Practice collects incorrect, partly learned and due cards across the language. Quick Practice starts a short session; open the practice summary for more choices. Spaced repetition in Study settings schedules future practice.</p>
+        <p>Smart Skip changes which cards you study while keeping the level boundaries stable. An unfinished session can be restored from the Welcome back prompt, with its card order and settings.</p>`;
 }
 
 function getNormalHelpContent() {
     return `
         <p><strong>What is this?</strong></p>
-        <p><strong>Speech</strong> teaches vocabulary from subtitle dialogue, ordered by how frequently each word occurs.</p>
+        <p><strong>Speech</strong> teaches vocabulary from film and TV dialogue, ordered by how frequently each word occurs.</p>
         <p><strong>Why frequency order?</strong></p>
-        <p>Language follows a power law: a small number of words make up the vast majority of everyday speech. In Spanish, the top 1,000 words cover roughly 81% of spoken language, and the top 3,000 cover around 91%. By learning frequent words first, you build practical comprehension faster.</p>
+        <p>A small number of common words make up a large share of everyday speech. Learning these first builds practical comprehension faster.</p>
         <p><strong>How does it work?</strong></p>
-        <p>Choose the language you’re learning, then choose whether to learn from Speech or Lyrics. Speech opens the frequency-ranked language release; Lyrics lets you select an artist, playlist, or your own mix before any large vocabulary file is loaded. The app selects a level's first small set containing unseen cards, while incorrect and partly learned cards collect in that level's separate review. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions reduce the cards available without moving the level boundaries. Examples retain source and translation evidence when the active release provides it. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
-        <p>The progress bar tracks your coverage based on the frequency of words you've learned — learning a common word contributes more to your coverage than a rare one.</p>
+        ${getSharedStudyHelpContent()}
+        <p>Choose Speech or Music in learning settings at any time. Music lets you choose artists and songs; Speech uses your language's frequency-ranked deck.</p>
+        <p>Estimated speech coverage measures words you recognise, weighted by frequency. Tap a card's Frequency figure for its source and any combined forms.</p>
     `;
 }
 

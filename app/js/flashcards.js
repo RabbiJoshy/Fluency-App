@@ -1,30 +1,30 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=e52e9ad6';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=e52e9ad6';
+import './state.js?v=c0491f46';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=c0491f46';
 import { installCardTouch } from './card-touch.js';
-import './speech.js?v=e52e9ad6';
-import { goToRoute, routeCodeFor } from './routes.js?v=e52e9ad6';
-import { memoryTipTileHTML } from './memory-tips.js?v=e52e9ad6';
-import './side-dock.js?v=e52e9ad6';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=e52e9ad6';
+import './speech.js?v=c0491f46';
+import { goToRoute, routeCodeFor } from './routes.js?v=c0491f46';
+import { memoryTipTileHTML } from './memory-tips.js?v=c0491f46';
+import './side-dock.js?v=c0491f46';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=c0491f46';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=e52e9ad6';
+} from './example-personalisation.js?v=c0491f46';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=e52e9ad6';
+} from './spanishdict-usage.js?v=c0491f46';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=e52e9ad6';
+} from './reverse-cues.js?v=c0491f46';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -57,7 +57,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=e52e9ad6';
+} from './card-metadata-pills.js?v=c0491f46';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2205,6 +2205,16 @@ function initializeApp() {
         this.dataset.loading = 'true';
         this.disabled = true;
         hideDeckCompleteModal();
+        if (action === 'smart-skip') {
+            try {
+                await goBackToSetup();
+                window.openFastModePage?.({ section: 'decks' });
+            } finally {
+                this.dataset.loading = 'false';
+                this.disabled = false;
+            }
+            return;
+        }
         if (action === 'next-daily-review') {
             window.showAppLoading?.('Loading practice', 'Preparing your next practice cards…');
             try {
@@ -6462,8 +6472,8 @@ function renderCardWikipediaBadge(card) {
         // size; the wording, units and the total-vocabulary denominator are
         // context and stay muted.
         if (activeArtist && card.corpusCount) {
-            freqHtml = cardStatHTML('card-freq-label', 'Song Lines',
-                Number(card.corpusCount).toLocaleString());
+            freqHtml = `<button type="button" class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-unit="song_lines" data-frequency-pooled="${card.corpusCountIsPooled ? '1' : '0'}" aria-label="Song line frequency information">`
+                + `<span class="card-stat-label">Song Lines</span><span class="card-stat-line"><strong class="card-stat-value">${Number(card.corpusCount).toLocaleString()}</strong></span></button>`;
         } else if (!activeArtist && Number(card.sourceFrequency) > 0) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
             const source = escapeCardText(card.sourceFrequencySource || 'Published frequency list');
@@ -9532,12 +9542,11 @@ function ensureSynLeaveConfirmModal() {
                     <span class="knowledge-overview-kicker">Leaving this app</span>
                     <h2 id="synLeaveConfirmTitle">No card for “<span class="syn-leave-word"></span>”</h2>
                 </div>
-                <button type="button" class="knowledge-overview-close" aria-label="Cancel" data-syn-leave="cancel">&times;</button>
+                <button type="button" class="knowledge-overview-close" aria-label="Close" data-syn-leave="cancel">&times;</button>
             </div>
             <p class="syn-leave-body">This word isn't in your deck, so there's no card to open.
                 Continuing leaves the app and opens <span class="syn-leave-destination">the dictionary</span> in a new tab.</p>
             <div class="syn-leave-actions">
-                <button type="button" class="auth-cancel-btn" data-syn-leave="cancel">Cancel</button>
                 <button type="button" class="auth-submit-btn" data-syn-leave="continue">Continue</button>
             </div>
         </div>`;
@@ -9552,7 +9561,7 @@ function ensureSynLeaveConfirmModal() {
             if (url) window.open(url, '_blank', 'noopener');
             return;
         }
-        // Cancel button, close button, or a tap on the backdrop itself.
+        // Close button or a tap on the backdrop itself.
         if (action === 'cancel' || event.target === modal) closeSynLeaveConfirm();
     });
     document.body.appendChild(modal);
@@ -10327,6 +10336,12 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
             : '';
     tip.innerHTML = `${head}. ${basis}Counts how often the spelling appears in the source, `
         + `not this sense. Harvested example sentences are not counted.${rows}`;
+    if (button?.dataset.frequencyUnit === 'song_lines') {
+        const pooled = button.dataset.frequencyPooled === '1';
+        tip.innerHTML = `Lines in your selected songs containing ${pooled ? 'one of the combined forms on this card' : 'this word'}. `
+            + `${pooled ? 'Repeated copies of the same pooled example line count once. ' : ''}`
+            + 'This is a word-level count, rather than the count for the selected meaning. Changing your songs can change this figure.';
+    }
     tip.classList.toggle('freq-tooltip-wide', showList);
 
     const rect = button.getBoundingClientRect();
@@ -10474,8 +10489,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'e52e9ad6';
-const MODALS_ASSET_VERSION = 'e52e9ad6';
+const ASSET_VERSION = 'c0491f46';
+const MODALS_ASSET_VERSION = 'c0491f46';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

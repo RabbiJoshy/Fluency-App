@@ -71,6 +71,12 @@
 .progress-title-row { display: flex; align-items: center; gap: 10px; }
 .progress-title-flag { display: inline-flex; align-items: center; line-height: 1; }
 .progress-title-flag .flag-img { height: 18px; width: auto; border-radius: 3px; }
+.progress-title-flag.is-artist {
+    flex: none; width: 36px; height: 36px; justify-content: center;
+    border-radius: 9px; background-color: var(--bg-tertiary);
+    background-size: cover; background-position: center;
+    color: var(--text-primary); font-size: 16px; font-weight: 700;
+}
 .progress-count-grid.has-skipped { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .progress-count-grid > div[hidden] { display: none; }
 .progress-count-grid i.is-skipped { background: var(--text-muted); }

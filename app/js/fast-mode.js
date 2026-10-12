@@ -16,11 +16,25 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=e52e9ad6';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=e52e9ad6';
+import './state.js?v=c0491f46';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=c0491f46';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
+let advancedRefreshTimer = null;
+function refreshAdvancedStudyChoices() {
+    clearTimeout(advancedRefreshTimer);
+    advancedRefreshTimer = setTimeout(async () => {
+        const setup = document.getElementById('setupPanel');
+        if (setup?.classList.contains('hidden')) return;
+        try {
+            await globalThis.renderLevelSelector?.(selectedLanguage);
+            await globalThis.updateExclusionBars?.();
+        } catch (error) {
+            console.warn('Could not refresh Smart Skip choices', error);
+        }
+    }, 0);
+}
 
 function lemmaAvailable() {
     return document.getElementById('lemmaToggleContainer')?.dataset.available === 'true';
@@ -69,15 +83,14 @@ function shortcutOn(kind) {
 // when the learner changes them by hand.
 function applyFastMode(on) {
     const previous = readFastTrack(selectedLanguage);
-    const isArtist = Boolean(globalThis.activeArtist);
     const hasChoices = previous.merge || previous.skip || previous.bridge || previous.skipGrammar || previous.skipSlang || previous.skipEntities;
     let merge = hasChoices ? previous.merge : lemmaAvailable();
     let skip = hasChoices ? previous.skip : cognateAvailable();
     let skipGrammar = hasChoices ? (previous.skipGrammar ?? false) : false;
-    let skipSlang = hasChoices ? (previous.skipSlang ?? true) : true;
-    let skipEntities = hasChoices ? (previous.skipEntities ?? true) : true;
+    let skipSlang = previous.skipSlang === true;
+    let skipEntities = previous.skipEntities === true;
 
-    if (on && !isArtist && !((merge && lemmaAvailable()) || (skip && cognateAvailable()) || (previous.bridge && window.bridgeSourceLanguages?.().length))) {
+    if (on && !((merge && lemmaAvailable()) || (skip && cognateAvailable()) || skipGrammar || skipSlang || skipEntities || (previous.bridge && window.bridgeSourceLanguages?.().length))) {
         if (lemmaAvailable()) merge = true;
         else if (cognateAvailable()) skip = true;
         else { showUnavailableMessage('all'); return; }
@@ -98,12 +111,9 @@ function applyFastMode(on) {
     globalThis.excludeSlang = on && skipSlang;
     globalThis.excludeProperNouns = on && skipEntities;
     applyingMasterSwitch = false;
+    refreshAdvancedStudyChoices();
 
-    if (!isArtist) {
-        saveFastTrack(selectedLanguage, { enabled: on, merge, skip });
-    } else {
-        saveFastTrack(selectedLanguage, { enabled: on, merge, skip, skipGrammar, skipSlang, skipEntities });
-    }
+    saveFastTrack(selectedLanguage, { enabled: on, merge, skip, skipGrammar, skipSlang, skipEntities });
 
     window.invalidatePreparedSetupVocabulary?.();
     // The clicks above each schedule their own refresh; this only restates what
@@ -590,6 +600,7 @@ function init() {
             const prev = readFastTrack(selectedLanguage);
             saveFastTrack(selectedLanguage, { ...prev, skipGrammar: exclude, enabled: prev.merge || prev.skip || prev.bridge || exclude || prev.skipSlang || prev.skipEntities });
             window.invalidatePreparedSetupVocabulary?.();
+            refreshAdvancedStudyChoices();
             refresh();
         });
     });
@@ -601,6 +612,7 @@ function init() {
             const prev = readFastTrack(selectedLanguage);
             saveFastTrack(selectedLanguage, { ...prev, skipSlang: exclude, enabled: prev.merge || prev.skip || prev.bridge || prev.skipGrammar || exclude || prev.skipEntities });
             window.invalidatePreparedSetupVocabulary?.();
+            refreshAdvancedStudyChoices();
             refresh();
         });
     });
@@ -612,6 +624,7 @@ function init() {
             const prev = readFastTrack(selectedLanguage);
             saveFastTrack(selectedLanguage, { ...prev, skipEntities: exclude, enabled: prev.merge || prev.skip || prev.bridge || prev.skipGrammar || prev.skipSlang || exclude });
             window.invalidatePreparedSetupVocabulary?.();
+            refreshAdvancedStudyChoices();
             refresh();
         });
     });

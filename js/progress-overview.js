@@ -88,7 +88,15 @@ export async function openProgressOverview(options) {
     const content = byId('progressOverviewContent');
     const refresh = byId('progressRefreshBtn');
     content.hidden = true;
-    setText('progressOverviewFlag', options.flag || '');
+    const identity = byId('progressOverviewFlag');
+    if (identity) {
+        identity.classList.toggle('is-artist', Boolean(options.identity));
+        identity.style.backgroundImage = options.identity?.image
+            ? `url(${JSON.stringify(options.identity.image)})` : '';
+        identity.textContent = options.identity
+            ? (options.identity.image ? '' : options.identity.fallback || '♫')
+            : options.flag || '';
+    }
     setText('progressOverviewStatus', 'Loading your progress…');
     refresh.hidden = true;
     refresh.disabled = true;

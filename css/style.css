@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=e52e9ad6");
+@import url("./appearance.css?v=c0491f46");
 
 
         * {
@@ -24679,17 +24679,73 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   #knownLanguagesModal .known-language-choice-check { width: 16px; height: 16px; }
 }
 /* A full language profile, with a deliberately smaller Smart Skip pair list. */
-.known-languages-add-form { margin-bottom: 14px; text-align: left; }
-.known-languages-add-form[hidden] { display: none; }
-.known-languages-add-form label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary); }
-.known-languages-add-form > div { display: flex; gap: 8px; }
-.known-languages-add-form input { flex: 1; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-tertiary); color: var(--text-primary); font: inherit; }
-.known-languages-add-form button, .known-languages-manage-all { min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-tertiary); color: var(--text-primary); font: 600 13px var(--font-reading); cursor: pointer; }
+.known-languages-manage-all { min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-tertiary); color: var(--text-primary); font: 600 13px var(--font-reading); cursor: pointer; }
 .known-languages-manage-all { margin-bottom: 12px; }
 .known-languages-manage-all[hidden] { display: none; }
 .known-language-btn:disabled, .known-language-choice-btn:disabled { opacity: .55; cursor: not-allowed; }
 .known-language-coming-soon, .known-language-btn small { display: block; margin-top: 3px; font-size: 11px; font-weight: 500; color: var(--text-muted); }
 .known-languages-empty { display: block; color: var(--text-muted); font-size: 13px; }
-#cancelKnownLanguagesBtn { appearance: none; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 12px; background: transparent; color: var(--text-secondary); font: 600 14px/1.2 var(--font-reading); cursor: pointer; }
 .known-language-choice-btn:disabled.selected { background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-muted); box-shadow: none; }
 .known-language-choice-btn:disabled.selected .known-language-choice-check { background: var(--bg-secondary); border-color: var(--border-color); color: var(--text-muted); }
+
+/* Lyrics extends the shared Smart Skip browser, without a separate Extras page. */
+.smart-skip-source-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.smart-skip-source-picker[hidden], .smart-skip-browser-actions > [hidden] { display: none; }
+.smart-skip-source-picker select {
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font: inherit;
+}
+.smart-skip-browser-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+.smart-skip-browser-actions .extras-search { flex: 1 1 180px; min-width: 0; margin: 0; }
+.smart-skip-browser-actions .range-btn-new { flex: 0 0 auto; padding: 10px 14px; }
+
+.smart-skip-browser-actions .extras-search {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 9px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
+}
+.smart-skip-browser-actions .extras-search:focus-visible,
+.smart-skip-source-picker select:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Modal dismissal belongs in the header; the single primary action is centred. */
+.known-languages-modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; text-align: left; }
+.known-languages-modal-header .modal-close { flex: none; position: static; }
+#continueKnownLanguagesBtn { justify-content: center; text-align: center; }
+.word-by-word-popup .smart-skip-preview-card { position: relative; }
+.word-by-word-popup-close { position: absolute; top: 10px; right: 10px; }
+.word-by-word-popup .smart-skip-preview-word { padding-right: 36px; }
+
+/* Language codes identify Smart Skip columns even when several languages match. */
+.smart-skip-languages { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
+.smart-skip-language { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.smart-skip-language .flag-img { height: 15px; width: auto; }
+.smart-skip-head { height: auto; min-height: 30px; padding-top: 8px; padding-bottom: 8px; }
+@media (min-width: 900px) { .smart-skip-head { min-height: 38px; } }

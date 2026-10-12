@@ -1,6 +1,6 @@
 // One language background per account, independent of any deck's skip policy.
-import { sendOrQueue } from './sync-queue.js?v=e52e9ad6';
-import { getIsolatedSyncUser } from './env.js?v=e52e9ad6';
+import { sendOrQueue } from './sync-queue.js?v=c0491f46';
+import { getIsolatedSyncUser } from './env.js?v=c0491f46';
 
 const PREFIX = 'fluency_language_profile_v1';
 const LEGACY = 'fluency_known_languages_v1';
@@ -69,22 +69,3 @@ function remote(rows, {full = false} = {}) {
 window.readLanguageProfile = read;
 window.saveLanguageProfile = save;
 window.applyRemoteLanguageProfile = remote;
-
-window.resolveProfileLanguage = text => {
-    const label = String(text || '').trim().slice(0,100);
-    if (!label) return null;
-    const names = new Intl.DisplayNames(['en'], {type: 'language'});
-    const lower = label.toLocaleLowerCase();
-    if (/^[a-z]{2,3}$/.test(lower)) {
-        const name = names.of(lower);
-        if (name && name !== lower) return {code: lower, label: name};
-    }
-    for (let a = 97; a <= 122; a++) for (let b = 97; b <= 122; b++) {
-        const code = String.fromCharCode(a,b);
-        const name = names.of(code);
-        if (name?.toLocaleLowerCase() === lower) return {code, label: name};
-    }
-    let hash = 2166136261;
-    for (const ch of lower.normalize('NFC')) {hash ^= ch.codePointAt(0); hash = Math.imul(hash,16777619);}
-    return {code: `x-${(hash >>> 0).toString(16)}`, label};
-};

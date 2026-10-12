@@ -1,9 +1,9 @@
 // Live playlist: look up lyrics on LRCLIB (six at a time), land each song in
 // the progress list, save tracks to Fluency, then build a study deck from
 // speech-inventory tokens plus unassigned song-line examples.
-import './state.js?v=e52e9ad6';
-import { combineSongCatalogs } from './song-sets-core.js?v=e52e9ad6';
-import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=e52e9ad6';
+import './state.js?v=c0491f46';
+import { combineSongCatalogs } from './song-sets-core.js?v=c0491f46';
+import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=c0491f46';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
 const LYRICS_DB_NAME = 'fluency-playlist-lyrics';
@@ -14,7 +14,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=e52e9ad6';
+const SPOTIFY_MODULE = './spotify.js?v=c0491f46';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
@@ -160,14 +160,11 @@ function setDismissLock(ms = DISMISS_LOCK_MS) {
     _ignoreBackdropUntil = Date.now() + ms;
     const modal = element('spotifyPlaylistModal');
     modal?.classList.add('is-dismiss-locked');
-    const cancel = element('cancelSpotifyPlaylistBtn');
     const close = element('closeSpotifyPlaylistModal');
-    if (cancel) cancel.disabled = true;
     if (close) close.disabled = true;
     window.clearTimeout(setDismissLock._timer);
     setDismissLock._timer = window.setTimeout(() => {
         modal?.classList.remove('is-dismiss-locked');
-        if (cancel) cancel.disabled = false;
         if (close) close.disabled = false;
     }, ms);
 }
@@ -752,7 +749,6 @@ function closeSpotifyPlaylistImport() {
     _importAbort?.abort();
     _importAbort = null;
     setImportBusy(false);
-    element('cancelSpotifyPlaylistBtn') && (element('cancelSpotifyPlaylistBtn').disabled = false);
     element('closeSpotifyPlaylistModal') && (element('closeSpotifyPlaylistModal').disabled = false);
     element('spotifyPlaylistModal')?.classList.add('hidden');
     _matchState = null;
@@ -833,7 +829,6 @@ function setupSpotifyPlaylistImport() {
     if (!modal || modal.dataset.listenersReady === '1') return;
     modal.dataset.listenersReady = '1';
     element('closeSpotifyPlaylistModal')?.addEventListener('click', closeSpotifyPlaylistImport);
-    element('cancelSpotifyPlaylistBtn')?.addEventListener('click', closeSpotifyPlaylistImport);
     element('reconnectSpotifyPlaylistBtn')?.addEventListener('click', reconnectSpotifyForPlaylist);
     element('useSpotifyMatchesBtn')?.addEventListener('click', confirmSpotifyMatches);
     element('useSpotifyLiveBtn')?.addEventListener('click', confirmSpotifyLiveDeck);

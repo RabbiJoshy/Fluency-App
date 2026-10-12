@@ -2,6 +2,60 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T21:39:36+01:00",
+   "date": "2026-10-12 21:39 BST",
+   "agent": "Codex",
+   "summary": "Artist photos in progress; flags and language codes in Smart Skip",
+   "detail": [
+    "Music progress uses the active artist picture, with initials or a music symbol when artwork is unavailable. Speech keeps its language flag.",
+    "Smart Skip column headings show flags beside ES, EN and other language codes. Multiple known languages show their own labels rather than a globe.",
+    "The cognate language filter uses All or a specific flag and code; unknown languages keep their code without a globe icon.",
+    "All 268 app tests passed; artist header and cognate columns checked in the browser."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-12T21:30:44+01:00",
+   "date": "2026-10-12 21:30 BST",
+   "agent": "Codex",
+   "summary": "Simpler language picker and consistent modal close buttons",
+   "detail": [
+    "Centre Save text and replace duplicate modal Cancel actions with the standard header X.",
+    "Remove Add another language; use only listed profile choices.",
+    "Label listed languages without study decks Coming soon while keeping them selectable as languages you know.",
+    "Preserve existing saved language profiles and Smart Skip’s relevant-pair filtering."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-12T21:22:57+01:00",
+   "date": "2026-10-12 21:22 BST",
+   "agent": "Codex",
+   "summary": "Lyrics vocabulary now shares Smart Skip with Speech; Artist Extras and the 60% gate are folded away",
+   "detail": [
+    "Browse supplementary song vocabulary by category inside Smart Skip, with shared search, lyric previews and sessions of up to 20 cards.",
+    "Remove the separate Extras panel and unlock requirement; older Extra links now open Smart Skip.",
+    "Use consistent optional skip defaults and restore saved supplementary cards by their original identities.",
+    "Explain Song Lines on tap, correct supplementary rank totals, update Music/Speech naming and shared study help.",
+    "Preserve the selected language when switching from Music to Speech.",
+    "Verified phone layout and supplementary card navigation; all 268 app tests pass."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-12T21:22:00+01:00",
+   "date": "2026-10-12 21:22 BST",
+   "agent": "Claude",
+   "summary": "New home-screen icon: white Fλ on an indigo-to-violet square; the app is called Fluency again (staging: Fβ, Fluency β)",
+   "detail": [
+    "Icon is a white F with a smaller λ beside it on a deep indigo to violet gradient (Manrope). Placeholder until a real logo is chosen.",
+    "Production is named Fluency; staging is Fluency β with Fβ, so the two installs are told apart.",
+    "The iPhone home-screen icon is the 512-pixel render, so it stays sharp when iOS scales it.",
+    "Phones that already added the app keep the old icon and name until it is removed and re-added."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T19:43:28+01:00",
    "date": "2026-10-12 19:43 BST",
    "agent": "Codex",
@@ -328,54 +382,6 @@
     "Non-merged cards choose a dictionary sentence containing the exact surface, including attached pronouns and accents. Other-form dictionary sentences stay out of the study and Less common uses sequences.",
     "Merged dictionary examples use an allowed group form; the header, sentence highlight and In this example cue agree.",
     "Recovered existing frozen dictionary alternatives for Spanish r4 and current Portuguese r3 without editing releases, senses, merging rules or saved progress. No production promotion."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T11:29:24+01:00",
-   "date": "2026-10-11 11:29 BST",
-   "agent": "Claude",
-   "summary": "Less common uses rows put meaning and context on one line when they fit",
-   "detail": [
-    "Rare uses sheet: meaning and context share a line when there is room; the context drops beneath as a whole when there isn't."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T11:04:22+01:00",
-   "date": "2026-10-11 11:04 BST",
-   "agent": "Claude",
-   "summary": "Focus meanings rows made uniform; Less common uses sheet is compact with example buttons",
-   "detail": [
-    "Focus meanings: every row is the same box — translation, then context; family headings sit inside each row; head reads 'Verb from decir'.",
-    "Rare uses sheet retitled 'Less common uses of <word>' (one line, no subtitle); rows are meaning + context with an examples icon button on the right."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T09:59:30+01:00",
-   "date": "2026-10-11 09:59 BST",
-   "agent": "Claude",
-   "summary": "Rare uses sheet redesigned; part-of-speech labels in sentence case; sense note is now Usage notes",
-   "detail": [
-    "Rare uses sheet: centred header 'Rare uses of <word>', no pill, clearer subtitle, POS headings in the sense-row style, centred rows in the card's fonts, no meta labels.",
-    "Part-of-speech labels use sentence case everywhere ('Verb from estar', 'Noun').",
-    "Sense-row information sheet heading renamed from 'About this meaning' to 'Usage notes'."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T09:40:38+01:00",
-   "date": "2026-10-11 09:40 BST",
-   "agent": "Claude",
-   "summary": "Card back: clearer sense rows, distinct POS colours, Focus meanings and practice cards, paired companion segments",
-   "detail": [
-    "Sense row reads 'verb from estar' with POS and lemma at the same size; the lemma chip at the top of the back is removed (reflexive shows as 'from irse').",
-    "Every shipped part of speech has its own colour; Portuguese name/article/abbreviation no longer fall to grey.",
-    "Example source line is upright and muted; the example pips (dot strip) are 20% larger.",
-    "'Review meaning(s)' is now 'Focus meanings' with a target icon.",
-    "Cards with meanings marked for practice show 'Practising N of M meanings' on the front; those rows open and carry a target dot on the back.",
-    "Companion (A/B) cards are joined as one bracketed pair in the deck scrubber."
    ],
    "commit": "pending"
   }
