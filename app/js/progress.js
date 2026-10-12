@@ -1,10 +1,10 @@
-import './state.js?v=479c3553';
+import './state.js?v=827537fb';
 import {
     crossModeProgressId,
     matchingProgressRecords,
     mergeProgressRecords,
     normalizeProgressSurface
-} from './progress-identity.js?v=479c3553';
+} from './progress-identity.js?v=827537fb';
 
 const SRS_DAY_MS = 24 * 60 * 60 * 1000;
 const SRS_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60, 120, 240, 365];
@@ -295,6 +295,7 @@ async function updateExclusionBars() {
     // deck is built), so publish the array Extras needs rather than making it
     // re-fetch and re-filter what was just computed here.
     globalThis.setupVocabularySnapshot = vocabularyData;
+    globalThis.forgetSmartSkipExtras?.();
     globalThis.refreshExtrasButton?.();
     globalThis.refreshFastMode?.();
 
@@ -482,6 +483,31 @@ function getGlobalDueReviewWords(language = '') {
     return dueWords;
 }
 
+// Future review times for words that do not need practice yet, one per
+// surface, so Practise can say when its next words come back. Empty while the
+// schedule is paused: then only mistakes return.
+function getUpcomingReviewTimes(language = '') {
+    if (typeof spacedRepetitionEnabled !== 'undefined' && spacedRepetitionEnabled === false) return [];
+    const data = typeof progressData !== 'undefined' ? progressData : (window.progressData || {});
+    if (!data) return [];
+    const targetLang = String(language || window.selectedLanguage || '').trim().toLowerCase();
+    const due = new Set(getGlobalDueReviewWords(targetLang).map(word => word.word.toLowerCase()));
+    const bySurface = new Map();
+    const now = Date.now();
+    for (const record of Object.values(data)) {
+        if (!record || !record.word) continue;
+        const recLang = String(record.language || '').trim().toLowerCase();
+        if (targetLang && recLang && recLang !== targetLang) continue;
+        const surface = record.word.toLowerCase();
+        if (due.has(surface)) continue;
+        const state = getProgressState(record, now);
+        if (state.needsReview || !(state.nextReviewAt > now)) continue;
+        const previous = bySurface.get(surface);
+        if (!previous || state.nextReviewAt < previous) bySurface.set(surface, state.nextReviewAt);
+    }
+    return Array.from(bySurface.values());
+}
+
 function getGlobalDueReviewSummary(language = '') {
     const targetLang = String(language || window.selectedLanguage || '').trim().toLowerCase();
     const currentEpoch = window.__progressEpoch || 0;
@@ -519,5 +545,6 @@ window.getMergedWordProgress = getMergedWordProgress;
 window.getWordProgressState = getWordProgressState;
 window.getGlobalDueReviewWords = getGlobalDueReviewWords;
 window.getGlobalDueReviewSummary = getGlobalDueReviewSummary;
+window.getUpcomingReviewTimes = getUpcomingReviewTimes;
 window.updateExclusionBars = updateExclusionBars;
 window.updatePersonalCoverage = updatePersonalCoverage;

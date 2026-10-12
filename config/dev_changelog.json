@@ -2,6 +2,70 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T23:50:05+01:00",
+   "date": "2026-10-12 23:50 BST",
+   "agent": "Claude",
+   "summary": "Czech level coverage is now right for every level, and opening a deck does less repeated work",
+   "detail": [
+    "Level coverage read each card's share under its dictionary form (ten) instead of the word actually spoken (to). Czech level 1 showed 32.0% of speech; it is 43.9%. Level 31 showed 0.9%; it is 0.3%.",
+    "Czech coverage now covers all 10,000 deck words (rebuilt from the same OpenSubtitles 2018 counts for release v22), so levels 31 to 100 show a figure.",
+    "Smart Skip works out its categories once per burst of work instead of about a dozen times when a deck opens: setup work on opening Czech ~800 ms to ~460 ms.",
+    "The hidden loading spinner no longer animates behind the app."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-12T23:35:32+01:00",
+   "date": "2026-10-12 23:35 BST",
+   "agent": "Claude",
+   "summary": "Sessions are now chosen by time, and Go explains what to do when a level has little or nothing new left",
+   "detail": [
+    "Go and Practise share one session length: 5 min, 10 min or No limit. Tap the clock chip to change it; it is remembered on this device.",
+    "Time becomes cards at a fixed assumed pace (about 15 s per new card, 10 s per practice card): 5 min = 20 new or 30 practice cards.",
+    "When more of a level waits in Practise than is new (at least 10), Go asks: practise these, or learn the new ones. It asks once per level until the app reloads.",
+    "When a level has no new words left, Go shows either 'No new words left' (practise, next level, or redo) or 'You've mastered all the words' (next level, or redo).",
+    "Practice Errors is now Practise. It says how many words are waiting and when the next ones come back, e.g. 'Nothing to practise. 12 words come back tomorrow, 30 more this week.'",
+    "The level badge shows the word range only; the level total appears while you scrub the bar, and the deck size is in the Choose a Level help.",
+    "End of session: 'Keep going · 5 min' replaces 'Another 20'; finishing a level says how many words are waiting in Practise."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-12T23:20:29+01:00",
+   "date": "2026-10-12 23:20 BST",
+   "agent": "Claude",
+   "summary": "Go starts a session almost at once: its words and example sentences download while you're on the home screen",
+   "detail": [
+    "The home screen now starts the session's downloads (word rows and example sentences, ~1.5 MB for a Czech level) as soon as it shows Go.",
+    "Before, Go waited for them: about 2.5 s on production for Czech level 1. Timed locally after the change: 0.2 s, with nothing left to download.",
+    "Uses the same prefetch the end-of-session screen already used for the next session; repeat renders do not download twice."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-12T23:17:26+01:00",
+   "date": "2026-10-12 23:17 BST",
+   "agent": "Claude",
+   "summary": "Opening a deck freezes the screen for less time: Smart Skip stops re-reading your language settings for every word",
+   "detail": [
+    "Smart Skip asked which languages you read once per word (~140,000 times when a deck opened), re-reading and re-parsing two saved settings each time.",
+    "The answer is now worked out once per pass and dropped the moment either setting changes.",
+    "Czech, timed locally: Smart Skip refresh 817 ms to 214 ms; Smart Skip button 239 ms to 101 ms; skipped-word list 74 ms to 24 ms."
+   ],
+   "commit": "pending"
+  },
+  {
+   "timestamp": "2026-10-12T23:10:20+01:00",
+   "date": "2026-10-12 23:10 BST",
+   "agent": "Claude",
+   "summary": "Czech coverage figures now show on Staging, and Staging no longer floods the browser with requests",
+   "detail": [
+    "Staging answers missing files with a real 404. Before, Cloudflare returned the app page with relative preload links, which recursed without end (~500 requests a minute per open tab).",
+    "Commit the Czech coverage file (coverage/cs/coverage.json) to the app, byte-identical to the one production already serves, so Staging builds it too."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T22:25:43+01:00",
    "date": "2026-10-12 22:25 BST",
    "agent": "Codex",
@@ -319,72 +383,6 @@
     "White set labels remain readable across segment boundaries, including selected and hovered sets; minimum contrast is 5.4:1.",
     "The SETWISE roadmap discussion will compare fewer progress boxes and a visible 25/50-card session choice; the four-box layout remains for now.",
     "Spanish r5 release checks repaired: regenerate the level-estimation pool, recompute Smart Skip verdicts, and validate the existing checked noun-merge evidence against the r5 source senses."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T13:19:38+01:00",
-   "date": "2026-10-11 13:19 BST",
-   "agent": "Codex",
-   "summary": "TOUCHPOINT: more reliable phone swipes without moving controls",
-   "detail": [
-    "Both grading directions use the same 50px threshold and existing indicators.",
-    "Vertical scrolling cannot turn into a grade or cycle content inside a scrollport.",
-    "Deliberate drags may start over buttons; taps keep their existing actions.",
-    "Cancelled and multiple-touch gestures reset without activating buttons on release; grading transitions reject duplicate grades.",
-    "Touch taps use the existing click path once; the first-swipe hint only dismisses after touch grading.",
-    "Layout, button positions, card identities and saved progress are unchanged. Physical-phone feel remains unverified."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T13:00:00+01:00",
-   "date": "2026-10-11 13:00 BST",
-   "agent": "Claude",
-   "summary": "Verb rows show one reading: the statement, or the command when the word is almost always one or the example on screen is one",
-   "detail": [
-    "No more 'look! / he/she looks' double rows: each row shows one reading.",
-    "The command shows when two-thirds of the card's own sentences use it: mira 'look!', olhe 'look!', esqueça 'don't forget!' (Não se esqueça), juguemos 'let's play!'. 14 es and 29 pt rows.",
-    "Otherwise the statement, switching to the command only while the example on screen is a command for that row's verb: espera 'he/she waits', and 'wait!' on '¡Espera aquí!'.",
-    "A command uses one verb: pare 'stop!' (not 'stop; cease!'), vejamos 'let's see!'.",
-    "The person still never follows the example: era is 'I/he/she was' on every example."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:42:00+01:00",
-   "date": "2026-10-11 12:42 BST",
-   "agent": "Claude",
-   "summary": "Verb rows no longer change with the example on screen; a command shows when the card's own sentences use one",
-   "detail": [
-    "The person on a verb row describes the word, not the sentence being shown: era is 'I/he/she was' on every example (was 'I was' or 'he was' depending on the example), habla is 'he/she speaks'.",
-    "A form that is both a statement and a command shows the command when at least one in five of the card's sentences use it, first when most do: mira 'look! / he/she looks' (19 of 26 sentences), deja 'he/she leaves / leave!', no te preocupes → preocupes 'don't worry! / you worry'. quiere, sabe, parece stay 'he/she …'.",
-    "Decided once per card from all its sentences, so the row is stable while browsing. 324 es and 366 pt rows gain a command (v24 decks); no row lost its English."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:12:26+01:00",
-   "date": "2026-10-11 12:12 BST",
-   "agent": "Codex",
-   "summary": "SEAM: keep recovered Speech dictionary examples scoped to Speech",
-   "detail": [
-    "Artist and live-lyrics cards cannot inherit Speech dictionary alternatives or Speech form-group lists.",
-    "Current Spanish/Portuguese Speech examples still match the studied form. Staging only; no production promotion."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:11:40+01:00",
-   "date": "2026-10-11 12:11 BST",
-   "agent": "Claude",
-   "summary": "Mark a meaning: known/total badge, reviewed meanings first and known ones faded; collapsible uses lists; calmer example word",
-   "detail": [
-    "Less common uses: part-of-speech sections start collapsed when there are several; examples open by default when they all fit.",
-    "Expressions page uses the same layout and collapsible sections as Less common uses.",
-    "'Focus meanings' is now 'Mark a meaning', showing known/total meaning rows (? until any are marked) instead of a target icon.",
-    "Cards with meanings brought back: those meanings sit at the top in colour; known meanings fade to the bottom. Amber target styling removed; front shows 'N meanings to review'.",
-    "Example sentence word: no pulse or boxed glow during audio and no tinted box; underline plus a soft permanent glow."
    ],
    "commit": "pending"
   }

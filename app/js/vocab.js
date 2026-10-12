@@ -1,12 +1,12 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=479c3553';
-import { readJsonWithTimeout } from './read-request.js?v=479c3553';
-import { validateVocabularyIndex } from './data-contracts.js?v=479c3553';
-import { formatRoute } from './routes.js?v=479c3553';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=479c3553';
-import { releaseUrl } from './release-host.js?v=479c3553';
+import './state.js?v=827537fb';
+import { readJsonWithTimeout } from './read-request.js?v=827537fb';
+import { validateVocabularyIndex } from './data-contracts.js?v=827537fb';
+import { formatRoute } from './routes.js?v=827537fb';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=827537fb';
+import { releaseUrl } from './release-host.js?v=827537fb';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -2525,6 +2525,7 @@ function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Se
 // pass. The smallest stable rank is the highest-frequency available surface,
 // with source rank as a deterministic final tie-breaker.
 function selectLemmaModeRepresentatives(items) {
+    globalThis.forgetSmartSkipExtras?.();
     const representativeByLemma = new Map();
     for (const item of items) {
         item._lemmaModeRepresentative = false;
@@ -2661,6 +2662,7 @@ globalThis.isGrammarParticleItem = isGrammarParticleItem;
 globalThis.isSlangItem = isSlangItem;
 
 function buildFilteredVocab(vocabData) {
+    globalThis.forgetSmartSkipExtras?.();
     // Deck construction attaches examples and prunes senses in place. Restore
     // the joined master template only after a deck actually mutated it.
     // Setup calls this function several times; cloning every sense tree on

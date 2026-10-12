@@ -1,6 +1,6 @@
 // Read-only transfer of verified source meaning knowledge. No target progress is written.
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=479c3553';
-import { mergeProgressRecords } from './progress-identity.js?v=479c3553';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=827537fb';
+import { mergeProgressRecords } from './progress-identity.js?v=827537fb';
 
 let bundle = null;
 let revision = 0;
@@ -116,6 +116,7 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
     return result;
 }
 function refresh() {
+    window.forgetSmartSkipExtras?.();
     const container = document.getElementById('bridgeToggleContainer');
     if (container) container.hidden = !bundle || window.bridgeSourceLanguages().length === 0;
     const toggle = document.getElementById('bridgeToggle');
