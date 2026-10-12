@@ -24742,3 +24742,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .word-by-word-popup .smart-skip-preview-card { position: relative; }
 .word-by-word-popup-close { position: absolute; top: 10px; right: 10px; }
 .word-by-word-popup .smart-skip-preview-word { padding-right: 36px; }
+
+/* Language codes identify Smart Skip columns even when several languages match. */
+.smart-skip-languages { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
+.smart-skip-language { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.smart-skip-language .flag-img { height: 15px; width: auto; }
+.smart-skip-head { height: auto; min-height: 30px; padding-top: 8px; padding-bottom: 8px; }
+@media (min-width: 900px) { .smart-skip-head { min-height: 38px; } }

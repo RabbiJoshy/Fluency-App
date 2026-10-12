@@ -780,23 +780,26 @@ function smartSkipRankHtml(row) {
 
 // Column headers. The flags say which language each column is in; Rank and the
 // category tag are desktop-only, so a phone keeps just the words.
+function smartSkipLanguageHTML(code, flag = g().knownLanguageFlag?.(code)) {
+    // Unknown languages keep their code; a globe does not identify a language.
+    const countryFlag = /^[\u{1F1E6}-\u{1F1FF}]{2}$/u.test(flag || '') ? flag : '';
+    return `<span class="smart-skip-language">${countryFlag ? `<span>${escapeHtml(countryFlag)}</span>` : ''}<span>${escapeHtml(String(code || '').toUpperCase())}</span></span>`;
+}
+
+function smartSkipKnownLanguageCodes() {
+    const active = g().activeKnownLanguages?.() || [];
+    return _activeCognateFilterLang !== 'all' ? [_activeCognateFilterLang] : active;
+}
+
 function smartSkipHeadHtml(category) {
-    const flag = g().config?.languages?.[g().selectedLanguage]?.flag || 'Word';
+    const language = g().config?.languages?.[g().selectedLanguage] || {};
+    const targetCode = language.routeCode || language.speechLang?.split('-')[0] || g().selectedLanguage?.slice(0, 2);
     const lemma = category === 'lemma';
-    let knownFlag = '🇬🇧';
-    if (category === 'cognate') {
-        const activeKnown = g().activeKnownLanguages?.() || [];
-        if (_activeCognateFilterLang !== 'all') {
-            knownFlag = g().knownLanguageFlag?.(_activeCognateFilterLang) || '🌐';
-        } else if (activeKnown.length === 1) {
-            knownFlag = g().knownLanguageFlag?.(activeKnown[0]) || '🌐';
-        } else {
-            knownFlag = '🌐';
-        }
-    }
+    const codes = category === 'cognate' ? smartSkipKnownLanguageCodes() : ['en'];
+    const known = codes.length ? codes.map(code => smartSkipLanguageHTML(code)).join('') : 'Known language';
     return `<div class="smart-skip-head" aria-hidden="true">
-        <span>${escapeHtml(flag)}</span>
-        <span>${escapeHtml(knownFlag)}</span>
+        <span class="smart-skip-languages">${smartSkipLanguageHTML(targetCode, language.flag)}</span>
+        <span class="smart-skip-languages">${known}</span>
         ${lemma ? '<span class="ss-h-forms">Combined forms</span><span class="ss-h-nforms">Forms</span>' : '<span class="ss-h-tag">Type</span>'}
         <span class="ss-h-rank">Rank</span>
     </div>`;
@@ -925,13 +928,11 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     if (langBtn) {
         langBtn.hidden = !showLangBtn;
         if (showLangBtn) {
-            const flag = _activeCognateFilterLang === 'all'
-                ? '🌐'
-                : (g().knownLanguageFlag?.(_activeCognateFilterLang) || _activeCognateFilterLang.toUpperCase());
             const label = _activeCognateFilterLang === 'all'
                 ? 'All languages'
                 : (g().knownLanguageLabel?.(_activeCognateFilterLang) || _activeCognateFilterLang);
-            langBtn.innerHTML = `<span aria-hidden="true">${flag}</span>`;
+            langBtn.innerHTML = _activeCognateFilterLang === 'all'
+                ? '<span>All</span>' : smartSkipLanguageHTML(_activeCognateFilterLang);
             langBtn.title = `Filtered by ${label} (click to switch)`;
             langBtn.setAttribute('aria-label', `Filtered by ${label}`);
         }

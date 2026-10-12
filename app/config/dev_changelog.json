@@ -2,6 +2,19 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T21:39:36+01:00",
+   "date": "2026-10-12 21:39 BST",
+   "agent": "Codex",
+   "summary": "Artist photos in progress; flags and language codes in Smart Skip",
+   "detail": [
+    "Music progress uses the active artist picture, with initials or a music symbol when artwork is unavailable. Speech keeps its language flag.",
+    "Smart Skip column headings show flags beside ES, EN and other language codes. Multiple known languages show their own labels rather than a globe.",
+    "The cognate language filter uses All or a specific flag and code; unknown languages keep their code without a globe icon.",
+    "All 268 app tests passed; artist header and cognate columns checked in the browser."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T21:30:44+01:00",
    "date": "2026-10-12 21:30 BST",
    "agent": "Codex",
@@ -368,16 +381,6 @@
     "Non-merged cards choose a dictionary sentence containing the exact surface, including attached pronouns and accents. Other-form dictionary sentences stay out of the study and Less common uses sequences.",
     "Merged dictionary examples use an allowed group form; the header, sentence highlight and In this example cue agree.",
     "Recovered existing frozen dictionary alternatives for Spanish r4 and current Portuguese r3 without editing releases, senses, merging rules or saved progress. No production promotion."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T11:29:24+01:00",
-   "date": "2026-10-11 11:29 BST",
-   "agent": "Claude",
-   "summary": "Less common uses rows put meaning and context on one line when they fit",
-   "detail": [
-    "Rare uses sheet: meaning and context share a line when there is room; the context drops beneath as a whole when there isn't."
    ],
    "commit": "pending"
   }

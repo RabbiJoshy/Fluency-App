@@ -3639,6 +3639,10 @@ async function showTotalStatsModal() {
     const smartSkipOn = Boolean(window.isFastTrackOn?.());
     const options = {
         flag: langConfig?.flag || LEARNING_CONTEXT_FLAGS[language] || '',
+        identity: artist ? {
+            image: artist.pickerImage || artist.image || artist.defaultAlbumArt || '',
+            fallback: artist.customSongSource ? '♫' : learningContextInitials(artist.name)
+        } : null,
         contentNoun: mode === 'speech' ? 'everyday speech' : mode === 'live' ? 'your playlist' : 'lyrics',
         smartSkipOn,
         source: artist?.name || langConfig?.name || language,
