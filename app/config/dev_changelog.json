@@ -2,6 +2,18 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T23:58:00+01:00",
+   "date": "2026-10-12 23:58 BST",
+   "agent": "Claude",
+   "summary": "Go starts a session almost at once: its words and example sentences download while you're on the home screen",
+   "detail": [
+    "The home screen now starts the session's downloads (word rows and example sentences, ~1.5 MB for a Czech level) as soon as it shows Go.",
+    "Before, Go waited for them: about 2.5 s on production for Czech level 1. Timed locally after the change: 0.2 s, with nothing left to download.",
+    "Uses the same prefetch the end-of-session screen already used for the next session; repeat renders do not download twice."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T23:41:00+01:00",
    "date": "2026-10-12 23:41 BST",
    "agent": "Claude",
@@ -371,18 +383,6 @@
     "Otherwise the statement, switching to the command only while the example on screen is a command for that row's verb: espera 'he/she waits', and 'wait!' on '¡Espera aquí!'.",
     "A command uses one verb: pare 'stop!' (not 'stop; cease!'), vejamos 'let's see!'.",
     "The person still never follows the example: era is 'I/he/she was' on every example."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:42:00+01:00",
-   "date": "2026-10-11 12:42 BST",
-   "agent": "Claude",
-   "summary": "Verb rows no longer change with the example on screen; a command shows when the card's own sentences use one",
-   "detail": [
-    "The person on a verb row describes the word, not the sentence being shown: era is 'I/he/she was' on every example (was 'I was' or 'he was' depending on the example), habla is 'he/she speaks'.",
-    "A form that is both a statement and a command shows the command when at least one in five of the card's sentences use it, first when most do: mira 'look! / he/she looks' (19 of 26 sentences), deja 'he/she leaves / leave!', no te preocupes → preocupes 'don't worry! / you worry'. quiere, sabe, parece stay 'he/she …'.",
-    "Decided once per card from all its sentences, so the row is stable while browsing. 324 es and 366 pt rows gain a command (v24 decks); no row lost its English."
    ],
    "commit": "pending"
   }

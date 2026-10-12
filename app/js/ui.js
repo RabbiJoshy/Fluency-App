@@ -2908,6 +2908,13 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     window.__studySessionContext = context;
     const nextCount = Math.min(STUDY_SESSION_LIMIT,
         levelNewCount || levelReviewCount || levelCardCount);
+    // Start this session's downloads (word rows, example sentences) while the
+    // learner reads the home screen, so Go finds them here instead of waiting
+    // ~2.5 s. Repeat renders reuse the loaded or in-flight shards.
+    if (nextCount > 0) {
+        const baseConfig = config.languages[selectedLanguage] || {};
+        window.prefetchStudySetPayload?.(activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig, context.range);
+    }
     const action = nextCount === 0 ? 'No cards available' : context.studyMode === 'new' ? `Go · ${nextCount} cards`
         : context.studyMode === 'review' ? `Practise · ${nextCount} cards` : `Study again · ${nextCount} cards`;
     const description = `${levelNewCount} new, ${levelReviewCount} practice, ${levelKnownCount} known, ${levelEstimatedCount} estimated familiar, ${levelSkippedCount} skipped`;
