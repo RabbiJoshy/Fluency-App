@@ -2,6 +2,17 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T23:10:20+01:00",
+   "date": "2026-10-12 23:10 BST",
+   "agent": "Claude",
+   "summary": "Czech coverage figures now show on Staging, and Staging no longer floods the browser with requests",
+   "detail": [
+    "Staging answers missing files with a real 404. Before, Cloudflare returned the app page with relative preload links, which recursed without end (~500 requests a minute per open tab).",
+    "Commit the Czech coverage file (coverage/cs/coverage.json) to the app, byte-identical to the one production already serves, so Staging builds it too."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T22:25:43+01:00",
    "date": "2026-10-12 22:25 BST",
    "agent": "Codex",
@@ -371,20 +382,6 @@
    "detail": [
     "Artist and live-lyrics cards cannot inherit Speech dictionary alternatives or Speech form-group lists.",
     "Current Spanish/Portuguese Speech examples still match the studied form. Staging only; no production promotion."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:11:40+01:00",
-   "date": "2026-10-11 12:11 BST",
-   "agent": "Claude",
-   "summary": "Mark a meaning: known/total badge, reviewed meanings first and known ones faded; collapsible uses lists; calmer example word",
-   "detail": [
-    "Less common uses: part-of-speech sections start collapsed when there are several; examples open by default when they all fit.",
-    "Expressions page uses the same layout and collapsible sections as Less common uses.",
-    "'Focus meanings' is now 'Mark a meaning', showing known/total meaning rows (? until any are marked) instead of a target icon.",
-    "Cards with meanings brought back: those meanings sit at the top in colour; known meanings fade to the bottom. Amber target styling removed; front shows 'N meanings to review'.",
-    "Example sentence word: no pulse or boxed glow during audio and no tinted box; underline plus a soft permanent glow."
    ],
    "commit": "pending"
   }
