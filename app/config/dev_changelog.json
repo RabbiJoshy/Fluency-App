@@ -2,6 +2,21 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-12T23:56:52+01:00",
+   "date": "2026-10-12 23:56 BST",
+   "agent": "Claude",
+   "summary": "Song translation: catalogue songs now play from any line, the line being sung fills green, and the song list is just song and artist",
+   "detail": [
+    "All 30 catalogue songs carry their Spotify track and LRCLIB line timing, baked offline (scripts/bake_probe_timings.py): 30 of 30 have a track, 29 of 30 have timing. Soso - Remix has no matching timed lyrics, so it stays plain with no play buttons.",
+    "While Spotify plays, the current line is highlighted and its words turn green as they are reached; finished lines dim. Word timing is estimated from each word's length within its line, because LRCLIB times lines, not words.",
+    "The view scrolls to the line being sung and stops following for four seconds when you scroll yourself. If Spotify is playing a different cut of the song (length differs by over 3 s) the highlight turns off and says so.",
+    "Songs with no Spotify track or no timing show no play buttons and no explanatory banner.",
+    "Song list shows only song and artist: the number, the line count, the ONLINE badge and the 'Curated Catalog' header are gone.",
+    "Yonaguni's human translations are matched to the timed lines by text (28 exact, more by near-match), so they no longer drift when the lines change."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-12T23:50:05+01:00",
    "date": "2026-10-12 23:50 BST",
    "agent": "Claude",
@@ -370,19 +385,6 @@
     "Where the bracket is the only thing telling two rows apart it stays, without the infinitive \"to\": é \"he/she is (have the given quality)\", foi \"he/she went (move to a destination)\".",
     "A bracket that completes the verb (\"pay (attention, respect etc.)\", \"waits (for a person)\") is untouched.",
     "Measured on pt-speech-v24-headway-r3: 3,389 rows changed (2,227 brackets dropped, 1,162 rewritten), 0 gained, 0 lost, no new identical rows on any card; Spanish is unchanged."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T14:25:11+01:00",
-   "date": "2026-10-11 14:25 BST",
-   "agent": "Codex",
-   "summary": "Set progress boxes use white labels and darker, calmer colours",
-   "detail": [
-    "Known, practice, new and skipped progress segments use deeper green, muted amber, dark slate and grey.",
-    "White set labels remain readable across segment boundaries, including selected and hovered sets; minimum contrast is 5.4:1.",
-    "The SETWISE roadmap discussion will compare fewer progress boxes and a visible 25/50-card session choice; the four-box layout remains for now.",
-    "Spanish r5 release checks repaired: regenerate the level-estimation pool, recompute Smart Skip verdicts, and validate the existing checked noun-merge evidence against the r5 source senses."
    ],
    "commit": "pending"
   }

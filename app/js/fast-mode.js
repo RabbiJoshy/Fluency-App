@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=827537fb';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=827537fb';
+import './state.js?v=e72ac9e7';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=e72ac9e7';
 
 // Measure the available desktop space and remove whole words until it fits.
 // ResizeObserver also refits after a window resize or the mobile row reappears.

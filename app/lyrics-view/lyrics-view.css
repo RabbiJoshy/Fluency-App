@@ -949,9 +949,8 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: linear-gradient(135deg, rgba(29, 185, 84, 0.12) 0%, rgba(18, 24, 32, 0.8) 100%);
-  border-bottom: 1px solid rgba(29, 185, 84, 0.25);
-  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 18px;
 }
 
 .spotify-banner-left {
@@ -1118,24 +1117,7 @@ main {
 }
 
 /* ───────────────────────── CATALOG SECTION HEADER ───────────────────────── */
-.catalog-section-header {
-  padding: 12px 18px 6px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--font-reading);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-dim);
-}
 
-.catalog-count {
-  font-family: var(--font-data);
-  font-size: 10px;
-  color: var(--text-muted);
-}
 
 /* ───────────────────────── SONG PICKER SHEET (FLUENCY STYLE) ───────────────────────── */
 .song-picker-search-wrap {
@@ -1230,19 +1212,6 @@ main {
   gap: 10px;
 }
 
-.song-picker-online-badge {
-  font-family: var(--font-data);
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--accent-blue);
-  background: rgba(74, 158, 255, 0.1);
-  border: 1px solid rgba(74, 158, 255, 0.25);
-  padding: 1px 6px;
-  border-radius: var(--radius-full);
-  margin-left: 6px;
-  display: inline-block;
-  vertical-align: middle;
-}
 
 /* ───────────────────────── ONLINE TURBO INTAKE FORM ───────────────────────── */
 .turbo-intake-container {
@@ -1503,7 +1472,8 @@ main {
 }
 
 .song-picker-item {
-  padding: 9px 12px;
+  min-height: 56px;
+  padding: 10px 14px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -1529,18 +1499,11 @@ main {
   overflow: hidden;
 }
 
-.song-picker-num {
-  font-family: var(--font-data);
-  font-size: 11px;
-  color: var(--text-muted);
-  width: 22px;
-  flex-shrink: 0;
-}
 
 .song-picker-name {
   font-family: var(--font-emphasis);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -1548,19 +1511,10 @@ main {
 }
 
 .song-picker-artist {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
 }
 
-.song-picker-lines {
-  font-size: 11px;
-  color: var(--text-muted);
-  background: var(--bg-secondary);
-  padding: 2px 7px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-color);
-  flex-shrink: 0;
-}
 
 /* Loading Box */
 .loading-box {
@@ -1671,3 +1625,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 :root[data-theme="light"] .elision-letter,
 :root[data-theme="light"] .apostrophe-tint { color: var(--accent-blue); }
 :root[data-theme="light"] .turbo-alert-box { color: var(--error); }
+
+/* ───────────────────────── FOLLOW PLAYBACK (KARAOKE FILL) ───────────────────────── */
+:root { --lyric-sung: #1ed760; }
+:root[data-theme="light"] { --lyric-sung: #087f38; }
+.lyric-listen-btn[hidden] { display: none; }
+.lyric-line-item.is-past .lyric-line-target,
+.lyric-line-item.is-past .lyric-line-english { opacity: 0.55; }
+.lyric-line-item.is-active {
+  background: color-mix(in srgb, var(--lyric-sung) 7%, transparent);
+}
+.lyric-line-item.is-active .lyric-token.is-sung { color: var(--lyric-sung); }

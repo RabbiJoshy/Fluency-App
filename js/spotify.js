@@ -1,6 +1,6 @@
 // Spotify OAuth PKCE + Web Playback SDK for in-browser playback.
 // Key functions: spotifyLogin(), spotifyPlayTrack(trackId, positionMs), isSpotifyConnected().
-import './state.js?v=827537fb';
+import './state.js?v=e72ac9e7';
 
 const SPOTIFY_SCOPES = 'streaming user-modify-playback-state user-read-playback-state user-read-email user-read-private playlist-read-private playlist-read-collaborative';
 const _isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -825,6 +825,22 @@ async function initSpotifyPlayer() {
             && !!_currentTrackId && stateTrackId === _currentTrackId;
         _setPlaying(playing);
         if (playing) _endButtonLoading();
+        // Position source for the lyrics reader's karaoke fill. The SDK only
+        // reports on change (play, pause, seek, track), so the listener
+        // interpolates from `at`.
+        if (state) {
+            window.dispatchEvent(new CustomEvent('fluency:spotify-state', {
+                detail: {
+                    trackId: stateTrackId,
+                    // A relinked track reports the regional id; the catalogue holds the original.
+                    linkedFromId: state.track_window?.current_track?.linked_from?.id || '',
+                    positionMs: state.position,
+                    durationMs: state.duration,
+                    paused: state.paused !== false,
+                    at: performance.now()
+                }
+            }));
+        }
     });
 
     _player.addListener('not_ready', ({ device_id }) => {
