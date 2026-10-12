@@ -91,39 +91,63 @@ M, inside CASCADE-WSD.
 **D. Subtitle OCR damage.** `lk` for `ik` (rank 416). Probably more l/I swaps; sweep
 the inventory once. Size S.
 
-## Pilot-blocking order and progress (2026-10-11)
+## State handed to CASCADE-WSD (2026-10-12)
 
-Pilot run: `runs/nl/speech/20261011T225109Z-9d9612c4`, profile
-`config/pipelines/nl/speech/pilot-4000.json`.
+**Pilot run: `runs/nl/speech/20261012T135827Z-bbb7d8cb`** (profile
+`config/pipelines/nl/speech/pilot-6000.json`). Superseded and not to be used:
+`20261011T225109Z-9d9612c4` (4,000), `20261012T082613Z-a8c7ba30` (adjudication pass),
+`20261012T135749Z-d4921938` (duplicate inventory; see its `SUPERSEDED.txt`).
 
-1. **Word list → SUBTLEX-NL. Done.** Snapshot `raw/frequency/subtlex-nl-cd2`
-   (licence and download URL unrecorded, labelled in `snapshot.json`); adapter
-   `src/fluency/inventory/subtlex.py` splits `_` units back into words (they had
-   removed `orde` to a sixth of its share), joins 4,916 full-stop tokens (`ben.`) and
-   repairs 209 apostrophe stand-ins. Policy `nl-v2`. `'t` 58, `m'n` 79, `'n` 81,
-   `z'n` 125 are now cards; `z` fell from 136 to 4,516.
-2. **Apostrophe matching. Done.** Matcher no longer finds `'s` inside `auto's`;
-   harvest policy `nl-v2` scores `'t 'n 's 'm 'k` as words.
-3. **Menus. Done at 91%** (3,641/4,000, snapshot `enwiktionary-2026-09-09-nl`,
-   unchanged). Open: `m'n` has no menu (needs a declared entry); er/daar/hier/waar +
-   preposition words (`ermee`, `daarmee`, `ervoor`, `daarna`) have none; and
-   **capitalized Dutch vocabulary has none** (`amerikaanse`, `franse`, `engeland`,
-   `londen`, about 40 cards) because the menu join requires case to match and
-   Wiktionary files these capitalized.
-4. **Harvest. Done.** 157,142 sentences, 186,061 candidate matches; 6 shortfalls,
-   all OCR junk.
-5. **OCR damage (capital I read as l).** `lk ls ln lets ledereen lemand fbl cla ltalië
-   lsland lndia` excluded (`lk` by policy, the rest by ledger adjudication). Only 35
-   of 157,142 harvested sentences contain such a token; the list, not the corpus, is
-   the problem.
-6. **Ledger lemmas. Cause found and fixed:** `observe_lemmas.py` had never been run
-   for Dutch. Now 3,662/4,000 (91.5%) resolved.
-7. **Review queue. Adjudicated:** 338 capitalized surfaces: 56 keep (countries,
-   nationalities, `god`, interjections), 246 personal names + 46 English fragments
-   and foreign place names excluded, same rule as fi/es/pt.
-8. **Eligible sentences. Cause found:** the cleaning stage
-   (`scripts/condition_pools.py`, local LaBSE alignment) had never run for Dutch.
-9. **Still open before the pilot:** pin and install a Dutch POS model (download
-   needs Josh's approval); re-run the inventory so exclusions free their ranks;
-   curated function-word menus; a hand-labelled benchmark including separable verbs
-   (B) and er-splits (C).
+| | Value |
+|---|---|
+| Word list | SUBTLEX-NL (`raw/frequency/subtlex-nl-cd2`; licence and URL unrecorded, labelled), adapter `subtlex-surface-frequency/v1`, policy `nl-v2` |
+| Ledger | 6,637 rows: 5,958 keep / 679 exclude / **0 review**; supply complete |
+| Usable cards in the run | 5,952 of 6,000 (48 excluded in the last review pass; a next run refills them) |
+| Lemmas | 5,955 (97.8%), Wiktionary `enwiktionary-2026-09-09`, 72 via title-case licence |
+| Menus | 5,859/6,000 (97.7%), policy `nl-v2` |
+| Sentences | 244,864 candidates; 203,859 distinct eligible after LaBSE cleaning (floor 0.3, shared default); 7 cards under 10 eligible |
+| POS model | `stanza-nl-default@1.14.0` pinned in `config/nlp/models.json` (installed, 303 MB) |
+
+What was fixed on the way:
+
+1. **Word list.** FrequencyWords had removed every apostrophe (`z'n` counted as
+   `z` + `n`). SUBTLEX-NL keeps them: `'t` 58, `m'n` 79, `'n` 81, `z'n` 125. The
+   adapter splits SUBTLEX's `_` units back into words (they had taken `orde` to a
+   sixth of its share), joins full-stop tokens (`ben.`), repairs apostrophe stand-ins.
+2. **Matcher.** `'s` was found inside `auto's`, `'n` inside `z'n`; fixed for every
+   language.
+3. **Capitalized vocabulary.** Exact-case matching stays the rule; the ledger
+   licenses a title-case Wiktionary entry per word where no exact entry exists
+   (`amerikaanse` -> "American", "a female American"; `engeland`, `londen`).
+4. **Pronominal adverbs** keep their own gloss (`ermee` "with it", `daarna`
+   "afterwards") instead of redirecting to the preposition.
+5. **`m'n`** reaches `mijn` "my" (menu policy `nl-v2`: pronoun may redirect to
+   determiner).
+6. **OCR damage** (capital I read as l): `lk ls ln lets ledereen lemand fbl cla
+   ltalië lsland lndia ltaliaanse ltaliaans lrak lerse` excluded. Only 35 of 157,142
+   harvested sentences carried such a token in the 4,000 run: the list, not the
+   corpus, was damaged.
+7. **Review.** 759 capitalized surfaces adjudicated by the fi/es/pt rule: keep
+   countries, nationality and language words, Dutch exonyms, religious words,
+   interjections; exclude personal names, English fragments, foreign place names,
+   letters. Events carry observer `dutch-pilot-review/2026-10-1x`.
+8. **Never-run steps.** `observe_lemmas.py` and `condition_pools.py` had never run
+   for Dutch; that was the "no lemmas, empty examples" gap.
+
+## Open, in order (none blocks starting CASCADE-WSD design)
+
+1. **141 no-menu cards:** about 40 English/foreign (`ok`, `hey`, `sir`) and 30 tail
+   names already excluded by review; about 28 inflected forms whose redirect fails
+   (`anderen`, `meeste`, `schitterende`, partitive `persoonlijks`), likely the same
+   part-of-speech mismatch as `m'n`; 5 stress-accent spellings (`eén`, `zó`, `vóór`,
+   `écht`) that should redirect; about 30 colloquial words needing declared entries
+   (`da's`, `ofzo`, `dankjewel`, `asjeblieft`).
+2. **Curated function-word menus** (Spanish `el`/`la` model) for about 10-20 words:
+   `de het een er te om op aan`.
+3. **Hand-labelled benchmark**, a few hundred sentences, deliberately including
+   separable verbs (B) and er-splits (C). Stanza already separates them:
+   `ik bel je op` gives `op` `compound:prt`; `op de tafel` gives `op` `case`.
+4. **Stale alternates:** the event log still holds the pre-fix `ermee -> met`
+   observations; they survive only as labelled alternates the menu does not follow.
+5. **Licence of SUBTLEX-NL** before any public release.
+6. Release-only items in the tables above (manual review queue, cognates, app wiring).
