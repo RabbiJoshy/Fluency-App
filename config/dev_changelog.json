@@ -2,6 +2,17 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-11T23:36:00+01:00",
+   "date": "2026-10-11 23:36 BST",
+   "agent": "Claude",
+   "summary": "Home-screen icon is now just the glowing F and β (no inner tile), and Add to Home Screen should stop offering the old Flashcards name",
+   "detail": [
+    "Icon drops the inner rounded square: a larger periwinkle F with a small β (α on staging), glowing on the dark background.",
+    "The manifest link now carries a version tag, so a phone still running the previous app version fetches the new manifest instead of its cached \"Flashcards\" one."
+   ],
+   "commit": "ae5602b1"
+  },
+  {
    "timestamp": "2026-10-11T23:31:14+01:00",
    "date": "2026-10-11 23:31 BST",
    "agent": "Codex",
@@ -363,18 +374,6 @@
     "The sheets are the live app's own Rare uses and Review meanings markup, drawn over the replica card from the demo word's real rare senses.",
     "Smart Skip: look-alikes now come before merged word forms and merged singular/plural.",
     "Portuguese demo word is now devia (dever): should / ought, with two real rare senses."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-10T23:05:00+01:00",
-   "date": "2026-10-10 23:05 BST",
-   "agent": "Claude",
-   "summary": "Reviewer access for the JOSHUA profile; one profile per username",
-   "detail": [
-    "JOSHUA (profile_028abec8…) can flag cards and open the data and model panel with Cmd/Ctrl+I, but sees no admin settings, changelog modal, provenance pills or scrape inspector. It is allow-listed by profile ID, not display name.",
-    "A username now belongs to one profile, compared case-insensitively. The worker refuses a second profile with the same name or with an unclaimed legacy name (needs migration 0007 and a worker deploy).",
-    "The sign-in match dialog no longer offers 'No, create an account' for a name that already exists."
    ],
    "commit": "pending"
   }
