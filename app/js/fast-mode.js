@@ -19,6 +19,20 @@
 import './state.js?v=20260825ak';
 import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=20260920a';
 
+// Measure the available desktop space and remove whole words until it fits.
+// ResizeObserver also refits after a window resize or the mobile row reappears.
+function fitSmartSkipExamples(element) {
+    const { words = [], prefix = '' } = element._exampleList || {};
+    if (!words.length) { element.innerHTML = ''; return; }
+    if (!element.clientWidth) return;
+    for (let count = words.length; count >= 0; count--) {
+        element.innerHTML = (count ? prefix : '') + words.slice(0, count)
+            .map(word => `<em>${escapeExample(word)}</em>`).join(', ')
+            + (count < words.length ? (count ? ', ...' : '...') : '');
+        if (element.scrollWidth <= element.clientWidth) break;
+    }
+}
+
 let applyingMasterSwitch = false;
 let returnToSettings = false;
 let advancedRefreshTimer = null;
@@ -210,6 +224,7 @@ function refresh() {
     if (hubSummary) {
         // The switch already says on or off, so this line says something else:
         // what turning it on does, then what it is doing.
+        hubSummary.classList.toggle('is-slogan', !on);
         hubSummary.textContent = !on ? 'Fewer cards, same coverage'
             : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} ${skippedCardsCount === 1 ? 'word' : 'words'} skipped`
             : 'No words skipped';
@@ -224,10 +239,14 @@ function refresh() {
         const words = [...new Set((on
             ? (extras.cognates || []).map(entry => entry.item)
             : lookAlikeCandidates()).slice(0, 12).map(targetWord).filter(Boolean))];
-        const shown = words.slice(0, 8).map(word => `<em>${escapeExample(word)}</em>`).join(', ');
-        hubExamples.innerHTML = !shown ? ''
-            : on ? `Skipping ${shown}${words.length > 8 ? ', …' : ''}`
-            : `Look-alikes like ${shown}`;
+        hubExamples._exampleList = { words, prefix: on ? 'Skipping ' : 'Look-alikes like ' };
+        hubExamples.innerHTML = words.length ? hubExamples._exampleList.prefix
+            + words.map(word => `<em>${escapeExample(word)}</em>`).join(', ') : '';
+        if (!hubExamples._fitObserver && typeof ResizeObserver !== 'undefined') {
+            hubExamples._fitObserver = new ResizeObserver(() => fitSmartSkipExamples(hubExamples));
+            hubExamples._fitObserver.observe(hubExamples);
+        }
+        requestAnimationFrame(() => fitSmartSkipExamples(hubExamples));
     }
 
     updateMappingStatus();

@@ -1345,8 +1345,6 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             container.innerHTML = '<div class="level-selector-empty">No levels available</div>';
             return;
         }
-        const initialMetrics = _levelBandMetrics(initial, preparedSamples);
-        const initialDeckTotal = _levelDeckTotal(percentageRanges, preparedSamples);
         // Coverage display. Ranges built from corpus counts carry their own
         // coverage. Speech levels are a pure ordering, so the figure comes
         // from the shipped corpus shares when the
@@ -1361,13 +1359,12 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         container.classList.add('level-selector--slider');
         container.innerHTML = `
             <div class="level-slider-wrap">
-                <div class="lsw-readout">
-                    <span class="lsw-range">Words <strong id="lswRankVal">${initialMetrics.start.toLocaleString()}–${initialMetrics.end.toLocaleString()}</strong> <span class="lsw-deck-total" id="lswDeckTotal" aria-label="${initialDeckTotal.toLocaleString()} cards in deck">/ ${initialDeckTotal.toLocaleString()}</span></span>
-                </div>
                 <div id="lswSlider" class="lsw-segments lsw-scrubber" role="radiogroup" aria-label="Level scrubber" data-value="${initialIdx}">
                     ${percentageRanges.map((lv, i) => {
                         const segLabel = `${i + 1}`;
-                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" aria-label="Level ${i + 1}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label"><span class="lsw-seg-eyebrow">Level</span><span class="lsw-seg-num">${segLabel}</span></span></button>`;
+                        const metrics = _levelBandMetrics(lv);
+                        const wordRange = `${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}`;
+                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" aria-label="Level ${i + 1} of ${percentageRanges.length}, words ${wordRange}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label"><span class="lsw-seg-heading"><span class="lsw-seg-eyebrow">Level</span><span class="lsw-seg-num">${segLabel}</span></span><span class="lsw-seg-words">Words ${wordRange}</span><span class="lsw-seg-total">of ${percentageRanges.length} levels</span></span></button>`;
                     }).join('')}
                 </div>
                 <div class="lsw-ticks lsw-ticks--hidden">${ticksHTML}</div>
@@ -1894,26 +1891,6 @@ function _levelBandMetrics(level, samples = null) {
     return { start, end, count: Math.max(0, count) };
 }
 
-// The quiet denominator beside the selected rank band is the size of the
-// whole active deck after the learner's current filters have been applied.
-// Fall back to the final level boundary only if the deck samples could not be
-// loaded, so the readout remains useful during a transient fetch failure.
-function _levelDeckTotal(ranges, samples = null) {
-    if (samples) return samples.length;
-    const finalLevel = ranges?.[ranges.length - 1];
-    const finalCardCount = Number(finalLevel?.cardCount);
-    if (Number.isFinite(finalCardCount)) return Math.max(0, finalCardCount);
-    return Math.max(0, (Number(finalLevel?.endRank) || 1) - 1);
-}
-
-function _updateLevelDeckTotal(samples) {
-    const totalEl = document.getElementById('lswDeckTotal');
-    if (!totalEl || !samples) return;
-    const total = samples.length;
-    totalEl.textContent = `/ ${total.toLocaleString()}`;
-    totalEl.setAttribute('aria-label', `${total.toLocaleString()} card${total === 1 ? '' : 's'} in deck`);
-}
-
 function _levelRankAccessor(rankBasis) {
     if (rankBasis === 'category') return item => item.categoryRank;
     if (rankBasis === 'stable') return item => item.stableRank;
@@ -1932,17 +1909,6 @@ function _levelRankAccessor(rankBasis) {
 function _applyFilteredRankCounts(samples) {
     if (!samples) return;
     const ranges = getActiveLevelRanges();
-    const segBar = document.getElementById('lswSlider');
-    const rankEl = document.getElementById('lswRankVal');
-    _updateLevelDeckTotal(samples);
-    if (segBar && rankEl && ranges.length > 0) {
-        const i = parseInt(segBar.dataset.value || '0', 10);
-        const lv = ranges[i];
-        if (lv) {
-            const metrics = _levelBandMetrics(lv, samples);
-            rankEl.textContent = `${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}`;
-        }
-    }
     document.querySelectorAll('#levelSelector .lsw-ticks span').forEach((el) => {
         const i = parseInt(el.dataset.i, 10);
         const lv = ranges[i];
@@ -2052,6 +2018,43 @@ function wireLevelScrubber(segBar, buttons) {
     });
 }
 
+// Prefer lexical words near the beginning, plus one later word for variety.
+// Unknown parts of speech remain eligible; sparse levels stay within their band.
+function _pickLevelExampleWords(samples, level) {
+    const rankOf = _levelRankAccessor(level.rankBasis);
+    const functionPOS = new Set(['ADP', 'AUX', 'CCONJ', 'SCONJ', 'CONJ', 'DET', 'PRON', 'PART', 'CLITIC',
+        'ARTICLE', 'DETERMINER', 'PRONOUN', 'PREPOSITION', 'CONJUNCTION', 'PARTICLE', 'AUXILIARY']);
+    const seen = new Set();
+    const band = samples.filter(sample => {
+        const rank = rankOf(sample);
+        return rank >= level.startRank && rank < level.endRank && !/\s/u.test(sample.word.trim());
+    }).sort((a, b) => rankOf(a) - rankOf(b)).filter(sample => {
+        const key = sample.word.trim().toLocaleLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+    const lexical = band.filter(sample => {
+        const item = sample.item || {};
+        const tags = [item.pos, item.part_of_speech,
+            ...(item.meanings || []).map(meaning => meaning.pos || meaning.part_of_speech)]
+            .filter(Boolean).map(pos => String(pos).trim().toUpperCase())
+            .filter(pos => !['X', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(pos));
+        return !tags.length || tags.some(pos => !functionPOS.has(pos));
+    });
+    const pool = lexical.length ? lexical : band;
+    const early = pool.slice(0, 4);
+    const lateStart = level.startRank + (level.endRank - level.startRank) * 0.75;
+    const later = pool.slice(early.length).find(sample => rankOf(sample) >= lateStart);
+    // The first five are also the mobile preview, so keep the later word there.
+    const picked = [...early, ...(later ? [later] : [])];
+    for (const sample of pool) {
+        if (picked.length >= 8) break;
+        if (!picked.includes(sample)) picked.push(sample);
+    }
+    return picked.map(sample => sample.word);
+}
+
 // Update the slider's rank/coverage text + example words for snap index `i`.
 // Examples are loaded lazily; the readout updates synchronously and examples
 // fill in when the vocab fetch resolves.
@@ -2059,17 +2062,12 @@ function updateLevelSliderReadout(i) {
     const ranges = getActiveLevelRanges();
     const lv = ranges[i];
     if (!lv) return;
-    const rankEl = document.getElementById('lswRankVal');
     const covEl  = document.getElementById('lswCovVal');
     const exEl   = document.getElementById('lswExamples');
     // Synchronous range and card count for this level's own band. Smart
     // ranges carry the exact band count; legacy ranges are counted against
     // the filtered samples when available.
     const _syncSamples = _levelSliderSamplesSync(selectedLanguage);
-    if (rankEl) {
-        const metrics = _levelBandMetrics(lv, _syncSamples);
-        rankEl.textContent = `${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}`;
-    }
     const usingReleaseLevels = !activeArtist && !window.playlistLiveActive?.() && Array.isArray(releaseStudyStructure?.levels) && releaseStudyStructure.levels.length > 0;
     const coverageType = activeArtist
         ? 'lyrics comprehension'
@@ -2138,24 +2136,15 @@ function updateLevelSliderReadout(i) {
     _renderLine('');
 
     _loadLevelSliderSamples(selectedLanguage).then(samples => {
+        // A previous level's fetch may finish after the learner has moved on.
+        if (Number(document.getElementById('lswSlider')?.dataset.value) !== i
+            || getActiveLevelRanges()[i] !== lv) return;
         if (!samples || samples.length === 0) { _renderLine(''); return; }
         // Replace any raw-rank fallback with the real filtered count now
         // that we've actually loaded the vocab.
         _applyFilteredRankCounts(samples);
         displayedWordCount = _levelBandMetrics(lv, samples).count;
-        // Pick 5-8 words from the upper portion of this level's range — in the
-        // target language (e.g. Spanish), not English glosses.
-        const rankOf = _levelRankAccessor(lv.rankBasis);
-        const start = Math.max(1, Math.floor(lv.startRank + (lv.endRank - lv.startRank) * 0.6));
-        const words = samples.filter(s => !/\s/u.test(s.word.trim()));
-        const inRange = words.filter(s => rankOf(s) >= start && rankOf(s) < lv.endRank);
-        const pick = (inRange.length ? inRange : words.filter(s => rankOf(s) < lv.endRank))
-            .slice(-12);
-
-        const candidates = [];
-        const total = Math.min(12, pick.length);
-        for (let k = 0; k < total; k++) candidates.push(pick[Math.floor(k * pick.length / total)]);
-        const targetWords = candidates.map(sample => sample.word);
+        const targetWords = _pickLevelExampleWords(samples, lv);
 
         const render = labels => {
             const out = [];

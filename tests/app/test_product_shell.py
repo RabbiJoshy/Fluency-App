@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v583"
+EXPECTED_CACHE_NAME = "flashcards-v584"
 
 
 
@@ -599,7 +599,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("extras.allSkipped", fast_mode_js)
         self.assertIn("extras.cognates", fast_mode_js)
         self.assertIn("lookAlikeCandidates()", fast_mode_js)
-        self.assertIn("Skipping ${shown}", fast_mode_js)
+        self.assertIn("prefix: on ? 'Skipping ' : 'Look-alikes like '", fast_mode_js)
 
     def test_settings_are_organised_around_learner_tasks(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
