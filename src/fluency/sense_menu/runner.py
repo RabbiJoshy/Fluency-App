@@ -90,6 +90,11 @@ def _implementation_content_id() -> str:
     )
 
 
+# The ledger's label for a lookup that uses Wiktionary's capitalised entry
+# (Dutch Amerikaanse, Engeland) because the lowercase card has no exact row.
+TITLE_CASE_PROVENANCE = "wiktionary title-case entry"
+
+
 def _store_lemmas(workspace, language: str) -> dict[str, list[str]]:
     """Surface to lemma, as the observation store records it.
 
@@ -107,9 +112,44 @@ def _store_lemmas(workspace, language: str) -> dict[str, list[str]]:
     out: dict[str, list[str]] = {}
     for surface, row in (payload.get("surfaces") or {}).items():
         lemmas = [lemma for lemma in (row.get("lemmas") or []) if lemma and lemma != surface]
+        # A title-case entry can be both a word (Amerikaanse "a female
+        # American") and an inflection (of Amerikaans "American"). The primary
+        # lemma keeps the first; its title-case alternates are hops too, or
+        # the adjective is lost.
+        lemmas += [alternate["lemma"] for alternate in row.get("lemma_alternates") or []
+                   if alternate.get("provenance") == TITLE_CASE_PROVENANCE
+                   and alternate.get("lemma") and alternate["lemma"] != surface
+                   and alternate["lemma"] not in lemmas]
         if lemmas:
             out[surface] = lemmas
     return out
+
+
+def _store_title_case(workspace, language: str) -> frozenset[str]:
+    """Headwords the ledger licenses to be read from a title-case Wiktionary row.
+
+    The surface itself and every lemma the ledger reached that way: the card
+    ``amerikaanse`` reads Wiktionary's ``Amerikaanse`` and its lemma
+    ``Amerikaans``. Nothing outside this set is ever matched case-blind.
+    """
+    view = ledger_path(workspace.root, language)
+    if not view.exists():
+        return frozenset()
+    try:
+        payload = json.loads(view.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return frozenset()
+    licensed: set[str] = set()
+    for surface, row in (payload.get("surfaces") or {}).items():
+        if row.get("lemma_provenance") == TITLE_CASE_PROVENANCE:
+            licensed.add(surface)
+            licensed.update(lemma for lemma in (row.get("lemmas") or []) if lemma)
+        for alternate in row.get("lemma_alternates") or []:
+            if alternate.get("provenance") == TITLE_CASE_PROVENANCE:
+                licensed.add(surface)
+                if alternate.get("lemma"):
+                    licensed.add(alternate["lemma"])
+    return frozenset(licensed)
 
 
 def _resolver_settings(
@@ -283,6 +323,7 @@ def build_sense_menu_stage(
             source_edition=profile["sense_menu"]["source_edition"],
             language_policy=language_policy,
             external_lemmas=_store_lemmas(workspace, language),
+            title_case_headwords=_store_title_case(workspace, language),
         )
     elif source_adapter == SPANISHDICT_ADAPTER_ID:
         adapter = SpanishDictSenseMenuAdapter(

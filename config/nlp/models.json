@@ -49,6 +49,14 @@
       "processors": "tokenize,mwt,pos,lemma,depparse",
       "note": "Finnish Universal Dependencies tagger. The Stanza package revision and its versioned default Finnish resources are pinned together; POS is required before a Finnish sense may compete across dictionary categories."
     },
+    "occurrence-pos-nl": {
+      "provider": "stanza",
+      "name": "stanza-nl-default",
+      "revision": "1.14.0",
+      "language": "nl",
+      "processors": "tokenize,mwt,pos,lemma,depparse",
+      "note": "Dutch Universal Dependencies tagger (Alpino treebank), chosen over spaCy to match Portuguese and Finnish (TAGLINE). Pinned with its versioned default Dutch resources. A separable-verb particle comes out as ADP with deprel compound:prt ('ik bel je op') and a preposition as ADP case ('op de tafel'), which is the distinction the CASCADE-WSD router needs."
+    },
     "word-alignment": {
       "provider": "huggingface",
       "name": "bert-base-multilingual-cased",

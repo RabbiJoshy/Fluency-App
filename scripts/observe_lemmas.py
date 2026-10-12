@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from fluency.surfaces.events import append, build_event, store_path  # noqa: E402
 from fluency.surfaces.ledger import ledger_path  # noqa: E402
-from fluency.sense_menu.kaikki import _semantic_senses, semantic_headword
+from fluency.sense_menu.kaikki import _semantic_senses, is_pronominal_adverb_sense, semantic_headword
 from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule
 
 WIKTIONARY = {
@@ -79,6 +79,10 @@ def wiktionary_forms(path: Path) -> tuple[dict[str, set[str]], set[str], set[str
             if semantic and lemma == word and (row.get("pos") or "") in CLOSED_POS:
                 closed.add(word)
             for sense in row.get("senses") or []:
+                # ermee is "pronominal adverb form of met + het": a word of its
+                # own, not an inflection of met, so met is not its lemma.
+                if is_pronominal_adverb_sense(sense):
+                    continue
                 for key in ("form_of", "alt_of"):
                     for item in sense.get(key) or []:
                         target = (item.get("word") or "").strip()
@@ -91,6 +95,46 @@ def wiktionary_forms(path: Path) -> tuple[dict[str, set[str]], set[str], set[str
     # "ser" and "está" to "estar". Precedence is handled by ordering the
     # closed-class source first, not by deleting links.
     return forms, heads_exact, closed
+
+
+def wiktionary_title_case(path: Path) -> dict[str, set[str]]:
+    """lowercase surface -> lemmas, read from a title-case entry, where no exact entry exists.
+
+    Dutch capitalises nationality words and country names, so Wiktionary has
+    Amerikaanse and Engeland but no amerikaanse or engeland, and an exact match
+    finds nothing. Exact matching stays the rule (see wiktionary_forms: case-blind
+    matching once read Spanish "no" as NO "noroeste"); this source only speaks
+    for a surface with no exact entry at all, and only from a title-case
+    spelling, never all capitals. Its lemmas are the entry's form_of targets
+    (Amerikaanse -> Amerikaans) or, for a plain entry, the surface itself.
+    """
+    exact: set[str] = set()
+    title: dict[str, set[str]] = {}
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            word = row.get("word") or ""
+            if not word:
+                continue
+            exact.add(word)
+            if not (word[:1].isupper() and not word.isupper() and word.lower() != word):
+                continue
+            key = word.lower()
+            targets = {
+                (item.get("word") or "").strip().lower()
+                for sense in row.get("senses") or []
+                if not is_pronominal_adverb_sense(sense)
+                for field in ("form_of", "alt_of")
+                for item in sense.get(field) or []
+                if (item.get("word") or "").strip()
+            }
+            if targets:
+                title.setdefault(key, set()).update(t for t in targets if t != key)
+            elif _semantic_senses(row):
+                title.setdefault(key, set()).add(key)
+    return {key: lemmas for key, lemmas in title.items() if key not in exact and lemmas}
 
 
 def _priority(provider: str) -> int:
@@ -142,6 +186,7 @@ def main() -> int:
             sources.append((f"enwiktionary-closed-class-headword:{wikt.parent.name}",
                             {w: {w} for w in closed_class}))
         sources.append((f"enwiktionary-form-of:{wikt.parent.name}", forms))
+        sources.append((f"enwiktionary-title-case:{wikt.parent.name}", wiktionary_title_case(wikt)))
 
     if lang == "es":
         snapshot = args.spanishdict_snapshot

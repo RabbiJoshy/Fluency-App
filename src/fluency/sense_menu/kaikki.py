@@ -42,6 +42,60 @@ MENU_VERSION = "sense-menu/v1"
 REPORT_VERSION = "sense-menu-report/v1"
 FORM_TAGS = frozenset({"form-of", "alt-of"})
 
+# Wiktionary files Dutch (and German, Afrikaans) pronominal adverbs -- ermee
+# "with it", daarna "afterwards" -- as "pronominal adverb form of met + het".
+# The form_of link names the preposition, but the word is a fused preposition
+# plus pronoun with a meaning of its own, not an inflection of the preposition.
+# Read as form-of, its gloss was discarded and the card redirected to the
+# preposition's menu; read as a sense, it keeps "with it".
+PRONOMINAL_ADVERB_PREFIX = "pronominal adverb form of"
+_PRONOMINAL_ENGLISH = re.compile(r"[\u201c\"]([^\u201d\"]+)[\u201d\"]")
+
+
+def is_pronominal_adverb_sense(sense: dict[str, Any]) -> bool:
+    return any(gloss.startswith(PRONOMINAL_ADVERB_PREFIX) for gloss in _glosses(sense))
+
+
+def _pronominal_adverb_gloss(sense: dict[str, Any]) -> str:
+    """English for a pronominal adverb, from the gloss's own words.
+
+    "... met + het (\u201cwith it\u201d)" gives "with it"; "... na + dat; thereafter,
+    afterwards" gives "thereafter, afterwards". When Wiktionary states only the
+    parts ("voor + het"), the parts are shown, labelled, rather than invented.
+    """
+    gloss = next(g for g in _glosses(sense) if g.startswith(PRONOMINAL_ADVERB_PREFIX))
+    rest = gloss[len(PRONOMINAL_ADVERB_PREFIX):].strip()
+    quoted = _PRONOMINAL_ENGLISH.search(rest)
+    if quoted:
+        return quoted.group(1).strip()
+    if ";" in rest:
+        return rest.split(";", 1)[1].strip()
+    return f"{rest} (pronominal adverb)"
+
+
+def _row_headword(
+    row: dict[str, Any],
+    normalize: Callable[[str], str],
+    title_case_headwords: frozenset[str] = frozenset(),
+) -> str:
+    """The headword a row speaks for, matched by exact spelling.
+
+    Spelling is matched exactly on purpose: ignoring case pulled Spanish
+    abbreviation entries in as meanings (no -> NO "noroeste"). Dutch writes
+    nationality words and country names with a capital -- Amerikaanse,
+    Engeland -- so a lowercase card has no exact row. The surface ledger
+    licenses a title-case row for exactly those words (provenance "wiktionary
+    title-case entry"), and only a title-case spelling, never all capitals.
+    """
+    raw = semantic_headword(row)
+    if not raw or not title_case_headwords:
+        return raw
+    key = _safe_surface(raw, normalize)
+    if (key is not None and key != raw and key in title_case_headwords
+            and raw[:1].isupper() and not raw.isupper()):
+        return key
+    return raw
+
 
 class KaikkiMenuError(ValueError):
     """Raised when a Kaikki snapshot cannot produce an exact menu."""
@@ -100,7 +154,7 @@ def _redirect_edges(
     edges: set[RedirectEdge] = set()
     for sense in _json_values(row.get("senses")):
         tags = _sense_tags(sense)
-        if not (tags & FORM_TAGS):
+        if not (tags & FORM_TAGS) or is_pronominal_adverb_sense(sense):
             continue
         if tags & reject_tags and not tags & allow_if_tags:
             continue
@@ -128,7 +182,7 @@ def _surface_grammar(row: dict[str, Any], normalize: Callable[[str], str]) -> di
 
     grammar: dict[str, list[str]] = {}
     for sense in _json_values(row.get("senses")):
-        if not (_sense_tags(sense) & FORM_TAGS):
+        if not (_sense_tags(sense) & FORM_TAGS) or is_pronominal_adverb_sense(sense):
             continue
         tags = sorted(tag for tag in _sense_tags(sense) if tag not in FORM_TAGS)
         if not tags:
@@ -166,8 +220,12 @@ def _semantic_senses(row: dict[str, Any]) -> list[dict[str, Any]]:
     return [
         sense
         for sense in _json_values(row.get("senses"))
-        if not (_sense_tags(sense) & FORM_TAGS) and not sense.get("form_of")
-        and not sense.get("alt_of") and _has_meaningful_gloss(sense)
+        if (
+            (not (_sense_tags(sense) & FORM_TAGS) and not sense.get("form_of")
+             and not sense.get("alt_of"))
+            or is_pronominal_adverb_sense(sense)
+        )
+        and _has_meaningful_gloss(sense)
     ]
 
 
@@ -242,6 +300,8 @@ def _display_gloss(sense: dict[str, Any]) -> str:
     glosses = _glosses(sense)
     if not glosses:
         return ""
+    if is_pronominal_adverb_sense(sense):
+        return project_gloss(_pronominal_adverb_gloss(sense)).display_text
     if len(glosses) > 1 and _JUNK_GLOSS_PATTERN.match(glosses[0].strip()):
         return project_gloss(glosses[1]).display_text
     return project_gloss(glosses[0]).display_text
@@ -480,6 +540,7 @@ class KaikkiSenseMenuAdapter:
         language_policy: dict[str, Any] | None = None,
         max_redirect_hops: int = 5,
         external_lemmas: dict[str, list[str]] | None = None,
+        title_case_headwords: frozenset[str] | None = None,
     ) -> None:
         self.path = path.resolve()
         if not self.path.is_file():
@@ -510,6 +571,7 @@ class KaikkiSenseMenuAdapter:
         self.external_lemmas = {
             surface: tuple(lemmas) for surface, lemmas in (external_lemmas or {}).items() if lemmas
         }
+        self.title_case_headwords = frozenset(title_case_headwords or ())
         self.snapshot_content_id = file_content_id(self.path)
         # Cards whose headword set comes from fluency.surfaces.resolver; every
         # other card is built exactly as before (see SpanishDict's adapter).
@@ -683,7 +745,9 @@ class KaikkiSenseMenuAdapter:
         entry_counts: dict[tuple[str, str], int] = defaultdict(int)
         for source_headword in dict.fromkeys([*headwords, surface]):
             for row in rows_by_word.get(source_headword, []):
-                headword = semantic_headword(row) or source_headword
+                headword = (_row_headword(row, getattr(self, "_normalize", None),
+                                          getattr(self, "title_case_headwords", frozenset()))
+                            or source_headword)
                 if headword not in headwords or len(headword.split()) > len(surface.split()):
                     continue
                 part_of_speech = row.get("pos")
@@ -752,7 +816,10 @@ class KaikkiSenseMenuAdapter:
                     provider_metadata={**_metadata(row, sense, self.language_policy),
                         **({"source_headword": row.get("word"),
                             "lemma_correction": "wiktionary-row-form-of/v1"}
-                           if row.get("word") != headword else {})},
+                           if row.get("word") != headword
+                           and not (getattr(self, "title_case_headwords", None)
+                                    and _safe_surface(row.get("word"), self._normalize) == headword)
+                           else {})},
                     specialist_features=spec_features,
                     metadata_accounting=metadata_accounting(
                         {**sense, "part_of_speech": part_of_speech},
@@ -831,6 +898,7 @@ class KaikkiSenseMenuAdapter:
             wanted, extra
         )
         if self.resolver is not None and isinstance(self.resolver.source, KaikkiHeadwordSource):
+            self.resolver.source.title_case_headwords = self.title_case_headwords
             self.resolver.source.bind(rows_by_word, paths, allowed_positions,
                                       self.external_lemmas, self._normalize)
         menu_cards: list[dict[str, Any]] = []
@@ -953,10 +1021,12 @@ class KaikkiHeadwordSource:
 
     def __init__(self, external_provenance: dict[str, str] | None = None) -> None:
         self.external_provenance = dict(external_provenance or {})
+        self.title_case_headwords: frozenset[str] = frozenset()
         self._bound = False
 
     def bind(self, rows_by_word, paths, allowed_positions, external_lemmas, normalize) -> None:
         self.rows_by_word, self.paths, self.allowed = rows_by_word, paths, allowed_positions
+        self.normalize = normalize
         self.external = {surface: {normalize(l) or l for l in lemmas}
                          for surface, lemmas in (external_lemmas or {}).items()}
         self._bound = True
@@ -965,7 +1035,7 @@ class KaikkiHeadwordSource:
         return any(
             isinstance(row.get("pos"), str) and row.get("pos")
             and (allowed is None or row.get("pos") in allowed)
-            and semantic_headword(row) == headword
+            and _row_headword(row, self.normalize, self.title_case_headwords) == headword
             and _semantic_senses(row)
             for row in self.rows_by_word.get(headword, [])
         )
