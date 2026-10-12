@@ -1,0 +1,4 @@
+{"_about": "Claude's first-pass judgement of the 46 disagreements, by item number on spotcheck.html. D = DeepSeek better, E = embeddings better, T = can't separate (both fine, or both wrong). Not blind: the judge could see which pick was which.",
+ "D": [6,7,8,9,14,16,20,22,38,39,40,41,42,43,44,46,49,51,54,55,56,60,61,62,63,64,66,68,72,76],
+ "E": [1,2,3,52,58,71,74,78],
+ "T": [15,24,28,29,48,53,65,73]}
