@@ -77,7 +77,6 @@ async function resolveProfile(user, container) {
         const label = document.createElement('label'); label.textContent = 'Username'; label.htmlFor = 'newAccountName';
         const input = document.createElement('input'); input.id = 'newAccountName'; input.required = true;
         input.maxLength = 40; input.className = 'initials-input'; input.autocomplete = 'nickname';
-        input.value = user.primaryEmailAddress?.emailAddress === 'rabbijoshy@gmail.com' ? 'JOSHUA' : (user.firstName || '');
         const error = document.createElement('p'); error.setAttribute('role', 'alert');
         const submit = document.createElement('button'); submit.type = 'submit'; submit.className = 'auth-submit-btn'; submit.textContent = 'Create account';
         form.append(heading, note, label, input, error, submit); container.append(form);
