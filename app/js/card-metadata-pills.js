@@ -1713,12 +1713,11 @@ export function isSupportingSenseMetadata(item) {
             && SUPPORTING_REGISTER_VALUES.has(item.value.toLocaleLowerCase('en')));
 }
 
-function senseNoteSectionHTML(title, values, className) {
-    const seen = new Set();
+function senseNoteSectionHTML(title, values, className, seen = new Set()) {
     const clean = [];
     for (const value of values) {
         const text = String(value || '').trim();
-        const key = foldMetadataComparable(text);
+        const key = senseNoteTextKey(text) || foldMetadataComparable(text);
         if (!text || !key || seen.has(key)) continue;
         seen.add(key);
         clean.push(text);
@@ -1814,17 +1813,20 @@ export function senseNoteHTML(presentation, options = {}) {
         ...(presentation.key?.items || []).map(item => senseMetadataDisplay(item, options).short)]
         .filter(Boolean).map(senseNoteTextKey);
     const addsDetail = text => text && senseNoteTextKey(text) && !shown.includes(senseNoteTextKey(text));
+    // The curated sections take precedence. Original text earns a section
+    // only when it contributes something not already explained in this note.
+    const noteSeen = new Set();
     const body = [
-        senseNoteSectionHTML('', noteGlossBeyondTitle(note.gloss, title), 'meaning'),
-        senseNoteSectionHTML('Usage', usage.filter(addsDetail), 'usage'),
-        senseNoteSectionHTML('How it is used', production.filter(addsDetail), 'production'),
+        senseNoteSectionHTML('', noteGlossBeyondTitle(note.gloss, title), 'meaning', noteSeen),
+        senseNoteSectionHTML('Usage', usage.filter(addsDetail), 'usage', noteSeen),
+        senseNoteSectionHTML('How it is used', production.filter(addsDetail), 'production', noteSeen),
         senseNoteSectionHTML('Grammar', grammar.length
-            ? [[...new Set(grammar)].join(', ').replace(/^./u, c => c.toLocaleUpperCase('en'))] : [], 'grammar'),
+            ? [[...new Set(grammar)].join(', ').replace(/^./u, c => c.toLocaleUpperCase('en'))] : [], 'grammar', noteSeen),
         senseNoteSectionHTML('Original dictionary text', note.original
             // A label projection ("indicating time" → "time") is not extra
             // usage detail. Keep original context only when the curated note
             // actually has context to explain; provenance remains in the data.
-            ? [note.original.originalGloss, ...(note.context ? [note.original.originalContext] : [])].filter(addsDetail) : [], 'original'),
+            ? [note.original.originalGloss, ...(note.context ? [note.original.originalContext] : [])].filter(addsDetail) : [], 'original', noteSeen),
     ].join('');
     if (!body) return '';
     return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}" data-sense-note-base-gloss="${escapeCardText(note.baseGloss || title)}">${body}</div></template>`;

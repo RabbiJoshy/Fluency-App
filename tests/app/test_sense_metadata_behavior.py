@@ -8,6 +8,31 @@ ROOT = Path(__file__).resolve().parents[2]
 
 @unittest.skipUnless(shutil.which('node'), 'Node.js required')
 class SenseMetadataBehaviorTests(unittest.TestCase):
+    def test_usage_and_original_text_do_not_duplicate_note_content(self):
+        result = subprocess.run(['node', '--input-type=module', '-'], cwd=ROOT,
+            text=True, capture_output=True, input=r'''
+import assert from 'node:assert/strict';
+import * as ui from './app/js/card-metadata-pills.js';
+const view = (context,originalContext) => ({gloss:'remembers',key:{text:'',items:[]},
+ note:{available:true,baseGloss:'to remember',context,items:[],original:{originalGloss:'to remember',originalContext}}});
+for(const [usage,raw] of [
+ ['Only used in formal writing','Only used in formal writing'],
+ ['Only used in formal writing','only used in formal writing.'],
+ ['in formal writing','used in formal writing'],
+ ['to own; to possess','to own; to possess'],
+]) {
+ const presentation=view(usage,raw);const html=ui.senseNoteHTML(presentation);
+ assert.equal((html.match(/<p>/g)||[]).length,1,html);
+ assert.match(html,/sense-note-section--usage/);
+ assert(!html.includes('Original dictionary text'));
+ assert.equal(presentation.note.original.originalContext,raw,'source text stays intact in the data');
+}
+const extended=ui.senseNoteHTML(view('in formal writing','used in formal writing, especially in legal documents'));
+assert.match(extended,/Original dictionary text/);
+assert.match(extended,/especially in legal documents/);
+''')
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_info_button_requires_details_beyond_inflection_and_visible_context(self):
         result = subprocess.run(['node', '--input-type=module', '-'], cwd=ROOT,
             text=True, capture_output=True, input=r'''
