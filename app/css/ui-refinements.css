@@ -1,0 +1,99 @@
+/* Card and account refinements, kept separate from the tutorial's styles. */
+.app-loading-mark,
+.app-loading-mark.is-free { width: 104px; height: 104px; margin-bottom: 20px; }
+.app-loading-mark-text.is-flag { font-size: 88px; }
+.app-loading-mark-text.is-flag .flag-img { width: 104px; height: 78px; }
+
+.card-front .front-lemma-pair {
+    background: rgba(var(--card-pos-rgb, 160, 160, 160), 0.07);
+    border-color: rgba(var(--card-pos-rgb, 160, 160, 160), 0.28);
+    box-shadow: none;
+}
+.card-front .front-lemma-pair .card-pos {
+    background: rgba(var(--front-pos-rgb, 160, 160, 160), 0.12);
+    color: color-mix(in srgb, rgb(var(--front-pos-rgb, 160, 160, 160)) 80%, var(--text-primary));
+    font-weight: 700;
+    text-shadow: none;
+}
+.card-front .front-lemma-pair.is-companion-split {
+    opacity: 0.75;
+    filter: none;
+    cursor: pointer;
+    pointer-events: auto;
+}
+.card-front .front-lemma-pair.is-companion-split:hover { opacity: 1; }
+.card-front .front-lemma-pair.is-companion-split:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 3px;
+}
+.front-lemma-from,
+.pos-collapsible .pos-lemma-from {
+    color: var(--text-secondary);
+    opacity: 0.85;
+    font-weight: 400;
+    font-size: 0.85em;
+    line-height: inherit;
+    align-self: baseline;
+}
+.pos-collapsible .pos-lemma-from { margin: 0 5px 0 0; }
+.meaning-row.meaning-row-known,
+.meaning-row.is-known-meaning,
+.group-card-varying-cell.is-known-subsense {
+    opacity: 0.52 !important;
+    filter: grayscale(1);
+    animation: none;
+}
+/* Commonness precedes the sub-row; its information button follows it. */
+.meaning-row-group > .pct-column { grid-column: 1; grid-row: 1; padding: 0 6px 0 0 !important; }
+.meaning-row-group > .meaning-row-body { grid-column: 2; grid-row: 1; }
+.meaning-row-group { grid-template-columns: auto minmax(0, 1fr) !important; }
+
+.study-level-label {
+    flex: none;
+    color: var(--text-secondary);
+    font: 600 12px/1.2 var(--font-reading);
+    white-space: nowrap;
+}
+.study-level-label[hidden] { display: none; }
+.card-back-scrubber { gap: 10px; }
+.account-ai { padding: 18px 0; border-bottom: 1px solid var(--border-color); }
+.account-ai p { margin: 8px 0 14px; color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+.preferred-ai-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.preferred-ai-actions select { padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-secondary); color: var(--text-primary); font: inherit; }
+.preferred-ai-actions a { color: var(--accent-primary); font-size: 14px; }
+/* The first action gets the same deliberate full-width placement as source choices. */
+#step1:not(.language-summary-active) #step1Header {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background: var(--bg-card);
+    text-align: left;
+}
+#step1:not(.language-summary-active) #step1Title { font-size: clamp(18px, 3vw, 22px); line-height: 1.35; }
+#step1:not(.language-summary-active) #step1PromptArrow { margin-left: auto; position: static; }
+.app-brand-icon { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: inherit; }
+.app-loading-mark-text.is-app-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 0;
+  background: url('../icons/icon-192.png') center / contain no-repeat;
+}
+.app-loading-mark:has(.is-app-logo):not(.has-art) { border: 0; background: transparent; box-shadow: none; }
+.auth-welcome-mark:has(.app-brand-icon) { padding: 0; overflow: hidden; border: 0; background: transparent; box-shadow: none; }
+.front-practice-badge {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.pos-collapsible .pos-section-head { align-items: baseline; }

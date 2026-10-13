@@ -1,3 +1,4 @@
+import { preferredAi } from '../js/ai-preference.js?v=20261013';
 import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=20261011play';
 import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=20261011play';
 import { TurboEngine } from '../turbo/turbo-engine.js?v=20261009L';
@@ -726,7 +727,10 @@ function renderLyrics(song) {
     aiCircleBtn.className = 'lyric-ai-circle-btn';
     aiCircleBtn.title = 'Look up with AI';
     aiCircleBtn.setAttribute('aria-label', 'Look up with AI');
-    aiCircleBtn.textContent = 'AI';
+    const provider = preferredAi();
+    aiCircleBtn.innerHTML = provider === 'claude' ? CLAUDE_SVG : CHATGPT_SVG;
+    aiCircleBtn.title = `Explain with ${provider === 'claude' ? 'Claude' : 'ChatGPT'}`;
+    aiCircleBtn.setAttribute('aria-label', aiCircleBtn.title);
     aiCircleBtn.addEventListener('click', (e) => {
       toggleLyricAiSheet(e, aiWrap);
     });
@@ -784,8 +788,8 @@ function renderLyrics(song) {
       }
     });
 
-    aiSheet.appendChild(claudeChip);
-    aiSheet.appendChild(gptChip);
+    aiSheet.appendChild(provider === 'claude' ? claudeChip : gptChip);
+    aiSheet.appendChild(provider === 'claude' ? gptChip : claudeChip);
 
     aiWrap.appendChild(aiCircleBtn);
     aiWrap.appendChild(aiSheet);

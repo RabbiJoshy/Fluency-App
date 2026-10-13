@@ -1839,7 +1839,7 @@ function initializeApp() {
         window.showChoiceSheet({
             id: 'studyChoiceSheet',
             ariaLabel: 'Study options',
-            title: 'Study options',
+            title: ['Study options', currentStudyLevelLabel()].filter(Boolean).join(' · '),
             variant: 'list',
             dock: true,
             entries
@@ -2701,6 +2701,24 @@ function deckCardLabels(count = flashcards.length) {
 
 // A split word opened on its own (search, word link) shows each companion
 // in the same slot before the way back. The return button still leaves at once.
+function selectSplitCompanion(event, readingIndex) {
+    event.preventDefault();
+    event.stopPropagation();
+    const card = flashcards[currentIndex];
+    if (!card?.splitInfo || readingIndex === card.splitInfo.index) return;
+    // A word opened on its own holds its companions in linked slots.
+    if (cardNavStack.length && stepToSplitSibling(readingIndex < card.splitInfo.index ? 'prev' : 'next')) return;
+    const index = currentIndex + readingIndex - card.splitInfo.index;
+    const candidate = flashcards[index];
+    if (candidate?.splitInfo?.index === readingIndex
+        && candidate.targetWord === card.targetWord) goToDeckCard(index);
+}
+window.selectSplitCompanion = selectSplitCompanion;
+
+function currentStudyLevelLabel() {
+    return stats.levelNumber ? `Level ${stats.levelNumber}` : '';
+}
+
 function stepToSplitSibling(direction = 'next') {
     const next = flashcards[currentIndex]?.[direction === 'prev' ? '_splitPrev' : '_splitNext'];
     if (!next || cardNavStack.length === 0) return false;
@@ -5826,6 +5844,13 @@ function bindGrammarPairChips(root) {
 
 function updateCard({ announceHeadword = false } = {}) {
     const card = flashcards[currentIndex];
+    // Refresh sense state even when the word was opened from search or a set.
+    const knowledgeInfo = window.getPracticeMeaningInfo?.(card);
+    if (knowledgeInfo?.total > 1) {
+        card.meanings?.forEach((meaning, index) => {
+            meaning.isKnownSense = knowledgeInfo.known.has(index);
+        });
+    }
     const langConfig = config.languages[selectedLanguage];
     const displaySurface = card.displaySurface || card.targetWord;
     // A surface-keyed card can hold senses from several headwords. Start with
@@ -6225,7 +6250,7 @@ function renderCardWikipediaBadge(card) {
         const pill = hasMorph
             ? `<button type="button" class="${pillClass} ${colour} has-morph-toggle" aria-expanded="false" aria-label="${posDisplayName(pos)}. Show verb morphology" onclick="toggleMorphPopover(event)">${posLabelHTML(pos)}</button>`
             : `<span class="${pillClass} ${colour}" aria-label="${posDisplayName(pos)}">${posLabelHTML(pos)}</span>`;
-        return `<span class="front-pos-unit${stackState ? ` ${stackState}` : ''}">${pill}${hasMorph ? renderMorphPopover() : ''}</span>`;
+        return `<span class="front-pos-unit${stackState ? ` ${stackState}` : ''}" style="--front-pos-rgb:${getPosAccentRgb(pos)}">${pill}${hasMorph ? renderMorphPopover() : ''}</span>`;
     };
 
     if (flippedFrontMeanings) {
@@ -6299,7 +6324,7 @@ function renderCardWikipediaBadge(card) {
                         pos: s.index === 2 ? s.pos : s.siblingPos }
                 ];
                 const renderSplitPill = (pair, cardNum, isActive) => {
-                    const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
+                    const posUnit = renderFrontPosUnit(pair.pos, isActive && isVerbPos(pair.pos));
                     const statusClass = isActive ? 'is-active-split' : 'is-companion-split';
                     const fromPrefix = foldSurfaceForm(pair.lemma) !== foldSurfaceForm(displayedTargetHeadword)
                         ? '<span class="front-lemma-from">from </span>'
@@ -6314,7 +6339,8 @@ function renderCardWikipediaBadge(card) {
                     const countHTML = isActive
                         ? `<button type="button" class="split-pill-count" aria-expanded="false" aria-label="Card ${cardNum} of ${s.total}: why separate cards?" onclick="toggleSplitCardTip(event)">Card ${cardNum} of ${s.total}</button>`
                         : `<span class="split-pill-count">Card ${cardNum}</span>`;
-                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}">${posUnit}${lemmaHTML}${countHTML}</span>`;
+                    const switchAttrs = isActive ? '' : ` role="button" tabindex="0" aria-label="Switch to card ${cardNum}: ${escapeCardText(pair.lemma)}, ${escapeCardText(posDisplayName(pair.pos))}" onclick="selectSplitCompanion(event, ${cardNum})" onkeydown="if (event.key === 'Enter' || event.key === ' ') selectSplitCompanion(event, ${cardNum})"`;
+                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}"${switchAttrs}>${posUnit}${lemmaHTML}${countHTML}</span>`;
                 };
 
                 const splitPairsHTML = readings.map((reading, index) =>
@@ -6378,12 +6404,14 @@ function renderCardWikipediaBadge(card) {
     {
         const practiceInfo = typeof window.getPracticeMeaningInfo === 'function'
             ? window.getPracticeMeaningInfo(card) : null;
-        const hasPractice = Boolean(practiceInfo && practiceInfo.practising > 0 && !flippedFrontMeanings);
+        const knownCount = card.meanings?.filter(meaning => meaning.isKnownSense).length || 0;
+        const remainingCount = card.meanings?.filter(meaning => !meaning.isKnownSense && !meaning.exampleOnly).length || 0;
+        const hasPractice = Boolean(!flippedFrontMeanings && (practiceInfo?.practising > 0 || (knownCount && remainingCount)));
         const practiceBadgeEl = document.getElementById('frontPracticeBadge');
         if (practiceBadgeEl) {
             practiceBadgeEl.hidden = !hasPractice;
             practiceBadgeEl.textContent = hasPractice
-                ? `${practiceInfo.practising} ${practiceInfo.practising === 1 ? 'meaning' : 'meanings'} to review` : '';
+                ? `${remainingCount} ${remainingCount === 1 ? 'meaning' : 'meanings'} to practise${knownCount ? ` · ${knownCount} already known` : ''}` : '';
         }
     }
 
@@ -6760,10 +6788,9 @@ function renderCardWikipediaBadge(card) {
         // With meanings brought back for review, rows read in three tiers:
         // practice (full colour, top), neither (normal), already known (greyed,
         // bottom). renderSections orders by the tier class on each row.
-        const knownMeaningIndices = practiceIndices.size
-            ? (window.getPracticeMeaningInfo(card).known || new Set()) : new Set();
+        const knownMeaningIndices = window.getPracticeMeaningInfo?.(card)?.known || new Set();
         const meaningTierClass = indices => {
-            if (!practiceIndices.size || !indices.length) return '';
+            if (!indices.length) return '';
             if (indices.some(i => practiceIndices.has(i))) return ' is-practice-meaning';
             return indices.every(i => knownMeaningIndices.has(i)) ? ' is-known-meaning' : '';
         };
@@ -8609,6 +8636,10 @@ function renderCardWikipediaBadge(card) {
 
     // Numbered active-set scrubber. It mirrors the level picker: the current
     // position is magnified, while any visible number can be selected directly.
+    document.querySelectorAll('[data-study-level]').forEach(el => {
+        el.textContent = currentStudyLevelLabel();
+        el.hidden = !el.textContent || cardNavStack.length > 0;
+    });
     const progressSegments = document.getElementById('deckProgressSegments');
     if (progressSegments) {
         const segmentCount = scrubCount;

@@ -28,6 +28,8 @@ const urlsToCache = [
   '/index.html',
   '/css/style.css?v=20261011style',
   '/css/appearance.css?v=20261011',
+  '/css/ui-refinements.css?v=20261013',
+  '/js/ai-preference.js?v=20261013',
   '/js/appearance-bootstrap.js?v=20261011',
   '/js/theme.js?v=20261011',
   `/css/progress-overview.css?v=${ASSET_VERSION}`,

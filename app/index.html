@@ -174,12 +174,13 @@
         };
     </script>
     <link rel="stylesheet" href="css/learning-profiles.css?v=1">
+    <link rel="stylesheet" href="css/ui-refinements.css?v=20261013">
 </head>
 <body>
     <div id="appLoadingScreen" class="app-loading-screen" role="status" aria-live="polite" aria-busy="true">
         <div class="app-loading-card">
             <div class="app-loading-mark" id="appLoadingMark" aria-hidden="true">
-                <span class="app-loading-mark-text" id="appLoadingMarkText">F</span>
+                <span class="app-loading-mark-text is-app-logo" id="appLoadingMarkText">F</span>
                 <div class="app-loading-mark-art" id="appLoadingMarkArt" hidden></div>
             </div>
             <!-- One visual in two modes. "spinner" is the boot/unknown-progress
@@ -723,6 +724,7 @@
                          Desktop only now — see .card-back-scrubber below for the mobile
                          redesign, which sits in this same reserved strip above the card. -->
                     <div id="deckProgressTrack" class="deck-progress-track" aria-label="Card position in active set">
+                        <span class="study-level-label" data-study-level hidden></span>
                         <div id="deckProgressSegments" class="deck-progress-segments" role="group" aria-label="Cards in this session"></div>
                         <button type="button" id="studyMenuBtn" class="gear-btn study-menu-btn" aria-label="More actions: main menu and settings" title="More actions" aria-haspopup="dialog">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
@@ -731,6 +733,7 @@
                     <!-- Inline set scrubber — mobile only, replaces #deckProgressTrack in
                          this same reserved strip above the card (not on the card face). -->
                     <div class="card-back-scrubber" id="cardBackScrubber" aria-label="Card position in active set">
+                        <span class="study-level-label" data-study-level hidden></span>
                         <div class="cbs-strip">
                             <div class="cbs-scrub" id="cardBackPips" role="slider" aria-valuemin="1" aria-valuenow="1" aria-valuemax="1" aria-label="Card position in this session">
                                 <div class="cbs-track-wrap">
@@ -838,7 +841,7 @@
     <!-- Authentication Modal -->
     <div id="authModal" class="modal">
         <div class="modal-content auth-modal-content">
-            <div class="auth-welcome-mark" aria-hidden="true">F</div>
+            <div class="auth-welcome-mark" aria-hidden="true"><img src="icons/icon-192.png" class="app-brand-icon" alt=""></div>
             <div class="auth-welcome-copy">
                 <h3>Learn words you’ll<br>actually use.</h3>
                 <p>From everyday speech and songs.</p>
@@ -1940,6 +1943,17 @@
             <div class="settings-tab-content" id="appearanceTabContent"></div>
             <!-- Account tab content -->
             <div class="settings-tab-content" id="accountTabContent">
+                <section class="account-ai" aria-labelledby="preferredAiTitle">
+                    <strong id="preferredAiTitle">Preferred AI</strong>
+                    <p>Choose who helps explain lyrics. Sign in on their site using your own account.</p>
+                    <div class="preferred-ai-actions">
+                        <select id="preferredAiSelect" aria-label="Preferred AI">
+                            <option value="chatgpt">ChatGPT</option>
+                            <option value="claude">Claude</option>
+                        </select>
+                        <a id="preferredAiLogin" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Open ChatGPT to sign in ↗</a>
+                    </div>
+                </section>
                 <!-- Who you are, then how you get in, then what you've connected. -->
                 <section class="account-profile" aria-label="Your profile">
                     <span class="account-avatar" id="accountUserBadge" aria-hidden="true">G</span>
@@ -2002,7 +2016,7 @@
             <div class="settings-tab-content" id="aboutTabContent">
                 <p class="settings-section-intro">Learn why this app is organised around frequency, context and finishable sets.</p>
                 <button type="button" class="settings-feature-card settings-feature-card--button" id="aboutProjectSettingsRow">
-                    <span class="settings-feature-icon" aria-hidden="true">F</span>
+                    <span class="settings-feature-icon" aria-hidden="true"><img src="icons/icon-192.png" class="app-brand-icon" alt=""></span>
                     <span><strong>About this app</strong><small>The thinking, data and design behind the project</small></span>
                     <span class="settings-feature-arrow" aria-hidden="true">→</span>
                 </button>

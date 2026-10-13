@@ -3,6 +3,7 @@
 import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import { releaseUrl } from './release-host.js?v=20260921rh';
 import './theme.js?v=20260922ui';
+import './ai-preference.js?v=20261013';
 import { installFlagRendering } from './flags.js?v=20260929flags';
 import { IS_STAGING } from './env.js?v=20261010airlock';
 import './state.js?v=20260921x';
@@ -174,6 +175,7 @@ function setLoadingMarkText(text = 'F', { flag = false } = {}) {
     const label = document.getElementById('appLoadingMarkText');
     if (!mark || !label) return;
     label.textContent = text;
+    label.classList.toggle('is-app-logo', text === 'F' && !flag);
     label.classList.toggle('is-flag', flag);
     mark.classList.toggle('is-free', flag || mark.classList.contains('has-clipart'));
 }
@@ -236,8 +238,11 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
         const artistArt = effectiveArtist.pickerImage || effectiveArtist.image || effectiveArtist.defaultAlbumArt || '';
         if (artistArt) {
             applyLoadingMarkImage(artistArt);
-            return;
+        } else {
+            applyLoadingMarkImage(null);
+            setLoadingMarkText(effectiveArtist.customSongSource ? '♫' : String(effectiveArtist.name || 'Music').split(/\s+/).map(word => word[0]).slice(0, 2).join(''));
         }
+        return;
     }
 
     const manifest = await fetchLoadingImagesManifest();
