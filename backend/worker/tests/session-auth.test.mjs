@@ -18,6 +18,10 @@ const payload = { action: 'bulkSave', rows: [{ user: identity }, {}] };
 await authorizeProgress(request(good), payload, env, publicKey);
 assert.equal(payload.user, identity);
 assert(payload.rows.every(row => row.user === identity));
+const productionTrial = { action: 'capabilities' };
+await authorizeProgress(request(await token({ azp: 'https://rabbijoshy.github.io' })), productionTrial,
+  { ...env, CLERK_ORIGIN: `${env.CLERK_ORIGIN},https://rabbijoshy.github.io` }, publicKey);
+assert.equal(productionTrial.user, identity);
 for (const bad of [null, good.slice(0, -8) + 'tampered', await token({ exp: now - 1 }),
   await token({ nbf: now + 60 }), await token({ iss: 'https://other.clerk.accounts.dev' }),
   await token({ azp: 'https://attacker.example' }), await token({ sts: 'pending' }),

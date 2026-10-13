@@ -22,7 +22,8 @@ export async function authorizeProgress(request, params, env, verificationKeys) 
       issuer: env.CLERK_ISSUER, algorithms: ['RS256'],
       requiredClaims: ['sub', 'exp', 'iat', 'nbf', 'sid', 'azp']
     }));
-    if (payload.azp !== env.CLERK_ORIGIN || payload.sts === 'pending'
+    const allowedOrigins = String(env.CLERK_ORIGIN).split(',').map(origin => origin.trim());
+    if (!allowedOrigins.includes(payload.azp) || payload.sts === 'pending'
       || !/^user_[A-Za-z0-9]+$/.test(payload.sub)) throw new Error('Invalid session');
   } catch (_) {
     throw Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 });
