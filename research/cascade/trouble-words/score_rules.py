@@ -3,16 +3,21 @@ import json, sys, collections, importlib, stanza
 lang, path = sys.argv[1], sys.argv[2]
 L = importlib.import_module(f"labeller_{lang}")
 rows = [json.loads(l) for l in open(path)]
-nlp = stanza.Pipeline(lang, processors="tokenize,mwt,pos,lemma,depparse", download_method=None, use_gpu=False, verbose=False)
-docs = nlp.bulk_process([stanza.Document([], text=r["text"]) for r in rows])
+if lang == "es":
+    import spacy_adapter
+    docs = spacy_adapter.Pipeline().bulk([r["text"] for r in rows])
+else:
+    nlp = stanza.Pipeline(lang, processors="tokenize,mwt,pos,lemma,depparse", download_method=None, use_gpu=False, verbose=False)
+    docs = nlp.bulk_process([stanza.Document([], text=r["text"]) for r in rows])
 per = collections.defaultdict(collections.Counter); out = []
 for r, d in zip(rows, docs):
     a = r["span"][0]; lab = {"kind": "none", "value": None, "rule": "not_found"}
     for s in d.sentences:
         for k, w in enumerate(s.words):
             tok = w.parent
-            if tok.start_char <= a < tok.end_char and w.text.lower() == r["word"]:
-                lab = L.label(s.words, k); break
+            if tok.start_char <= a < tok.end_char and (w.text.lower() == r["word"] or tok.text.lower() == r["word"]):
+                # contractions (pt 'do' = de + o) are matched on the token and labelled from its first word
+                lab = L.label(s.words, k, surface=tok.text) if lang != "nl" else L.label(s.words, k); break
         else: continue
         break
     got = f"{lab['kind']}:{lab['value']}" if lab["kind"] != "none" else "none"

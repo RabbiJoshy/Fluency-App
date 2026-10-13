@@ -1,4 +1,4 @@
-// Function-word presentation (CASCADE-WSD prototype, Dutch first).
+// Function-word presentation (CASCADE-WSD prototype: Dutch, then es / pt / cs).
 //
 // Function words -- articles, prepositions, particles, clitics -- are taught by
 // the construction they belong to (opgeven, aan het + verb) or by their
@@ -33,6 +33,11 @@ const ROLE_NAMES = {
     adverb: 'adverb',
     demonstrative: 'pointing word',
     relative: 'relative pronoun',
+    personal_a: 'personal a',
+    impersonal_se: 'impersonal se',
+    than: 'comparison',
+    conditional: 'conditional',
+    negation: 'negation',
 };
 
 function esc(value) {

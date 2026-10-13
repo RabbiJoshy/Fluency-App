@@ -2,6 +2,19 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-13T15:07:59+01:00",
+   "date": "2026-10-13 15:07 BST",
+   "agent": "Claude",
+   "summary": "Grammar-word cards for Spanish, Portuguese and Czech (and Dutch pronouns): function words shown by role and pattern, not a sense list",
+   "detail": [
+    "Spanish (179 cards), Portuguese (198) and Czech (241) now show the 'Grammar word' block on function-word cards: articles, prepositions, conjunctions, pronouns, determiners, se/si. Each example carries its role or construction (gostar de, tener que, lo que, bát se).",
+    "Labels come from rules over a parser (Spanish: es_dep_news_trf; Portuguese, Czech: Stanza) plus Wiktionary. Hand-checked on random samples: about 95 percent right in each language.",
+    "Nothing else changed: every card, sense and example is identical to the live decks (pt v25 r4, es v25 r6, cs v22); new releases are the same decks with -fw1, and their side files (frequency, pools, cognates, merge lists, BRIDGE) are rebound copies.",
+    "Wording of role names is a draft for review."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-13T14:29:13+01:00",
    "date": "2026-10-13 14:29 BST",
    "agent": "Claude",
@@ -383,18 +396,6 @@
     "Removed the action row’s coloured background and rounded tray in both themes; it now blends into the page like the scrubber.",
     "Reduced the gap and button padding, preserving readable labels and usable tap targets.",
     "Reclaimed footer space: about 30px more card content on desktop and 42px on phones, while respecting the phone safe area."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T23:05:37+01:00",
-   "date": "2026-10-11 23:05 BST",
-   "agent": "Codex",
-   "summary": "Commonness tooltips stay above the card without clipping; white text and taller sense meters.",
-   "detail": [
-    "Commonness explanations open in a separate overlay above scrolling and transformed card surfaces, positioned within the screen edges.",
-    "Tooltip text and commonness icon are white. Sense-row meters are taller and slightly wider, with less surrounding padding.",
-    "Hover, tap and keyboard access work; tooltips dismiss when scrolling, flipping, changing cards or returning to the menu."
    ],
    "commit": "pending"
   }

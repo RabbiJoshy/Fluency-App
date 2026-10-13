@@ -319,7 +319,9 @@ def _validate_method(method: Any) -> dict[str, Any]:
     # contract break.
     # v10 adds the closed-class GROUND policy and parser it ran under
     # (LITERAL-GROUND); absent on every earlier bundle.
-    optional = {"constraint_mode", "ground"}
+    # CASCADE-WSD adds the function-word overlay: senses carried unchanged, rule
+    # labels for function-word cards, with the labeller and parser that made them.
+    optional = {"constraint_mode", "ground", "function_word_overlay"}
     fields = set(method)
     if not expected <= fields or not fields <= expected | optional:
         raise WSDAssignmentImportError("WSD method fields do not match the bundle contract")

@@ -133,7 +133,8 @@ function harness() {
     // checks the full build/runtime seam, without touching a user's account.
     h.config = JSON.parse(fs.readFileSync(`${root}/app/config/config.json`, 'utf8'));
     for (const [code, language] of [['fr','french'],['es','spanish'],['pt','portuguese']]) {
-        const real = JSON.parse(fs.readFileSync(`${root}/app/data/bridge/${code}.json`, 'utf8'));
+        // The file config names: a deck rebound to a new release carries its own copy.
+        const real = JSON.parse(fs.readFileSync(`${root}/app/${h.config.languages[language].bridgePath}`, 'utf8'));
         assert(Object.keys(real.thresholds).every(source=>policy.targets[code].includes(source)), 'bundles may only contain approved pairs');
         h.selectedLanguage = language;
         h.progressData = {}; h.itemProgressData = {}; h.__progressEpoch++;
