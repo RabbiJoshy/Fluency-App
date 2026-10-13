@@ -40,7 +40,9 @@ jobs:
 
       - name: App shell tests
         working-directory: src
-        run: PYTHONPATH=src python -m unittest discover -s tests/app -t .
+        run: |
+          npm ci --prefix backend/worker
+          PYTHONPATH=src python -m unittest discover -s tests/app -t .
 
       - name: Check out gh-pages
         uses: actions/checkout@v4

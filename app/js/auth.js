@@ -17,6 +17,7 @@ import {
     applyPendingMetaProgressOverlay
 } from './sync-queue.js?v=20260825ak';
 import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=20261010airlock';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=1';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -83,6 +84,7 @@ async function loadSecrets() {
     GOOGLE_SCRIPT_URL = typeof publicProgressSyncUrl === 'string'
         ? publicProgressSyncUrl.trim()
         : '';
+    if (PASSWORDLESS_ENABLED) GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
@@ -100,6 +102,7 @@ async function loadSecrets() {
     } finally {
         clearTimeout(timeout);
     }
+    if (PASSWORDLESS_ENABLED) GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
 }
 
 // Detect whether this page load is a reload (F5 / Cmd-R) versus a fresh
@@ -149,6 +152,12 @@ function _openFirstRunTutorialUnlessLinked() {
 //   - new tab at #/about   → no session → landing + About on top
 //   - named user, any case → logged in (localStorage)
 function checkAuthentication() {
+    if (PASSWORDLESS_ENABLED) {
+        GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
+        showAuthModal();
+        startPasswordlessAuth(completeProfileLogin, () => window.location.reload());
+        return;
+    }
     // User-initiated refresh should drop guest mode so the landing reappears.
     // A route change also reloads (mode is decided at boot) but is a same-tab
     // navigation, so it keeps the guest session like any other.
@@ -244,6 +253,7 @@ function showUserInfo() {
 //
 // Progress is still never persisted for guests.
 function enterGuestMode() {
+    if (PASSWORDLESS_ENABLED) return;
     currentUser = { isGuest: true };
     // A guest has no stored progress to wait for, so the setup screen must not
     // sit behind a promise that will never resolve.
@@ -257,6 +267,10 @@ function enterGuestMode() {
 
 // Show login form
 function showLoginForm(mode = 'login') {
+    if (PASSWORDLESS_ENABLED) {
+        startPasswordlessAuth(completeProfileLogin, () => window.location.reload());
+        return;
+    }
     resetProfileLogin();
     const guestRow = document.getElementById('guestModeRow');
     if (guestRow) guestRow.style.display = 'none';
@@ -304,10 +318,12 @@ function hideLoginForm() {
     if (bdayDay) bdayDay.value = '';
     const bdayMonth = document.getElementById('birthdayMonth');
     if (bdayMonth) bdayMonth.value = '';
+    if (PASSWORDLESS_ENABLED) hideLegacyAuthChoices();
 }
 
 // Submit initials and login
 async function submitLogin() {
+    if (PASSWORDLESS_ENABLED) return startPasswordlessAuth(completeProfileLogin, () => window.location.reload());
     return submitProfileLogin(completeProfileLogin);
 }
 
@@ -378,7 +394,7 @@ function renderAccountPanel() {
 
     const row = document.getElementById('accountPasswordRow');
     if (!row) return;
-    row.hidden = !named;
+    row.hidden = !named || currentUser?.authProvider === 'clerk';
     if (row.hidden) return;
     const birthday = currentUser?.birthday || '';
     const input = document.getElementById('accountPasswordInput');
@@ -467,7 +483,14 @@ function wireAccountPassword() {
 
 // Logout handler. Guests skip the confirm (nothing to lose); named users get
 // the prompt since they might have unsaved progress in flight.
-function logout() {
+async function logout() {
+    if (PASSWORDLESS_ENABLED) {
+        await window.flushQueue?.().catch(() => {});
+        localStorage.removeItem('flashcardUser');
+        await window.Clerk?.signOut();
+        window.location.reload();
+        return;
+    }
     const isGuest = currentUser?.isGuest;
     if (!isGuest && !confirm('Are you sure you want to logout? Unsaved progress will be lost.')) {
         return;
@@ -1317,7 +1340,7 @@ function renderMarkdown(md) {
             '<button type="button" class="about-see-example-btn" onclick="window.openWalkthrough && window.openWalkthrough()">'
             + '<span class="about-see-example-icon" aria-hidden="true">▶</span>'
             + '<span class="about-see-example-label">$1</span>'
-            + '<span class="about-see-example-hint">Two screens · about 30 seconds</span>'
+            + '<span class="about-see-example-hint">A quick look at a card · about 30 seconds</span>'
             + '</button>');
         out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g,
             '<a href="$2" target="_blank" rel="noopener">$1</a>');
