@@ -47,6 +47,11 @@ Accuracy on 377 random Dutch content-word sentences (±4 points at this size):
 - The es/pt/cs grammar-word labels were added to the live decks without any other change
   (`fw-overlay/`; verified identical apart from the labels).
 
+Come back to (Josh, 2026-10-13): Spanish grammar-word phrases, pronominal verbs and verb
+patterns come from English Wiktionary, while Spanish card senses come from SpanishDict, so one
+card mixes two dictionaries. This was inherited from the Dutch design, not compared. Check
+whether our SpanishDict data has phrase entries before deciding; Wiktionary is acceptable meanwhile.
+
 Left open: the role names in `app/js/function-word-card.js` are a draft waiting for Josh's
 approval; the word route (`#/xx/w/…`) does not show the grammar-word block yet.
 
