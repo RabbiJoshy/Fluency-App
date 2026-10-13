@@ -16,7 +16,7 @@
 // words really are half of everything said. Gain keeps a legible number all the
 // way down (3.0% for the same band) by shrinking the denominator as the learner
 // advances. Share is the default; gain is a setting.
-import './state.js?v=5b2c6999';
+import './state.js?v=49e8aa06';
 
 const MODE_KEY = 'fluency_coverage_mode_v1';
 

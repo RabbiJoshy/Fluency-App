@@ -1,4 +1,4 @@
-import { IS_STAGING } from './env.js?v=5b2c6999';
+import { IS_STAGING } from './env.js?v=49e8aa06';
 
 export const PASSWORDLESS_ENABLED = true;
 export const PASSWORDLESS_SYNC_URL = IS_STAGING
@@ -69,11 +69,12 @@ async function resolveProfile(user, container) {
     if (existing) return existing;
     if (mounted) { window.Clerk.unmountSignIn(container); window.Clerk.unmountSignUp(container); mounted = false; }
     container.replaceChildren();
+    document.getElementById('passwordlessEmailNotice')?.classList.add('hidden');
     return new Promise(resolve => {
         const form = document.createElement('form');
-        form.style.width = '100%';
+        form.className = 'passwordless-profile-form';
         const heading = document.createElement('h4'); heading.textContent = 'Choose your username';
-        const note = document.createElement('p'); note.textContent = 'This name labels your saved progress. You’ll sign in with Google or an email code.';
+        const note = document.createElement('p'); note.textContent = 'This name labels your saved progress. Your progress stays with your account on every device.';
         const label = document.createElement('label'); label.textContent = 'Username'; label.htmlFor = 'newAccountName';
         const input = document.createElement('input'); input.id = 'newAccountName'; input.required = true;
         input.maxLength = 40; input.className = 'initials-input'; input.autocomplete = 'nickname';
@@ -96,10 +97,25 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
         container = document.createElement('div');
         container.id = 'passwordlessSignIn';
         document.querySelector('#authModal .auth-body').prepend(container);
-        const style = document.createElement('style');
-        document.querySelector('#authModal .auth-modal-content')?.classList.add('passwordless-modal');
-        style.textContent = '.passwordless-modal {max-height:calc(100dvh - 32px);overflow-y:auto;padding:20px!important;} .passwordless-modal .auth-welcome-mark {display:none;} .passwordless-modal .auth-welcome-copy {margin-bottom:16px;} .passwordless-modal .auth-welcome-copy h3 {font-size:24px;} #passwordlessSignIn {display:flex;justify-content:center;max-width:100%;} #passwordlessSignIn .cl-rootBox {width:100%;} #passwordlessSignIn .cl-card {box-shadow:none;width:100%;max-width:100%;} #passwordlessSignIn .cl-cardBox {width:100%;max-width:100%;}';
-        document.head.appendChild(style);
+        const modal = document.getElementById('authModal');
+        modal.classList.add('passwordless-auth-active');
+        modal.querySelector('.auth-modal-content')?.classList.add('passwordless-modal');
+        const heading = modal.querySelector('.auth-welcome-copy h3');
+        if (heading) heading.textContent = 'Fluency';
+        const subtitle = modal.querySelector('.auth-welcome-copy p');
+        if (subtitle) subtitle.textContent = 'Sign in to save your learning across devices.';
+        const notice = document.createElement('p');
+        notice.id = 'passwordlessEmailNotice';
+        notice.className = 'passwordless-email-notice';
+        notice.setAttribute('role', 'note');
+        notice.textContent = 'Email codes currently aren’t reaching iCloud or me.com addresses. Please use Google, Microsoft or another email address.';
+        container.after(notice);
+        const stylesheet = document.createElement('link');
+        stylesheet.rel = 'stylesheet';
+        const stylesheetUrl = new URL('../css/passwordless-auth.css', import.meta.url);
+        stylesheetUrl.search = new URL(import.meta.url).search;
+        stylesheet.href = stylesheetUrl.href;
+        document.head.appendChild(stylesheet);
     }
     container.style.display = 'flex';
     if (!loading) {
@@ -148,9 +164,15 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
                 routing: 'virtual', forceRedirectUrl: returnUrl,
                 signInForceRedirectUrl: returnUrl, signUpForceRedirectUrl: returnUrl,
                 signInUrl: returnUrl, signUpUrl: signupUrl.href,
-                appearance: { variables: {
+                appearance: { layout: { socialButtonsVariant: 'blockButton' }, elements: {
+                    header: { display: 'none' },
+                    socialButtons: { display: 'flex', flexDirection: 'column', gap: '10px' },
+                    card: { boxShadow: 'none', background: 'transparent', border: 'none', padding: '0' },
+                    cardBox: { boxShadow: 'none', width: '100%', borderRadius: '0' },
+                    socialButtonsBlockButton: { minHeight: '44px', width: '100%' }
+                }, variables: {
                     colorPrimary: '#a5b4fc', colorForeground: '#f8fafc', colorMutedForeground: '#cbd5e1',
-                    colorBackground: '#1f2937', colorInputBackground: '#111827',
+                    colorBackground: '#1a222c', colorInputBackground: '#111827',
                     colorInputText: '#f8fafc', borderRadius: '12px'
                 } }
             };
