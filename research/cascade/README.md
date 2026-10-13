@@ -13,7 +13,8 @@ Accuracy on 377 random Dutch content-word sentences (±4 points at this size):
 | Cascade: Qwen3-Embedding-4B + e5-small, DeepSeek where they disagree | ~94% | ~30–34% |
 | Gemini embedding alone | 85–88% | 0 |
 | Qwen3-Embedding-8B / 4B alone (marked word + English) | 86 / 85% | 0 |
-| Qwen3-Reranker-0.6B alone | 83% | 0 |
+| Qwen3-Reranker-0.6B alone (reads sentence and gloss together; slower) | 83% | 0 |
+| Qwen3-Embedding-0.6B alone (marked word + English) — the Turbo pick | 79% | 0 |
 | e5-small alone (browser-sized) | 78% | 0 |
 | first sense on the menu | 49% | 0 |
 
@@ -81,5 +82,6 @@ LLMs to keep improving. So:
 
    Prerequisites: a French grammar-word labeller and a French ledger at pilot size.
 
-**Not yet measured:** the accuracy of Qwen3-Embedding-0.6B. The 83% above is the 0.6B
-*reranker*. Score the 0.6B embedding on the Dutch benchmark first; it costs cents.
+**Measured, 2026-10-12:** Qwen3-Embedding-0.6B alone is 79% on the random set (4B: 85%)
+and 44% on the hard words. Not yet measured: 0.6B with the per-word hard list sent to the LLM,
+which is the Turbo configuration; it needs a 0.6B per-word agreement file (`word_agreement.py`).
