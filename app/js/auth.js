@@ -37,7 +37,8 @@ function isJpAccount(user = currentUser) {
 // profiles are keyed by their profile ID, never by display name, because
 // anyone can register a display name. Keep this list to explicit IDs.
 const REVIEWER_PROFILE_IDS = new Set([
-    'profile_028abec8-a887-469a-9772-424e78ff9397' // JOSHUA
+    'profile_028abec8-a887-469a-9772-424e78ff9397', // Archived JOSHUA identity
+    'clerk_user_3KdfOQ19QCngxtBsj0NsX3qlMjl' // Verified replacement Joshua account
 ]);
 
 function isReviewerAccount(user = currentUser) {
