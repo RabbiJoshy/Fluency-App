@@ -1,4 +1,4 @@
-import { IS_STAGING } from './env.js?v=7f0d8f06';
+import { IS_STAGING } from './env.js?v=a161b6e0';
 
 export const PASSWORDLESS_ENABLED = true;
 export const PASSWORDLESS_SYNC_URL = IS_STAGING
@@ -77,7 +77,6 @@ async function resolveProfile(user, container) {
         const label = document.createElement('label'); label.textContent = 'Username'; label.htmlFor = 'newAccountName';
         const input = document.createElement('input'); input.id = 'newAccountName'; input.required = true;
         input.maxLength = 40; input.className = 'initials-input'; input.autocomplete = 'nickname';
-        input.value = user.primaryEmailAddress?.emailAddress === 'rabbijoshy@gmail.com' ? 'JOSHUA' : (user.firstName || '');
         const error = document.createElement('p'); error.setAttribute('role', 'alert');
         const submit = document.createElement('button'); submit.type = 'submit'; submit.className = 'auth-submit-btn'; submit.textContent = 'Create account';
         form.append(heading, note, label, input, error, submit); container.append(form);
