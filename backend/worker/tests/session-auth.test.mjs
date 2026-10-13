@@ -22,6 +22,11 @@ const productionTrial = { action: 'capabilities' };
 await authorizeProgress(request(await token({ azp: 'https://rabbijoshy.github.io' })), productionTrial,
   { ...env, CLERK_ORIGIN: `${env.CLERK_ORIGIN},https://rabbijoshy.github.io` }, publicKey);
 assert.equal(productionTrial.user, identity);
+const liveAccount = { action: 'account', name: 'JOSHUA' };
+await authorizeProgress(request(good), liveAccount, { ...env, CLERK_ENVIRONMENT: 'production' }, publicKey);
+assert.equal(liveAccount.user, 'clerk_user_abc');
+await assert.rejects(authorizeProgress(request(good), { action: 'load', user: identity },
+  { ...env, CLERK_ENVIRONMENT: 'production' }, publicKey), error => error.status === 403);
 for (const bad of [null, good.slice(0, -8) + 'tampered', await token({ exp: now - 1 }),
   await token({ nbf: now + 60 }), await token({ iss: 'https://other.clerk.accounts.dev' }),
   await token({ azp: 'https://attacker.example' }), await token({ sts: 'pending' }),
@@ -48,7 +53,7 @@ globalThis.window = { __FLUENCY_ENV__: 'production', location: { hostname: 'exam
 const { authenticatedSyncFetch } = await import('../../../app/js/passwordless-auth.js');
 let seen, tokenCalls = 0;
 const nativeFetch = async (...args) => { seen = args; return new Response('{}'); };
-const endpoint = 'https://auth-staging.example/';
+const endpoint = 'https://auth-staging.example';
 const transport = authenticatedSyncFetch(nativeFetch, () => ({ getToken: async () => { tokenCalls++; return 'test-token'; } }), endpoint);
 await transport('https://spotify.example/', { headers: { 'X-Test': 'kept' } });
 assert.equal(tokenCalls, 0);
@@ -57,5 +62,8 @@ await transport(endpoint, { headers: { 'X-Test': 'kept' }, method: 'POST', body:
 assert.equal(seen[1].headers.get('Authorization'), 'Bearer test-token');
 assert.equal(seen[1].headers.get('X-Test'), 'kept');
 assert.equal(seen[1].body, '{}');
+await transport('https://fluency-api.rabbijoshy.workers.dev', { method: 'POST', body: '{"action":"save"}' });
+assert.equal(seen[0], endpoint);
+assert.equal(seen[1].headers.get('Authorization'), 'Bearer test-token');
 await assert.rejects(authenticatedSyncFetch(nativeFetch, () => null, endpoint)(endpoint), error => error.auth === true);
 console.log('Passwordless ownership, token validation, legacy compatibility and transport isolation passed.');

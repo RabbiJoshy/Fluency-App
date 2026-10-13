@@ -1,4 +1,4 @@
-import { lookupProfiles, createProfile, claimLegacyProfile } from './profiles.js';
+import { lookupProfiles, createProfile, claimLegacyProfile, authenticatedProfile } from './profiles.js';
 import { authorizeProgress } from './session-auth.js';
 /**
  * Fluency backend — Cloudflare Worker + D1.
@@ -788,6 +788,9 @@ export default {
     try {
       await authorizeProgress(request, params, env);
       switch (params.action) {
+        case 'account':
+          if (!env.CLERK_ISSUER) return response(false, 'Passwordless accounts are unavailable here.');
+          return response(true, 'Account', await authenticatedProfile(db, params));
         case 'lookupProfiles': return response(true, 'Profiles found', await lookupProfiles(db,params));
         case 'createProfile': return response(true, 'Profile created', await createProfile(db,params));
         case 'claimLegacyProfile': return response(true, 'Profile linked', await claimLegacyProfile(db,params));

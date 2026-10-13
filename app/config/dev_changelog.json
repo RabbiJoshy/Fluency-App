@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-13T19:08:23+01:00",
+      "date": "2026-10-13 19:08 BST",
+      "agent": "Codex",
+      "summary": "Google and email-code accounts now open the main app",
+      "detail": [
+        "New signed-in users choose a username once; their profile is bound to the verified Clerk account.",
+        "Staging and production use separate databases and account keys. Progress URLs are normalized before attaching session tokens.",
+        "Previous accounts and complete learning data are archived for manual restoration after the replacement accounts are created."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T15:07:59+01:00",
       "date": "2026-10-13 15:07 BST",
       "agent": "Claude",
@@ -384,18 +396,6 @@
         "Removed the four progress divisions and grouped each learning status into one continuous stretch instead of repeating colours across rank regions.",
         "Known cards are light green, practice is light yellow, new is white, estimated familiarity is soft lilac and skipped is blue-grey. Legend colours match in both themes.",
         "Kept 100-card target levels, 20-card sessions, saved progress and within-level estimation unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-11T23:22:13+01:00",
-      "date": "2026-10-11 23:22 BST",
-      "agent": "Codex",
-      "summary": "Rare uses has a monochrome count in a thin circle instead of a coloured notification badge.",
-      "detail": [
-        "Removed the coloured fill and shadow behind the Rare uses count.",
-        "Count remains above the icon at the top left, with white digits and a thin white ring; light mode uses dark ink.",
-        "Kept the three-bar icon and its half-filled first bar."
       ],
       "commit": "pending"
     }

@@ -7,6 +7,7 @@ preview_urls = false
 [vars]
 CLERK_ISSUER = "https://hardy-feline-9737.clerk.accounts.dev"
 CLERK_ORIGIN = "https://fluency-staging.pages.dev,https://rabbijoshy.github.io"
+CLERK_ENVIRONMENT = "staging"
 
 [[d1_databases]]
 binding = "DB"

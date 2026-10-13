@@ -31,7 +31,8 @@ export async function authorizeProgress(request, params, env, verificationKeys) 
   if (prohibitedActions.has(params.action)) {
     throw Object.assign(new Error('This action is unavailable for passwordless accounts.'), { status: 403 });
   }
-  const expectedUser = `stg_clerk_${payload.sub}`;
+  const prefix = env.CLERK_ENVIRONMENT === 'production' ? '' : 'stg_';
+  const expectedUser = `${prefix}clerk_${payload.sub}`;
   // Validate all supplied identities, including nested bulk rows. Never allow
   // a signed-in person to address another account by changing a request body.
   if ((params.user && params.user !== expectedUser)
