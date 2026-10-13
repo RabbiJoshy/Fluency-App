@@ -4,11 +4,6 @@
 .app-loading-mark-text.is-flag { font-size: 88px; }
 .app-loading-mark-text.is-flag .flag-img { width: 104px; height: 78px; }
 
-.card-front .front-lemma-pair {
-    background: rgba(var(--card-pos-rgb, 160, 160, 160), 0.07);
-    border-color: rgba(var(--card-pos-rgb, 160, 160, 160), 0.28);
-    box-shadow: none;
-}
 .card-front .front-lemma-pair .card-pos {
     background: rgba(var(--front-pos-rgb, 160, 160, 160), 0.12);
     color: color-mix(in srgb, rgb(var(--front-pos-rgb, 160, 160, 160)) 80%, var(--text-primary));
@@ -43,10 +38,6 @@
     filter: grayscale(1);
     animation: none;
 }
-/* Commonness precedes the sub-row; its information button follows it. */
-.meaning-row-group > .pct-column { grid-column: 1; grid-row: 1; padding: 0 6px 0 0 !important; }
-.meaning-row-group > .meaning-row-body { grid-column: 2; grid-row: 1; }
-.meaning-row-group { grid-template-columns: auto minmax(0, 1fr) !important; }
 
 .study-level-label {
     flex: none;
