@@ -2,6 +2,20 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-13T09:06:51+01:00",
+   "date": "2026-10-13 09:06 BST",
+   "agent": "Codex",
+   "summary": "Desktop sidebar for choosing sets, with a focused study view",
+   "detail": [
+    "Desktop setup has a left sidebar for choosing sets, Your words, progress, tutorial, settings and account.",
+    "Settings, learning context and progress fill the workspace beside the sidebar; setup sheets no longer dock in the gutters.",
+    "Starting a set hides navigation and restores the existing study side panels. Returning to the main menu restores the sidebar.",
+    "Phones and narrow windows retain the compact top bar and dialogs.",
+    "Checked desktop setup, workspace navigation, study entry/exit and phone layout; app tests pass."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-13T08:34:57+01:00",
    "date": "2026-10-13 08:34 BST",
    "agent": "Codex",
@@ -381,19 +395,6 @@
     "Home-screen name, manifest name and browser tab title are Fluency β on production and Fluency α on staging, so the two installs are told apart.",
     "Icon is the app's F mark in its neutral periwinkle, on the tinted tile with the soft glow, with a small β (or α) beside the F.",
     "Placeholder until a real logo is chosen. Phones that already added the app keep the old icon until it is removed and re-added."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T12:00:00+01:00",
-   "date": "2026-10-11 12:00 BST",
-   "agent": "Claude",
-   "summary": "Memory tips cover far more cards and show a step-by-step link from the word to English",
-   "detail": [
-    "Any card whose own English gloss can be reached by a short chain of edits now gets a tip: about 39% of Spanish and 44% of Portuguese speech cards (was 7% and 8%).",
-    "Each tip is tiered: Same word, Regular pattern, Close match, or Loose link (loose ones say to check the meaning).",
-    "The sheet shows the word against its English partner letter by letter, then numbered steps (drop the accent, -ción becomes -tion, swap a letter) with the changed letters highlighted.",
-    "Verb infinitives (informar → inform) and spelling-variant senses are handled; the deck's own lemma is never offered as the English word."
    ],
    "commit": "pending"
   }

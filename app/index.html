@@ -175,6 +175,7 @@
     </script>
     <link rel="stylesheet" href="css/learning-profiles.css?v=1">
     <link rel="stylesheet" href="css/ui-refinements.css?v=20261013">
+    <link rel="stylesheet" href="css/desktop-shell.css?v=1">
 </head>
 <body>
     <div id="appLoadingScreen" class="app-loading-screen" role="status" aria-live="polite" aria-busy="true">
@@ -368,9 +369,10 @@
 
     <div class="container">
         <div class="file-upload" id="setupPanel">
-            <!-- Top bar: Tutorial, Estimate Level, gear (shared by both modes) -->
+            <!-- App controls: desktop setup sidebar; compact top bar on narrow screens. -->
             <div id="topBar" class="setup-step">
                 <div class="step-header top-bar-header">
+                    <div class="desktop-shell-brand"><img src="icons/icon-192.png" alt="" width="32" height="32"><span>Fluency</span></div>
                     <button id="learningContextBtn" class="learning-context-chip" type="button" hidden aria-haspopup="dialog" aria-label="Open learning settings">
                         <span id="learningContextFlag" class="learning-context-flag" aria-hidden="true"></span>
                         <span id="learningContextPhoto" class="learning-context-photo" hidden aria-hidden="true"></span>
@@ -380,13 +382,17 @@
                         <span class="learning-context-chevron" aria-hidden="true">›</span>
                     </button>
                     <div class="top-bar-right-controls">
+                    <button id="desktopStudyBtn" class="desktop-shell-nav" type="button" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M9 9h6M9 13h6M9 17h3"></path></svg><span>Choose a set</span></button>
+                    <button id="desktopWordsBtn" class="desktop-shell-nav" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v17l-7-4-7 4z"></path></svg><span>Your words</span></button>
                     <button id="envBadge" class="env-badge env-staging" type="button" hidden aria-label="Environment: Staging" title="Staging environment — Tap for details">STAGING</button>
                     <button id="topBarUserName" class="top-bar-user-name" type="button" title="Open account settings"></button>
                     <button id="topBarProgressBtn" class="top-bar-icon-btn" type="button" hidden title="Your progress" aria-label="Open your progress" aria-haspopup="dialog" aria-controls="totalStatsModal">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16M9 16v-5M14 16V7M19 16V4"></path></svg>
+                        <span class="desktop-shell-label">Progress</span>
                     </button>
                     <button id="helpBtn" class="top-bar-icon-btn" type="button" title="Tutorial" aria-label="Open tutorial">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.3 2.3 0 0 1 4.45.8c0 1.7-2.25 1.95-2.25 3.45"></path><path d="M12 17h.01"></path></svg>
+                        <span class="desktop-shell-label">Tutorial</span>
                     </button>
                     <!-- Offline / sync-pending status pill. Hidden when online with an empty queue. -->
                     <button id="syncStatusIndicator" class="sync-status is-synced" type="button" title="Open synchronization details" onclick="showSettingsModalWithTab('offline')">Synced</button>
@@ -396,6 +402,7 @@
                             <circle cx="12" cy="12" r="3"></circle>
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                         </svg>
+                        <span class="desktop-shell-label">Settings</span>
                     </button>
                     </div>
                 </div>
