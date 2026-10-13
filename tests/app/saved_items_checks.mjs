@@ -35,6 +35,49 @@ assert.equal(saved.highlightSavedSentence('hola', []), 'hola');
 const button = saved.saveItemButtonHTML({ type: 'phrase', surface: '"><img src=x onerror=alert(1)>', sentence: '', language: 'spanish' });
 assert.equal(button.includes('<img'), false, 'save attributes and labels escape user-controlled text');
 assert.ok(button.includes('aria-pressed="false"'));
+assert.ok(button.includes('aria-haspopup="dialog"'));
+assert.ok(button.includes('<svg'), 'a star represents Saved');
 assert.throws(() => saved.toggleSavedItem(phrase, { getItem: () => null, setItem() { throw new Error('storage full'); } }), /storage full/);
 assert.deepEqual(saved.loadSavedItems({ getItem: () => 'bad JSON' }), []);
 console.log('Saved item compatibility, phrase context, highlighting and storage checks passed');
+
+// Opening and cancelling the star confirmation never changes Saved.
+class Control {
+    constructor() { this.events = {}; this.parts = new Map(); }
+    setAttribute() {}
+    addEventListener(name, fn) { this.events[name] = fn; }
+    querySelector(selector) {
+        if (!this.parts.has(selector)) this.parts.set(selector, new Control());
+        return this.parts.get(selector);
+    }
+    showModal() { this.open = true; }
+    close() { this.open = false; }
+    focus() {}
+}
+const nodes = new Map([['savedConfirmationTitle', new Control()], ['savedConfirmationPhrase', new Control()]]);
+globalThis.document = { getElementById: id => nodes.get(id), createElement: () => new Control(),
+    body: { appendChild: element => nodes.set(element.id, element) }, querySelectorAll: () => [] };
+const savedTimeout = globalThis.setTimeout;
+globalThis.setTimeout = () => 0;
+saved.confirmSavedItem(phrase);
+const dialog = nodes.get('savedItemConfirmation');
+assert.equal(nodes.get('savedConfirmationTitle').textContent, 'Add to Saved?');
+assert.equal(saved.isItemSaved(phrase), false);
+dialog.querySelector('[data-save-cancel]').events.click();
+assert.equal(dialog.open, false);
+assert.equal(saved.isItemSaved(phrase), false);
+saved.confirmSavedItem(phrase);
+dialog.querySelector('[data-save-confirm]').onclick();
+assert.equal(saved.isItemSaved(phrase), true);
+saved.confirmSavedItem(phrase);
+assert.equal(nodes.get('savedConfirmationTitle').textContent, 'Remove from Saved?');
+dialog.querySelector('[data-save-cancel]').events.click();
+assert.equal(saved.isItemSaved(phrase), true);
+// Another tab saving between opening and confirming must not remove the item.
+saved.toggleSavedItem(phrase);
+saved.confirmSavedItem(phrase);
+saved.toggleSavedItem(phrase);
+dialog.querySelector('[data-save-confirm]').onclick();
+assert.equal(saved.isItemSaved(phrase), true);
+globalThis.setTimeout = savedTimeout;
+console.log('Star confirmation, cancellation and concurrent-save checks passed');

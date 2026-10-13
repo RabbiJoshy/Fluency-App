@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-13T21:34:37+01:00",
+      "date": "2026-10-13 21:34 BST",
+      "agent": "Codex",
+      "summary": "Compact star controls for saved phrases",
+      "detail": [
+        "Moved saving to a star at the start of each expression, alongside the examples action, with Add to Saved confirmation.",
+        "Added a faint violet edge to expression boxes and a subtle star halo that remains visible when examples are closed."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T21:19:08+01:00",
       "date": "2026-10-13 21:19 BST",
       "agent": "Codex",
@@ -372,18 +383,6 @@
         "Changed the washed-out palette to the Portuguese level accent green, vivid yellow, white, violet and slate; made legend text more readable.",
         "The continuous bar and its legend now run New, Practice, Known, Estimated familiar, Skipped, putting the work remaining on the left.",
         "Session selection, level boundaries, estimation and saved learning progress are unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-11T23:25:05+01:00",
-      "date": "2026-10-11 23:25 BST",
-      "agent": "Codex",
-      "summary": "Level progress is now one continuous bar with lighter status colours.",
-      "detail": [
-        "Removed the four progress divisions and grouped each learning status into one continuous stretch instead of repeating colours across rank regions.",
-        "Known cards are light green, practice is light yellow, new is white, estimated familiarity is soft lilac and skipped is blue-grey. Legend colours match in both themes.",
-        "Kept 100-card target levels, 20-card sessions, saved progress and within-level estimation unchanged."
       ],
       "commit": "pending"
     }
