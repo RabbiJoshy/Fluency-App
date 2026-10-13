@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign-in check · Fluency</title>
+  <style>
+    * {box-sizing:border-box} body {margin:0;min-height:100dvh;background:#111827;color:#f8fafc;font:16px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:24px}
+    main {width:100%;max-width:440px} h1 {font-size:28px;margin:0 0 8px} p {color:#cbd5e1} a {color:#a5b4fc} #sign-in {display:flex;justify-content:center} #sign-in .cl-rootBox,#sign-in .cl-cardBox {width:100%}
+    #result {background:#1f2937;padding:24px;border-radius:16px} #identity {overflow-wrap:anywhere} button {font:inherit;border:0;border-radius:8px;background:#a5b4fc;color:#111827;padding:10px 16px;cursor:pointer}
+    .note {font-size:14px} [hidden] {display:none!important}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Fluency sign-in check</h1>
+  <p>Try Google or an email code on the live Fluency address.</p>
+  <div id="sign-in" aria-live="polite">Loading sign-in…</div>
+  <section id="result" hidden aria-live="polite">
+    <h2>You’re signed in</h2>
+    <p id="identity"></p>
+    <p id="verification">Checking your session…</p>
+    <button id="sign-out" type="button">Sign out</button>
+  </section>
+  <p class="note">This trial uses Clerk’s development setup. Your existing learning progress is unchanged and has not been linked yet.</p>
+  <a href="./">Return to Fluency</a>
+</main>
+<script type="module" src="js/sign-in-test.js?v=b35347ac"></script>
+</body>
+</html>
