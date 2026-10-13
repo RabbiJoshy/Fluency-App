@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=db6ceea7';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=db6ceea7';
-import { readFastTrack } from './fast-track-preferences.js?v=db6ceea7';
-import './session-plan.js?v=db6ceea7';
+import './state.js?v=041a14f3';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=041a14f3';
+import { readFastTrack } from './fast-track-preferences.js?v=041a14f3';
+import './session-plan.js?v=041a14f3';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1365,7 +1365,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
                         const segLabel = `${i + 1}`;
                         const metrics = _levelBandMetrics(lv);
                         const wordRange = `${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}`;
-                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" aria-label="Level ${i + 1} of ${percentageRanges.length}, words ${wordRange}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label"><span class="lsw-seg-heading"><span class="lsw-seg-eyebrow">Level</span><span class="lsw-seg-num">${segLabel}</span></span><span class="lsw-seg-words"><small>Words</small> ${wordRange}</span><span class="lsw-seg-total">of ${percentageRanges.length.toLocaleString()} levels</span></span></button>`;
+                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" aria-label="Level ${i + 1} of ${percentageRanges.length}, words ${wordRange}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label"><span class="lsw-seg-heading"><span class="lsw-seg-eyebrow">Level</span><span class="lsw-seg-num">${segLabel}</span></span><span class="lsw-seg-words"><small>Words</small> ${wordRange}</span><span class="lsw-seg-total">of ${_levelBandMetrics(percentageRanges[percentageRanges.length - 1]).end.toLocaleString()} words</span></span></button>`;
                     }).join('')}
                 </div>
                 <div class="lsw-ticks lsw-ticks--hidden">${ticksHTML}</div>
@@ -3355,7 +3355,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=db6ceea7')
+        import('./spotify.js?v=041a14f3')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

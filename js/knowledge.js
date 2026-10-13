@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=db6ceea7';
-import { sendOrQueue } from './sync-queue.js?v=db6ceea7';
+import './state.js?v=041a14f3';
+import { sendOrQueue } from './sync-queue.js?v=041a14f3';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -752,15 +752,19 @@ function getPracticeMeaningInfo(card) {
     const indices = new Set();
     const known = new Set();
     let practising = 0;
+    const rowLearned = new Map();
     focusItems.forEach(item => {
         const state = getKnowledgeItemState(card, item);
+        const index = item.meaningIndex;
+        if (Number.isInteger(index) && index >= 0) {
+            rowLearned.set(index, (rowLearned.get(index) ?? true) && state.learned);
+        }
         if (state.needsReview && state.reviewReason === 'incorrect') {
             practising += 1;
-            if (Number.isInteger(item.meaningIndex)) indices.add(item.meaningIndex);
-        } else if (state.learned && Number.isInteger(item.meaningIndex)) {
-            known.add(item.meaningIndex);
+            if (Number.isInteger(index) && index >= 0) indices.add(index);
         }
     });
+    rowLearned.forEach((learned, index) => { if (learned) known.add(index); });
     return { indices, known, practising, total: focusItems.length };
 }
 

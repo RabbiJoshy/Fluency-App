@@ -1,6 +1,7 @@
-import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=db6ceea7';
-import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=db6ceea7';
-import { TurboEngine } from '../turbo/turbo-engine.js?v=db6ceea7';
+import { preferredAi } from '../js/ai-preference.js?v=041a14f3';
+import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=041a14f3';
+import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=041a14f3';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=041a14f3';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -253,7 +254,7 @@ async function init() {
     } catch (error) {
       console.warn('Could not initialize Spotify configuration:', error);
     }
-    await import('../js/spotify.js?v=db6ceea7');
+    await import('../js/spotify.js?v=041a14f3');
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');
@@ -726,7 +727,10 @@ function renderLyrics(song) {
     aiCircleBtn.className = 'lyric-ai-circle-btn';
     aiCircleBtn.title = 'Look up with AI';
     aiCircleBtn.setAttribute('aria-label', 'Look up with AI');
-    aiCircleBtn.textContent = 'AI';
+    const provider = preferredAi();
+    aiCircleBtn.innerHTML = provider === 'claude' ? CLAUDE_SVG : CHATGPT_SVG;
+    aiCircleBtn.title = `Explain with ${provider === 'claude' ? 'Claude' : 'ChatGPT'}`;
+    aiCircleBtn.setAttribute('aria-label', aiCircleBtn.title);
     aiCircleBtn.addEventListener('click', (e) => {
       toggleLyricAiSheet(e, aiWrap);
     });
@@ -784,8 +788,8 @@ function renderLyrics(song) {
       }
     });
 
-    aiSheet.appendChild(claudeChip);
-    aiSheet.appendChild(gptChip);
+    aiSheet.appendChild(provider === 'claude' ? claudeChip : gptChip);
+    aiSheet.appendChild(provider === 'claude' ? gptChip : claudeChip);
 
     aiWrap.appendChild(aiCircleBtn);
     aiWrap.appendChild(aiSheet);

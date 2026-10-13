@@ -83,7 +83,8 @@ function canDockCard() {
     return studyViewOpen() && panelWidth() >= PANEL_MIN;
 }
 function canDockSheet() {
-    return panelWidth() >= PANEL_MIN
+    return !document.body.classList.contains('desktop-workspace')
+        && panelWidth() >= PANEL_MIN
         && (studyViewOpen() || window.innerWidth / layoutZoom() >= SETUP_MIN_WINDOW);
 }
 
@@ -421,12 +422,13 @@ function init() {
     if (app) {
         new MutationObserver(() => {
             if (!app.classList.contains('hidden')) {
-                applyPanelWidth();
+                schedulePlacement();
                 return;
             }
             closeAll(OCCUPANTS.filter(o => isOpen(o) && !o.settings
                 && elementOf(o).dataset.dockStack === undefined
                 && (o.card || sideOf(o) === 'left' || sideOf(o) === 'right')));
+            schedulePlacement();
         }).observe(app, { attributes: true, attributeFilter: ['class'] });
     }
     applyPanelWidth();

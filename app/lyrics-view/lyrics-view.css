@@ -1694,3 +1694,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 body.has-play-bar main { padding-bottom: 140px; }
 @media (prefers-reduced-motion: reduce) { .play-bar { backdrop-filter: none; } }
 :root[data-theme="light"] .play-bar-main, :root[data-theme="light"] .play-bar-main:hover { color: #ffffff; }
+
+/* Give translations enough weight and room to read alongside the original. */
+.lyric-line-english {
+  font-size: clamp(18px, 2.4vw, 23px);
+  line-height: 1.55;
+  font-weight: 500;
+  color: var(--text-secondary, #b8c4d6);
+  margin-top: 8px;
+  max-width: 64ch;
+}
+.lyric-line-item { padding-top: 18px; padding-bottom: 18px; }
+.lyric-ai-circle-btn svg { width: 24px; height: 24px; }
+.lyric-ai-circle-btn { opacity: 0.8; }
+@media (max-width: 600px) {
+  .lyric-line-english { font-size: 18px; line-height: 1.5; }
+  .lyric-line-item { padding-top: 14px; padding-bottom: 14px; }
+}
