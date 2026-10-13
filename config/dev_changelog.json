@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-13T19:26:31+01:00",
+      "date": "2026-10-13 19:26 BST",
+      "agent": "Codex",
+      "summary": "Restored Joshua’s learning history to the new Google account",
+      "detail": [
+        "The approved new Joshua identity receives the archived progress and history, keeping new onboarding preferences.",
+        "The replacement account retains its reviewer flagging controls. Other users’ archives are not restored."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T19:16:28+01:00",
       "date": "2026-10-13 19:16 BST",
       "agent": "Codex",
@@ -375,18 +386,6 @@
         "Removed the action row’s coloured background and rounded tray in both themes; it now blends into the page like the scrubber.",
         "Reduced the gap and button padding, preserving readable labels and usable tap targets.",
         "Reclaimed footer space: about 30px more card content on desktop and 42px on phones, while respecting the phone safe area."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-11T23:05:37+01:00",
-      "date": "2026-10-11 23:05 BST",
-      "agent": "Codex",
-      "summary": "Commonness tooltips stay above the card without clipping; white text and taller sense meters.",
-      "detail": [
-        "Commonness explanations open in a separate overlay above scrolling and transformed card surfaces, positioned within the screen edges.",
-        "Tooltip text and commonness icon are white. Sense-row meters are taller and slightly wider, with less surrounding padding.",
-        "Hover, tap and keyboard access work; tooltips dismiss when scrolling, flipping, changing cards or returning to the menu."
       ],
       "commit": "pending"
     }

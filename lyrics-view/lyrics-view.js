@@ -1,7 +1,7 @@
-import { preferredAi } from '../js/ai-preference.js?v=a161b6e0';
-import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=a161b6e0';
-import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=a161b6e0';
-import { TurboEngine } from '../turbo/turbo-engine.js?v=a161b6e0';
+import { preferredAi } from '../js/ai-preference.js?v=5b2c6999';
+import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=5b2c6999';
+import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=5b2c6999';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=5b2c6999';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -254,7 +254,7 @@ async function init() {
     } catch (error) {
       console.warn('Could not initialize Spotify configuration:', error);
     }
-    await import('../js/spotify.js?v=a161b6e0');
+    await import('../js/spotify.js?v=5b2c6999');
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');
