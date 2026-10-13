@@ -6698,13 +6698,12 @@ function renderCardWikipediaBadge(card) {
         <div class="back-header">
             <div class="flip-back-area" id="flipBackArea">
                 <div class="back-headword-row">
-                    <span class="back-headword" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: 1.1;">${wordDisplay}</span>${backSplitBadgeHTML}${renderCardWikipediaBadge(card)}
+                    <span class="back-headword" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: 1.1;">${wordDisplay}</span>${grammarPairCueHTML(card)}${backSplitBadgeHTML}${renderCardWikipediaBadge(card)}
                     ${backPosLegendHTML}
                 </div>
                 ${notableSurfaceRelation
                     ? `<div class="surface-relation-cue back-surface-relation">${escapeCardText(notableSurfaceRelation.surface)} <span aria-hidden="true">→</span> ${escapeCardText(notableSurfaceRelation.canonical)}</div>`
                     : ''}
-                ${grammarPairCueHTML(card)}
                 ${backGrammarHTML}
             </div>
             ${backDerivationHTML}
