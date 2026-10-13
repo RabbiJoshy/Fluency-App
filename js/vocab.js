@@ -1,12 +1,12 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=353dd12e';
-import { readJsonWithTimeout } from './read-request.js?v=353dd12e';
-import { validateVocabularyIndex } from './data-contracts.js?v=353dd12e';
-import { formatRoute } from './routes.js?v=353dd12e';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=353dd12e';
-import { releaseUrl } from './release-host.js?v=353dd12e';
+import './state.js?v=a1cbe2d7';
+import { readJsonWithTimeout } from './read-request.js?v=a1cbe2d7';
+import { validateVocabularyIndex } from './data-contracts.js?v=a1cbe2d7';
+import { formatRoute } from './routes.js?v=a1cbe2d7';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=a1cbe2d7';
+import { releaseUrl } from './release-host.js?v=a1cbe2d7';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1567,6 +1567,10 @@ function expandSlimExample(record, sources) {
     if (license) source.license = license;
     if (record.r) source.source_record_id = record.r;
     const metadata = { source };
+    if (Array.isArray(record.fw)) {
+        const [kind, value, gloss] = record.fw;
+        metadata.function_word = { kind, value, gloss };
+    }
     const sentenceId = slimId(record.i, 'sentence_');
     if (sentenceId) metadata.sentence_id = sentenceId;
     if (Array.isArray(record.d)) {
@@ -3632,6 +3636,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         : (item.corpus_count || null)),
                 meanings: meanings,
                 grammarPairs: item._grammarCard?.pairs || [],
+                // Function words are taught by construction and grammatical
+                // role, labelled by rules in the release, instead of by sense.
+                functionWord: item.function_word || null,
                 unusedMenuSenses: finished.unusedMenuSenses,
                 translation: meanings[0]?.meaning || '',
                 targetSentence: firstExample.targetSentence,

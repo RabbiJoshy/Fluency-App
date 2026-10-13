@@ -23,7 +23,7 @@
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
     measureReplicaCard, fitReplicaCard,
-} from './card-replica.js?v=353dd12e';
+} from './card-replica.js?v=a1cbe2d7';
 
 // ---------------------------------------------------------------------------
 // Content
@@ -48,9 +48,11 @@ const FRONT_LABELS = [
 const BACK_LABELS = [
     { face: 'back', anchor: '.pos-section-head', title: 'Every meaning, separated',
       text: 'One word, two unrelated meanings: a bank and a bench.' },
-    { face: 'back', anchor: '.meaning-row.is-current-sense .sense-prominence-badge', title: 'How often each is used',
+    { face: 'back', anchor: '.meaning-row.is-current-sense .sense-prominence-badge',
+      pinTitle: 'How common', title: 'How often each is used',
       text: 'Estimated from the real sentences behind the deck.' },
-    { face: 'back', anchor: '.example-word-highlight', title: 'A real sentence for it',
+    { face: 'back', anchor: '.example-word-highlight', pinAnchor: '.breakdown-trigger',
+      title: 'A real sentence for it',
       text: 'Tap another meaning and the example changes with it.' },
 ];
 
@@ -260,6 +262,39 @@ function refreshSlotBack(i) {
 function fitCards() {
     const inners = [...document.querySelectorAll('#walkthroughStage .card-replica')];
     if (!inners.length) return;
+    const stage = document.getElementById('walkthroughStage');
+    const body = document.getElementById('walkthroughBody');
+    inners.forEach(inner => {
+        inner.style.removeProperty('--replica-card-scale');
+        inner.style.removeProperty('--replica-layout-w');
+    });
+
+    // A single card on a phone is never clipped: if its content is taller than
+    // the room the header and footer leave, the whole card is scaled down. It
+    // is laid out at width ÷ scale so that, scaled, it still spans the screen,
+    // and a wider card wraps fewer rows, so the two settle together.
+    if (window.innerWidth <= 700 && inners.length === 1 && body && stage) {
+        const bodyStyle = getComputedStyle(body);
+        const room = body.clientHeight - parseFloat(bodyStyle.paddingTop) - parseFloat(bodyStyle.paddingBottom) - 2;
+        const cardW = parseFloat(stage.style.getPropertyValue('--walkthrough-card-w')) || stage.clientWidth;
+        const inner = inners[0];
+        let scale = 1;
+        let tallest = 0;
+        for (let pass = 0; pass < 4; pass++) {
+            inner.style.setProperty('--replica-layout-w', `${Math.round(cardW / scale)}px`);
+            inner.style.setProperty('--replica-card-h', '1600px'); // roomy, so nothing is squeezed while measuring
+            tallest = Math.max(380, measureReplicaCard(inner));
+            const next = tallest > room ? Math.max(0.7, room / tallest) : 1;
+            if (Math.abs(next - scale) < 0.01) break;
+            scale = next;
+        }
+        scale = tallest > room ? Math.max(0.7, room / tallest) : 1;
+        inner.style.setProperty('--replica-card-h', `${tallest}px`);
+        inner.style.setProperty('--replica-card-scale', String(scale));
+        inner.style.setProperty('--replica-layout-w', `${Math.round(cardW / scale)}px`);
+        return;
+    }
+
     const tallest = Math.max(...inners.map(measureReplicaCard));
     // Leave the header and the footer on screen with the card.
     const chrome = (document.querySelector('.walkthrough-head')?.offsetHeight || 90)
@@ -334,7 +369,8 @@ function placeLabels() {
         const cardBox = slotEl?.querySelector('.card-replica')?.getBoundingClientRect();
         if (!cardBox) return;
         slot.spec.labels.forEach(label => {
-            const target = slotEl.querySelector(`.card-${label.face} ${label.anchor}`);
+            const anchorSelector = (!callouts && label.pinAnchor) ? label.pinAnchor : label.anchor;
+            const target = slotEl.querySelector(`.card-${label.face} ${anchorSelector}`);
             if (!target) return;
             const box = target.getBoundingClientRect();
             if (!box.width && !box.height) return;
@@ -424,7 +460,7 @@ function layoutCallouts(layer, svg, side, items, stageHeight) {
 function pinLabel(layer, label, rel, cardLeft, cardRight) {
     const tag = document.createElement('div');
     tag.className = 'walkthrough-pin';
-    tag.textContent = label.title;
+    tag.textContent = label.pinTitle || label.title;
     layer.appendChild(tag);
     const w = tag.offsetWidth;
     const h = tag.offsetHeight;

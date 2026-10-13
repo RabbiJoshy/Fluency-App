@@ -79,6 +79,32 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-13T15:07:59+01:00",
+      "date": "2026-10-13 15:07 BST",
+      "agent": "Claude",
+      "summary": "Grammar-word cards for Spanish, Portuguese and Czech (and Dutch pronouns): function words shown by role and pattern, not a sense list",
+      "detail": [
+        "Spanish (179 cards), Portuguese (198) and Czech (241) now show the 'Grammar word' block on function-word cards: articles, prepositions, conjunctions, pronouns, determiners, se/si. Each example carries its role or construction (gostar de, tener que, lo que, bát se).",
+        "Labels come from rules over a parser (Spanish: es_dep_news_trf; Portuguese, Czech: Stanza) plus Wiktionary. Hand-checked on random samples: about 95 percent right in each language.",
+        "Nothing else changed: every card, sense and example is identical to the live decks (pt v25 r4, es v25 r6, cs v22); new releases are the same decks with -fw1, and their side files (frequency, pools, cognates, merge lists, BRIDGE) are rebound copies.",
+        "Wording of role names is a draft for review."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-13T14:29:13+01:00",
+      "date": "2026-10-13 14:29 BST",
+      "agent": "Claude",
+      "summary": "Dutch prototype: pronouns and determiners now shown as grammar words too",
+      "detail": [
+        "Dutch release nl-speech-cascade-proto2-6000x10: 150 cards get the 'Grammar word' block, up from 69. The 81 new ones are pronouns and determiners (je, ze, die, wat, mijn, haar, geen, alle, veel...).",
+        "Roles come from the parser: subject, object, possessive, reflexive (-self), question word, relative pronoun, pointing word, amount word. Glosses follow the sentence: 'ze' reads 'she' or 'they' from the verb.",
+        "Card summaries now keep one chip per role and gloss, so 'ze' shows both 'subject · she' and 'subject · they'.",
+        "Wording is a draft for review."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T14:15:43+01:00",
       "date": "2026-10-13 14:15 BST",
       "agent": "Claude",
@@ -87,6 +113,46 @@
         "Back: rows that group several meanings (e.g. llevar's 'to take / to transport / to spend time on') no longer sit pushed to the right; an extra empty left column from today's ui-refinements.css is removed.",
         "Front: the 'Verb from querer' capsule loses the POS-coloured outer ring and tint added in the same file; it is the neutral grey capsule again.",
         "Cause: commit c3988450 (ui-refinements.css); no new overrides added."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-13T12:56:37+01:00",
+      "date": "2026-10-13 12:56 BST",
+      "agent": "Claude",
+      "summary": "Dutch prototype deck (CASCADE-WSD): function words shown as grammar words; other senses chosen by a cheap embedding + LLM cascade",
+      "detail": [
+        "Dutch is enabled with release nl-speech-cascade-proto-6000x10 (6,000 cards, 10 examples each, published to Fluency-Releases-nl).",
+        "69 function words (de, het, een, van, op, aan, er, te, dat, als...) are labelled by rule, not WSD: the card back shows a 'Grammar word' block with 'Used as' roles and recurring patterns (aan het, om te, meegaan), and each example carries its role or construction label.",
+        "Other words: Qwen3-Embedding-4B picks the sense, e5-small checks it, and DeepSeek V4.1 Flash decides the 34% where they disagree. Single-sense cards need no model.",
+        "Prototype wording ('Grammar word', 'Used as', 'Patterns') is a draft for review."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-13T12:55:00+01:00",
+      "date": "2026-10-13 12:55 BST",
+      "agent": "Gemini",
+      "summary": "SHOWCASE: Tutorial copy tightened, Walkthrough unclipped & full-bleed on phones, About demo card alignment fixed",
+      "detail": [
+        "Shortened tutorial explanations to <= 180 characters across Spanish, Portuguese, Czech, and French with no unreplaced placeholders.",
+        "Walkthrough modal is full-bleed on phones (<= 700px) with single-card scaling so cards are never clipped, even on 375x667.",
+        "Walkthrough pin labels support pinTitle ('How common') and pinAnchor ('.breakdown-trigger') so they never overlap headwords, context tags, or example sentences.",
+        "Fixed About modal demo cards (.about-demo-card) whose 3-column meaning rows were broken by global .meaning-row rules.",
+        "Updated About project button hint to 'A quick look at a card · about 30 seconds', accurate for both phone (3 screens) and desktop (2 screens)."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-13T12:43:10+01:00",
+      "date": "2026-10-13 12:43 BST",
+      "agent": "Codex",
+      "summary": "Passwordless accounts on staging with Google and email codes",
+      "detail": [
+        "Staging uses Clerk sign-in without password creation or guest mode.",
+        "Signed-in accounts save progress in a separate staging database, with server checks for account ownership.",
+        "Existing production accounts and progress are unchanged. Staging accounts start with empty progress.",
+        "Sign-up stays inside Fluency, with readable sign-in controls and a scrollable layout on small screens."
       ],
       "commit": "pending"
     },
@@ -320,69 +386,6 @@
         "Production is named Fluency; staging is Fluency β with Fβ, so the two installs are told apart.",
         "The iPhone home-screen icon is the 512-pixel render, so it stays sharp when iOS scales it.",
         "Phones that already added the app keep the old icon and name until it is removed and re-added."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T19:43:28+01:00",
-      "date": "2026-10-12 19:43 BST",
-      "agent": "Codex",
-      "summary": "Smart Skip offers useful language pairs, with missing maps marked Coming soon",
-      "detail": [
-        "An explicit pair list now limits both runtime filtering and offline mapping generation.",
-        "Smart Skip shows only relevant languages; relevant unmapped pairs are greyed out as Coming soon.",
-        "The filtered Languages you know editor preserves unrelated profile languages and links to the full list in Settings.",
-        "Onboarding and general Settings can save other languages by name or code without creating unnecessary mappings."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T19:21:41+01:00",
-      "date": "2026-10-12 19:21 BST",
-      "agent": "Codex",
-      "summary": "Keep language-profile and BRIDGE preferences isolated during staging review",
-      "detail": [
-        "Language-profile and Smart Skip preference writes now use the staging account namespace.",
-        "Added regression checks for both preference writers so staging review cannot update production preferences."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T19:16:50+01:00",
-      "date": "2026-10-12 19:16 BST",
-      "agent": "Codex",
-      "summary": "BRIDGE and shared known-language settings, with safer verb matching and centred mobile dialogs",
-      "detail": [
-        "Languages you know now live in Settings → App, save across the account and are asked once; Polish is always offered.",
-        "Smart Skip source-language choices no longer overwrite the shared profile.",
-        "BRIDGE is opt-in per learning language and uses known matching source meanings without writing target progress; skipped words remain browsable.",
-        "Cross-language verbs require compatible dictionary forms, including person, number, tense, mood and lexical aspect. Infinitives do not imply knowing conjugated forms.",
-        "Spanish/French/Portuguese mappings are tied to exact releases. French currently has 200 cards, so verified BRIDGE eligibility is limited.",
-        "Mobile dialogs are vertically centred; desktop panels fit the side gutter or centre when there is insufficient space.",
-        "Smart Skip title, Recommended badge, info icon and larger toggle share a line, with smaller explanation below."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-11T23:36:00+01:00",
-      "date": "2026-10-11 23:36 BST",
-      "agent": "Claude",
-      "summary": "Home-screen icon is now just the glowing F and β (no inner tile), and Add to Home Screen should stop offering the old Flashcards name",
-      "detail": [
-        "Icon drops the inner rounded square: a larger periwinkle F with a small β (α on staging), glowing on the dark background.",
-        "The manifest link now carries a version tag, so a phone still running the previous app version fetches the new manifest instead of its cached \"Flashcards\" one."
-      ],
-      "commit": "ae5602b1"
-    },
-    {
-      "timestamp": "2026-10-11T23:31:14+01:00",
-      "date": "2026-10-11 23:31 BST",
-      "agent": "Codex",
-      "summary": "Progress uses stronger colours and shows the cards left to study first.",
-      "detail": [
-        "Changed the washed-out palette to the Portuguese level accent green, vivid yellow, white, violet and slate; made legend text more readable.",
-        "The continuous bar and its legend now run New, Practice, Known, Estimated familiar, Skipped, putting the work remaining on the left.",
-        "Session selection, level boundaries, estimation and saved learning progress are unchanged."
       ],
       "commit": "pending"
     }
