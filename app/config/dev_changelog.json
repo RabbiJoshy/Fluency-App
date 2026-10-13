@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-13T20:04:49+01:00",
+      "date": "2026-10-13 20:04 BST",
+      "agent": "Codex",
+      "summary": "Cleaner centred passwordless sign-in",
+      "detail": [
+        "One centred sign-in panel with full-width provider buttons and responsive spacing.",
+        "Added a temporary warning about iCloud and me.com email-code delivery. Microsoft is available alongside Google through Clerk."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T19:26:31+01:00",
       "date": "2026-10-13 19:26 BST",
       "agent": "Codex",
@@ -384,17 +395,6 @@
         "Smart Skip title, Recommended badge, info icon and larger toggle share a line, with smaller explanation below."
       ],
       "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-11T23:36:00+01:00",
-      "date": "2026-10-11 23:36 BST",
-      "agent": "Claude",
-      "summary": "Home-screen icon is now just the glowing F and β (no inner tile), and Add to Home Screen should stop offering the old Flashcards name",
-      "detail": [
-        "Icon drops the inner rounded square: a larger periwinkle F with a small β (α on staging), glowing on the dark background.",
-        "The manifest link now carries a version tag, so a phone still running the previous app version fetches the new manifest instead of its cached \"Flashcards\" one."
-      ],
-      "commit": "ae5602b1"
     }
   ]
 }

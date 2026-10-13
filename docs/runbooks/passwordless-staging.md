@@ -1,7 +1,7 @@
 # Passwordless demo accounts
 
 The live GitHub Pages app and staging both use the Fluency Clerk development
-instance, Google sign-in and email verification codes. Password creation and
+instance, Google and Microsoft sign-in, and email verification codes. Password creation and
 guest mode are disabled. This is intentionally Clerk's development setup for
 Josh's small demo, not a configured Clerk production instance.
 
@@ -53,7 +53,13 @@ staging worker using `wrangler.auth-staging.toml` and the production worker usin
 `wrangler.toml`. Follow AIRLOCK for the frontend: stage, verify the exact build,
 then promote only with Josh's production authorization.
 
-Test Google and email-code sign-in, explicit username registration, remembered
+The sign-in panel includes a temporary notice that iCloud/me.com email codes
+are affected by Clerk’s development-email delivery incident. Recheck Clerk’s
+status before removing the notice. Microsoft uses shared development OAuth
+credentials; its button and provider redirect have been checked, but a full
+Microsoft account sign-in still needs a user test.
+
+Test Google, Microsoft and email-code sign-in, explicit username registration, remembered
 sessions, logout, cross-device progress and isolation between environments.
 Use a private browser window to test the provider-choice screen; use a different
 email address for a distinct new account. Choosing the same verified email can
