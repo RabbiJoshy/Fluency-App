@@ -8,7 +8,8 @@ Every harvested (card, sentence) pair gets one row:
   every other card                    -> assigned by the cascade (Qwen3-4B agreed with e5-small,
                                          or DeepSeek decided); abstained if DeepSeek gave no answer
 Provenance names this research prototype and every model it used; nothing claims Gemini or
-the production executor. Output: Fluency-Workspace/raw/wsd/nl-cascade-proto-1/bundle.json
+the production executor. Output: Fluency-Workspace/raw/wsd/nl-cascade-proto-2/bundle.json
+v2 (2026-10-13): pronouns and determiners labelled by rule too (labeller_nl.pron_det).
 """
 import json, os, sys
 from pathlib import Path
@@ -39,7 +40,7 @@ code = [HERE / f for f in ("plan.py", "parse_label.py", "relabel.py", "cascade.p
     HERE.parent / "trouble-words/labeller_nl.py", HERE.parent / "nl-benchmark/embed_score.py"]
 REVS = {"gloss": "Qwen/Qwen3-Embedding-4B (DeepInfra)", "check": "intfloat/multilingual-e5-small@614241f622f53c4eeff9890bdc4f31cfecc418b3",
         "llm": "deepseek-flash (DeepSeek V4.1 Flash, thinking off)", "occurrence_pos": "stanza-nl-default@1.14.0"}
-method = {"profile_id": "nl-cascade-proto-1", "implementation_version": "research.cascade.nl-proto/v1",
+method = {"profile_id": "nl-cascade-proto-2", "implementation_version": "research.cascade.nl-proto/v2",
           "implementation_content_id": canonical_content_id({p.name: file_content_id(p) for p in code}),
           "model_revisions": REVS, "random_seed": 0}
 cls = {c["card_id"]: c for c in plan["cards"]}
@@ -91,6 +92,6 @@ bundle = {"bundle_version": "wsd-assignment-bundle/v1", "run_id": "20261012T1758
           "coverage": "complete_candidate_pool", "method": method, "inputs": inputs, "assignments": rows,
           "sampling": {**{k: plan["policy"][k] for k in ()}, "policy": plan["policy"], "surface_cards": len(cands["cards"]),
                        "occurrences_considered": considered, "occurrences_selected": selected_n, "occurrences_not_evaluated": not_eval}}
-dest = W / "raw/wsd/nl-cascade-proto-1"; dest.mkdir(parents=True, exist_ok=True)
+dest = W / "raw/wsd/nl-cascade-proto-2"; dest.mkdir(parents=True, exist_ok=True)
 (dest / "bundle.json").write_text(json.dumps(bundle, ensure_ascii=False))
 print(counts, "->", dest / "bundle.json")

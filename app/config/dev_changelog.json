@@ -2,6 +2,19 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-13T14:29:13+01:00",
+   "date": "2026-10-13 14:29 BST",
+   "agent": "Claude",
+   "summary": "Dutch prototype: pronouns and determiners now shown as grammar words too",
+   "detail": [
+    "Dutch release nl-speech-cascade-proto2-6000x10: 150 cards get the 'Grammar word' block, up from 69. The 81 new ones are pronouns and determiners (je, ze, die, wat, mijn, haar, geen, alle, veel...).",
+    "Roles come from the parser: subject, object, possessive, reflexive (-self), question word, relative pronoun, pointing word, amount word. Glosses follow the sentence: 'ze' reads 'she' or 'they' from the verb.",
+    "Card summaries now keep one chip per role and gloss, so 'ze' shows both 'subject · she' and 'subject · they'.",
+    "Wording is a draft for review."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-13T12:56:37+01:00",
    "date": "2026-10-13 12:56 BST",
    "agent": "Claude",
@@ -382,19 +395,6 @@
     "Commonness explanations open in a separate overlay above scrolling and transformed card surfaces, positioned within the screen edges.",
     "Tooltip text and commonness icon are white. Sense-row meters are taller and slightly wider, with less surrounding padding.",
     "Hover, tap and keyboard access work; tooltips dismiss when scrolling, flipping, changing cards or returning to the menu."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T22:56:24+01:00",
-   "date": "2026-10-11 22:56 BST",
-   "agent": "Codex",
-   "summary": "SETWISE: one level progress bar and short 20-card sessions, with finer starting-level suggestions.",
-   "detail": [
-    "Keep 100-card target levels; four quiet progress segments replace the selectable 25-card boxes. Go starts up to 20 eligible cards across the level.",
-    "Session completion offers Another 20 (or the smaller remaining count) and waits for your choice. New cards and practice remain separate.",
-    "Estimation suggests positions such as around halfway through Level 1 while preserving the saved starting rank. Estimated familiarity is shown separately from answered-card progress.",
-    "Resume retains saved session membership and order, including old sessions and companion cards. Guest sessions advance in memory without syncing answers."
    ],
    "commit": "pending"
   }

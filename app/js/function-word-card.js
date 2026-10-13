@@ -9,8 +9,12 @@
 const ROLE_NAMES = {
     prep: 'preposition',
     article: 'article',
-    subject_pron: 'pronoun',
-    object_pron: 'pronoun',
+    subject_pron: 'subject',
+    object_pron: 'object',
+    reflexive: 'reflexive (-self)',
+    interrogative: 'question word',
+    indefinite: 'pronoun',
+    quantifier: 'amount word',
     conj: 'conjunction',
     conj_that: 'conjunction',
     conj_if: 'conjunction',
@@ -56,7 +60,7 @@ export function functionWordLabelText(label) {
 export function functionWordBlockHTML(card) {
     const summary = card?.functionWord;
     if (!summary) return '';
-    // Distinct chips only: subject and object pronoun both read "pronoun · it".
+    // Distinct chips only: two roles can render the same text.
     const distinct = texts => [...new Set(texts.filter(Boolean))];
     const roleTexts = distinct((summary.roles || []).map(r => functionWordLabelText({ kind: 'role', ...r }))).slice(0, 3);
     // A pattern seen once in the card's sentences is an accident of sampling, not a pattern.

@@ -190,8 +190,8 @@ def function_word_label(row: dict[str, Any] | None) -> dict[str, Any] | None:
 def function_word_summary(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
     """Card-level view of a function word: its constructions and roles by count."""
 
-    units: dict[str, dict[str, Any]] = {}
-    roles: dict[str, dict[str, Any]] = {}
+    units: dict[tuple[str, Any], dict[str, Any]] = {}
+    roles: dict[tuple[str, Any], dict[str, Any]] = {}
     labelled = 0
     for row in rows:
         label = function_word_label(row)
@@ -199,11 +199,13 @@ def function_word_summary(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
             continue
         labelled += 1
         bucket = units if label["kind"] == "unit" else roles
-        entry = bucket.setdefault(label["value"], {"value": label["value"], "gloss": label.get("gloss"), "count": 0})
+        # one entry per (role, gloss): 'ze' as subject is 'she' in some sentences and 'they' in others
+        key = (label["value"], label.get("gloss"))
+        entry = bucket.setdefault(key, {"value": label["value"], "gloss": label.get("gloss"), "count": 0})
         entry["count"] += 1
     if not labelled:
         return None
-    order = lambda items: sorted(items, key=lambda item: (-item["count"], item["value"]))
+    order = lambda items: sorted(items, key=lambda item: (-item["count"], item["value"], item["gloss"] or ""))
     return {
         "summary_version": "function-word-summary/v1",
         "labelled": labelled,

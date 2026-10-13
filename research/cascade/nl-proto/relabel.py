@@ -21,7 +21,7 @@ for c in cands:
     docs = nlp.bulk_process([stanza.Document([], text=bank[s]) for s in c["selected"]])
     labels = {}
     for sid, d in zip(c["selected"], docs):
-        m = re.search(r"(?<![\w'])" + re.escape(c["form"]) + r"(?![\w'])", bank[sid], re.I)
+        m = re.search(r"(?<![\w'’])" + re.escape(c["form"]).replace("'", "['’]") + r"(?![\w'’])", bank[sid], re.I)
         lab = None
         if m:
             for s in d.sentences:

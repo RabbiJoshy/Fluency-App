@@ -39,6 +39,92 @@ CONJ_GLOSS = {"dat": "that", "als": "if / when / as", "dan": "than", "zoals": "l
               "voordat": "before", "tot": "until", "toen": "when", "terwijl": "while", "of": "whether / or", "want": "because",
               "maar": "but", "en": "and", "door": "by (doing)", "voor": "before", "wanneer": "when", "nadat": "after", "zodat": "so that"}
 
+# Pronouns and determiners: role from Stanza features, gloss from this table (role -> gloss, "*" = any role).
+PRON_GLOSS = {
+    "ik": {"*": "I"}, "jij": {"*": "you"}, "je": {"possessive": "your", "reflexive": "yourself", "*": "you"},
+    "jou": {"*": "you"}, "jouw": {"*": "your"}, "u": {"reflexive": "yourself", "*": "you (formal)"}, "uw": {"*": "your (formal)"},
+    "hij": {"*": "he"}, "ie": {"*": "he"}, "hem": {"*": "him / it"}, "'m": {"*": "him / it"},
+    "zij": {"subject_pron": "she / they", "*": "her / them"}, "ze": {"subject_pron": "she / they", "*": "her / them"},
+    "haar": {"possessive": "her", "*": "her"}, "hun": {"possessive": "their", "*": "them"}, "hen": {"*": "them"},
+    "me": {"possessive": "my", "reflexive": "myself", "*": "me"}, "mij": {"reflexive": "myself", "*": "me"}, "mijn": {"*": "my"},
+    "ons": {"possessive": "our", "reflexive": "ourselves", "*": "us"}, "onze": {"*": "our"}, "jullie": {"possessive": "your (plural)", "*": "you (plural)"},
+    "z'n": {"*": "his / its"}, "zich": {"*": "himself / herself / themselves"}, "zichzelf": {"*": "himself / herself / themselves"},
+    "men": {"*": "one / people"}, "d'r": {"possessive": "her", "*": "her / there"}, "gij": {"*": "you (archaic)"},
+    "zijne": {"*": "his"}, "hare": {"*": "hers"}, "haren": {"*": "hers"}, "mijnen": {"*": "mine"},
+    "die": {"relative": "who / that", "demonstrative": "that / those", "*": "that one / he / she"},
+    "deze": {"*": "this / these"}, "dit": {"*": "this"}, "dien": {"*": "that"}, "gene": {"*": "that (one)"},
+    "wat": {"interrogative": "what", "relative": "what / which", "quantifier": "some / a bit of", "indefinite": "something", "*": "what"},
+    "wie": {"relative": "who / whom", "*": "who"}, "welke": {"*": "which"}, "welk": {"*": "which"}, "hoeveel": {"*": "how much / how many"},
+    "wiens": {"*": "whose"}, "dier": {"*": "of those"},
+    "iets": {"*": "something"}, "niets": {"*": "nothing"}, "niks": {"*": "nothing"}, "iemand": {"*": "someone"},
+    "zoiets": {"*": "something like that"}, "geen": {"*": "no / not a"}, "alle": {"*": "all"}, "allen": {"*": "all (of them)"},
+    "allemaal": {"*": "all (of them)"}, "elk": {"*": "each / every"}, "ieder": {"*": "each / every"}, "iedere": {"*": "each / every"},
+    "veel": {"*": "much / many / a lot"}, "vele": {"*": "many"}, "weinig": {"*": "little / few"}, "meer": {"*": "more"},
+    "minder": {"*": "less / fewer"}, "meest": {"*": "most"}, "meeste": {"*": "most"}, "meesten": {"*": "most (people)"},
+    "genoeg": {"*": "enough"}, "voldoende": {"*": "enough"}, "zoveel": {"*": "so much / so many"}, "evenveel": {"*": "as much / as many"},
+    "sommige": {"*": "some"}, "sommigen": {"*": "some (people)"}, "enkele": {"*": "a few / some"}, "meerdere": {"*": "several"},
+    "beide": {"*": "both"}, "beiden": {"*": "both"}, "allebei": {"*": "both"}, "ander": {"*": "other"}, "anderen": {"*": "others"},
+    "hetzelfde": {"*": "the same"}, "dezelfde": {"*": "the same"}, "zelfde": {"*": "same"}, "zo'n": {"*": "such a"},
+    "dergelijke": {"*": "such"}, "allerlei": {"*": "all kinds of"}, "eén": {"*": "one"}, "èèn": {"*": "one"}, "ene": {"*": "the one / one"},
+    "enige": {"only": "only", "*": "some / any"}, "enig": {"only": "only", "*": "some / any"}, "enigen": {"only": "the only ones", "*": "some (people)"},
+    "der": {"*": "of the"}, "des": {"*": "of the"}, "den": {"*": "the"},
+}
+QUANT = {"geen", "alle", "allen", "allemaal", "elk", "ieder", "iedere", "veel", "vele", "weinig", "meer", "minder", "meest", "meeste",
+         "meesten", "genoeg", "voldoende", "zoveel", "evenveel", "sommige", "sommigen", "enkele", "meerdere", "beide", "beiden",
+         "allebei", "ander", "anderen", "hetzelfde", "dezelfde", "zelfde", "zo'n", "dergelijke", "allerlei", "eén", "èèn", "ene",
+         "enige", "enig", "enigen"}
+INDEF_PRON = {"iets", "niets", "niks", "iemand", "zoiets", "men"}
+ARCHAIC_ART = {"der", "des", "den"}
+
+def pron_det(sent, i):
+    """Role + gloss for a pronoun or determiner; None when the form is not in the table."""
+    w = sent[i]; t = w.text.lower().replace("\u2019", "'"); g = PRON_GLOSS.get(t)
+    # homographs: 'dier' animal, 'haren' hair, 'mijnen' mines, 'Gene' a name
+    if g is None or w.upos in ("NOUN", "PROPN", "VERB"): return None
+    f = w.feats or ""; head = sent[w.head - 1] if w.head else None
+    def out(role, gl=None):
+        return {"kind": "role", "value": role, "gloss": gl or g.get(role) or g["*"], "rule": "pron_det"}
+    if t in ARCHAIC_ART: return out("article")
+    if t == "d'r" and "Poss=Yes" not in f and w.deprel != "nmod:poss": return out("locative_er", "there (= er)")
+    if t in ("enige", "enig", "enigen") and i > 0 and sent[i - 1].text.lower() in ("de", "het", "mijn", "zijn", "onze", "hun"):
+        return out("quantifier", g["only"])
+    if t == "meer" and any(x.text.lower() in ("geen", "niet", "nooit", "niemand", "niets", "niks") for x in sent[:i]) \
+            and not (i + 1 < len(sent) and sent[i + 1].upos in ("NOUN", "ADJ", "ADV")):
+        return out("adverb", "anymore / no longer")
+    if t in ("enkele", "enkel") and i > 0 and sent[i - 1].text.lower() == "geen": return out("quantifier", "single (not a single)")
+    if t in QUANT: return out("quantifier")
+    if t in INDEF_PRON: return out("indefinite")
+    if t == "wat":
+        if w.upos == "DET": return out("quantifier")
+        if "PronType=Ind" in f: return out("indefinite")
+        if "PronType=Rel" in f or (i > 0 and sent[i - 1].text.lower() in ("alles", "niets", "iets", "dat", "niet", "het")): return out("relative")
+        return out("interrogative")
+    if t in ("wie", "welke", "welk", "hoeveel", "wiens"):
+        if "PronType=Rel" in f or (i > 0 and sent[i - 1].upos == "ADP" and i > 1 and sent[i - 2].upos in ("NOUN", "PRON")): return out("relative")
+        return out("interrogative")
+    if t in ("die", "deze", "dit", "dien", "gene", "dier"):
+        if "PronType=Rel" in f: return out("relative")
+        return out("demonstrative")
+    if "Poss=Yes" in f or w.deprel == "nmod:poss" or t in ("mijn", "jouw", "uw", "onze", "z'n", "zijne", "hare", "haren", "mijnen"):
+        return out("possessive")
+    if t in ("zich", "zichzelf"): return out("reflexive")
+    if ("Reflex=Yes" in f or w.deprel == "expl:pv") and head is not None:
+        # 'me' is only 'myself' when the clause's subject is the same person ('ik schaam me', not 'jullie geloofden me')
+        person = re.search(r"Person=(\d)", f)
+        subj = [k for k in sent if k.head == head.id and k.deprel.startswith("nsubj")]
+        if not subj and head.head:  # 'je moet je haasten': the subject hangs on the modal
+            subj = [k for k in sent if k.head == head.head and k.deprel.startswith("nsubj")]
+        if person and subj and re.search(r"Person=(\d)", subj[0].feats or "") and \
+                re.search(r"Person=(\d)", subj[0].feats).group(1) == person.group(1):
+            return out("reflexive")
+    if w.deprel.startswith("nsubj") or w.deprel == "expl":
+        if t in ("ze", "zij") and head is not None:
+            verb = next((k for k in sent if k.head == head.id and k.upos == "AUX" and "Number=" in (k.feats or "")), head)
+            num = re.search(r"Number=(\w+)", verb.feats or "")
+            if num: return out("subject_pron", "she" if num.group(1) == "Sing" else "they")
+        return out("subject_pron")
+    return out("object_pron")
+
 def _phrase(words, i):
     best = None
     for p in BY_TOKEN.get(words[i].text.lower(), []):
@@ -116,6 +202,8 @@ def label(sent, i):
         if w.deprel == "aux": return {"kind": "role", "value": "aux_perfect", "gloss": "have (perfect)", "rule": "role"}
         if w.deprel == "cop": return {"kind": "role", "value": "copula", "gloss": "be", "rule": "role"}
         return {"kind": "role", "value": "be", "gloss": "be / exist", "rule": "role"}
+    pd = pron_det(sent, i)
+    if pd: return pd
     if w.upos == "DET" and t in ("de", "het", "een", "'t", "'n"): return {"kind": "role", "value": "article", "gloss": "the" if t != "een" else "a", "rule": "role"}
     if t in ("het", "'t") and w.upos == "PRON":
         return {"kind": "role", "value": "subject_pron" if w.deprel.startswith("nsubj") or w.deprel == "expl" else "object_pron", "gloss": "it", "rule": "role"}
