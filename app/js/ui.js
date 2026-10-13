@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
 import './state.js?v=20260825ak';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=20260927pa';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=20261013saved';
 import { readFastTrack } from './fast-track-preferences.js?v=20260920a';
 import './session-plan.js?v=1';
 
@@ -795,7 +795,8 @@ function setupLanguageTabs() {
                 return;
             }
             // The language already in use: nothing to switch.
-            if (this.dataset.lang === selectedLanguage && currentLearningMode()) {
+            if (this.dataset.lang === selectedLanguage && currentLearningMode()
+                && sessionStorage.getItem('fluencyPendingSpeechLanguage') !== this.dataset.lang) {
                 return;
             }
             document.getElementById('step1')?.classList.remove('source-speech-active', 'context-ready');
@@ -959,7 +960,7 @@ function setupLanguageTabs() {
                     document.body.classList.add('has-learning-context');
                     updateLearningContextUI();
 
-                    if (sessionStorage.getItem('fluencyPendingLiveStudy') === '1' && window.playlistLiveActive?.()) {
+                    if (sessionStorage.getItem('fluencyPendingLiveStudy') === '1' && window.playlistLiveActive?.() && !window.musicWorkspaceActive?.()) {
                         sessionStorage.removeItem('fluencyPendingLiveStudy');
                         await startSelectedStudySession();
                     }

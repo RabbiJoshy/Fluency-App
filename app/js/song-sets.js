@@ -186,7 +186,11 @@ function updatePickerCount() {
     const count = document.getElementById('songSetCount');
     const apply = document.getElementById('applySongSetBtn');
     if (count) count.textContent = `${draftSongIds.size} selected`;
-    if (apply) apply.disabled = draftSongIds.size === 0;
+    if (apply) {
+        apply.disabled = draftSongIds.size === 0;
+        apply.textContent = `Use ${draftSongIds.size} song${draftSongIds.size === 1 ? '' : 's'} ›`;
+    }
+    window.updateMusicSelection?.((artistSongCatalog?.songs || []).filter(song => draftSongIds.has(String(song.id))));
 }
 
 function renderSongOptions() {
@@ -233,6 +237,10 @@ function renderSongOptions() {
 
 export function showSongSetPicker() {
     if (!artistSongCatalog?.songs?.length) return;
+    if (!document.getElementById('appContent')?.classList.contains('hidden')) {
+        window.goBackToSetup?.().then(() => showSongSetPicker());
+        return;
+    }
     draftSongIds = new Set(selectedSongIds.map(String));
     const modal = document.getElementById('songSetModal');
     const title = document.getElementById('songSetTitle');
@@ -247,6 +255,7 @@ export function showSongSetPicker() {
     if (search) search.value = '';
     document.getElementById('songSetStatus').textContent = '';
     renderSongOptions();
+    window.showMusicSongPicker?.();
     updatePickerCount();
     modal?.classList.remove('hidden');
     search?.focus();
@@ -254,6 +263,7 @@ export function showSongSetPicker() {
 
 function hideSongSetPicker() {
     document.getElementById('songSetModal')?.classList.add('hidden');
+    if (window.musicWorkspaceActive?.()) window.showMusicStudySetup?.();
 }
 
 async function applySongSet() {
@@ -261,6 +271,7 @@ async function applySongSet() {
     const status = document.getElementById('songSetStatus');
     const apply = document.getElementById('applySongSetBtn');
     apply.disabled = true;
+    window.setMusicWorkspaceBusy?.(true);
     status.textContent = 'Saving song selection…';
     const updatedAt = new Date().toISOString();
     selectedSongIds = validSongIds(Array.from(draftSongIds));
@@ -307,6 +318,7 @@ function setupSongSetPicker() {
         applySongSet().catch(error => {
             document.getElementById('songSetStatus').textContent = error?.message || 'Could not save the song selection.';
             document.getElementById('applySongSetBtn').disabled = false;
+            window.setMusicWorkspaceBusy?.(false);
         });
     });
     document.getElementById('closeSongSetModal')?.addEventListener('click', hideSongSetPicker);
@@ -314,7 +326,7 @@ function setupSongSetPicker() {
         if (event.target === modal) hideSongSetPicker();
     });
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && !modal.classList.contains('hidden')) hideSongSetPicker();
+        if (event.key === 'Escape' && !modal.classList.contains('hidden') && !window.musicWorkspaceBusy?.()) hideSongSetPicker();
     });
 }
 
