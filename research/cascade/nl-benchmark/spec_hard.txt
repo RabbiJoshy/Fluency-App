@@ -1,0 +1,53 @@
+# sid8 word occ gold(sense indices, comma) verdict case | note
+7f75ae1c op 0 8 fits preposition |
+fb5161ff op 0 7 closest governed_preposition | lijken op = resemble; no 'governed' sense
+fdba8776 op 0 7 closest governed_preposition | wachten op = wait for
+2062b6a7 op 0 6 fits separable_particle | opzetten = put up
+d8200b71 op 0 6 closest separable_particle | kom op = come on (idiom)
+c3846d49 op 0 - gap separable_particle | opbrengen = yield/bring in; no sense covers it
+73e76ad5 op 0 7 fits fixed_phrase | op weg = on the way (first of two op)
+73e76ad5 op 1 6 fits separable_particle | oppikken = pick up (second op)
+aca9f263 op 0 5 closest separable_particle | ophouden = cease
+3c49e201 er 0 3 fits existential_er | Is er nog een andere ingang?
+b7e65e39 er 0 3 fits existential_er | Wat is er gebeurd? (menu's own example)
+cdf040d9 er 0 2,3 fits locative_er | gold widened at adjudication
+3ca1289f er 0 2 fits locative_er | er heen = there
+74e111a6 er 0 1 fits partitive_er | U krijgt er een = you'll get one (of them)
+97ae8f98 er 0 - gap fixed_er_verb | er uitzien = look (appearance); er is part of the verb
+69381478 er 0 0 fits er_split | er ... voor = for it; sense exists but its gloss reads 'him, her, them'
+a6702f93 er 0 0 fits er_split | er over = about it
+894527f6 er 0 - gap fixed_er_verb | er slecht aan toe zijn = be in a bad way
+cdc4b671 te 0 0 fits degree_te | te lui = too lazy (first te)
+cdc4b671 te 1 3 fits infinitive_te | om te reizen (second te)
+769a0513 te 0 0 fits degree_te |
+8906e49a te 0 0 fits degree_te | te laat = late; English drops 'too'
+27f07337 te 0 3 fits infinitive_te |
+2a95d87d te 0 3 fits infinitive_te | te maken hebben met = have to do with (idiom)
+9dd27887 te 0 3 fits infinitive_te |
+ad1c0f05 te 0 0 fits degree_te | het te druk hebben = be too busy
+546b8cba aan 0 2 fits separable_particle | aanhebben = be wearing
+2dcc579e aan 0 3,4,6 fits separable_particle | aannemen = assume; the three senses are identical and their gloss is empty ('in compounds with verbs:')
+b5915420 aan 0 3,4,6 fits separable_particle | aanbieden = offer; same empty-gloss senses
+d6eea44f aan 0 7 fits progressive_aan_het | aan het koken = was cooking
+450b88c1 aan 0 7 closest progressive_aan_het | aan het lachen brengen = make laugh
+300d76e3 aan 0 16 fits preposition | te danken aan = owe to
+cbf08daf aan 0 16 fits preposition | vragen aan = ask (someone)
+11b4b61c aan 0 12 closest fixed_phrase | aan de beurt = whose turn
+d02614e0 aan 0 - gap fixed_phrase | aan de hand zijn = be going on
+8a6f3518 zijn 0 1 fits possessive |
+1b3bbf31 zijn 0 1 fits possessive | in zijn toestand
+e0b7a7cb zijn 0 10,11 fits copula | gold widened at adjudication
+1c718b6b zijn 0 10 fits existential_zijn | Er zijn mensen = there are people (first zijn)
+1c718b6b zijn 1 10,11 fits copula | bang zijn = be afraid (second zijn); gold widened at adjudication
+6ed593d7 zijn 0 6,9 fits perfect_auxiliary | zijn begonnen = have started
+ff5e3cfc zijn 0 2,3 fits passive_auxiliary | zijn ze opgepakt = have they been arrested
+508917eb zijn 0 6,9,11 fits perfect_auxiliary | genezen zijn = have healed / are healed; parser says copula
+a2f9c6de zijn 0 10 fits locative_zijn | we hier zijn = we're here
+a5291d83 dat 0 1 fits conjunction |
+6e6c0a27 dat 0 1 fits conjunction |
+a91262d1 dat 0 2,3 fits relative | het eerste dat je gaat doen; parser says conjunction; gold widened at adjudication
+2a0bf2ee dat 0 3,4,5 fits demonstrative_pronoun | three near-identical senses all accepted
+a881bb79 dat 0 3,4,5 fits demonstrative_pronoun |
+cdcad8fb dat 0 3,4,5 fits demonstrative_pronoun |
+93a0edb8 dat 0 3,4,6 fits demonstrative_determiner | Dat huis; gold widened at adjudication
+3e1aa471 dat 0 3,4,5 fits demonstrative_pronoun | dat geld voor iedereen = that applies to everyone (geld = verb gelden); parser says determiner; subtitle English misaligned

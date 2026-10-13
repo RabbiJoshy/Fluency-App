@@ -25118,3 +25118,14 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   font: 600 13px/1.2 var(--font-emphasis);
   text-decoration: underline;
 }
+
+/* Function-word presentation (CASCADE-WSD prototype): app/js/function-word-card.js */
+.fw-block { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 12px; padding: 10px 12px; border-radius: 10px; background: var(--bg-tertiary); }
+.fw-block-head { display: flex; justify-content: center; }
+.fw-badge { font-size: 12px; letter-spacing: 0.02em; padding: 2px 10px; border-radius: 999px; color: var(--accent-primary); border: 1px solid var(--accent-primary); }
+.fw-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.fw-row-label { font-size: 12px; color: var(--text-muted); }
+.fw-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.fw-chip { font-size: 13px; padding: 3px 9px; border-radius: 8px; color: var(--text-primary); border: 1px solid var(--border-color); }
+.fw-chip-pattern { border-color: var(--accent-primary); }
+.fw-example-label { margin-top: 8px; display: flex; justify-content: center; }

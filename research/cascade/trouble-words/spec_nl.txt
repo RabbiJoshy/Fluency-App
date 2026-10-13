@@ -1,0 +1,65 @@
+# sid8 word occ menu_gold verdict teach | note
+88890da8 op 0 7 closest unit:op dieet | on a diet
+6ad52635 op 0 8 fits role:prep |
+6fbb8be8 op 0 8 fits role:prep |
+ae04e910 op 0 7 closest unit:op tijd | on time
+8908c7eb op 0 7 closest role:prep|unit:op manier | in different ways
+fce95933 op 0 8 fits role:prep | geen steen op de andere laten (idiom)
+7863ab43 op 0 7 closest unit:verliefd op | in love with
+5a154bb7 op 0 6 fits unit:opsteken | raise (hand)
+98c94fd8 aan 0 16 fits role:prep|unit:voorstellen aan | introduce to
+77b58f10 aan 0 - gap unit:aan boord | aboard
+57f243e9 aan 0 7 fits unit:aan het | progressive
+67ca7609 aan 0 7 fits unit:aan het | progressive
+888129be aan 0 - gap unit:een hekel hebben aan|role:pronominal_adverb | er ... aan, hate
+f1a84b58 aan 0 7 fits unit:aan het | progressive
+5a6b480d aan 0 - gap unit:aan de kant | aside, move
+ee9f3cd7 aan 0 - gap role:prep | aan wat; subtitle loose
+11b6604a er 0 3 fits role:existential_er | dummy er in a passive
+490f8bc1 er 0 3 fits role:existential_er |
+b0c56147 er 0 0,3 fits role:pronominal_adverb|role:existential_er | er ... bij = with it
+330c8a1d er 0 3 fits role:existential_er |
+9c84f1bb er 0 3 fits role:existential_er |
+d8e0477a er 0 - gap unit:eruitzien | look
+c3916abc er 0 2 fits role:locative_er | there
+b7e710ce er 0 - gap unit:er is niets aan te doen|role:pronominal_adverb | it can't be helped
+f041f9b1 te 0 3 fits role:infinitive_to |
+d4f926b7 te 0 3 fits role:infinitive_to |
+5d965552 te 0 3 fits role:infinitive_to |
+8a6f8b7d te 0 3 fits role:infinitive_to |
+b52e3b82 te 0 3 fits role:infinitive_to|unit:om te |
+ef5d00e4 te 0 3 fits role:infinitive_to |
+5146d363 te 0 3 fits role:infinitive_to |
+addcb5ec te 0 3 fits role:infinitive_to|unit:om te |
+81aaed3f het 0 1 fits role:object_pron |
+9bb7c390 het 0 1 fits role:object_pron |
+0658d03a het 0 0 fits role:article |
+fa36f809 het 0 2,3 fits role:subject_pron |
+ffbc09d0 het 0 0 fits role:article |
+59ee2184 het 0 1 fits role:object_pron |
+2952d1ff het 0 1 fits role:object_pron |
+943ea6c1 het 0 0 fits role:article |
+cbca3874 van 0 11,17 fits role:prep |
+a7b0a3f7 van 0 0 closest unit:wat dacht je van | what about
+146bf5e9 van 0 9 fits role:prep | made of
+216e670d van 0 11 fits role:prep |
+b5e1ab4e van 0 6,11 fits role:prep |
+1cad27de van 0 11 fits role:prep|unit:aan de overkant van | across from
+c677a588 van 0 11 fits role:prep |
+d59c5059 van 0 - gap unit:van harte | heartily
+6bcadcfb dat 0 3,4,5 fits role:demonstrative |
+9c73a323 dat 0 3,4,5 fits role:demonstrative |
+5557adaf dat 0 1 fits role:conj_that |
+153613eb dat 0 3,4,5 fits role:demonstrative |
+a5de5508 dat 0 3,4,5 fits role:demonstrative |
+1d4be50f dat 0 1 fits role:conj_that |
+fba8ac37 dat 0 3,4,5 fits role:demonstrative |
+a1142a02 dat 0 3,4,5 fits role:demonstrative |
+174abfb5 voor 0 3 fits role:prep |
+c69d65b9 voor 0 3 fits role:prep |
+8e9b3df9 voor 0 0 fits role:conj_before | voor Mam het zou zien = before
+d9792067 voor 0 3 fits role:prep |
+e7dce027 voor 0 3 fits role:prep |
+8466e065 voor 0 6 fits role:prep | before
+7b568298 voor 0 5 fits role:prep | in front of
+6c562e01 voor 0 3,4 fits role:prep |

@@ -210,6 +210,8 @@ def build_app_compatibility_assets(
             old_card["wsd_distribution"] = distribution
         if "noun_merge" in card:
             old_card["noun_merge"] = card["noun_merge"]
+        if "function_word" in card:
+            old_card["function_word"] = card["function_word"]
         split_examples: dict[str, Any] = {"m": buckets}
         if not meanings and (unassigned_senses or unassigned_examples):
             # Normal-mode setup intentionally rejects cards with no primary

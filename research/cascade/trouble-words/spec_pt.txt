@@ -1,0 +1,65 @@
+# sid8 word occ menu_gold verdict teach | note
+56fd1813 que 0 - gap unit:ter que | have to
+d2bdc9b5 que 0 - gap unit:é que | porque é que = why (cleft)
+2031e39b que 0 3 fits role:conj_that|unit:achar que |
+b08cbbb0 que 0 8,9 closest unit:o que | no que = about what
+e7c3907f que 0 - gap unit:é que | onde é que = where (cleft)
+ab023c49 que 0 3 fits role:conj_that|unit:achar que |
+80d6b3ee que 0 3 fits role:conj_that|unit:pensar que |
+a89d66dd que 0 - gap unit:é que | Porque é que = why (cleft); 'tem que' later in the sentence
+8280026c de 0 2,3 fits role:prep|unit:medo de |
+e3d572df de 0 3 closest role:prep | jeito de fazer = way to do
+e2769669 de 0 3 closest unit:gostar de | would like to
+ea4e13c5 de 0 3 closest unit:precisar de | need
+83366654 de 0 - gap unit:ter de | have to
+109d53d4 de 0 16 fits role:prep | Frank's
+d03e942f de 0 3 closest unit:lembrar de|unit:lembrar-se de | remember
+ab0568b6 de 0 11 fits role:prep | from
+1d05093d a 0 25,27,28 fits role:article |
+909f9301 a 0 25,27,28 fits role:article |
+17206919 a 0 25,27,28 fits role:article |
+4c66300e a 0 25,27,28 fits role:article |
+3f735aa0 a 0 - gap unit:a não ser que | unless
+fd47b05f a 0 25,27,28 fits role:article |
+7721adc3 a 0 25,27,28 fits role:article | article before a name
+77012094 a 0 - gap unit:a salvo | safe
+a85e50b7 se 0 11 closest unit:sentir-se | feel
+2c52232d se 0 11 closest unit:juntar-se | join
+cacfb2ec se 0 1,2,3,4,5,6 fits role:conj_if | first se
+827a16c1 se 0 5 fits role:conj_if | whether
+576360ac se 0 1,2,3,4,5,6 fits role:conj_if |
+67c45366 se 0 11 closest unit:divorciar-se | get divorced
+d275e1e5 se 0 11 closest unit:preocupar-se | worry
+93038dfa se 0 5 fits role:conj_if | whether
+174151e7 o 0 14 fits role:object_pron |
+d0e6e922 o 0 0,2,3,4,5,6,7,8,9,10,11 fits role:article | article before a name
+f3c2611c o 0 0,2,3,4,5,6,7,8,9,10,11 fits role:article |
+0f3b0d36 o 0 0,2,3,4,5,6,7,8,9,10,11 fits role:article |
+c72aa3fa o 0 1 closest unit:o que | what
+b06f4b16 o 0 1 closest unit:o que | what
+2861e997 o 0 14 fits role:object_pron |
+8ad0d4cd o 0 0,2,3,4,5,6,7,8,9,10,11 fits role:article|unit:o senhor | o senhor = you (formal)
+cd9be84d no 0 2,8 fits role:prep | on the computer
+8c494692 no 0 6,13 fits role:prep |
+c5499b0f no 0 13 fits role:prep |
+20d6da95 no 0 - gap unit:no geral | in general
+a04c2f1d no 0 2,4 fits role:prep |
+a081565b no 0 2 fits role:prep |
+7c3d3de9 no 0 2 fits role:prep |
+280ee23c no 0 8 fits role:prep |
+f78cfaa6 por 0 - gap unit:por que | why
+6fac2d8a por 0 - gap unit:por que | why
+b951342f por 0 5 fits role:prep|unit:obrigado por | thanks for
+89954efd por 0 - gap unit:por que | why
+39b17a48 por 0 - gap unit:por que | why
+2aead4a2 por 0 - gap unit:por favor | please
+c438fcf5 por 0 - gap unit:por favor | please
+772eea83 por 0 - gap unit:por que | why
+97dac0c7 do 0 0,6 fits role:prep |
+5688acb5 do 0 11 fits role:prep | out of
+7ecd3f06 do 0 - gap unit:do que | than
+88829a17 do 0 11 fits role:prep | from
+58cb62f3 do 0 - gap unit:do que | than
+04aba30e do 0 11 fits role:prep | from
+bb03816a do 0 0,6 fits role:prep |
+a9e067d2 do 0 3 closest unit:o que|role:prep | do que = (of) what

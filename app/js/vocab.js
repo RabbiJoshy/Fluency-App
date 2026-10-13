@@ -1567,6 +1567,10 @@ function expandSlimExample(record, sources) {
     if (license) source.license = license;
     if (record.r) source.source_record_id = record.r;
     const metadata = { source };
+    if (Array.isArray(record.fw)) {
+        const [kind, value, gloss] = record.fw;
+        metadata.function_word = { kind, value, gloss };
+    }
     const sentenceId = slimId(record.i, 'sentence_');
     if (sentenceId) metadata.sentence_id = sentenceId;
     if (Array.isArray(record.d)) {
@@ -3632,6 +3636,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         : (item.corpus_count || null)),
                 meanings: meanings,
                 grammarPairs: item._grammarCard?.pairs || [],
+                // Function words are taught by construction and grammatical
+                // role, labelled by rules in the release, instead of by sense.
+                functionWord: item.function_word || null,
                 unusedMenuSenses: finished.unusedMenuSenses,
                 translation: meanings[0]?.meaning || '',
                 targetSentence: firstExample.targetSentence,

@@ -1,0 +1,24 @@
+emb_gemini-001_inst alone: 138/152 (91%)
+   + emb_labse_en                   escalate  32%  stays right  95%  catches 9/14 errors  ceiling 97%
+   + emb_gemma-300m-di_en           escalate  26%  stays right  95%  catches 8/14 errors  ceiling 96%
+   + emb_gte-ml-base_en             escalate  30%  stays right  95%  catches 9/14 errors  ceiling 97%
+   + emb_e5-small_inst              escalate  32%  stays right  94%  catches 8/14 errors  ceiling 96%
+   + qwen06_rerank                  escalate  34%  stays right  97%  catches 11/14 errors  ceiling 98%
+   + emb_qwen3-8b-di_inst           escalate  26%  stays right  96%  catches 9/14 errors  ceiling 97%
+   + emb_qwen3-4b-di_inst           escalate  22%  stays right  95%  catches 8/14 errors  ceiling 96%
+emb_qwen3-8b-di_inst alone: 130/152 (86%)
+   + emb_labse_en                   escalate  35%  stays right  93%  catches 15/22 errors  ceiling 95%
+   + emb_gemma-300m-di_en           escalate  33%  stays right  94%  catches 16/22 errors  ceiling 96%
+   + emb_gte-ml-base_en             escalate  34%  stays right  94%  catches 16/22 errors  ceiling 96%
+   + emb_e5-small_inst              escalate  38%  stays right  96%  catches 18/22 errors  ceiling 97%
+   + qwen06_rerank                  escalate  29%  stays right  94%  catches 16/22 errors  ceiling 96%
+   + emb_gemini-001_inst            escalate  26%  stays right  96%  catches 17/22 errors  ceiling 97%
+   + emb_qwen3-4b-di_inst           escalate  18%  stays right  90%  catches 9/22 errors  ceiling 91%
+emb_qwen3-4b-di_inst alone: 125/152 (82%)
+   + emb_labse_en                   escalate  35%  stays right  93%  catches 20/27 errors  ceiling 95%
+   + emb_gemma-300m-di_en           escalate  31%  stays right  93%  catches 20/27 errors  ceiling 95%
+   + emb_gte-ml-base_en             escalate  33%  stays right  92%  catches 19/27 errors  ceiling 95%
+   + emb_e5-small_inst              escalate  37%  stays right  95%  catches 22/27 errors  ceiling 97%
+   + qwen06_rerank                  escalate  31%  stays right  93%  catches 20/27 errors  ceiling 95%
+   + emb_gemini-001_inst            escalate  22%  stays right  95%  catches 21/27 errors  ceiling 96%
+   + emb_qwen3-8b-di_inst           escalate  18%  stays right  90%  catches 14/27 errors  ceiling 91%

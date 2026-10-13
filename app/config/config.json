@@ -214,7 +214,17 @@
     "dutch": {
       "name": "Dutch",
       "dataPath": "Data/Dutch/vocabulary.json",
+      "indexPath": "releases/nl/speech/nl-speech-cascade-proto-6000x10/app/vocabulary.index.json",
+      "estimationPoolPath": null,
+      "frequencyPath": null,
+      "examplesPath": "releases/nl/speech/nl-speech-cascade-proto-6000x10/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/nl/speech/nl-speech-cascade-proto-6000x10/app/study-structure.json",
+      "releaseManifestPath": "releases/nl/speech/nl-speech-cascade-proto-6000x10/manifest.json",
+      "releaseCompositionPath": "releases/nl/speech/nl-speech-cascade-proto-6000x10/composition.json",
       "conjugationsPath": null,
+      "cognatesPath": null,
+      "mergeExceptionsPath": "data/merge-exceptions/nl.json",
+      "coveragePath": null,
       "exampleTargetField": "example_dutch",
       "exampleEnglishField": "example_english",
       "colorTheme": {
@@ -265,7 +275,9 @@
         "reverso": "https://context.reverso.net/translation/dutch-english/{word}",
         "conjugation": "https://www.verbix.com/webverbix/Dutch/{word}"
       },
-      "hasData": false,
+      "cefrLevelsNote": "Prototype (CASCADE-WSD): function words labelled by rule, other senses by the embedding + LLM cascade. Comprehension percentages are not measured for this deck.",
+      "hasData": true,
+      "capabilities": {"speech": true, "lyrics": false, "mergeLemmas": true, "cognateFilter": false},
       "flag": "🇳🇱",
       "routeCode": "nl",
       "shortCode": "NL",

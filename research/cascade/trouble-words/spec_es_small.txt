@@ -1,0 +1,52 @@
+# sid8 word occ gold verdict unit | note        (unit '-' = the word stands on its own)
+e9522626 que 0 0 fits - | Supongo que ...
+2c660b56 que 0 - gap tener_que | tener que = have to
+aa27df21 que 0 1 fits más_que | más que = than
+1dc70b4d que 0 4,5,6,7 closest lo_que | lo que = what
+97f7f21c que 0 - gap así_que | así que = so
+b24b5ee1 que 0 0 fits - | quisiera que + subjunctive
+8eea13c6 que 0 - gap hace_..._que | hace cuánto tiempo que = how long (have you)
+67bb8605 que 0 - gap tener_que_ver_con | tener que ver con = have to do with
+6a24b43e de 0 2,3 fits - | el amor de mi vida
+d29897ef de 0 - gap acerca_de | acerca de = about
+0cac5ad8 de 0 - gap tratar_de | tratar de + infinitive = try to
+6a2b2557 de 0 - gap acabar_de | acabar de + infinitive = have just
+d7d1d43c de 0 0 fits - | amiga de Canadá = from
+e4931d40 de 0 - gap más_de | más de treinta = more than
+1bf5e02a de 0 - gap hablar_de | hablar de = talk about
+23253778 de 0 6 fits de_la_mañana | las seis de la mañana (first de)
+7668479c de 0 - gap a_prueba_de | a prueba de agua = waterproof
+53cf8b00 a 0 0 fits - | iré a Tokio
+86f2aa55 a 0 - gap ir_a | ir a + infinitive = going to
+9a9e1c4c a 0 4 fits - | personal a
+8e40017c a 0 2 fits - | a las nueve
+b9b3fd93 a 0 - gap volver_a | volver a + infinitive = again
+02f1359d a 0 4 fits - | A nadie le gusta (personal a)
+f785359f a 0 - gap a_veces | a veces = sometimes
+6899f304 a 0 0,4 fits - | enseño francés a adultos
+a15f7e73 se 0 - gap irse | se va = leaves; 'themselves' would mislead
+79f83bf9 se 0 4 fits - | reciprocal
+2b8fed9f se 0 2 closest levantarse | se levantó = got up
+333b3df0 se 0 2 closest llamarse | cómo se llama = what's his name
+9d058893 se 0 5 fits - | passive/impersonal se
+ca556022 se 0 3 fits - | se ahorcó a sí misma
+127d93c3 se 0 1 closest apagarse | se apagó la pantalla = went off
+8b456607 se 0 - gap se_lo | se = le before lo (to him/her); not on the menu
+85d3057f se 0 3 closest casarse | se casó = got married
+7718eb14 lo 0 0 fits - |
+e3adcc26 lo 0 1 fits - |
+fd7c7c9f lo 0 5,6 fits lo_que | lo que = what
+2ec89929 lo 0 7 fits lo_+_adjective | lo peor = the worst
+11d865e3 lo 0 7 closest estar_en_lo_cierto | estar en lo cierto = be right
+b31a1c28 lo 0 0 fits - | no se lo diga
+a9e23d3b lo 0 0 closest - | Lo estaré = I will be (so); predicative lo
+4985158b lo 0 1 fits - |
+67d84fe7 lo 0 0 fits - | lo hiciste muy bien
+506b4f07 para 0 0,1 fits - | para él = for him
+b0212df9 para 0 2,3 fits - | para ayudar = to help
+2939175b para 0 6 fits - | para navidad
+64c78dd3 para 0 - gap para_siempre | para siempre = forever
+9fc07fe5 para 0 0 closest - | final feliz para esta historia
+8696289c para 0 1,2,3 fits - | para alargar tu vida
+2cc567a6 para 0 0 fits - | lista para eso
+22011da3 para 0 0,1 fits - | para más información

@@ -119,7 +119,7 @@ class ProductShellTests(unittest.TestCase):
             key for key, value in config["languages"].items()
             if value.get("hasData", True)
         }
-        self.assertEqual(enabled, {"czech", "finnish", "french", "portuguese", "spanish"})
+        self.assertEqual(enabled, {"czech", "dutch", "finnish", "french", "portuguese", "spanish"})
         self.assertEqual(config["languages"]["portuguese"]["name"], "Portuguese")
         self.assertEqual(config["languages"]["portuguese"]["flag"], "🇵🇹")
         self.assertEqual(config["languages"]["portuguese"]["speechLang"], "pt-PT")

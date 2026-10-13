@@ -1,0 +1,23 @@
+content-word sentences: 364 (dropped 13 whose word has a closed-class sense)
+DeepSeek batched on every sentence: 96.2%, LLM on 100%
+
+primary          alone | easy list t  easy | second opinion         accuracy  LLM on
+e5-small         77.5% |        none    0% | qwen06_rerank             91.5%     30%   most accurate
+e5-small         77.5% |      >=100%   26% | qwen06_rerank             90.4%     27%   fewest LLM calls within 1.5pt
+LaBSE            80.8% |      >=100%   22% | qwen06_rerank             92.0%     26%   most accurate
+LaBSE            80.8% |       >=80%   50% | qwen06_rerank             90.7%     21%   fewest LLM calls within 1.5pt
+EmbeddingGemma   81.3% |        none    0% | qwen06_rerank             90.4%     24%   most accurate
+EmbeddingGemma   81.3% |       >=90%   44% | qwen06_rerank             89.6%     20%   fewest LLM calls within 1.5pt
+bge-m3           80.2% |        none    0% | qwen06_rerank             91.5%     27%   most accurate
+bge-m3           80.2% |      >=100%   32% | qwen06_rerank             91.2%     25%   fewest LLM calls within 1.5pt
+Qwen3-8B         85.2% |        none    0% | qwen06_rerank             94.8%     31%   most accurate
+Qwen3-8B         85.2% |       >=80%   62% | qwen06_rerank             94.0%     20%   fewest LLM calls within 1.5pt
+Gemini           87.1% |        none    0% | qwen06_rerank             95.1%     29%   most accurate
+Gemini           87.1% |      >=100%   39% | qwen06_rerank             94.2%     24%   fewest LLM calls within 1.5pt
+
+Qwen3-8B primary, easy list >=80%, second opinion options:
+  qwen06_rerank          94.0%  LLM on 20%
+  labse_en               92.3%  LLM on 20%
+  e5-small_inst          93.7%  LLM on 20%
+  gemma-300m-di_en       92.9%  LLM on 19%
+  bge-m3-di_en           93.1%  LLM on 18%

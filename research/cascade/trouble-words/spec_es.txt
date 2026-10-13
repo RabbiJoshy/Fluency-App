@@ -1,0 +1,66 @@
+# sid8 word occ menu_gold verdict teach | note
+# teach: unit:<construction>  or  role:<role>; alternatives separated by '|'
+b6f2d42d que 0 - gap unit:hasta que | until
+936d8035 que 0 4,5,6,7 closest unit:lo que | what
+534eebcd que 0 0 fits role:conj_that|unit:pensar que |
+aec7df82 que 0 - gap unit:así que | so
+c820168f que 0 0 fits role:conj_that|unit:creer que |
+7482534e que 0 - gap unit:porque|unit:por que | 'por que' written for porque = because
+952ecc02 que 0 1 fits role:than|unit:mayor que | than
+127ebfdc que 0 0 fits role:conj_that|unit:mejor que | será mejor que = you'd better
+b2a69536 de 0 0 fits role:prep | distinguir de = from
+e371204d de 0 4 closest unit:algo de | algo de tiempo = some time
+17f250c0 de 0 4 closest unit:de que|role:prep | duda de que = doubt that
+741e0e63 de 0 3,4 fits role:prep | falta de agua
+3b8ce010 de 0 3,4 fits role:prep | necesidad de
+0f09c8b7 de 0 5 fits role:prep | compound noun capital de riesgo
+4deea22b de 0 0 closest unit:fuera de | out of
+99d5bffc de 0 3,4 fits role:prep | ninguna de = none of
+d063c623 a 0 0 fits role:prep |
+a391774e a 0 4 fits role:personal_a |
+2afbd474 a 0 - gap unit:volver a | do again
+49b4ec46 a 0 0 fits role:prep |
+2eddf550 a 0 7 fits role:prep | ve a ver = go and see (purpose), not 'going to'
+43ffbe2f a 0 4 closest role:personal_a|role:prep | a este libro le faltan (dative a)
+874dc085 a 0 0 fits role:prep |
+ed4c0f79 a 0 0,1 closest unit:parecerse a|role:prep | resemble
+5c2388c1 se 0 - gap unit:verse | se ven iguales = look alike
+1afa95ed se 0 5 fits role:impersonal_se | se ve desde aquí = can be seen
+f8d737f6 se 0 - gap unit:acabarse | se ha acabado = is over
+70b93f42 se 0 - gap unit:irse | se habrá ido = will have left
+687f6a89 se 0 0 closest unit:apagarse | se apagaron = went out
+90b2e078 se 0 - gap unit:quedarse | stay
+6f0aa6c9 se 0 1 closest unit:despejarse | clear up
+b0c9047a se 0 - gap unit:verse | look (appearance)
+52e8e354 lo 0 0 fits role:object_pron |
+964f7a98 lo 0 0 fits role:object_pron |
+c69e8c9f lo 0 0 fits role:object_pron |
+b61e92d6 lo 0 5,6 fits unit:lo que | what
+d5ef53fc lo 0 5,6 fits unit:lo que | what
+9af273fb lo 0 0 fits role:object_pron |
+3da3d5cc lo 0 1 fits role:object_pron |
+400d9211 lo 0 0 closest role:object_pron | no lo serías = you wouldn't be (so)
+eb8e542a en 0 0 fits role:prep |
+5c567b8c en 0 0 fits role:prep |
+1eae741f en 0 0,4 fits role:prep|unit:en peligro | in danger
+b9c0cf62 en 0 - gap unit:en serio | seriously
+d62cfa31 en 0 0,2 fits role:prep |
+441d4398 en 0 0,1 fits role:prep |
+020cabd9 en 0 1 fits role:prep |
+18192868 en 0 0 fits role:prep|unit:entrar en | into
+b00f7ff1 por 0 2 closest unit:por la noche | at night
+75521a76 por 0 - gap unit:por qué | why
+dafcb659 por 0 - gap unit:por favor | please
+47138605 por 0 2 closest unit:por la noche | at night
+202fe411 por 0 - gap unit:por qué | why
+9566190b por 0 - gap unit:por favor | please
+9dcc7738 por 0 - gap unit:por favor | please
+d6f81079 por 0 2 closest unit:por la mañana | in the morning
+24357204 la 0 0 fits role:article |
+a27152af la 0 0 fits role:article |
+7e31a90f la 0 0 fits role:article |
+af28dbed la 0 0 fits role:article |
+fdfedbe3 la 0 0 fits role:article|unit:a la cara | to my face
+81773724 la 0 0 fits role:article |
+8fc1ec76 la 0 0 fits role:article |
+f1a28532 la 0 0 fits role:article |

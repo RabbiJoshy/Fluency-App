@@ -2,6 +2,19 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-13T12:56:37+01:00",
+   "date": "2026-10-13 12:56 BST",
+   "agent": "Claude",
+   "summary": "Dutch prototype deck (CASCADE-WSD): function words shown as grammar words; other senses chosen by a cheap embedding + LLM cascade",
+   "detail": [
+    "Dutch is enabled with release nl-speech-cascade-proto-6000x10 (6,000 cards, 10 examples each, published to Fluency-Releases-nl).",
+    "69 function words (de, het, een, van, op, aan, er, te, dat, als...) are labelled by rule, not WSD: the card back shows a 'Grammar word' block with 'Used as' roles and recurring patterns (aan het, om te, meegaan), and each example carries its role or construction label.",
+    "Other words: Qwen3-Embedding-4B picks the sense, e5-small checks it, and DeepSeek V4.1 Flash decides the 34% where they disagree. Single-sense cards need no model.",
+    "Prototype wording ('Grammar word', 'Used as', 'Patterns') is a draft for review."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-13T12:55:00+01:00",
    "date": "2026-10-13 12:55 BST",
    "agent": "Gemini",
@@ -382,31 +395,6 @@
     "Session completion offers Another 20 (or the smaller remaining count) and waits for your choice. New cards and practice remain separate.",
     "Estimation suggests positions such as around halfway through Level 1 while preserving the saved starting rank. Estimated familiarity is shown separately from answered-card progress.",
     "Resume retains saved session membership and order, including old sessions and companion cards. Guest sessions advance in memory without syncing answers."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T22:48:26+01:00",
-   "date": "2026-10-11 22:48 BST",
-   "agent": "Codex",
-   "summary": "Clearer Rare uses badge and Flag a meaning counter, with a softer card action tray.",
-   "detail": [
-    "Rare uses count moves to the top left with larger digits, and its first bar is half filled in white.",
-    "Mark a meaning becomes Flag a meaning. Its counter starts at zero and counts the meanings flagged for review, matching the checked rows.",
-    "The action tray uses the normal dark background colour instead of pure black; light mode retains its soft grey surface."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T22:37:33+01:00",
-   "date": "2026-10-11 22:37 BST",
-   "agent": "Codex",
-   "summary": "Clearer level and set controls, larger centred lookup icons, and a separate card action tray.",
-   "detail": [
-    "Word range sits quietly at the top right; the selected level is wider with larger text and less surrounding padding. The lyrics-frequency sentence is hidden while its calculation remains available.",
-    "Set bars are taller with larger labels; the set summary and progress legend are centred and more subtle.",
-    "Commonness tooltips show a coloured icon and title above the explanation; Rare uses shares the sense meters’ bar proportions.",
-    "Larger lookup icons rise centred above the magnifying glass. Card-back actions sit on a separate black tray with a 10px gap; light mode uses soft grey."
    ],
    "commit": "pending"
   }

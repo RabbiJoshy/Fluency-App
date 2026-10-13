@@ -38,7 +38,7 @@ _KEPT_TOP = frozenset({
 })
 _KNOWN_METADATA = frozenset({
     "sentence_id", "source", "target", "translation", "wsd", "selection_metrics",
-    "selection_policy", "source_title",
+    "selection_policy", "source_title", "function_word",
 })
 _SOURCE_DEFAULT_FIELDS = ("attribution", "license", "url")
 SHARD_DIRECTORY = "vocabulary.examples.shards"
@@ -131,6 +131,10 @@ def slim_example(example: dict[str, Any], defaults: dict[str, dict[str, str]]) -
     title = example.get("source_title") or metadata.get("source_title")
     if title:
         record["st"] = title
+    function_word = metadata.get("function_word")
+    if isinstance(function_word, dict) and function_word.get("value"):
+        # Construction or role label for a function word: [kind, value, gloss].
+        record["fw"] = [function_word.get("kind"), function_word.get("value"), function_word.get("gloss") or ""]
     wsd = metadata.get("wsd") or {}
     level = wsd.get("supported_level")
     agree = (wsd.get("gemini_recommendation") or {}).get("reason") == _AGREE

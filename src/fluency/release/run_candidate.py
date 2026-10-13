@@ -168,7 +168,49 @@ def display_pool_for_card(
         item
         for item in pool
         if (assignments.get((card_id, item["sentence_id"])) or {}).get("selected_sense_id")
+        or function_word_label(assignments.get((card_id, item["sentence_id"]))) is not None
     ]
+
+
+def function_word_label(row: dict[str, Any] | None) -> dict[str, Any] | None:
+    """A declared function-word label carried in a WSD row's evidence, if any.
+
+    Function words (articles, prepositions, particles, clitics) are taught by
+    construction or grammatical role instead of by a dictionary sense, so their
+    rows abstain from a sense and carry the label instead. A sentence with such
+    a label is displayable exactly as one with a sense is.
+    """
+
+    label = ((row or {}).get("evidence") or {}).get("function_word")
+    if isinstance(label, dict) and label.get("kind") in ("unit", "role") and label.get("value"):
+        return label
+    return None
+
+
+def function_word_summary(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Card-level view of a function word: its constructions and roles by count."""
+
+    units: dict[str, dict[str, Any]] = {}
+    roles: dict[str, dict[str, Any]] = {}
+    labelled = 0
+    for row in rows:
+        label = function_word_label(row)
+        if label is None:
+            continue
+        labelled += 1
+        bucket = units if label["kind"] == "unit" else roles
+        entry = bucket.setdefault(label["value"], {"value": label["value"], "gloss": label.get("gloss"), "count": 0})
+        entry["count"] += 1
+    if not labelled:
+        return None
+    order = lambda items: sorted(items, key=lambda item: (-item["count"], item["value"]))
+    return {
+        "summary_version": "function-word-summary/v1",
+        "labelled": labelled,
+        "considered": len(rows),
+        "patterns": order(units.values()),
+        "roles": order(roles.values()),
+    }
 
 
 def without_canonical_example_lists(payload: Any) -> Any:
@@ -688,6 +730,9 @@ def build_inactive_run_candidate(
                 if computed.get("confidence") is not None:
                     wsd_metadata["confidence"] = computed["confidence"]
                 example_metadata["wsd"] = wsd_metadata
+            label = function_word_label(card_assignments.get(sentence_id))
+            if label is not None:
+                example_metadata["function_word"] = dict(label)
             title_id = str((sentence["source"].get("document") or {}).get("title_id") or "")
             if title_id and title_id in source_titles:
                 example_metadata["source_title"] = source_titles[title_id]
@@ -705,6 +750,9 @@ def build_inactive_run_candidate(
                 }
             )
         card_payload = {**card, "meanings": meanings, "examples": examples}
+        summary = function_word_summary(list(card_assignments.values()))
+        if summary is not None:
+            card_payload["function_word"] = summary
         if "noun_merge" in menu_card:
             card_payload["noun_merge"] = menu_card["noun_merge"]
         resolved = menu_card.get("resolution") or {}

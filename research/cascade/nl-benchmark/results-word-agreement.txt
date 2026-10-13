@@ -1,0 +1,6 @@
+e5-small       n=377 right 78%  AUROC 0.74 |  agree>=100%: 25% of words, 95% right  agree>=90%: 39% of words, 93% right  agree>=80%: 49% of words, 90% right
+labse          n=377 right 81%  AUROC 0.75 |  agree>=100%: 22% of words, 98% right  agree>=90%: 37% of words, 94% right  agree>=80%: 50% of words, 93% right
+gemma-300m-di  n=377 right 81%  AUROC 0.76 |  agree>=100%: 29% of words, 96% right  agree>=90%: 44% of words, 95% right  agree>=80%: 58% of words, 91% right
+bge-m3-di      n=377 right 80%  AUROC 0.78 |  agree>=100%: 31% of words, 97% right  agree>=90%: 47% of words, 93% right  agree>=80%: 56% of words, 92% right
+gemini-001     n=377 right 87%  AUROC 0.74 |  agree>=100%: 38% of words, 97% right  agree>=90%: 55% of words, 94% right  agree>=80%: 68% of words, 93% right
+qwen3-8b-di    n=377 right 85%  AUROC 0.81 |  agree>=100%: 36% of words, 97% right  agree>=90%: 51% of words, 97% right  agree>=80%: 62% of words, 96% right

@@ -8,6 +8,7 @@ import { installCardTouch } from './card-touch.js';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import { memoryTipTileHTML } from './memory-tips.js?v=1';
+import { functionWordBlockHTML, functionWordExampleHTML } from './function-word-card.js?v=1';
 import './side-dock.js?v=20260927pa';
 import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=20261005kb';
 import {
@@ -7935,7 +7936,9 @@ function renderCardWikipediaBadge(card) {
         // Emit the scroll region first, then the pinned tray underneath
         // (MWE/CLITIC rows that stay visible when the user scrolls).
         if (scrollSections.size > 0) {
-            backHTML += `<div class="meanings-scroll">${renderSections(scrollSections)}</div>`;
+            backHTML += card.functionWord
+                ? functionWordBlockHTML(card)
+                : `<div class="meanings-scroll">${renderSections(scrollSections)}</div>`;
         }
         // Expressions mode off keeps the pinned tray; on, MWE/CLITIC entries
         // leave silently as chain children (no on-card announcement).
@@ -8253,6 +8256,7 @@ function renderCardWikipediaBadge(card) {
                         ${showExampleProductionForm ? `<div class="reverse-example-form"><span>In this example</span><strong>${escapeCardText(exampleProductionForm)}</strong></div>` : ''}
                         <div class="breakdown-trigger" style="margin-bottom: 8px; cursor: pointer;" onclick="showLyricBreakdown(event); event.stopPropagation();" title="Word by word">${displayTargetSentence}</div>
                         <div class="translation">${displayEnglishSentence}</div>
+                        ${card.functionWord ? functionWordExampleHTML(currentExample) : ''}
                         ${songNameDisplay}
                     </div>
                 `;

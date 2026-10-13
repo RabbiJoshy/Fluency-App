@@ -1,0 +1,402 @@
+# idx gold verdict | note   (stratum R: random polysemous card, random eligible sentence)
+0 1 fits |
+1 0 fits |
+2 3 fits |
+3 1 fits |
+4 0 fits |
+5 1 fits |
+6 0,1 fits | duplicate senses
+7 1,4 fits | gold widened at adjudication
+8 0 fits |
+9 1 fits |
+10 0 fits | er scheelt iets = something's wrong
+11 2 fits | op een bepaald niveau = on a certain level
+12 0,1 fits | gold widened at adjudication
+13 0 fits |
+14 1 fits |
+15 1 fits | zich bedenken = change one's mind
+16 1 closest | goede doelen = charities (fixed phrase)
+17 2 fits |
+18 0 fits |
+19 2 fits |
+20 0 fits | zo vriendelijk zijn = be so kind as to
+21 2 fits |
+22 0,1 fits | gold widened at adjudication
+23 3 fits |
+24 0 fits |
+25 0,1 fits | duplicate senses
+26 3 fits | wen er maar aan = get used to it
+27 1 fits |
+28 1,3 fits | gold widened at adjudication
+29 0,1 fits | duplicate senses
+30 2 fits |
+31 1 fits |
+32 0 fits |
+33 0 fits |
+34 0 fits |
+35 0 fits |
+36 1 fits |
+37 1 fits |
+38 0 closest | gerust toegeven = feel free to admit; adverb use, menu has only adj 'at ease'
+39 3 fits |
+40 0 fits |
+41 0 fits |
+42 3 fits |
+43 7 fits | uit je hoofd leren = learn by heart
+44 2 fits |
+45 1 fits |
+46 1 fits |
+47 0 fits |
+48 0,1 fits | gold widened at adjudication
+49 - gap | source misspells bezorgd (worried); no adjective on the menu
+50 1 fits |
+51 0 fits |
+52 0 fits |
+53 3 fits | menu defect: lenen menu also carries six 'lid' senses
+54 - gap | OK = operating room (operatiekamer); no sense
+55 1,2 fits |
+56 0,1 fits |
+57 4 fits |
+58 2 fits |
+59 0,2 fits | gold widened at adjudication
+60 0 fits | met plezier = gladly
+61 1 fits |
+62 0 fits |
+63 0 fits | streng gesproken = strictly speaking
+64 2 fits | broeder as a form of address
+65 2 closest | aanklagen (separable: klaag ... aan) = charge with
+66 2 fits | erbij halen = bring in
+67 1 closest | opgeblazen = bloated
+68 3 fits |
+69 1 fits |
+70 0 fits |
+71 4 fits | causative: een bom laten afgaan
+72 1 fits |
+73 0 fits |
+74 0,1 fits |
+75 0 fits |
+76 0 fits |
+77 0,1 fits |
+78 1 fits |
+79 3 fits | vrije dag = day off
+80 3,4 fits |
+81 - gap | mollen (verb) = do in, wreck; no verb on the menu
+82 7 fits | menu defect: zij menu carries wijzen, zeggen, zijde and zijn senses
+83 1 fits |
+84 1,3 fits |
+85 1 fits |
+86 0,2 fits | gold widened at adjudication
+87 0 fits | groep = band
+88 0 fits |
+89 1 fits |
+90 0 fits |
+91 0 fits | zich beheersen = control oneself
+92 0,2 fits | gold widened at adjudication
+93 0,1,3,4 fits | which kind of cabin is not determinable
+94 1 fits |
+95 0 fits |
+96 1 fits |
+97 1 fits |
+98 0 fits | deze lui = these guys
+99 3 fits |
+100 0 fits |
+101 0,1 fits | gold widened at adjudication
+102 1 fits |
+103 2 fits |
+104 1,2,3,4 fits | menu defect: four senses all glossed 'division (specific senses)'
+105 2 fits |
+106 0 fits |
+107 1,2 closest | zich zorgen maken = worry (fixed phrase); gold widened at adjudication
+108 0,1 fits |
+109 1 fits |
+110 1,2 fits |
+111 - unclear | meaning of 'een goede bestemming' here is not determinable; excluded from scoring
+112 2 fits |
+113 1 fits |
+114 0,1 fits | gold widened at adjudication
+115 0 fits |
+116 1 fits |
+117 0,3 fits |
+118 3 fits | blinde vlek = blind spot
+119 0 fits |
+120 5,6 fits | gaan + infinitive = going to
+121 - gap | US-style college (university); menu has school, board, lecture
+122 1,2 fits |
+123 2 fits |
+124 - gap | vastleggen (separable: legde ... vast) = record, capture
+125 4 fits |
+126 1 fits |
+127 0 fits |
+128 0 fits |
+129 1 fits |
+130 1 fits |
+131 0 closest | verdomd goed = damn good (intensifier adverb); menu has only adj 'damned'
+132 0,2 fits |
+133 0 fits |
+134 3 fits |
+135 0,1 fits |
+136 1,4 fits |
+137 2 fits |
+138 0 fits |
+139 3,4 fits |
+140 1 fits |
+141 0,2 fits | vastbinden (separable: bond ... vast) = tie; gold widened at adjudication
+142 1 closest | vals spelen = cheat (fixed phrase)
+143 1 fits |
+144 0,1 fits | gold widened at adjudication
+145 0,1 fits |
+146 1,2 fits |
+147 3,4 fits | gold widened at adjudication
+148 4,5 fits |
+149 0,1 fits | gold widened at adjudication
+150 0 fits |
+151 - unclear | 'een zachte klap' here is not determinable (subtitle English garbled)
+152 2 fits |
+153 0 fits |
+154 1 fits |
+155 0,1 fits |
+156 0,1 fits |
+157 - gap | English title 'On Golden Pond'; not the Dutch word
+158 0,1 fits |
+159 1 fits |
+# --- second draw (sample_r2.py, seed 20261013), labelled with the not-misleading rule from the start
+160 1 fits |
+161 0 fits | luid = loudly (adjective used adverbially)
+162 2,3 fits |
+163 2 fits |
+164 0 fits |
+165 5 fits |
+166 2 fits |
+167 3 fits | heus wel = surely
+168 0,2 fits | inside the compound massa-ontvoerder
+169 2 fits |
+170 5,6 fits |
+171 1,2 fits |
+172 1 fits |
+173 2,4 fits |
+174 - gap | op prijs stellen = appreciate (fixed phrase)
+175 0 fits |
+176 4 closest | zich voegen bij = join
+177 0 fits | in tegenstelling tot = unlike
+178 1 fits |
+179 0 closest | last hebben van = suffer from
+180 4 fits |
+181 - unclear | klein poesje: pet name or vulgar, not determinable
+182 1 fits |
+183 0 fits |
+184 0,1 fits |
+185 - gap | tegemoetkomen = accommodate; subtitle English unrelated
+186 1 fits |
+187 1 closest | penning = police badge
+188 1 fits |
+189 0 fits |
+190 1 fits | boeken = (account) books
+191 - gap | erin luizen = frame (someone)
+192 - gap | opraken (separable: raakt ... op) = run out
+193 0 fits |
+194 0 fits |
+195 3 fits |
+196 1 fits | het mis hebben = be wrong
+197 0 fits |
+198 - gap | indienen (separable: dien ... in) = file
+199 1 fits |
+200 1 fits |
+201 0 fits |
+202 0,1 fits |
+203 1 fits |
+204 1,2 fits |
+205 0,1 fits |
+206 6 fits |
+207 0,3,4 fits |
+208 0 fits |
+209 0 fits |
+210 0,1 fits |
+211 0 fits |
+212 0 closest | een geintje uithalen = play a prank
+213 2 fits |
+214 1 fits | op korte termijn = in the short term
+215 0 fits |
+216 0 fits |
+217 0 fits |
+218 0,1 fits |
+219 0 fits |
+220 0 fits |
+221 0 fits |
+222 4 fits | menu defect: lenen menu carries lid senses
+223 0,1 fits |
+224 1,3 fits |
+225 2,3 fits |
+226 2 fits | voor half geld = half price
+227 1 fits |
+228 1,4 fits |
+229 - gap | overhalen (separable: haalt ... over) = pull (a trigger)
+230 0,2 fits |
+231 0,1 fits |
+232 0 fits |
+233 1 fits |
+234 1 fits |
+235 2 fits | drie vierde = three quarters
+236 3 fits |
+237 3 fits | blote voeten = bare feet
+238 3 fits |
+239 1 closest | dat kleine scherpe ding: meaning loose (subtitle 'stingy thing')
+240 0 fits |
+241 0,2 fits |
+242 1 fits |
+243 0 fits |
+244 1,2 fits |
+245 1 fits |
+246 0 fits |
+247 1,2 fits |
+248 0 fits | link worden = get dangerous (subtitle says 'dark')
+249 0 fits | vertrouwen op dat
+250 0 fits |
+251 0 closest | een eigen agenda = a hidden agenda
+252 0 fits |
+253 0 fits |
+254 2,7 fits | val = trap, setup
+255 1 fits |
+256 0 fits |
+257 - gap | iets kwijt willen = want to get something off one's chest
+258 0 fits | excuus aanbieden = apologise
+259 2 fits |
+260 0,1 fits |
+261 7 fits | aan het zoeken waren = were searching
+262 0 fits |
+263 1 fits |
+264 0 fits |
+265 3 fits |
+266 2,3,5 fits |
+267 0 fits |
+268 1 fits | zich melden = report, check in
+269 3 closest | in beslag nemen = confiscate
+270 1 fits |
+271 1,2 closest | Europa telt N landen = Europe has N countries
+272 1,2 fits | in bad gaan = take a bath
+273 5 fits |
+274 2 fits | onder de gordel = below the belt
+275 1 fits |
+276 0 fits |
+277 2 fits |
+278 7,8 fits | lusten = like (food)
+279 0 fits |
+280 - gap | card dealer; menu has drug and car dealers only
+281 - gap | verrekte raar = damn weird (intensifier); menu has verbs only
+282 1 fits |
+283 - gap | zichzelf de dood in jagen = get oneself killed
+284 1 fits |
+285 0,1 fits |
+286 1 fits |
+287 1 fits |
+288 0 fits | figurative fire
+289 0,3 fits | ik bid u = I pray you
+290 1,2 closest | opstijgen (separable: steeg ... op) = take off
+291 1 closest | een oogje hebben op = fancy (someone)
+292 1 fits |
+293 0 fits |
+294 3 fits |
+295 - gap | schema = schedule; menu has model, diagram
+296 1 fits |
+297 - gap | aanwijzingen = instructions, directions
+298 1 fits |
+299 1,3 fits |
+300 2 fits |
+301 0 fits |
+302 1 fits |
+303 2 fits |
+304 1 fits |
+305 1 fits |
+306 2 fits |
+307 0,1 fits |
+308 1 fits |
+309 0 fits |
+310 0,1 fits |
+311 1 fits |
+312 0 fits |
+313 0 fits |
+314 0,1 fits |
+315 3,4 fits |
+316 0,1,2,3,4 fits | er hetzelfde uitzien = look the same; every sense reads 'the same'
+317 0 fits |
+318 0 fits |
+319 0,2 fits |
+320 2 fits | passen bij = go with
+321 0 fits |
+322 1 fits |
+323 1 fits |
+324 1 fits |
+325 0,1 fits |
+326 5 fits | staart = stares (staren), not tail
+327 3 fits |
+328 0,2 fits |
+329 1 fits |
+330 2 fits |
+331 1,2 fits |
+332 2 fits |
+333 3 fits |
+334 1 fits |
+335 0,1 closest | a healthy relationship
+336 1 fits |
+337 3 fits |
+338 0 fits |
+339 - gap | zich uitputten (separable: put ... uit) = exhaust oneself
+340 1 fits |
+341 0 fits |
+342 8 fits |
+343 0 fits | ophalen = pick (someone) up
+344 0 fits |
+345 0 fits |
+346 1 fits | uit elkaar drijven = drive apart
+347 0 closest | pakjes = outfits
+348 1 fits |
+349 0 fits |
+350 1 fits |
+351 1 fits |
+352 - gap | afzetten (separable: zette ... af) = drop off
+353 1,2 fits |
+354 1 fits |
+355 2 fits | Stille Nacht = Silent Night
+356 2 fits |
+357 2 fits |
+358 2 fits |
+359 1 fits |
+360 1 fits |
+361 1,2 fits |
+362 2 fits |
+363 2 fits |
+364 1 fits |
+365 0,4 fits |
+366 3 fits | bekend voor = known for
+367 3 fits |
+368 0 fits |
+369 1,8 fits |
+370 0 fits |
+371 1 fits |
+372 1 fits |
+373 0,1 fits |
+374 1 fits |
+375 3 fits |
+376 0 closest | uitkleden (uit te kleden) = undress
+377 0 fits |
+378 0 fits |
+379 1,2 fits |
+380 0 fits | draaien om = be about
+381 0 fits |
+382 1 fits |
+383 3 fits |
+384 2 fits |
+385 2 fits |
+386 0,1 fits |
+387 1 fits | een hekel hebben aan = dislike
+388 2,4 fits |
+389 1 fits |
+390 11 fits |
+391 0,1 fits |
+392 0 fits |
+393 2,4 fits |
+394 1 fits |
+395 1 fits |
+396 0 fits |
+397 0 fits |
+398 0,1 fits | erger = worse
+399 0 fits |
