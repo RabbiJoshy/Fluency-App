@@ -35,7 +35,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
-import {lookupProfiles,createProfile,claimLegacyProfile,profileFields} from './backend/worker/src/profiles.js';
+import {lookupProfiles,createProfile,claimLegacyProfile,profileFields,authenticatedProfile} from './backend/worker/src/profiles.js';
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'learning-profiles-'));
 const dbPath=path.join(temp,'profiles.sqlite');
 const execute=(sql,args=[],script=false)=>JSON.parse(execFileSync('python3',['-c',`
@@ -92,5 +92,13 @@ try {
  const undatedLegacy=(await lookupProfiles(db,{name:'NEW',birthday:'10-08'})).profiles[0];
  assert.equal(undatedLegacy.id,'NEW');assert.equal(undatedLegacy.needsLink,false);
  assert.equal(execute("SELECT COUNT(*) AS n FROM item_state WHERE user_id='NEW'")[0].n,1);
+ const owner='clerk_user_owner', other='clerk_user_other';
+ assert.equal((await authenticatedProfile(db,{user:owner})).profile,null);
+ const registered=(await authenticatedProfile(db,{user:owner,name:'AuthOwner'})).profile;
+ assert.equal(registered.id,owner);assert.equal(registered.name,'AuthOwner');
+ assert.equal((await authenticatedProfile(db,{user:owner,name:'Changed'})).profile.name,'AuthOwner');
+ await assert.rejects(authenticatedProfile(db,{user:other,name:'authowner'}),/already taken/);
+ assert.equal((await authenticatedProfile(db,{user:other})).profile,null);
+ assert.equal(execute("SELECT COUNT(*) AS n FROM item_state WHERE user_id=?",[owner])[0].n,0);
 } finally {fs.rmSync(temp,{recursive:true,force:true});}
 ''')

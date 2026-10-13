@@ -12,6 +12,11 @@ compatibility_date = "2026-08-30"
 workers_dev = true
 preview_urls = false
 
+[vars]
+CLERK_ISSUER = "https://hardy-feline-9737.clerk.accounts.dev"
+CLERK_ORIGIN = "https://rabbijoshy.github.io"
+CLERK_ENVIRONMENT = "production"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "fluency"

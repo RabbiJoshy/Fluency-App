@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node tests/session-auth.test.mjs" },
+  "dependencies": {
+    "jose": "^6.2.12"
+  }
+}

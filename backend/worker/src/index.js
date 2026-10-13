@@ -1,4 +1,5 @@
-import { lookupProfiles, createProfile, claimLegacyProfile } from './profiles.js';
+import { lookupProfiles, createProfile, claimLegacyProfile, authenticatedProfile } from './profiles.js';
+import { authorizeProgress } from './session-auth.js';
 /**
  * Fluency backend — Cloudflare Worker + D1.
  *
@@ -28,7 +29,7 @@ const FLAG_SCHEMA_VERSION = 4;
 const cors = () => ({
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   'Access-Control-Max-Age': '86400'
 });
 
@@ -785,7 +786,11 @@ export default {
     catch (_) { return response(false, 'Error: invalid JSON body'); }
 
     try {
+      await authorizeProgress(request, params, env);
       switch (params.action) {
+        case 'account':
+          if (!env.CLERK_ISSUER) return response(false, 'Passwordless accounts are unavailable here.');
+          return response(true, 'Account', await authenticatedProfile(db, params));
         case 'lookupProfiles': return response(true, 'Profiles found', await lookupProfiles(db,params));
         case 'createProfile': return response(true, 'Profile created', await createProfile(db,params));
         case 'claimLegacyProfile': return response(true, 'Profile linked', await claimLegacyProfile(db,params));
@@ -826,6 +831,9 @@ export default {
           return response(false, 'Invalid action');
       }
     } catch (error) {
+      if (error.status) return new Response(JSON.stringify({ success: false, message: error.message }), {
+        status: error.status, headers: { 'Content-Type': 'application/json', ...cors() }
+      });
       return response(false, `Error: ${error?.message || error}`);
     }
   }

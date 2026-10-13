@@ -39,6 +39,25 @@ export async function lookupProfiles(db, params) {
 
 const NAME_TAKEN = 'That username is already taken. Choose it from the list to continue, or pick a different name.';
 
+// The caller has already verified the Clerk session and supplied its immutable
+// storage identity. Choosing a display name never claims old learner data.
+export async function authenticatedProfile(db, params) {
+  const existing = await db.prepare('SELECT * FROM learning_profiles WHERE user_id=?1').bind(params.user).first();
+  if (existing) return { profile: { id: existing.user_id, name: existing.display_name } };
+  if (!params.name) return { profile: null };
+  const fields = profileFields({ name: params.name });
+  try {
+    await db.prepare(`INSERT INTO learning_profiles (user_id,display_name,name_key,birthday,origin,created_at)
+      VALUES (?1,?2,?3,'','new',?4) ON CONFLICT(user_id) DO NOTHING`)
+      .bind(params.user, fields.name, fields.nameKey, new Date().toISOString()).run();
+  } catch (error) {
+    if (/UNIQUE/i.test(String(error?.message || error))) throw new Error('That username is already taken. Please choose another.');
+    throw error;
+  }
+  const row = await db.prepare('SELECT * FROM learning_profiles WHERE user_id=?1').bind(params.user).first();
+  return { profile: { id: row.user_id, name: row.display_name } };
+}
+
 export async function createProfile(db, params) {
   const fields = profileFields(params);
   const id = String(params.id || '');

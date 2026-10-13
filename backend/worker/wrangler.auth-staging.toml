@@ -1,0 +1,16 @@
+name = "fluency-auth-staging"
+main = "src/index.js"
+compatibility_date = "2026-08-30"
+workers_dev = true
+preview_urls = false
+
+[vars]
+CLERK_ISSUER = "https://hardy-feline-9737.clerk.accounts.dev"
+CLERK_ORIGIN = "https://fluency-staging.pages.dev,https://rabbijoshy.github.io"
+CLERK_ENVIRONMENT = "staging"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fluency-auth-staging"
+database_id = "e424f48e-73b4-4ca2-b052-72b04977b64d"
+migrations_dir = "migrations"
