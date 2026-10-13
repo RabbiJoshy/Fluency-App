@@ -1,0 +1,127 @@
+{
+  "word": "aún",
+  "id": "e6d1937b",
+  "meanings": [
+    {
+      "assignment_method": "assigned",
+      "canonical_example": {
+        "bold_text_offsets": [],
+        "bold_translation_offsets": [],
+        "literal_meaning": "",
+        "tags": [],
+        "text": "Mis papás aún están en el trabajo.",
+        "translation": "My parents are still at work."
+      },
+      "context": "indicating time",
+      "frequency": "0.175000",
+      "headword": "aún",
+      "metadata": {
+        "sense_metadata": {
+          "contract_version": "sense-metadata/v1",
+          "features": [
+            {
+              "embedding_text": "indicating time",
+              "family": "functional",
+              "kind": "temporal_relation",
+              "value": "time"
+            }
+          ]
+        },
+        "sense_provider_metadata": {
+          "context": "indicating time",
+          "legacy_menu_sense_id": "83e",
+          "spanishdict": {},
+          "translation_status": "present"
+        },
+        "source_adapter": "spanishdict-sense-menu/v1"
+      },
+      "pos": "ADV",
+      "sense_id": "sense_6625fbec80d7836ed13538ca626a23ac",
+      "source": "spanishdict",
+      "source_reference": "spanishdict-menu:aún:83e",
+      "translation": "still"
+    },
+    {
+      "assignment_method": "assigned",
+      "canonical_example": {
+        "bold_text_offsets": [],
+        "bold_translation_offsets": [],
+        "literal_meaning": "",
+        "tags": [],
+        "text": "Aún no hemos recibido el pedido.",
+        "translation": "We haven't received the order yet."
+      },
+      "context": "indicating time",
+      "frequency": "0.175000",
+      "headword": "aún",
+      "metadata": {
+        "sense_metadata": {
+          "contract_version": "sense-metadata/v1",
+          "features": [
+            {
+              "embedding_text": "indicating time",
+              "family": "functional",
+              "kind": "temporal_relation",
+              "value": "time"
+            }
+          ]
+        },
+        "sense_provider_metadata": {
+          "context": "indicating time",
+          "legacy_menu_sense_id": "c56",
+          "spanishdict": {},
+          "translation_status": "present"
+        },
+        "source_adapter": "spanishdict-sense-menu/v1"
+      },
+      "pos": "ADV",
+      "sense_id": "sense_f0d1bb3e21bf47ea1075f3a61e2749b6",
+      "source": "spanishdict",
+      "source_reference": "spanishdict-menu:aún:c56",
+      "translation": "yet"
+    },
+    {
+      "assignment_method": "assigned",
+      "canonical_example": {
+        "bold_text_offsets": [],
+        "bold_translation_offsets": [],
+        "literal_meaning": "",
+        "tags": [],
+        "text": "Me encanta leer, pero salir me gusta más aún.",
+        "translation": "I love reading, but I love going out even more."
+      },
+      "context": "in comparatives",
+      "frequency": "0.025000",
+      "headword": "aún",
+      "metadata": {
+        "sense_metadata": {
+          "contract_version": "sense-metadata/v1",
+          "features": []
+        },
+        "sense_provider_metadata": {
+          "context": "in comparatives",
+          "legacy_menu_sense_id": "e05",
+          "spanishdict": {},
+          "translation_status": "present"
+        },
+        "source_adapter": "spanishdict-sense-menu/v1"
+      },
+      "pos": "ADV",
+      "sense_id": "sense_5223dce56f571a36cee42c4e0b73bd58",
+      "source": "spanishdict",
+      "source_reference": "spanishdict-menu:aún:e05",
+      "translation": "even"
+    }
+  ],
+  "wsd_distribution": {
+    "distribution_version": "wsd-distribution/v1",
+    "denominator": 80,
+    "supported_leaf_counts": {},
+    "supported_level_counts": {
+      "glosskey": 0,
+      "leaf": 0,
+      "tuple": 30,
+      "unresolved": 0
+    }
+  }
+}

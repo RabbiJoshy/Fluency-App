@@ -6,6 +6,7 @@ import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './
 import { songCreditHTML } from './song-credit.js?v=1';
 import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=2';
 import { installCardTouch } from './card-touch.js';
+import { fitSenseRowText } from './card-row-layout.js?v=20261013rows';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20261013music';
 import { memoryTipTileHTML } from './memory-tips.js?v=1';
@@ -52,6 +53,7 @@ import {
     senseMetadataItems,
     splitSenseMetadataClauses,
     senseNoteHTML,
+    senseNoteTextKey,
     toggleSenseMetadataChip,
     extractSenseCompanion,
     senseCollocationHTML,
@@ -60,7 +62,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20261011terse2';
+} from './card-metadata-pills.js?v=20261013rows';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -803,7 +805,7 @@ function placeRowLeadMarks(root) {
         else row.prepend(lead);
         row.classList.add('has-row-lead');
         if (info) row.classList.add('has-row-lead-and-info');
-        const leftEdge = info ? 32 : 8;
+        const leftEdge = row.querySelector(':scope > :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag)') ? 38 : 8;
         const measured = lead.getBoundingClientRect().width
             || (lead.textContent.length * 8 + (flag ? 22 : 0) + 12);
         const pad = Math.max(38, Math.ceil(leftEdge + measured + 6));
@@ -843,17 +845,11 @@ function shownTextPieces(element) {
 // A note line the learner already sees in full is not news: "Brazil,
 // informal" beside a flag and "informal", or the sub-row's own words.
 function dropNoteLinesShownIn(copy, ...scopes) {
-    // Compared word by word: "of (being a part of)" adds nothing under a
-    // family "of" whose sub-row reads "being a part of".
-    // Dictionary frame notation reads as the row does: "(+ gerund)".
-    copy.querySelectorAll('p').forEach(p => {
-        p.textContent = p.textContent.replace(/\s*(\[[^\]]+\])/g, (_, frame) => {
-            const cue = frameCue(frame);
-            return cue ? ` (${cue})` : '';
-        }).trim();
-    });
-    const words = text => String(text || '').toLocaleLowerCase('en').split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+    // Compare the raw source through the row's wording rules without
+    // rewriting away qualifications that the note still needs to explain.
+    const words = text => senseNoteTextKey(text).split(/[^\p{L}\p{N}]+/u).filter(Boolean);
     const shown = new Set(scopes.filter(Boolean).flatMap(shownTextPieces).flatMap(words));
+    words(copy.dataset.senseNoteBaseGloss).forEach(word => shown.add(word));
     const isShown = text => {
         const textWords = words(text);
         return textWords.length > 0 && textWords.every(word => shown.has(word));
@@ -867,7 +863,7 @@ function dropNoteLinesShownIn(copy, ...scopes) {
         else p.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
     });
     copy.querySelectorAll('section').forEach(sec => { if (!sec.querySelector('p')) sec.remove(); });
-    return copy.children.length > 0;
+    return Boolean(copy.querySelector('p'));
 }
 
 // A sub-sense's note sits on its own sub-row, so the button says which
@@ -897,16 +893,21 @@ function placeRowInformationButtons(root) {
             own.className = 'sense-note-template';
             own.content.append(copy);
             template.remove();
-            // The note explains this context, so its button follows the
-            // context text on the right rather than leading the sub-row.
+            // Keep the note beside its context vertically, at the outer edge.
             button.classList.add('is-context-info');
-            cell.append(own, button);
+            const slot = document.createElement('div');
+            slot.className = 'sense-cell-information';
+            slot._senseContextCell = cell;
+            slot.append(button, own);
+            row.append(slot);
             cell.classList.add('has-cell-information');
         }
         if (!rowButtons.length) return;
         const copy = document.createElement('div');
         copy.className = 'sense-note-copy';
         const seen = new Set();
+        const rowScope = row.cloneNode(true);
+        rowScope.querySelectorAll('.group-card-varying-cell.has-cell-information').forEach(el => el.remove());
         for (const button of rowButtons) {
             const template = button.nextElementSibling;
             const source = template?.content?.querySelector('.sense-note-copy');
@@ -914,10 +915,10 @@ function placeRowInformationButtons(root) {
             if (!source || seen.has(source.innerHTML)) continue;
             seen.add(source.innerHTML);
             copy.dataset.senseNoteTitle ||= source.dataset.senseNoteTitle;
-            copy.append(...source.cloneNode(true).children);
+            const ownCopy = source.cloneNode(true);
+            // Filter before combining: each source has its own citation gloss.
+            if (dropNoteLinesShownIn(ownCopy, rowScope)) copy.append(...ownCopy.children);
         }
-        const rowScope = row.cloneNode(true);
-        rowScope.querySelectorAll('.group-card-varying-cell.has-cell-information').forEach(el => el.remove());
         if (!dropNoteLinesShownIn(copy, rowScope)) {
             rowButtons.forEach(el => el.remove());
             return;
@@ -926,20 +927,30 @@ function placeRowInformationButtons(root) {
         combined.className = 'sense-note-template';
         combined.content.append(copy);
         rowButtons.slice(1).forEach(el => el.remove());
-        // A single-sense row with a context: the button sits just right of
-        // the shaded context box, so it reads as explaining that context.
-        const cue = row.matches('.meaning-row-regular') ? row.querySelector('.meaning-row-sub') : null;
-        const cueHasWords = cue && shownTextPieces(cue).length > 0;
-        if (cueHasWords) {
-            rowButtons[0].classList.add('is-context-info');
-            cue.after(combined, rowButtons[0]);
-            row.classList.add('has-context-information');
-            return;
+        if (row.matches('.meaning-row-group')) {
+            copy.dataset.senseNoteScope = 'all-contexts';
+            rowButtons[0].setAttribute('aria-label', 'Information about the shared meaning; applies to all contexts');
+            rowButtons[0].title = 'Applies to all contexts';
+            row.classList.toggle('has-shared-and-cell-information', Boolean(row.querySelector('.sense-cell-information')));
         }
         row.prepend(rowButtons[0], combined);
         row.classList.add('has-row-information');
     });
 }
+
+function fitRowInformationButtons(root) {
+    root?.querySelectorAll('.sense-cell-information').forEach(slot => {
+        const cell = slot._senseContextCell;
+        const row = slot.closest('.meaning-row');
+        if (!cell || !row) return;
+        const rowRect = row.getBoundingClientRect();
+        const cellRect = cell.getBoundingClientRect();
+        const scale = rowRect.height / row.offsetHeight || 1;
+        slot.style.top = `${(cellRect.top - rowRect.top + cellRect.height / 2) / scale}px`;
+        slot.hidden = !cell.getClientRects().length;
+    });
+}
+
 
 // Only the active sense spreads over more than one line. Each other row or
 // sub-row keeps to one line, cut with an ellipsis, unless the open menu has so
@@ -1005,26 +1016,34 @@ function arrangeSenseCueAreas(root) {
         else if (cue.querySelector('img')) cue.classList.add('sense-cue-bare');
         else cue.remove();
     });
-    root.querySelectorAll('.meaning-row-group[data-axis="translation"] .group-card-body').forEach(body => {
+    root.querySelectorAll('.meaning-row-group .group-card-body').forEach(body => {
         const cells = [...body.querySelectorAll('.group-card-varying-cell')];
         if (!cells.length) return;
         const cues = document.createElement('div');
         cues.className = 'sense-cue-area sense-cue-group';
         cues.append(...cells);
-        body.append(cues);
+        // Different translations under a shared context need the same
+        // vertical list as different contexts under a shared translation.
+        // Flex otherwise lays "still" and "yet" out as one combined line.
+        if (body.closest('.meaning-row-group').dataset.axis === 'context') {
+            cues.classList.add('sense-translation-group');
+            body.prepend(cues);
+        } else body.append(cues);
     });
 }
 
 // A short shared gloss must not split a word merely to preserve two columns.
 // Measure the rendered cell; longer labels already request a stacked layout.
 function fitSenseRowLayouts(root) {
+    root?.querySelectorAll('.group-card-body.is-stacked').forEach(body => body.classList.remove('is-stacked'));
+    fitSenseRowText(root);
     root?.querySelectorAll('.group-card-body').forEach(body => {
-        body.classList.remove('is-stacked');
         const shared = body.querySelector('.group-card-shared');
         if (shared && shared.clientWidth > 0 && shared.scrollWidth > shared.clientWidth + 1) {
             body.classList.add('is-stacked');
         }
     });
+    fitRowInformationButtons(root);
 }
 
 let posSummaryResizeFrame = 0;
@@ -1072,9 +1091,9 @@ function collapseSubsensesToFit(scroll, available) {
     scroll.classList.remove('collapse-subsenses');
     const senseRows = [...scroll.querySelectorAll('.meaning-row')]
         .filter(row => !row.closest('.pos-collapsible:not(.is-open)'));
-    if (senseRows.length < 2 || scroll.scrollHeight <= available + 1) return;
-    if (!scroll.querySelector('.sense-cue-group')) return;
-    scroll.classList.add('collapse-subsenses');
+    if (senseRows.length >= 2 && scroll.scrollHeight > available + 1
+        && scroll.querySelector('.sense-cue-group')) scroll.classList.add('collapse-subsenses');
+    fitRowInformationButtons(scroll);
 }
 
 // Disclosures change row height without rendering the card again. Release the
