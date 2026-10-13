@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-13T20:04:49+01:00",
+      "date": "2026-10-13 20:04 BST",
+      "agent": "Codex",
+      "summary": "Cleaner centred passwordless sign-in",
+      "detail": [
+        "One centred sign-in panel with full-width provider buttons and responsive spacing.",
+        "Added a temporary warning about iCloud and me.com email-code delivery. Microsoft is available alongside Google through Clerk."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T19:26:31+01:00",
       "date": "2026-10-13 19:26 BST",
       "agent": "Codex",
@@ -374,18 +385,6 @@
         "Removed the coloured fill and shadow behind the Rare uses count.",
         "Count remains above the icon at the top left, with white digits and a thin white ring; light mode uses dark ink.",
         "Kept the three-bar icon and its half-filled first bar."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-11T23:19:32+01:00",
-      "date": "2026-10-11 23:19 BST",
-      "agent": "Codex",
-      "summary": "Card actions sit directly on the page background, with less padding and more room for card content.",
-      "detail": [
-        "Removed the action row’s coloured background and rounded tray in both themes; it now blends into the page like the scrubber.",
-        "Reduced the gap and button padding, preserving readable labels and usable tap targets.",
-        "Reclaimed footer space: about 30px more card content on desktop and 42px on phones, while respecting the phone safe area."
       ],
       "commit": "pending"
     }
