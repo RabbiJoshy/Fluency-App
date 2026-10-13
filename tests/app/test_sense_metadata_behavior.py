@@ -8,6 +8,43 @@ ROOT = Path(__file__).resolve().parents[2]
 
 @unittest.skipUnless(shutil.which('node'), 'Node.js required')
 class SenseMetadataBehaviorTests(unittest.TestCase):
+    def test_info_button_requires_details_beyond_inflection_and_visible_context(self):
+        result = subprocess.run(['node', '--input-type=module', '-'], cwd=ROOT,
+            text=True, capture_output=True, input=r'''
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import * as ui from './app/js/card-metadata-pills.js';
+for (const [translation,gloss] of [['to remember','remember'],['to forget','forgets'],['a bale','bales']]) {
+ const meaning={translation,context:'a fact',pos:'verb'};
+ const presentation=ui.learnerSensePresentation(meaning,true,{ignoreBudget:true,gloss,cardMeanings:[meaning]});
+ assert.equal(ui.senseNoteHTML(presentation),'',`${translation}: inflection and visible context add no note`);
+ assert.equal(meaning.translation,translation);
+}
+const detailed={translation:'bank (a financial institution serving local people and businesses)',pos:'noun'};
+const presentation=ui.learnerSensePresentation(detailed,true,{ignoreBudget:true,cardMeanings:[detailed]});
+assert.match(ui.senseNoteHTML(presentation),/financial institution/);
+assert.match(ui.senseNoteHTML(presentation),/sense-note-trigger/);
+const aun=JSON.parse(fs.readFileSync('tests/app/fixtures/spanish_shared_context.json'));
+for(const meaning of aun.meanings.slice(0,2)) {
+ const presentation=ui.learnerSensePresentation(meaning,true,{ignoreBudget:true,gloss:meaning.translation,cardMeanings:aun.meanings});
+ assert.equal(ui.senseNoteHTML(presentation),'','indicating time only explains the visible time label');
+}
+const equivalentNotes=[
+ ['it has already been mentioned','already mentioned'],
+ ['it is presumed to be definitely known in context or from shared knowledge','known from context/shared knowledge'],
+ ['is to be completely specified in the same sentence','specified in this sentence'],
+ ['used to indicate time','time'],
+ ['[with infinitive]','+ infinitive'],
+];
+for(const [raw,visible] of equivalentNotes) {
+ const presentation={gloss:'remembers',key:{text:visible,items:[]},note:{available:true,baseGloss:'to remember',context:raw,items:[],original:{originalGloss:'to remember',originalContext:raw}}};
+ assert.equal(ui.senseNoteHTML(presentation),'',`${raw}: rewording alone adds no detail`);
+}
+const qualified={gloss:'remembers',key:{text:'+ gerund',items:[]},note:{available:true,baseGloss:'to remember',context:'[with gerund (only after estar)]',items:[],original:null}};
+assert.match(ui.senseNoteHTML(qualified),/only after estar/,'a cut qualification must remain recoverable');
+''')
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_unbudgeted_cues_are_stable_across_selection_and_density(self):
         result = subprocess.run(['node', '--input-type=module', '-'], cwd=ROOT, text=True,
             input=r'''import assert from 'node:assert/strict';

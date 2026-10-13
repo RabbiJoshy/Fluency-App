@@ -21989,7 +21989,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     padding: 4px 38px !important;
     grid-template-columns: minmax(0, 1fr) !important;
 }
-.meaning-row.meaning-row-known { padding-right: 58px !important; }
+.meaning-row.meaning-row-known { padding-left: 58px !important; padding-right: 58px !important; }
 .meaning-row .meaning-row-body,
 .meaning-row .group-card-body:is(.has-long-shared, .is-stacked) {
     display: flex !important;
@@ -22007,7 +22007,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     min-width: 0;
     text-align: center;
     padding: 0 !important;
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
+    word-break: normal !important;
 }
 .meaning-row .sense-cue-area {
     display: flex;
@@ -22022,7 +22023,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     border-radius: 6px;
     background: rgba(var(--sense-match-rgb), 0.09);
     text-align: center;
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
+    word-break: normal;
     box-sizing: border-box;
 }
 .meaning-row .sense-cue-group {
@@ -22030,6 +22032,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     gap: 3px;
     padding: 0;
 }
+.meaning-row .sense-translation-group { background: transparent; }
 .meaning-row .sense-cue-group > .group-card-varying-cell {
     grid-column: 1 !important;
     grid-row: auto !important;
@@ -22378,6 +22381,16 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 /* The translation keeps its words; the cue gives way first. */
 .meanings-scroll.has-compact-rows .meaning-row-regular:not(.selected) .meaning-row-gloss { flex: 0 0 auto; max-width: 72%; }
+/* If even a complete word cannot fit beside the cue, give the gloss the row. */
+.meaning-row.sense-row-needs-stack :is(.meaning-row-body, .group-card-body) {
+    display: flex !important;
+    flex-direction: column !important;
+}
+.meaning-row.sense-row-needs-stack :is(.meaning-row-gloss, .group-card-shared, .sense-cue-area) {
+    max-width: 100%;
+    width: 100% !important;
+    flex-basis: auto;
+}
 .meanings-scroll.has-compact-rows .meaning-row-regular:not(.selected) .sense-cue-area { flex: 0 1 auto; min-width: 0; max-width: none; padding: 3px 8px; }
 .meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) { min-height: 0 !important; padding: 4px 10px; }
 .meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) .group-member-gloss { margin-right: 6px; }
@@ -22411,20 +22424,46 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .card-ranking .card-stat-unit--below { font-size: 12.5px; opacity: 1; }
 .card-ranking .card-stat-value { font-size: 30px; }
 
-/* An information button that explains a context sits on the context's right.
-   Either way it sits just outside the shaded box: a sub-row gives up a gutter
-   on its right for it, as a single-sense row does beside its context. The row's side padding keeps it clear of the
-   commonness meter at the far right. */
-.meaning-row .group-card-varying-cell.has-cell-information { position: relative; padding-left: 10px !important; padding-right: 10px !important; }
-.meaning-row .sense-cue-area:has(> .group-card-varying-cell.has-cell-information) { margin-right: 30px; }
-.meaning-row .group-card-varying-cell.has-cell-information > .sense-note-trigger.is-context-info { left: auto; right: -31px; }
-.meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) > .sense-note-trigger { display: inline-flex !important; }
-.meaning-row.has-context-information { padding-left: 38px !important; }
-.meaning-row .meaning-row-body > .sense-note-trigger.is-context-info {
-    position: static;
-    transform: none;
-    align-self: center;
-    margin-left: -2px;
+/* Information always occupies the outer right gutter. A context note aligns
+   vertically with its sub-row; shared notes belong to the whole parent row. */
+.meaning-row > .sense-note-trigger,
+.meaning-row .sense-cell-information > .sense-note-trigger {
+    left: auto !important;
+    right: 6px !important;
+}
+.meaning-row > .sense-cell-information {
+    position: absolute;
+    right: 0;
+    width: 34px;
+    height: 0;
+    z-index: 2;
+}
+.meaning-row > .sense-cell-information[hidden] { display: none; }
+.meaning-row .group-card-varying-cell.has-cell-information {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+.meaning-row > .pct-column {
+    left: 6px;
+    right: auto !important;
+}
+.meaning-row > :is(.sense-prominence-badge, .sense-percentage-tail, .known-sense-tag) {
+    left: 8px;
+    right: auto !important;
+}
+.meaning-row.has-row-lead-and-info > .row-lead-marks { left: 8px; }
+.meaning-row:has(> :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag)) > .row-lead-marks { left: 38px; }
+.meaning-row.has-shared-and-cell-information > .meaning-row-body { margin-top: 30px; }
+.meaning-row.has-shared-and-cell-information > .sense-note-trigger {
+    top: 16px;
+}
+.meaning-row.has-shared-and-cell-information::before {
+    content: 'All contexts';
+    position: absolute;
+    top: 7px;
+    right: 38px;
+    font-size: 12px;
+    color: var(--text-secondary);
 }
 
 /* ===== Settings: three tabs =====
