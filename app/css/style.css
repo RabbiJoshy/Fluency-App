@@ -14610,11 +14610,12 @@
            outlined, the live four-bar meter at the right. The colour comes
            from --sense-match-rgb, set per card by _runAboutDemo(). */
         .about-demo-card-inner .meaning-row-regular {
-            display: grid;
-            grid-template-columns: 22px minmax(0, 1fr) 30px;
+            display: grid !important;
+            grid-template-columns: 22px minmax(0, 1fr) 30px !important;
+            grid-template-rows: auto !important;
             align-items: center;
             gap: 4px;
-            padding: 8px 10px;
+            padding: 8px 10px !important;
             background: rgba(var(--sense-match-rgb, 148, 163, 184), 0.10);
             border-radius: 8px;
             min-height: 40px;
@@ -14625,10 +14626,11 @@
         .about-demo-card-inner .meaning-row-regular.is-selected {
             background: rgba(var(--sense-match-rgb, 148, 163, 184), 0.16);
             border: 2px solid rgb(var(--sense-match-rgb, 148, 163, 184));
-            padding: 7px 9px;  /* compensate for the thicker border */
+            padding: 7px 9px !important;  /* compensate for the thicker border */
         }
 
         .about-demo-row-tick {
+            grid-column: 1;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -14643,6 +14645,7 @@
         }
 
         .about-demo-row-meter {
+            grid-column: 3;
             display: flex;
             justify-content: flex-end;
             color: var(--text-secondary);
@@ -14655,11 +14658,12 @@
 
         .about-demo-card-inner .meaning-row-body {
             grid-column: 2;
-            display: flex;
-            flex-direction: column;
+            display: flex !important;
+            flex-direction: column !important;
             align-items: center;
             justify-content: center;
             min-width: 0;
+            padding: 0 !important;
         }
 
         .about-demo-card-inner .meaning-row-translation {
@@ -20992,7 +20996,12 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     /* Full-bleed: the generic .modal inset (12px) and the content's rounded
        corners cost a phone width and height it cannot spare. */
     #walkthroughModal.modal { padding: 0 !important; }
-    .walkthrough-modal { border-radius: 0; }
+    #walkthroughModal .walkthrough-modal {
+        width: 100%;
+        height: calc(100dvh / var(--ui-zoom, 1));
+        max-height: none;
+        border-radius: 0;
+    }
 
     /* Title and exit share one row; the lead sits beneath. The dots would
        need a row of their own and the footer already counts "2 of 3". */
@@ -21008,12 +21017,24 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 
     .walkthrough-copy { display: contents; }
 
+    /* A card too tall for the room is scaled (walkthrough.js sets the scale
+       and a layout width of width ÷ scale); the card row centres the wider
+       box, so it stays centred once scaled. */
+    .walkthrough-stage .card-replica {
+        width: var(--replica-layout-w, var(--walkthrough-card-w, 400px));
+        max-width: none;
+        transform: scale(var(--replica-card-scale, 1));
+        transform-origin: top center;
+        margin-bottom: calc(var(--replica-card-h, 480px) * (var(--replica-card-scale, 1) - 1));
+    }
+
     .walkthrough-title {
         grid-column: 1;
         grid-row: 1;
         align-self: center;
         margin: 0;
         font-size: 18px;
+        text-align: left;
     }
 
     .walkthrough-close { grid-column: 2; grid-row: 1; }
@@ -21024,6 +21045,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
         padding-right: 4px;
         font-size: 13.5px;
         line-height: 1.4;
+        text-align: left;
     }
 
     .walkthrough-body {

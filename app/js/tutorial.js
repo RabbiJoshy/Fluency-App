@@ -59,14 +59,14 @@ function tutorialText(value) {
     return String(value || '')
         .replaceAll('{language}', adapter.language)
         .replaceAll('{provider}', adapter.provider)
-        .replaceAll('{posExample}', tutorialLanguageKey() === 'portuguese' ? 'For example, Portuguese “como” can be a verb (“I eat”) or a conjunction (“as”).' : '')
+        .replaceAll('{posExample}', tutorialLanguageKey() === 'portuguese' ? ' (e.g. Portuguese “como” can be a verb or conjunction).' : '')
         .replaceAll('{demoLemma}', currentCard()?.lemma || currentCard()?.word || '')
         .replaceAll('{lemmaSentence}', (() => {
             const card = currentCard();
             if (!card) return '';
             return card.lemma && card.lemma !== card.word
-                ? `Here the word is “${card.word}” but its dictionary form is “${card.lemma}”, the form you would find in a dictionary.`
-                : `Here the word and dictionary form are both “${card.lemma || card.word}”. Inflected words can differ: {lemmaExample}.`;
+                ? `The word is “${card.word}” and its dictionary form is “${card.lemma}”.`
+                : `The word and dictionary form are both “${card.lemma || card.word}” (e.g. {lemmaExample}).`;
         })())
         .replaceAll('{altMeaning}', esc(orderedMeanings(currentCard())[1]?.translation || ''))
         .replaceAll('{demoWord}', currentCard()?.word || '')
@@ -160,8 +160,8 @@ const TUTORIAL_DECKS = [
                         side: 'left',
                         anchor: '.sense-note-trigger',
                         when: card => Boolean(selectedMeaning(card)?.context || selectedMeaning(card)?.metadata?.length),
-                        title: 'More about a meaning',
-                        text: 'Tap the “i” on the highlighted meaning for when it is used and any grammar that goes with it.',
+                        title: 'Usage notes',
+                        text: 'Tap the “i” beside a meaning for its usage notes: when it is used and any grammar that goes with it.',
                     },
                     {
                         side: 'left',
@@ -211,7 +211,7 @@ const TUTORIAL_DECKS = [
                         find: stage => [stage.querySelector(`.meaning-row[data-meaning-index="${altMeaningIndex()}"]`),
                             stage.querySelector('.sentence')],
                         title: 'Change the meaning',
-                        text: 'Tap another meaning, here “{altMeaning}”, and the example below changes to a sentence that uses that meaning. The highlighted row is always the one being illustrated.',
+                        text: 'Tap another meaning, here “{altMeaning}”, and the example changes to one that uses it. The highlighted row is always the one illustrated.',
                     },
                     {
                         side: 'right',
@@ -219,7 +219,7 @@ const TUTORIAL_DECKS = [
                         when: card => (card?.meanings || []).some(m => m.examples.length > 1),
                         anchor: '.sentence',
                         title: 'Cycle through the examples',
-                        text: 'Tap the sentence and the next example of the same meaning takes its place; the little dots beneath mark which one you are on. After the last it goes back to the first.',
+                        text: 'Tap the sentence for the next example of the same meaning; the dots show which one you are on, and after the last it starts over.',
                     },
                     {
                         side: 'right',
@@ -227,14 +227,14 @@ const TUTORIAL_DECKS = [
                         when: card => Boolean(card?.rareUses?.length),
                         anchor: '.ref-rare-uses-btn',
                         title: 'Rare uses',
-                        text: 'Opens a sheet over the card listing the word’s less common meanings, each with an example folded under it (tap “Examples”). They are for browsing and are not tested in daily reviews. Tap × to close.',
+                        text: 'Opens the word’s less common meanings, each with an example under “Examples”. They are for browsing, not tested in daily reviews. Tap × to close.',
                     },
                     {
                         side: 'right',
                         demo: 'openReview',
                         anchor: '.knowledge-overview-trigger',
                         title: 'Flag a meaning',
-                        text: 'Know the word, but not every meaning? The badge shows how many meanings you have flagged for review. Tap it to tick the ones you want future reviews to bring back; those move to the top of the card’s back, and the meanings you know fade to the bottom.',
+                        text: 'Know the word but not every meaning? Tap to tick the ones to bring back in reviews; they move to the top, and the count shows how many are flagged.',
                     },
                     {
                         side: 'right',
@@ -250,7 +250,7 @@ const TUTORIAL_DECKS = [
                         when: card => Boolean(card?.lookup?.length),
                         find: stage => [stage.querySelector('.lookup-sheet-icon'), stage.querySelector('.lookup-sheet')],
                         title: 'Open a dictionary',
-                        text: 'Tap a site and a Visit button appears; tap that and the word’s dictionary form (“{demoLemma}”) opens there in a new tab. Nothing leaves the app until you confirm.',
+                        text: 'Tap a site, then Visit, and the dictionary form (“{demoLemma}”) opens there in a new tab. Nothing leaves the app until you confirm.',
                     },
                     {
                         side: 'right',
@@ -291,7 +291,7 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         anchor: '.front-pos-unit .card-pos',
                         title: 'Kind of word',
-                        text: 'The label names the kind of word, such as a noun or verb. Different kinds of use get separate groups on the back. {posExample}',
+                        text: 'The label names the kind of word, such as a noun or verb. Groups on the back separate different uses.{posExample}',
                     },
                     {
                         side: 'right',
@@ -322,7 +322,7 @@ const TUTORIAL_PAGES = {
                 side: 'left',
                 anchor: '.tutorial-page-lookalike',
                 title: 'Look-alikes are skipped',
-                text: 'Words that look and mean the same as in a language you know, like {smartSkipLookalike} in English. Tap Smart Skip to see every word it set aside; you can still study them.',
+                text: 'Words that look and mean the same as in a language you know, like {smartSkipLookalike} in English. Tap Smart Skip to browse them; you can still study any.',
             },
             {
                 side: 'right',
@@ -335,7 +335,7 @@ const TUTORIAL_PAGES = {
                 anchor: '.tutorial-page-plurals',
                 when: () => Boolean(tutorialAdapter().smartSkip.plurals),
                 title: 'Singular and plural share a card',
-                text: '{pluralForms} are one noun, so they share one flashcard. This happens only when the singular and the plural mean exactly the same things; if either has an extra meaning they stay separate.',
+                text: '{pluralForms} share one flashcard, but only when singular and plural mean exactly the same things; if one has an extra meaning, they stay separate.',
             },
         ],
         html: smartSkipPageHTML,
@@ -348,26 +348,26 @@ const TUTORIAL_PAGES = {
                 side: 'left',
                 anchor: '.tutorial-page-source:nth-of-type(1)',
                 title: 'Speech',
-                text: 'Words are ranked by how often people actually say them, counted across thousands of films and TV series. It is the fastest route to the words you need for ordinary conversation, and the examples are lines of real dialogue.',
+                text: 'Words are ranked by how often people say them across thousands of films and TV series, with real dialogue as the examples. The fastest route to everyday conversation.',
             },
             {
                 side: 'left',
                 anchor: '.tutorial-page-source:nth-of-type(2)',
                 title: 'Music',
-                text: 'You choose the songs, and the words are ranked by how often they appear in those lyrics. Song lyrics use different vocabulary from speech, so the deck changes with your taste, and every example is a real line from one of your songs, with the artist and a button to play it in Spotify.',
+                text: 'You pick the songs. Words are ranked by how often they appear in those lyrics, and each example is a real line you can play in Spotify.',
             },
             {
                 side: 'right',
                 anchor: '.tutorial-page-sources',
                 requires: 'lyrics',
                 title: 'Two ways to choose your music',
-                text: 'Pick artists from the app’s library, taking all of their songs or just the ones you choose. Or connect Spotify and build a deck from one of your own playlists, either from songs the app already has or from a new import.',
+                text: 'Pick artists from the library (all their songs, or just some), or connect Spotify and build a deck from one of your own playlists.',
             },
             {
                 side: 'right',
                 anchor: '.tutorial-page-topbar',
                 title: 'Switch at any time',
-                text: 'You can change between them whenever you like, from the language header at the top of the screen. Your progress comes with you: a word you learn in one is already marked known when it appears in the other.',
+                text: 'Switch whenever you like from the language header at the top. Progress comes with you: a word learned in one is already known in the other.',
             },
         ],
         html: modesPageHTML,
