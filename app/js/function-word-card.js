@@ -46,19 +46,31 @@ function esc(value) {
         .replace(/"/g, '&quot;');
 }
 
-// Dictionary glosses can be long ("what time is it? (literally ...)"); a chip shows the core.
+// Dictionary glosses can be long ("at random, randomly, haphazardly"); a chip shows
+// the first meaning only.
 function shortGloss(gloss) {
-    return String(gloss || '').split(/\s*[(;]/)[0].trim();
+    return String(gloss || '').split(/\s*[(;,]/)[0].trim();
+}
+
+// Wiktionary entries whose "gloss" is a note or a pointer, not a meaning
+// ("Used other than figuratively or idiomatically: see a, ti.", "alternative
+// spelling of enseguida"). A chip shows the phrase without it.
+const NOT_A_MEANING = /^used other than|\b(?:form|spelling) of\b|^synonym of\b/i;
+
+function meaningOf(gloss) {
+    return NOT_A_MEANING.test(String(gloss || '')) ? '' : gloss;
 }
 
 export function functionWordLabelText(label) {
     if (!label || !label.value) return '';
     if (label.kind === 'unit') {
-        const gloss = shortGloss(label.gloss);
+        const gloss = shortGloss(meaningOf(label.gloss));
         return gloss ? `${label.value} · ${gloss}` : label.value;
     }
     const name = ROLE_NAMES[label.value] || label.value.replace(/_/g, ' ');
-    return label.gloss && label.gloss !== name ? `${name} · ${label.gloss}` : name;
+    // "to / at" and "to / at (+ verb)" are one meaning of the preposition.
+    const gloss = label.value === 'prep' ? String(label.gloss || '').replace(/\s*\(\+ verb\)$/, '') : label.gloss;
+    return gloss && gloss !== name ? `${name} · ${gloss}` : name;
 }
 
 /** Card-back block replacing the sense list: what the word does, and its constructions. */
@@ -69,15 +81,16 @@ export function functionWordBlockHTML(card) {
     const distinct = texts => [...new Set(texts.filter(Boolean))];
     const roleTexts = distinct((summary.roles || []).map(r => functionWordLabelText({ kind: 'role', ...r }))).slice(0, 3);
     // A pattern seen once in the card's sentences is an accident of sampling, not a pattern.
-    const patternTexts = distinct((summary.patterns || []).filter(p => p.count >= 2)
-        .map(p => functionWordLabelText({ kind: 'unit', ...p }))).slice(0, 4);
+    const patternTexts = distinct((summary.patterns || []).filter(p => p.count >= 2 && meaningOf(p.gloss))
+        .map(p => functionWordLabelText({ kind: 'unit', ...p }))).slice(0, 3);
     const roleChips = roleTexts.map(t => `<span class="fw-chip fw-chip-role">${esc(t)}</span>`).join('');
     const patternChips = patternTexts.map(t => `<span class="fw-chip fw-chip-pattern">${esc(t)}</span>`).join('');
+    // Compact: the badge leads the role chips on one line, so the example
+    // sentence keeps most of the card.
     return `
         <div class="fw-block">
-            <div class="fw-block-head"><span class="fw-badge">Grammar word</span></div>
-            ${roleChips ? `<div class="fw-row"><span class="fw-row-label">Used as</span><div class="fw-chips">${roleChips}</div></div>` : ''}
-            ${patternChips ? `<div class="fw-row"><span class="fw-row-label">Patterns</span><div class="fw-chips">${patternChips}</div></div>` : ''}
+            <div class="fw-row"><span class="fw-badge">Grammar word</span>${roleChips}</div>
+            ${patternChips ? `<div class="fw-row"><span class="fw-row-label">Patterns</span>${patternChips}</div>` : ''}
         </div>`;
 }
 
