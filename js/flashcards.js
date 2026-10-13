@@ -1,32 +1,32 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=d25030a2';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=d25030a2';
-import { songCreditHTML } from './song-credit.js?v=d25030a2';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=d25030a2';
+import './state.js?v=353dd12e';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=353dd12e';
+import { songCreditHTML } from './song-credit.js?v=353dd12e';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=353dd12e';
 import { installCardTouch } from './card-touch.js';
-import './speech.js?v=d25030a2';
-import { goToRoute, routeCodeFor } from './routes.js?v=d25030a2';
-import { memoryTipTileHTML } from './memory-tips.js?v=d25030a2';
-import './side-dock.js?v=d25030a2';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=d25030a2';
+import './speech.js?v=353dd12e';
+import { goToRoute, routeCodeFor } from './routes.js?v=353dd12e';
+import { memoryTipTileHTML } from './memory-tips.js?v=353dd12e';
+import './side-dock.js?v=353dd12e';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=353dd12e';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=d25030a2';
+} from './example-personalisation.js?v=353dd12e';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=d25030a2';
+} from './spanishdict-usage.js?v=353dd12e';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=d25030a2';
+} from './reverse-cues.js?v=353dd12e';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -59,7 +59,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=d25030a2';
+} from './card-metadata-pills.js?v=353dd12e';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -4670,9 +4670,10 @@ const RARE_SENSE_EXAMPLE_LIMIT = 3;
 // asked for, so the list reads as one short overview.
 // One compact row: the text (centred) with a speech-bubble button and count
 // at its right edge; the examples open below the row inside the same box.
-function rareRowHTML(textHTML, examplesHTML, count) {
-    if (!examplesHTML) return textHTML ? `<div class="rare-row"><div class="rare-row-text">${textHTML}</div></div>` : '';
+function rareRowHTML(textHTML, examplesHTML, count, leadingAction = '') {
+    if (!examplesHTML) return textHTML ? `<div class="rare-row">${leadingAction}<div class="rare-row-text">${textHTML}</div></div>` : '';
     return `<div class="rare-row">
+            ${leadingAction}
             <div class="rare-row-text">${textHTML}</div>
             <button type="button" class="rare-ex-btn" aria-expanded="false" aria-label="Show ${count} example${count === 1 ? '' : 's'}" data-count="${count}" onclick="toggleRareExamples(event, this)">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.5-4.6A8 8 0 1 1 21 12z"/></svg>
@@ -4871,10 +4872,9 @@ function renderPhraseRow(item) {
     const textHTML = `<div class="phrase-expression">${escapeCardText(item.expression)}</div>`
         + (item.translation ? `<div class="phrase-translation">${escapeCardText(item.translation)}</div>` : '')
         + (item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : '');
-    return `<div class="phrase-summary-item has-save-control">
-        ${saveItemButtonHTML(entry)}
+    return `<div class="phrase-summary-item">
         ${sourcePill ? `<div class="phrase-badge-row">${sourcePill}</div>` : ''}
-        ${rareRowHTML(textHTML, exampleHTML, 1)}
+        ${rareRowHTML(textHTML, exampleHTML, 1, saveItemButtonHTML(entry))}
     </div>`;
 }
 
@@ -7290,13 +7290,13 @@ function renderCardWikipediaBadge(card) {
                 const mweTextClass = adaptiveRowTextClass(mweExpr, mwePrimary, mweContext);
                 target.push(`
                 <div class="meaning-row meaning-row-mwe ${mweTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}" style="position: relative; display: flex; align-items: center; padding: 6px 8px; margin-bottom: 6px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 40px;" onclick="selectMeaning(${idx})">
+                    ${saveItemButtonHTML(savedPhraseEntry({ ...(activeMwe || m), expression: mweExpr }, selectedLanguage))}
                     ${renderRowCheckSlot(isSelected)}
                     <span class="special-meaning-copy bilingual-meaning-copy${mweCount > 1 ? ' has-counter' : ''}">
                         <span class="mwe-expression">${mweExpr}</span>
                         <strong class="mwe-translation">${primaryDisplay}</strong>
                         ${contextHTML}
                     </span>
-                    ${saveItemButtonHTML(savedPhraseEntry({ ...(activeMwe || m), expression: mweExpr }, selectedLanguage))}
                     ${mweCounter}
                 </div>
                 `);
@@ -10521,8 +10521,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'd25030a2';
-const MODALS_ASSET_VERSION = 'd25030a2';
+const ASSET_VERSION = '353dd12e';
+const MODALS_ASSET_VERSION = '353dd12e';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

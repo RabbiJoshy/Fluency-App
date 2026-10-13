@@ -76,13 +76,14 @@ export function savedPhraseEntry(item, language, example = (item.examples || ite
     };
 }
 
+const SAVE_STAR_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2L3.2 9.6l6.3-.9L12 3Z"/></svg>';
+
 export function saveItemButtonHTML(entry) {
     if (!entry.surface) return '';
     const saved = isItemSaved(entry);
-    const kind = entry.type === 'phrase' ? 'phrase' : 'word';
     return `<button type="button" class="save-item-btn${saved ? ' is-saved' : ''}" data-save-item="${escapeSavedText(JSON.stringify(entry))}"
-        aria-pressed="${saved}" aria-label="${saved ? 'Remove' : 'Save'} ${escapeSavedText(entry.surface)}${saved ? ' from Saved' : ' for later'}"
-        title="${saved ? 'Remove from Saved' : `Save ${kind} for later`}">${saved ? '✓' : '+'}</button>`;
+        aria-pressed="${saved}" aria-haspopup="dialog" aria-label="${saved ? 'Remove' : 'Add'} ${escapeSavedText(entry.surface)}${saved ? ' from Saved' : ' to Saved'}"
+        title="${saved ? 'Remove from Saved' : 'Add to Saved'}">${SAVE_STAR_ICON}</button>`;
 }
 
 export function renderSavedItems() {
@@ -117,9 +118,9 @@ export function renderSavedItems() {
             const saved = items.some(item => savedItemKey(item) === savedItemKey(entry));
             button.classList.toggle('is-saved', saved);
             button.setAttribute('aria-pressed', String(saved));
-            button.setAttribute('aria-label', `${saved ? 'Remove' : 'Save'} ${entry.surface}${saved ? ' from Saved' : ' for later'}`);
-            button.title = saved ? 'Remove from Saved' : 'Save phrase for later';
-            button.textContent = saved ? '✓' : '+';
+            button.setAttribute('aria-label', `${saved ? 'Remove' : 'Add'} ${entry.surface}${saved ? ' from Saved' : ' to Saved'}`);
+            button.title = saved ? 'Remove from Saved' : 'Add to Saved';
+            button.innerHTML = SAVE_STAR_ICON;
         } catch (_) { /* Ignore an unrelated malformed control. */ }
     });
 }
@@ -173,12 +174,42 @@ export function downloadSavedItems() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+export function confirmSavedItem(entry) {
+    let dialog = document.getElementById('savedItemConfirmation');
+    if (!dialog) {
+        dialog = document.createElement('dialog');
+        dialog.id = 'savedItemConfirmation';
+        dialog.className = 'saved-confirm-dialog';
+        dialog.setAttribute('aria-labelledby', 'savedConfirmationTitle');
+        dialog.setAttribute('aria-describedby', 'savedConfirmationPhrase');
+        dialog.innerHTML = `<h2 id="savedConfirmationTitle"></h2><p id="savedConfirmationPhrase"></p>
+            <div class="saved-confirm-actions"><button type="button" data-save-cancel>Cancel</button>
+            <button type="button" data-save-confirm></button></div>`;
+        dialog.querySelector('[data-save-cancel]').addEventListener('click', () => dialog.close());
+        dialog.addEventListener('keydown', event => event.stopPropagation());
+        document.body.appendChild(dialog);
+    }
+    const wasSaved = isItemSaved(entry);
+    document.getElementById('savedConfirmationTitle').textContent = wasSaved ? 'Remove from Saved?' : 'Add to Saved?';
+    document.getElementById('savedConfirmationPhrase').textContent = entry.surface;
+    const confirm = dialog.querySelector('[data-save-confirm]');
+    confirm.textContent = wasSaved ? 'Remove' : 'Add to Saved';
+    confirm.onclick = () => {
+        dialog.close();
+        // A save in another tab must not turn an Add confirmation into removal.
+        if (isItemSaved(entry) === wasSaved) toggleAndRenderSavedItem(entry);
+        else renderSavedItems();
+    };
+    if (!dialog.open) dialog.showModal();
+    dialog.querySelector('[data-save-cancel]').focus();
+}
+
 if (typeof document !== 'undefined') {
     document.addEventListener('click', event => {
         const save = event.target.closest('[data-save-item]');
         if (save) {
             event.preventDefault(); event.stopPropagation();
-            try { toggleAndRenderSavedItem(JSON.parse(save.dataset.saveItem)); } catch (_) {}
+            try { confirmSavedItem(JSON.parse(save.dataset.saveItem)); } catch (_) {}
         }
         const remove = event.target.closest('[data-remove-saved]');
         if (remove) {
