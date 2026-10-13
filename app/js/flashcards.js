@@ -2,11 +2,12 @@
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=20261013saved';
 import { songCreditHTML } from './song-credit.js?v=1';
 import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=2';
 import { installCardTouch } from './card-touch.js';
 import './speech.js?v=20260825ak';
-import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
+import { goToRoute, routeCodeFor } from './routes.js?v=20261013music';
 import { memoryTipTileHTML } from './memory-tips.js?v=1';
 import { functionWordBlockHTML, functionWordExampleHTML } from './function-word-card.js?v=1';
 import './side-dock.js?v=20260927pa';
@@ -1821,7 +1822,7 @@ function initializeApp() {
         // Set progress and Saved words are not offered mid-set: progress adds
         // little here, and saved words lives in Settings → Words & data.
         const entries = [
-            { label: 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
+            { label: activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
             { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
             { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
             { ...darkModeRow(), keepOpen: true, tail: '', refresh: darkModeRow, onSelect: () => window.applyThemePreference?.(
@@ -2815,7 +2816,7 @@ async function goBackToSetup() {
     // other transition in the app announces itself. Without this the tap read
     // as the app stalling rather than working — the same overlay Learn New and
     // Review already use.
-    window.showAppLoading?.('Main menu', 'Updating your levels…');
+    window.showAppLoading?.(activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', 'Updating your levels…');
     stopExampleAutoplay(true);
     // Hide app content, show setup
     const appContent = document.getElementById('appContent');
@@ -2824,6 +2825,7 @@ async function goBackToSetup() {
     appContent.classList.add('hidden');
     setupPanel.classList.remove('hidden');
     setupPanel.style.display = 'block';
+    if (activeArtist || window.playlistLiveActive?.()) window.showMusicStudySetup?.();
 
     // Hide mobile floating buttons
     showFloatingBtns(false);
@@ -3968,6 +3970,7 @@ function collectChainItems(card) {
                     subIndex: sub,
                     kind: m.pos === 'CLITIC' ? 'CLITIC' : 'MWE',
                     expression: expr,
+                    variants: item.variants || [],
                     translation: trans,
                     context: ctx,
                     source: src,
@@ -3996,6 +3999,7 @@ function collectExpressionItems(card) {
             subIndex: extras.length,
             kind: unused.pos === 'CLITIC' ? 'CLITIC' : 'MWE',
             expression: expr,
+            variants: unused.variants || [],
             translation: unused.meaning || unused.translation || '',
             context: unused.context || '',
             source: meaningSourceAdapter(unused) || unused.source || 'mwe-merged',
@@ -4011,6 +4015,7 @@ function collectExpressionItems(card) {
             subIndex: sub,
             kind: 'MWE',
             expression: mwe.expression || '',
+            variants: mwe.variants || [],
             translation: mwe.translation || '',
             context: mwe.context || '',
             source: mwe.source || '',
@@ -4647,15 +4652,15 @@ function clusterRareSenses(items) {
     return [...groups.values()];
 }
 
-function compactPhraseExampleHTML(example, posAccentRgb) {
-    const target = exampleTargetText(example) || example?.text || example?.targetSentence || '';
+function compactPhraseExampleHTML(example, posAccentRgb, phraseEntry = null) {
+    const target = phraseEntry?.sentence || exampleTargetText(example) || example?.text || example?.targetSentence || '';
     if (!target) return '';
     const english = example?.english || example?.translation || example?.englishSentence || '';
     const englishHTML = english
         ? `<div class="phrase-example-translation">${escapeCardText(english)}</div>` : '';
     const accent = posAccentRgb || 'var(--accent-primary-rgb)';
     return `<div class="phrase-example phrase-example--compact" style="--sense-match-rgb: ${accent};">
-            <div class="phrase-example-target">${escapeCardText(target)}</div>
+            <div class="phrase-example-target">${phraseEntry ? highlightSavedSentence(target, phraseEntry.highlightRanges) : escapeCardText(target)}</div>
             ${englishHTML}
         </div>`;
 }
@@ -4666,9 +4671,10 @@ const RARE_SENSE_EXAMPLE_LIMIT = 3;
 // asked for, so the list reads as one short overview.
 // One compact row: the text (centred) with a speech-bubble button and count
 // at its right edge; the examples open below the row inside the same box.
-function rareRowHTML(textHTML, examplesHTML, count) {
-    if (!examplesHTML) return textHTML ? `<div class="rare-row"><div class="rare-row-text">${textHTML}</div></div>` : '';
+function rareRowHTML(textHTML, examplesHTML, count, leadingAction = '') {
+    if (!examplesHTML) return textHTML ? `<div class="rare-row">${leadingAction}<div class="rare-row-text">${textHTML}</div></div>` : '';
     return `<div class="rare-row">
+            ${leadingAction}
             <div class="rare-row-text">${textHTML}</div>
             <button type="button" class="rare-ex-btn" aria-expanded="false" aria-label="Show ${count} example${count === 1 ? '' : 's'}" data-count="${count}" onclick="toggleRareExamples(event, this)">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.5-4.6A8 8 0 1 1 21 12z"/></svg>
@@ -4861,14 +4867,15 @@ function renderRareSenseGroups(rareItems, ctx = { total: 1 }) {
 function renderPhraseRow(item) {
     const example = (item.examples || [])[0];
     // Expressions share the phrase accent with the set scrubber's phrase pip.
-    const exampleHTML = compactPhraseExampleHTML(example, 'var(--accent-phrases-rgb)');
+    const entry = savedPhraseEntry(item, item.parentCard?.language || selectedLanguage, example);
+    const exampleHTML = compactPhraseExampleHTML(example, 'var(--accent-phrases-rgb)', entry);
     const sourcePill = phraseSourcePillHTML(item);
     const textHTML = `<div class="phrase-expression">${escapeCardText(item.expression)}</div>`
         + (item.translation ? `<div class="phrase-translation">${escapeCardText(item.translation)}</div>` : '')
         + (item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : '');
     return `<div class="phrase-summary-item">
         ${sourcePill ? `<div class="phrase-badge-row">${sourcePill}</div>` : ''}
-        ${rareRowHTML(textHTML, exampleHTML, 1)}
+        ${rareRowHTML(textHTML, exampleHTML, 1, saveItemButtonHTML(entry))}
     </div>`;
 }
 
@@ -7284,6 +7291,7 @@ function renderCardWikipediaBadge(card) {
                 const mweTextClass = adaptiveRowTextClass(mweExpr, mwePrimary, mweContext);
                 target.push(`
                 <div class="meaning-row meaning-row-mwe ${mweTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}" style="position: relative; display: flex; align-items: center; padding: 6px 8px; margin-bottom: 6px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 40px;" onclick="selectMeaning(${idx})">
+                    ${saveItemButtonHTML(savedPhraseEntry({ ...(activeMwe || m), expression: mweExpr }, selectedLanguage))}
                     ${renderRowCheckSlot(isSelected)}
                     <span class="special-meaning-copy bilingual-meaning-copy${mweCount > 1 ? ' has-counter' : ''}">
                         <span class="mwe-expression">${mweExpr}</span>
@@ -10518,7 +10526,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260922mod';
-const MODALS_ASSET_VERSION = '20260927pa';
+const MODALS_ASSET_VERSION = '20261013saved';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

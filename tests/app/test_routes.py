@@ -98,7 +98,7 @@ class RouteTests(unittest.TestCase):
 
     def test_format_round_trips(self) -> None:
         hashes = ["#/es", "#/es/w/unidos", "#/pt-br/w/%C3%A9l", "#/artist/bad-bunny",
-                  "#/artist/bad-bunny/extra", "#/es/songs", "#/fr/live", "#/about",
+                  "#/artist/bad-bunny/extra", "#/es/songs", "#/fr/live", "#/es/music", "#/about",
                   "#/tutorial", "#/walkthrough", "#/es/conjugate", "#/es/conjugate/tener"]
         parsed = self.run_js(*[["parseRoute", h] for h in hashes])
         formatted = self.run_js(*[["formatRoute", p] for p in parsed])

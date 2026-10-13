@@ -2,6 +2,28 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-13T21:34:37+01:00",
+      "date": "2026-10-13 21:34 BST",
+      "agent": "Codex",
+      "summary": "Compact star controls for saved phrases",
+      "detail": [
+        "Moved saving to a star at the start of each expression, alongside the examples action, with Add to Saved confirmation.",
+        "Added a faint violet edge to expression boxes and a subtle star halo that remains visible when examples are closed."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-13T21:19:08+01:00",
+      "date": "2026-10-13 21:19 BST",
+      "agent": "Codex",
+      "summary": "Music workspace and saved phrases",
+      "detail": [
+        "Choose artists, playlists and song subsets inside a full-screen Music workspace, then continue to study setup.",
+        "Keep words and phrases with their meanings, highlighted examples and translations in Saved. Revisit them from Progress or Settings, remove them or export a copy. Saving stays separate from review."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T20:04:49+01:00",
       "date": "2026-10-13 20:04 BST",
       "agent": "Codex",
@@ -42,6 +64,17 @@
         "New signed-in users choose a username once; their profile is bound to the verified Clerk account.",
         "Staging and production use separate databases and account keys. Progress URLs are normalized before attaching session tokens.",
         "Previous accounts and complete learning data are archived for manual restoration after the replacement accounts are created."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-13T18:45:06+01:00",
+      "date": "2026-10-13 18:45 BST",
+      "agent": "Codex",
+      "summary": "Google and email sign-in trial on the live Fluency address",
+      "detail": [
+        "A separate sign-in check page uses the existing free Clerk development setup.",
+        "The trial verifies a real signed session with the isolated authentication API; it does not change or link existing progress."
       ],
       "commit": "pending"
     },
@@ -353,46 +386,6 @@
         "Production is named Fluency; staging is Fluency β with Fβ, so the two installs are told apart.",
         "The iPhone home-screen icon is the 512-pixel render, so it stays sharp when iOS scales it.",
         "Phones that already added the app keep the old icon and name until it is removed and re-added."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T19:43:28+01:00",
-      "date": "2026-10-12 19:43 BST",
-      "agent": "Codex",
-      "summary": "Smart Skip offers useful language pairs, with missing maps marked Coming soon",
-      "detail": [
-        "An explicit pair list now limits both runtime filtering and offline mapping generation.",
-        "Smart Skip shows only relevant languages; relevant unmapped pairs are greyed out as Coming soon.",
-        "The filtered Languages you know editor preserves unrelated profile languages and links to the full list in Settings.",
-        "Onboarding and general Settings can save other languages by name or code without creating unnecessary mappings."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T19:21:41+01:00",
-      "date": "2026-10-12 19:21 BST",
-      "agent": "Codex",
-      "summary": "Keep language-profile and BRIDGE preferences isolated during staging review",
-      "detail": [
-        "Language-profile and Smart Skip preference writes now use the staging account namespace.",
-        "Added regression checks for both preference writers so staging review cannot update production preferences."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T19:16:50+01:00",
-      "date": "2026-10-12 19:16 BST",
-      "agent": "Codex",
-      "summary": "BRIDGE and shared known-language settings, with safer verb matching and centred mobile dialogs",
-      "detail": [
-        "Languages you know now live in Settings → App, save across the account and are asked once; Polish is always offered.",
-        "Smart Skip source-language choices no longer overwrite the shared profile.",
-        "BRIDGE is opt-in per learning language and uses known matching source meanings without writing target progress; skipped words remain browsable.",
-        "Cross-language verbs require compatible dictionary forms, including person, number, tense, mood and lexical aspect. Infinitives do not imply knowing conjugated forms.",
-        "Spanish/French/Portuguese mappings are tied to exact releases. French currently has 200 cards, so verified BRIDGE eligibility is limited.",
-        "Mobile dialogs are vertically centred; desktop panels fit the side gutter or centre when there is insufficient space.",
-        "Smart Skip title, Recommended badge, info icon and larger toggle share a line, with smaller explanation below."
       ],
       "commit": "pending"
     }

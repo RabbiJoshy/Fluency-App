@@ -4,7 +4,7 @@
 import './state.js?v=20260825ak';
 import { readJsonWithTimeout } from './read-request.js?v=1';
 import { validateVocabularyIndex } from './data-contracts.js?v=20260825ak';
-import { formatRoute } from './routes.js?v=20260923cj';
+import { formatRoute } from './routes.js?v=20261013music';
 import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260923gn';
 import { releaseUrl } from './release-host.js?v=20260921rh';
 

@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v585"
+EXPECTED_CACHE_NAME = "flashcards-v588"
 
 
 
@@ -743,13 +743,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("id: 'studyChoiceSheet'", flashcards)
         self.assertIn("variant: 'list'", flashcards)
         self.assertIn("dock: true", flashcards)
-        self.assertIn("id: 'lyricsSourceSheet'", main)
-        self.assertIn("id: 'artistChoiceSheet'", main)
-        self.assertIn("onBack: openLearningSourcePicker", main)
+        self.assertIn("openMusicWorkspace({", main)
+        workspace = (APP_ROOT / "js/music-workspace.js").read_text(encoding="utf-8")
+        self.assertIn('id="musicWorkspaceTitle"', workspace)
+        self.assertIn('data-music-stage="artists"', workspace)
+        self.assertIn('data-music-stage="playlists"', workspace)
         # Two ways into Lyrics; what to build from a playlist is asked after
         # the playlist is picked.
-        self.assertIn("label: 'Pick artists'", main)
-        self.assertIn("label: 'Build from a Spotify playlist'", main)
+        self.assertIn("onSelectArtist:", main)
+        self.assertIn("onSelectPlaylist:", main)
         self.assertIn("{ mode: 'choose' }", main)
         self.assertNotIn("label: 'Live playlist'", main)
         spotify_import = (APP_ROOT / "js" / "spotify-playlist-import.js").read_text(encoding="utf-8")
@@ -939,8 +941,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("error !== 'access_denied'", callback)
         self.assertIn("spotifyWebLogin", callback)
         self.assertIn("/js/spotify.js?v=20260923su", worker)
-        self.assertIn("/js/main.js?v=20261011terse2", worker)
-        self.assertIn("/js/ui.js?v=20260927pa", worker)
+        self.assertIn("/js/main.js?v=20261013saved", worker)
+        self.assertIn("/js/ui.js?v=20261013saved", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -1092,7 +1094,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("tracksHref", spotify)
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
-        self.assertIn("/js/spotify-playlist-import.js?v=20260923su", worker)
+        self.assertIn("/js/spotify-playlist-import.js?v=20261013music", worker)
         self.assertIn('css/style.css?v=20261011style', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)

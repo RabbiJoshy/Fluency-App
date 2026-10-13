@@ -1,0 +1,88 @@
+body.music-workspace-active #setupPanel.file-upload { display: block; text-align: left; }
+body.music-workspace-active #step1,
+body.music-workspace-active #resumeLastSetCard { display: none !important; }
+#musicWorkspace[hidden], #musicWorkspace [hidden] { display: none !important; }
+#musicWorkspace { padding: 8px 0 24px; color: var(--text-primary); }
+.music-workspace-header { display: flex; align-items: center; gap: 18px; margin-bottom: 28px; }
+.music-workspace-header h1 { margin: 2px 0 0; font: 700 30px/1.2 var(--font-emphasis); }
+.music-workspace-header h1:focus { outline: none; }
+.music-workspace-header small, .music-summary-eyebrow { color: var(--text-muted); font: 600 12px/1.4 var(--font-reading); }
+.music-back, .music-workspace-nav button, #musicEditSongsBtn {
+    min-height: 44px; padding: 10px 14px; border: 1px solid var(--border-color);
+    border-radius: 12px; background: var(--bg-card); color: var(--text-primary);
+    font: 600 14px/1.4 var(--font-reading); cursor: pointer;
+}
+#musicWorkspace button:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+#musicWorkspace button:disabled { opacity: .5; cursor: default; }
+.music-workspace-layout { display: grid; grid-template-columns: 155px minmax(0, 1fr) 230px; gap: 24px; align-items: start; }
+.music-workspace-nav { display: flex; flex-direction: column; gap: 8px; }
+.music-workspace-nav button { text-align: left; background: transparent; border-color: transparent; }
+.music-workspace-nav [aria-current="page"] {
+    background: color-mix(in srgb, var(--accent-primary) 12%, var(--bg-card));
+    border-color: color-mix(in srgb, var(--accent-primary) 30%, var(--border-color));
+}
+.music-workspace-main { min-width: 0; }
+#musicArtistBrowser h2 { margin: 0 0 8px; font: 700 22px/1.3 var(--font-emphasis); }
+#musicArtistBrowser > p { margin: 0 0 22px; color: var(--text-secondary); font: 14px/1.5 var(--font-reading); }
+#musicArtistList { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.music-artist-option {
+    display: flex; align-items: center; gap: 14px; min-height: 100px; padding: 16px;
+    border: 1px solid var(--border-color); border-radius: 16px; background: var(--bg-card);
+    color: var(--text-primary); text-align: left; cursor: pointer;
+}
+.music-artist-option:hover { border-color: var(--accent-primary); background: var(--bg-secondary); }
+.music-artist-image { display: flex; align-items: center; justify-content: center; flex: 0 0 54px; height: 54px; overflow: hidden; border-radius: 12px; background: var(--bg-tertiary); font: 700 19px var(--font-emphasis); }
+.music-artist-image img { width: 100%; height: 100%; object-fit: cover; }
+.music-artist-option strong { display: block; font: 700 16px/1.3 var(--font-reading); }
+.music-artist-option small { display: block; margin-top: 5px; color: var(--text-secondary); font: 12px/1.5 var(--font-reading); }
+.music-selection-summary { position: sticky; top: 24px; padding: 20px; border: 1px solid var(--border-color); border-radius: 16px; background: color-mix(in srgb, var(--accent-primary) 5%, var(--bg-card)); }
+.music-selection-summary h2 { margin: 10px 0; font: 700 20px/1.3 var(--font-emphasis); overflow-wrap: anywhere; }
+.music-selection-summary p, .music-selection-summary li { color: var(--text-secondary); font: 13px/1.5 var(--font-reading); }
+.music-selection-summary ul { list-style: none; padding: 0; margin: 16px 0; }
+.music-selection-summary li { padding: 6px 0; border-bottom: 1px solid var(--border-color); }
+#musicWorkspace .music-inline-panel { position: static; inset: auto; width: 100%; height: auto; padding: 0; background: none; backdrop-filter: none; display: block; z-index: auto; }
+#musicWorkspace .music-inline-panel.hidden { display: none; }
+#musicWorkspace .music-inline-panel > .modal-content {
+    width: 100%; max-width: none; max-height: none; margin: 0; padding: 0;
+    background: none; border: 0; border-radius: 0; box-shadow: none; overflow: visible; animation: none;
+}
+#musicWorkspace .music-inline-panel .modal-close { display: none; }
+#musicWorkspace .song-set-list { max-height: none; overflow: visible; }
+#musicWorkspace .song-set-footer { position: sticky; bottom: 0; padding: 14px 0; background: var(--bg-primary); z-index: 1; }
+#musicWorkspace .song-set-footer button:not(.secondary-btn) { background: var(--accent-primary); color: var(--bg-primary); min-height: 44px; font-size: 14px; }
+#musicWorkspace .song-set-footer:not(:has(> button:not([hidden]))) { display: none; }
+#musicWorkspace #artistSourceStep .step-header { display: none; }
+#musicWorkspace #artistSourceStep { margin-top: 0; }
+#musicWorkspace .artist-source-secondary-actions #artistSourceSpeechBtn { display: none; }
+#musicStudySetup .setup-step { margin-bottom: 24px; }
+@media (min-width: 768px) {
+    #musicWorkspace #songSetList, #musicWorkspace #spotifyPlaylistList:has(input) {
+        max-height: max(260px, calc(100dvh / var(--ui-zoom, 1) - 390px));
+        overflow-y: auto;
+    }
+}
+@media (max-width: 1199px) {
+    .music-workspace-layout { grid-template-columns: minmax(0, 1fr) 220px; gap: 18px; }
+    .music-workspace-nav { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; }
+}
+@media (max-width: 767px) {
+    #musicWorkspace { padding: 12px 8px 24px; }
+    .music-workspace-header { gap: 12px; margin-bottom: 20px; }
+    .music-workspace-header h1 { font-size: 25px; }
+    .music-workspace-layout { display: flex; flex-direction: column; gap: 18px; }
+    .music-workspace-nav { width: 100%; flex-wrap: nowrap; gap: 4px; }
+    .music-workspace-nav button { flex: 1; padding: 9px 7px; font-size: 12px; text-align: center; }
+    .music-workspace-main { width: 100%; }
+    .music-selection-summary { position: static; width: 100%; box-sizing: border-box; padding: 16px; }
+    #musicWorkspace[data-stage="songs"] .music-selection-summary,
+    #musicWorkspace[data-stage="playlists"] .music-selection-summary { display: none; }
+    #musicArtistList { grid-template-columns: 1fr; }
+    #musicWorkspace .song-set-toolbar { grid-template-columns: minmax(0, 1fr); }
+    #musicWorkspace[data-stage="songs"] .music-workspace-main,
+    #musicWorkspace[data-stage="playlists"] .music-workspace-main { padding-bottom: 76px; }
+    #musicWorkspace .song-set-footer {
+        position: fixed; inset: auto 0 0; padding: 12px 24px calc(12px + env(safe-area-inset-bottom, 0px));
+        border-top: 1px solid var(--border-color); z-index: 901;
+    }
+    #musicWorkspace .song-set-footer button { flex: 1; }
+}

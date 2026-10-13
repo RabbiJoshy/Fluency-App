@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v585';
+const CACHE_NAME = 'flashcards-v588';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = '20260927v24';
+const ASSET_VERSION = '20261013saved';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -30,6 +30,10 @@ const urlsToCache = [
   '/css/appearance.css?v=20261011',
   '/css/ui-refinements.css?v=20261013',
   '/css/desktop-shell.css?v=1',
+  '/css/music-workspace.css?v=20261013music',
+  '/js/music-workspace.js?v=20261013music',
+  '/js/saved-items.js?v=20261013saved',
+  '/css/saved-items.css?v=20261013saved',
   '/js/desktop-shell.js?v=1',
   '/js/ai-preference.js?v=20261013',
   '/js/appearance-bootstrap.js?v=20261011',
@@ -49,8 +53,8 @@ const urlsToCache = [
   '/data/estimation-pools/french.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/routes.js?v=20260923cj',
-  '/js/main.js?v=20261011terse2',
+  '/js/routes.js?v=20261013music',
+  '/js/main.js?v=20261013saved',
   '/js/theme.js?v=20260922ui',
   '/js/state.js?v=20260921x',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -77,7 +81,7 @@ const urlsToCache = [
   '/js/knowledge.js?v=20260927pa',
   `/js/progress-overview.js?v=${ASSET_VERSION}`,
   '/js/session-plan.js?v=1',
-  '/js/ui.js?v=20260927pa',
+  '/js/ui.js?v=20261013saved',
   '/js/fast-track-preferences.js?v=20260920a',
   '/js/vocab.js?v=20260927pa',
   '/js/grammar-cards.js?v=20260923gn',
@@ -92,10 +96,10 @@ const urlsToCache = [
   '/js/cognates.js?v=20260922ft2',
   '/js/coverage.js?v=20260909a',
   '/js/fast-mode.js?v=20260923ft',
-  '/js/extras.js?v=20260925cues',
+  '/js/extras.js?v=20261013saved',
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
-  '/js/song-sets.js?v=20260823ae',
-  '/js/spotify-playlist-import.js?v=20260923su',
+  '/js/song-sets.js?v=20261013music',
+  '/js/spotify-playlist-import.js?v=20261013music',
   '/js/playlist-live.js?v=20260923cj',
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
   '/js/vocabulary-import.js?v=20260923bk',
@@ -103,7 +107,7 @@ const urlsToCache = [
   '/js/reverse-cues.js?v=20260927v24',
   '/js/flags.js?v=20260929flags',
   '/js/card-metadata-pills.js?v=20261011terse2',
-  '/js/flashcards.js?v=20261011terse2',
+  '/js/flashcards.js?v=20261013saved',
   '/js/keyboard-guide.js?v=20261005kb',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
@@ -111,7 +115,7 @@ const urlsToCache = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
-  '/js/flashcards-modals.js?v=20260927pa',
+  '/js/flashcards-modals.js?v=20261013saved',
   '/js/flashcards-conj.js?v=20260922mod',
   '/js/side-dock.js?v=20260927pa',
   '/js/review-home.js?v=20260927pa'

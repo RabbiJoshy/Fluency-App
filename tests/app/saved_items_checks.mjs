@@ -1,0 +1,83 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+
+const source = await readFile(new URL('../../app/js/saved-items.js', import.meta.url), 'utf8');
+const saved = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+const values = new Map();
+globalThis.localStorage = { getItem: key => values.get(key) || null, setItem: (key, value) => values.set(key, value) };
+const legacy = { surface: 'casa', language: 'spanish', sentence: 'Voy a casa.', gloss: 'house', savedAt: '2025-01-01' };
+values.set(saved.SAVED_ITEMS_KEY, JSON.stringify([legacy]));
+values.set('flashcardProgress', '{"known":true}');
+assert.deepEqual(saved.loadSavedItems(), [legacy], 'preserve existing saved words without migration');
+assert.equal(saved.isItemSaved({ ...legacy, type: 'word' }), true);
+const phrase = saved.savedPhraseEntry({ expression: 'tener en cuenta', translation: 'take into account',
+    variants: ['tuvo en cuenta'], examples: [{ target: 'Ella tuvo en cuenta mi idea.', english: 'She took my idea into account.' }] }, 'spanish');
+assert.equal(phrase.type, 'phrase');
+assert.deepEqual(phrase.highlightRanges, [{ start: 5, end: 19 }]);
+assert.equal(saved.toggleSavedItem(phrase), true);
+assert.equal(saved.loadSavedItems().length, 2);
+assert.equal(saved.loadSavedItems()[0].english, 'She took my idea into account.');
+assert.equal(values.get('flashcardProgress'), '{"known":true}', 'saving must not change study progress');
+assert.equal(saved.toggleSavedItem(phrase), false, 'a second save toggles the item off');
+assert.deepEqual(saved.loadSavedItems(), [legacy]);
+assert.equal(saved.toggleSavedItem({ ...legacy, type: 'phrase' }), true, 'word and phrase identities remain distinct');
+saved.removeSavedItem(saved.savedItemKey(legacy));
+assert.equal(saved.loadSavedItems()[0].type, 'phrase');
+saved.removeSavedItem(saved.savedItemKey({ ...legacy, type: 'phrase' }));
+assert.equal(saved.loadSavedItems().length, 0);
+assert.deepEqual(saved.phraseHighlightRanges('Más que nada, más que nada.', ['más que nada']), [{ start: 0, end: 12 }, { start: 14, end: 26 }]);
+assert.deepEqual(saved.phraseHighlightRanges('Casamiento', ['casa']), [], 'do not underline substrings inside a word');
+assert.deepEqual(saved.phraseHighlightRanges('Se dio cuenta.', ['[pron] dio cuenta']), [{ start: 0, end: 13 }]);
+assert.deepEqual(saved.phraseHighlightRanges("Vo’a salir", ["vo' a"]), [{ start: 0, end: 4 }]);
+assert.equal(saved.highlightSavedSentence('<img> hola', [{ start: 6, end: 10 }]), '&lt;img&gt; <span class="saved-phrase-hit">hola</span>');
+assert.equal(saved.highlightSavedSentence('hola', [{ start: -1, end: 3 }, { start: 0, end: 99 }]), 'hola');
+assert.equal(saved.highlightSavedSentence('hola', []), 'hola');
+const button = saved.saveItemButtonHTML({ type: 'phrase', surface: '"><img src=x onerror=alert(1)>', sentence: '', language: 'spanish' });
+assert.equal(button.includes('<img'), false, 'save attributes and labels escape user-controlled text');
+assert.ok(button.includes('aria-pressed="false"'));
+assert.ok(button.includes('aria-haspopup="dialog"'));
+assert.ok(button.includes('<svg'), 'a star represents Saved');
+assert.throws(() => saved.toggleSavedItem(phrase, { getItem: () => null, setItem() { throw new Error('storage full'); } }), /storage full/);
+assert.deepEqual(saved.loadSavedItems({ getItem: () => 'bad JSON' }), []);
+console.log('Saved item compatibility, phrase context, highlighting and storage checks passed');
+
+// Opening and cancelling the star confirmation never changes Saved.
+class Control {
+    constructor() { this.events = {}; this.parts = new Map(); }
+    setAttribute() {}
+    addEventListener(name, fn) { this.events[name] = fn; }
+    querySelector(selector) {
+        if (!this.parts.has(selector)) this.parts.set(selector, new Control());
+        return this.parts.get(selector);
+    }
+    showModal() { this.open = true; }
+    close() { this.open = false; }
+    focus() {}
+}
+const nodes = new Map([['savedConfirmationTitle', new Control()], ['savedConfirmationPhrase', new Control()]]);
+globalThis.document = { getElementById: id => nodes.get(id), createElement: () => new Control(),
+    body: { appendChild: element => nodes.set(element.id, element) }, querySelectorAll: () => [] };
+const savedTimeout = globalThis.setTimeout;
+globalThis.setTimeout = () => 0;
+saved.confirmSavedItem(phrase);
+const dialog = nodes.get('savedItemConfirmation');
+assert.equal(nodes.get('savedConfirmationTitle').textContent, 'Add to Saved?');
+assert.equal(saved.isItemSaved(phrase), false);
+dialog.querySelector('[data-save-cancel]').events.click();
+assert.equal(dialog.open, false);
+assert.equal(saved.isItemSaved(phrase), false);
+saved.confirmSavedItem(phrase);
+dialog.querySelector('[data-save-confirm]').onclick();
+assert.equal(saved.isItemSaved(phrase), true);
+saved.confirmSavedItem(phrase);
+assert.equal(nodes.get('savedConfirmationTitle').textContent, 'Remove from Saved?');
+dialog.querySelector('[data-save-cancel]').events.click();
+assert.equal(saved.isItemSaved(phrase), true);
+// Another tab saving between opening and confirming must not remove the item.
+saved.toggleSavedItem(phrase);
+saved.confirmSavedItem(phrase);
+saved.toggleSavedItem(phrase);
+dialog.querySelector('[data-save-confirm]').onclick();
+assert.equal(saved.isItemSaved(phrase), true);
+globalThis.setTimeout = savedTimeout;
+console.log('Star confirmation, cancellation and concurrent-save checks passed');
