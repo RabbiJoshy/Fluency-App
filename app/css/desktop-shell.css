@@ -63,7 +63,6 @@ body.desktop-workspace #topBar :is(.desktop-shell-nav, .top-bar-icon-btn, .top-b
 }
 body.desktop-workspace .desktop-shell-label { display: inline; }
 body.desktop-workspace #desktopStudyBtn { order: 1; }
-body.desktop-workspace #desktopWordsBtn { order: 2; }
 body.desktop-workspace #topBarProgressBtn { order: 3; }
 body.desktop-workspace #topBar #helpBtn { order: 4; margin-top: auto; }
 body.desktop-workspace #topBarGearBtn { order: 5; }

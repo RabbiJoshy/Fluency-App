@@ -5,7 +5,7 @@ const PAGE_IDS = [
     'learningContextModal', 'extrasModal', 'cognateRulesModal',
     'fastModeModal', 'vocabularyImportModal', 'aboutProjectModal',
 ];
-const NAV_IDS = ['desktopStudyBtn', 'desktopWordsBtn', 'topBarProgressBtn',
+const NAV_IDS = ['desktopStudyBtn', 'topBarProgressBtn',
     'topBarGearBtn', 'topBarUserName', 'helpBtn', 'learningContextBtn'];
 
 function initDesktopShell() {
@@ -62,9 +62,6 @@ function initDesktopShell() {
     }
     document.getElementById('desktopStudyBtn')?.addEventListener('click', () => {
         refresh();
-    });
-    document.getElementById('desktopWordsBtn')?.addEventListener('click', () => {
-        window.showSettingsModalWithTab?.('vocabulary');
     });
     const observer = new MutationObserver(refresh);
     observer.observe(setup, { attributes: true, attributeFilter: ['class'] });
