@@ -2,6 +2,18 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
+   "timestamp": "2026-10-13T14:15:43+01:00",
+   "date": "2026-10-13 14:15 BST",
+   "agent": "Claude",
+   "summary": "Grouped meaning rows centred again; front lemma capsule back to plain grey",
+   "detail": [
+    "Back: rows that group several meanings (e.g. llevar's 'to take / to transport / to spend time on') no longer sit pushed to the right; an extra empty left column from today's ui-refinements.css is removed.",
+    "Front: the 'Verb from querer' capsule loses the POS-coloured outer ring and tint added in the same file; it is the neutral grey capsule again.",
+    "Cause: commit c3988450 (ui-refinements.css); no new overrides added."
+   ],
+   "commit": "pending"
+  },
+  {
    "timestamp": "2026-10-13T12:42:44+01:00",
    "date": "2026-10-13 12:42 BST",
    "agent": "Codex",
@@ -380,21 +392,6 @@
     "Set bars are taller with larger labels; the set summary and progress legend are centred and more subtle.",
     "Commonness tooltips show a coloured icon and title above the explanation; Rare uses shares the sense meters’ bar proportions.",
     "Larger lookup icons rise centred above the magnifying glass. Card-back actions sit on a separate black tray with a 10px gap; light mode uses soft grey."
-   ],
-   "commit": "pending"
-  },
-  {
-   "timestamp": "2026-10-11T21:14:00+01:00",
-   "date": "2026-10-11 21:14 BST",
-   "agent": "Claude",
-   "summary": "Spanish and Portuguese 'de' (and pt 'em') cards now show 'of' / 'in; at' instead of stray senses like 'by means of' and 'in (wearing)' (candidate decks pt r4, es r6)",
-   "detail": [
-    "LITERAL-GROUND. Only the preposition cards were re-run: pt de, do, da, dos, das, em, no, na, nos, nas (10 cards) and es de, del (2 cards). Every other card is byte-identical to pt r3 / es r5.",
-    "A rarer preposition sense must now beat the main one by 0.025, and de takes 'of' outright where it follows a verb or noun it belongs to (precisar de, gostaria de fazer, lembrar de mim, bolso da jaqueta).",
-    "Examples: pt dos went from 12 mixed rows to one 'of' row; pt da lost 'by means of' (5) and 'in (wearing)' (3); es de lost 'from' (13 of 80, mostly wrong) to 'of'.",
-    "Measured on 124 hand-judged changed sentences: 78 better, 7 worse where the card English changes (e.g. 'caiu da ponte' now 'of', should be 'from').",
-    "Not changed: por, para, es a / al / en (a prior made them worse), and the English-wording fix ('except' vs 'except for') is verified but not rolled out deck-wide yet.",
-    "No spend: WSD ran offline from the existing embedding cache."
    ],
    "commit": "pending"
   }
