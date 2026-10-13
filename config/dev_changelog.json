@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-13T19:08:23+01:00",
+      "date": "2026-10-13 19:08 BST",
+      "agent": "Codex",
+      "summary": "Google and email-code accounts now open the main app",
+      "detail": [
+        "New signed-in users choose a username once; their profile is bound to the verified Clerk account.",
+        "Staging and production use separate databases and account keys. Progress URLs are normalized before attaching session tokens.",
+        "Previous accounts and complete learning data are archived for manual restoration after the replacement accounts are created."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T18:45:06+01:00",
       "date": "2026-10-13 18:45 BST",
       "agent": "Codex",
@@ -378,18 +390,6 @@
         "Session completion offers Another 20 (or the smaller remaining count) and waits for your choice. New cards and practice remain separate.",
         "Estimation suggests positions such as around halfway through Level 1 while preserving the saved starting rank. Estimated familiarity is shown separately from answered-card progress.",
         "Resume retains saved session membership and order, including old sessions and companion cards. Guest sessions advance in memory without syncing answers."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-11T22:48:26+01:00",
-      "date": "2026-10-11 22:48 BST",
-      "agent": "Codex",
-      "summary": "Clearer Rare uses badge and Flag a meaning counter, with a softer card action tray.",
-      "detail": [
-        "Rare uses count moves to the top left with larger digits, and its first bar is half filled in white.",
-        "Mark a meaning becomes Flag a meaning. Its counter starts at zero and counts the meanings flagged for review, matching the checked rows.",
-        "The action tray uses the normal dark background colour instead of pure black; light mode retains its soft grey surface."
       ],
       "commit": "pending"
     }
