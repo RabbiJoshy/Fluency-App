@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-13T19:26:31+01:00",
+      "date": "2026-10-13 19:26 BST",
+      "agent": "Codex",
+      "summary": "Restored Joshua’s learning history to the new Google account",
+      "detail": [
+        "The approved new Joshua identity receives the archived progress and history, keeping new onboarding preferences.",
+        "The replacement account retains its reviewer flagging controls. Other users’ archives are not restored."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T19:16:28+01:00",
       "date": "2026-10-13 19:16 BST",
       "agent": "Codex",
@@ -384,18 +395,6 @@
         "The manifest link now carries a version tag, so a phone still running the previous app version fetches the new manifest instead of its cached \"Flashcards\" one."
       ],
       "commit": "ae5602b1"
-    },
-    {
-      "timestamp": "2026-10-11T23:31:14+01:00",
-      "date": "2026-10-11 23:31 BST",
-      "agent": "Codex",
-      "summary": "Progress uses stronger colours and shows the cards left to study first.",
-      "detail": [
-        "Changed the washed-out palette to the Portuguese level accent green, vivid yellow, white, violet and slate; made legend text more readable.",
-        "The continuous bar and its legend now run New, Practice, Known, Estimated familiar, Skipped, putting the work remaining on the left.",
-        "Session selection, level boundaries, estimation and saved learning progress are unchanged."
-      ],
-      "commit": "pending"
     }
   ]
 }
