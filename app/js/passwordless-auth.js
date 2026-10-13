@@ -55,7 +55,8 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
         container.id = 'passwordlessSignIn';
         document.querySelector('#authModal .auth-body').prepend(container);
         const style = document.createElement('style');
-        style.textContent = '#passwordlessSignIn {display:flex;justify-content:center;max-width:100%;} #passwordlessSignIn .cl-rootBox {width:100%;} #passwordlessSignIn .cl-card {box-shadow:none;width:100%;max-width:100%;} #passwordlessSignIn .cl-cardBox {width:100%;max-width:100%;}';
+        document.querySelector('#authModal .auth-modal-content')?.classList.add('passwordless-modal');
+        style.textContent = '.passwordless-modal {max-height:calc(100dvh - 32px);overflow-y:auto;padding:20px!important;} .passwordless-modal .auth-welcome-mark {display:none;} .passwordless-modal .auth-welcome-copy {margin-bottom:16px;} .passwordless-modal .auth-welcome-copy h3 {font-size:24px;} #passwordlessSignIn {display:flex;justify-content:center;max-width:100%;} #passwordlessSignIn .cl-rootBox {width:100%;} #passwordlessSignIn .cl-card {box-shadow:none;width:100%;max-width:100%;} #passwordlessSignIn .cl-cardBox {width:100%;max-width:100%;}';
         document.head.appendChild(style);
     }
     container.style.display = 'flex';
@@ -89,10 +90,23 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
         if (!window.Clerk.user && !mounted) {
             container.replaceChildren();
             const returnUrl = window.location.origin + window.location.pathname + window.location.hash;
-            window.Clerk.mountSignIn(container, {
-                routing: 'virtual', signInForceRedirectUrl: returnUrl, signUpForceRedirectUrl: returnUrl,
-                appearance: { variables: { colorPrimary: '#334155', borderRadius: '12px' } }
-            });
+            const signupUrl = new URL(window.location.href);
+            signupUrl.searchParams.set('account', 'create');
+            const props = {
+                routing: 'virtual', forceRedirectUrl: returnUrl,
+                signInForceRedirectUrl: returnUrl, signUpForceRedirectUrl: returnUrl,
+                signInUrl: returnUrl, signUpUrl: signupUrl.href,
+                appearance: { variables: {
+                    colorPrimary: '#a5b4fc', colorForeground: '#f8fafc', colorMutedForeground: '#cbd5e1',
+                    colorBackground: '#1f2937', colorInputBackground: '#111827',
+                    colorInputText: '#f8fafc', borderRadius: '12px'
+                } }
+            };
+            if (new URLSearchParams(window.location.search).get('account') === 'create') {
+                window.Clerk.mountSignUp(container, props);
+            } else {
+                window.Clerk.mountSignIn(container, props);
+            }
             mounted = true;
         }
     } catch (error) {

@@ -15,6 +15,15 @@ accounts begin with empty staging progress; existing production or legacy
 profiles are not automatically linked. Do not use a matching email or display
 name as evidence of ownership of a legacy profile.
 
+## No paid services
+
+Josh requires this authentication setup to stay on the free Hobby plan. Do not
+add payment details, purchase add-ons or upgrade a plan without explicit approval.
+As checked on 13 October 2026, Hobby includes 50,000 monthly retained users per
+app; Clerk's published terms can change. If the free tier stops fitting, stop or
+replace the integration rather than authorizing charges. This is a billing
+constraint, not a promise that Clerk will provide unchanged free terms forever.
+
 ## Deploy
 
 ```

@@ -2,14 +2,15 @@
  "_readme": "User-visible changes in the replacement app, newest first.",
  "entries": [
   {
-   "timestamp": "2026-10-13T12:38:46+01:00",
-   "date": "2026-10-13 12:38 BST",
+   "timestamp": "2026-10-13T12:43:10+01:00",
+   "date": "2026-10-13 12:43 BST",
    "agent": "Codex",
    "summary": "Passwordless accounts on staging with Google and email codes",
    "detail": [
     "Staging uses Clerk sign-in without password creation or guest mode.",
     "Signed-in accounts save progress in a separate staging database, with server checks for account ownership.",
-    "Existing production accounts and progress are unchanged. Staging accounts start with empty progress."
+    "Existing production accounts and progress are unchanged. Staging accounts start with empty progress.",
+    "Sign-up stays inside Fluency, with readable sign-in controls and a scrollable layout on small screens."
    ],
    "commit": "pending"
   },
