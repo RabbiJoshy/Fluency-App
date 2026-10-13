@@ -1,31 +1,32 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=49e8aa06';
-import { songCreditHTML } from './song-credit.js?v=49e8aa06';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=49e8aa06';
+import './state.js?v=d25030a2';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=d25030a2';
+import { songCreditHTML } from './song-credit.js?v=d25030a2';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=d25030a2';
 import { installCardTouch } from './card-touch.js';
-import './speech.js?v=49e8aa06';
-import { goToRoute, routeCodeFor } from './routes.js?v=49e8aa06';
-import { memoryTipTileHTML } from './memory-tips.js?v=49e8aa06';
-import './side-dock.js?v=49e8aa06';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=49e8aa06';
+import './speech.js?v=d25030a2';
+import { goToRoute, routeCodeFor } from './routes.js?v=d25030a2';
+import { memoryTipTileHTML } from './memory-tips.js?v=d25030a2';
+import './side-dock.js?v=d25030a2';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=d25030a2';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=49e8aa06';
+} from './example-personalisation.js?v=d25030a2';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=49e8aa06';
+} from './spanishdict-usage.js?v=d25030a2';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=49e8aa06';
+} from './reverse-cues.js?v=d25030a2';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -58,7 +59,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=49e8aa06';
+} from './card-metadata-pills.js?v=d25030a2';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1820,7 +1821,7 @@ function initializeApp() {
         // Set progress and Saved words are not offered mid-set: progress adds
         // little here, and saved words lives in Settings → Words & data.
         const entries = [
-            { label: 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
+            { label: activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
             { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
             { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
             { ...darkModeRow(), keepOpen: true, tail: '', refresh: darkModeRow, onSelect: () => window.applyThemePreference?.(
@@ -2814,7 +2815,7 @@ async function goBackToSetup() {
     // other transition in the app announces itself. Without this the tap read
     // as the app stalling rather than working — the same overlay Learn New and
     // Review already use.
-    window.showAppLoading?.('Main menu', 'Updating your levels…');
+    window.showAppLoading?.(activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', 'Updating your levels…');
     stopExampleAutoplay(true);
     // Hide app content, show setup
     const appContent = document.getElementById('appContent');
@@ -2823,6 +2824,7 @@ async function goBackToSetup() {
     appContent.classList.add('hidden');
     setupPanel.classList.remove('hidden');
     setupPanel.style.display = 'block';
+    if (activeArtist || window.playlistLiveActive?.()) window.showMusicStudySetup?.();
 
     // Hide mobile floating buttons
     showFloatingBtns(false);
@@ -3967,6 +3969,7 @@ function collectChainItems(card) {
                     subIndex: sub,
                     kind: m.pos === 'CLITIC' ? 'CLITIC' : 'MWE',
                     expression: expr,
+                    variants: item.variants || [],
                     translation: trans,
                     context: ctx,
                     source: src,
@@ -3995,6 +3998,7 @@ function collectExpressionItems(card) {
             subIndex: extras.length,
             kind: unused.pos === 'CLITIC' ? 'CLITIC' : 'MWE',
             expression: expr,
+            variants: unused.variants || [],
             translation: unused.meaning || unused.translation || '',
             context: unused.context || '',
             source: meaningSourceAdapter(unused) || unused.source || 'mwe-merged',
@@ -4010,6 +4014,7 @@ function collectExpressionItems(card) {
             subIndex: sub,
             kind: 'MWE',
             expression: mwe.expression || '',
+            variants: mwe.variants || [],
             translation: mwe.translation || '',
             context: mwe.context || '',
             source: mwe.source || '',
@@ -4646,15 +4651,15 @@ function clusterRareSenses(items) {
     return [...groups.values()];
 }
 
-function compactPhraseExampleHTML(example, posAccentRgb) {
-    const target = exampleTargetText(example) || example?.text || example?.targetSentence || '';
+function compactPhraseExampleHTML(example, posAccentRgb, phraseEntry = null) {
+    const target = phraseEntry?.sentence || exampleTargetText(example) || example?.text || example?.targetSentence || '';
     if (!target) return '';
     const english = example?.english || example?.translation || example?.englishSentence || '';
     const englishHTML = english
         ? `<div class="phrase-example-translation">${escapeCardText(english)}</div>` : '';
     const accent = posAccentRgb || 'var(--accent-primary-rgb)';
     return `<div class="phrase-example phrase-example--compact" style="--sense-match-rgb: ${accent};">
-            <div class="phrase-example-target">${escapeCardText(target)}</div>
+            <div class="phrase-example-target">${phraseEntry ? highlightSavedSentence(target, phraseEntry.highlightRanges) : escapeCardText(target)}</div>
             ${englishHTML}
         </div>`;
 }
@@ -4860,12 +4865,14 @@ function renderRareSenseGroups(rareItems, ctx = { total: 1 }) {
 function renderPhraseRow(item) {
     const example = (item.examples || [])[0];
     // Expressions share the phrase accent with the set scrubber's phrase pip.
-    const exampleHTML = compactPhraseExampleHTML(example, 'var(--accent-phrases-rgb)');
+    const entry = savedPhraseEntry(item, item.parentCard?.language || selectedLanguage, example);
+    const exampleHTML = compactPhraseExampleHTML(example, 'var(--accent-phrases-rgb)', entry);
     const sourcePill = phraseSourcePillHTML(item);
     const textHTML = `<div class="phrase-expression">${escapeCardText(item.expression)}</div>`
         + (item.translation ? `<div class="phrase-translation">${escapeCardText(item.translation)}</div>` : '')
         + (item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : '');
-    return `<div class="phrase-summary-item">
+    return `<div class="phrase-summary-item has-save-control">
+        ${saveItemButtonHTML(entry)}
         ${sourcePill ? `<div class="phrase-badge-row">${sourcePill}</div>` : ''}
         ${rareRowHTML(textHTML, exampleHTML, 1)}
     </div>`;
@@ -7289,6 +7296,7 @@ function renderCardWikipediaBadge(card) {
                         <strong class="mwe-translation">${primaryDisplay}</strong>
                         ${contextHTML}
                     </span>
+                    ${saveItemButtonHTML(savedPhraseEntry({ ...(activeMwe || m), expression: mweExpr }, selectedLanguage))}
                     ${mweCounter}
                 </div>
                 `);
@@ -10513,8 +10521,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '49e8aa06';
-const MODALS_ASSET_VERSION = '49e8aa06';
+const ASSET_VERSION = 'd25030a2';
+const MODALS_ASSET_VERSION = 'd25030a2';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

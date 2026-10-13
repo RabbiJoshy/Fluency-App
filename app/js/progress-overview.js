@@ -80,6 +80,7 @@ export async function openProgressOverview(options) {
     const modal = byId('totalStatsModal');
     if (!modal || !options) return;
     wireModal(modal);
+    globalThis.renderSavedWords?.();
     const opening = modal.classList.contains('hidden');
     if (opening) returnFocus = document.activeElement;
     latestOptions = options;

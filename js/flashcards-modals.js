@@ -5,7 +5,8 @@
 // core flashcards.js, so subsequent calls hit the real implementation
 // directly. State (flashcards, currentIndex, currentUser, etc.) and helpers
 // like flagWord and getPosColorClass come through the globalThis proxy
-// installed by state.js / auth.js / flashcards.js — no imports needed.
+// installed by state.js / auth.js / flashcards.js.
+import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=d25030a2';
 
 // ---------------------------------------------------------------------------
 // Part-of-speech popup
@@ -666,6 +667,8 @@ function quickLookHTML(rowIndex, example) {
         <div class="smart-skip-preview-actions">
             <button type="button" class="smart-skip-preview-close" data-breakdown-popup-close>Close</button>
             <button type="button" class="smart-skip-preview-open" data-breakdown-action="open" data-row="${rowIndex}">Open full card</button>
+            ${row.isPhrase ? saveItemButtonHTML(savedPhraseEntry({ expression: row.text, translation: row.gloss }, selectedLanguage,
+                { target: currentBreakdownSentence.target, english: currentBreakdownSentence.english })) : ''}
         </div>`;
 }
 
@@ -687,8 +690,8 @@ function showSaveOffer(rowIndex) {
     showBreakdownPopup(`
         <div class="smart-skip-preview-word"><b>${word}</b></div>
         <p class="word-by-word-popup-text">${saved
-            ? `<strong>${word}</strong> is in your saved words, a list you can export to use in other apps.`
-            : `<strong>${word}</strong> isn’t one of the flashcards in this app. You can save it to your saved words, a list you can export to use in other apps.`}</p>
+            ? `<strong>${word}</strong> is in Saved. You can revisit or export it from Settings → Your words.`
+            : `<strong>${word}</strong> isn’t one of the flashcards in this app. You can keep it in Saved to revisit or export later. Saving doesn’t add it to review.`}</p>
         <div class="smart-skip-preview-actions">
             ${saved
                 ? `<button type="button" class="smart-skip-preview-close" data-breakdown-action="save" data-row="${rowIndex}">Remove</button>

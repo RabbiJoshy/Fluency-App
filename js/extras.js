@@ -3,7 +3,8 @@
 // vocabulary in the same browser, with no coverage gate or separate setup.
 // The filtered vocabulary snapshot supplies the active songs and original IDs.
 // Each supplementary word has one home even when it also resembles a cognate.
-import './state.js?v=49e8aa06';
+import './state.js?v=d25030a2';
+import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=d25030a2';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -1494,96 +1495,22 @@ function initExtras() {
     });
 
     document.getElementById('downloadSavedWordsBtn')?.addEventListener('click', downloadSavedWords);
+    document.getElementById('progressSavedBtn')?.addEventListener('click', openSavedWords);
+    renderSavedWords();
 
     refreshExtrasButtons();
 }
 
-const SAVED_WORDS_KEY = 'fluency_saved_words_v1';
-
-function loadSavedWords() {
-    try {
-        const raw = localStorage.getItem(SAVED_WORDS_KEY);
-        const parsed = raw ? JSON.parse(raw) : [];
-        return Array.isArray(parsed) ? parsed : [];
-    } catch (_) {
-        return [];
-    }
-}
-
-function writeSavedWords(items) {
-    localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(items));
-}
-
-function savedWordKey(item) {
-    return `${item.language || ''}\0${item.surface || ''}\0${item.sentence || ''}`;
-}
-
+// Compatibility for the existing word-by-word save controls.
 function isWordSaved(surface, sentence, language) {
-    const key = savedWordKey({ language, surface, sentence });
-    return loadSavedWords().some(item => savedWordKey(item) === key);
+    return isItemSaved({ type: 'word', surface, sentence, language });
 }
-
 function toggleSavedWord(entry) {
-    const language = entry.language || g().selectedLanguage || '';
-    const next = {
-        language,
-        surface: entry.surface,
-        gloss: entry.gloss || '',
-        pos: entry.pos || '',
-        sentence: entry.sentence || '',
-        english: entry.english || '',
-        savedAt: new Date().toISOString(),
-    };
-    const items = loadSavedWords();
-    const key = savedWordKey(next);
-    const index = items.findIndex(item => savedWordKey(item) === key);
-    if (index >= 0) items.splice(index, 1);
-    else items.unshift(next);
-    writeSavedWords(items);
-    renderSavedWords();
-    return index < 0;
+    return toggleAndRenderSavedItem({ ...entry, type: 'word', language: entry.language || g().selectedLanguage || '' });
 }
-
-// Saved words live in Settings → Your words, under the other word tools,
-// rather than in a sheet of their own. Download appears only when there is
-// something to download.
-function renderSavedWords() {
-    const body = document.getElementById('savedWordsBody');
-    if (!body) return;
-    const items = loadSavedWords();
-    const download = document.getElementById('downloadSavedWordsBtn');
-    if (download) download.hidden = items.length === 0;
-    if (items.length === 0) {
-        body.innerHTML = '<p class="saved-words-empty">No saved words yet. Save one from Word by word on a sentence.</p>';
-        return;
-    }
-    body.innerHTML = `<ul class="extras-list">${items.map(item => `
-        <li class="extras-row">
-            <span class="extras-word">${_escapeHtml(item.surface)}</span>
-            <span class="extras-note">${_escapeHtml([item.gloss, item.language].filter(Boolean).join(' · '))}</span>
-            <span class="extras-note">${_escapeHtml(item.sentence)}</span>
-        </li>`).join('')}</ul>`;
-}
-
-function _escapeHtml(value) {
-    return String(value ?? '').replace(/[&<>"']/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
-}
-
-function openSavedWords() {
-    globalThis.showSettingsModalWithTab?.('vocabulary');
-}
-
-function downloadSavedWords() {
-    const blob = new Blob([JSON.stringify(loadSavedWords(), null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'fluency-saved-words.json';
-    a.click();
-    URL.revokeObjectURL(url);
-}
+function renderSavedWords() { return renderSavedItems(); }
+function openSavedWords() { return openSavedItems(); }
+function downloadSavedWords() { return downloadSavedItems(); }
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initExtras);

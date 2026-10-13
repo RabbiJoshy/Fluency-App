@@ -1,9 +1,9 @@
 // Live playlist: look up lyrics on LRCLIB (six at a time), land each song in
 // the progress list, save tracks to Fluency, then build a study deck from
 // speech-inventory tokens plus unassigned song-line examples.
-import './state.js?v=49e8aa06';
-import { combineSongCatalogs } from './song-sets-core.js?v=49e8aa06';
-import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=49e8aa06';
+import './state.js?v=d25030a2';
+import { combineSongCatalogs } from './song-sets-core.js?v=d25030a2';
+import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=d25030a2';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
 const LYRICS_DB_NAME = 'fluency-playlist-lyrics';
@@ -14,7 +14,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=49e8aa06';
+const SPOTIFY_MODULE = './spotify.js?v=d25030a2';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
@@ -23,6 +23,7 @@ let _importAbort = null;
 let _importMode = 'filter';
 let _importBusy = false;
 let _ignoreBackdropUntil = 0;
+let _openGeneration = 0;
 
 function element(id) {
     return document.getElementById(id);
@@ -172,6 +173,7 @@ function setDismissLock(ms = DISMISS_LOCK_MS) {
 function setImportBusy(busy) {
     _importBusy = Boolean(busy);
     element('spotifyPlaylistModal')?.classList.toggle('is-importing', _importBusy);
+    window.setMusicWorkspaceBusy?.(_importBusy);
 }
 
 function renderProgress(done, total, activeLabels) {
@@ -518,7 +520,85 @@ async function ensureSpotifyModule() {
     }
 }
 
+// Live playlists choose their subset before any lyrics lookup or deck build.
+// Abort releases the pending choice when the user navigates away.
+function choosePlaylistTracks(playlist, tracks, signal, language) {
+    const list = element('spotifyPlaylistList');
+    list.replaceChildren();
+    list.classList.remove('hidden');
+    const selectionKey = `fluency_music_playlist_songs_v1:${language}:${playlist.id}`;
+    let previous = null;
+    try { previous = JSON.parse(localStorage.getItem(selectionKey) || 'null'); } catch (_) {}
+    const selected = new Set(Array.isArray(previous)
+        ? tracks.filter(track => previous.includes(track.id)) : tracks);
+    const footer = document.createElement('div');
+    footer.className = 'song-set-footer';
+    const use = document.createElement('button');
+    use.type = 'button';
+    const update = () => {
+        use.textContent = `Use ${selected.size} song${selected.size === 1 ? '' : 's'} ›`;
+        use.disabled = selected.size === 0;
+        window.updateMusicSelection?.(tracks.filter(track => selected.has(track)), playlist.name);
+    };
+    const toolbar = document.createElement('div');
+    toolbar.className = 'song-set-bulk-actions';
+    const inputs = [];
+    for (const [label, checked] of [['Select all', true], ['Clear all', false]]) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = label;
+        button.addEventListener('click', () => {
+            selected.clear();
+            if (checked) tracks.forEach(track => selected.add(track));
+            inputs.forEach(input => { input.checked = checked; });
+            update();
+        });
+        toolbar.appendChild(button);
+    }
+    list.appendChild(toolbar);
+    tracks.forEach(track => {
+        const row = document.createElement('label');
+        row.className = 'song-set-option';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = selected.has(track);
+        inputs.push(checkbox);
+        const copy = document.createElement('span');
+        const title = document.createElement('strong');
+        title.textContent = track.title;
+        const artist = document.createElement('small');
+        artist.textContent = track.artist || '';
+        copy.append(title, artist);
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) selected.add(track);
+            else selected.delete(track);
+            update();
+        });
+        row.append(checkbox, copy);
+        list.appendChild(row);
+    });
+    footer.appendChild(use);
+    list.appendChild(footer);
+    element('spotifyPlaylistTitle').textContent = playlist.name;
+    element('spotifyPlaylistStatus').textContent = 'Choose the songs you want to learn from.';
+    setImportBusy(false);
+    update();
+    return new Promise((resolve, reject) => {
+        const abort = () => reject(new DOMException('Playlist selection cancelled', 'AbortError'));
+        signal.addEventListener('abort', abort, { once: true });
+        use.addEventListener('click', () => {
+            if (!selected.size || signal.aborted) return;
+            signal.removeEventListener('abort', abort);
+            try { localStorage.setItem(selectionKey, JSON.stringify([...selected].map(track => track.id))); } catch (_) {}
+            setImportBusy(true);
+            resolve(tracks.filter(track => selected.has(track)));
+        }, { once: true });
+        if (signal.aborted) abort();
+    });
+}
+
 async function openSpotifyPlaylistImport(matchingArtists, language, options = {}) {
+    const generation = ++_openGeneration;
     const modal = element('spotifyPlaylistModal');
     const status = element('spotifyPlaylistStatus');
     const useBtn = element('useSpotifyMatchesBtn');
@@ -559,6 +639,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     status.textContent = 'Connecting to Spotify…';
 
     await ensureSpotifyModule();
+    if (generation !== _openGeneration) return;
     if (!window.isSpotifyConnected) {
         status.textContent = 'Spotify sign-in is temporarily unavailable. Please reload the app and try again.';
         return;
@@ -566,6 +647,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
 
     if (!window.isSpotifyConnected?.()) {
         const connected = await window.spotifyLogin?.();
+        if (generation !== _openGeneration) return;
         if (!connected) {
             status.textContent = 'Could not connect to Spotify.';
             return;
@@ -576,7 +658,9 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     let playlists;
     try {
         playlists = await window.fetchSpotifyPlaylists();
+        if (generation !== _openGeneration) return;
     } catch (error) {
+        if (generation !== _openGeneration) return;
         status.textContent = error?.message || 'Could not load your playlists.';
         return;
     }
@@ -588,6 +672,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     }
 
     const showPlaylists = () => {
+        if (generation !== _openGeneration) return;
         status.textContent = 'Choose a playlist you created.';
         renderPlaylistList(playlists, runPlaylist);
     };
@@ -666,7 +751,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                 return;
             }
 
-            const tracks = await window.fetchSpotifyPlaylistTracks(playlist.id, {
+            let tracks = await window.fetchSpotifyPlaylistTracks(playlist.id, {
                 tracksHref: playlist.tracksHref,
                 canReadItems: playlist.canReadItems
             });
@@ -674,6 +759,10 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             if (!tracks.length) {
                 status.textContent = `"${playlist.name}" has no playable Spotify tracks.`;
                 return;
+            }
+            if (window.musicWorkspaceActive?.()) {
+                tracks = await choosePlaylistTracks(playlist, tracks, abort.signal, language);
+                if (abort.signal.aborted) return;
             }
             element('spotifyPlaylistList').classList.add('hidden');
             resetProgressUi({ keepVisible: true });
@@ -709,7 +798,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             try {
                 const saved = await window.savePlaylistLiveDeckToServer?.(deck);
                 if (saved?.ok) {
-                    status.textContent = `${parts.join('. ')}. Saved to your account. Opening study…`;
+                    status.textContent = `${parts.join('. ')}. Saved to your account. Opening study setup…`;
                 } else if (namedSyncUser()) {
                     status.textContent = `${parts.join('. ')}. Deck is ready here, but no copy was saved to your account.`;
                 } else {
@@ -722,7 +811,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             if (liveBtn) liveBtn.hidden = false;
             confirmSpotifyLiveDeck();
         } catch (error) {
-            if (error?.name === 'AbortError') return;
+            if (error?.name === 'AbortError' || abort.signal.aborted) return;
             setImportBusy(false);
             element('spotifyPlaylistList').classList.remove('hidden');
             element('spotifyPlaylistProgress')?.classList.add('hidden');
@@ -744,8 +833,9 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     renderPlaylistList(playlists, runPlaylist);
 }
 
-function closeSpotifyPlaylistImport() {
-    if (Date.now() < _ignoreBackdropUntil) return;
+function closeSpotifyPlaylistImport({ force = false } = {}) {
+    if (!force && Date.now() < _ignoreBackdropUntil) return;
+    ++_openGeneration;
     _importAbort?.abort();
     _importAbort = null;
     setImportBusy(false);
@@ -789,6 +879,12 @@ function confirmSpotifyLiveDeck() {
     setImportBusy(false);
     element('spotifyPlaylistModal')?.classList.add('hidden');
     _importAbort = null;
+    if (window.musicWorkspaceActive?.()) {
+        window.navigateMusicWorkspace?.({
+            kind: 'live', language: routeCodeFor(language, typeof config !== 'undefined' ? config?.languages : null)
+        }, 'setup', { fromPlaylist: true });
+        return;
+    }
     activatePlaylistLiveStudy(language);
 }
 
@@ -804,10 +900,12 @@ function confirmSpotifyMatches() {
         localStorage.setItem(CUSTOM_SONG_SET_KEY, JSON.stringify(record));
     } catch (_) {}
     window.showAppLoading?.('Building your deck', `Matching ${_matchState.playlistName}…`, true);
-    goToRoute({
+    const route = {
         kind: 'songs',
         language: routeCodeFor(_matchState.language, typeof config !== 'undefined' ? config?.languages : null)
-    });
+    };
+    if (window.musicWorkspaceActive?.()) window.navigateMusicWorkspace?.(route, 'songs', { fromPlaylist: true });
+    else goToRoute(route);
 }
 
 async function reconnectSpotifyForPlaylist() {
@@ -840,6 +938,10 @@ function setupSpotifyPlaylistImport() {
     document.addEventListener('keydown', event => {
         if (event.key !== 'Escape' || modal.classList.contains('hidden')) return;
         if (_importBusy || Date.now() < _ignoreBackdropUntil) return;
+        if (window.musicWorkspaceActive?.()) {
+            window.musicWorkspaceBack?.();
+            return;
+        }
         closeSpotifyPlaylistImport();
     });
 }
@@ -848,5 +950,6 @@ setupSpotifyPlaylistImport();
 
 window.postPlaylistLive = postPlaylistLive;
 window.openSpotifyPlaylistImport = openSpotifyPlaylistImport;
+window.closeSpotifyPlaylistImport = closeSpotifyPlaylistImport;
 window.FLUENCY_PLAYLIST_LYRICS_DB = LYRICS_DB_NAME;
 window.FLUENCY_PLAYLIST_LYRICS_CONCURRENCY = LOOKUP_CONCURRENCY;

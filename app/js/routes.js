@@ -3,6 +3,7 @@
 //   #/es                     a language, picker skipped
 //   #/es/w/unidos            one word, as a single card (card_id is the surface)
 //   #/artist/bad-bunny       an artist deck; /extra for the extra deck
+//   #/es/music               full-screen music selection workspace
 //   #/es/songs               your songs: chosen ones, or a playlist matched
 //                            against the lyrics library
 //   #/es/live                your live playlist deck, looked up from lyrics
@@ -39,7 +40,7 @@ export function parseRoute(hash) {
         return { kind: 'artist', artist: second, scope: third === 'extra' ? 'extra' : 'main' };
     }
     if (parts.length === 1) return { kind: 'language', language: first };
-    if (parts.length === 2 && (second === 'songs' || second === 'live')) return { kind: second, language: first };
+    if (parts.length === 2 && (second === 'songs' || second === 'live' || second === 'music')) return { kind: second, language: first };
     if (parts.length === 3 && second === 'w' && third) return { kind: 'word', language: first, surface: third };
     if (second === 'conjugate' && parts.length <= 3) {
         return third ? { kind: 'conjugate', language: first, verb: third } : { kind: 'conjugate', language: first };
@@ -59,6 +60,7 @@ export function formatRoute(route) {
         case 'word':
             return `#/${enc(route.language)}/w/${enc(route.surface)}`;
         case 'songs':
+        case 'music':
         case 'live':
             return `#/${enc(route.language)}/${route.kind}`;
         case 'conjugate':

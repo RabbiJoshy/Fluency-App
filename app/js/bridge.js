@@ -1,6 +1,6 @@
 // Read-only transfer of verified source meaning knowledge. No target progress is written.
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=49e8aa06';
-import { mergeProgressRecords } from './progress-identity.js?v=49e8aa06';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=d25030a2';
+import { mergeProgressRecords } from './progress-identity.js?v=d25030a2';
 
 let bundle = null;
 let revision = 0;

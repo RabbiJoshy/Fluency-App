@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=49e8aa06';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=49e8aa06';
-import { readFastTrack } from './fast-track-preferences.js?v=49e8aa06';
-import './session-plan.js?v=49e8aa06';
+import './state.js?v=d25030a2';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=d25030a2';
+import { readFastTrack } from './fast-track-preferences.js?v=d25030a2';
+import './session-plan.js?v=d25030a2';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -795,7 +795,8 @@ function setupLanguageTabs() {
                 return;
             }
             // The language already in use: nothing to switch.
-            if (this.dataset.lang === selectedLanguage && currentLearningMode()) {
+            if (this.dataset.lang === selectedLanguage && currentLearningMode()
+                && sessionStorage.getItem('fluencyPendingSpeechLanguage') !== this.dataset.lang) {
                 return;
             }
             document.getElementById('step1')?.classList.remove('source-speech-active', 'context-ready');
@@ -959,7 +960,7 @@ function setupLanguageTabs() {
                     document.body.classList.add('has-learning-context');
                     updateLearningContextUI();
 
-                    if (sessionStorage.getItem('fluencyPendingLiveStudy') === '1' && window.playlistLiveActive?.()) {
+                    if (sessionStorage.getItem('fluencyPendingLiveStudy') === '1' && window.playlistLiveActive?.() && !window.musicWorkspaceActive?.()) {
                         sessionStorage.removeItem('fluencyPendingLiveStudy');
                         await startSelectedStudySession();
                     }
@@ -3355,7 +3356,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=49e8aa06')
+        import('./spotify.js?v=d25030a2')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
