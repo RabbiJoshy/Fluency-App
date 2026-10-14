@@ -1,0 +1,196 @@
+{
+  "que": {
+    "word": "que",
+    "role": "Connector",
+    "pos": "CONJ",
+    "posLabel": "Connector",
+    "rank": 1,
+    "frequency": 38240,
+    "uses": [
+      {
+        "id": "that",
+        "english": "that",
+        "description": "Introduces what someone thinks, says or knows.",
+        "examples": [
+          {"target": "Acho que vai chover.", "translation": "I think it’s going to rain.", "highlight": "que", "content": "achar"},
+          {"target": "Sei que você está certo.", "translation": "I know that you are right.", "highlight": "que", "content": "saber"},
+          {"target": "Ela disse que viria.", "translation": "She said that she would come.", "highlight": "que", "content": "dizer"}
+        ]
+      },
+      {
+        "id": "relative",
+        "english": "who / which / that",
+        "description": "Adds information about a person or thing.",
+        "examples": [
+          {"target": "Este é o livro que estou lendo.", "translation": "This is the book that I’m reading.", "highlight": "que", "content": "livro"},
+          {"target": "A pessoa que me ajudou foi embora.", "translation": "The person who helped me left.", "highlight": "que", "content": "pessoa"}
+        ]
+      },
+      {
+        "id": "than",
+        "english": "than",
+        "description": "Connects the two sides of a comparison.",
+        "examples": [
+          {"target": "Ela é mais alta que eu.", "translation": "She is taller than me.", "highlight": "que", "content": "mais alta"},
+          {"target": "Este café é melhor que o outro.", "translation": "This coffee is better than the other.", "highlight": "que", "content": "melhor"}
+        ]
+      }
+    ]
+  },
+  "de": {
+    "word": "de",
+    "role": "Preposition",
+    "pos": "PREP",
+    "posLabel": "Preposition",
+    "rank": 4,
+    "frequency": 25447,
+    "uses": [
+      {
+        "id": "of-from",
+        "english": "of / from",
+        "description": "Shows connection, possession or origin.",
+        "examples": [
+          {"target": "Ela é de Lisboa.", "translation": "She is from Lisbon.", "highlight": "de", "content": "origem"},
+          {"target": "A casa de Ana é bonita.", "translation": "Ana's house is beautiful.", "highlight": "de", "content": "posse"},
+          {"target": "Quero um copo de água.", "translation": "I want a glass of water.", "highlight": "de", "content": "conteúdo"}
+        ]
+      },
+      {
+        "id": "verb-object",
+        "english": "connects a verb to its object",
+        "description": "Required link after common verbs before a noun or action.",
+        "examples": [
+          {"target": "Gosto de música.", "translation": "I like music.", "highlight": "de", "content": "gostar"},
+          {"target": "Preciso de ajuda.", "translation": "I need help.", "highlight": "de", "content": "precisar"},
+          {"target": "Tudo depende de você.", "translation": "Everything depends on you.", "highlight": "de", "content": "depender"}
+        ]
+      }
+    ]
+  },
+  "se": {
+    "word": "se",
+    "role": "Conjunction & Clitic",
+    "pos": "CONJ",
+    "posLabel": "Conjunction & Clitic",
+    "rank": 11,
+    "frequency": 16900,
+    "uses": [
+      {
+        "id": "conditional",
+        "english": "if / whether",
+        "description": "Introduces a condition or an indirect question.",
+        "examples": [
+          {"target": "Se chover, fico em casa.", "translation": "If it rains, I’ll stay home.", "highlight": "Se", "content": "condição"},
+          {"target": "Não sei se ele vem.", "translation": "I don't know if he is coming.", "highlight": "se", "content": "dúvida"}
+        ]
+      },
+      {
+        "id": "reflexive",
+        "english": "-self / each other",
+        "description": "Action reflects back on the person doing it.",
+        "examples": [
+          {"target": "Ela se olhou no espelho.", "translation": "She looked at herself in the mirror.", "highlight": "se", "content": "olhar"},
+          {"target": "Ele se levantou cedo.", "translation": "He got [himself] up early.", "highlight": "se", "content": "levantar"},
+          {"target": "Nós nos abraçamos com carinho.", "translation": "We hugged each other warmly.", "highlight": "nos", "content": "abraçar"}
+        ]
+      },
+      {
+        "id": "passive",
+        "english": "action without naming who",
+        "description": "Describes something done generally or passively.",
+        "examples": [
+          {"target": "Aqui se fala português.", "translation": "Portuguese is spoken here.", "highlight": "se", "content": "falar"},
+          {"target": "Vende-se esta casa.", "translation": "This house is for sale.", "highlight": "se", "content": "vender"}
+        ]
+      }
+    ]
+  },
+  "o": {
+    "word": "o",
+    "role": "Article & Pronoun",
+    "pos": "DET",
+    "posLabel": "Article & Pronoun",
+    "rank": 3,
+    "frequency": 31200,
+    "uses": [
+      {
+        "id": "article",
+        "english": "the",
+        "description": "Before a masculine singular noun.",
+        "examples": [
+          {"target": "O livro está na mesa.", "translation": "The book is on the table.", "highlight": "O", "content": "livro"},
+          {"target": "O dia está lindo.", "translation": "The day is beautiful.", "highlight": "O", "content": "dia"}
+        ]
+      },
+      {
+        "id": "pronoun",
+        "english": "him / it",
+        "description": "Object pronoun receiving the action of a verb.",
+        "examples": [
+          {"target": "Eu o vi ontem no parque.", "translation": "I saw him yesterday in the park.", "highlight": "o", "content": "ver"},
+          {"target": "Não consigo encontrá-lo.", "translation": "I cannot find it.", "highlight": "lo", "content": "encontrar"}
+        ]
+      }
+    ]
+  },
+  "nos": {
+    "word": "nos",
+    "role": "Pronoun & Contraction",
+    "pos": "PRON",
+    "posLabel": "Pronoun & Contraction",
+    "rank": 44,
+    "frequency": 7890,
+    "uses": [
+      {
+        "id": "pronoun-object",
+        "english": "us / to us",
+        "description": "Object pronoun receiving the action.",
+        "examples": [
+          {"target": "Ela nos chamou para jantar.", "translation": "She called us for dinner.", "highlight": "nos", "content": "chamar"},
+          {"target": "Eles nos disseram a verdade.", "translation": "They told us the truth.", "highlight": "nos", "content": "dizer"}
+        ]
+      },
+      {
+        "id": "pronoun-reflexive",
+        "english": "ourselves / each other",
+        "description": "Reflexive or reciprocal action done by nós.",
+        "examples": [
+          {"target": "Nós nos abraçamos.", "translation": "We hugged each other.", "highlight": "nos", "content": "abraçar"},
+          {"target": "Nós nos conhecemos bem.", "translation": "We know each other well.", "highlight": "nos", "content": "conhecer"}
+        ]
+      },
+      {
+        "id": "contraction",
+        "english": "in / on / at the",
+        "description": "Contraction of em + os before a masculine plural noun.",
+        "parts": ["em", "os"],
+        "examples": [
+          {"target": "Está nos livros.", "translation": "It’s in the books.", "highlight": "nos", "content": "livros"},
+          {"target": "Eles moram nos Estados Unidos.", "translation": "They live in the United States.", "highlight": "nos", "content": "Estados Unidos"}
+        ]
+      }
+    ]
+  },
+  "naquele": {
+    "word": "naquele",
+    "role": "Contraction",
+    "pos": "CONTRACTION",
+    "posLabel": "Contraction",
+    "rank": 1104,
+    "frequency": 420,
+    "parts": ["em", "aquele"],
+    "partsLabel": "Contraction formula",
+    "uses": [
+      {
+        "id": "in-that",
+        "english": "in that / on that",
+        "description": "Points to a particular place or time.",
+        "examples": [
+          {"target": "Eu estava naquele lugar.", "translation": "I was in that place.", "highlight": "naquele", "content": "lugar"},
+          {"target": "Tudo começou naquele dia.", "translation": "Everything started on that day.", "highlight": "naquele", "content": "dia"},
+          {"target": "Naquele momento, tudo mudou.", "translation": "At that moment, everything changed.", "highlight": "Naquele", "content": "momento"}
+        ]
+      }
+    ]
+  }
+}

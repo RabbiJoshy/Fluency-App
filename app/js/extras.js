@@ -16,14 +16,13 @@ const g = () => globalThis;
 // controls. Deliberately NOT imported from vocab.js — that module exports
 // nothing, and duplicating two predicates is cheaper than widening its surface.
 function cognateExtra(item) {
-    // The same decision the deck filter makes: each known language judged at
-    // its own cutoff, with the legacy scalar and slider for older releases.
+    const active = g().excludeCognates || g().isBridgeEnabled?.();
+    if (!active) return false;
     const decide = g().isCognateKnown;
     const known = decide
         ? Boolean(decide(item))
         : Number(item.cognate_score || 0) >= g().cognateThreshold;
-    return Boolean(g().bridgeVerdict?.(item, {useProfile: g().excludeCognates}))
-        || (g().excludeCognates && g().cognateFieldAvailable && known);
+    return Boolean(g().bridgeVerdict?.(item, {useProfile: true})) || known;
 }
 
 function lemmaExtra(item) {
@@ -177,7 +176,7 @@ function cognateMatch(item, lang = _activeCognateFilterLang) {
         if (direct) return { word: String(direct), code: lang, obvious: true };
 
         if (g().bridgeVerdict) {
-            const bv = g().bridgeVerdict(item, { useProfile: g().excludeCognates });
+            const bv = g().bridgeVerdict(item, { useProfile: true });
             const ev = bv?.evidence?.find(e => e.code === lang);
             if (ev?.word) return { word: String(ev.word), code: lang, obvious: true };
         }
@@ -207,7 +206,7 @@ function cognateMatch(item, lang = _activeCognateFilterLang) {
         return { word: shortGloss(firstTranslation(item)), code: lang, obvious: false };
     }
 
-    const bridge = g().bridgeVerdict?.(item, { useProfile: g().excludeCognates });
+    const bridge = g().bridgeVerdict?.(item, { useProfile: true });
     if (bridge?.word && bridge?.code) {
         return { word: String(bridge.word), code: bridge.code, obvious: true };
     }
@@ -460,7 +459,7 @@ function escapeHtml(value) {
 // With more than one known language a bare number says nothing about why the
 // word is free, so name the language that made it so.
 function cognateNote(item) {
-    const bridge = g().bridgeVerdict?.(item, {useProfile: g().excludeCognates});
+    const bridge = g().bridgeVerdict?.(item, {useProfile: true});
     const strongest = g().strongestKnownLanguage?.(item) || bridge;
     const fallbackCode = g().activeKnownLanguages?.()[0] || 'en';
     const code = strongest?.code || fallbackCode;
@@ -754,7 +753,7 @@ function skipEntriesFor(extras, category) {
         const check = g().isCognateKnownForLanguage;
         return entries.filter(({ item }) => {
             if (check && check(item, lang)) return true;
-            const bv = g().bridgeVerdict?.(item, {useProfile: g().excludeCognates});
+            const bv = g().bridgeVerdict?.(item, {useProfile: true});
             if (bv?.evidence?.some(e => e.code === lang)) return true;
             return false;
         });
@@ -985,12 +984,8 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     if (sourceSelect) sourceSelect.value = _ssSource;
     const intro = document.getElementById('smartSkipLyricsIntro');
     if (intro) intro.hidden = !artist;
-    const explanation = document.getElementById('smartSkipListExplanation');
-    if (explanation) explanation.textContent = _ssSource === 'songs'
-        ? 'Supplementary words from your selected songs, available with any skip settings.'
-        : 'Words skipped or combined by your settings.';
-    const listLabel = document.getElementById('skippedWordsLabel');
-    if (listLabel) listLabel.textContent = _ssSource === 'songs' ? 'Song vocabulary' : 'Skipped words';
+    document.getElementById('smartSkipListExplanation')?.remove();
+    document.getElementById('skippedWordsLabel')?.remove();
     const studyButton = document.getElementById('smartSkipStudySongsBtn');
     if (studyButton) studyButton.hidden = _ssSource !== 'songs';
     const body = document.getElementById('skippedWordsBody');
@@ -1022,7 +1017,7 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
                 const label = g().knownLanguageLabel?.(code) || code.toUpperCase();
                 const langCount = (extras.byCategory?.cognate || []).filter(({ item }) => {
                     if (check && check(item, code)) return true;
-                    return g().bridgeVerdict?.(item, {useProfile: g().excludeCognates})?.evidence?.some(e => e.code === code);
+                    return g().bridgeVerdict?.(item, {useProfile: true})?.evidence?.some(e => e.code === code);
                 }).length;
                 optionsHtml.push(`<option value="${escapeHtml(code)}">${escapeHtml(shownFlag + label)} (${langCount.toLocaleString()})</option>`);
             }
@@ -1375,8 +1370,6 @@ function openMergedForms() {
 function openSkippedWords(initialCategory = 'cognate') {
     _ssSource = initialCategory.startsWith('song:') ? 'songs' : 'settings';
     _ssQuery = '';
-    const search = document.getElementById('smartSkipWordSearch');
-    if (search) search.value = '';
     _activeSkippedCategory = initialCategory;
     if (g().openFastModePage) g().openFastModePage({ section: 'decks' });
     renderSkippedWords(initialCategory, { force: true });
@@ -1457,14 +1450,9 @@ async function studySupplementarySongWords() {
 }
 
 function initExtras() {
-    document.getElementById('smartSkipWordSearch')?.addEventListener('input', event => {
-        closeSmartSkipPreview();
-        filterSkippedWords(event.currentTarget.value);
-    });
     document.getElementById('smartSkipSourceSelect')?.addEventListener('change', event => {
         _ssSource = event.currentTarget.value;
         _ssQuery = '';
-        document.getElementById('smartSkipWordSearch').value = '';
         closeSmartSkipPreview();
         renderSkippedWords(_ssSource === 'songs' ? 'song:all' : 'cognate', {force: true});
     });
@@ -1587,8 +1575,6 @@ globalThis.openMergedForms = openMergedForms;
 globalThis.resetSkippedCategory = () => {
     _ssQuery = '';
     _activeSkippedCategory = _ssSource === 'songs' ? 'song:all' : 'cognate';
-    const search = document.getElementById('smartSkipWordSearch');
-    if (search) search.value = '';
 };
 globalThis.openSkippedWords = openSkippedWords;
 globalThis.openExtras = openExtras;

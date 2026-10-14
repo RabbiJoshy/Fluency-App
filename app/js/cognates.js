@@ -276,6 +276,7 @@ function cognateScoreFor(item, code) {
 // asked separately, at its own cutoff.
 function isCognateKnown(item) {
     if (!item) return false;
+    if (globalThis.bridgeVerdict?.(item, { useProfile: true })) return true;
     if (isSenseItem(item)) {
         for (const code of activeKnownLanguages()) {
             if (code !== 'en' && globalThis.bridgeVerbCompatible?.(item, code) === false) continue;
@@ -501,25 +502,30 @@ function renderKnownLanguagePicker() {
     const selector = document.getElementById('knownLanguagesSelector');
     if (!container || !selector) return;
     container.style.display = 'block';
-    const ready = availableKnownLanguages();
-    const choices = globalThis.smartSkipLanguageChoices?.(readSelected(), ready)
-        || readSelected().filter(code => ready.includes(code)).map(code => ({code, ready: true}));
-    const active = new Set(activeKnownLanguages());
+    const active = activeKnownLanguages();
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    selector.innerHTML = choices.map(({code, ready}) => {
+    
+    // Display active languages as clean pills with a subtle + button to open the modal
+    const chipsHtml = (active.length ? active : ['en']).map(code => {
         const flag = knownLanguageFlag(code);
         const shownFlag = flag ? `${flag} ` : '';
-        return `
-        <button type="button" class="known-language-btn${active.has(code) ? ' selected' : ''}"
-                data-known-language="${code}" aria-pressed="${active.has(code)}" ${ready ? '' : 'disabled'}>
-            ${active.has(code) ? '✓ ' : ''}${shownFlag}${escape(languageLabel(code))}${ready ? '' : ' <small>Coming soon</small>'}
+        return `<button type="button" class="known-language-chip" data-edit-language-profile title="Language look-alikes from ${escape(languageLabel(code))}. Click to manage.">
+            ${shownFlag}${escape(languageLabel(code))}
         </button>`;
-    }).join('') + (choices.length ? '' : '<small class="known-languages-empty">None of your saved languages have a useful pair here yet.</small>')
-        + '<button type="button" class="known-language-btn known-language-edit-btn" data-edit-language-profile title="Manage languages in Settings">⚙ Manage languages</button>';
-    selector.querySelectorAll('[data-known-language]').forEach(button => {
-        button.addEventListener('click', () => toggleKnownLanguage(button.dataset.knownLanguage));
+    }).join('');
+
+    selector.innerHTML = `
+        <div class="known-languages-folded-row">
+            ${chipsHtml}
+            <button type="button" class="known-language-add-btn" data-edit-language-profile title="Add more languages or transfer words from other languages" aria-label="Add more languages">
+                <span class="known-language-add-plus" aria-hidden="true">+</span>
+            </button>
+        </div>
+    `;
+
+    selector.querySelectorAll('[data-edit-language-profile]').forEach(button => {
+        button.addEventListener('click', () => globalThis.openKnownLanguagesSettings?.());
     });
-    selector.querySelector('[data-edit-language-profile]')?.addEventListener('click', () => globalThis.openKnownLanguagesSettings?.());
 }
 
 function toggleKnownLanguage(code) {
@@ -568,11 +574,18 @@ function isCognateKnownForLanguage(item, code) {
     const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
     if (code !== 'en' && globalThis.bridgeVerbCompatible?.(item, code) === false) return false;
     if (isSenseItem(item)) {
-        return cognateScoreFor(item, code) >= cutoff;
+        if (cognateScoreFor(item, code) >= cutoff) return true;
+    } else {
+        if (code === 'en' && !hasCardLookalikeGloss(item)) {
+            // fall through to bridge
+        } else {
+            const score = Number(item.cognate_scores?.[code] || (code === 'en' ? item.cognate_score : 0) || 0);
+            if (score >= cutoff) return true;
+        }
     }
-    if (code === 'en' && !hasCardLookalikeGloss(item)) return false;
-    const score = Number(item.cognate_scores?.[code] || (code === 'en' ? item.cognate_score : 0) || 0);
-    return score >= cutoff;
+    const bv = globalThis.bridgeVerdict?.(item, { useProfile: true });
+    if (bv?.evidence?.some(e => e.code === code)) return true;
+    return false;
 }
 
 globalThis.cognateThresholdFor = cognateThresholdFor;

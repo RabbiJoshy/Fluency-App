@@ -2406,6 +2406,7 @@ function openKnownLanguagesSettings() {
     renderKnownLanguagesModalChoices(knownLanguagesScoped ? (window.relevantSmartSkipLanguages?.() || []) : getKnownLanguagesForTarget());
     document.getElementById('knownLanguagesModalTitle').textContent = 'Languages you know';
     document.getElementById('continueKnownLanguagesBtn').textContent = 'Save';
+    window.refreshBridge?.();
     modal.classList.remove('hidden');
     modal.querySelector('button')?.focus();
 }

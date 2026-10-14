@@ -969,6 +969,13 @@
             <p class="known-languages-modal-intro" id="knownLanguagesModalIntro">
                 Choose languages where most everyday words are already familiar. Saved for every language you study; you can change this in Settings. You do not need to add a language just because you are studying it here.
             </p>
+            <div id="knownLanguagesBridgeRow" class="known-languages-bridge-row">
+                <div class="known-languages-bridge-info">
+                    <strong>Transfer from other languages</strong>
+                    <p id="knownLanguagesBridgeDesc">Skip matching words you’ve already learned in other languages you study in Fluency.</p>
+                </div>
+                <button type="button" id="knownLanguagesBridgeToggle" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Transfer words from other languages you study"></button>
+            </div>
             <button type="button" id="knownLanguagesManageAllBtn" class="known-languages-manage-all" hidden>Manage all languages in Settings</button>
             <div class="known-languages-modal-actions">
                 <button class="product-primary-action" id="continueKnownLanguagesBtn" type="button">
@@ -1205,9 +1212,6 @@
                         <div class="smart-skip-shortcut-detail" hidden>
                             <p class="fast-mode-explainer">Words that look similar <em>and</em> mean the same in English, like <em>idea</em> or <em>familia</em>.</p>
                             <div id="knownLanguagesContainer" class="known-languages-context" style="display: none;">
-                                <div class="known-languages-header">
-                                    <strong>Languages used to find look-alikes</strong>
-                                </div>
                                 <div id="knownLanguagesSelector" class="known-languages-selector"></div>
                             </div>
                         </div>
@@ -1253,14 +1257,11 @@
                                 <option value="songs">Supplementary song vocabulary</option>
                             </select>
                         </label>
-                        <p id="smartSkipListExplanation" class="fast-mode-explainer"></p>
                         <div class="smart-skip-toolbar">
-                            <span class="smart-skip-hub-label" id="skippedWordsLabel">Skipped words</span>
                             <div class="smart-skip-select-wrap">
-                                <select id="skippedCategorySelect" aria-labelledby="skippedWordsLabel"></select>
+                                <select id="skippedCategorySelect" aria-label="Skipped words category"></select>
                                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
                             </div>
-                            <input type="search" id="smartSkipWordSearch" class="extras-search" placeholder="Search words or meanings" aria-label="Search Smart Skip words" autocomplete="off">
                             <select id="smartSkipCognateLangFilter" class="smart-skip-lang-btn" hidden aria-label="Filter look-alikes by language"></select>
                         </div>
                         <div class="smart-skip-browser-actions">

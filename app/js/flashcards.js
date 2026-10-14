@@ -10,7 +10,13 @@ import { fitSenseRowText } from './card-row-layout.js?v=20261013rows';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20261013music';
 import { memoryTipTileHTML } from './memory-tips.js?v=1';
-import { functionWordBlockHTML, functionWordExampleHTML } from './function-word-card.js?v=1';
+import {
+    functionWordBlockHTML,
+    functionWordExampleHTML,
+    isFunctionWordCard,
+    getPortugueseGrammarDefinition,
+    getCardAmbientGlow
+} from './function-word-card.js?v=20261015';
 import './side-dock.js?v=20260927pa';
 import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=20261005kb';
 import {
@@ -6037,6 +6043,8 @@ function updateCard({ announceHeadword = false } = {}) {
         ? (currentMeaning.cycle_pos || 'X')
         : (currentMeaning?.pos || card.partOfSpeech || '');
     document.getElementById('flashcard')?.style.setProperty('--card-pos-rgb', getPosAccentRgb(activeDisplayPos));
+    const ambientGlow = getCardAmbientGlow(card, selectedLanguage, activeDisplayPos, Boolean(card.splitInfo), getPosAccentRgb);
+    document.getElementById('flashcard')?.style.setProperty('--card-ambient-glow', ambientGlow);
     const activeProductionAnswer = getActiveProductionAnswer(card, currentMeaning);
     const mergedExampleFocus = getMergedLemmaExampleFocus(card, currentMeaning, {
         advanceOnEntry: announceHeadword
@@ -8017,9 +8025,9 @@ function renderCardWikipediaBadge(card) {
         }
         // Emit the scroll region first, then the pinned tray underneath
         // (MWE/CLITIC rows that stay visible when the user scrolls).
-        if (scrollSections.size > 0) {
-            backHTML += card.functionWord
-                ? functionWordBlockHTML(card)
+        if (scrollSections.size > 0 || isFunctionWordCard(card, selectedLanguage)) {
+            backHTML += isFunctionWordCard(card, selectedLanguage)
+                ? functionWordBlockHTML(card, selectedLanguage)
                 : `<div class="meanings-scroll">${renderSections(scrollSections)}</div>`;
         }
         // Expressions mode off keeps the pinned tray; on, MWE/CLITIC entries
@@ -8071,7 +8079,10 @@ function renderCardWikipediaBadge(card) {
             // We still complete the variable computation here because
             // nothing in it is expensive or has side-effects — the only
             // suppression point is the `backHTML +=` at the bottom.
-            const suppressSentenceBlock = (isMWEOrCliticCycle && activeExamples.length === 0)
+            const isDeterministicFw = isFunctionWordCard(card, selectedLanguage)
+                && Boolean(getPortugueseGrammarDefinition(card, selectedLanguage) || card.functionWord?.uses);
+            const suppressSentenceBlock = isDeterministicFw
+                || (isMWEOrCliticCycle && activeExamples.length === 0)
                 || (!isMWEOrCliticCycle && activeExamples.length === 0 && !currentMeaning.targetSentence);
 
             const hasMultipleExamples = activeExamples.length > 1;
