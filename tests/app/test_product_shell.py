@@ -502,7 +502,8 @@ class ProductShellTests(unittest.TestCase):
     def test_setup_shell_uses_a_quiet_single_surface_hierarchy(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        self.assertIn('class="step-title step-title-trigger" data-tooltip="step5Tooltip"', html)
+        self.assertNotIn('data-tooltip="step5Tooltip"', html)
+        self.assertIn('id="step5Description"', html)
         self.assertIn('class="step-title step-title-trigger" data-tooltip="step2Tooltip"', html)
         self.assertIn('id="fastTrackHubBtn"', html)
         self.assertIn(".sync-status.is-synced { display: none; }", css)
@@ -560,7 +561,7 @@ class ProductShellTests(unittest.TestCase):
     def test_fast_track_has_one_language_switch_and_fine_tuning(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn('class="level-choosing"', html)
-        choosing = html[html.index('class="level-choosing"'):html.index('id="step4"')]
+        choosing = html[html.index('class="level-choosing"'):html.index('id="reviewDeckSection"')]
         self.assertIn('id="levelSelector"', choosing)
         self.assertIn('id="setupOptions"', choosing)
         # One row carrying both: the switch turns Fast Track on where the

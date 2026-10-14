@@ -448,6 +448,7 @@ async function startDailyReview(opts = {}) {
 }
 
 function setActiveSetupStep(stepId) {
+    if (stepId === 'step4') stepId = 'step2';
     document.querySelectorAll('#step1 .step-number, #step2 .step-number, #step4 .step-number')
         .forEach(number => number.classList.toggle('--active', number.closest('.setup-step')?.id === stepId));
 }
@@ -1052,7 +1053,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    description.textContent = 'Go starts new words from your selected level, for as long as you choose: 5 minutes, 10 minutes or no limit. When the level has no new words left, Go shows what to do next. The progress bar shows your progress across the whole level.';
+    description.textContent = 'Go starts a batch of new words from your selected level. Choose a time to estimate its size. If fewer new words remain, the batch contains those words and the time choice is hidden. The progress bar and counts describe the selected level.';
 }
 
 // Annotates every level control with its completion percentage and returns

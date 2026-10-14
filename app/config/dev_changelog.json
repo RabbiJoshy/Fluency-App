@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T19:24:19+01:00",
+      "date": "2026-10-14 19:24 BST",
+      "agent": "Codex",
+      "summary": "Combine choosing a level with starting its next session",
+      "detail": [
+        "The level picker, selected-level progress and Go controls share one Choose a level section.",
+        "Smart Skip sits in a separate compact row directly underneath.",
+        "The time choice appears on the left of Go; short batches keep the full-width Go button.",
+        "The level information modal now includes the session and progress explanation."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T19:13:07+01:00",
       "date": "2026-10-14 19:13 BST",
       "agent": "Codex",

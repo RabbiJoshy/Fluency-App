@@ -34,7 +34,10 @@ try{
     document.documentElement.dataset.theme=theme;
     document.getElementById('setupPanel').style.display='block';
     document.getElementById('appContent').classList.add('hidden');
-    for(const id of ['step1','step2','step3'])document.getElementById(id)?.style.setProperty('display','none');
+    for(const id of ['step1','step3'])document.getElementById(id)?.style.setProperty('display','none');
+    document.getElementById('step2').style.display='block';
+    document.getElementById('levelSelector').innerHTML='<div class="lsw-segments lsw-scrubber">'+[1,2,3,4,5].map(n=>`<button type="button" class="lsw-seg${n===4?' selected':''}"><span class="lsw-seg-num">${n}</span></button>`).join('')+'</div>';
+    document.getElementById('setupOptions').style.display='block';
     const step=document.getElementById('step4');step.style.display='block';step.classList.remove('hidden');
     document.getElementById('rangeSelector').innerHTML=setup;
     document.getElementById('studySessionLevel').textContent=' · Level 4';
@@ -44,6 +47,14 @@ try{
    },{setup,practice,theme});
    assert.match(await page.locator('#studySetStartBtn').textContent(),name==='long'?/20 new/:/11 new/);
    assert.equal(await page.locator('#step4 .session-length-chip').count(),name==='long'?1:0);
+   assert.equal(await page.locator('#step2 > .step-header').count(),1);
+   assert.equal(await page.locator('#step2 #step4').count(),1);
+   assert.equal(await page.locator('#step2Tooltip #step5Description').count(),1);
+   const layout=await page.evaluate(()=>({
+       below:document.getElementById('setupOptions').getBoundingClientRect().top>=document.getElementById('rangeSelector').getBoundingClientRect().bottom,
+       clockLeft:!document.querySelector('#step4 .session-length-chip') || document.querySelector('#step4 .session-length-chip').getBoundingClientRect().left<document.getElementById('studySetStartBtn').getBoundingClientRect().left
+   }));
+   assert(layout.below);assert(layout.clockLeft);
    assert.equal(await page.locator('#quickReviewBtn').textContent(),'Practise');
    const sizes=await page.locator('.review-deck-summary-copy').evaluate(el=>({main:parseFloat(getComputedStyle(el.querySelector('strong')).fontSize),later:parseFloat(getComputedStyle(el.querySelector('small')).fontSize)}));
    assert(sizes.later<sizes.main);

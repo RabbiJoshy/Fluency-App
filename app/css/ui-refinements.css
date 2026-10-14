@@ -123,3 +123,18 @@
 .cbs-end-label { flex: none; margin-left: 16px; color: var(--text-secondary); font: 600 12px/1 var(--font-reading); pointer-events: none; }
 .cbs-end-label.is-at-end { visibility: hidden; }
 .cbs-end-label[hidden] { display: none; }
+
+/* One level chooser contains its next batch, with Smart Skip below. */
+#step2 .study-session-section { margin: 10px 0 16px; padding: 0; }
+#step4 .session-action-pill > .session-length-chip {
+    order: -1;
+    border-radius: 12px 0 0 12px;
+    border-left: 0;
+    border-right: 1px solid rgba(0, 0, 0, .18);
+}
+#step4 .session-action-pill:has(.session-length-chip) > .study-set-start { border-radius: 0 12px 12px 0; }
+
+#step2 .level-choosing #step4 { margin: 0; }
+#step2 .level-choosing .study-set-panel { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+#step2 .level-choosing .study-set-choice { background: transparent; }
+#step2 > #setupOptions { margin-top: 12px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-card); }
