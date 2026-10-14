@@ -463,35 +463,34 @@ checkAuthentication();
 perfMark('after early authentication');
 setTimeout(() => window.checkAndShowAdminUpdateModal?.(), 500);
 
-// Register service worker for PWA functionality
+// Register before window.load: a broken cached preload can keep that event
+// pending forever, preventing the replacement worker from repairing the cache.
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-            .then(registration => {
-                console.log('SW registered');
-                const announceUpdate = () => {
-                    if (!registration.waiting) return;
-                    const indicator = document.getElementById('syncStatusIndicator');
-                    if (indicator) {
-                        indicator.className = 'sync-status is-update';
-                        indicator.textContent = 'Update ready';
-                        indicator.onclick = () => {
-                            sessionStorage.setItem('fluency_admin_update_pending', 'true');
-                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                        };
-                    }
-                };
-                announceUpdate();
-                registration.addEventListener('updatefound', () => {
-                    registration.installing?.addEventListener('statechange', announceUpdate);
-                });
-                let reloading = false;
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    if (!reloading) { reloading = true; location.reload(); }
-                });
-            })
-            .catch(err => console.log('SW registration failed'));
-    });
+    navigator.serviceWorker.register('service-worker.js')
+        .then(registration => {
+            console.log('SW registered');
+            const announceUpdate = () => {
+                if (!registration.waiting) return;
+                const indicator = document.getElementById('syncStatusIndicator');
+                if (indicator) {
+                    indicator.className = 'sync-status is-update';
+                    indicator.textContent = 'Update ready';
+                    indicator.onclick = () => {
+                        sessionStorage.setItem('fluency_admin_update_pending', 'true');
+                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    };
+                }
+            };
+            announceUpdate();
+            registration.addEventListener('updatefound', () => {
+                registration.installing?.addEventListener('statechange', announceUpdate);
+            });
+            let reloading = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!reloading) { reloading = true; location.reload(); }
+            });
+        })
+        .catch(err => console.log('SW registration failed'));
 }
 
 // All available artist configs, keyed by slug. Loaded once from artists.json.

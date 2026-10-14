@@ -67,3 +67,21 @@ async function request(path, mode = 'cors') {
 })().catch(error => {console.error(error); process.exitCode = 1;});
 ''')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_worker_update_starts_even_if_page_load_never_finishes(self):
+        result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r'''
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const source = fs.readFileSync('app/js/main.js', 'utf8');
+const start = source.indexOf("if ('serviceWorker' in navigator)");
+const end = source.indexOf('// All available artist configs', start);
+let registered = 0;
+const context = {
+  navigator: {serviceWorker: {register() {registered++; return new Promise(() => {});}}},
+  window: {addEventListener() { /* Simulate a load event that never arrives. */ }},
+};
+vm.runInNewContext(source.slice(start, end), context);
+assert.equal(registered, 1, 'worker recovery must not wait for stalled page loading');
+''')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
