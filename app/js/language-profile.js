@@ -1,6 +1,6 @@
 // One language background per account, independent of any deck's skip policy.
-import { sendOrQueue } from './sync-queue.js?v=a6ecc8bc';
-import { getIsolatedSyncUser } from './env.js?v=a6ecc8bc';
+import { sendOrQueue } from './sync-queue.js?v=74900aa0';
+import { getIsolatedSyncUser } from './env.js?v=74900aa0';
 
 const PREFIX = 'fluency_language_profile_v1';
 const LEGACY = 'fluency_known_languages_v1';

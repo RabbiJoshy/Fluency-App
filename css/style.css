@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=a6ecc8bc");
+@import url("./appearance.css?v=74900aa0");
 
 
         * {
@@ -5459,28 +5459,15 @@
         }
         .ref-tile-count-badge {
             position: absolute;
-            top: -2px;
-            left: -6px;
-            min-width: 20px;
-            min-height: 20px;
-            aspect-ratio: 1;
-            width: max-content;
-            padding: 2px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
+            top: -7px;
+            left: -3px;
+            padding: 0;
+            border: 0;
             background: transparent;
-            border: 1px solid currentColor;
-            color: #fff;
-            font-size: 13px;
-            font-weight: 700;
-            line-min-height: 20px;
-            aspect-ratio: 1;
-            width: max-content;
-            text-align: center;
+            color: inherit;
+            font: 700 15px/1 var(--font-emphasis, inherit);
+            font-variant-numeric: tabular-nums;
             pointer-events: none;
-            box-shadow: none;
         }
         .ref-tile-label {
             font-size: 13.5px;

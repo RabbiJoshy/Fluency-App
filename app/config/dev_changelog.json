@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T08:38:43+01:00",
+      "date": "2026-10-14 08:38 BST",
+      "agent": "Codex",
+      "summary": "Clearer companion cards and access to partly learned meanings",
+      "detail": [
+        "Partly learned meanings remain selectable, including possible-meaning groups and identical short glosses.",
+        "Companion pills select the exact card, keep their own colours, and show a subtle share of uses beside frequency.",
+        "Rare-use numbers use the emphasis font without a circle; level labels above the cards are larger."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-13T22:57:44+01:00",
       "date": "2026-10-13 22:57 BST",
       "agent": "Claude",
@@ -373,21 +385,6 @@
         "Remove Add another language; use only listed profile choices.",
         "Label listed languages without study decks Coming soon while keeping them selectable as languages you know.",
         "Preserve existing saved language profiles and Smart Skip’s relevant-pair filtering."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T21:22:57+01:00",
-      "date": "2026-10-12 21:22 BST",
-      "agent": "Codex",
-      "summary": "Lyrics vocabulary now shares Smart Skip with Speech; Artist Extras and the 60% gate are folded away",
-      "detail": [
-        "Browse supplementary song vocabulary by category inside Smart Skip, with shared search, lyric previews and sessions of up to 20 cards.",
-        "Remove the separate Extras panel and unlock requirement; older Extra links now open Smart Skip.",
-        "Use consistent optional skip defaults and restore saved supplementary cards by their original identities.",
-        "Explain Song Lines on tap, correct supplementary rank totals, update Music/Speech naming and shared study help.",
-        "Preserve the selected language when switching from Music to Speech.",
-        "Verified phone layout and supplementary card navigation; all 268 app tests pass."
       ],
       "commit": "pending"
     }
