@@ -58,15 +58,34 @@ def record_staging_release(meta: dict) -> None:
     STAGING_RECORD_FILE.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
 
 
+def check_staging_ancestry(full_sha: str) -> None:
+    """Parallel checkouts must preserve the changes already published to staging."""
+    staged = git("rev-parse", "--verify", "refs/heads/staging", check=False)
+    if staged.returncode != 0:
+        return
+    staged_sha = staged.stdout.strip()
+    included = git("merge-base", "--is-ancestor", staged_sha, full_sha, check=False)
+    if included.returncode != 0:
+        sys.exit(
+            f"Staging deployment blocked: {full_sha[:8]} does not include the current "
+            f"staging release {staged_sha[:8]}. Merge staging into your branch first "
+            "so another chat's fixes are preserved. Use --allow-replace-staging only "
+            "for an intentional replacement."
+        )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--ref", default="HEAD", help="git ref or commit to deploy to staging (default: HEAD)")
     parser.add_argument("--dry-run", action="store_true", help="build the staging site without deploying to Cloudflare")
     parser.add_argument("--skip-tests", action="store_true", help="skip running the app test suite")
+    parser.add_argument("--allow-replace-staging", action="store_true", help="intentionally replace staging with a divergent or older ref")
     args = parser.parse_args()
 
     # 1. Resolve commit details
     full_sha = git("rev-parse", args.ref).stdout.strip()
+    if not args.dry_run and not args.allow_replace_staging:
+        check_staging_ancestry(full_sha)
     short_sha = full_sha[:8]
     subject = git("log", "-1", "--format=%s", full_sha).stdout.strip()
     author = git("log", "-1", "--format=%an", full_sha).stdout.strip()

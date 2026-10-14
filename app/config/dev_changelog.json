@@ -2,6 +2,29 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T20:36:08+01:00",
+      "date": "2026-10-14 20:36 BST",
+      "agent": "Codex",
+      "summary": "Restore the overheating repair alongside the latest staging interface changes.",
+      "detail": [
+        "A later staging deployment omitted the repair and restarted the recursive preload loop.",
+        "Combined the latest session help and colour legend with the cache repair, early worker update and missing-backend request fix.",
+        "Added a staging deployment check that prevents accidentally replacing the staged release with a branch missing its changes."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T20:29:48+01:00",
+      "date": "2026-10-14 20:29 BST",
+      "agent": "Codex",
+      "summary": "Shorter levels and sessions help",
+      "detail": [
+        "Combined the opening guidance into one paragraph and moved a short Go explanation to the bottom.",
+        "Moved colour definitions into a separate information modal opened beside the level legend."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T20:12:58+01:00",
       "date": "2026-10-14 20:12 BST",
       "agent": "Codex",
@@ -355,34 +378,6 @@
         "At most five examples, set in the same type and colour as the level box's 'e.g.' line, and no trailing '...'. A narrow row shows fewer words, or none, rather than a cut-off list.",
         "Phones get the same single line: name and Recommended badge when off, name and count when on (the 'Fewer cards, same coverage' line no longer has room and is dropped). Row height is 66px in every state; checked at 320, 375 and 800 wide in Speech and in Lyrics.",
         "The selected level badge and its glow were fixed blue; they now use the language colour (Spanish red) or the artist's colour (Bad Bunny blue)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:56:52+01:00",
-      "date": "2026-10-12 23:56 BST",
-      "agent": "Claude",
-      "summary": "Song translation: catalogue songs now play from any line, the line being sung fills green, and the song list is just song and artist",
-      "detail": [
-        "All 30 catalogue songs carry their Spotify track and LRCLIB line timing, baked offline (scripts/bake_probe_timings.py): 30 of 30 have a track, 29 of 30 have timing. Soso - Remix has no matching timed lyrics, so it stays plain with no play buttons.",
-        "While Spotify plays, the current line is highlighted and its words turn green as they are reached; finished lines dim. Word timing is estimated from each word's length within its line, because LRCLIB times lines, not words.",
-        "The view scrolls to the line being sung and stops following for four seconds when you scroll yourself. If Spotify is playing a different cut of the song (length differs by over 3 s) the highlight turns off and says so.",
-        "Songs with no Spotify track or no timing show no play buttons and no explanatory banner.",
-        "Song list shows only song and artist: the number, the line count, the ONLINE badge and the 'Curated Catalog' header are gone.",
-        "Yonaguni's human translations are matched to the timed lines by text (28 exact, more by near-match), so they no longer drift when the lines change."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:50:05+01:00",
-      "date": "2026-10-12 23:50 BST",
-      "agent": "Claude",
-      "summary": "Czech level coverage is now right for every level, and opening a deck does less repeated work",
-      "detail": [
-        "Level coverage read each card's share under its dictionary form (ten) instead of the word actually spoken (to). Czech level 1 showed 32.0% of speech; it is 43.9%. Level 31 showed 0.9%; it is 0.3%.",
-        "Czech coverage now covers all 10,000 deck words (rebuilt from the same OpenSubtitles 2018 counts for release v22), so levels 31 to 100 show a figure.",
-        "Smart Skip works out its categories once per burst of work instead of about a dozen times when a deck opens: setup work on opening Czech ~800 ms to ~460 ms.",
-        "The hidden loading spinner no longer animates behind the app."
       ],
       "commit": "pending"
     }
