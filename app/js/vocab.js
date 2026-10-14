@@ -7,6 +7,7 @@ import { validateVocabularyIndex } from './data-contracts.js?v=20260825ak';
 import { formatRoute } from './routes.js?v=20261013music';
 import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260923gn';
 import { releaseUrl } from './release-host.js?v=20260921rh';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=1';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1807,6 +1808,9 @@ async function fetchIndexRowShard(langConfig, shard) {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         trackDataFreshness(response);
         mergeIndexRowPayload(responseData);
+        for (const card of window._cachedJoinedIndex || []) {
+            if (responseData?.[card.id]) promoteSubglossTranslations(card.meanings);
+        }
         loadedIndexRowShards.add(key);
     }).finally(() => indexRowShardInflight.delete(key));
     indexRowShardInflight.set(key, pending);
@@ -1921,6 +1925,7 @@ async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
     }
 
     validateVocabularyIndex(data, { source: indexPath });
+    if (Array.isArray(data)) for (const card of data) promoteSubglossTranslations(card?.meanings);
 
     window._cachedJoinedIndex = data;
     window._cachedJoinedIndexPath = cacheKey;
@@ -3387,6 +3392,12 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 if (m.sense_id || m.id) meaning.senseId = m.sense_id || m.id;
                 if (m.sense_id_aliases?.length) meaning.senseIdAliases = m.sense_id_aliases;
                 if (m.context) meaning.context = m.context;
+                // Shown text may be a promoted sub-gloss (sense-gloss.js);
+                // progress keys stay on the release's own text.
+                if (m.original_translation != null) {
+                    meaning.originalMeaning = m.original_translation;
+                    meaning.originalContext = m.original_context || '';
+                }
                 if (m.headword) meaning.headword = m.headword;
                 if (m.source_reference) meaning.source_reference = m.source_reference;
                 if (m.metadata) meaning.metadata = m.metadata;

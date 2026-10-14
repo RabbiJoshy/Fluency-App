@@ -74,6 +74,7 @@ const urlsToCache = [
   '/js/spotify.js?v=20260923su',
   '/js/estimation.js?v=20261010pool',
   '/js/release-host.js?v=20260921rh',
+  '/js/sense-gloss.js?v=1',
   '/js/env.js?v=20261010airlock',
   '/js/config.js?v=20260921rh',
   '/js/progress.js?v=20260927pa',

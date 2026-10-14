@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T22:02:45+01:00",
+      "date": "2026-10-14 22:02 BST",
+      "agent": "Claude",
+      "summary": "Portuguese (and other Wiktionary decks): meanings that all read the same, like fazer's five 'to make', now show what each one means",
+      "detail": [
+        "fazer shows 'to do; to execute; to perform', 'to create; to produce' and 'to cause to' instead of three 'to make's; 'to make' moves to the note line.",
+        "Only when two or more meanings on a card share the same English, and only for short sub-glosses: explanations, topic labels (music, firearms) and long definitions stay as notes.",
+        "Portuguese: 159 distinct meanings change, e.g. seu 'his / her / their', bico 'beak', corte 'haircut', parada 'halt'. Spanish (SpanishDict) is untouched.",
+        "Display only: progress keys keep the original wording."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T20:36:08+01:00",
       "date": "2026-10-14 20:36 BST",
       "agent": "Codex",
@@ -365,19 +378,6 @@
         "Entity boxes are now a tight rectangle (4 px corners) that wraps the name, and the Wiktionary mark is a serif W at the start of the entity instead of the end.",
         "Yonaguni's human translations load on the deployed site now: the build excluded the folder they were read from, so they never appeared there. They now match 51 of 60 lines.",
         "Removed unused wiring: previous/next-song buttons, the compatibility anchors and the count badges."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T00:08:00+01:00",
-      "date": "2026-10-13 00:08 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip is one line on every screen, and the level picker takes the language's (or artist's) colour",
-      "detail": [
-        "Smart Skip on: the count moves up beside the name and the examples follow it, e.g. 'Smart Skip  3,115 skipped  e.g. idea, familia, minutos, importante, capitán'. The second 'N words skipped' line is gone.",
-        "At most five examples, set in the same type and colour as the level box's 'e.g.' line, and no trailing '...'. A narrow row shows fewer words, or none, rather than a cut-off list.",
-        "Phones get the same single line: name and Recommended badge when off, name and count when on (the 'Fewer cards, same coverage' line no longer has room and is dropped). Row height is 66px in every state; checked at 320, 375 and 800 wide in Speech and in Lyrics.",
-        "The selected level badge and its glow were fixed blue; they now use the language colour (Spanish red) or the artist's colour (Bad Bunny blue)."
       ],
       "commit": "pending"
     }

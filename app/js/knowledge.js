@@ -132,7 +132,10 @@ function knowledgeItemsForMeaning(card, meaning, meaningIndex) {
     const stableAliases = meaning.senseIdAliases || meaning.sense_id_aliases || [];
     const isRare = Boolean(meaning.isRareSense);
     const type = isRare ? 'rare_sense' : 'sense';
-    const fallbackSignature = `${isRare ? 'rare-sense' : 'sense'}|${normalizeKnowledgeText(pos)}|${normalizeKnowledgeText(translation)}|${normalizeKnowledgeText(context)}`;
+    // A promoted sub-gloss changes only what is shown (sense-gloss.js).
+    const keyTranslation = meaning.originalMeaning ?? translation;
+    const keyContext = meaning.originalContext ?? context;
+    const fallbackSignature = `${isRare ? 'rare-sense' : 'sense'}|${normalizeKnowledgeText(pos)}|${normalizeKnowledgeText(keyTranslation)}|${normalizeKnowledgeText(keyContext)}`;
     const item = {
         ...makeKnowledgeItem(
             card,
