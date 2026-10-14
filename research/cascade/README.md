@@ -90,3 +90,32 @@ LLMs to keep improving. So:
 **Measured, 2026-10-12:** Qwen3-Embedding-0.6B alone is 79% on the random set (4B: 85%)
 and 44% on the hard words. Not yet measured: 0.6B with the per-word hard list sent to the LLM,
 which is the Turbo configuration; it needs a 0.6B per-word agreement file (`word_agreement.py`).
+
+## Hard-word list: es/pt router and spot check (2026-10-12)
+
+A first cut at the offline hard-word list, on Spanish and Portuguese. `router.py` predicts
+per word how often the embedding margin (best sense minus runner-up) falls in the
+narrowest quarter, from features known before embedding: senses still live after the POS
+filter (by far the strongest), share decided without embeddings, largest single-POS
+menu, closed-class share. Gradient boosting, cross-validated R² 0.29. Top families: es
+verb + clitic imperatives (*dígales*, *llévenlo*), *estar*/*poder* forms, demonstratives;
+pt *em*/*de*/*a* contractions, *ter*/*ser*/*levar*/*querer*.
+
+78 closest calls from 16 families went to DeepSeek V4.1 Flash, thinking off
+(`compare.py`, one sentence per call; `batched.py`, one menu with ~6 sentences per call).
+Batched was better and cheaper ($0.058 per 1,000 sentences, peak): against the shipped
+embedding pick, DeepSeek better 31, embeddings better 2, same 36, inseparable 9 (mostly
+menu gaps: *darse vuelta*, *levar a sério*, *cuanto más*). Wins are senses carried by
+grammar (auxiliary, passive, *ter que*, possession, indirect object). Judged by Claude,
+not blind (`verdicts.json`, `spotcheck.html`).
+
+Open, for whoever builds the Turbo hard-word list:
+1. **Noise check.** Each setting ran once; repeat the single-sentence run (under a cent)
+   to see how often DeepSeek changes its answer unprompted before reading the 7-vs-1
+   batched-vs-single difference as real.
+2. **Exact-duplicate senses.** The es *decir* menu lists every sense twice (VERB and
+   transitive verb), so near-zero margins there are ties between identical text and
+   inflate the router's list. Measure the margin against the best sense with different
+   text. Do not cluster near-duplicates: Josh, a duplicate is a property of the
+   sentence-sense pair, not of the menu.
+3. **Retry missing answers.** One of 156 batched sentences came back with no answer.
