@@ -1,34 +1,34 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=feb9d28c';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=feb9d28c';
-import { songCreditHTML } from './song-credit.js?v=feb9d28c';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=feb9d28c';
+import './state.js?v=75601eb1';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=75601eb1';
+import { songCreditHTML } from './song-credit.js?v=75601eb1';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=75601eb1';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=feb9d28c';
-import './speech.js?v=feb9d28c';
-import { goToRoute, routeCodeFor } from './routes.js?v=feb9d28c';
-import { memoryTipTileHTML } from './memory-tips.js?v=feb9d28c';
-import { functionWordBlockHTML, functionWordExampleHTML } from './function-word-card.js?v=feb9d28c';
-import './side-dock.js?v=feb9d28c';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=feb9d28c';
+import { fitSenseRowText } from './card-row-layout.js?v=75601eb1';
+import './speech.js?v=75601eb1';
+import { goToRoute, routeCodeFor } from './routes.js?v=75601eb1';
+import { memoryTipTileHTML } from './memory-tips.js?v=75601eb1';
+import { functionWordBlockHTML, functionWordExampleHTML } from './function-word-card.js?v=75601eb1';
+import './side-dock.js?v=75601eb1';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=75601eb1';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=feb9d28c';
+} from './example-personalisation.js?v=75601eb1';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=feb9d28c';
+} from './spanishdict-usage.js?v=75601eb1';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=feb9d28c';
+} from './reverse-cues.js?v=75601eb1';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -62,7 +62,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=feb9d28c';
+} from './card-metadata-pills.js?v=75601eb1';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -8813,7 +8813,15 @@ function renderCardWikipediaBadge(card) {
         const thumb = cardBackPips.querySelector('.cbs-thumb');
         const thumbNum = cardBackPips.querySelector('.cbs-thumb-num');
         // A split word's two cards share a number: 25A, 25B, then 26.
-        if (thumbNum) thumbNum.textContent = deckCardLabels(scrubCount).labels[scrubIndex] || String(scrubIndex + 1);
+        const labels = deckCardLabels(scrubCount).labels;
+        if (thumbNum) thumbNum.textContent = labels[scrubIndex] || String(scrubIndex + 1);
+        const endpoint = cardBackPips.querySelector('.cbs-end-label');
+        if (endpoint) {
+            endpoint.textContent = labels.at(-1) || String(scrubCount);
+            // Keep the rail's geometry stable as the thumb reaches the end.
+            endpoint.classList.toggle('is-at-end', scrubIndex === last);
+            endpoint.hidden = scrubCount <= 1;
+        }
         thumb?.classList.toggle('is-phrases', onPhraseCard);
         cardBackPips.setAttribute('aria-valuenow', String(scrubIndex + 1));
         cardBackPips.setAttribute('aria-valuemax', String(Math.max(1, scrubCount)));
@@ -10599,8 +10607,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'feb9d28c';
-const MODALS_ASSET_VERSION = 'feb9d28c';
+const ASSET_VERSION = '75601eb1';
+const MODALS_ASSET_VERSION = '75601eb1';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

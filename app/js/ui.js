@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=feb9d28c';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=feb9d28c';
-import { readFastTrack } from './fast-track-preferences.js?v=feb9d28c';
-import './session-plan.js?v=feb9d28c';
+import './state.js?v=75601eb1';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=75601eb1';
+import { readFastTrack } from './fast-track-preferences.js?v=75601eb1';
+import './session-plan.js?v=75601eb1';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -448,6 +448,7 @@ async function startDailyReview(opts = {}) {
 }
 
 function setActiveSetupStep(stepId) {
+    if (stepId === 'step4') stepId = 'step2';
     document.querySelectorAll('#step1 .step-number, #step2 .step-number, #step4 .step-number')
         .forEach(number => number.classList.toggle('--active', number.closest('.setup-step')?.id === stepId));
 }
@@ -1052,7 +1053,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    description.textContent = 'Go starts new words from your selected level, for as long as you choose: 5 minutes, 10 minutes or no limit. When the level has no new words left, Go shows what to do next. The progress bar shows your progress across the whole level.';
+    description.textContent = 'Go starts a batch of new words from your selected level. Choose a time to estimate its size. If fewer new words remain, the batch contains those words and the time choice is hidden. The progress bar and counts describe the selected level.';
 }
 
 // Annotates every level control with its completion percentage and returns
@@ -2904,8 +2905,12 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     // SETWISE-2: Practise is the language-wide queue, with its own length chip.
     const plan = window.SessionPlan;
     const lengthInfo = plan?.sessionLengthInfo?.() || { label: `${STUDY_SESSION_LIMIT} cards`, spoken: `${STUDY_SESSION_LIMIT} cards` };
-    const lengthChip = () => `<button type="button" class="session-length-chip" data-session-length-toggle
+    const lengthChip = (available, kind) => {
+        const cap = plan?.sessionCardLimit?.(kind) || STUDY_SESSION_LIMIT;
+        if (available <= 0 || (lengthInfo.minutes && available < cap)) return '';
+        return `<button type="button" class="session-length-chip" data-session-length-toggle
             aria-label="Session length: ${lengthInfo.spoken}. Tap to change.">${lengthInfo.label}</button>`;
+    };
     let reviewHTML = '';
     if (currentUser && !currentUser.isGuest) {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
@@ -2914,25 +2919,28 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         const upcoming = plan?.summariseUpcoming?.(window.getUpcomingReviewTimes?.(selectedLanguage) || []) || null;
         const upcomingText = plan?.describeUpcoming?.(upcoming) || '';
         let reviewMeta;
+        let reviewLater = '';
         if (globalTotal > 0) {
-            const later = upcoming?.nextCount
-                ? ` · ${upcoming.nextCount.toLocaleString()} more ${upcoming.nextLabel}` : '';
-            reviewMeta = `${globalTotal.toLocaleString()} waiting${later}`;
+            reviewMeta = `${globalTotal.toLocaleString()} waiting`;
+            reviewLater = upcoming?.nextCount
+                ? `${upcoming.nextCount.toLocaleString()} more ${upcoming.nextLabel}` : '';
         } else if (!srsOn) {
             reviewMeta = 'Nothing to practise. Review schedule paused: only mistakes come back.';
         } else {
-            reviewMeta = upcomingText ? `Nothing to practise. ${upcomingText}` : 'Nothing to practise yet.';
+            reviewMeta = 'Nothing to practise yet.';
+            reviewLater = upcomingText;
         }
         reviewHTML = `<div class="review-deck-content">
                 <button class="review-deck-summary" type="button" id="openReviewHomeBtn">
                     <span class="review-deck-summary-copy">
                         <strong>${reviewMeta}</strong>
+                        ${reviewLater ? `<small class="review-deck-upcoming">${reviewLater}</small>` : ''}
                     </span>
                     <span class="review-deck-summary-chevron" aria-hidden="true">›</span>
                 </button>
                 <div class="session-action-pill is-practice${globalTotal > 0 ? '' : ' is-disabled'}">
                     <button class="study-set-review" type="button" id="quickReviewBtn" ${globalTotal > 0 ? '' : 'disabled'}>Practise</button>
-                    ${lengthChip()}
+                    ${lengthChip(globalTotal, 'practice')}
                 </div>
             </div>`;
     }
@@ -2965,7 +2973,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         studyMode: levelNewCount > 0 ? 'new' : levelReviewCount > 0 ? 'review' : 'all'
     };
     window.__studySessionContext = context;
-    const nextCount = Math.min(STUDY_SESSION_LIMIT,
+    const scopeLabel = document.getElementById('studySessionLevel');
+    if (scopeLabel) scopeLabel.textContent = levelNumber > 0 ? ` · Level ${levelNumber}` : ' · Selected level';
+    const nextCount = Math.min(plan?.sessionCardLimit?.(context.studyMode === 'review' ? 'practice' : 'new') || STUDY_SESSION_LIMIT,
         levelNewCount || levelReviewCount || levelCardCount);
     // Start this session's downloads (word rows, example sentences) while the
     // learner reads the home screen, so Go finds them here instead of waiting
@@ -2994,8 +3004,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     : `<div class="session-action-pill">
                     <button class="range-btn-new study-set-start" id="studySetStartBtn" type="button"
                         data-range="${context.range}" data-rank-basis="${rankBasis}" data-level-state="${levelState}"
-                        data-study-mode="${context.studyMode}" data-level-number="${levelNumber}" ${goDisabled ? 'disabled' : ''}>Go</button>
-                    ${lengthChip()}
+                        data-study-mode="${context.studyMode}" data-level-number="${levelNumber}" ${goDisabled ? 'disabled' : ''}>Go${levelNewCount > 0 ? `<span class="study-session-count"> · ${nextCount.toLocaleString()} new</span>` : ''}</button>
+                    ${levelNewCount > 0 ? lengthChip(levelNewCount, 'new') : ''}
                 </div>`}
             </div>
         </div>`;
@@ -3037,12 +3047,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
 }
 
 function refreshSessionLengthChips() {
-    const info = window.SessionPlan?.sessionLengthInfo?.();
-    if (!info) return;
-    document.querySelectorAll('[data-session-length-toggle]').forEach(chip => {
-        chip.textContent = info.label;
-        chip.setAttribute('aria-label', `Session length: ${info.spoken}. Tap to change.`);
-    });
+    // The selected length changes both the advertised count and whether the
+    // time choice is relevant to the available cards.
+    return renderRangeSelector();
 }
 
 // Recount after sync, then start the level session the learner asked for.
@@ -3052,10 +3059,7 @@ async function runLevelSession(button, studyMode) {
     if (_studySessionStarting) return;
     _studySessionStarting = true;
     if (button) button.disabled = true;
-    const kind = studyMode === 'review' ? 'practice' : 'new';
-    const length = window.SessionPlan?.sessionLengthInfo?.();
-    window.showAppLoading?.('Preparing your session', length?.minutes
-        ? `About ${length.label} of ${kind === 'practice' ? 'practice' : 'cards'}…` : 'Loading your cards…');
+    window.showAppLoading?.('Preparing your session', 'Loading your cards…');
     try {
         await window.progressRefreshSettled?.(5000);
         await renderRangeSelector();
@@ -3356,7 +3360,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=feb9d28c')
+        import('./spotify.js?v=75601eb1')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

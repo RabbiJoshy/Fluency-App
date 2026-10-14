@@ -2,6 +2,45 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T19:42:54+01:00",
+      "date": "2026-10-14 19:42 BST",
+      "agent": "Codex",
+      "summary": "Explicit Off and On choices for Smart Skip",
+      "detail": [
+        "Replaced the setup switch with Off and On buttons and a selected-state checkmark.",
+        "Desktop uses one line; mobile puts the skipped count and Details on a second line.",
+        "Removed the Recommended pill and example words from the setup row. Details still opens the individual options.",
+        "The control preserves the existing saved preference and recalculates the available cards."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T19:24:19+01:00",
+      "date": "2026-10-14 19:24 BST",
+      "agent": "Codex",
+      "summary": "Combine choosing a level with starting its next session",
+      "detail": [
+        "The level picker, selected-level progress and Go controls share one Choose a level section.",
+        "Smart Skip sits in a separate compact row directly underneath.",
+        "The time choice appears on the left of Go; short batches keep the full-width Go button.",
+        "The level information modal now includes the session and progress explanation."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T19:13:07+01:00",
+      "date": "2026-10-14 19:13 BST",
+      "agent": "Codex",
+      "summary": "Show session batch sizes and a clear scrubber endpoint",
+      "detail": [
+        "Go shows the number of new words in the selected batch, and the next-session heading names its level.",
+        "Future practice arrivals use smaller text; Practise keeps its plain button label.",
+        "Time choices hide for batches shorter than the saved duration permits. The selected duration stays saved.",
+        "The card scrubber shows the final position for every finite session, excluding temporary expression cards."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T16:10:24+01:00",
       "date": "2026-10-14 16:10 BST",
       "agent": "Claude",
