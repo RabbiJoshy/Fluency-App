@@ -39,6 +39,18 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-14T20:46:55+01:00",
+      "date": "2026-10-14 20:46 BST",
+      "agent": "Codex",
+      "summary": "Explain level goals and studying cards from first principles",
+      "detail": [
+        "Level help explains what a level contains and the goal of learning its words, including the music-specific introduction.",
+        "Go describes studying unseen words, flipping a flashcard and marking whether you knew it.",
+        "The deck total starts on its own line after the introductory guidance."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T20:36:08+01:00",
       "date": "2026-10-14 20:36 BST",
       "agent": "Codex",
@@ -356,22 +368,6 @@
         "Starting a set hides navigation and restores the existing study side panels. Returning to the main menu restores the sidebar.",
         "Phones and narrow windows retain the compact top bar and dialogs.",
         "Checked desktop setup, workspace navigation, study entry/exit and phone layout; app tests pass."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T08:34:57+01:00",
-      "date": "2026-10-13 08:34 BST",
-      "agent": "Codex",
-      "summary": "Clearer flashcards, lyrics and progress, with a preferred AI setting",
-      "detail": [
-        "Tap companion lemma/POS pills on the front to switch readings; known meanings stay greyed and the front explains what remains to practise.",
-        "Brighter, lighter POS pills; aligned from labels; commonness appears before sense subrows and information follows them.",
-        "Larger artist photos and flags on progress screens; artist sources keep their own imagery.",
-        "Choose ChatGPT or Claude in Account settings and open its sign-in page; the preference chooses the lyric-view logo.",
-        "Larger English lyrics, level labels in study navigation and options, and word totals in the level scrubber.",
-        "Reuse the deployed Fλ icon throughout the app and give the startup language chooser a full-width placement.",
-        "Tutorial and unrelated in-progress edits are excluded from this staging commit."
       ],
       "commit": "pending"
     }
