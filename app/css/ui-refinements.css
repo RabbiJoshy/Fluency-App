@@ -113,3 +113,13 @@
 .sense-cycle-choice.is-known-subsense { opacity: .52; filter: grayscale(1); }
 .sense-cycle-choice .known-sense-tag { margin-left: 8px; }
 .sense-cycle-choice:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+/* Counts describe the batch; the heading scopes the level statistics. */
+.study-session-level { white-space: nowrap; font: 500 .8em/1.2 var(--font-reading); color: var(--text-secondary); }
+.study-session-count { font-size: .8em; font-weight: 500; }
+.review-deck-upcoming { font: 400 12px/1.4 var(--font-reading); color: var(--text-secondary); }
+.session-action-pill:not(:has(.session-length-chip)) > .study-set-start,
+.session-action-pill:not(:has(.session-length-chip)) > .study-set-review { border-radius: 12px !important; }
+.cbs-end-label { flex: none; margin-left: 16px; color: var(--text-secondary); font: 600 12px/1 var(--font-reading); pointer-events: none; }
+.cbs-end-label.is-at-end { visibility: hidden; }
+.cbs-end-label[hidden] { display: none; }

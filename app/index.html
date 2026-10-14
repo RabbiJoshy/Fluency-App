@@ -588,13 +588,13 @@
             <div id="step4" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
                     <span class="step-number" id="rangeStepNumber">3</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sessions">Your Next Session <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sessions">Next session<span id="studySessionLevel" class="study-session-level"></span> <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div id="step5Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="nextSessionHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
                             <div><h3 id="nextSessionHelpTitle">Your Next Session</h3></div>
                             <button type="button" class="info-sheet-close" aria-label="Close session information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead" id="step5Description">Go starts new words from your selected level, for as long as you choose: 5 minutes, 10 minutes or no limit. When the level has no new words left, Go shows what to do next. The progress bar shows your progress across the whole level.</p>
+                        <p class="info-sheet-lead" id="step5Description">Go starts a batch of new words from your selected level. Choose 5 minutes, 10 minutes or no limit to estimate the batch size. If fewer words remain, the batch contains those words and the time choice is hidden. When the level has no new words left, Go shows what to do next. The progress bar shows your progress across the whole level.</p>
                         <div class="info-sheet-points">
                             <div><span class="info-point-badge is-new">New</span><p><strong class="is-new">New:</strong> Words you have not studied yet.</p></div>
                             <div><span class="info-point-badge is-practice">Practise</span><p><strong class="is-practice">Practise:</strong> Cards you missed or that are due for review.</p></div>
@@ -749,6 +749,7 @@
                                     <div class="cbs-fill" aria-hidden="true"></div>
                                     <div class="cbs-thumb" aria-hidden="true"><span class="cbs-thumb-num">1</span></div>
                                 </div>
+                                <span class="cbs-end-label" aria-hidden="true"></span>
                             </div>
                             <!-- Child cards (search / synonym / lyric jump) replace the pip
                                  row with this labelled return control, so the way back is in

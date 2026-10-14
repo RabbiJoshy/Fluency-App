@@ -8813,7 +8813,15 @@ function renderCardWikipediaBadge(card) {
         const thumb = cardBackPips.querySelector('.cbs-thumb');
         const thumbNum = cardBackPips.querySelector('.cbs-thumb-num');
         // A split word's two cards share a number: 25A, 25B, then 26.
-        if (thumbNum) thumbNum.textContent = deckCardLabels(scrubCount).labels[scrubIndex] || String(scrubIndex + 1);
+        const labels = deckCardLabels(scrubCount).labels;
+        if (thumbNum) thumbNum.textContent = labels[scrubIndex] || String(scrubIndex + 1);
+        const endpoint = cardBackPips.querySelector('.cbs-end-label');
+        if (endpoint) {
+            endpoint.textContent = labels.at(-1) || String(scrubCount);
+            // Keep the rail's geometry stable as the thumb reaches the end.
+            endpoint.classList.toggle('is-at-end', scrubIndex === last);
+            endpoint.hidden = scrubCount <= 1;
+        }
         thumb?.classList.toggle('is-phrases', onPhraseCard);
         cardBackPips.setAttribute('aria-valuenow', String(scrubIndex + 1));
         cardBackPips.setAttribute('aria-valuemax', String(Math.max(1, scrubCount)));
