@@ -6761,12 +6761,14 @@ function renderCardWikipediaBadge(card) {
     // on narrow viewports) so the header grows by a reasonable amount
     // rather than adding a full line of whitespace each wrap. Single-line
     // cards are unaffected — line-height only matters when there are two
-    // or more rendered lines.
-    let backHTML = card.isChainChild
-        ? (card.chainChildKind === 'examples'
-            ? renderExamplesChildBack(card)
-            : renderPhraseSummaryBack(card))
-        : `
+    const ptGrammarWord = getPortugueseGrammarDefinition(card, selectedLanguage);
+    let backHTML = ptGrammarWord
+        ? functionWordBlockHTML(card, selectedLanguage)
+        : (card.isChainChild
+            ? (card.chainChildKind === 'examples'
+                ? renderExamplesChildBack(card)
+                : renderPhraseSummaryBack(card))
+            : `
         <div class="back-header">
             <div class="flip-back-area" id="flipBackArea">
                 <div class="back-headword-row">
@@ -6781,8 +6783,8 @@ function renderCardWikipediaBadge(card) {
             ${backDerivationHTML}
             ${homographChipHTML}
         </div>
-    `;
-    if (card.translationUnavailable) {
+    `);
+    if (!ptGrammarWord && card.translationUnavailable) {
         backHTML += `<div class="extra-translation-unavailable"><strong>No translation available yet.</strong><br>This one-off lyric remains available as corpus evidence.</div>`;
     }
 
@@ -6790,7 +6792,7 @@ function renderCardWikipediaBadge(card) {
     // learner, signed in or not, sees the same menu. Chain-child cards skip this entirely — renderPhraseChildHeader already
     // rendered the expression/translation, and renderPhraseChildExample
     // (below) is a self-contained example panel, not a sense-row list.
-    if (card.isMultiMeaning && !card.isChainChild) {
+    if (!ptGrammarWord && card.isMultiMeaning && !card.isChainChild) {
         // Two POS-section maps:
         //   - scrollSections: regular meanings + SENSE_CYCLE (these scroll)
         //   - traySections: MWE + CLITIC (always visible, pinned below the
@@ -8362,8 +8364,8 @@ function renderCardWikipediaBadge(card) {
         } else if (currentMeaning?.exampleOnly) {
             backHTML += `<div class="sentence search-example-empty">No example is available for this source entry yet.</div>`;
         }
-    } else if (card.isChainChild) {
-        // renderPhraseSummaryBack already rendered every phrase's example.
+    } else if (card.isChainChild || ptGrammarWord) {
+        // renderPhraseSummaryBack or functionWordBlockHTML already rendered the complete card back.
     } else {
         // Legacy format
         backHTML += `<div style="font-size: 28px; color: var(--text-primary); margin-top: 12px; font-weight: 600; text-align: center; margin-bottom: 20px;">${backTranslation}${modelProposalMarkerHTML(currentMeaning)}</div>`;
@@ -8448,6 +8450,7 @@ function renderCardWikipediaBadge(card) {
     // The tile row is dropped entirely on small phones (see @media in
     // style.css); the handoff row / example already earn that vertical
     // space there.
+    if (!ptGrammarWord) {
     backHTML += `<div class="links-section" id="linksSection">`;
 
     if (rareAndExprItems.length > 0) {
@@ -8577,6 +8580,7 @@ function renderCardWikipediaBadge(card) {
 
     backHTML += buildProvenancePanelHTML(card);
     }
+    }
 
     const renderedBack = document.getElementById('backContent');
     const backDomChanged = renderedBack?._fluencyRenderedHTML !== backHTML;
@@ -8597,6 +8601,12 @@ function renderCardWikipediaBadge(card) {
         // face so flipping and card navigation still move them together.
         const backFace = renderedBack.closest('.card-back');
         backFace?.querySelector(':scope > .links-section')?.remove();
+        if (ptGrammarWord) {
+            backFace?.classList.remove('has-action-tray');
+            renderedBack.innerHTML = backHTML;
+            renderedBack._fluencyRenderedHTML = backHTML;
+            return;
+        }
         renderedBack.innerHTML = backHTML;
         const actionTray = renderedBack.querySelector(':scope > .links-section');
         if (actionTray && backFace) renderedBack.after(actionTray);

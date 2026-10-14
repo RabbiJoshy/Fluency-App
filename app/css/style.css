@@ -25245,6 +25245,21 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .back-headword-row .grammar-pair-chips { margin-top: 0; padding: 2px 8px; font-size: 13px; }
 
 /* Modern Deterministic Function-Word Card Layout */
+.card-face.card-back:has(.fw-deterministic-card) {
+  padding: 26px 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+.card-face.card-back:has(.fw-deterministic-card) #backContent {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+.card-face.card-back:has(.fw-deterministic-card) .links-section {
+  display: none !important;
+}
 .fw-deterministic-card {
   display: flex;
   flex-direction: column;
@@ -25257,34 +25272,34 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 .fw-heading {
-  font: 700 34px/1.1 var(--font-emphasis, "Space Grotesk");
-  letter-spacing: -0.8px;
+  font: 700 42px/1.1 var(--font-emphasis, "Space Grotesk");
+  letter-spacing: -1.2px;
   color: var(--text-primary);
 }
 .fw-badge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 16px;
+  padding: 5px 13px;
+  border-radius: 18px;
   background: rgba(212, 218, 245, 0.12);
   color: rgb(212, 218, 245);
-  border: 1px solid rgba(212, 218, 245, 0.3);
+  border: 1px solid rgba(212, 218, 245, 0.35);
 }
 .fw-parts-box {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: var(--bg-tertiary, #131c24);
   border: 1px solid var(--border-color, #2d3f50);
-  border-radius: 10px;
-  padding: 6px 14px;
-  font-size: 16px;
-  margin-bottom: 14px;
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 18px;
+  margin-bottom: 16px;
   width: fit-content;
 }
 .fw-part-pill {
@@ -25294,20 +25309,20 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .fw-part-plus {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 16px;
 }
 .fw-uses-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 .fw-use-btn {
   width: 100%;
   text-align: left;
-  border: 1px solid var(--border-color, #2a3846);
-  border-radius: 11px;
-  padding: 10px 14px;
+  border: 1px solid var(--border-color, #283745);
+  border-radius: 13px;
+  padding: 12px 16px;
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-primary);
   cursor: pointer;
@@ -25315,95 +25330,99 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .fw-use-btn:hover {
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(212, 218, 245, 0.3);
+  border-color: rgba(212, 218, 245, 0.35);
 }
 .fw-use-btn.is-selected,
 .fw-use-btn[aria-pressed="true"] {
-  border-color: rgba(212, 218, 245, 0.6);
-  background: rgba(212, 218, 245, 0.08);
-  box-shadow: 0 0 0 1px rgba(212, 218, 245, 0.3);
+  border-color: rgba(212, 218, 245, 0.7);
+  background: rgba(212, 218, 245, 0.1);
+  box-shadow: 0 0 0 1px rgba(212, 218, 245, 0.35);
 }
 .fw-use-btn strong {
   display: block;
-  font: 700 17px var(--font-reading);
+  font: 700 19px var(--font-reading);
   letter-spacing: -0.2px;
-  color: var(--text-primary);
+  color: #fff;
 }
 .fw-use-btn p {
-  font-size: 13.5px;
-  line-height: 1.35;
+  font-size: 14.5px;
+  line-height: 1.4;
   color: var(--text-muted);
-  margin: 3px 0 0;
+  margin: 4px 0 0;
 }
 .fw-example-section {
   margin-top: auto;
-  border-top: 1px solid var(--border-color, #243444);
-  padding-top: 12px;
+  background: #0d151c;
+  border: 1px solid #23313f;
+  border-radius: 14px;
+  padding: 16px 18px;
+  text-align: center;
 }
 .fw-variation-bar {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 10px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #222f3d;
 }
 .fw-variation-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--text-muted);
 }
 .fw-chips {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 .fw-chip-step {
-  border: 1px solid var(--border-color, #2a3846);
-  border-radius: 16px;
-  background: var(--bg-tertiary, #121c25);
+  border: 1px solid #36485b;
+  border-radius: 14px;
+  background: var(--bg-tertiary, #16222d);
   color: var(--text-secondary);
-  padding: 4px 12px;
-  font-size: 13px;
+  padding: 4px 14px;
+  font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 .fw-chip-step:hover {
   border-color: rgba(212, 218, 245, 0.4);
-  color: var(--text-primary);
+  color: #fff;
 }
 .fw-chip-step.is-selected,
 .fw-chip-step[aria-pressed="true"] {
-  border-color: rgba(212, 218, 245, 0.7);
-  background: rgba(212, 218, 245, 0.14);
+  border-color: rgba(212, 218, 245, 0.8);
+  background: rgba(212, 218, 245, 0.16);
   color: #fff;
 }
 .fw-example-box {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border-color, #2a3846);
-  border-radius: 12px;
-  padding: 12px 14px;
+  padding: 4px 0 0;
   text-align: center;
   cursor: pointer;
 }
 .fw-example-sentence {
-  font: 700 19px/1.35 var(--font-reading);
-  color: var(--text-primary);
-  margin-bottom: 4px;
-}
-.fw-example-sentence .fw-highlight {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  color: #fff;
-}
-.fw-example-translation {
-  font-size: 14.5px;
-  color: var(--text-muted);
+  font: 700 22px/1.35 var(--font-reading);
+  color: #f4f5f6;
   margin-bottom: 6px;
 }
+.fw-example-sentence .fw-highlight {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+}
+.fw-example-translation {
+  font-size: 15.5px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
 .fw-example-hint {
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--text-muted);
   opacity: 0.75;
 }

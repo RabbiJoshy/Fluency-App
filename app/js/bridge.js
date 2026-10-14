@@ -80,10 +80,10 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
         .flatMap(m => m.pos === 'SENSE_CYCLE' && m.allSenses?.length ? m.allSenses : [m])
         .filter(m => m && (m.translation || m.meaning) && m.unassigned !== true && m.assignment_method !== 'unassigned');
     if (meanings.length && target.meanings?.length && meanings.some(m => {
-        const mh = normalize(m.headword || item?.headword || item?.lemma || word);
+        const mh = normalize(m.headword || item?.headword || item?.lemma || '');
         const mt = normalize(m.translation || m.meaning);
         return !target.meanings.some(t => {
-            const th = normalize(t.headword || word);
+            const th = normalize(t.headword || '');
             const tt = normalize(t.translation || t.meaning);
             const headwordMatch = !mh || !th || th === mh;
             const transMatch = tt === mt || mt.includes(tt) || tt.includes(mt);
