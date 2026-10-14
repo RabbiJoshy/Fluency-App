@@ -78,12 +78,15 @@ export function reconcileProgress(prior, params) {
   const latest = (a, b) => reviewTimestamp(a) >= reviewTimestamp(b) ? (a || '') : (b || '');
   const previousAnswer = Math.max(reviewTimestamp(prior?.last_correct_at), reviewTimestamp(prior?.last_incorrect_at));
   const incomingAnswer = Math.max(reviewTimestamp(params.lastCorrect), reviewTimestamp(params.lastWrong));
-  const hasNewAnswer = !prior || c > prior.correct_count || w > prior.incorrect_count || incomingAnswer > previousAnswer;
+  const gainedCounts = !prior || c > prior.correct_count || w > prior.incorrect_count;
+  const importedAt = prior?.migration_review_at ? reviewTimestamp(prior.migration_review_at) - 14 * 86400000 : 0;
+  const hasNewAnswer = gainedCounts || incomingAnswer > Math.max(previousAnswer, importedAt);
+  const oldImportRetry = importedAt && !gainedCounts && incomingAnswer <= importedAt;
   return {
     correct: Math.max(c, prior?.correct_count || 0), wrong: Math.max(w, prior?.incorrect_count || 0),
-    lastCorrect: latest(params.lastCorrect, prior?.last_correct_at),
-    lastWrong: latest(params.lastWrong, prior?.last_incorrect_at),
-    lastSeen: latest(params.lastSeen, prior?.last_seen_at),
+    lastCorrect: oldImportRetry ? prior.last_correct_at : latest(params.lastCorrect, prior?.last_correct_at),
+    lastWrong: oldImportRetry ? prior.last_incorrect_at : latest(params.lastWrong, prior?.last_incorrect_at),
+    lastSeen: oldImportRetry ? prior.last_seen_at : latest(params.lastSeen, prior?.last_seen_at),
     srsStage: prior && !hasNewAnswer ? prior.srs_stage : params.srsStage,
     migrationReviewAt: hasNewAnswer ? null : (prior?.migration_review_at || null)
   };

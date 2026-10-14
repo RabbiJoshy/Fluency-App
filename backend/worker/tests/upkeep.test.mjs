@@ -32,6 +32,8 @@ assert.equal(reviewIntervalDays(cases[1]),376);
 const prior={correct_count:4,incorrect_count:2,last_correct_at:original,last_incorrect_at:'2026-01-01T00:00:00.000Z',last_seen_at:original,srs_stage:3,migration_review_at:migration};
 const old=reconcileProgress(prior,{correct:1,wrong:0,lastCorrect:'2025-01-01T00:00:00.000Z',srsStage:0});
 assert.equal(old.correct,4);assert.equal(old.wrong,2);assert.equal(old.srsStage,3);assert.equal(old.migrationReviewAt,migration);
+const importRetry=reconcileProgress(prior,{correct:4,wrong:2,lastCorrect:'2026-10-07T00:00:00.000Z',srsStage:4});
+assert.equal(importRetry.migrationReviewAt,migration);assert.equal(importRetry.lastCorrect,original);
 const newer=reconcileProgress(prior,{correct:4,wrong:3,lastWrong:'2026-10-20T00:00:00.000Z',srsStage:1});
 assert.equal(newer.migrationReviewAt,null);assert.equal(computeSchedule(newer).unresolved,1);
 let statement;
