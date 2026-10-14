@@ -327,6 +327,7 @@ function mergeKnowledgeProgress(parent, item) {
             lastCorrect: item.lastCorrect || null,
             lastWrong: item.lastWrong || null,
             lastSeen: newestIso(parent?.lastSeen, item?.lastSeen),
+            migrationReviewAt: item.migrationReviewAt || null,
             srsStage: getSrsStage(item)
         };
     }
@@ -344,6 +345,7 @@ function mergeKnowledgeProgress(parent, item) {
         lastSeen: newestIso(parent?.lastSeen, item?.lastSeen),
         // The schedule belongs to the newest answer source. Combined lifetime
         // counts are retained for history but must not inflate its interval.
+        migrationReviewAt: itemUnresolvedWrong ? null : (newest?.migrationReviewAt || null),
         srsStage: itemUnresolvedWrong
             ? (item ? getSrsStage(item) : 0)
             : (newest ? getSrsStage(newest) : undefined)
@@ -604,6 +606,7 @@ async function saveKnowledgeProgress(card, items, isCorrect) {
             schemaVersion: KNOWLEDGE_SCHEMA_VERSION
         });
         existing.srsStage = advanceSrsStage(existing, isCorrect);
+        delete existing.migrationReviewAt;
         if (isCorrect) {
             existing.correct = (Number(existing.correct) || 0) + 1;
             existing.lastCorrect = timestamp;

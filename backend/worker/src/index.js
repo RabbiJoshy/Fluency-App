@@ -17,7 +17,7 @@ import { authorizeProgress } from './session-auth.js';
 import {
   ITEM_TYPES, wireMode, storedMode, parseFullId, toFullId, normalizeItemType,
   legacySheetMode, computeSchedule, stateToWireWord, stateToWireItem,
-  upsertStateStmt, insertEventStmt, deriveEvents
+  upsertStateStmt, insertEventStmt, deriveEvents, reconcileProgress
 } from './store.js';
 
 const PROGRESS_SCHEMA_VERSION = 4;
@@ -59,14 +59,7 @@ async function recordProgress(db, params, { itemType, fullId, parentFullId, labe
      WHERE user_id=?1 AND lang_code=?2 AND item_id=?3 AND mode=?4`
   ).bind(params.user, parsed.langCode, parsed.itemId, parsed.mode).first();
 
-  const incoming = {
-    correct: Math.max(0, Number(params.correct) || 0),
-    wrong: Math.max(0, Number(params.wrong) || 0),
-    lastCorrect: params.lastCorrect || (prior ? prior.last_correct_at : ''),
-    lastWrong: params.lastWrong || (prior ? prior.last_incorrect_at : ''),
-    lastSeen: params.lastSeen || new Date().toISOString(),
-    srsStage: params.srsStage
-  };
+  const incoming = reconcileProgress(prior, params);
   const schedule = computeSchedule(incoming);
 
   const identity = {
@@ -88,7 +81,8 @@ async function recordProgress(db, params, { itemType, fullId, parentFullId, labe
     firstSeen: prior?.first_seen_at || incoming.lastSeen,
     lastSeen: incoming.lastSeen,
     lastCorrect: incoming.lastCorrect, lastWrong: incoming.lastWrong,
-    stage: schedule.explicitStage, dueAt: schedule.dueAt, unresolved: schedule.unresolved
+    stage: schedule.explicitStage, dueAt: schedule.dueAt, unresolved: schedule.unresolved,
+    migrationReviewAt: incoming.migrationReviewAt
   }));
 
   await db.batch(statements);

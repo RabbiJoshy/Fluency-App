@@ -19,7 +19,8 @@ RUNNER = r"""
     const [progressPath, knowledgePath, flashcardsPath] = process.argv.slice(2);
     const strip = source => source.replace(/^import .*$/gm, '');
     const progress = fs.readFileSync(progressPath, 'utf8');
-    const schedule = progress.slice(
+    const policy = fs.readFileSync(require('node:path').join(require('node:path').dirname(progressPath), 'srs-policy.js'), 'utf8').replace(/^export /gm, '');
+    const schedule = policy + '\n' + progress.slice(
         progress.indexOf('const SRS_DAY_MS'), progress.indexOf('const progressSurfaceById'));
     const flashcards = fs.readFileSync(flashcardsPath, 'utf8');
     const stepper = flashcards.slice(

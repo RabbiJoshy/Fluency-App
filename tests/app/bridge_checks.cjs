@@ -3,7 +3,8 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const root = require('node:path').resolve(__dirname, '../..');
 function load(context, file) {
-    const source = fs.readFileSync(`${root}/${file}`, 'utf8').replace(/^import[\s\S]*?;[ \t]*$/mg, '').replace(/^export /mg, '');
+    let source = fs.readFileSync(`${root}/${file}`, 'utf8').replace(/^import[\s\S]*?;[ \t]*$/mg, '').replace(/^export /mg, '');
+    if (file === 'app/js/progress.js') source = fs.readFileSync(`${root}/app/js/srs-policy.js`, 'utf8').replace(/^export /mg, '') + '\n' + source;
     vm.runInContext(`(()=>{${source}\n})()`, context, {filename: file});
 }
 function harness() {
