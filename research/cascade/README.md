@@ -30,7 +30,7 @@ Accuracy on 377 random Dutch content-word sentences (±4 points at this size):
    about $0.03 per 1,000 sentences when batched by word. The full Dutch deck (38,520
    sentences: 66% the two embeddings agreed, 34% went to DeepSeek) cost cents.
 
-## What shipped (staging `stg-d2d56600`; production waits on Josh's "promote")
+## What shipped (production 2026-10-13: `a1cbe2d7`, compact display `469908f6`)
 
 - Dutch prototype deck `nl-cascade-proto-2`, built with the cascade (`nl-proto/`).
 - Grammar-word rule labellers (`trouble-words/labeller_{nl,es,pt,cs}.py`). These use a
