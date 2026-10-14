@@ -521,6 +521,14 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     const artistRow = document.getElementById('learningContextArtistBtn');
     const songsRow = document.getElementById('learningContextSongsBtn');
     flagEl.textContent = flag;
+    // The desktop sidebar names the language even in artist mode; the artist
+    // gets its own chip beneath it (desktop-shell.js trail).
+    const languageOnlyEl = document.getElementById('learningContextLanguageOnly');
+    if (languageOnlyEl) {
+        const plainLanguage = activeArtist?.language || selectedLanguage;
+        languageOnlyEl.textContent = window._normalModeLangConfigs?.[plainLanguage]?.name
+            || config.languages?.[plainLanguage]?.name || languageConfig.name || selectedLanguage;
+    }
     document.getElementById('learningContextSheetFlag').textContent = flag;
     document.getElementById('learningContextSheetLanguage').textContent = languageConfig.name || selectedLanguage;
     document.getElementById('learningContextSheetMode').textContent = mode;

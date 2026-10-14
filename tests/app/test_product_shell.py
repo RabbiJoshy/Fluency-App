@@ -1789,3 +1789,17 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("modal.classList.remove('hidden')", profiles_js)
 
 
+
+    def test_desktop_sidebar_trail_switches_each_level_in_place(self) -> None:
+        shell = (APP_ROOT / "js" / "desktop-shell.js").read_text(encoding="utf-8")
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn('id="learningContextLanguageOnly"', html)
+        self.assertIn('id="desktopExploreBtn"', html)
+        for level in ('data-level="mode"', 'data-level="source"'):
+            self.assertIn(level, shell)
+        # The chips reuse the modal pickers' handlers rather than a second copy.
+        for action in ("chooseSpeech", "chooseMusic", "openPlaylists", "chooseArtist", "changeLanguage"):
+            self.assertIn(action, main)
+        self.assertIn("chooseSpeechVocabulary(language);", main)
+        self.assertIn("selectMusicArtist(entry, language),", main)

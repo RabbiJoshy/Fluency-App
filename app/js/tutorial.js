@@ -233,8 +233,8 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         demo: 'openReview',
                         anchor: '.knowledge-overview-trigger',
-                        title: 'Flag a meaning',
-                        text: 'Know the word but not every meaning? Tap to tick the ones to bring back in reviews; they move to the top, and the count shows how many are flagged.',
+                        title: 'Revisit a meaning',
+                        text: 'Know the word but not every meaning? Tap to tick the ones to bring back in reviews; they move to the top, and the number shows how many you’ll revisit.',
                     },
                     {
                         side: 'right',
@@ -1204,7 +1204,7 @@ function reviewSheetHTML(card) {
             </span>
             <input type="checkbox" class="knowledge-overview-checkbox" aria-label="Review ${esc(meaning.translation)} later">
         </label>`).join('');
-    return `<div class="knowledge-overview-modal tutorial-demo-sheet" role="dialog" aria-label="Flag a meaning">
+    return `<div class="knowledge-overview-modal tutorial-demo-sheet" role="dialog" aria-label="Revisit a meaning">
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
                 <p class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>
@@ -1244,8 +1244,15 @@ function updateDemoFlagCount() {
     const rows = stage?.querySelectorAll('.tutorial-demo-sheet [data-demo-row]');
     if (!rows?.length) return;
     const flagged = [...rows].filter(row => row.classList.contains('is-selected')).length;
-    const fraction = stage.querySelector('.knowledge-overview-trigger .ref-tile-fraction');
-    if (fraction) fraction.textContent = `${flagged}/${rows.length}`;
+    const wrap = stage.querySelector('.knowledge-overview-trigger .ref-tile-icon-wrap');
+    if (!wrap) return;
+    let badge = wrap.querySelector('.ref-tile-count-badge');
+    if (!badge && flagged) {
+        badge = document.createElement('span');
+        badge.className = 'ref-tile-count-badge';
+        wrap.appendChild(badge);
+    }
+    if (badge) { badge.textContent = flagged || ''; badge.hidden = !flagged; }
 }
 
 function tickReviewRow() {

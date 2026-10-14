@@ -1628,13 +1628,7 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null, { sta
     const catalog = artists && Object.keys(artists).length ? artists : await ensureArtistCatalog();
     const resolvedArtists = Object.fromEntries(Object.entries(catalog || {}).filter(([, cfg]) =>
         (cfg.language || 'spanish') === language));
-    const entries = Object.entries(resolvedArtists).map(([slug, cfg]) => ({
-        slug, name: cfg.name, image: artistPickerImage(cfg), initials: artistInitials(cfg.name)
-    }));
-    if (Object.values(resolvedArtists).some(cfg => cfg.songsPath)) entries.push({
-        slug: CUSTOM_ARTIST_SLUG, name: 'Mix several artists', initials: '♪',
-        description: 'Choose individual songs from across the library.'
-    });
+    const entries = musicArtistEntries(resolvedArtists);
     window.closeChoiceSheet?.('lyricsSourceSheet', true);
     window.closeChoiceSheet?.('artistChoiceSheet', true);
     window.closeChoiceSheet?.('learningSourceChoiceSheet', true);
@@ -1643,22 +1637,37 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null, { sta
     }
     openMusicWorkspace({
         language, languageName: languageDisplayName(language), artists: entries, stage,
-        onSelectArtist: entry => {
-            if (entry.slug === window._urlArtistSlug && window.showSongSetPicker && artistSongCatalog?.songs?.length) {
-                window.showSongSetPicker();
-                return;
-            }
-            window.clearPlaylistLiveSession?.();
-            showAppLoading(`Loading ${entry.name}`, 'Preparing your songs…', true);
-            navigateMusicWorkspace(entry.slug === CUSTOM_ARTIST_SLUG
-                ? { kind: 'songs', language: routeCodeFor(language, config.languages) }
-                : { kind: 'artist', artist: entry.slug });
-        },
+        onSelectArtist: entry => selectMusicArtist(entry, language),
         onSelectPlaylist: () => window.openSpotifyPlaylistImport?.(resolvedArtists, language, { mode: 'choose' }),
         onLeave: () => {
             goToRoute({ kind: 'language', language: routeCodeFor(language, config.languages) });
         }
     });
+}
+
+// The artists a language offers, plus the "mix" entry. One list feeds the music
+// workspace and the desktop sidebar trail, so they cannot offer different things.
+function musicArtistEntries(resolvedArtists) {
+    const entries = Object.entries(resolvedArtists).map(([slug, cfg]) => ({
+        slug, name: cfg.name, image: artistPickerImage(cfg), initials: artistInitials(cfg.name)
+    }));
+    if (Object.values(resolvedArtists).some(cfg => cfg.songsPath)) entries.push({
+        slug: CUSTOM_ARTIST_SLUG, name: 'Mix several artists', initials: '♪',
+        description: 'Choose individual songs from across the library.'
+    });
+    return entries;
+}
+
+function selectMusicArtist(entry, language) {
+    if (entry.slug === window._urlArtistSlug && window.showSongSetPicker && artistSongCatalog?.songs?.length) {
+        window.showSongSetPicker();
+        return;
+    }
+    window.clearPlaylistLiveSession?.();
+    showAppLoading(`Loading ${entry.name}`, 'Preparing your songs…', true);
+    navigateMusicWorkspace(entry.slug === CUSTOM_ARTIST_SLUG
+        ? { kind: 'songs', language: routeCodeFor(language, config.languages) }
+        : { kind: 'artist', artist: entry.slug });
 }
 
 function artistsIcon() {
@@ -1711,6 +1720,43 @@ function languageDisplayName(language) {
     return window._normalModeLangConfigs?.[language]?.name || config.languages?.[language]?.name || language;
 }
 
+// Switching to Speech from wherever the learner is. Shared by the vocabulary
+// sheet and the desktop sidebar trail.
+function chooseSpeechVocabulary(language) {
+    if (window.playlistLiveActive?.()) {
+        window.clearPlaylistLiveSession?.();
+        sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
+        goToRoute({ kind: 'language', language: routeCodeFor(language, config?.languages) });
+        return;
+    }
+    if (activeArtist || window.musicWorkspaceActive?.()) {
+        showAppLoading('Switching to Speech vocabulary', 'Preparing your language and progress…', true);
+        sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
+        goToRoute({ kind: 'language', language: routeCodeFor(language, config.languages) }, { keepSearch: false });
+    } else {
+        document.getElementById('standardSourceSpeechBtn')?.click();
+    }
+}
+
+// What the desktop sidebar trail (desktop-shell.js) calls. Each chip in the
+// trail switches its own level in place, so none of these start from the
+// beginning: they are the same handlers the modal pickers use.
+window.desktopTrailActions = {
+    changeLanguage() {
+        if (activeArtist) showLanguagePicker(config.languages);
+        else window.reopenLanguagePicker?.();
+    },
+    chooseSpeech(language) { chooseSpeechVocabulary(language); },
+    chooseMusic(language) { return showArtistPicker(null, null, language); },
+    openPlaylists(language) { return showArtistPicker(null, null, language, { stage: 'playlists' }); },
+    chooseArtist(entry, language) { selectMusicArtist(entry, language); },
+    async artistEntries(language) {
+        const catalog = await ensureArtistCatalog();
+        return musicArtistEntries(Object.fromEntries(Object.entries(catalog || {}).filter(([, cfg]) =>
+            (cfg.language || 'spanish') === language)));
+    },
+};
+
 function openLearningSourcePicker() {
     const language = activeArtist?.language || selectedLanguage || 'spanish';
     const languageConfig = window._normalModeLangConfigs?.[language] || config.languages?.[language] || {};
@@ -1738,19 +1784,7 @@ function openLearningSourcePicker() {
                 onSelect: () => {
                     // Already here: the sheet just closes. Nothing reloads.
                     if (inSpeech) return;
-                    if (window.playlistLiveActive?.()) {
-                        window.clearPlaylistLiveSession?.();
-                        sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
-                        goToRoute({ kind: 'language', language: routeCodeFor(language, config?.languages) });
-                        return;
-                    }
-                    if (activeArtist) {
-                        showAppLoading('Switching to Speech vocabulary', 'Preparing your language and progress…', true);
-                        sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
-                        goToRoute({ kind: 'language', language: routeCodeFor(language, config.languages) }, { keepSearch: false });
-                    } else {
-                        document.getElementById('standardSourceSpeechBtn')?.click();
-                    }
+                    chooseSpeechVocabulary(language);
                 }
             },
             {
