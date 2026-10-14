@@ -92,9 +92,16 @@ try{
    assert(width<768?skipLayout.below:skipLayout.sameLine);
    if(process.env.SESSION_ENDPOINT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.SESSION_ENDPOINT_SCREENSHOTS,`smart-skip-on-${theme}-${width}.png`)});
    if(name==='long') {
+       await page.evaluate(()=>{
+           activeArtist={name:'Selected music'};window.updateStep2Tooltip();window.updateStep5Tooltip();
+           const total=document.getElementById('step2DeckTotal');total.textContent='This deck has 10,000 words.';total.hidden=false;
+       });
        await page.locator('[data-tooltip="step2Tooltip"]').click();
        assert(await page.locator('#step2Tooltip').isVisible());
        assert.equal(await page.locator('#step2Tooltip .level-help-section').count(),1);
+       assert.match(await page.locator('#step2LevelDescription').textContent(),/group of words from Selected music/);
+       assert.match(await page.locator('#step5Description').textContent(),/Flip each card/);
+       assert(await page.locator('#step2DeckTotal').evaluate(el=>el.getBoundingClientRect().top>=el.previousElementSibling.getBoundingClientRect().bottom));
        assert(!await page.locator('#step2Tooltip').textContent().then(text=>text.includes('countdown')));
        assert.equal(await page.locator('#step2Tooltip .level-help-legend').count(),0);
        if(process.env.SESSION_ENDPOINT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.SESSION_ENDPOINT_SCREENSHOTS,`level-help-${theme}-${width}.png`)});
@@ -103,6 +110,7 @@ try{
        assert(await page.locator('#levelColoursTooltip').isVisible());
        assert.equal(await page.locator('#levelColoursTooltip .info-point-badge').count(),5);
        await page.locator('#levelColoursTooltip .info-sheet-close').click();
+       await page.evaluate(()=>{activeArtist=null;window.updateStep2Tooltip();});
    }
    await page.locator('[data-ss-master="off"]').focus();await page.keyboard.press('Enter');
    await page.waitForFunction(()=>document.querySelector('[data-ss-master="off"]').getAttribute('aria-pressed')==='true');

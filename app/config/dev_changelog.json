@@ -15,6 +15,18 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-14T20:46:55+01:00",
+      "date": "2026-10-14 20:46 BST",
+      "agent": "Codex",
+      "summary": "Explain level goals and studying cards from first principles",
+      "detail": [
+        "Level help explains what a level contains and the goal of learning its words, including the music-specific introduction.",
+        "Go describes studying unseen words, flipping a flashcard and marking whether you knew it.",
+        "The deck total starts on its own line after the introductory guidance."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T20:36:08+01:00",
       "date": "2026-10-14 20:36 BST",
       "agent": "Codex",
@@ -361,23 +373,6 @@
         "The tallest explanation's height is reserved once (measured at the coach's real width, including a chapter's two-button last note), so changing steps cannot move the card or the navigation.",
         "A card that has to shrink is laid out at stage width ÷ scale, so it still spans the stage instead of sitting in a narrow strip; height cap raised to 760 px.",
         "Work left uncommitted by the tutorial (SHOWCASE) chat; committed and staged on Josh's instruction after a phone-width smoke check."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T00:11:41+01:00",
-      "date": "2026-10-13 00:11 BST",
-      "agent": "Claude",
-      "summary": "Song translation: a play bar, tap-a-line to play, an English toggle, 389 more songs, and a tidier entity box",
-      "detail": [
-        "Play bar at the bottom: previous line, play/pause, next line, and repeat this line. Repeat loops the line being sung, or the next one you tap. On a phone using Spotify's app, the highlight is kept in step by polling Spotify about every 1.5 s.",
-        "Tap anywhere on a line to play it from there (tapping a word still opens its card; the Spotify button still works).",
-        "EN button in the header hides or shows the English under each line; it is remembered on this device.",
-        "The song list grows from 30 to 419 songs: all of Bad Bunny, Rosalía and Young Miko in the lyrics release that LRCLIB has timed lyrics for (389 of 401). Search covers all of them; a song's lyrics are fetched when it is opened. 10 of them rest on a single LRCLIB record, so their timing is the least certain.",
-        "Song links now carry the song's Spotify id instead of its position in the list, so a saved link no longer shifts after importing a song. Old numeric links still open the song they used to.",
-        "Entity boxes are now a tight rectangle (4 px corners) that wraps the name, and the Wiktionary mark is a serif W at the start of the entity instead of the end.",
-        "Yonaguni's human translations load on the deployed site now: the build excluded the folder they were read from, so they never appeared there. They now match 51 of 60 lines.",
-        "Removed unused wiring: previous/next-song buttons, the compatibility anchors and the count badges."
       ],
       "commit": "pending"
     }
