@@ -600,7 +600,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("extras.allSkipped", fast_mode_js)
         self.assertIn("extras.cognates", fast_mode_js)
         self.assertIn("lookAlikeCandidates()", fast_mode_js)
-        self.assertNotIn('id="fastTrackHubExamples"', choosing)
+        self.assertIn('id="fastTrackHubExamples"', choosing)
         self.assertIn('data-ss-master="off" aria-pressed="true"', choosing)
         self.assertIn('data-ss-master="on" aria-pressed="false"', choosing)
         self.assertNotIn('Recommended', choosing)

@@ -35,7 +35,7 @@ try{
     window.testFastTrackPrefs=prefs;
     prefs.saveFastTrack('spanish',{enabled:false,merge:false,skip:false,skipGrammar:true,skipSlang:false,skipEntities:false});
     for(const id of ['lemmaToggleContainer','cognateToggleContainer'])document.getElementById(id).dataset.available='false';
-    window.collectExtras=()=>({allSkipped:Array(32).fill({}),grammar:Array(32).fill({}),potential:{grammar:32}});
+    window.collectExtras=()=>({allSkipped:Array.from({length:32},(_,i)=>({item:{word:['hotel','animal','hospital'][i%3]}})),grammar:Array(32).fill({}),potential:{grammar:32}});
     window.renderLevelSelector=async()=>{};window.updateExclusionBars=async()=>{};
     window.refreshFastMode();
     window.masterChangeEvents=0;window.addEventListener('fast-track-preference-change',()=>window.masterChangeEvents++);
@@ -70,6 +70,10 @@ try{
    await page.locator('[data-ss-master="on"]').click();
    await page.waitForFunction(()=>document.querySelector('[data-ss-master="on"]').getAttribute('aria-pressed')==='true');
    assert.equal(await page.locator('#fastTrackHubSummary').textContent(),'32 skipped');
+   assert.equal(await page.locator('.smart-skip-check').count(),0);
+   assert.equal(await page.locator('[data-ss-master="on"]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(21, 128, 61)');
+   assert.equal(await page.locator('#fastTrackHubExamples').isVisible(),width>=768);
+   assert.equal(await page.locator('#fastTrackHubExamples').textContent(),'e.g. hotel, animal, hospital');
    assert(await page.evaluate(()=>window.testFastTrackPrefs.readFastTrack('spanish').enabled));
    const changes=await page.evaluate(()=>window.masterChangeEvents);
    await page.locator('[data-ss-master="on"]').click();
@@ -87,6 +91,17 @@ try{
    assert(!skipLayout.overflow);
    assert(width<768?skipLayout.below:skipLayout.sameLine);
    if(process.env.SESSION_ENDPOINT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.SESSION_ENDPOINT_SCREENSHOTS,`smart-skip-on-${theme}-${width}.png`)});
+   if(name==='long') {
+       await page.locator('[data-tooltip="step2Tooltip"]').click();
+       assert(await page.locator('#step2Tooltip').isVisible());
+       assert.equal(await page.locator('#step2Tooltip .level-help-section').count(),3);
+       assert.match(await page.locator('#step5Description').textContent(),/not a countdown/);
+       await page.locator('.level-help-counts summary').click();
+       assert(await page.locator('.level-help-legend').isVisible());
+       await page.locator('.level-help-counts summary').click();
+       if(process.env.SESSION_ENDPOINT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.SESSION_ENDPOINT_SCREENSHOTS,`level-help-${theme}-${width}.png`)});
+       await page.locator('#step2Tooltip .info-sheet-close').click();
+   }
    await page.locator('[data-ss-master="off"]').focus();await page.keyboard.press('Enter');
    await page.waitForFunction(()=>document.querySelector('[data-ss-master="off"]').getAttribute('aria-pressed')==='true');
    assert.equal(await page.locator('#fastTrackHubSummary').textContent(),'Fewer cards to study');

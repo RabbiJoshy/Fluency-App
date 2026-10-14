@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T19:57:30+01:00",
+      "date": "2026-10-14 19:57 BST",
+      "agent": "Codex",
+      "summary": "Clearer level help and a centred Smart Skip row",
+      "detail": [
+        "Simplified level help around where to start, how Go sizes a batch, and what level progress means. Colour definitions can be expanded.",
+        "Smart Skip On uses a green selected state without a redundant tick.",
+        "Centred the compact controls and restored real skipped-word examples on desktop."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T19:42:54+01:00",
       "date": "2026-10-14 19:42 BST",
       "agent": "Codex",

@@ -1053,7 +1053,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    description.textContent = 'Go starts a batch of new words from your selected level. Choose a time to estimate its size. If fewer new words remain, the batch contains those words and the time choice is hidden. The progress bar and counts describe the selected level.';
+    description.textContent = 'Go opens new words from this level. Your time choice estimates the batch size; it is not a countdown. If fewer words remain, Go opens that smaller batch and hides the time choice.';
 }
 
 // Annotates every level control with its completion percentage and returns

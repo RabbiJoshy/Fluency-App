@@ -536,24 +536,33 @@
                     </div>
                     <div id="step2Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="levelHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header is-centered">
-                            <h3 id="levelHelpTitle">Choose where to begin</h3>
+                            <h3 id="levelHelpTitle">Levels and sessions</h3>
                             <button type="button" class="info-sheet-close" aria-label="Close level information">&#10005;</button>
                         </div>
                         <p class="info-sheet-lead" id="step2LevelDescription">Vocabulary is ordered by frequency, from daily essentials to less common words.</p>
                         <p class="info-sheet-lead level-deck-total" id="step2DeckTotal" hidden></p>
-                        <div class="info-sheet-points">
-                            <div><span class="info-point-badge">1</span><p><strong>Start anywhere:</strong> Begin at Level 1 or jump ahead to words you don’t know yet.</p></div>
-                            <div><span class="info-point-badge">2</span><p><strong>Short sessions:</strong> Pick a time to estimate how many new cards to study. A shorter remaining batch contains all the new cards left in the level.</p></div>
-                            <div><span class="info-point-badge">3</span><p><strong>Smart Skip:</strong> Related forms and obvious look-alikes are skipped to save time.</p></div>
-                        </div>
-                        <p class="info-sheet-lead" id="step5Description">Go starts a batch of new words from your selected level. Choose 5 minutes, 10 minutes or no limit to estimate the batch size. If fewer words remain, the batch contains those words and the time choice is hidden. When the level has no new words left, Go shows what to do next. The progress bar shows your progress across the whole level.</p>
-                        <div class="info-sheet-points">
-                            <div><span class="info-point-badge is-new">New</span><p><strong class="is-new">New:</strong> Words you have not studied yet.</p></div>
-                            <div><span class="info-point-badge is-practice">Practise</span><p><strong class="is-practice">Practise:</strong> Cards you missed or that are due for review.</p></div>
-                            <div><span class="info-point-badge is-done">Known</span><p><strong class="is-done">Known:</strong> Answered correctly and up to date.</p></div>
-                            <div><span class="info-point-badge is-estimated">Familiar</span><p><strong class="is-estimated">Estimated Familiar:</strong> Words your level estimate marks as familiar.</p></div>
-                            <div><span class="info-point-badge is-skip">Skipped</span><p><strong class="is-skip">Skipped:</strong> Familiar words or related forms set aside by Smart Skip.</p></div>
-                        </div>
+                        <section class="level-help-section">
+                            <h4>Where to start</h4>
+                            <p>Start at Level 1, or jump ahead to words that are new to you. You can change levels anytime.</p>
+                        </section>
+                        <section class="level-help-section">
+                            <h4>What Go starts</h4>
+                            <p id="step5Description">Go opens new words from this level. Your time choice estimates the batch size; it is not a countdown. If fewer words remain, Go opens that smaller batch and hides the time choice.</p>
+                        </section>
+                        <section class="level-help-section">
+                            <h4>Your level progress</h4>
+                            <p>The bar and counts describe this level. Practise collects reviews from every level.</p>
+                            <details class="level-help-counts">
+                                <summary>What the colours mean</summary>
+                            <div class="info-sheet-points level-help-legend">
+                                <div><span class="info-point-badge is-new">New</span><p>Not studied yet.</p></div>
+                                <div><span class="info-point-badge is-practice">Practice</span><p>Missed or due for review.</p></div>
+                                <div><span class="info-point-badge is-done">Known</span><p>Answered correctly and up to date.</p></div>
+                                <div><span class="info-point-badge is-estimated">Familiar</span><p>Marked familiar by your level estimate.</p></div>
+                                <div><span class="info-point-badge is-skip">Skipped</span><p>Set aside or combined by Smart Skip.</p></div>
+                            </div>
+                            </details>
+                        </section>
 
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
                             <div class="level-estimate-modal-body">
@@ -577,10 +586,13 @@
                         <strong id="smartSkipLabel" class="smart-skip-hub-label">Smart Skip</strong>
                         <div id="fastTrackHubSwitch" class="smart-skip-choice" role="group" aria-labelledby="smartSkipLabel">
                             <button type="button" data-ss-master="off" aria-pressed="true">Off</button>
-                            <button type="button" data-ss-master="on" aria-pressed="false">On<span class="smart-skip-check" aria-hidden="true"> ✓</span></button>
+                            <button type="button" data-ss-master="on" aria-pressed="false">On</button>
                         </div>
-                        <small id="fastTrackHubSummary" class="smart-skip-hub-summary">Fewer cards to study</small>
-                        <button type="button" id="fastTrackHubBtn" class="smart-skip-details" aria-label="Smart Skip details">Details</button>
+                        <span class="smart-skip-meta">
+                            <small id="fastTrackHubSummary" class="smart-skip-hub-summary">Fewer cards to study</small>
+                            <span id="fastTrackHubExamples" class="smart-skip-hub-examples" hidden></span>
+                            <button type="button" id="fastTrackHubBtn" class="smart-skip-details" aria-label="Smart Skip details">Details</button>
+                        </span>
                     </div>
                 </div>
             </div>

@@ -212,6 +212,16 @@ function refresh() {
             : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} skipped`
             : 'None skipped';
     }
+    const examples = document.getElementById('fastTrackHubExamples');
+    if (examples) {
+        // Use real candidates from this deck, with different copy for enabled
+        // exclusions and the preview while Smart Skip is off.
+        const candidates = on ? [...(extras.allSkipped || extras.cognates || []), ...(extras.lemmas || [])]
+            .map(entry => entry.item || entry) : lookAlikeCandidates();
+        const words = [...new Set(candidates.map(item => String(item?.word || '').trim()).filter(Boolean))].slice(0, 3);
+        examples.textContent = words.length ? `${on ? 'e.g.' : 'Could skip:'} ${words.join(', ')}` : '';
+        examples.hidden = !words.length;
+    }
     const secondaryState = document.getElementById('smartSkipSecondaryState');
     if (secondaryState) {
         const activeCount = Number(lemmaOn()) + advancedOn + Number(Boolean(globalThis.isBridgeEnabled?.()));
