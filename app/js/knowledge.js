@@ -501,8 +501,8 @@ function wordNeedsKnowledgeReview(parentWordId, surface = '') {
 // A part-known card keeps its known senses, flagged `isKnownSense` so they
 // render greyed as Known and stay out of the cycle; the senses not yet known
 // are the ones fronted and answered. "Known" is `learned`: a known sense that
-// has fallen due is active again. A cycle row (expressions, clitics, possible
-// meanings) drops its known entries, since it shows one entry at a time.
+// has fallen due is active again. Cycling rows retain every entry so their
+// identities and inspection choices remain stable.
 // Review also skips a word with nothing left to practise; a set shows it whole.
 function buildKnowledgeAwareCard(card, { skipWhenNothingToPractise = false } = {}) {
     if (!card?.meanings?.length) return card;
@@ -520,34 +520,14 @@ function buildKnowledgeAwareCard(card, { skipWhenNothingToPractise = false } = {
             continue;
         }
         if (unresolved.length === items.length) {
-            focusedMeanings.push({ ...meaning });
+            focusedMeanings.push({ ...meaning, isKnownSense: false });
             continue;
         }
         shaped = true;
 
-        if (meaning.allMWEs?.length) {
-            const keep = new Set(unresolved.map(item => item.cycleIndex));
-            focusedMeanings.push({
-                ...meaning,
-                allMWEs: meaning.allMWEs.filter((_, index) => keep.has(index))
-            });
-        } else if (meaning.allClitics?.length) {
-            const keep = new Set(unresolved.map(item => item.cycleIndex));
-            focusedMeanings.push({
-                ...meaning,
-                allClitics: meaning.allClitics.filter((_, index) => keep.has(index))
-            });
-        } else if (meaning.pos === 'SENSE_CYCLE' && meaning.allSenses?.length) {
-            const keep = new Set(unresolved.map(item => item.cycleIndex));
-            const allSenses = meaning.allSenses.filter((_, index) => keep.has(index));
-            focusedMeanings.push({
-                ...meaning,
-                allSenses,
-                meaning: allSenses[0]?.translation || meaning.meaning
-            });
-        } else {
-            focusedMeanings.push({ ...meaning });
-        }
+        // Keep the inventory and cycle indices stable. Knowledge changes
+        // emphasis and grading, never which senses can be inspected.
+        focusedMeanings.push({ ...meaning, isKnownSense: false });
     }
     // Rare senses remain opt-in during ordinary study. Once explicitly marked
     // for review, they become active meanings on the same parent card.
@@ -692,13 +672,15 @@ async function saveWholeCardKnowledgeAnswer(card, isCorrect) {
     // The whole-card answer supersedes a pending one-tap exception.
     if (knowledgeSiblingsPendingCard === card) knowledgeSiblingsPendingCard = null;
     if (!currentUser || currentUser.isGuest) return false;
-    const hasKnownSenses = card?.meanings?.some(meaning => meaning.isKnownSense);
+    const hasKnownSenses = card?.meanings?.some((meaning, index) => meaning.isKnownSense
+        || ((meaning.allSenses || meaning.allMWEs || meaning.allClitics)?.length > 1
+            && knowledgeItemsForMeaning(card, meaning, index).some(item => getKnowledgeItemState(card, item).learned)));
     const hasIndividualAnswers = card && getKnowledgeOverviewItems(card)
         .some(item => answeredDuringVisit(card, item));
     if (!hasKnownSenses && !hasIndividualAnswers) return false;
     const items = card.meanings
         .flatMap((meaning, index) => meaning.isKnownSense ? [] : knowledgeItemsForMeaning(card, meaning, index))
-        .filter(item => !answeredDuringVisit(card, item));
+        .filter(item => !getKnowledgeItemState(card, item).learned && !answeredDuringVisit(card, item));
     if (items.length) await saveKnowledgeProgress(card, items, isCorrect);
     return true;
 }
@@ -752,10 +734,12 @@ function getPracticeMeaningInfo(card) {
     const indices = new Set();
     const known = new Set();
     let practising = 0;
+    let knownCount = 0;
     const rowLearned = new Map();
     focusItems.forEach(item => {
         const state = getKnowledgeItemState(card, item);
         const index = item.meaningIndex;
+        if (state.learned) knownCount += 1;
         if (Number.isInteger(index) && index >= 0) {
             rowLearned.set(index, (rowLearned.get(index) ?? true) && state.learned);
         }
@@ -765,7 +749,7 @@ function getPracticeMeaningInfo(card) {
         }
     });
     rowLearned.forEach((learned, index) => { if (learned) known.add(index); });
-    return { indices, known, practising, total: focusItems.length };
+    return { indices, known, knownCount, practising, total: focusItems.length };
 }
 
 function getPracticeMeaningIndices(card) {

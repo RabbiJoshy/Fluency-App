@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v589';
+const CACHE_NAME = 'flashcards-v590';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = '20261013saved';
+const ASSET_VERSION = '20261014clarity';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -26,9 +26,9 @@ const ASSET_VERSION = '20261013saved';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20261013rows',
+  '/css/style.css?v=20261014clarity',
   '/css/appearance.css?v=20261011',
-  '/css/ui-refinements.css?v=20261013',
+  '/css/ui-refinements.css?v=20261014clarity',
   '/css/desktop-shell.css?v=1',
   '/css/music-workspace.css?v=20261013music',
   '/js/music-workspace.js?v=20261013music',
@@ -54,7 +54,7 @@ const urlsToCache = [
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
   '/js/routes.js?v=20261013music',
-  '/js/main.js?v=20261013rows',
+  '/js/main.js?v=20261014clarity',
   '/js/theme.js?v=20260922ui',
   '/js/state.js?v=20260921x',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -78,7 +78,7 @@ const urlsToCache = [
   '/js/config.js?v=20260921rh',
   '/js/progress.js?v=20260927pa',
   '/js/progress-identity.js?v=20260831a',
-  '/js/knowledge.js?v=20260927pa',
+  '/js/knowledge.js?v=20261014clarity',
   `/js/progress-overview.js?v=${ASSET_VERSION}`,
   '/js/session-plan.js?v=1',
   '/js/ui.js?v=20261013saved',
@@ -107,7 +107,7 @@ const urlsToCache = [
   '/js/reverse-cues.js?v=20260927v24',
   '/js/flags.js?v=20260929flags',
   '/js/card-metadata-pills.js?v=20261013rows',
-  '/js/flashcards.js?v=20261013rows',
+  '/js/flashcards.js?v=20261014clarity',
   '/js/card-row-layout.js?v=20261013rows',
   '/js/keyboard-guide.js?v=20261005kb',
   '/icons/tatoeba.svg',

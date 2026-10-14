@@ -1374,7 +1374,9 @@ function buildCardAutoplayItems(card) {
             || meaning.allClitics?.length
             || (meaning.pos === 'SENSE_CYCLE' && meaning.allSenses?.length)
             || 1;
+        const knowledgeItems = window.knowledgeItemsForMeaning?.(card, meaning, meaningIndex) || [];
         for (let cycleIndex = 0; cycleIndex < cycleCount; cycleIndex++) {
+            if (window.getKnowledgeItemState?.(card, knowledgeItems[cycleIndex])?.learned) continue;
             items.push({
                 meaningIndex,
                 cycleIndex,
@@ -2728,13 +2730,35 @@ function selectSplitCompanion(event, readingIndex) {
     const card = flashcards[currentIndex];
     if (!card?.splitInfo || readingIndex === card.splitInfo.index) return;
     // A word opened on its own holds its companions in linked slots.
-    if (cardNavStack.length && stepToSplitSibling(readingIndex < card.splitInfo.index ? 'prev' : 'next')) return;
+    if (cardNavStack.length) {
+        const visited = new Set([card]);
+        const pending = [card._splitNext, card._splitPrev];
+        while (pending.length) {
+            const candidate = pending.shift();
+            if (!candidate || visited.has(candidate)) continue;
+            visited.add(candidate);
+            if (candidate.targetWord !== card.targetWord) continue;
+            if (candidate.splitInfo?.index === readingIndex) {
+                showSplitSibling(candidate);
+                return;
+            }
+            pending.push(candidate._splitNext, candidate._splitPrev);
+        }
+        return;
+    }
     const index = currentIndex + readingIndex - card.splitInfo.index;
     const candidate = flashcards[index];
     if (candidate?.splitInfo?.index === readingIndex
         && candidate.targetWord === card.targetWord) goToDeckCard(index);
 }
 window.selectSplitCompanion = selectSplitCompanion;
+
+function splitUsageShareHTML(card) {
+    const share = card?.splitInfo?.share;
+    if (typeof share !== 'number' || !Number.isFinite(share) || share < 0 || share > 1) return '';
+    const detail = `${card.splitInfo.headword}: ${Math.round(share * 100)}% of assigned uses of ${card.targetWord}`;
+    return `<span class="split-usage-share" title="${escapeCardText(detail)}" tabindex="0" aria-label="${escapeCardText(detail)}">${Math.round(share * 100)}% of uses</span>`;
+}
 
 function currentStudyLevelLabel() {
     return stats.levelNumber ? `Level ${stats.levelNumber}` : '';
@@ -2743,13 +2767,18 @@ function currentStudyLevelLabel() {
 function stepToSplitSibling(direction = 'next') {
     const next = flashcards[currentIndex]?.[direction === 'prev' ? '_splitPrev' : '_splitNext'];
     if (!next || cardNavStack.length === 0) return false;
+    showSplitSibling(next);
+    return true;
+}
+
+function showSplitSibling(next) {
     flashcards[currentIndex] = next;
     currentMeaningIndex = 0;
     currentExampleIndex = 0;
     currentMWEIndex = 0;
     document.getElementById('flashcard')?.classList.remove('flipped');
+    currentGroupSelection = null;
     updateCard({ announceHeadword: true });
-    return true;
 }
 
 // Plain forward step through the deck, shared by the ordinary swipe path and
@@ -3953,6 +3982,17 @@ function stepPractisedMeaningIndex(card, fromIndex, direction) {
     for (let offset = 1; offset <= count; offset++) {
         const index = (fromIndex + direction * offset + count * offset) % count;
         if (!card.meanings[index]?.isKnownSense) return index;
+    }
+    return (fromIndex + direction + count) % count;
+}
+
+function stepPractisedCycleIndex(card, meaningIndex, fromIndex, direction = 1) {
+    const meaning = card?.meanings?.[meaningIndex];
+    const items = window.knowledgeItemsForMeaning?.(card, meaning, meaningIndex) || [];
+    const count = (meaning?.allSenses || meaning?.allMWEs || meaning?.allClitics)?.length || 1;
+    for (let offset = 1; offset <= count; offset++) {
+        const index = (fromIndex + direction * offset + count * offset) % count;
+        if (!items[index] || !window.getKnowledgeItemState?.(card, items[index])?.learned) return index;
     }
     return (fromIndex + direction + count) % count;
 }
@@ -5873,7 +5913,7 @@ function updateCard({ announceHeadword = false } = {}) {
     const card = flashcards[currentIndex];
     // Refresh sense state even when the word was opened from search or a set.
     const knowledgeInfo = window.getPracticeMeaningInfo?.(card);
-    if (knowledgeInfo?.total > 1) {
+    if (knowledgeInfo) {
         card.meanings?.forEach((meaning, index) => {
             meaning.isKnownSense = knowledgeInfo.known.has(index);
         });
@@ -5952,6 +5992,10 @@ function updateCard({ announceHeadword = false } = {}) {
     if (announceHeadword && card.meanings?.[currentMeaningIndex]?.isKnownSense) {
         currentMeaningIndex = stepPractisedMeaningIndex(card, currentMeaningIndex, 1);
         currentGroupSelection = null;
+    }
+
+    if (announceHeadword) {
+        currentMWEIndex = stepPractisedCycleIndex(card, currentMeaningIndex, -1);
     }
 
     // Validate the group selection against the current card. If any member
@@ -6367,7 +6411,7 @@ function renderCardWikipediaBadge(card) {
                         ? `<button type="button" class="split-pill-count" aria-expanded="false" aria-label="Card ${cardNum} of ${s.total}: why separate cards?" onclick="toggleSplitCardTip(event)">Card ${cardNum} of ${s.total}</button>`
                         : `<span class="split-pill-count">Card ${cardNum}</span>`;
                     const switchAttrs = isActive ? '' : ` role="button" tabindex="0" aria-label="Switch to card ${cardNum}: ${escapeCardText(pair.lemma)}, ${escapeCardText(posDisplayName(pair.pos))}" onclick="selectSplitCompanion(event, ${cardNum})" onkeydown="if (event.key === 'Enter' || event.key === ' ') selectSplitCompanion(event, ${cardNum})"`;
-                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}"${switchAttrs}>${posUnit}${lemmaHTML}${countHTML}</span>`;
+                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}" style="--split-accent: ${getPosAccentRgb(pair.pos)}"${switchAttrs}>${posUnit}${lemmaHTML}${countHTML}</span>`;
                 };
 
                 const splitPairsHTML = readings.map((reading, index) =>
@@ -6431,8 +6475,8 @@ function renderCardWikipediaBadge(card) {
     {
         const practiceInfo = typeof window.getPracticeMeaningInfo === 'function'
             ? window.getPracticeMeaningInfo(card) : null;
-        const knownCount = card.meanings?.filter(meaning => meaning.isKnownSense).length || 0;
-        const remainingCount = card.meanings?.filter(meaning => !meaning.isKnownSense && !meaning.exampleOnly).length || 0;
+        const knownCount = practiceInfo?.knownCount || 0;
+        const remainingCount = Math.max(0, (practiceInfo?.total || 0) - knownCount);
         const hasPractice = Boolean(!flippedFrontMeanings && (practiceInfo?.practising > 0 || (knownCount && remainingCount)));
         const practiceBadgeEl = document.getElementById('frontPracticeBadge');
         if (practiceBadgeEl) {
@@ -6560,10 +6604,11 @@ function renderCardWikipediaBadge(card) {
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocabulary Rank';
         frontRankingEl.innerHTML =
             cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), rankOf, true)
-            + freqHtml;
+            + (freqHtml ? `<div class="split-frequency">${freqHtml}${splitUsageShareHTML(card)}</div>` : splitUsageShareHTML(card));
         frontRankingEl.style.display = 'flex';
     } else {
-        frontRankingEl.style.display = 'none';
+        frontRankingEl.innerHTML = splitUsageShareHTML(card);
+        frontRankingEl.style.display = frontRankingEl.innerHTML ? 'flex' : 'none';
     }
 
     let backWordText = backWord;
@@ -6964,7 +7009,11 @@ function renderCardWikipediaBadge(card) {
         // A pair can share one gloss or context too (for example "no" and
         // "not" under negation). The grouping pass leaves unrelated pairs as
         // singletons, so there is no reason to require a third sense.
-        const GROUP_DUPLICATE_MEANINGS = activeMeaningsCount >= 2;
+        const hasMixedKnowledge = card.meanings.some(m => m.isKnownSense)
+            && card.meanings.some(m => !m.isKnownSense && !m.exampleOnly);
+        // A partly learned card needs one selectable row per meaning, even
+        // when two senses happen to have the same short gloss.
+        const GROUP_DUPLICATE_MEANINGS = activeMeaningsCount >= 2 && !hasMixedKnowledge;
         const contextLabelByMeaning = new Map();
         const groupingGlossByMeaning = new Map();
         card.meanings.forEach((meaning, index) => {
@@ -7129,7 +7178,7 @@ function renderCardWikipediaBadge(card) {
         });
 
         for (const [, entries] of singletonsBySectionGloss) {
-            if (entries.length < 2) continue;
+            if (hasMixedKnowledge || entries.length < 2) continue;
             const groupMeanings = entries.map(e => e.m);
             const diffs = entries.map(e => resolveMeaningDifferentiator(
                 e.m,
@@ -7405,13 +7454,20 @@ function renderCardWikipediaBadge(card) {
                 const informationButton = overflowTranslations.length || cycleWasShortened
                     ? `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about possible meanings" title="Information about possible meanings"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="Possible meanings"><section class="sense-note-section sense-note-section--meaning"><h3>All possibilities</h3><p>${escapeCardText(cycleNoteText)}</p></section></div></template>`
                     : '';
+                const cycleItems = window.knowledgeItemsForMeaning?.(card, m, idx) || [];
+                const hasCycleProgress = cycleItems.some(item => window.getKnowledgeItemState?.(card, item)?.seen);
+                const cycleChoices = hasCycleProgress ? cyclePresentations.map((presentation, cycleIndex) => {
+                    const state = window.getKnowledgeItemState?.(card, cycleItems[cycleIndex]);
+                    const selected = isSelected && currentMWEIndex === cycleIndex;
+                    return `<button type="button" class="sense-cycle-choice${state?.learned ? ' is-known-subsense' : ''}${selected ? ' is-selected' : ''}" onclick="event.stopPropagation(); focusKnowledgeCardItem(${idx}, ${cycleIndex})" aria-pressed="${selected}" title="${escapeCardText(rawTranslations[cycleIndex])}">${escapeCardText(presentation.gloss)}${state?.learned ? knownSenseTagHTML() : ''}</button>`;
+                }).join('') : '';
                 recordSenseDisplay(idx, { family: '', label: '', detail: '', hidden: false });
                 const cycleTextClass = adaptiveRowTextClass(joinedFull);
                 recordSectionMeanings(target, m.allSenses || [m]);
                 target.push(`
                 <div class="meaning-row meaning-row-cycle ${cycleTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${m.isKnownSense ? ' meaning-row-known' : ''}" style="position: relative; display: flex; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px; opacity: 0.75;" onclick="selectMeaning(${idx})">
                     ${renderRowCheckSlot(isSelected)}
-                    <span class="row-adaptive-text sense-cycle-notes" aria-label="Possible meanings" style="flex: 1; font-weight: 600; color: white; min-width: 0; text-align: center; line-height: 1.4; padding: 4px 8px;"><span class="sense-cycle-label" style="display: block; font-size: 11px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary);">Possible meanings</span><span class="sense-cycle-short">${escapeCardText(joinedDisplay)}</span>${informationButton}</span>
+                    <span class="row-adaptive-text sense-cycle-notes" aria-label="Possible meanings" style="flex: 1; font-weight: 600; color: white; min-width: 0; text-align: center; line-height: 1.4; padding: 4px 8px;"><span class="sense-cycle-label" style="display: block; font-size: 11px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary);">Possible meanings</span>${hasCycleProgress ? `<span class="sense-cycle-choices">${cycleChoices}</span>` : `<span class="sense-cycle-short">${escapeCardText(joinedDisplay)}</span>`}${informationButton}</span>
                     ${m.isKnownSense ? knownSenseTagHTML('position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''}
                 </div>
                 `);
@@ -9052,7 +9108,7 @@ function cycleMWEForward(event) {
     const m = card && card.meanings[currentMeaningIndex];
     const items = m && (m.allMWEs || m.allClitics);
     if (items && items.length > 1) {
-        currentMWEIndex = (currentMWEIndex + 1) % items.length;
+        currentMWEIndex = stepPractisedCycleIndex(card, currentMeaningIndex, currentMWEIndex);
         currentExampleIndex = 0;
         updateCard();
     }
@@ -9065,7 +9121,7 @@ function cycleMWEBackward(event) {
     const m = card && card.meanings[currentMeaningIndex];
     const items = m && (m.allMWEs || m.allClitics);
     if (items && items.length > 1) {
-        currentMWEIndex = (currentMWEIndex - 1 + items.length) % items.length;
+        currentMWEIndex = stepPractisedCycleIndex(card, currentMeaningIndex, currentMWEIndex, -1);
         currentExampleIndex = 0;
         updateCard();
     }
@@ -9089,19 +9145,19 @@ function selectMeaning(index) {
         const card = flashcards[currentIndex];
         const m = card && card.meanings[index];
         if (m && m.allMWEs && m.allMWEs.length > 1) {
-            currentMWEIndex = (currentMWEIndex + 1) % m.allMWEs.length;
+            currentMWEIndex = stepPractisedCycleIndex(card, index, currentMWEIndex);
             currentExampleIndex = 0;
             updateCard();
             return;
         }
         if (m && m.allClitics && m.allClitics.length > 1) {
-            currentMWEIndex = (currentMWEIndex + 1) % m.allClitics.length;
+            currentMWEIndex = stepPractisedCycleIndex(card, index, currentMWEIndex);
             currentExampleIndex = 0;
             updateCard();
             return;
         }
         if (m && m.allSenses && m.allSenses.length > 1) {
-            currentMWEIndex = (currentMWEIndex + 1) % m.allSenses.length;
+            currentMWEIndex = stepPractisedCycleIndex(card, index, currentMWEIndex);
             currentExampleIndex = 0;
             updateCard();
             return;

@@ -88,6 +88,25 @@ RUNNER = r"""
         context.stepPractisedMeaningIndex(fromSet, 1, -1),
     ];
 
+    // A partly known possible-meaning group must keep its durable indices.
+    const cycleCard = { fullId: 'es-que-cycle', targetWord: 'que', isMultiMeaning: true,
+        meanings: [{ pos: 'SENSE_CYCLE', cycle_pos: 'PRON', allSenses: [
+            { sense_id: 'q-that', translation: 'that' },
+            { sense_id: 'q-which', translation: 'which' },
+            { sense_id: 'q-what', translation: 'what' }
+        ] }] };
+    const cycleItems = context.getCardKnowledgeItems(cycleCard);
+    context.itemProgressData[cycleItems[0].itemId] = {
+        correct: 2, lastCorrect: iso(DAY), lastSeen: iso(DAY), srsStage: 3
+    };
+    const cycleShaped = context.buildKnowledgeAwareCard(cycleCard);
+    out.cycleIds = context.getCardKnowledgeItems(cycleShaped).map(item => item.itemId);
+    out.originalCycleIds = cycleItems.map(item => item.itemId);
+    out.cycleKnown = context.getPracticeMeaningInfo(cycleShaped).known.size;
+    out.cycleKnownCount = context.getPracticeMeaningInfo(cycleShaped).knownCount;
+    out.cycleStep = context.stepPractisedCycleIndex(cycleShaped, 0, 2);
+    out.cycleReopened = context.buildKnowledgeAwareCard(cycleShaped).meanings[0].allSenses.length;
+
     (async () => {
         const bankBefore = JSON.stringify(context.itemProgressData[items[0].itemId]);
         const bankDueBefore = state(0).nextReviewAt;
@@ -99,6 +118,11 @@ RUNNER = r"""
         out.handledAsParts = await context.saveWholeCardKnowledgeAnswer(fromSet, true);
         out.afterYes = [0, 1, 2].map(i => state(i).learned);
         out.bankUntouched = JSON.stringify(context.itemProgressData[items[0].itemId]) === bankBefore;
+
+        const cycleBefore = JSON.stringify(context.itemProgressData[cycleItems[0].itemId]);
+        out.cycleAnswerHandled = await context.saveWholeCardKnowledgeAnswer(cycleShaped, true);
+        out.cycleKnownUntouched = JSON.stringify(context.itemProgressData[cycleItems[0].itemId]) === cycleBefore;
+        out.cycleFinished = context.getPracticeMeaningInfo(cycleShaped).known.has(0);
 
         // Completing every sense promotes the card; the promotion must not
         // re-date bank, which keeps its own schedule.
@@ -227,6 +251,16 @@ class KnownSenseTests(unittest.TestCase):
                     "dueIsNotSelected"]:
             with self.subTest(key=key):
                 self.assertTrue(self.out[key])
+
+    def test_possible_meanings_keep_inventory_and_grade_unknown_leaves(self):
+        self.assertEqual(self.out['cycleIds'], self.out['originalCycleIds'])
+        self.assertEqual(self.out['cycleReopened'], 3)
+        self.assertEqual(self.out['cycleKnown'], 0)
+        self.assertEqual(self.out['cycleKnownCount'], 1)
+        self.assertEqual(self.out['cycleStep'], 1)
+        self.assertTrue(self.out['cycleAnswerHandled'])
+        self.assertTrue(self.out['cycleKnownUntouched'])
+        self.assertTrue(self.out['cycleFinished'])
 
 
 if __name__ == "__main__":

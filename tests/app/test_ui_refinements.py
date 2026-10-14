@@ -47,8 +47,10 @@ class UiRefinementTests(unittest.TestCase):
         c.selectSplitCompanion(event, 2);
         assert.equal(c.currentIndex, 0, 'never navigate to an unrelated word');
         c.cardNavStack = [{}];
+        c.flashcards[0]._splitNext = { targetWord: 'fue', splitInfo: { index: 2 } };
+        c.showSplitSibling = card => { c.selected = card.splitInfo.index; };
         c.selectSplitCompanion(event, 2);
-        assert.equal(c.direction, 'next', 'linked word views use their sibling slot');
+        assert.equal(c.selected, 2, 'linked word views select the requested sibling');
         assert.equal(stopped, 5);
         assert.equal(c.currentStudyLevelLabel(), 'Level 4');
         c.stats.levelNumber = null;
@@ -62,4 +64,39 @@ class UiRefinementTests(unittest.TestCase):
         """
         result = subprocess.run(['node', '-'], input=script, text=True,
                                 capture_output=True, cwd=ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_exact_three_companion_selection(self):
+        script = r"""
+        const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
+        const source = fs.readFileSync('app/js/flashcards.js', 'utf8');
+        const c = { window: {}, stats: {}, cardNavStack: [{}], currentIndex: 0,
+            currentMeaningIndex: 2, currentExampleIndex: 2, currentMWEIndex: 2,
+            currentGroupSelection: {}, document: { getElementById: () => null },
+            updateCard() {}, goToDeckCard(index) { c.currentIndex = index; } };
+        vm.createContext(c);
+        vm.runInContext(source.slice(source.indexOf('function selectSplitCompanion('),
+            source.indexOf('// Plain forward step')), c);
+        const event = { preventDefault() {}, stopPropagation() {} };
+        for (const order of [[1,2,3],[2,3,1],[3,1,2]]) {
+            const cards = order.map(index => ({ targetWord:'fue', splitInfo:{index} }));
+            cards.forEach((card, index) => {
+                card._splitNext = cards[index+1]; card._splitPrev = cards[index-1];
+            });
+            for (const from of cards) for (const to of cards) {
+                c.flashcards = [from]; c.selectSplitCompanion(event, to.splitInfo.index);
+                assert.equal(c.flashcards[0], to);
+                assert.equal(c.cardNavStack.length, 1);
+            }
+            c.flashcards = [cards[0]];
+            assert(c.stepToSplitSibling()); assert(c.stepToSplitSibling());
+            assert.equal(c.stepToSplitSibling(), false);
+        }
+        c.cardNavStack = [];
+        c.flashcards = [1,2,3].map(index => ({targetWord:'fue',splitInfo:{index}}));
+        for (let from=0; from<3; from++) for (let to=0; to<3; to++) {
+            c.currentIndex=from; c.selectSplitCompanion(event,to+1); assert.equal(c.currentIndex,to);
+        }
+        """
+        result = subprocess.run(['node', '-'], input=script, text=True, capture_output=True, cwd=ROOT)
         self.assertEqual(result.returncode, 0, result.stderr)
