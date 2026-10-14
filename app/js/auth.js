@@ -840,7 +840,8 @@ async function loadLegacyProgress(cacheKey, cached) {
                 lastCorrect: item.lastCorrect,
                 lastWrong: item.lastWrong,
                 lastSeen: item.lastSeen,
-                srsStage: item.srsStage
+                srsStage: item.srsStage,
+                    migrationReviewAt: item.migrationReviewAt || null
             };
         });
     };
@@ -1019,7 +1020,8 @@ async function loadUserProgressFromSheetNow() {
                     lastCorrect: item.lastCorrect,
                     lastWrong: item.lastWrong,
                     lastSeen: item.lastSeen,
-                    srsStage: item.srsStage
+                    srsStage: item.srsStage,
+                    migrationReviewAt: item.migrationReviewAt || null
                 };
             });
             console.log(`Loaded ${progressResult.data.progress.length} unified card progress rows`);
@@ -1042,7 +1044,8 @@ async function loadUserProgressFromSheetNow() {
                     lastWrong: item.lastWrong,
                     lastSeen: item.lastSeen,
                     schemaVersion: item.schemaVersion || 1,
-                    srsStage: item.srsStage
+                    srsStage: item.srsStage,
+                    migrationReviewAt: item.migrationReviewAt || null
                 };
             });
             console.log(`Loaded ${Object.keys(itemProgressData).length} granular knowledge items`);
@@ -1153,6 +1156,7 @@ async function saveWordProgress(card, isCorrect) {
     }
 
     progressData[wordId].srsStage = advanceSrsStage(progressData[wordId], isCorrect);
+    delete progressData[wordId].migrationReviewAt;
     if (isCorrect) {
         progressData[wordId].correct++;
         progressData[wordId].lastCorrect = timestamp;

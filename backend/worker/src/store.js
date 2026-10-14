@@ -1,3 +1,4 @@
+import { reviewStage, reviewIntervalDays, reviewUnresolved, reviewNextAt, reviewTimestamp, reviewCount } from '../../../app/js/srs-policy.js';
 /**
  * Storage layer for the event-sourced schema.
  *
@@ -16,8 +17,7 @@
  */
 
 export const ITEM_TYPES = ['sense', 'mwe', 'clitic', 'lemma'];
-const SRS_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60, 120];
-const DAY_MS = 86400000;
+
 
 /* ------------------------------- identity ------------------------------- */
 
@@ -61,51 +61,32 @@ export function legacySheetMode(sheetName) {
 
 /* ------------------------------- schedule ------------------------------- */
 
-const ts = value => {
-  if (!value) return 0;
-  const parsed = Date.parse(value);
-  return Number.isFinite(parsed) ? parsed : 0;
-};
+export function computeSchedule(progress) {
+  const raw = progress.srsStage;
+  const explicit = raw !== null && raw !== undefined && raw !== ''
+    && Number.isFinite(Number(raw)) && Number(raw) >= 0;
+  const stage = reviewStage(progress), unresolved = reviewUnresolved(progress);
+  const due = unresolved ? (reviewTimestamp(progress.lastWrong) || reviewTimestamp(progress.lastSeen)
+    || reviewTimestamp(progress.lastCorrect)) : reviewNextAt(progress);
+  return { stage, explicitStage: explicit ? stage : null,
+    dueAt: due ? new Date(due).toISOString() : null, unresolved: unresolved ? 1 : 0 };
+}
 
-/**
- * The v1 ladder, unchanged from the client's getSrsStage/getProgressState —
- * computed once here instead of for every card on every render. Because it is
- * derived, changing this function and replaying review_events re-schedules
- * everything without touching the source data.
- */
-export function computeSchedule({ correct, wrong, lastCorrect, lastWrong, lastSeen, srsStage }) {
-  const c = Math.max(0, Number(correct) || 0);
-  const w = Math.max(0, Number(wrong) || 0);
-  const lc = ts(lastCorrect);
-  const lw = ts(lastWrong);
-
-  // An explicitly recorded stage and a derived one are not interchangeable:
-  // '' means "no stage was ever written, derive it from the counts", and the
-  // client still does that itself. Persisting a derived value as though it
-  // were explicit would silently pin the card's schedule and override any
-  // future change to the derivation. So keep them apart — explicitStage is
-  // what gets stored, stage is what due_at is computed from.
-  const parsed = Number(srsStage);
-  const explicitStage = (srsStage !== null && srsStage !== undefined && srsStage !== ''
-    && Number.isFinite(parsed) && parsed >= 0)
-    ? Math.min(Math.floor(parsed), SRS_INTERVAL_DAYS.length)
-    : null;
-
-  let stage;
-  if (explicitStage !== null) stage = explicitStage;
-  else if (c === 0) stage = 0;
-  else stage = Math.min(Math.max(1, c - w), SRS_INTERVAL_DAYS.length);
-
-  let unresolved = false;
-  if (w > 0 || lw > 0) unresolved = (lw > 0 || lc > 0) ? lw > lc : c === 0;
-
-  let dueAt = null;
-  if (unresolved) {
-    dueAt = lastWrong || lastSeen || lastCorrect || null;
-  } else if (lc > 0 && stage > 0) {
-    dueAt = new Date(lc + SRS_INTERVAL_DAYS[stage - 1] * DAY_MS).toISOString();
-  }
-  return { stage, explicitStage, dueAt, unresolved: unresolved ? 1 : 0 };
+// Old-device retries cannot reduce lifetime totals or resurrect an import date.
+export function reconcileProgress(prior, params) {
+  const c = reviewCount(params.correct), w = reviewCount(params.wrong);
+  const latest = (a, b) => reviewTimestamp(a) >= reviewTimestamp(b) ? (a || '') : (b || '');
+  const previousAnswer = Math.max(reviewTimestamp(prior?.last_correct_at), reviewTimestamp(prior?.last_incorrect_at));
+  const incomingAnswer = Math.max(reviewTimestamp(params.lastCorrect), reviewTimestamp(params.lastWrong));
+  const hasNewAnswer = !prior || c > prior.correct_count || w > prior.incorrect_count || incomingAnswer > previousAnswer;
+  return {
+    correct: Math.max(c, prior?.correct_count || 0), wrong: Math.max(w, prior?.incorrect_count || 0),
+    lastCorrect: latest(params.lastCorrect, prior?.last_correct_at),
+    lastWrong: latest(params.lastWrong, prior?.last_incorrect_at),
+    lastSeen: latest(params.lastSeen, prior?.last_seen_at),
+    srsStage: prior && !hasNewAnswer ? prior.srs_stage : params.srsStage,
+    migrationReviewAt: hasNewAnswer ? null : (prior?.migration_review_at || null)
+  };
 }
 
 /* -------------------------------- mapping ------------------------------- */
@@ -124,7 +105,8 @@ export function stateToWireWord(row) {
     lastWrong: row.last_incorrect_at,
     lastSeen: row.last_seen_at,
     schemaVersion: 4,
-    srsStage: row.srs_stage === null ? '' : row.srs_stage
+    srsStage: row.srs_stage === null ? '' : row.srs_stage,
+    migrationReviewAt: row.migration_review_at || null
   };
 }
 
@@ -143,7 +125,8 @@ export function stateToWireItem(row) {
     lastWrong: row.last_incorrect_at,
     lastSeen: row.last_seen_at,
     schemaVersion: 4,
-    srsStage: row.srs_stage === null ? '' : row.srs_stage
+    srsStage: row.srs_stage === null ? '' : row.srs_stage,
+    migrationReviewAt: row.migration_review_at || null
   };
 }
 
@@ -151,8 +134,8 @@ const UPSERT_STATE = `
 INSERT INTO item_state (
   user_id, lang_code, item_id, mode, item_type, parent_id, language, source,
   label, correct_count, incorrect_count, first_seen_at, last_seen_at,
-  last_correct_at, last_incorrect_at, srs_stage, due_at, unresolved, updated_at
-) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19)
+  last_correct_at, last_incorrect_at, srs_stage, due_at, unresolved, updated_at, migration_review_at
+) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20)
 ON CONFLICT(user_id, lang_code, item_id, mode) DO UPDATE SET
   item_type=excluded.item_type, parent_id=excluded.parent_id,
   language=excluded.language, source=excluded.source, label=excluded.label,
@@ -162,7 +145,11 @@ ON CONFLICT(user_id, lang_code, item_id, mode) DO UPDATE SET
   last_seen_at=excluded.last_seen_at, last_correct_at=excluded.last_correct_at,
   last_incorrect_at=excluded.last_incorrect_at, srs_stage=excluded.srs_stage,
   due_at=excluded.due_at, unresolved=excluded.unresolved,
-  updated_at=excluded.updated_at`;
+  updated_at=excluded.updated_at, migration_review_at=excluded.migration_review_at
+WHERE excluded.correct_count >= item_state.correct_count
+  AND excluded.incorrect_count >= item_state.incorrect_count
+  AND excluded.last_correct_at >= item_state.last_correct_at
+  AND excluded.last_incorrect_at >= item_state.last_incorrect_at`;
 
 export function upsertStateStmt(db, s) {
   return db.prepare(UPSERT_STATE).bind(
@@ -171,7 +158,7 @@ export function upsertStateStmt(db, s) {
     s.correct, s.wrong, s.firstSeen || '', s.lastSeen || '',
     s.lastCorrect || '', s.lastWrong || '',
     s.stage === null || s.stage === undefined ? null : s.stage,
-    s.dueAt, s.unresolved, new Date().toISOString()
+    s.dueAt, s.unresolved, new Date().toISOString(), s.migrationReviewAt || null
   );
 }
 
