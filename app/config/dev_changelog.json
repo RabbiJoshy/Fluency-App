@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T19:42:54+01:00",
+      "date": "2026-10-14 19:42 BST",
+      "agent": "Codex",
+      "summary": "Explicit Off and On choices for Smart Skip",
+      "detail": [
+        "Replaced the setup switch with Off and On buttons and a selected-state checkmark.",
+        "Desktop uses one line; mobile puts the skipped count and Details on a second line.",
+        "Removed the Recommended pill and example words from the setup row. Details still opens the individual options.",
+        "The control preserves the existing saved preference and recalculates the available cards."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T19:24:19+01:00",
       "date": "2026-10-14 19:24 BST",
       "agent": "Codex",

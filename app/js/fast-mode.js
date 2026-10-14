@@ -19,20 +19,6 @@
 import './state.js?v=20260825ak';
 import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=20260920a';
 
-// Measure the space the row has left and drop whole words until the rest fit.
-// Fewer words is the honest answer on a narrow row; an ellipsis would only say
-// the list was cut. ResizeObserver refits after a window resize or rotation.
-function fitSmartSkipExamples(element) {
-    const { words = [], prefix = '' } = element._exampleList || {};
-    if (!words.length) { element.innerHTML = ''; return; }
-    if (!element.clientWidth) return;
-    for (let count = words.length; count >= 0; count--) {
-        element.innerHTML = count ? prefix + words.slice(0, count)
-            .map(word => `<em>${escapeExample(word)}</em>`).join(', ') : '';
-        if (element.scrollWidth <= element.clientWidth) break;
-    }
-}
-
 let applyingMasterSwitch = false;
 let returnToSettings = false;
 let advancedRefreshTimer = null;
@@ -208,14 +194,10 @@ function refresh() {
         }
     }
 
-    // The home row: the switch is the real master control, and the count next
-    // to the chevron is what tells a learner there is more behind the row.
-    // Total skipped cards counts all cards set aside or merged.
-    const hubSwitch = document.getElementById('fastTrackHubSwitch');
-    if (hubSwitch) {
-        hubSwitch.classList.toggle('selected', on);
-        hubSwitch.setAttribute('aria-checked', String(on));
-    }
+    // The home row exposes two explicit, mutually exclusive choices.
+    document.querySelectorAll('[data-ss-master]').forEach(button => {
+        button.setAttribute('aria-pressed', String((button.dataset.ssMaster === 'on') === on));
+    });
     const hubRow = document.getElementById('setupOptions')?.querySelector('.fast-track-hub-row');
     if (hubRow) {
         hubRow.classList.toggle('is-unseen', !hasSeenFastTrackPage());
@@ -223,34 +205,13 @@ function refresh() {
     }
     const hubSummary = document.getElementById('fastTrackHubSummary');
     if (hubSummary) {
-        // The switch already says on or off, so this line says something else:
+        // The control already says on or off, so this line says something else:
         // what turning it on does, then what it is doing.
         hubSummary.classList.toggle('is-slogan', !on);
-        hubSummary.textContent = !on ? 'Fewer cards, same coverage'
+        hubSummary.textContent = !on ? 'Fewer cards to study'
             : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} skipped`
             : 'None skipped';
     }
-    const hubExamples = document.getElementById('fastTrackHubExamples');
-    if (hubExamples) {
-        // After the count, in the level box's "e.g." voice: on, a few of the
-        // look-alikes Smart Skip is setting aside; off, the commonest ones it
-        // would. A handful of strong, familiar words says it better than a
-        // long list, and the row shows fewer still where it is narrow.
-        // Target language words (e.g. Spanish) as the level box examples are.
-        const targetWord = item => item?.word || '';
-        const words = [...new Set((on
-            ? (extras.cognates || []).map(entry => entry.item)
-            : lookAlikeCandidates()).slice(0, 12).map(targetWord).filter(Boolean))].slice(0, 5);
-        hubExamples._exampleList = { words, prefix: on ? 'e.g. ' : 'Look-alikes like ' };
-        hubExamples.innerHTML = words.length ? hubExamples._exampleList.prefix
-            + words.map(word => `<em>${escapeExample(word)}</em>`).join(', ') : '';
-        if (!hubExamples._fitObserver && typeof ResizeObserver !== 'undefined') {
-            hubExamples._fitObserver = new ResizeObserver(() => fitSmartSkipExamples(hubExamples));
-            hubExamples._fitObserver.observe(hubExamples);
-        }
-        requestAnimationFrame(() => fitSmartSkipExamples(hubExamples));
-    }
-
     const secondaryState = document.getElementById('smartSkipSecondaryState');
     if (secondaryState) {
         const activeCount = Number(lemmaOn()) + advancedOn + Number(Boolean(globalThis.isBridgeEnabled?.()));
@@ -545,7 +506,12 @@ function init() {
         if (secondary) secondary.open = !event.matches || !cognateAvailable();
     });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
-    document.getElementById('fastTrackHubSwitch')?.addEventListener('click', () => applyFastMode(currentState() !== 'on'));
+    document.querySelectorAll('[data-ss-master]').forEach(button => {
+        button.addEventListener('click', () => {
+            const on = button.dataset.ssMaster === 'on';
+            if (on !== (currentState() === 'on')) applyFastMode(on);
+        });
+    });
     document.getElementById('dismissStreamlineRecBtn')?.addEventListener('click', (e) => {
         e.stopPropagation();
         try { localStorage.setItem(STREAMLINE_REC_DISMISSED_KEY, '1'); } catch (_) {}

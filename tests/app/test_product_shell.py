@@ -600,7 +600,10 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("extras.allSkipped", fast_mode_js)
         self.assertIn("extras.cognates", fast_mode_js)
         self.assertIn("lookAlikeCandidates()", fast_mode_js)
-        self.assertIn("prefix: on ? 'e.g. ' : 'Look-alikes like '", fast_mode_js)
+        self.assertNotIn('id="fastTrackHubExamples"', choosing)
+        self.assertIn('data-ss-master="off" aria-pressed="true"', choosing)
+        self.assertIn('data-ss-master="on" aria-pressed="false"', choosing)
+        self.assertNotIn('Recommended', choosing)
 
     def test_settings_are_organised_around_learner_tasks(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
