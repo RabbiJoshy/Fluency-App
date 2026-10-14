@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-15T00:41:00+01:00",
+      "date": "2026-10-15 00:41 BST",
+      "agent": "Antigravity",
+      "summary": "Modernized Portuguese function words with deterministic content cycling & ambient glow system",
+      "detail": [
+        "Closed-class focus words (que, de, se, o, nos, naquele) now feature a deterministic grammatical layout on card backs with content-word variation pills (e.g. gostar, precisar, depender for de) and clean contraction breakdown formulas (em + aquele for naquele; contextual em + os for nos).",
+        "Function words receive a single, dedicated signature ambient glow: Periwinkle Moonstone Off-White (rgb(212, 218, 245)), giving structural grammar words elevated distinction without competing with the chromatic POS spectrum.",
+        "Non-function words receive ambient glow per Part of Speech: multi-corner radial lighting on unified cards with multiple parts of speech, and single-POS lighting on companion cards ('Card 1 of 2')."
+      ],
+      "commit": "69c66a4c"
+    },
+    {
       "timestamp": "2026-10-14T22:18:59+01:00",
       "date": "2026-10-14 22:18 BST",
       "agent": "Claude",
