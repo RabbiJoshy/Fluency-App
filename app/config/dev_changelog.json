@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T16:10:24+01:00",
+      "date": "2026-10-14 16:10 BST",
+      "agent": "Claude",
+      "summary": "Portuguese: DeepSeek re-checked the 13,486 shakiest meanings on words 1–4,000 (temporary, labelled DEEPSEEK v25)",
+      "detail": [
+        "Same cards and same examples as before; only the meaning shown on 13,486 example sentences changes.",
+        "Those picks come from DeepSeek, each confirmed by a second head-to-head check, ranked above the normal v25 picks.",
+        "Kept in a separate assigner file, not in the pipeline run, so a future normal v26 can outrank it.",
+        "Spanish and French bridge files now point at the new Portuguese release."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T14:37:25+01:00",
       "date": "2026-10-14 14:37 BST",
       "agent": "Codex",
@@ -371,19 +384,6 @@
         "Keep desktop settings and browser controls accessible while scrolling; add preview chevrons to word rows.",
         "Render song titles without italics, above artist or vocalist credits, in both live cards and tutorial replicas.",
         "All 268 app tests passed; desktop scrolling, phone layout, five-match study counts and two-line card credits checked in the browser."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T21:39:36+01:00",
-      "date": "2026-10-12 21:39 BST",
-      "agent": "Codex",
-      "summary": "Artist photos in progress; flags and language codes in Smart Skip",
-      "detail": [
-        "Music progress uses the active artist picture, with initials or a music symbol when artwork is unavailable. Speech keeps its language flag.",
-        "Smart Skip column headings show flags beside ES, EN and other language codes. Multiple known languages show their own labels rather than a globe.",
-        "The cognate language filter uses All or a specific flag and code; unknown languages keep their code without a globe icon.",
-        "All 268 app tests passed; artist header and cognate columns checked in the browser."
       ],
       "commit": "pending"
     }
