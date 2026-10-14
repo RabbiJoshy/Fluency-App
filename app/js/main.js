@@ -469,6 +469,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
         .then(registration => {
             console.log('SW registered');
+            registration.update().catch(error => console.warn('SW update failed:', error.message));
             const announceUpdate = () => {
                 if (!registration.waiting) return;
                 const indicator = document.getElementById('syncStatusIndicator');

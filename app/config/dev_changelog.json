@@ -7,6 +7,7 @@
       "agent": "Codex",
       "summary": "Stop cached staging error pages from triggering recursive file preloads and excessive CPU use.",
       "detail": [
+        "Use staging public service settings directly instead of requesting the unshipped backend/secrets.json file that triggers the old cached fallback.",
         "Start the offline-worker update before the page finishes loading, so recursive preloads cannot prevent the repair from installing.",
         "Reject HTML responses requested as scripts or data, including old cached fallback pages with recursive preload headers.",
         "Evict the invalid asset cache entry and retry the real file; preserve valid assets, offline downloads and learner progress.",

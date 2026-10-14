@@ -87,6 +87,11 @@ async function loadSecrets() {
         : '';
     if (PASSWORDLESS_ENABLED) GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
 
+    // Pages never ships backend/. Older offline workers can replay a cached
+    // HTML fallback here and start recursive module preloads before updating.
+    // Staging already has every public endpoint above; do not probe that URL.
+    if (IS_STAGING) return;
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
     try {

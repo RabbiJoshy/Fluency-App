@@ -85,3 +85,27 @@ vm.runInNewContext(source.slice(start, end), context);
 assert.equal(registered, 1, 'worker recovery must not wait for stalled page loading');
 ''')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_staging_uses_public_services_without_probing_missing_backend(self):
+        result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r'''
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const source = fs.readFileSync('app/js/auth.js', 'utf8');
+const start = source.indexOf('async function loadSecrets()');
+const end = source.indexOf('// modern Navigation', start);
+const bodyEnd = source.indexOf('\n}\n', start) + 3;
+let fetched = false;
+const context = {config: {publicServices: {spotifyClientId: 'public-client', progressSyncUrl: 'public-sync'}},
+  window: {}, IS_STAGING: true, PASSWORDLESS_ENABLED: true, PASSWORDLESS_SYNC_URL: 'staging-sync',
+  fetch() {fetched = true; throw new Error('must not request missing backend');}};
+vm.createContext(context);
+vm.runInContext(source.slice(start, bodyEnd), context);
+(async () => {
+  await vm.runInContext('loadSecrets()', context);
+  assert.equal(fetched, false);
+  assert.equal(context.window._spotifyClientId, 'public-client');
+  assert.equal(context.GOOGLE_SCRIPT_URL, 'staging-sync');
+})().catch(error => {console.error(error); process.exitCode = 1;});
+''')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
