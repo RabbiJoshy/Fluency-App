@@ -106,6 +106,7 @@ export function mergeProgressRecords(records) {
         lastSeen: newestValue(records, 'lastSeen'),
         // Review cadence follows the newest answer source. Summed lifetime
         // counts remain history and must not accidentally inflate SRS stage.
-        srsStage: newest.srsStage
+        srsStage: newest.srsStage,
+        migrationReviewAt: newest.migrationReviewAt || null
     };
 }

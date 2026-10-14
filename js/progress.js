@@ -1,13 +1,14 @@
-import './state.js?v=74900aa0';
+import { REVIEW_INTERVAL_DAYS, reviewStage, reviewIntervalDays, reviewNextAt } from './srs-policy.js?v=22104522';
+import './state.js?v=22104522';
 import {
     crossModeProgressId,
     matchingProgressRecords,
     mergeProgressRecords,
     normalizeProgressSurface
-} from './progress-identity.js?v=74900aa0';
+} from './progress-identity.js?v=22104522';
 
 const SRS_DAY_MS = 24 * 60 * 60 * 1000;
-const SRS_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60, 120, 240, 365];
+const SRS_INTERVAL_DAYS = REVIEW_INTERVAL_DAYS;
 
 function parseProgressTimestamp(value) {
     if (!value) return 0;
@@ -18,30 +19,8 @@ function parseProgressTimestamp(value) {
 // Adaptive schedule: successful recalls graduate through intervals [1..365] days,
 // fine-tuned by the learner's personal error rate on the card.
 // Explicit stages are preserved; legacy rows derive an initial stage from lifetime totals.
-function getSrsStage(progress) {
-    const explicit = Number(progress?.srsStage);
-    if (progress?.srsStage !== null && progress?.srsStage !== ''
-            && Number.isFinite(explicit) && explicit >= 0) {
-        return Math.min(Math.floor(explicit), SRS_INTERVAL_DAYS.length);
-    }
-    const correct = Math.max(0, Number(progress?.correct) || 0);
-    const wrong = Math.max(0, Number(progress?.wrong) || 0);
-    if (correct === 0) return 0;
-    return Math.min(Math.max(1, correct - wrong), SRS_INTERVAL_DAYS.length);
-}
-
-function getSrsIntervalDays(progress) {
-    const stage = getSrsStage(progress);
-    if (stage <= 0) return null;
-    const baseDays = SRS_INTERVAL_DAYS[stage - 1];
-    const correct = Math.max(0, Number(progress?.correct) || 0);
-    const wrong = Math.max(0, Number(progress?.wrong) || 0);
-    if (correct + wrong === 0) return baseDays;
-    const failRate = wrong / (correct + wrong);
-    // Personal multiplier: scales between 0.75x (frequent errors) and 1.25x (clean recall)
-    const factor = Math.max(0.75, Math.min(1.25, 1.25 - (failRate * 0.55)));
-    return Math.max(1, Math.round(baseDays * factor));
-}
+function getSrsStage(progress) { return reviewStage(progress); }
+function getSrsIntervalDays(progress) { return reviewIntervalDays(progress); }
 
 const SRS_MIN_ADVANCE_ELAPSED_MS = 4 * 60 * 60 * 1000; // 4 hours
 
@@ -103,7 +82,7 @@ function getProgressState(progress, now = Date.now()) {
     const intervalDays = !unresolved && lastCorrect > 0
         ? getSrsIntervalDays(progress)
         : null;
-    const nextReviewAt = intervalDays ? lastCorrect + intervalDays * SRS_DAY_MS : 0;
+    const nextReviewAt = !unresolved ? reviewNextAt(progress) : 0;
     const nowTime = Number.isFinite(Number(now)) ? Number(now) : Date.now();
     // The schedule can be paused while the app/content are under active
     // development. Pausing suppresses only time-based due status: explicit

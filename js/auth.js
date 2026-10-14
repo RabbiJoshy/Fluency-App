@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=74900aa0';
-import { readJsonWithTimeout } from './read-request.js?v=74900aa0';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=74900aa0';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=74900aa0';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=74900aa0';
-import { dbGet, dbPut } from './offline-db.js?v=74900aa0';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=74900aa0';
+import './state.js?v=22104522';
+import { readJsonWithTimeout } from './read-request.js?v=22104522';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=22104522';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=22104522';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=22104522';
+import { dbGet, dbPut } from './offline-db.js?v=22104522';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=22104522';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=74900aa0';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=74900aa0';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=74900aa0';
+} from './sync-queue.js?v=22104522';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=22104522';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=22104522';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -840,7 +840,8 @@ async function loadLegacyProgress(cacheKey, cached) {
                 lastCorrect: item.lastCorrect,
                 lastWrong: item.lastWrong,
                 lastSeen: item.lastSeen,
-                srsStage: item.srsStage
+                srsStage: item.srsStage,
+                    migrationReviewAt: item.migrationReviewAt || null
             };
         });
     };
@@ -1019,7 +1020,8 @@ async function loadUserProgressFromSheetNow() {
                     lastCorrect: item.lastCorrect,
                     lastWrong: item.lastWrong,
                     lastSeen: item.lastSeen,
-                    srsStage: item.srsStage
+                    srsStage: item.srsStage,
+                    migrationReviewAt: item.migrationReviewAt || null
                 };
             });
             console.log(`Loaded ${progressResult.data.progress.length} unified card progress rows`);
@@ -1042,7 +1044,8 @@ async function loadUserProgressFromSheetNow() {
                     lastWrong: item.lastWrong,
                     lastSeen: item.lastSeen,
                     schemaVersion: item.schemaVersion || 1,
-                    srsStage: item.srsStage
+                    srsStage: item.srsStage,
+                    migrationReviewAt: item.migrationReviewAt || null
                 };
             });
             console.log(`Loaded ${Object.keys(itemProgressData).length} granular knowledge items`);
@@ -1153,6 +1156,7 @@ async function saveWordProgress(card, isCorrect) {
     }
 
     progressData[wordId].srsStage = advanceSrsStage(progressData[wordId], isCorrect);
+    delete progressData[wordId].migrationReviewAt;
     if (isCorrect) {
         progressData[wordId].correct++;
         progressData[wordId].lastCorrect = timestamp;

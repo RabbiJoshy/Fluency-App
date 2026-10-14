@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T14:37:25+01:00",
+      "date": "2026-10-14 14:37 BST",
+      "agent": "Codex",
+      "summary": "Keep imported known progress reviewable without invented answers",
+      "detail": [
+        "The app and server use one review policy and repair answered stage-zero states.",
+        "Imported known cards have a separate 14-day review date, cleared by their next answer.",
+        "Stale device writes cannot reduce stored counts or replace newer answer dates."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T08:38:43+01:00",
       "date": "2026-10-14 08:38 BST",
       "agent": "Codex",
@@ -372,19 +384,6 @@
         "Smart Skip column headings show flags beside ES, EN and other language codes. Multiple known languages show their own labels rather than a globe.",
         "The cognate language filter uses All or a specific flag and code; unknown languages keep their code without a globe icon.",
         "All 268 app tests passed; artist header and cognate columns checked in the browser."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T21:30:44+01:00",
-      "date": "2026-10-12 21:30 BST",
-      "agent": "Codex",
-      "summary": "Simpler language picker and consistent modal close buttons",
-      "detail": [
-        "Centre Save text and replace duplicate modal Cancel actions with the standard header X.",
-        "Remove Add another language; use only listed profile choices.",
-        "Label listed languages without study decks Coming soon while keeping them selectable as languages you know.",
-        "Preserve existing saved language profiles and Smart Skip’s relevant-pair filtering."
       ],
       "commit": "pending"
     }
