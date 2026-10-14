@@ -125,6 +125,12 @@ def register(subparsers) -> None:
         default="forced_leaf",
         help="publish every forced leaf or only leaf-level supported claims",
     )
+    pipeline_run_release.add_argument(
+        "--assigner-order",
+        nargs="+",
+        help="ranked WSD assigners, highest first: NORMAL (this run's stage 04) and "
+        "assigner directories inside workspace/raw, e.g. raw/wsd/pt/assigners/<id> NORMAL",
+    )
 
 
 def handle_pipeline(args: argparse.Namespace) -> int:
@@ -267,6 +273,7 @@ def handle_pipeline(args: argparse.Namespace) -> int:
             source_titles_path=args.source_titles,
             wsd_selection_projection=args.wsd_selection_projection,
             wsd_publication_projection=args.wsd_publication_projection,
+            assigner_order=args.assigner_order,
         )
         manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
         deck = json.loads((output / "deck.json").read_text(encoding="utf-8"))

@@ -89,7 +89,7 @@
       "speechLang": "es-ES",
       "cognatesPath": "cognates/es/cognates-literal-ground-r6-fw1.json",
       "mergeExceptionsPath": "data/merge-exceptions/es-literal-ground-r6-seam-v1-fw1.json",
-      "bridgePath": "data/bridge/es-fw1.json",
+      "bridgePath": "data/bridge/es-fw1-ds25.json",
       "coveragePath": null,
       "dictionaryExamplesPath": "data/dictionary-examples/es-es-speech-v25-literal-ground-r6-10000x30-slim-v1-fw1.json"
     },
@@ -393,7 +393,7 @@
       "speechLang": "fr-FR",
       "cognatesPath": "cognates/fr/cognates.json",
       "mergeExceptionsPath": "data/merge-exceptions/fr.json",
-      "bridgePath": "data/bridge/fr-fw1.json",
+      "bridgePath": "data/bridge/fr-fw1-ds25.json",
       "coveragePath": null
     },
     "russian": {
@@ -516,14 +516,14 @@
     },
     "portuguese": {
       "name": "Portuguese",
-      "indexPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-slim/app/vocabulary.index.json",
-      "estimationPoolPath": "data/estimation-pools/portuguese-literal-ground-r4-seam-v1-fw1.json",
-      "frequencyPath": "data/speech-frequency/pt-literal-ground-r4-fw1.json",
-      "examplesPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-slim/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-slim/app/study-structure.json",
-      "releaseManifestPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-slim/manifest.json",
-      "releaseCompositionPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-slim/composition.json",
-      "conjugationsPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-slim/app/conjugations.json",
+      "indexPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim/app/vocabulary.index.json",
+      "estimationPoolPath": "data/estimation-pools/portuguese-literal-ground-r4-seam-v1-fw1-ds25.json",
+      "frequencyPath": "data/speech-frequency/pt-literal-ground-r4-fw1-ds25.json",
+      "examplesPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim/app/study-structure.json",
+      "releaseManifestPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim/manifest.json",
+      "releaseCompositionPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim/composition.json",
+      "conjugationsPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim/app/conjugations.json",
       "exampleTargetField": "example_portuguese",
       "exampleEnglishField": "example_english",
       "hasData": true,
@@ -587,11 +587,11 @@
       "conjugationDrill": "pt",
       "shortCode": "PT",
       "speechLang": "pt-PT",
-      "cognatesPath": "cognates/pt/cognates-literal-ground-r4-fw1.json",
-      "mergeExceptionsPath": "data/merge-exceptions/pt-literal-ground-r4-seam-v1-fw1.json",
-      "bridgePath": "data/bridge/pt-fw1.json",
+      "cognatesPath": "cognates/pt/cognates-literal-ground-r4-fw1-ds25.json",
+      "mergeExceptionsPath": "data/merge-exceptions/pt-literal-ground-r4-seam-v1-fw1-ds25.json",
+      "bridgePath": "data/bridge/pt-fw1-ds25.json",
       "coveragePath": null,
-      "dictionaryExamplesPath": "data/dictionary-examples/pt-pt-speech-v25-literal-ground-r4-10000x30-slim-v1-fw1.json"
+      "dictionaryExamplesPath": "data/dictionary-examples/pt-pt-speech-v25-literal-ground-r4-10000x30-slim-v1-fw1-ds25.json"
     },
     "portuguese_brazilian": {
       "name": "Brazilian Portuguese",

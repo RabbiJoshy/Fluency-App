@@ -119,3 +119,29 @@ Open, for whoever builds the Turbo hard-word list:
    text. Do not cluster near-duplicates: Josh, a duplicate is a property of the
    sentence-sense pair, not of the menu.
 3. **Retry missing answers.** One of 156 batched sentences came back with no answer.
+
+## Ranked assigners: DEEPSEEK v25 on Portuguese (2026-10-14)
+
+A temporary "ideal state" for the Portuguese deck while WSD improves, built so it cannot
+leak into the method. `src/fluency/release/ranked_assigners.py`: a release takes each
+example's sense from the first assigner in a declared order (`--assigner-order`), where
+`NORMAL` is the run's own stage 04 and anything else is a sparse `wsd-assigner/v1`
+directory under `<workspace>/raw`. Examples are still chosen from NORMAL (stage 05 is
+unchanged); only the senses shown on them move. Nothing is written to any run, so no later
+run can carry an LLM pick forward as a WSD decision. A later `NORMAL v26 > DEEPSEEK v25`
+order lets an improved algorithm take over.
+
+Portuguese, `pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim`, order
+`DEEPSEEK v25 > NORMAL v25`:
+
+- Calibration (1,500 sentences, random by margin band): DeepSeek disagreement is flat at
+  ~50% across the narrowest 30% of margins, 41% at 30–40%, 23% at 40–60%, 3% at the top.
+- Pass (`oneoff_pt.py`): words 1–4,000, narrowest 40% of margins, rule-decided rows
+  excluded: 34,577 sentences, 3,813 calls batched by word, $1.48 at peak rates.
+  16,561 meaning changes; Claude's judgement of 60: 30 better, 5 worse, 25 too close.
+- Head-to-head check (`duel.py`): the two senses only, random order. On the judged 60 it
+  kept all 30 better and rejected 4 of 5 worse. Kept 13,486 of 16,561 changes; $0.75.
+- Assigner: `<workspace>/raw/wsd/pt/assigners/deepseek-v25-20261014` (13,486 rows),
+  written by `scripts/write_wsd_assigner.py`.
+- Release: same 282,300 examples as the live fw1 release; 13,486 differ in sense only.
+  Side files rebound (`-ds25`); cognate verdicts recomputed (5,149 → 5,060 cards).

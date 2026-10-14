@@ -32,6 +32,7 @@ from fluency.release.composition import compose_release
 from fluency.core.io import atomic_write, json_bytes
 from fluency.release.study_structure import build_study_structure
 from fluency.release.assignment_store import AssignmentFile, SentenceFile
+from fluency.release.ranked_assigners import NORMAL, RankedAssignments
 from fluency.release.validation import SPEECH_DECK_VERSION
 from fluency.pipeline.budget import display_examples_for_rank
 from fluency.sense_menu.canonical import choose as choose_canonical_example
@@ -321,8 +322,14 @@ def build_inactive_run_candidate(
     wsd_selection_projection: str = "provider_only",
     wsd_publication_projection: str = "forced_leaf",
     memory_bounded: bool = False,
+    assigner_order: list[str | Path] | None = None,
 ) -> Path:
-    """Select harvested examples and compose a non-activated release."""
+    """Select harvested examples and compose a non-activated release.
+
+    ``assigner_order`` ranks WSD assigners, highest first; ``NORMAL`` is this
+    run's stage 04 and any other entry an assigner directory (see
+    ``ranked_assigners``). Omitted, the release reads stage 04 alone.
+    """
 
     created_at = datetime.now(UTC) if created_at is None else created_at
     if wsd_selection_projection not in SELECTION_PROJECTIONS:
@@ -394,6 +401,33 @@ def build_inactive_run_candidate(
             run / "stages/04_wsd_assignments/output/assignments.jsonl"
         )
     menu_by_card = {card["card_id"]: card for card in menus.get("cards", [])}
+    use_assigners = bool(assigner_order) and list(assigner_order) != [NORMAL]
+    # Examples are chosen from this run's own stage 04 and recorded in its stage
+    # 05; ranked assigners change only the senses shown on them afterwards. So a
+    # ranked release shows exactly the examples its NORMAL release shows.
+    selection_assignments = assignments
+    selection_inputs = dict(inputs)
+    if use_assigners:
+        if not assignments:
+            raise RunCandidateError("ranked assigners need this run's stage 04 to rank against")
+        order = []
+        for item in assigner_order:
+            if item == NORMAL:
+                order.append(NORMAL)
+                continue
+            path = Path(item).expanduser()
+            path = (path if path.is_absolute() else workspace.root / path).resolve()
+            try:
+                path.relative_to((workspace.root / "raw").resolve())
+            except ValueError as error:
+                raise RunCandidateError("an assigner must live inside workspace/raw") from error
+            order.append(path)
+        try:
+            assignments = RankedAssignments(assignments, order, menu_by_card, language)
+        except ValueError as error:
+            raise RunCandidateError(str(error)) from error
+        for assigner in assignments.assigners:
+            inputs[f"wsd_assigner:{assigner['name']}"] = assigner["artifact_id"]
     candidates_by_card = {card["card_id"]: card for card in candidates.get("cards", [])}
     scope = profile["scope"]
     # How many different cards may show the same sentence before it is held
@@ -413,7 +447,7 @@ def build_inactive_run_candidate(
         if int(entry.get("rank", 0)) <= _SELECTION_FUNCTION_WORD_RANK
     )
 
-    if isinstance(assignments, AssignmentFile):
+    if isinstance(assignments, (AssignmentFile, RankedAssignments)):
         assignments_by_card = assignments
     else:
         assignments_by_card: dict[str, dict[str, Any]] = defaultdict(dict)
@@ -432,9 +466,9 @@ def build_inactive_run_candidate(
         limit = display_examples_for_rank(scope, card["rank"])
         pool = display_pool_for_card(
             candidate_card.get("candidates", []) or [],
-            assignments,
+            selection_assignments,
             card_id,
-            wsd_ran=bool(assignments),
+            wsd_ran=bool(selection_assignments),
         )
         # Band, then rank on form. See _form_penalty: burden is a ceiling here,
         # not an ordering, so a sentence is never chosen merely for being cheap.
@@ -483,7 +517,7 @@ def build_inactive_run_candidate(
         # cards gain at least one meaning they would otherwise never show.
         sense_of: dict[str, str] = {}
         for item in ranked:
-            row = assignments.get((card_id, item["sentence_id"]))
+            row = selection_assignments.get((card_id, item["sentence_id"]))
             if row and row.get("selected_sense_id") and row.get("menu_analysis_id"):
                 sense_of[item["sentence_id"]] = _scoped_sense_id(
                     card_id, row["menu_analysis_id"], row["selected_sense_id"]
@@ -832,7 +866,7 @@ def build_inactive_run_candidate(
         "language": language,
         "mode": mode,
         "max_examples_per_surface": limit,
-        "inputs": inputs,
+        "inputs": selection_inputs,
         "cards": selection_cards,
     }
     selection_output = run / "stages/05_example_selection/output"
@@ -958,7 +992,7 @@ def build_inactive_run_candidate(
         # contradiction that makes every other provenance claim untrustworthy.
         layers["wsd_assignments"] = layer(
             "wsd_assignments",
-            (assignments.counts["assigned"] if isinstance(assignments, AssignmentFile) else
+            (assignments.counts["assigned"] if isinstance(assignments, (AssignmentFile, RankedAssignments)) else
              sum(1 for row in assignments.values() if row.get("status") == "assigned")),
             {"sense_menu": inputs["sense_menu"], "sentences": inputs["sentence_bank"]},
         )
@@ -966,6 +1000,11 @@ def build_inactive_run_candidate(
             "selection_projection": wsd_selection_projection,
             "publication_projection": wsd_publication_projection,
         }
+        if use_assigners:
+            # Which assigner supplied which senses must be on record, or a deck
+            # with LLM senses would read as if stage 04 had decided them.
+            layers["wsd_assignments"]["parameters"]["assigner_order"] = list(assignments.order)
+            layers.update(assignments.layers(inputs["sense_menu"]))
     else:
         omitted_layers.insert(
             0,
