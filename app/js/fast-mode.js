@@ -150,6 +150,12 @@ function refresh() {
     // Advanced options sheet, which is listed only where one can do something.
     let advancedAvailable = 0;
     let advancedOn = 0;
+    const bridgeContainer = document.getElementById('bridgeToggleContainer');
+    const bridgeAvailable = bridgeContainer && !bridgeContainer.hidden;
+    if (bridgeAvailable) {
+        advancedAvailable++;
+        if (globalThis.isBridgeEnabled?.()) advancedOn++;
+    }
     for (const kind of ['grammar', 'slang', 'entity']) {
         const container = document.getElementById(`${kind}ToggleContainer`);
         if (!container) continue;
@@ -490,7 +496,7 @@ function openFastModePage({ section } = {}) {
     if (!section) globalThis.resetSkippedCategory?.();
     // Cognates explain the benefit immediately; other explanations stay folded.
     const secondary = document.getElementById('smartSkipSecondarySettings');
-    if (secondary) secondary.open = !window.matchMedia('(max-width: 899px)').matches || !cognateAvailable();
+    if (secondary && 'open' in secondary) secondary.open = !window.matchMedia('(max-width: 899px)').matches || !cognateAvailable();
     closeAdvancedSkip();
     document.querySelectorAll('.smart-skip-shortcut').forEach(el => { delete el.dataset.userExpanded; });
     refresh();
@@ -513,7 +519,7 @@ function closeFastModePage({ reopenSettings = true } = {}) {
 function init() {
     window.matchMedia('(max-width: 899px)').addEventListener('change', event => {
         const secondary = document.getElementById('smartSkipSecondarySettings');
-        if (secondary) secondary.open = !event.matches || !cognateAvailable();
+        if (secondary && 'open' in secondary) secondary.open = !event.matches || !cognateAvailable();
     });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
     document.querySelectorAll('[data-ss-master]').forEach(button => {

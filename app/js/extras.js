@@ -169,26 +169,57 @@ function glossTokens(text) {
     });
 }
 
-function cognateEnglish(item) {
-    if (!item) return { word: '', obvious: false };
-    const lang = _activeCognateFilterLang !== 'all'
-        ? _activeCognateFilterLang
-        : ((g().activeKnownLanguages?.() || [])[0] || 'en');
-    const cacheKey = `_cachedCognate_${lang}`;
-    if (item[cacheKey]) return item[cacheKey];
+function cognateMatch(item, lang = _activeCognateFilterLang) {
+    if (!item) return { word: '', code: 'en', obvious: false };
+    if (lang && lang !== 'all') {
+        const direct = item?.cognate_match_words?.[lang]
+            || (isSenseItem(item) ? g().cardSenseCognate?.(item, lang)?.word : null);
+        if (direct) return { word: String(direct), code: lang, obvious: true };
 
-    let matched = null;
-    if (_activeCognateFilterLang !== 'all') {
-        const word = item?.cognate_match_words?.[_activeCognateFilterLang]
-            || (isSenseItem(item) ? g().cardSenseCognate?.(item, _activeCognateFilterLang)?.word : null);
-        if (word) matched = { code: _activeCognateFilterLang, word: String(word) };
+        if (g().bridgeVerdict) {
+            const bv = g().bridgeVerdict(item, { useProfile: g().excludeCognates });
+            const ev = bv?.evidence?.find(e => e.code === lang);
+            if (ev?.word) return { word: String(ev.word), code: lang, obvious: true };
+        }
+
+        if (lang === 'en') {
+            const surface = String(item?.word || '');
+            let best = '';
+            let bestScore = 0;
+            for (const meaning of item?.meanings || []) {
+                for (const token of glossTokens(meaning?.translation)) {
+                    const score = letterSimilarity(surface, token);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        best = token;
+                        if (score >= 0.95) break;
+                    }
+                }
+                if (bestScore >= 0.95) break;
+            }
+            if (best && bestScore >= LOOKALIKE_FLOOR) {
+                return { word: best, code: 'en', obvious: true };
+            }
+        }
+        if (item.is_transparent_cognate) {
+            return { word: String(item.word), code: lang, obvious: true };
+        }
+        return { word: shortGloss(firstTranslation(item)), code: lang, obvious: false };
     }
-    if (!matched) matched = g().bridgeVerdict?.(item, {useProfile: g().excludeCognates}) || g().matchedKnownWord?.(item);
 
+    const bridge = g().bridgeVerdict?.(item, { useProfile: g().excludeCognates });
+    if (bridge?.word && bridge?.code) {
+        return { word: String(bridge.word), code: bridge.code, obvious: true };
+    }
+    const strongest = g().strongestKnownLanguage?.(item);
+    if (strongest?.code) {
+        const word = item?.cognate_match_words?.[strongest.code]
+            || (isSenseItem(item) ? g().cardSenseCognate?.(item, strongest.code)?.word : null);
+        if (word) return { word: String(word), code: strongest.code, obvious: true };
+    }
+    const matched = g().matchedKnownWord?.(item);
     if (matched?.word) {
-        const res = { word: String(matched.word), obvious: true };
-        item[cacheKey] = res;
-        return res;
+        return { word: String(matched.word), code: matched.code || 'en', obvious: true };
     }
     const surface = String(item?.word || '');
     let best = '';
@@ -204,15 +235,14 @@ function cognateEnglish(item) {
         }
         if (bestScore >= 0.95) break;
     }
-    let res;
     if (best && bestScore >= LOOKALIKE_FLOOR) {
-        res = { word: best, obvious: true };
-    } else {
-        const gloss = shortGloss(firstTranslation(item));
-        res = { word: gloss, obvious: false };
+        return { word: best, code: 'en', obvious: true };
     }
-    item[cacheKey] = res;
-    return res;
+    return { word: shortGloss(firstTranslation(item)), code: 'en', obvious: false };
+}
+
+function cognateEnglish(item) {
+    return cognateMatch(item, _activeCognateFilterLang);
 }
 
 function lemmaDisplayOf(item, host) {
@@ -260,7 +290,8 @@ function smartSkipExtrasInputs() {
     const s = g();
     return [s.setupVocabularySnapshot || s.cachedVocabularyData, s.activeArtist, s.excludeCognates,
         s.cognateFieldAvailable, s.cognateThreshold, s.useLemmaMode, s.lemmaFieldAvailable,
-        s.excludeGrammarParticles, s.excludeSlang, s.excludeProperNouns];
+        s.excludeGrammarParticles, s.excludeSlang, s.excludeProperNouns,
+        (s.activeKnownLanguages?.() || []).join(',')];
 }
 
 function collectExtras() {
@@ -721,9 +752,12 @@ function skipEntriesFor(extras, category) {
     if (category === 'cognate' && _activeCognateFilterLang !== 'all') {
         const lang = _activeCognateFilterLang;
         const check = g().isCognateKnownForLanguage;
-        if (check) {
-            return entries.filter(({ item }) => check(item, lang) || g().bridgeVerdict?.(item, {useProfile: g().excludeCognates})?.evidence.some(e => e.code === lang));
-        }
+        return entries.filter(({ item }) => {
+            if (check && check(item, lang)) return true;
+            const bv = g().bridgeVerdict?.(item, {useProfile: g().excludeCognates});
+            if (bv?.evidence?.some(e => e.code === lang)) return true;
+            return false;
+        });
     }
     return entries;
 }
@@ -737,7 +771,7 @@ function smartSkipMenu(extras) {
         return { options, combined: [] };
     }
     const skips = SKIP_KINDS
-        .map(kind => ({ ...kind, count: skipEntriesFor(extras, kind.id).length }))
+        .map(kind => ({ ...kind, count: (extras.byCategory?.[kind.id] || []).length }))
         .filter(kind => kind.count > 0 || (kind.id === 'cognate' && (extras.cognates?.length || 0) > 0));
     const options = [];
     // "All" only earns its place when there is more than one thing to mix.
@@ -828,11 +862,25 @@ function smartSkipHeadHtml(category) {
     const language = g().config?.languages?.[g().selectedLanguage] || {};
     const targetCode = language.routeCode || language.speechLang?.split('-')[0] || g().selectedLanguage?.slice(0, 2);
     const lemma = category === 'lemma';
-    const codes = category === 'cognate' ? smartSkipKnownLanguageCodes() : ['en'];
-    const known = codes.length ? codes.map(code => smartSkipLanguageHTML(code)).join('') : 'Known language';
+    let knownHtml;
+    if (category === 'cognate') {
+        if (_activeCognateFilterLang !== 'all') {
+            knownHtml = smartSkipLanguageHTML(_activeCognateFilterLang);
+        } else {
+            const active = g().activeKnownLanguages?.() || [];
+            if (active.length === 1) {
+                knownHtml = smartSkipLanguageHTML(active[0]);
+            } else {
+                const flags = active.map(code => g().knownLanguageFlag?.(code) || '').filter(Boolean).join('');
+                knownHtml = `<span class="smart-skip-language">${flags ? `<span>${escapeHtml(flags)}</span>` : ''}<span>KNOWN</span></span>`;
+            }
+        }
+    } else {
+        knownHtml = smartSkipLanguageHTML('en');
+    }
     return `<div class="smart-skip-head" aria-hidden="true">
         <span class="smart-skip-languages">${smartSkipLanguageHTML(targetCode, language.flag)}</span>
-        <span class="smart-skip-languages">${known}</span>
+        <span class="smart-skip-languages">${knownHtml}</span>
         ${lemma ? '<span class="ss-h-forms">Combined forms</span><span class="ss-h-nforms">Forms</span>' : '<span class="ss-h-tag">Type</span>'}
         <span class="ss-h-rank">Rank</span>
     </div>`;
@@ -864,8 +912,12 @@ function smartSkipRowHtml(row, index, showTag) {
     const more = row.extra.length ? `<span class="smart-skip-more">+${row.extra.length}</span>` : '';
     let gloss;
     if (row.kind === 'cognate') {
-        const choice = cognateEnglish(item);
-        gloss = `<span class="smart-skip-g"><span class="cognate-pair-eq"${choice.obvious ? '' : ' hidden'} aria-hidden="true">=</span><span class="cognate-pair-known${choice.obvious ? '' : ' is-gloss'}">${escapeHtml(choice.word)}</span></span>`;
+        const choice = cognateMatch(item, _activeCognateFilterLang);
+        const activeKnown = g().activeKnownLanguages?.() || [];
+        const showFlag = _activeCognateFilterLang === 'all' && activeKnown.length > 1;
+        const flag = showFlag ? (g().knownLanguageFlag?.(choice.code) || '') : '';
+        const flagHtml = flag ? `<span class="cognate-pair-flag" title="${escapeHtml(g().knownLanguageLabel?.(choice.code) || choice.code.toUpperCase())}">${flag}</span>` : '';
+        gloss = `<span class="smart-skip-g">${flagHtml}<span class="cognate-pair-eq"${choice.obvious ? '' : ' hidden'} aria-hidden="true">=</span><span class="cognate-pair-known${choice.obvious ? '' : ' is-gloss'}">${escapeHtml(choice.word)}</span></span>`;
     } else {
         gloss = `<span class="smart-skip-g is-gloss extras-translation-slot">${escapeHtml(shortGloss(firstTranslation(item)))}</span>`;
     }
@@ -961,14 +1013,22 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     if (langBtn) {
         langBtn.hidden = !showLangBtn;
         if (showLangBtn) {
-            langBtn.innerHTML = `<option value="all">All languages</option>` + activeKnown.map(code => {
+            const allCount = (extras.byCategory?.cognate || []).length;
+            const optionsHtml = [`<option value="all">All languages (${allCount.toLocaleString()})</option>`];
+            const check = g().isCognateKnownForLanguage;
+            for (const code of activeKnown) {
                 const flag = g().knownLanguageFlag?.(code) || '';
                 const shownFlag = /^[\u{1F1E6}-\u{1F1FF}]{2}$/u.test(flag) ? flag + ' ' : '';
                 const label = g().knownLanguageLabel?.(code) || code.toUpperCase();
-                return `<option value="${escapeHtml(code)}">${escapeHtml(shownFlag + code.toUpperCase() + ' · ' + label)}</option>`;
-            }).join('');
+                const langCount = (extras.byCategory?.cognate || []).filter(({ item }) => {
+                    if (check && check(item, code)) return true;
+                    return g().bridgeVerdict?.(item, {useProfile: g().excludeCognates})?.evidence?.some(e => e.code === code);
+                }).length;
+                optionsHtml.push(`<option value="${escapeHtml(code)}">${escapeHtml(shownFlag + label)} (${langCount.toLocaleString()})</option>`);
+            }
+            langBtn.innerHTML = optionsHtml.join('');
             langBtn.value = _activeCognateFilterLang;
-            langBtn.title = 'Choose which known language to compare';
+            langBtn.title = 'Filter look-alikes by language';
         }
     }
 
@@ -1134,7 +1194,7 @@ function paintPreviewGloss(row) {
     const gloss = document.getElementById('smartSkipPreviewGloss');
     if (!gloss) return;
     if (row.kind === 'cognate') {
-        const choice = cognateEnglish(row.item);
+        const choice = cognateMatch(row.item, _activeCognateFilterLang);
         gloss.textContent = choice.word;
     } else if (row.kind === 'lemma') {
         gloss.textContent = shortGloss(row.group.lemma.translation || firstTranslation(row.item));
@@ -1150,7 +1210,9 @@ async function openSmartSkipPreview(rowIndex) {
     _ssPreviewRow = row;
     const token = ++_ssPreviewToken;
     const why = row.kind.startsWith('song:') ? `Supplementary song vocabulary · ${songCategoryLabel(row.kind)}`
-        : row.kind === 'lemma' ? 'Combined forms' : (KIND_BY_ID[row.kind]?.why || 'Skipped');
+        : row.kind === 'lemma' ? 'Combined forms'
+        : row.kind === 'cognate' ? `Look-alike · ${g().knownLanguageLabel?.(cognateMatch(row.item, _activeCognateFilterLang).code) || 'English'}`
+        : (KIND_BY_ID[row.kind]?.why || 'Skipped');
     const word = row.kind === 'lemma' ? row.group.lemma.word : row.item.word;
     document.getElementById('smartSkipPreviewWhy').textContent = why;
     document.getElementById('smartSkipPreviewWord').textContent = word;

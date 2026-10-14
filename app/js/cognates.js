@@ -506,12 +506,16 @@ function renderKnownLanguagePicker() {
         || readSelected().filter(code => ready.includes(code)).map(code => ({code, ready: true}));
     const active = new Set(activeKnownLanguages());
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    selector.innerHTML = choices.map(({code, ready}) => `
+    selector.innerHTML = choices.map(({code, ready}) => {
+        const flag = knownLanguageFlag(code);
+        const shownFlag = flag ? `${flag} ` : '';
+        return `
         <button type="button" class="known-language-btn${active.has(code) ? ' selected' : ''}"
                 data-known-language="${code}" aria-pressed="${active.has(code)}" ${ready ? '' : 'disabled'}>
-            ${active.has(code) ? '✓ ' : ''}${escape(languageLabel(code))}${ready ? '' : ' <small>Coming soon</small>'}
-        </button>`).join('') + (choices.length ? '' : '<small class="known-languages-empty">None of your saved languages have a useful pair here yet.</small>')
-        + '<button type="button" class="known-language-btn" data-edit-language-profile>Languages you know</button>';
+            ${active.has(code) ? '✓ ' : ''}${shownFlag}${escape(languageLabel(code))}${ready ? '' : ' <small>Coming soon</small>'}
+        </button>`;
+    }).join('') + (choices.length ? '' : '<small class="known-languages-empty">None of your saved languages have a useful pair here yet.</small>')
+        + '<button type="button" class="known-language-btn known-language-edit-btn" data-edit-language-profile title="Manage languages in Settings">⚙ Manage languages</button>';
     selector.querySelectorAll('[data-known-language]').forEach(button => {
         button.addEventListener('click', () => toggleKnownLanguage(button.dataset.knownLanguage));
     });
@@ -522,6 +526,7 @@ function toggleKnownLanguage(code) {
     if (!code) return;
     globalThis.toggleKnownLanguageSource?.(code);
     renderKnownLanguagePicker();
+    globalThis.forgetSmartSkipExtras?.();
     globalThis.updateKnownLanguageCopy?.();
     globalThis.updateExclusionBars?.();
     globalThis.updateLevelSelector?.();
@@ -565,7 +570,7 @@ function isCognateKnownForLanguage(item, code) {
     if (isSenseItem(item)) {
         return cognateScoreFor(item, code) >= cutoff;
     }
-    if (!hasCardLookalikeGloss(item)) return false;
+    if (code === 'en' && !hasCardLookalikeGloss(item)) return false;
     const score = Number(item.cognate_scores?.[code] || (code === 'en' ? item.cognate_score : 0) || 0);
     return score >= cutoff;
 }

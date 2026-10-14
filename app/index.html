@@ -1206,8 +1206,7 @@
                             <p class="fast-mode-explainer">Words that look similar <em>and</em> mean the same in English, like <em>idea</em> or <em>familia</em>.</p>
                             <div id="knownLanguagesContainer" class="known-languages-context" style="display: none;">
                                 <div class="known-languages-header">
-                                    <strong>Use for this language</strong>
-                                    <small>Only useful language pairs appear here. Greyed-out pairs are coming soon; your full language list stays in Settings.</small>
+                                    <strong>Languages used to find look-alikes</strong>
                                 </div>
                                 <div id="knownLanguagesSelector" class="known-languages-selector"></div>
                             </div>
@@ -1220,19 +1219,9 @@
                             <button class="cognate-toggle-btn selected" data-cognate="include">Include</button>
                         </div>
                     </div>
-                    <details id="smartSkipSecondarySettings" class="smart-skip-secondary-settings" open>
-                        <summary>Other settings <span id="smartSkipSecondaryState">Combine forms · Advanced</span></summary>
+                    <div id="smartSkipSecondarySettings" class="smart-skip-secondary-settings">
+                        <span id="smartSkipSecondaryState" hidden></span>
                         <div class="smart-skip-secondary-controls">
-                    <div id="bridgeToggleContainer" class="smart-skip-shortcut" hidden>
-                        <div class="smart-skip-shortcut-row">
-                            <strong class="bridge-shortcut-title">Use words I’ve learned in other languages</strong>
-                            <button type="button" id="bridgeToggle" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Use words I’ve learned in other languages"></button>
-                        </div>
-                        <div class="smart-skip-shortcut-detail">
-                            <p class="fast-mode-explainer">Skip matching words you’ve already learned elsewhere. Every meaning must match; verb forms must match too.</p>
-                            <p id="bridgeSourcesSummary" class="fast-mode-explainer"></p>
-                        </div>
-                    </div>
                     <div id="lemmaToggleContainer" class="smart-skip-shortcut" data-ss-kind="lemma" style="display: none;">
                         <div class="smart-skip-shortcut-row">
                             <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Combine word forms</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
@@ -1252,7 +1241,7 @@
                     </div>
                     <button type="button" id="smartSkipMoreOptions" class="smart-skip-more-options" aria-haspopup="dialog" hidden><span>Advanced options</span><span class="smart-skip-more-state" id="smartSkipMoreState"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
                         </div>
-                    </details>
+                    </div>
                 </div>
 
                 <section class="fast-mode-section smart-skip-words" data-section="decks">
@@ -1304,6 +1293,16 @@
                 <p>Entirely optional. Smart Skip works well without these, so leave them off unless you want a leaner deck.</p>
             </div>
             <div class="fast-mode-controls smart-skip-shortcuts">
+                    <div id="bridgeToggleContainer" class="smart-skip-shortcut" hidden>
+                        <div class="smart-skip-shortcut-row">
+                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Words from other languages</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                            <button type="button" id="bridgeToggle" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Use words learned in other languages"></button>
+                        </div>
+                        <div class="smart-skip-shortcut-detail" hidden>
+                            <p class="fast-mode-explainer">Skip matching words you’ve already learned in other languages you study.</p>
+                            <p id="bridgeSourcesSummary" class="fast-mode-explainer"></p>
+                        </div>
+                    </div>
                     <div id="grammarToggleContainer" class="smart-skip-shortcut" data-ss-kind="grammar" style="display: none;">
                         <div class="smart-skip-shortcut-row">
                             <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Skip pronouns &amp; particles</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
