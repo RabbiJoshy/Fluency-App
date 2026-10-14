@@ -125,8 +125,21 @@ function refresh() {
     if (text) text.textContent = bundle ? `Uses your saved ${window.bridgeSourceLanguages()
         .map(code => window.knownLanguageLabel?.(code) || code.toUpperCase()).join(' and ')} progress. Only matching meanings you know are used.` : '';
     const settingsSummary = document.getElementById('settingsKnownLanguagesSummary');
-    if (settingsSummary) settingsSummary.textContent = (window.readKnownLanguages?.() || [])
-        .map(code => window.knownLanguageLabel?.(code) || code.toUpperCase()).join(', ') || 'None selected';
+    if (settingsSummary) {
+        const codes = window.readKnownLanguages?.() || [];
+        const names = codes.map(code => window.knownLanguageLabel?.(code) || code.toUpperCase());
+        settingsSummary.replaceChildren(...codes.map((code, index) => {
+            const chip = document.createElement('span');
+            chip.className = 'known-language-flag';
+            chip.title = names[index];
+            const flag = window.knownLanguageFlag?.(code);
+            chip.textContent = flag || code.toUpperCase();
+            if (!flag) chip.classList.add('is-code');
+            return chip;
+        }));
+        if (!codes.length) settingsSummary.textContent = 'None selected';
+        settingsSummary.setAttribute('aria-label', names.join(', ') || 'None selected');
+    }
 }
 function init() {
     document.getElementById('bridgeToggle')?.addEventListener('click', async () => {

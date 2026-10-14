@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T22:18:59+01:00",
+      "date": "2026-10-14 22:18 BST",
+      "agent": "Claude",
+      "summary": "“Languages you know” moved into Settings → Study and shows flags instead of a sentence.",
+      "detail": [
+        "Now sits under Show first on the Study tab (it was on the App tab).",
+        "The row shows one flag per language you know; hover a flag for its name. The explanatory line is now a tooltip.",
+        "Closing the editor returns you to the Study tab."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T22:08:31+01:00",
       "date": "2026-10-14 22:08 BST",
       "agent": "Claude",
@@ -354,20 +366,6 @@
         "Remove the separate Your words shortcut from the desktop sidebar.",
         "Keep Choose a set, Progress and Settings directly accessible, with Tutorial and Account below.",
         "Settings retains its visible Study, App and Your words tabs."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T09:06:51+01:00",
-      "date": "2026-10-13 09:06 BST",
-      "agent": "Codex",
-      "summary": "Desktop sidebar for choosing sets, with a focused study view",
-      "detail": [
-        "Desktop setup has a left sidebar for choosing sets, Your words, progress, tutorial, settings and account.",
-        "Settings, learning context and progress fill the workspace beside the sidebar; setup sheets no longer dock in the gutters.",
-        "Starting a set hides navigation and restores the existing study side panels. Returning to the main menu restores the sidebar.",
-        "Phones and narrow windows retain the compact top bar and dialogs.",
-        "Checked desktop setup, workspace navigation, study entry/exit and phone layout; app tests pass."
       ],
       "commit": "pending"
     }

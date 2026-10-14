@@ -2394,7 +2394,7 @@ function openKnownLanguagesSettings() {
     else document.getElementById('settingsModal')?.classList.add('hidden');
     knownLanguagesEditorReturn = () => {
         if (fromFast) window.openFastModePage?.();
-        else window.showSettingsModalWithTab?.('appearance');
+        else window.showSettingsModalWithTab?.('study');
     };
     introSelectedCodes = new Set(window.readKnownLanguages?.() || []);
     introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};

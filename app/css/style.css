@@ -25156,3 +25156,14 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 /* The parts of a contraction (al = a + el) sit beside the word, not on a line of their own. */
 .back-headword-row:has(.grammar-pair-chips) { flex-wrap: wrap; justify-content: center; }
 .back-headword-row .grammar-pair-chips { margin-top: 0; padding: 2px 8px; font-size: 13px; }
+
+/* Languages you know: flags, not a sentence. */
+#settingsModal .settings-known-languages-row { gap: 10px; }
+#settingsModal .settings-known-languages-row > span:first-child { flex: 1 1 auto; }
+.known-language-flags { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; color: var(--text-muted); font-size: 12px; }
+.known-language-flag {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 4px;
+  border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-tertiary);
+  font-size: 19px; line-height: 1;
+}
+.known-language-flag.is-code { font: 700 11px var(--font-emphasis); color: var(--text-secondary); }
