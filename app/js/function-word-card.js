@@ -376,7 +376,7 @@ function refreshFunctionWordCardBack() {
             const chipsHtml = examples.map((ex, idx) => {
                 const isSelected = idx === _activeExampleIndex;
                 const label = ex.content || ex.highlight || `Example ${idx + 1}`;
-                return `<button type="button" class="fw-chip-step${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="window.selectFunctionWordExample(${idx})">${esc(label)}</button>`;
+                return `<button type="button" class="fw-chip-step${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordExample(${idx})">${esc(label)}</button>`;
             }).join('');
             variationBar.innerHTML = `<span class="fw-variation-label">Content variation (${examples.length})</span><div class="fw-chips">${chipsHtml}</div>`;
             variationBar.style.display = 'flex';
@@ -464,7 +464,7 @@ export function functionWordBlockHTML(card, lang) {
         const usesHTML = uses.map((u, i) => {
             const isSelected = i === _activeUseIndex;
             return `
-                <button type="button" class="fw-use-btn${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="window.selectFunctionWordUse(${i})">
+                <button type="button" class="fw-use-btn${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordUse(${i})">
                     <strong>${esc(u.english)}</strong>
                     <p>${esc(u.description)}</p>
                 </button>`;
@@ -476,7 +476,7 @@ export function functionWordBlockHTML(card, lang) {
             const chips = examples.map((ex, idx) => {
                 const isSelected = idx === _activeExampleIndex;
                 const label = ex.content || ex.highlight || `Example ${idx + 1}`;
-                return `<button type="button" class="fw-chip-step${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="window.selectFunctionWordExample(${idx})">${esc(label)}</button>`;
+                return `<button type="button" class="fw-chip-step${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordExample(${idx})">${esc(label)}</button>`;
             }).join('');
             variationChipsHTML = `
                 <div class="fw-variation-bar">
@@ -508,7 +508,7 @@ export function functionWordBlockHTML(card, lang) {
                 </div>
                 <div class="fw-example-section">
                     ${variationChipsHTML}
-                    <div class="fw-example-box" onclick="window.speakTargetSentence?.() || window.speakText?.('${esc(currentEx?.target || '')}')">
+                    <div class="fw-example-box" onclick="event.stopPropagation(); (window.speakTargetSentence?.() || window.speakText?.('${esc(currentEx?.target || '')}'))">
                         <div class="fw-example-sentence">${exampleTargetHTML}</div>
                         <div class="fw-example-translation">${esc(currentEx?.translation || '')}</div>
                         <div class="fw-example-hint">Tap a chip above to see how <strong>${esc(wordKey)}</strong> connects different content words</div>
