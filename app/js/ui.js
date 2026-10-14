@@ -278,19 +278,17 @@ applyGlobalStudyDefaults();
 
 function setupTooltipHandlers() {
     // Step help tooltip handlers — open as modal
-    document.querySelectorAll('.step-help-btn, .step-title-trigger').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const tooltipId = this.dataset.tooltip;
-            const tooltip = document.getElementById(tooltipId);
-
-            // Close all other tooltips first
-            document.querySelectorAll('.step-info-tooltip').forEach(t => {
-                if (t.id !== tooltipId) t.classList.remove('visible');
-            });
-
-            tooltip.classList.toggle('visible');
+    // Delegation also covers the progress legend rebuilt with the session.
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest?.('.step-help-btn, .step-title-trigger');
+        if (!button) return;
+        const tooltip = document.getElementById(button.dataset.tooltip);
+        if (!tooltip) return;
+        e.stopPropagation();
+        document.querySelectorAll('.step-info-tooltip').forEach(other => {
+            if (other !== tooltip) other.classList.remove('visible');
         });
+        tooltip.classList.toggle('visible');
     });
 
     // Close tooltip modal on backdrop click (click on outer overlay, not inner content)
@@ -1053,7 +1051,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    description.textContent = 'Go opens new words from this level. Your time choice estimates the batch size; it is not a countdown. If fewer words remain, Go opens that smaller batch and hides the time choice.';
+    description.textContent = 'Go opens new words from this level. Choose a time to estimate how many to study.';
 }
 
 // Annotates every level control with its completion percentage and returns
@@ -2997,6 +2995,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                         <b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>
                         ${levelEstimatedCount > 0 ? `<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated familiar</b>` : ''}
                         ${levelSkippedCount > 0 ? `<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>` : ''}
+                        <button type="button" class="study-legend-info step-help-btn" data-tooltip="levelColoursTooltip" aria-label="What the level colours mean" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     </span>
                 </div>
                 ${nextCount === 0

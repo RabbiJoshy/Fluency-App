@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T20:29:48+01:00",
+      "date": "2026-10-14 20:29 BST",
+      "agent": "Codex",
+      "summary": "Shorter levels and sessions help",
+      "detail": [
+        "Combined the opening guidance into one paragraph and moved a short Go explanation to the bottom.",
+        "Moved colour definitions into a separate information modal opened beside the level legend."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T19:57:30+01:00",
       "date": "2026-10-14 19:57 BST",
       "agent": "Codex",

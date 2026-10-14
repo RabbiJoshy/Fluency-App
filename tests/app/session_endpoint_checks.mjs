@@ -94,13 +94,15 @@ try{
    if(name==='long') {
        await page.locator('[data-tooltip="step2Tooltip"]').click();
        assert(await page.locator('#step2Tooltip').isVisible());
-       assert.equal(await page.locator('#step2Tooltip .level-help-section').count(),3);
-       assert.match(await page.locator('#step5Description').textContent(),/not a countdown/);
-       await page.locator('.level-help-counts summary').click();
-       assert(await page.locator('.level-help-legend').isVisible());
-       await page.locator('.level-help-counts summary').click();
+       assert.equal(await page.locator('#step2Tooltip .level-help-section').count(),1);
+       assert(!await page.locator('#step2Tooltip').textContent().then(text=>text.includes('countdown')));
+       assert.equal(await page.locator('#step2Tooltip .level-help-legend').count(),0);
        if(process.env.SESSION_ENDPOINT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.SESSION_ENDPOINT_SCREENSHOTS,`level-help-${theme}-${width}.png`)});
        await page.locator('#step2Tooltip .info-sheet-close').click();
+       await page.locator('.study-legend-info').click();
+       assert(await page.locator('#levelColoursTooltip').isVisible());
+       assert.equal(await page.locator('#levelColoursTooltip .info-point-badge').count(),5);
+       await page.locator('#levelColoursTooltip .info-sheet-close').click();
    }
    await page.locator('[data-ss-master="off"]').focus();await page.keyboard.press('Enter');
    await page.waitForFunction(()=>document.querySelector('[data-ss-master="off"]').getAttribute('aria-pressed')==='true');

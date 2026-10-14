@@ -188,6 +188,7 @@
 .level-help-section > p { margin: 0; color: var(--text-secondary); font: 400 14px/1.5 var(--font-reading); }
 .level-help-legend { margin-top: 10px; }
 
-.level-help-counts { margin-top: 10px; text-align: left; }
-.level-help-counts summary { color: var(--text-secondary); font: 600 13px/1.4 var(--font-reading); cursor: pointer; }
-.level-help-counts summary:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+.step-info-tooltip-inner .level-help-session-note { margin: 16px 0 0; color: var(--text-secondary); font: 400 13px/1.5 var(--font-reading); }
+.study-legend-info { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 2px; margin-left: 4px; vertical-align: middle; background: transparent; border: 0; color: var(--text-secondary); cursor: pointer; }
+.study-legend-info svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.study-legend-info:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
