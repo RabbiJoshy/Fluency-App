@@ -57,7 +57,9 @@ def sql(plan):
     statements=['-- Owner-scoped guarded conversion; genuine post-snapshot answers are never overwritten.']
     columns=['srs_stage','unresolved','due_at','migration_review_at','first_seen_at','last_correct_at','last_seen_at','updated_at']
     for r in plan['changes']:
-        a,b=r['after'],r['before'];sets=', '.join(f'{f}={literal(a[f])}' for f in columns)
+        a,b=r['after'],r['before'];sets=', '.join(f'{f}={literal(a[f])}' for f in columns if f != 'updated_at')
+        # Use execution time: a client may have synced a newer answer since preview.
+        sets += ", updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now')"
         check=['user_id','lang_code','item_id','mode','correct_count','incorrect_count','last_correct_at','last_incorrect_at','first_seen_at','last_seen_at','updated_at','srs_stage']
         where=' AND '.join(f'{f} IS {literal(b[f])}' for f in check)
         statements.append('UPDATE item_state SET '+sets+' WHERE '+where+';')
