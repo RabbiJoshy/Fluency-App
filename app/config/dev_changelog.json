@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-14T20:12:58+01:00",
+      "date": "2026-10-14 20:12 BST",
+      "agent": "Codex",
+      "summary": "Stop cached staging error pages from triggering recursive file preloads and excessive CPU use.",
+      "detail": [
+        "Reject HTML responses requested as scripts or data, including old cached fallback pages with recursive preload headers.",
+        "Evict the invalid asset cache entry and retry the real file; preserve valid assets, offline downloads and learner progress.",
+        "Verified cached-HTML recovery, HTML rejection without preload headers, valid script caching and normal page navigation."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T19:57:30+01:00",
       "date": "2026-10-14 19:57 BST",
       "agent": "Codex",
@@ -369,72 +381,6 @@
         "Czech coverage now covers all 10,000 deck words (rebuilt from the same OpenSubtitles 2018 counts for release v22), so levels 31 to 100 show a figure.",
         "Smart Skip works out its categories once per burst of work instead of about a dozen times when a deck opens: setup work on opening Czech ~800 ms to ~460 ms.",
         "The hidden loading spinner no longer animates behind the app."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:35:32+01:00",
-      "date": "2026-10-12 23:35 BST",
-      "agent": "Claude",
-      "summary": "Sessions are now chosen by time, and Go explains what to do when a level has little or nothing new left",
-      "detail": [
-        "Go and Practise share one session length: 5 min, 10 min or No limit. Tap the clock chip to change it; it is remembered on this device.",
-        "Time becomes cards at a fixed assumed pace (about 15 s per new card, 10 s per practice card): 5 min = 20 new or 30 practice cards.",
-        "When more of a level waits in Practise than is new (at least 10), Go asks: practise these, or learn the new ones. It asks once per level until the app reloads.",
-        "When a level has no new words left, Go shows either 'No new words left' (practise, next level, or redo) or 'You've mastered all the words' (next level, or redo).",
-        "Practice Errors is now Practise. It says how many words are waiting and when the next ones come back, e.g. 'Nothing to practise. 12 words come back tomorrow, 30 more this week.'",
-        "The level badge shows the word range only; the level total appears while you scrub the bar, and the deck size is in the Choose a Level help.",
-        "End of session: 'Keep going · 5 min' replaces 'Another 20'; finishing a level says how many words are waiting in Practise."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:20:29+01:00",
-      "date": "2026-10-12 23:20 BST",
-      "agent": "Claude",
-      "summary": "Go starts a session almost at once: its words and example sentences download while you're on the home screen",
-      "detail": [
-        "The home screen now starts the session's downloads (word rows and example sentences, ~1.5 MB for a Czech level) as soon as it shows Go.",
-        "Before, Go waited for them: about 2.5 s on production for Czech level 1. Timed locally after the change: 0.2 s, with nothing left to download.",
-        "Uses the same prefetch the end-of-session screen already used for the next session; repeat renders do not download twice."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:17:26+01:00",
-      "date": "2026-10-12 23:17 BST",
-      "agent": "Claude",
-      "summary": "Opening a deck freezes the screen for less time: Smart Skip stops re-reading your language settings for every word",
-      "detail": [
-        "Smart Skip asked which languages you read once per word (~140,000 times when a deck opened), re-reading and re-parsing two saved settings each time.",
-        "The answer is now worked out once per pass and dropped the moment either setting changes.",
-        "Czech, timed locally: Smart Skip refresh 817 ms to 214 ms; Smart Skip button 239 ms to 101 ms; skipped-word list 74 ms to 24 ms."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:10:20+01:00",
-      "date": "2026-10-12 23:10 BST",
-      "agent": "Claude",
-      "summary": "Czech coverage figures now show on Staging, and Staging no longer floods the browser with requests",
-      "detail": [
-        "Staging answers missing files with a real 404. Before, Cloudflare returned the app page with relative preload links, which recursed without end (~500 requests a minute per open tab).",
-        "Commit the Czech coverage file (coverage/cs/coverage.json) to the app, byte-identical to the one production already serves, so Staging builds it too."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T22:25:43+01:00",
-      "date": "2026-10-12 22:25 BST",
-      "agent": "Codex",
-      "summary": "Smart Skip is easier to browse; lyric credits put the song above the artist",
-      "detail": [
-        "Keep the cognate explanation open initially; other explanations stay folded. Mobile groups secondary controls under Other settings.",
-        "Group category, search and known-language filters; show live match counts and the exact number of words the supplementary study button will load.",
-        "Use a direct language picker instead of cycling. Empty comparisons remain selectable so learners can switch back.",
-        "Keep desktop settings and browser controls accessible while scrolling; add preview chevrons to word rows.",
-        "Render song titles without italics, above artist or vocalist credits, in both live cards and tutorial replicas.",
-        "All 268 app tests passed; desktop scrolling, phone layout, five-match study counts and two-line card credits checked in the browser."
       ],
       "commit": "pending"
     }

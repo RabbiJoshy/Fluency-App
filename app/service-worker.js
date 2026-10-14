@@ -314,9 +314,20 @@ self.addEventListener('fetch', event => {
     matchRetainedContent(request).then(async retained => {
       if (retained) return retained;
       const cache = await caches.open(CACHE_NAME);
-      return cache.match(request).then(cached => {
-        if (cached) return cached;
+      return cache.match(request).then(async cached => {
+        // Older Pages deployments returned the HTML shell for missing assets.
+        // Its relative Link preloads recursively request js/js/... when replayed
+        // from cache. Never return that HTML (or its preload headers) as an asset.
+        const isHtml = response => /\btext\/html\b/i.test(response?.headers.get('content-type') || '');
+        if (cached && !isHtml(cached)) return cached;
+        if (cached) await cache.delete(request);
         return fetch(request).then(response => {
+          if (isHtml(response)) {
+            return new Response('Asset not found', {
+              status: 404,
+              headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' },
+            });
+          }
           // Only cache valid 200 responses. Don't poison the cache with
           // 404s, opaque cross-origin responses, or partial content.
           if (response && response.status === 200 && response.type === 'basic') {
