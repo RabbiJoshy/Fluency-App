@@ -8,203 +8,148 @@
 
 export const FW_SIGNATURE_GLOW_RGB = '212, 218, 245'; // Periwinkle Moonstone Off-White
 
-// Curated deterministic definitions for Portuguese closed-class focus words.
+// Curated deterministic relational definitions for Portuguese closed-class focus words.
 export const PORTUGUESE_GRAMMAR_WORDS = {
-    que: {
-        word: 'que',
-        role: 'Connector',
-        pos: 'CONJ',
-        posLabel: 'Connector',
-        rank: 1,
-        frequency: 38240,
-        uses: [
-            {
-                id: 'that',
-                english: 'that',
-                description: 'Introduces what someone thinks, says or knows.',
-                examples: [
-                    { target: 'Acho que vai chover.', translation: 'I think it’s going to rain.', highlight: 'que', content: 'achar' },
-                    { target: 'Sei que você está certo.', translation: 'I know that you are right.', highlight: 'que', content: 'saber' },
-                    { target: 'Ela disse que viria.', translation: 'She said that she would come.', highlight: 'que', content: 'dizer' }
-                ]
-            },
-            {
-                id: 'relative',
-                english: 'who / which / that',
-                description: 'Adds information about a person or thing.',
-                examples: [
-                    { target: 'Este é o livro que estou lendo.', translation: 'This is the book that I’m reading.', highlight: 'que', content: 'livro' },
-                    { target: 'A pessoa que me ajudou foi embora.', translation: 'The person who helped me left.', highlight: 'que', content: 'pessoa' }
-                ]
-            },
-            {
-                id: 'than',
-                english: 'than',
-                description: 'Connects the two sides of a comparison.',
-                examples: [
-                    { target: 'Ela é mais alta que eu.', translation: 'She is taller than me.', highlight: 'que', content: 'mais alta' },
-                    { target: 'Este café é melhor que o outro.', translation: 'This coffee is better than the other.', highlight: 'que', content: 'melhor' }
-                ]
-            }
-        ]
-    },
     de: {
         word: 'de',
         role: 'Preposition',
-        pos: 'PREP',
-        posLabel: 'Preposition',
         rank: 4,
         frequency: 25447,
-        uses: [
+        relations: [
             {
-                id: 'of-from',
-                english: 'of / from',
-                description: 'Shows connection, possession or origin.',
-                examples: [
-                    { target: 'Ela é de Lisboa.', translation: 'She is from Lisbon.', highlight: 'de', content: 'origem' },
-                    { target: 'A casa de Ana é bonita.', translation: 'Ana\'s house is beautiful.', highlight: 'de', content: 'posse' },
-                    { target: 'Quero um copo de água.', translation: 'I want a glass of water.', highlight: 'de', content: 'conteúdo' }
-                ]
+                tag: 'Verbal Valency',
+                formulaHTML: '<span class="fw-token-v">Verb</span> + <span class="fw-token-connector">de</span> + <span class="fw-token-c">Complement</span>',
+                rule: "Required link: the preceding verb governs 'de' before its object or action.",
+                targetHTML: "<span class='fw-token-v'>Gosto</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>música</span>.",
+                translation: 'I like music.'
             },
             {
-                id: 'verb-object',
-                english: 'connects a verb to its object',
-                description: 'Required link after common verbs before a noun or action.',
-                examples: [
-                    { target: 'Gosto de música.', translation: 'I like music.', highlight: 'de', content: 'gostar' },
-                    { target: 'Preciso de ajuda.', translation: 'I need help.', highlight: 'de', content: 'precisar' },
-                    { target: 'Tudo depende de você.', translation: 'Everything depends on you.', highlight: 'de', content: 'depender' }
-                ]
+                tag: 'Noun Attribution',
+                formulaHTML: '<span class="fw-token-v">Noun</span> + <span class="fw-token-connector">de</span> + <span class="fw-token-c">Noun / Origin</span>',
+                rule: 'Nominal binding: connects a head noun to its owner, origin, or content.',
+                targetHTML: "Quero um <span class='fw-token-v'>copo</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>água</span>.",
+                translation: 'I want a glass of water.'
             }
         ]
     },
-    se: {
-        word: 'se',
-        role: 'Conjunction & Clitic',
-        pos: 'CONJ',
-        posLabel: 'Conjunction & Clitic',
-        rank: 11,
-        frequency: 16900,
-        uses: [
+    que: {
+        word: 'que',
+        role: 'Connector',
+        rank: 1,
+        frequency: 38240,
+        relations: [
             {
-                id: 'conditional',
-                english: 'if / whether',
-                description: 'Introduces a condition or an indirect question.',
-                examples: [
-                    { target: 'Se chover, fico em casa.', translation: 'If it rains, I’ll stay home.', highlight: 'Se', content: 'condição' },
-                    { target: 'Não sei se ele vem.', translation: 'I don\'t know if he is coming.', highlight: 'se', content: 'dúvida' }
-                ]
+                tag: 'Clausal Link',
+                formulaHTML: '<span class="fw-token-v">Thought / Speech</span> + <span class="fw-token-connector">que</span> + <span class="fw-token-c">Clause</span>',
+                rule: 'Subordination: bridges what someone thinks, says, or knows to the statement.',
+                targetHTML: "<span class='fw-token-v'>Acho</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vai chover</span>.",
+                translation: 'I think it’s going to rain.'
             },
             {
-                id: 'reflexive',
-                english: '-self / each other',
-                description: 'Action reflects back on the person doing it.',
-                examples: [
-                    { target: 'Ela se olhou no espelho.', translation: 'She looked at herself in the mirror.', highlight: 'se', content: 'olhar' },
-                    { target: 'Ele se levantou cedo.', translation: 'He got [himself] up early.', highlight: 'se', content: 'levantar' },
-                    { target: 'Nós nos abraçamos com carinho.', translation: 'We hugged each other warmly.', highlight: 'nos', content: 'abraçar' }
-                ]
+                tag: 'Relative Pronoun',
+                formulaHTML: '<span class="fw-token-v">Noun</span> + <span class="fw-token-connector">que</span> + <span class="fw-token-c">Description</span>',
+                rule: 'Relativization: refers back to a noun while connecting more information.',
+                targetHTML: "Este é o <span class='fw-token-v'>livro</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>estou lendo</span>.",
+                translation: 'This is the book that I’m reading.'
             },
             {
-                id: 'passive',
-                english: 'action without naming who',
-                description: 'Describes something done generally or passively.',
-                examples: [
-                    { target: 'Aqui se fala português.', translation: 'Portuguese is spoken here.', highlight: 'se', content: 'falar' },
-                    { target: 'Vende-se esta casa.', translation: 'This house is for sale.', highlight: 'se', content: 'vender' }
-                ]
-            }
-        ]
-    },
-    o: {
-        word: 'o',
-        role: 'Article & Pronoun',
-        pos: 'DET',
-        posLabel: 'Article & Pronoun',
-        rank: 3,
-        frequency: 31200,
-        uses: [
-            {
-                id: 'article',
-                english: 'the',
-                description: 'Before a masculine singular noun.',
-                examples: [
-                    { target: 'O livro está na mesa.', translation: 'The book is on the table.', highlight: 'O', content: 'livro' },
-                    { target: 'O dia está lindo.', translation: 'The day is beautiful.', highlight: 'O', content: 'dia' }
-                ]
-            },
-            {
-                id: 'pronoun',
-                english: 'him / it',
-                description: 'Object pronoun receiving the action of a verb.',
-                examples: [
-                    { target: 'Eu o vi ontem no parque.', translation: 'I saw him yesterday in the park.', highlight: 'o', content: 'ver' },
-                    { target: 'Não consigo encontrá-lo.', translation: 'I cannot find it.', highlight: 'lo', content: 'encontrar' }
-                ]
-            }
-        ]
-    },
-    nos: {
-        word: 'nos',
-        role: 'Pronoun & Contraction',
-        pos: 'PRON',
-        posLabel: 'Pronoun & Contraction',
-        rank: 44,
-        frequency: 7890,
-        uses: [
-            {
-                id: 'pronoun-object',
-                english: 'us / to us',
-                description: 'Object pronoun receiving the action.',
-                examples: [
-                    { target: 'Ela nos chamou para jantar.', translation: 'She called us for dinner.', highlight: 'nos', content: 'chamar' },
-                    { target: 'Eles nos disseram a verdade.', translation: 'They told us the truth.', highlight: 'nos', content: 'dizer' }
-                ]
-            },
-            {
-                id: 'pronoun-reflexive',
-                english: 'ourselves / each other',
-                description: 'Reflexive or reciprocal action done by nós.',
-                examples: [
-                    { target: 'Nós nos abraçamos.', translation: 'We hugged each other.', highlight: 'nos', content: 'abraçar' },
-                    { target: 'Nós nos conhecemos bem.', translation: 'We know each other well.', highlight: 'nos', content: 'conhecer' }
-                ]
-            },
-            {
-                id: 'contraction',
-                english: 'in / on / at the',
-                description: 'Contraction of em + os before a masculine plural noun.',
-                parts: ['em', 'os'],
-                examples: [
-                    { target: 'Está nos livros.', translation: 'It’s in the books.', highlight: 'nos', content: 'livros' },
-                    { target: 'Eles moram nos Estados Unidos.', translation: 'They live in the United States.', highlight: 'nos', content: 'Estados Unidos' }
-                ]
+                tag: 'Comparison',
+                formulaHTML: '<span class="fw-token-v">Degree</span> + <span class="fw-token-connector">que</span> + <span class="fw-token-c">Standard</span>',
+                rule: 'Comparison: connects the two sides of a degree or quality difference.',
+                targetHTML: "Ela é <span class='fw-token-v'>mais alta</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>eu</span>.",
+                translation: 'She is taller than me.'
             }
         ]
     },
     naquele: {
         word: 'naquele',
         role: 'Contraction',
-        pos: 'CONTRACTION',
-        posLabel: 'Contraction',
         rank: 1104,
-        frequency: 420,
+        frequency: 88,
         parts: ['em', 'aquele'],
-        partsLabel: 'Contraction formula',
-        uses: [
+        relations: [
             {
-                id: 'in-that',
-                english: 'in that / on that',
-                description: 'Points to a particular place or time.',
-                examples: [
-                    { target: 'Eu estava naquele lugar.', translation: 'I was in that place.', highlight: 'naquele', content: 'lugar' },
-                    { target: 'Tudo começou naquele dia.', translation: 'Everything started on that day.', highlight: 'naquele', content: 'dia' },
-                    { target: 'Naquele momento, tudo mudou.', translation: 'At that moment, everything changed.', highlight: 'Naquele', content: 'momento' }
-                ]
+                tag: 'Deictic Location',
+                formulaHTML: '<span class="fw-token-connector">em + aquele</span> + <span class="fw-token-c">Place / Time</span>',
+                rule: 'Contraction formula pointing to a distant place or past moment.',
+                targetHTML: "Eu estava <span class='fw-token-connector'>naquele</span> <span class='fw-token-c'>lugar</span>.",
+                translation: 'I was in that place.'
+            }
+        ]
+    },
+    nos: {
+        word: 'nos',
+        role: 'Pronoun & Contraction',
+        rank: 44,
+        frequency: 1581,
+        relations: [
+            {
+                tag: 'Object Pronoun',
+                formulaHTML: '<span class="fw-token-connector">nos</span> + <span class="fw-token-v">Verb</span>',
+                rule: "Pronominal argument: represents 'us / to us' receiving the action of a verb.",
+                targetHTML: "Ela <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>chamou</span> para jantar.",
+                translation: 'She called us for dinner.'
+            },
+            {
+                tag: 'Contraction',
+                formulaHTML: '<span class="fw-token-connector">em + os</span> + <span class="fw-token-c">Plural Noun</span>',
+                parts: ['em', 'os'],
+                rule: "Contraction of 'em + os' (in / on / at the) before a masculine plural noun.",
+                targetHTML: "Está <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>livros</span>.",
+                translation: 'It’s in the books.'
+            }
+        ]
+    },
+    se: {
+        word: 'se',
+        role: 'Conjunction & Clitic',
+        rank: 11,
+        frequency: 7806,
+        relations: [
+            {
+                tag: 'Condition',
+                formulaHTML: '<span class="fw-token-connector">Se</span> + <span class="fw-token-v">Condition</span> , <span class="fw-token-c">Result</span>',
+                rule: 'Conditional marker: introduces a hypothetical situation before its consequence.',
+                targetHTML: "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>chover</span>, <span class='fw-token-c'>fico em casa</span>.",
+                translation: 'If it rains, I’ll stay home.'
+            },
+            {
+                tag: 'Reflexive Clitic',
+                formulaHTML: '<span class="fw-token-connector">se</span> + <span class="fw-token-v">Verb of self-action</span>',
+                rule: 'Reflexive clitic: action reflects back onto the person doing it.',
+                targetHTML: "Ela <span class='fw-token-connector'>se</span> <span class='fw-token-v'>olhou</span> no espelho.",
+                translation: 'She looked at herself in the mirror.'
+            }
+        ]
+    },
+    o: {
+        word: 'o',
+        role: 'Article & Clitic',
+        rank: 3,
+        frequency: 34538,
+        relations: [
+            {
+                tag: 'Definite Article',
+                formulaHTML: '<span class="fw-token-connector">o</span> + <span class="fw-token-c">Masculine Noun</span>',
+                rule: 'Definite determiner: points to a specific masculine singular noun.',
+                targetHTML: "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>livro</span> está na mesa.",
+                translation: 'The book is on the table.'
+            },
+            {
+                tag: 'Object Clitic',
+                formulaHTML: '<span class="fw-token-v">Verb</span> + <span class="fw-token-connector">o</span>',
+                rule: 'Direct object pronoun: replaces a 3rd-person masculine singular object.',
+                targetHTML: "Eu <span class='fw-token-connector'>o</span> <span class='fw-token-v'>vi</span> ontem no parque.",
+                translation: 'I saw him yesterday in the park.'
             }
         ]
     }
 };
+
+// Backward-compatibility: alias .uses to .relations
+for (const entry of Object.values(PORTUGUESE_GRAMMAR_WORDS)) {
+    entry.uses = entry.relations;
+}
 
 const ROLE_NAMES = {
     prep: 'preposition',
@@ -323,18 +268,16 @@ export function getCardAmbientGlow(card, lang, activePos, isSplitCard, getPosAcc
 
 // Active state for deterministic card back navigation
 let _activeWordKey = null;
-let _activeUseIndex = 0;
-let _activeExampleIndex = 0;
+let _activeRelIndex = 0;
 
-export function selectFunctionWordUse(useIdx) {
-    _activeUseIndex = Number(useIdx) || 0;
-    _activeExampleIndex = 0;
+export function selectFunctionWordRelation(relIdx) {
+    _activeRelIndex = Number(relIdx) || 0;
     refreshFunctionWordCardBack();
 }
 
-export function selectFunctionWordExample(exIdx) {
-    _activeExampleIndex = Number(exIdx) || 0;
-    refreshFunctionWordCardBack();
+// Backward compatibility alias:
+export function selectFunctionWordUse(useIdx) {
+    selectFunctionWordRelation(useIdx);
 }
 
 function refreshFunctionWordCardBack() {
@@ -344,16 +287,13 @@ function refreshFunctionWordCardBack() {
     const data = PORTUGUESE_GRAMMAR_WORDS[cardWord];
     if (!data) return;
 
-    const uses = data.uses || [];
-    if (_activeUseIndex >= uses.length) _activeUseIndex = 0;
-    const currentUse = uses[_activeUseIndex];
-    const examples = currentUse?.examples || [];
-    if (_activeExampleIndex >= examples.length) _activeExampleIndex = 0;
-    const currentEx = examples[_activeExampleIndex];
+    const relations = data.relations || data.uses || [];
+    if (_activeRelIndex >= relations.length) _activeRelIndex = 0;
+    const currentRel = relations[_activeRelIndex];
 
-    // Update uses selection
-    container.querySelectorAll('.fw-use-btn').forEach((btn, i) => {
-        const isSelected = i === _activeUseIndex;
+    // Update relations selection
+    container.querySelectorAll('.fw-relation-box').forEach((btn, i) => {
+        const isSelected = i === _activeRelIndex;
         btn.setAttribute('aria-pressed', String(isSelected));
         btn.classList.toggle('is-selected', isSelected);
     });
@@ -361,49 +301,30 @@ function refreshFunctionWordCardBack() {
     // Update contextual parts box (e.g. for hybrid nos)
     const dynamicPartsBox = container.querySelector('.fw-dynamic-parts-box');
     if (dynamicPartsBox) {
-        if (currentUse?.parts && currentUse.parts.length === 2) {
-            dynamicPartsBox.innerHTML = `<span class="fw-part-pill">${esc(currentUse.parts[0])}</span> <span class="fw-part-plus">+</span> <span class="fw-part-pill">${esc(currentUse.parts[1])}</span>`;
+        if (currentRel?.parts && currentRel.parts.length === 2) {
+            dynamicPartsBox.innerHTML = `<span class="fw-part-pill">${esc(currentRel.parts[0])}</span> <span class="fw-part-plus">+</span> <span class="fw-part-pill">${esc(currentRel.parts[1])}</span>`;
             dynamicPartsBox.style.display = 'inline-flex';
         } else {
             dynamicPartsBox.style.display = 'none';
         }
     }
 
-    // Update content variation chips
-    const variationBar = container.querySelector('.fw-variation-bar');
-    if (variationBar) {
-        if (examples.length > 1) {
-            const chipsHtml = examples.map((ex, idx) => {
-                const isSelected = idx === _activeExampleIndex;
-                const label = ex.content || ex.highlight || `Example ${idx + 1}`;
-                return `<button type="button" class="fw-chip-step${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordExample(${idx})">${esc(label)}</button>`;
-            }).join('');
-            variationBar.innerHTML = `<span class="fw-variation-label">Content variation (${examples.length})</span><div class="fw-chips">${chipsHtml}</div>`;
-            variationBar.style.display = 'flex';
-        } else {
-            variationBar.style.display = 'none';
-        }
+    // Update sentence target and translation
+    const sentenceEl = container.querySelector('.fw-sentence-target');
+    if (sentenceEl && currentRel) {
+        sentenceEl.innerHTML = currentRel.targetHTML || currentRel.target || '';
     }
 
-    // Update example target sentence with highlight and translation
-    const sentenceEl = container.querySelector('.fw-example-sentence');
-    if (sentenceEl && currentEx) {
-        const hl = currentEx.highlight || data.word;
-        const re = new RegExp(`(\\b${hl}\\b)`, 'i');
-        const highlightedTarget = esc(currentEx.target).replace(re, '<strong class="fw-highlight">$1</strong>');
-        sentenceEl.innerHTML = highlightedTarget;
-    }
-
-    const transEl = container.querySelector('.fw-example-translation');
-    if (transEl && currentEx) {
-        transEl.textContent = currentEx.translation;
+    const transEl = container.querySelector('.fw-sentence-translation');
+    if (transEl && currentRel) {
+        transEl.textContent = currentRel.translation || '';
     }
 }
 
 // Make functions available globally for onclick handlers
 if (typeof window !== 'undefined') {
+    window.selectFunctionWordRelation = selectFunctionWordRelation;
     window.selectFunctionWordUse = selectFunctionWordUse;
-    window.selectFunctionWordExample = selectFunctionWordExample;
     window.getCardAmbientGlow = getCardAmbientGlow;
     window.FW_SIGNATURE_GLOW_RGB = FW_SIGNATURE_GLOW_RGB;
 }
@@ -424,20 +345,16 @@ export function functionWordBlockHTML(card, lang) {
     const ptData = getPortugueseGrammarDefinition(card, lang) || (card?.functionWord?.uses ? card.functionWord : null);
 
     // 1. Deterministic layout for Portuguese focus grammar words
-    if (ptData && ptData.uses) {
+    if (ptData && (ptData.relations || ptData.uses)) {
         const wordKey = ptData.word || card.targetWord || card.word;
         if (_activeWordKey !== wordKey) {
             _activeWordKey = wordKey;
-            _activeUseIndex = 0;
-            _activeExampleIndex = 0;
+            _activeRelIndex = 0;
         }
 
-        const uses = ptData.uses || [];
-        if (_activeUseIndex >= uses.length) _activeUseIndex = 0;
-        const currentUse = uses[_activeUseIndex];
-        const examples = currentUse?.examples || [];
-        if (_activeExampleIndex >= examples.length) _activeExampleIndex = 0;
-        const currentEx = examples[_activeExampleIndex];
+        const relations = ptData.relations || ptData.uses || [];
+        if (_activeRelIndex >= relations.length) _activeRelIndex = 0;
+        const currentRel = relations[_activeRelIndex];
 
         // Permanent contraction formula box (e.g. naquele = em + aquele)
         let partsBoxHTML = '';
@@ -450,69 +367,45 @@ export function functionWordBlockHTML(card, lang) {
                 </div>`;
         }
 
-        // Contextual formula box for hybrid words (e.g. nos = em + os when contraction use is active)
+        // Contextual formula box for hybrid words (e.g. nos = em + os when contraction relation is active)
         let dynamicPartsHTML = '';
         if (!ptData.parts) {
-            const hasParts = currentUse?.parts && currentUse.parts.length === 2;
+            const hasParts = currentRel?.parts && currentRel.parts.length === 2;
             dynamicPartsHTML = `
                 <div class="fw-parts-box fw-dynamic-parts-box" style="${hasParts ? 'display: inline-flex;' : 'display: none;'}">
-                    ${hasParts ? `<span class="fw-part-pill">${esc(currentUse.parts[0])}</span> <span class="fw-part-plus">+</span> <span class="fw-part-pill">${esc(currentUse.parts[1])}</span>` : ''}
+                    ${hasParts ? `<span class="fw-part-pill">${esc(currentRel.parts[0])}</span> <span class="fw-part-plus">+</span> <span class="fw-part-pill">${esc(currentRel.parts[1])}</span>` : ''}
                 </div>`;
         }
 
-        // Uses list
-        const usesHTML = uses.map((u, i) => {
-            const isSelected = i === _activeUseIndex;
+        // Relations tiles (no square brackets, color alone establishes constituents)
+        const relationsHTML = relations.map((rel, i) => {
+            const isSelected = i === _activeRelIndex;
             return `
-                <button type="button" class="fw-use-btn${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordUse(${i})">
-                    <strong>${esc(u.english)}</strong>
-                    <p>${esc(u.description)}</p>
+                <button type="button" class="fw-relation-box${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordRelation(${i})">
+                    <div class="fw-relation-top">
+                        <span class="fw-relation-formula">${rel.formulaHTML || esc(rel.formula || '')}</span>
+                        <span class="fw-relation-tag">${esc(rel.tag || '')}</span>
+                    </div>
+                    <p class="fw-relation-rule">${esc(rel.rule || rel.description || '')}</p>
                 </button>`;
         }).join('');
 
-        // Content variation stepper chips
-        let variationChipsHTML = '';
-        if (examples.length > 1) {
-            const chips = examples.map((ex, idx) => {
-                const isSelected = idx === _activeExampleIndex;
-                const label = ex.content || ex.highlight || `Example ${idx + 1}`;
-                return `<button type="button" class="fw-chip-step${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordExample(${idx})">${esc(label)}</button>`;
-            }).join('');
-            variationChipsHTML = `
-                <div class="fw-variation-bar">
-                    <span class="fw-variation-label">Content variation (${examples.length})</span>
-                    <div class="fw-chips">${chips}</div>
-                </div>`;
-        } else {
-            variationChipsHTML = `<div class="fw-variation-bar" style="display: none;"></div>`;
-        }
-
-        // Example sentence highlight
-        let exampleTargetHTML = '';
-        if (currentEx) {
-            const hl = currentEx.highlight || ptData.word;
-            const re = new RegExp(`(\\b${hl}\\b)`, 'i');
-            exampleTargetHTML = esc(currentEx.target).replace(re, '<strong class="fw-highlight">$1</strong>');
-        }
+        const targetHTML = currentRel?.targetHTML || esc(currentRel?.target || '');
+        const plainTargetText = targetHTML.replace(/<[^>]+>/g, '');
 
         return `
             <div class="fw-deterministic-card" data-word="${esc(wordKey)}">
                 <div class="fw-header">
-                    <div class="fw-heading">${esc(wordKey)}</div>
-                    <span class="fw-badge">${esc(ptData.posLabel || ptData.role)}</span>
+                    <h2 class="fw-heading">${esc(wordKey)}</h2>
                 </div>
                 ${partsBoxHTML}
                 ${dynamicPartsHTML}
-                <div class="fw-uses-grid">
-                    ${usesHTML}
+                <div class="fw-relations-list">
+                    ${relationsHTML}
                 </div>
-                <div class="fw-example-section">
-                    ${variationChipsHTML}
-                    <div class="fw-example-box" onclick="event.stopPropagation(); (window.speakTargetSentence?.() || window.speakText?.('${esc(currentEx?.target || '')}'))">
-                        <div class="fw-example-sentence">${exampleTargetHTML}</div>
-                        <div class="fw-example-translation">${esc(currentEx?.translation || '')}</div>
-                        <div class="fw-example-hint">Tap a chip above to see how <strong>${esc(wordKey)}</strong> connects different content words</div>
-                    </div>
+                <div class="fw-sentence-panel" onclick="event.stopPropagation(); (window.speakTargetSentence?.() || window.speakText?.('${esc(plainTargetText)}'))">
+                    <div class="fw-sentence-target">${targetHTML}</div>
+                    <div class="fw-sentence-translation">${esc(currentRel?.translation || '')}</div>
                 </div>
             </div>`;
     }
