@@ -582,6 +582,7 @@ export function functionWordBlockHTML(card, lang) {
                 </div>
                 ${partsBoxHTML}
                 ${dynamicPartsHTML}
+                <div class="fw-section-header">Core patterns</div>
                 <div class="fw-relations-list">
                     ${relationsHTML}
                 </div>

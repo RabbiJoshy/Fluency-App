@@ -25320,6 +25320,15 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 
 /* Syntactic relations list */
+.fw-section-header {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
 .fw-relations-list {
   display: flex;
   flex-direction: column;
