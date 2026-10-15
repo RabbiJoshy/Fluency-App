@@ -21,7 +21,7 @@
       "detail": [
         "Each companion card lists the lemma/POS pill(s) built from its own senses; the dimmed sibling pill is gone.",
         "A single small \"Card N of M\" label sits under the pills and still opens the \"why separate cards?\" note.",
-        "No capsule behind any lemma/POS pill: the pill is the POS colour at about two-thirds brightness with white text, straight on the card glow; a lemma is plain text beside it."
+        "No capsule behind any lemma/POS pill: the pill is a muted, darkened POS colour (mixed toward slate) with white text and no outline, straight on the card glow; a lemma is plain text beside it."
       ],
       "commit": "pending"
     },

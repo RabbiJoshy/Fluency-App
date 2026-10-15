@@ -16,7 +16,8 @@
 .card-front .front-lemma-pair .front-lemma-name { color: var(--text-primary); }
 .card-front .front-lemma-pair .front-lemma-from { color: var(--text-primary); opacity: 0.75; }
 .card-front .front-lemma-pair .card-pos {
-    background: color-mix(in srgb, rgb(var(--front-pos-rgb, 160, 160, 160)) 66%, #000);
+    background: color-mix(in srgb, rgb(var(--front-pos-rgb, 160, 160, 160)) 52%, #10151a);
+    border-color: transparent;
     color: #fff;
     font-weight: 700;
     text-shadow: none;
