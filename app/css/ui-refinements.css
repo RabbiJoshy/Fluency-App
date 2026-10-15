@@ -443,3 +443,23 @@
   .smart-skip-language-code { display: none; }
 }
 .smart-skip-browser-actions:has(> #smartSkipResultsCount:empty):has(> button[hidden]) { display: none; }
+
+/* Parts of speech of one lemma form one joined pill: a hairline gap between
+   segments, only the outer ends rounded. Short names show only when the full
+   names do not fit (.is-short, set by the card renderer). */
+.pos-short-label { display: none; }
+.card-front .front-pos-joined {
+    display: inline-flex;
+    gap: 2px;
+    max-width: 100%;
+}
+.card-front .front-pos-joined.is-short .pos-full-label { display: none; }
+.card-front .front-pos-joined.is-short .pos-short-label { display: inline; }
+.card-front .front-pos-joined > .front-pos-unit:not(:last-child) .card-pos {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.card-front .front-pos-joined > .front-pos-unit:not(:first-child) .card-pos {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}

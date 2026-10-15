@@ -4671,6 +4671,16 @@ function posDisplayName(pos) {
         || String(pos || '').toLowerCase().replace(/^./, char => char.toUpperCase());
 }
 
+// Short forms for a joined POS pill, used only when the full names do not fit.
+function posShortName(pos) {
+    const labels = {
+        NOUN: 'Noun', VERB: 'Verb', AUX: 'Aux', ADJ: 'Adj', ADV: 'Adv', PREP: 'Prep',
+        ADP: 'Prep', CONJ: 'Conj', CCONJ: 'Conj', SCONJ: 'Conj', PRON: 'Pron',
+        DET: 'Det', INTJ: 'Intj', NUM: 'Num', PROPN: 'Name'
+    };
+    return labels[String(pos || '').toUpperCase()] || posDisplayName(pos);
+}
+
 function rareSenseFieldKey(value) {
     const raw = String(value || '').trim();
     if (!raw) return '';
@@ -6260,7 +6270,7 @@ function renderCardWikipediaBadge(card) {
         const p = String(pos || '').toLowerCase();
         return p.includes('verb') || p === 'v' || p === 'vb';
     };
-    const posLabelHTML = pos => `<span class="pos-full-label">${posDisplayName(pos)}</span>`;
+    const posLabelHTML = pos => `<span class="pos-full-label">${posDisplayName(pos)}</span><span class="pos-short-label" aria-hidden="true">${posShortName(pos)}</span>`;
     // The verb POS pill retains the complete popover on every face. In the
     // production direction its coupled subject + tense/mood rows are also
     // repeated as a compact, always-visible cue beneath the English senses;
@@ -6393,12 +6403,29 @@ function renderCardWikipediaBadge(card) {
         if (pairs.length === 0) {
             frontPOSEl.style.display = 'none';
         } else {
-            const pillsHTML = pairs.map(pair => {
-                const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
-                if (!pair.lemma || foldSurfaceForm(pair.lemma) === foldSurfaceForm(displayedTargetHeadword)) {
-                    return `<span class="front-lemma-pair is-pos-only">${posUnit}</span>`;
+            // Parts of speech of one lemma are one joined pill; a different
+            // lemma ("from x") is its own pill.
+            const targetKey = foldSurfaceForm(displayedTargetHeadword);
+            const pillGroups = [];
+            const groupByLemma = new Map();
+            pairs.forEach(pair => {
+                const key = !pair.lemma || foldSurfaceForm(pair.lemma) === targetKey
+                    ? '' : foldSurfaceForm(pair.lemma);
+                let group = groupByLemma.get(key);
+                if (!group) {
+                    group = { lemma: key ? pair.lemma : '', pairs: [] };
+                    groupByLemma.set(key, group);
+                    pillGroups.push(group);
                 }
-                return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name"><span class="front-lemma-from">from </span>${escapeCardText(pair.lemma)}</span></span>`;
+                group.pairs.push(pair);
+            });
+            const pillsHTML = pillGroups.map(group => {
+                const units = group.pairs.map(pair =>
+                    renderFrontPosUnit(pair.pos, isVerbPos(pair.pos))).join('');
+                const joined = group.pairs.length > 1
+                    ? `<span class="front-pos-joined">${units}</span>` : units;
+                if (!group.lemma) return `<span class="front-lemma-pair is-pos-only">${joined}</span>`;
+                return `<span class="front-lemma-pair">${joined}<span class="front-lemma-name"><span class="front-lemma-from">from </span>${escapeCardText(group.lemma)}</span></span>`;
             }).join('');
             const isSplitCard = Boolean(card.splitInfo);
             if (isSplitCard) {
@@ -6437,6 +6464,16 @@ function renderCardWikipediaBadge(card) {
                 names.forEach(name => { name.style.fontSize = `${labelSize - 0.5}px`; });
             }
             names.forEach(name => { name.title = name.textContent; });
+            // A joined pill keeps its full names unless they genuinely do not fit.
+            frontPOSEl.querySelectorAll('.front-pos-joined').forEach(group => {
+                group.classList.remove('is-short');
+                const pair = group.closest('.front-lemma-pair');
+                const room = frontPOSEl.clientWidth;
+                if ((pair && pair.scrollWidth > pair.clientWidth + 1)
+                    || (room && group.getBoundingClientRect().width > room - 4)) {
+                    group.classList.add('is-short');
+                }
+            });
         }
     } else {
         frontPOSEl.style.display = 'none';
