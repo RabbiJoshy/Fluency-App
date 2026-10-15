@@ -148,13 +148,14 @@ function initDesktopTrail(closePages) {
         const menu = levels.music.querySelector('.desktop-trail-menu');
         menu.replaceChildren();
         const copy = window.learningModeCopy?.(lang);
-        const isLive = Boolean(window.playlistLiveDeck?.() && !window.activeArtist);
+        const stage = window.musicWorkspaceStage?.() || '';
+        const isLive = Boolean(window.playlistLiveDeck?.() && !window.activeArtist) || stage === 'playlists';
         const spotifyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
         menu.append(
             option('Artists', {
-                icon: copy?.lyrics?.iconHTML || '', selected: !isLive,
+                icon: copy?.lyrics?.iconHTML || '', selected: !isLive && (stage === 'artists' || !stage),
                 detail: 'Choose an artist or mix songs',
-                onSelect: () => window.desktopTrailActions?.chooseMusic(lang),
+                onSelect: () => window.desktopTrailActions?.chooseArtists ? window.desktopTrailActions.chooseArtists(lang) : window.desktopTrailActions?.chooseMusic(lang, 'artists'),
             }),
             option('Spotify playlists', {
                 icon: spotifyIcon, selected: isLive,
@@ -235,12 +236,14 @@ function initDesktopTrail(closePages) {
         levels.music.hidden = !inMusic;
         if (inMusic) {
             const isLive = Boolean(live && !artist);
+            const stage = window.musicWorkspaceStage?.() || (isLive ? 'playlists' : (artist ? 'artists' : 'choices'));
+            const inChoices = stage === 'choices' && !artist && !live;
             const musicChip = levels.music.querySelector('.desktop-trail-chip');
             const musicIcon = musicChip.querySelector('.desktop-trail-icon');
             musicChip.querySelector('small').textContent = 'Music';
-            musicChip.querySelector('strong').textContent = isLive ? 'Spotify playlists' : 'Artists';
-            musicIcon.innerHTML = isLive ? spotifyIcon : (copy?.lyrics.iconHTML || '');
-            levels.music.dataset.state = 'chosen';
+            musicChip.querySelector('strong').textContent = inChoices ? 'Choose…' : (isLive || stage === 'playlists' ? 'Spotify playlists' : 'Artists');
+            musicIcon.innerHTML = inChoices ? '' : ((isLive || stage === 'playlists') ? spotifyIcon : (copy?.lyrics.iconHTML || ''));
+            levels.music.dataset.state = inChoices ? 'empty' : 'chosen';
             if (levels.music.querySelector('.desktop-trail-menu').hidden) renderMusicMenu(current);
         } else {
             const menu = levels.music.querySelector('.desktop-trail-menu');
@@ -326,6 +329,7 @@ function initDesktopTrail(closePages) {
     if (step1) observer.observe(step1, { attributes: true, attributeFilter: ['class'] });
     observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     window.addEventListener('hashchange', schedule);
+    window.refreshDesktopTrail = schedule;
     schedule();
     return schedule;
 }

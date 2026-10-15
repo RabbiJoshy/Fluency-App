@@ -1626,7 +1626,7 @@ async function ensureArtistCatalog() {
 
 // The music source choice is a persistent page, including song subsets and
 // study setup. Reloading a source carries a workspace handoff, never home.
-async function showArtistPicker(anchorBtn, artists, targetLanguage = null, { stage = 'artists' } = {}) {
+async function showArtistPicker(anchorBtn, artists, targetLanguage = null, { stage = (activeArtist || window.playlistLiveActive?.() ? 'artists' : 'choices') } = {}) {
     if (!document.getElementById('appContent')?.classList.contains('hidden')) await window.goBackToSetup?.();
     const language = targetLanguage || Object.values(artists || {})[0]?.language || selectedLanguage || 'spanish';
     const catalog = artists && Object.keys(artists).length ? artists : await ensureArtistCatalog();
@@ -1751,7 +1751,8 @@ window.desktopTrailActions = {
         else window.reopenLanguagePicker?.();
     },
     chooseSpeech(language) { chooseSpeechVocabulary(language); },
-    chooseMusic(language) { return showArtistPicker(null, null, language); },
+    chooseMusic(language, stage = 'choices') { return showArtistPicker(null, null, language, { stage }); },
+    chooseArtists(language) { return showArtistPicker(null, null, language, { stage: 'artists' }); },
     openPlaylists(language) { return showArtistPicker(null, null, language, { stage: 'playlists' }); },
     chooseArtist(entry, language) { selectMusicArtist(entry, language); },
     async artistEntries(language) {

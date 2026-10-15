@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-15T14:40:00+01:00",
+      "date": "2026-10-15 14:40 BST",
+      "agent": "Antigravity",
+      "summary": "Guided on-page music mode selection and removal of redundant 'Back to vocabulary' button",
+      "detail": [
+        "Landing on Music mode now visually guides the learner on the page with dedicated cards for Artists and Spotify playlists rather than jumping straight into artist browsing.",
+        "Removed the redundant '‹ Back to vocabulary' button since sidebar chips handle mode and language switching.",
+        "In sub-pages (Artists, Spotify playlists, Songs), the on-page '‹ Back' button returns to the previous guided step (e.g. from Artists back to music source choices).",
+        "Sidebar trail Level 2 reflects 'Choose…' until a source option is picked, keeping the sidebar and page in full alignment."
+      ],
+      "commit": "1168755a"
+    },
+    {
       "timestamp": "2026-10-15T11:28:00+01:00",
       "date": "2026-10-15 11:28 BST",
       "agent": "Antigravity",
