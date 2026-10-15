@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-15T11:08:00+01:00",
+      "date": "2026-10-15 11:08 BST",
+      "agent": "Antigravity",
+      "summary": "Streamlined music navigation: eliminated nested sidebars, direct choosing set menu flow, and clear sidebar hierarchy",
+      "detail": [
+        "Eliminated the nested secondary sidebar (Artists, Spotify playlists, Study setup) in the music complex; replaced with a clean horizontal source switcher.",
+        "Selecting an artist or Spotify playlist takes the learner directly through selection into the main choosing set menu without nested workspaces.",
+        "Desktop sidebar trail now reads clearly: Spanish -> Vocabulary: Artists / Spotify playlists -> Artist / Playlist name."
+      ],
+      "commit": "df2ff1a9"
+    },
+    {
       "timestamp": "2026-10-15T10:41:00+01:00",
       "date": "2026-10-15 10:41 BST",
       "agent": "Antigravity",

@@ -28,20 +28,23 @@ function init() {
     workspace.innerHTML = `
         <header class="music-workspace-header">
             <button type="button" id="musicBackBtn" class="music-back">‹ Back</button>
-            <div><small id="musicWorkspaceLanguage"></small><h1 id="musicWorkspaceTitle" tabindex="-1">Your music</h1></div>
-        </header>
-        <div class="music-workspace-layout">
-            <nav class="music-workspace-nav" aria-label="Music">
+            <div class="music-workspace-title-group">
+                <small id="musicWorkspaceLanguage"></small>
+                <h1 id="musicWorkspaceTitle" tabindex="-1">Choose your music</h1>
+            </div>
+            <nav class="music-workspace-nav" aria-label="Music source">
                 <button type="button" data-music-stage="artists">Artists</button>
                 <button type="button" data-music-stage="playlists">Spotify playlists</button>
-                <button type="button" data-music-stage="setup" id="musicSetupBtn">Study setup</button>
+                <button type="button" data-music-stage="setup" id="musicSetupBtn" hidden aria-hidden="true" tabindex="-1">Study setup</button>
             </nav>
+        </header>
+        <div class="music-workspace-layout">
             <div class="music-workspace-main">
-                <div id="musicArtistBrowser"><h2>Choose your music</h2><p>Pick an artist, or mix songs from several artists.</p><div id="musicArtistList"></div></div>
+                <div id="musicArtistBrowser"><p class="music-browser-intro">Pick an artist, or mix songs from several artists.</p><div id="musicArtistList"></div></div>
                 <div id="musicPickerHost"></div>
                 <div id="musicStudySetup" hidden></div>
             </div>
-            <aside class="music-selection-summary" aria-labelledby="musicSelectionTitle">
+            <aside class="music-selection-summary" aria-labelledby="musicSelectionTitle" hidden>
                 <span class="music-summary-eyebrow">Your selection</span>
                 <h2 id="musicSelectionTitle">Choose some music</h2>
                 <p id="musicSelectionCount"></p>
@@ -225,8 +228,7 @@ export function updateMusicSelection(songs = null, sourceName = '') {
     edit.textContent = live && !artist ? 'Change playlist songs' : 'Choose songs';
 }
 
-export function leaveMusicWorkspace() {
-    if (busy) return;
+export function dismissMusicWorkspace() {
     closePickers();
     for (const [element, marker] of homes) {
         marker.after(element);
@@ -237,10 +239,15 @@ export function leaveMusicWorkspace() {
         }
     }
     active = false;
-    workspace.hidden = true;
+    if (workspace) workspace.hidden = true;
     document.body.classList.remove('music-workspace-active');
     const studyNav = document.querySelector('#desktopStudyBtn .desktop-shell-label');
     if (studyNav) studyNav.textContent = 'Choose a set';
+}
+
+export function leaveMusicWorkspace() {
+    if (busy) return;
+    dismissMusicWorkspace();
     if (options.onLeave) options.onLeave();
     else {
         window.fluencyRoutes?.replaceRoute({ kind: 'language', language: window.fluencyRoutes.routeCodeFor(options.language, window.config?.languages) });
@@ -267,6 +274,7 @@ export function consumeMusicHandoff() {
 }
 
 window.openMusicWorkspace = openMusicWorkspace;
+window.dismissMusicWorkspace = dismissMusicWorkspace;
 window.showMusicSongPicker = showMusicSongPicker;
 window.showMusicStudySetup = showMusicStudySetup;
 window.updateMusicSelection = updateMusicSelection;

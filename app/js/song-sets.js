@@ -263,7 +263,7 @@ export function showSongSetPicker() {
 
 function hideSongSetPicker() {
     document.getElementById('songSetModal')?.classList.add('hidden');
-    if (window.musicWorkspaceActive?.()) window.showMusicStudySetup?.();
+    if (window.musicWorkspaceActive?.()) window.dismissMusicWorkspace?.();
 }
 
 async function applySongSet() {

@@ -123,16 +123,20 @@ function initDesktopTrail(closePages) {
         const speechAvailable = capabilities.speech !== false;
         const musicAvailable = capabilities.lyrics !== false || speechAvailable;
         const inMusic = mode === 'lyrics' || mode === 'live';
-        // Music is a level, not a leaf: once in it, the artist chip below holds
-        // the choices, so this row only reports where you are.
+        const isLive = Boolean(window.playlistLiveDeck?.());
+        const spotifyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
         menu.append(
             option(copy.speech.label, {
                 icon: copy.speech.iconHTML, selected: mode === 'speech', disabled: !speechAvailable,
                 onSelect: () => window.desktopTrailActions?.chooseSpeech(lang),
             }),
-            option(copy.lyrics.label, {
-                icon: copy.lyrics.iconHTML, selected: inMusic, disabled: !musicAvailable,
+            option('Artists', {
+                icon: copy.lyrics.iconHTML, selected: inMusic && !isLive, disabled: !musicAvailable,
                 onSelect: () => window.desktopTrailActions?.chooseMusic(lang),
+            }),
+            option('Spotify playlists', {
+                icon: spotifyIcon, selected: inMusic && isLive, disabled: !musicAvailable,
+                onSelect: () => window.desktopTrailActions?.openPlaylists(lang),
             }),
         );
     }
@@ -183,28 +187,42 @@ function initDesktopTrail(closePages) {
         const current = state();
         const copy = window.learningModeCopy?.(lang);
         const inMusic = current.mode === 'lyrics' || current.mode === 'live';
+        const live = window.playlistLiveDeck?.();
+        const artist = window.activeArtist;
         const modeChip = levels.mode.querySelector('.desktop-trail-chip');
         const modeIcon = modeChip.querySelector('.desktop-trail-icon');
-        modeChip.querySelector('strong').textContent = current.mode === 'speech' ? 'Speech'
-            : inMusic ? 'Music' : 'Choose…';
-        modeIcon.innerHTML = current.mode === 'speech' ? (copy?.speech.iconHTML || '')
-            : inMusic ? (copy?.lyrics.iconHTML || '') : '';
+        const spotifyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
+        let modeText = 'Choose…';
+        if (current.mode === 'speech') {
+            modeText = 'Speech';
+            modeIcon.innerHTML = copy?.speech.iconHTML || '';
+        } else if (live && !artist) {
+            modeText = 'Spotify playlists';
+            modeIcon.innerHTML = spotifyIcon;
+        } else if (inMusic) {
+            modeText = 'Artists';
+            modeIcon.innerHTML = copy?.lyrics.iconHTML || '';
+        } else {
+            modeIcon.innerHTML = '';
+        }
+        modeChip.querySelector('strong').textContent = modeText;
+        modeChip.querySelector('small').textContent = 'Vocabulary';
         levels.mode.dataset.state = current.mode || 'empty';
         if (levels.mode.querySelector('.desktop-trail-menu').hidden) renderModeMenu(current);
 
-        levels.source.hidden = !inMusic;
-        if (inMusic) {
-            const live = window.playlistLiveDeck?.();
-            const artist = window.activeArtist;
+        const hasSource = Boolean(artist || live);
+        levels.source.hidden = !inMusic || !hasSource;
+        if (inMusic && hasSource) {
+            const isLive = Boolean(live && !artist);
             const sourceChip = levels.source.querySelector('.desktop-trail-chip');
-            const label = live && !artist ? (live.playlistName || 'Spotify playlist')
+            const label = isLive ? (live.playlistName || 'Spotify playlist')
                 : artist ? (artist.name || 'Artist') : 'Choose artist';
             sourceChip.querySelector('strong').textContent = label;
-            sourceChip.querySelector('small').textContent = live && !artist ? 'Playlist' : 'Artist';
+            sourceChip.querySelector('small').textContent = isLive ? 'Playlist' : 'Artist';
             const photo = sourceChip.querySelector('.desktop-trail-icon');
             if (artist) paintChipPhoto(photo, artist);
-            else { photo.replaceChildren(); photo.style.backgroundImage = ''; photo.textContent = '♪'; }
-            levels.source.dataset.state = artist || live ? 'chosen' : 'empty';
+            else { photo.replaceChildren(); photo.style.backgroundImage = ''; photo.innerHTML = spotifyIcon; }
+            levels.source.dataset.state = 'chosen';
         } else {
             const menu = levels.source.querySelector('.desktop-trail-menu');
             menu.hidden = true;

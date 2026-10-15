@@ -823,10 +823,14 @@ loadConfig().then(async () => {
         openActivityChoice('verbs', event.currentTarget.dataset.href);
     });
     document.getElementById('learningContextLyricsViewBtn')?.addEventListener('click', event => {
-        openActivityChoice('translation', event.currentTarget.dataset.href || 'lyrics-view/');
+        const currentLang = activeArtist?.language || selectedLanguage;
+        const defaultHref = window.fluencyRoutes?.lyricsViewHref?.(null, currentLang) || (currentLang === 'portuguese' ? 'lyrics-view/?lang=pt' : 'lyrics-view/');
+        openActivityChoice('translation', event.currentTarget.dataset.href || defaultHref);
     });
     document.getElementById('artistSourceLyricsViewBtn')?.addEventListener('click', () => {
-        openActivityChoice('translation', 'lyrics-view/');
+        const currentLang = activeArtist?.language || selectedLanguage;
+        const href = window.fluencyRoutes?.lyricsViewHref?.(null, currentLang) || (currentLang === 'portuguese' ? 'lyrics-view/?lang=pt' : 'lyrics-view/');
+        openActivityChoice('translation', href);
     });
     document.getElementById('learningContextSongsBtn')?.addEventListener('click', () => {
         closeLearningContext();
@@ -947,7 +951,7 @@ loadConfig().then(async () => {
         window.updateLearningContextUI?.();
         sessionStorage.setItem('fluencyPendingSpeechLanguage', selectedLanguage);
         sessionStorage.removeItem('fluencyPendingLiveStudy');
-        await showArtistPicker(null, null, selectedLanguage, { stage: 'setup' });
+        window.dismissMusicWorkspace?.();
         const liveTab = document.querySelector(`.lang-tab[data-lang="${selectedLanguage}"]`);
         if (liveTab && !liveTab.disabled) {
             liveTab.click();
@@ -965,7 +969,7 @@ loadConfig().then(async () => {
             // Hide step 1 entirely (language auto-selected)
             document.getElementById('step1').style.display = 'none';
             renderArtistSourceSummary();
-            await showArtistPicker(null, allArtistsConfig, selectedLanguage, { stage: 'setup' });
+            window.dismissMusicWorkspace?.();
             await loadPpmData(activeArtist.language || 'spanish');
             document.getElementById('step2').style.display = 'block';
             // Title is now static ("Choose level" in the HTML); the
