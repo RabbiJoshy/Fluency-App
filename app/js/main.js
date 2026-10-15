@@ -1907,6 +1907,10 @@ function showLanguagePicker(languages) {
     // than having a duplicate orphaned tile.
     const ready = key => languages[key].hasData !== false;
     const ordered = languageOrder.filter(key => languages[key] && key !== 'portuguese_brazilian');
+    let preferred = null;
+    try { preferred = localStorage.getItem('fluencyPreferredLanguageV1'); } catch (_) {}
+    const activeTab = document.querySelector('.lang-tab.active')?.dataset.lang;
+    const establishedLanguage = preferred || activeTab || null;
     const entries = [...ordered.filter(ready), ...ordered.filter(key => !ready(key))].map(key => {
         const cfg = languages[key];
         const isPortuguese = key === 'portuguese';
@@ -1915,7 +1919,7 @@ function showLanguagePicker(languages) {
             fallbackText: flags[key] || '🌐',
             accent: (cfg.colorTheme && cfg.colorTheme.primary) || 'var(--accent-primary)',
             disabled: cfg.hasData === false,
-            selected: key === selectedLanguage,
+            selected: Boolean(establishedLanguage && key.toLowerCase() === establishedLanguage.toLowerCase()),
             onSelect: () => {
                 if (window.musicWorkspaceActive?.()) {
                     window.resetActiveArtist?.();
