@@ -551,7 +551,9 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     if (lyricsViewRow) {
         const lyricsActive = modeKey === 'lyrics' || modeKey === 'live';
         lyricsViewRow.hidden = !lyricsActive;
-        lyricsViewRow.dataset.href = 'lyrics-view/';
+        const currentLang = (typeof activeArtist !== 'undefined' && activeArtist?.language) || (typeof selectedLanguage !== 'undefined' ? selectedLanguage : null);
+        const routes = typeof window !== 'undefined' ? window.fluencyRoutes : null;
+        lyricsViewRow.dataset.href = routes?.lyricsViewHref?.(null, currentLang) || (currentLang === 'portuguese' ? 'lyrics-view/?lang=pt' : 'lyrics-view/');
     }
     const activities = document.getElementById('learningContextActivities');
     if (activities) activities.hidden = Boolean(verbsRow?.hidden && lyricsViewRow?.hidden);
