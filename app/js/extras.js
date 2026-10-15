@@ -3,8 +3,8 @@
 // vocabulary in the same browser, with no coverage gate or separate setup.
 // The filtered vocabulary snapshot supplies the active songs and original IDs.
 // Each supplementary word has one home even when it also resembles a cognate.
-import './state.js?v=fe7d652a';
-import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=fe7d652a';
+import './state.js?v=95cfa70f';
+import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=95cfa70f';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
