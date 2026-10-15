@@ -25627,3 +25627,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   font-size: 19px; line-height: 1;
 }
 .known-language-flag.is-code { font: 700 11px var(--font-emphasis); color: var(--text-secondary); }
+
+/* Companion cards: one "Card N of M" cue under the card's own pill(s). */
+.card-pos-list .split-card-note.is-counter { margin-top: 2px; }
+.card-pos-list .split-card-note.is-counter .split-pill-count::after { content: " ?"; opacity: 0.7; }

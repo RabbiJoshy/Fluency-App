@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-16T00:15:00+01:00",
+      "date": "2026-10-16 00:15 BST",
+      "agent": "Claude",
+      "summary": "Companion cards show only their own lemma/POS pills, with one \"Card 1 of 2\" cue underneath",
+      "detail": [
+        "Each companion card now lists the lemma/POS pill(s) built from its own senses; the dimmed sibling pill is gone.",
+        "A single \"Card N of M ?\" label sits under the pills and still opens the \"why separate cards?\" note.",
+        "Switching to the sibling is by the next/previous card, as the pair is adjacent in the deck."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-15T14:58:00+01:00",
       "date": "2026-10-15 14:58 BST",
       "agent": "Antigravity",
