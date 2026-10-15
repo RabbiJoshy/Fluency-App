@@ -1,7 +1,7 @@
 // One Fast Track choice per language. The legacy global study defaults seed a
 // language until it has its own choice; they are never changed by this module.
-import { sendOrQueue } from './sync-queue.js?v=95cfa70f';
-import { getIsolatedSyncUser } from './env.js?v=95cfa70f';
+import { sendOrQueue } from './sync-queue.js?v=1d9163be';
+import { getIsolatedSyncUser } from './env.js?v=1d9163be';
 
 const PREFIX = 'fluency_fast_track_v1';
 const LEGACY_KEY = 'fluency_global_study_defaults_v1';

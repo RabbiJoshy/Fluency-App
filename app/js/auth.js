@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=95cfa70f';
-import { readJsonWithTimeout } from './read-request.js?v=95cfa70f';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=95cfa70f';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=95cfa70f';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=95cfa70f';
-import { dbGet, dbPut } from './offline-db.js?v=95cfa70f';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=95cfa70f';
+import './state.js?v=1d9163be';
+import { readJsonWithTimeout } from './read-request.js?v=1d9163be';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=1d9163be';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=1d9163be';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=1d9163be';
+import { dbGet, dbPut } from './offline-db.js?v=1d9163be';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=1d9163be';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=95cfa70f';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=95cfa70f';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=95cfa70f';
+} from './sync-queue.js?v=1d9163be';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=1d9163be';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=1d9163be';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
