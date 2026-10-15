@@ -133,12 +133,13 @@ function refresh() {
     if (toggle) toggle.setAttribute('aria-checked', String(enabled()));
     const modalToggle = document.getElementById('knownLanguagesBridgeToggle');
     if (modalToggle) modalToggle.setAttribute('aria-checked', String(enabled()));
-    const summaryText = bundle ? `Uses your saved ${window.bridgeSourceLanguages()
-        .map(code => window.knownLanguageLabel?.(code) || code.toUpperCase()).join(' and ')} progress. Only matching meanings you know are used.` : '';
+    const bridgeExample = 'Skip words you’ve already learned in other languages you study (e.g. learn <em>noche</em> in Spanish → skip <em>noite</em> in Portuguese).';
+    const sourceLangs = window.bridgeSourceLanguages().map(code => window.knownLanguageLabel?.(code) || code.toUpperCase()).join(' and ');
+    const summaryText = bundle && sourceLangs ? `Uses your saved ${sourceLangs} progress (e.g. learn noche in Spanish → skip noite in Portuguese).` : '';
     const text = document.getElementById('bridgeSourcesSummary');
     if (text) text.textContent = summaryText;
     const modalDesc = document.getElementById('knownLanguagesBridgeDesc');
-    if (modalDesc && summaryText) modalDesc.textContent = summaryText;
+    if (modalDesc) modalDesc.innerHTML = bridgeExample;
     const settingsSummary = document.getElementById('settingsKnownLanguagesSummary');
     if (settingsSummary) {
         const codes = window.readKnownLanguages?.() || [];

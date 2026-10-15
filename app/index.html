@@ -960,23 +960,22 @@
     <div id="knownLanguagesModal" class="modal hidden product-modal" role="dialog" aria-modal="true" aria-labelledby="knownLanguagesModalTitle">
         <div class="modal-content tutorial-intro-sheet known-languages-sheet">
             <div class="known-languages-modal-header">
-                <h2 id="knownLanguagesModalTitle">Languages you already know</h2>
+                <h2 id="knownLanguagesModalTitle">Languages you know</h2>
                 <button class="modal-close" id="closeKnownLanguagesModal" type="button" aria-label="Close languages you know">✕</button>
             </div>
+            <p class="known-languages-modal-intro" id="knownLanguagesModalIntro">
+                Smart Skip uses languages you know to skip words you already understand, so you only study what’s new.
+            </p>
             <div class="known-languages-modal-selection">
                 <div id="knownLanguagesModalChoices" class="known-languages-choice-grid" role="group" aria-label="Languages you already know"></div>
             </div>
-            <p class="known-languages-modal-intro" id="knownLanguagesModalIntro">
-                Choose languages where most everyday words are already familiar. Saved for every language you study; you can change this in Settings. You do not need to add a language just because you are studying it here.
-            </p>
             <div id="knownLanguagesBridgeRow" class="known-languages-bridge-row">
                 <div class="known-languages-bridge-info">
                     <strong>Transfer from other languages</strong>
-                    <p id="knownLanguagesBridgeDesc">Skip matching words you’ve already learned in other languages you study in Fluency.</p>
+                    <p id="knownLanguagesBridgeDesc">Skip words you’ve already learned in other languages you study (e.g. learn <em>noche</em> in Spanish → skip <em>noite</em> in Portuguese).</p>
                 </div>
                 <button type="button" id="knownLanguagesBridgeToggle" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Transfer words from other languages you study"></button>
             </div>
-            <button type="button" id="knownLanguagesManageAllBtn" class="known-languages-manage-all" hidden>Manage all languages in Settings</button>
             <div class="known-languages-modal-actions">
                 <button class="product-primary-action" id="continueKnownLanguagesBtn" type="button">
                     <span>Continue</span>

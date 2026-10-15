@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-15T10:41:00+01:00",
+      "date": "2026-10-15 10:41 BST",
+      "agent": "Antigravity",
+      "summary": "Streamlined 'Languages you know' modal with punchy Smart Skip copy and concrete bridge examples",
+      "detail": [
+        "Replaced verbose modal instructions and 'coming soon' disclaimers with a punchy single sentence explaining the purpose of known languages for skipping familiar words.",
+        "Removed the redundant 'Manage all languages in Settings' button to declutter the modal.",
+        "Simplified the cross-language transfer explanation with clear, concrete examples (e.g., learn noche in Spanish → skip noite in Portuguese)."
+      ],
+      "commit": "0bccb82c"
+    },
+    {
       "timestamp": "2026-10-15T09:15:00+01:00",
       "date": "2026-10-15 09:15 BST",
       "agent": "Antigravity",

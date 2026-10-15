@@ -271,7 +271,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("Smart Skip Primer", html)
         self.assertNotIn("Languages you know:", html)
         self.assertIn("Languages you already know", html)
-        self.assertIn("Saved for every language you study; you can change this in Settings", html)
+        self.assertIn("Smart Skip uses languages you know to skip words you already understand, so you only study what’s new.", html)
         self.assertIn('class="product-primary-action frequency-intro-tutorial"', html)
         self.assertIn('class="frequency-intro-skip"', html)
         self.assertIn(".lsw-segments.lsw-scrubber .lsw-seg.selected::after {\n  display: none !important;\n}", css)

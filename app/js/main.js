@@ -2399,10 +2399,8 @@ function openKnownLanguagesSettings() {
     introSelectedCodes = new Set(window.readKnownLanguages?.() || []);
     introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
     knownLanguagesScoped = Boolean(fromFast);
-    document.getElementById('knownLanguagesManageAllBtn').hidden = !knownLanguagesScoped;
-    document.getElementById('knownLanguagesModalIntro').textContent = knownLanguagesScoped
-        ? 'Only useful pairs for this learning language appear here. Coming soon means the mapping is not available yet. Your other languages stay saved in Settings.'
-        : 'Choose from the listed languages you can comfortably read. Coming soon marks study languages we have not added yet. Smart Skip uses only useful, supported language pairs.';
+    document.getElementById('knownLanguagesModalIntro').textContent =
+        'Smart Skip uses languages you know to skip words you already understand, so you only study what’s new.';
     renderKnownLanguagesModalChoices(knownLanguagesScoped ? (window.relevantSmartSkipLanguages?.() || []) : getKnownLanguagesForTarget());
     document.getElementById('knownLanguagesModalTitle').textContent = 'Languages you know';
     document.getElementById('continueKnownLanguagesBtn').textContent = 'Save';
@@ -2498,9 +2496,9 @@ function maybeShowKnownLanguagesIntro(targetLang) {
     knownLanguagesEditorReturn = null;
     knownLanguagesScoped = false;
     introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
-    document.getElementById('knownLanguagesManageAllBtn').hidden = true;
-    document.getElementById('knownLanguagesModalIntro').textContent = 'Choose languages where most everyday words are already familiar. Saved for every language you study; you can change this in Settings. Coming soon marks study languages we have not added yet.';
-    document.getElementById('knownLanguagesModalTitle').textContent = 'Which languages can you comfortably read?';
+    document.getElementById('knownLanguagesModalIntro').textContent =
+        'Smart Skip uses languages you know to skip words you already understand, so you only study what’s new.';
+    document.getElementById('knownLanguagesModalTitle').textContent = 'Languages you know';
     document.getElementById('continueKnownLanguagesBtn').textContent = 'Continue';
     renderKnownLanguagesModalChoices(available);
     modal.classList.remove('hidden');
@@ -2508,11 +2506,6 @@ function maybeShowKnownLanguagesIntro(targetLang) {
 }
 
 function setupKnownLanguagesIntro() {
-    document.getElementById('knownLanguagesManageAllBtn')?.addEventListener('click', () => {
-        closeKnownLanguagesModal();
-        knownLanguagesEditorReturn = null;
-        window.showSettingsModalWithTab?.('appearance');
-    });
     const continueBtn = document.getElementById('continueKnownLanguagesBtn');
     if (continueBtn) {
         continueBtn.addEventListener('click', () => {
