@@ -25623,7 +25623,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 
 /* Companion cards: one small "Card N of M" cue under the card's own pill(s).
    Plain text, no tint; tapping it opens the explanation. */
-.card-pos-list .split-card-note.is-counter { margin-top: 4px; }
+.card-front .card-pos-list.is-lemma-map > .split-card-note.is-counter {
+  flex: 0 0 100%;
+  margin: 0;
+  text-align: center;
+}
 .card-pos-list .split-card-note.is-counter .split-pill-count {
   background: none;
   color: var(--text-primary);
