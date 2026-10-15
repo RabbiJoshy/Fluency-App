@@ -567,7 +567,7 @@
                         <div><span class="info-point-badge is-new">New</span><p>Not studied yet.</p></div>
                         <div><span class="info-point-badge is-practice">Practice</span><p>Missed or due for review.</p></div>
                         <div><span class="info-point-badge is-done">Known</span><p>Answered correctly and up to date.</p></div>
-                        <div><span class="info-point-badge is-estimated">Familiar</span><p>Marked familiar by your level estimate.</p></div>
+                        <div id="levelEstimatedLegend" hidden><span class="info-point-badge is-estimated">Estimated</span><p>Words you likely know, based on your level estimate.</p></div>
                         <div><span class="info-point-badge is-skip">Skipped</span><p>Set aside or combined by Smart Skip.</p></div>
                     </div>
                 </div></div>
@@ -1215,7 +1215,6 @@
                             <div id="knownLanguagesContainer" class="known-languages-context" style="display: none;">
                                 <div class="known-languages-bar-header">
                                     <span class="known-languages-bar-title">Skip look-alikes from</span>
-                                    <button type="button" class="known-languages-manage-btn" data-edit-language-profile>Manage</button>
                                 </div>
                                 <div id="knownLanguagesSelector" class="known-languages-selector"></div>
                             </div>
@@ -1238,7 +1237,7 @@
                             <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Combine word forms" data-ss-toggle="lemma"></button>
                         </div>
                         <div class="smart-skip-shortcut-detail" hidden>
-                            <p class="fast-mode-explainer"><em>hablo</em>, <em>habló</em> and <em>hablar</em> share one flashcard. Forms with a meaning of their own, like <em>fue</em> or <em>al</em>, keep their own card.</p>
+                            <p class="fast-mode-explainer">Related forms, such as <em>hablo</em>, <em>habló</em> and <em>hablar</em>, share one flashcard.</p>
                         </div>
                         <p id="lemmaNoneLine" class="fast-mode-none" hidden></p>
                         <!-- The real control. ui.js and fast-mode.js own what changing
@@ -1820,7 +1819,6 @@
                     <div class="settings-defaults-heading">
                         <strong id="studyDefaultsTitle">Study</strong>
                     </div>
-                    <p class="settings-compact-note">Choose how your cards work. Change Smart Skip when choosing a level.</p>
                     <button type="button" class="settings-link-row settings-known-languages-row" id="settingsKnownLanguagesBtn" title="Saved across all your learning languages. Smart Skip uses them to skip words you already know.">
                         <span><strong>Languages you know</strong></span>
                         <span class="known-language-flags" id="settingsKnownLanguagesSummary" role="img" aria-label="English"></span>
@@ -1839,8 +1837,7 @@
                         </div>
                         <div class="settings-default-row">
                             <span class="settings-row-label-block">
-                                <span class="settings-row-label">Show first</span>
-                                <small class="settings-row-explanation">The word first: guess the English. English first: say the word.</small>
+                                <span class="settings-row-label">Front of flashcard</span>
                             </span>
                             <div class="group-size-selector settings-toggle" role="group" aria-label="What appears on the front of the card">
                                 <button type="button" class="group-size-btn global-study-default-btn selected" id="cardFrontTargetBtn" data-setting="directionFlipped" data-value="off" aria-pressed="true">Language</button>
@@ -1910,7 +1907,7 @@
                             <button type="button" class="group-size-btn text-size-btn" data-text-size="large" role="radio" aria-checked="false" tabindex="-1">Bigger</button>
                         </div>
                     </div>
-                    <button type="button" class="settings-link-row" id="settingsAccountBtn"><span><strong>Account</strong><small>Your profile and connections</small></span><span aria-hidden="true">›</span></button>
+                    <button type="button" class="settings-link-row" id="settingsAccountBtn"><span><strong>Account</strong><small>Your profile and connected apps</small></span><span aria-hidden="true">›</span></button>
                     <div class="settings-overview-links">
                         <button type="button" class="settings-footer-link" id="settingsAdminBtn" hidden>Owner tools</button>
                     </div>

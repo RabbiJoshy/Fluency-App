@@ -2799,6 +2799,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
 
     const estimate = levelEstimates[selectedLanguage] || 0;
+    const estimatedLegend = document.getElementById('levelEstimatedLegend');
+    if (estimatedLegend) estimatedLegend.hidden = estimate <= 0;
     const estimatedIds = activeArtist && currentUser && !currentUser.isGuest
         ? await buildEstimatedKnownIds(estimate)
         : null;
@@ -3007,7 +3009,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         const baseConfig = config.languages[selectedLanguage] || {};
         window.prefetchStudySetPayload?.(activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig, context.range);
     }
-    const description = `${levelNewCount} new, ${levelReviewCount} practice, ${levelKnownCount} known, ${levelEstimatedCount} estimated familiar, ${levelSkippedCount} skipped`;
+    const description = `${levelNewCount} new, ${levelReviewCount} practice, ${levelKnownCount} known, ${levelEstimatedCount} estimated, ${levelSkippedCount} skipped`;
     const goDisabled = nextCount === 0 || _studySessionStarting;
     container.innerHTML = `
         <div class="study-set-panel">
@@ -3018,7 +3020,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                         <b class="study-set-stat"><i class="is-unseen"></i>${levelNewCount} New</b>
                         <b class="study-set-stat"><i class="is-review"></i>${levelReviewCount} Practice</b>
                         <b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>
-                        ${levelEstimatedCount > 0 ? `<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated familiar</b>` : ''}
+                        ${levelEstimatedCount > 0 ? `<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated</b>` : ''}
                         ${levelSkippedCount > 0 ? `<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>` : ''}
                     </span>
                 </div>
@@ -4104,7 +4106,7 @@ function getArtistHelpContent() {
 }
 
 function getSharedStudyHelpContent() {
-    return `<p>Choose a level, then Go starts new cards for as long as you choose: 5 minutes, 10 minutes or no limit. The level bar shows New, Practice, Known, Estimated familiar and Skipped words. When a level has few or no new words left, Go explains what to do next.</p>
+    return `<p>Choose a level, then Go starts new cards for as long as you choose: 5 minutes, 10 minutes or no limit. The level bar shows New, Practice, Known, Estimated and Skipped words. When a level has few or no new words left, Go explains what to do next.</p>
         <p>Practise collects incorrect, partly learned and due cards across the language, and says when the next ones come back. It runs for the same length you chose for Go. Spaced repetition in Study settings schedules future practice.</p>
         <p>Smart Skip changes which cards you study while keeping the level boundaries stable. An unfinished session can be restored from the Welcome back prompt, with its card order and settings.</p>`;
 }

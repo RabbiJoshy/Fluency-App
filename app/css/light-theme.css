@@ -1278,7 +1278,8 @@
 }
 
 /* Same saturated status colours as the dark theme; the bar outline frames white new cards. */
-:root[data-theme="light"] #step4 {
+:root[data-theme="light"] #step4,
+:root[data-theme="light"] #levelColoursTooltip {
     --set-known: #06a557;
     --set-review: #ffcc00;
     --set-new: #ffffff;

@@ -622,7 +622,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="settingsBackBtn"', html)
         self.assertIn('function setupSettingsOverview()', ui)
         self.assertIn('> .settings-tabs { display: none !important; }', css)
-        self.assertIn("Show first", html)
+        self.assertIn("Front of flashcard", html)
         self.assertIn("Spaced repetition", html)
         self.assertNotIn("Speak the word", overview)
         self.assertIn('Bring back learned words', overview)

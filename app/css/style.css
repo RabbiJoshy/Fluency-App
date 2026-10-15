@@ -24856,8 +24856,9 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   .card-back.has-action-tray > .links-section { padding-inline: 16px; }
 }
 
-/* SETWISE: continuous progress by status, with no labels inside the bar. */
-#step4 {
+/* Shared status colours for the level bar and its legend. */
+#step4,
+#levelColoursTooltip {
   --set-known: #06a557;
   --set-review: var(--study-practice-color);
   --set-new: #ffffff;

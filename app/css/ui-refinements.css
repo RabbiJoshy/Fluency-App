@@ -422,3 +422,31 @@
 
 .step-info-tooltip-inner .level-deck-total { display: block; margin-top: 12px; }
 .step-info-tooltip-inner .level-deck-total[hidden] { display: none; }
+
+/* Settings rows share the same inset across Study, App and Your words. */
+#settingsModal .settings-default-row,
+#settingsModal .settings-link-row,
+#settingsModal .settings-overview-footer .appearance-settings-card,
+#settingsModal .settings-words-saved-head {
+  box-sizing: border-box;
+  padding-inline: 16px;
+}
+
+/* Each legend swatch uses the exact fill of its progress-bar segment. */
+#levelColoursTooltip .info-point-badge {
+  min-width: 88px;
+  border: 1px solid var(--border-color);
+}
+#levelColoursTooltip .info-point-badge.is-new { background: var(--set-new); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-practice { background: var(--set-review); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-done { background: var(--set-known); color: #fff; }
+#levelColoursTooltip .info-point-badge.is-estimated { background: var(--set-estimated); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-skip { background: var(--set-skipped); color: #fff; }
+#levelEstimatedLegend[hidden] { display: none; }
+
+.smart-skip-language-name { display: none; }
+@media (min-width: 900px) {
+  .smart-skip-language-name { display: inline; }
+  .smart-skip-language-code { display: none; }
+}
+.smart-skip-browser-actions:has(> #smartSkipResultsCount:empty):has(> button[hidden]) { display: none; }

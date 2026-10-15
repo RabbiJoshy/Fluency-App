@@ -281,7 +281,8 @@ function refresh() {
         const shortcut = toggle?.closest('.smart-skip-shortcut');
         const detail = shortcut?.querySelector('.smart-skip-shortcut-detail');
         if (detail && !shortcut.dataset.userExpanded) {
-            const expanded = kind === (cognateAvailable() ? 'cognate' : 'lemma');
+            const expanded = kind === (cognateAvailable() ? 'cognate' : 'lemma')
+                || (kind === 'lemma' && window.matchMedia('(min-width: 900px)').matches);
             detail.hidden = !expanded;
             shortcut.querySelector('.smart-skip-shortcut-name')?.setAttribute('aria-expanded', String(expanded));
         }
@@ -547,9 +548,7 @@ function updateStreamlineLanguageExamples() {
 
     const lemmaExplainer = document.querySelector('#lemmaToggleContainer .fast-mode-explainer');
     if (lemmaExplainer) {
-        // Forms with a meaning of their own (fue, al, au) are never combined.
-        const keeps = config.lemmaKeeps ? `, like ${config.lemmaKeeps},` : '';
-        lemmaExplainer.innerHTML = `${config.lemmaExplainer} Forms with a meaning of their own${keeps} keep their own card.`;
+        lemmaExplainer.innerHTML = `Related forms, such as ${config.lemmaExplainer.replace(' share one flashcard.', ', share one flashcard.')}`;
     }
     const cognateExplainer = document.querySelector('#cognateToggleContainer .fast-mode-explainer');
     if (cognateExplainer) {
@@ -614,6 +613,7 @@ function init() {
     window.matchMedia('(max-width: 899px)').addEventListener('change', event => {
         const secondary = document.getElementById('smartSkipSecondarySettings');
         if (secondary && 'open' in secondary) secondary.open = !event.matches || !cognateAvailable();
+        refresh();
     });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
     document.querySelectorAll('[data-ss-master]').forEach(button => {

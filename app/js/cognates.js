@@ -504,7 +504,10 @@ function renderKnownLanguagePicker() {
     container.style.display = 'block';
 
     const selectedCodes = readSelected();
-    const codesToShow = [...new Set([...(selectedCodes.length ? selectedCodes : ['en']), ...activeKnownLanguages()])];
+    const target = globalThis.config?.languages?.[globalThis.selectedLanguage];
+    const targetCode = target?.routeCode || target?.speechLang?.split('-')[0] || globalThis.selectedLanguage?.slice(0, 2);
+    const codesToShow = [...new Set([...(selectedCodes.length ? selectedCodes : ['en']), ...activeKnownLanguages()])]
+        .filter(code => code !== targetCode);
     const active = new Set(activeKnownLanguages());
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 

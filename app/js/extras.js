@@ -768,9 +768,9 @@ function skipEntriesFor(extras, category) {
 function smartSkipMenu(extras) {
     if (_ssSource === 'songs' && g().activeArtist) {
         const entries = Object.entries(extras.supplementaryByCategory || {});
-        const options = entries.length ? [{ id: 'song:all', label: `All categories (${extras.supplementary.length.toLocaleString()})` }] : [];
+        const options = entries.length ? [{ id: 'song:all', label: `All categories · ${extras.supplementary.length.toLocaleString()}` }] : [];
         entries.sort((a, b) => songCategoryLabel(a[0]).localeCompare(songCategoryLabel(b[0])))
-            .forEach(([id, words]) => options.push({ id, label: `${songCategoryLabel(id)} (${words.length.toLocaleString()})` }));
+            .forEach(([id, words]) => options.push({ id, label: `${songCategoryLabel(id)} · ${words.length.toLocaleString()}` }));
         return { options, combined: [] };
     }
     const skips = SKIP_KINDS
@@ -779,12 +779,12 @@ function smartSkipMenu(extras) {
     const options = [];
     // "All" only earns its place when there is more than one thing to mix.
     if (skips.length > 1) {
-        options.push({ id: 'all', label: `All skipped (${(extras.allSkipped || []).length.toLocaleString()})` });
+        options.push({ id: 'all', label: `All skipped · ${(extras.allSkipped || []).length.toLocaleString()}` });
     }
-    skips.forEach(kind => options.push({ id: kind.id, label: `${kind.menu} (${kind.count.toLocaleString()})` }));
+    skips.forEach(kind => options.push({ id: kind.id, label: `${kind.menu} · ${kind.count.toLocaleString()}` }));
     const combined = groupMergedLemmas(extras.lemmas || []);
     if (combined.length) {
-        options.push({ id: 'lemma', label: `Combined forms (${combined.length.toLocaleString()})` });
+        options.push({ id: 'lemma', label: `Combined forms · ${combined.length.toLocaleString()}` });
     }
     return { options, combined };
 }
@@ -853,7 +853,7 @@ function smartSkipRankHtml(row) {
 function smartSkipLanguageHTML(code, flag = g().knownLanguageFlag?.(code)) {
     // Unknown languages keep their code; a globe does not identify a language.
     const countryFlag = /^[\u{1F1E6}-\u{1F1FF}]{2}$/u.test(flag || '') ? flag : '';
-    return `<span class="smart-skip-language">${countryFlag ? `<span>${escapeHtml(countryFlag)}</span>` : ''}<span>${escapeHtml(String(code || '').toUpperCase())}</span></span>`;
+    return `<span class="smart-skip-language">${countryFlag ? `<span>${escapeHtml(countryFlag)}</span>` : ''}<span class="smart-skip-language-name">${escapeHtml(g().knownLanguageLabel?.(code) || String(code || '').toUpperCase())}</span><span class="smart-skip-language-code">${escapeHtml(String(code || '').toUpperCase())}</span></span>`;
 }
 
 function smartSkipKnownLanguageCodes() {
@@ -1022,7 +1022,7 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
                     if (check && check(item, code)) return true;
                     return g().bridgeVerdict?.(item, {useProfile: true})?.evidence?.some(e => e.code === code);
                 }).length;
-                optionsHtml.push(`<option value="${escapeHtml(code)}">${escapeHtml(shownFlag + label)} (${langCount.toLocaleString()})</option>`);
+                optionsHtml.push(`<option value="${escapeHtml(code)}">${escapeHtml(shownFlag + label)} · ${langCount.toLocaleString()}</option>`);
             }
             langBtn.innerHTML = optionsHtml.join('');
             langBtn.value = _activeCognateFilterLang;
@@ -1062,7 +1062,7 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     ({ items: _ssItems, rows: _ssRows, levels: _ssLevels } = buildSmartSkipItems(extras, category, combined, needle));
     if (resultsCount) resultsCount.textContent = needle
         ? `${_ssRows.length.toLocaleString()} ${_ssRows.length === 1 ? 'match' : 'matches'}`
-        : `${_ssRows.length.toLocaleString()} ${category === 'lemma' ? (_ssRows.length === 1 ? 'group' : 'groups') : (_ssRows.length === 1 ? 'word' : 'words')}${_ssRows.length ? ' · Tap a word to preview' : ''}`;
+        : '';
     if (!_ssItems.length) {
         const emptyText = needle ? `No matches for “${_ssQuery.trim()}”.`
             : category === 'cognate' && _activeCognateFilterLang !== 'all'
