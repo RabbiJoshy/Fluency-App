@@ -58,6 +58,87 @@ ctx.setupVocabularySnapshot = deck;
 ''')
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_render_lookalikes_populates_table(self):
+        result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r'''
+const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
+
+const sentinelEl = {
+    insertAdjacentHTML(pos, html) { listEl.innerHTML += html; },
+    remove() {}
+};
+const rowsEl = {
+    innerHTML: '',
+    insertAdjacentHTML(pos, html) {
+        this.innerHTML += html;
+        listEl.innerHTML += html;
+    }
+};
+const listEl = {
+    innerHTML: '',
+    querySelector(sel) {
+        if (sel.includes('.smart-skip-sentinel')) return sentinelEl;
+        if (sel.includes('.smart-skip-group-rows')) return rowsEl;
+        return null;
+    },
+    querySelectorAll() { return []; }
+};
+const body = {
+    innerHTML: '',
+    querySelector(sel) {
+        if (sel === '.smart-skip-list') return listEl;
+        return null;
+    }
+};
+const makeStub = () => ({
+    innerHTML: '', textContent: '', value: '', hidden: false,
+    classList: { add(){}, remove(){}, toggle(){} },
+    setAttribute(){}, getAttribute(){ return ''; },
+    removeAttribute(){}, toggleAttribute(){}, addEventListener(){},
+    querySelector(){ return null; }, querySelectorAll(){ return []; },
+    closest(){ return makeStub(); }, remove(){}
+});
+
+const ctx = {
+    console,
+    selectedLanguage: 'spanish',
+    excludeCognates: true,
+    cognateFieldAvailable: true,
+    excludeProperNouns: false,
+    useLemmaMode: false,
+    excludeGrammarParticles: false,
+    excludeSlang: false,
+    activeKnownLanguages: () => ['en'],
+    strongestKnownLanguage: (item) => ({ code: 'en', score: 0.9 }),
+    isCognateKnown: (item) => true,
+    isCognateKnownForLanguage: (item, code) => true,
+    renderSavedItems: () => {},
+    document: {
+        readyState: 'loading',
+        addEventListener(){},
+        getElementById: (id) => {
+            if (id === 'skippedWordsBody') return body;
+            return makeStub();
+        },
+        querySelector: () => makeStub(),
+        querySelectorAll: () => []
+    }
+};
+ctx.window = ctx;
+ctx.globalThis = ctx;
+vm.runInNewContext(fs.readFileSync('app/js/extras.js', 'utf8').replace(/^import .*;$/gm, ''), ctx);
+ctx.setupVocabularySnapshot = [
+    { id: '1', word: 'hotel', rank: 1, meanings: [{ translation: 'hotel' }], cognate_score: 1 },
+    { id: '2', word: 'problema', rank: 2, meanings: [{ translation: 'problem' }], cognate_score: 0.9 }
+];
+
+// Selecting "cognate" (Look-alikes) in the dropdown renders the table with rows
+ctx.renderSkippedWords('cognate', { force: true });
+assert.ok(body.innerHTML.includes('class="smart-skip-table"'), 'Table wrapper rendered');
+assert.ok(rowsEl.innerHTML.includes('extras-row--cognate'), 'Lookalike row rendered');
+''')
+        self.assertEqual(result.returncode, 0, result.stderr)
+
 
 if __name__ == '__main__':
     unittest.main()
+

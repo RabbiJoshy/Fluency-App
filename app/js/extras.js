@@ -48,6 +48,10 @@ function entityExtra(item) {
     return Boolean(g().excludeProperNouns) && isEntityItem(item);
 }
 
+function isSenseItem(item) {
+    return Boolean(item?.cognate_sense_map || item?.cognate_card);
+}
+
 function isEntityItem(item) {
     if (item.is_propernoun || item.is_propernoun_corpus || item.extra_category === 'proper_noun' || item.extra_category === 'name') return true;
     if (Array.isArray(item.meanings) && item.meanings.length > 0 && item.meanings.every(m => m.pos === 'PROPN')) return true;
@@ -915,7 +919,7 @@ function smartSkipRowHtml(row, index, showTag) {
         const activeKnown = g().activeKnownLanguages?.() || [];
         const showFlag = _activeCognateFilterLang === 'all' && activeKnown.length > 1;
         const flag = showFlag ? (g().knownLanguageFlag?.(choice.code) || '') : '';
-        const flagHtml = flag ? `<span class="cognate-pair-flag" title="${escapeHtml(g().knownLanguageLabel?.(choice.code) || choice.code.toUpperCase())}">${flag}</span>` : '';
+        const flagHtml = flag ? `<span class="cognate-pair-flag" title="${escapeHtml(g().knownLanguageLabel?.(choice.code) || (choice.code ? choice.code.toUpperCase() : ''))}">${flag}</span>` : '';
         gloss = `<span class="smart-skip-g">${flagHtml}<span class="cognate-pair-eq"${choice.obvious ? '' : ' hidden'} aria-hidden="true">=</span><span class="cognate-pair-known${choice.obvious ? '' : ' is-gloss'}">${escapeHtml(choice.word)}</span></span>`;
     } else {
         gloss = `<span class="smart-skip-g is-gloss extras-translation-slot">${escapeHtml(shortGloss(firstTranslation(item)))}</span>`;

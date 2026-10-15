@@ -604,6 +604,7 @@ globalThis.knownLemmas = knownLemmas;
 globalThis.knownLanguageLabel = languageLabel;
 globalThis.getCognateAlgorithmInfo = getCognateAlgorithmInfo;
 globalThis.cardSenseCognate = cardSenseCognate;
+globalThis.isSenseItem = isSenseItem;
 globalThis.writeKnownLanguages = writeSelected;
 globalThis.readKnownLanguages = readSelected;
 

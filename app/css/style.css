@@ -5479,6 +5479,18 @@
             text-align: center;
             line-height: 1.2;
         }
+        .ref-tile.ref-memory-tip-btn {
+            color: #f0c878;
+        }
+        .ref-tile.ref-memory-tip-btn .ref-tile-label {
+            color: #f0c878;
+        }
+        .ref-tile.ref-memory-tip-btn:hover {
+            color: #ffd98f;
+        }
+        .ref-tile.ref-memory-tip-btn:hover .ref-tile-label {
+            color: #ffd98f;
+        }
 
         .lookup-sheet[hidden] {
             display: none;

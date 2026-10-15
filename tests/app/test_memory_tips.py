@@ -64,6 +64,38 @@ class MemoryTipTests(unittest.TestCase):
         out = self._run("console.log(tip('rychle','quickly','czech'));")
         self.assertEqual(out, "null")
 
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
+    def test_prefix_rule_alone(self) -> None:
+        out = self._run(
+            "const t = tip('espacio','space');"
+            "console.log(t.tier, t.prefixFrom, t.prefixTo, t.english);"
+        )
+        self.assertEqual(out, "pattern es s space")
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
+    def test_prefix_and_suffix_combination(self) -> None:
+        out = self._run(
+            "const t = tip('estación','station');"
+            "console.log(t.tier, t.prefixFrom, t.prefixTo, t.from, t.to, t.english);"
+        )
+        self.assertEqual(out, "pattern es s ción tion station")
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
+    def test_italian_language_support(self) -> None:
+        out = self._run(
+            "const t = tip('rapidamente','rapidly','italian');"
+            "console.log(t.tier, t.from, t.to, t.english);"
+        )
+        self.assertEqual(out, "pattern mente ly rapidly")
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
+    def test_takeaway_and_twins_generated(self) -> None:
+        out = self._run(
+            "const t = tip('rápidamente','rapidly');"
+            "console.log(Boolean(t.takeaway), t.twins.length > 0, t.chunks.source.suffix);"
+        )
+        self.assertEqual(out, "true true -mente")
+
 
 if __name__ == "__main__":
     unittest.main()
