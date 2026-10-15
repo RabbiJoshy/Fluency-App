@@ -125,14 +125,38 @@
 .cbs-end-label[hidden] { display: none; }
 
 /* One level chooser contains its next batch, with Smart Skip below. */
-#step2 .study-session-section { margin: 10px 0 16px; padding: 0; }
+#step4 .session-action-pill {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    position: relative;
+    border-radius: 12px;
+}
+#step4 .session-action-pill > .study-set-start {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    border-radius: 12px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+}
 #step4 .session-action-pill > .session-length-chip {
-    order: -1;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    z-index: 2;
+    order: 0;
     border-radius: 12px 0 0 12px;
     border-left: 0;
     border-right: 1px solid rgba(0, 0, 0, .18);
+    transition: filter 0.15s ease, background-color 0.15s ease;
 }
-#step4 .session-action-pill:has(.session-length-chip) > .study-set-start { border-radius: 0 12px 12px 0; }
+#step4 .session-action-pill > .session-length-chip:hover {
+    filter: brightness(1.12);
+}
 
 #step2 .level-choosing #step4 { margin: 0; }
 #step2 .level-choosing .study-set-panel { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
