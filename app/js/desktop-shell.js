@@ -32,6 +32,14 @@ function initDesktopTrail(closePages) {
             </button>
             <div class="desktop-trail-menu" id="desktopTrailModeMenu" role="group" aria-label="Vocabulary" hidden></div>
         </div>
+        <div class="desktop-trail-level" data-level="music" hidden>
+            <button type="button" class="desktop-trail-chip" aria-expanded="false" aria-controls="desktopTrailMusicMenu">
+                <span class="desktop-trail-icon" aria-hidden="true"></span>
+                <span class="desktop-trail-copy"><small>Music</small><strong></strong></span>
+                <span class="desktop-trail-caret" aria-hidden="true">›</span>
+            </button>
+            <div class="desktop-trail-menu" id="desktopTrailMusicMenu" role="group" aria-label="Music options" hidden></div>
+        </div>
         <div class="desktop-trail-level" data-level="source" hidden>
             <button type="button" class="desktop-trail-chip" aria-expanded="false" aria-controls="desktopTrailSourceMenu">
                 <span class="desktop-trail-icon desktop-trail-photo" aria-hidden="true"></span>
@@ -43,6 +51,7 @@ function initDesktopTrail(closePages) {
     chip.after(trail);
     const levels = {
         mode: trail.querySelector('[data-level="mode"]'),
+        music: trail.querySelector('[data-level="music"]'),
         source: trail.querySelector('[data-level="source"]'),
     };
     let sourceEntries = null;
@@ -123,19 +132,33 @@ function initDesktopTrail(closePages) {
         const speechAvailable = capabilities.speech !== false;
         const musicAvailable = capabilities.lyrics !== false || speechAvailable;
         const inMusic = mode === 'lyrics' || mode === 'live';
-        const isLive = Boolean(window.playlistLiveDeck?.());
-        const spotifyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
         menu.append(
             option(copy.speech.label, {
                 icon: copy.speech.iconHTML, selected: mode === 'speech', disabled: !speechAvailable,
                 onSelect: () => window.desktopTrailActions?.chooseSpeech(lang),
             }),
+            option(copy.lyrics.label, {
+                icon: copy.lyrics.iconHTML, selected: inMusic, disabled: !musicAvailable,
+                onSelect: () => window.desktopTrailActions?.chooseMusic(lang),
+            }),
+        );
+    }
+
+    function renderMusicMenu({ language: lang }) {
+        const menu = levels.music.querySelector('.desktop-trail-menu');
+        menu.replaceChildren();
+        const copy = window.learningModeCopy?.(lang);
+        const isLive = Boolean(window.playlistLiveDeck?.() && !window.activeArtist);
+        const spotifyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
+        menu.append(
             option('Artists', {
-                icon: copy.lyrics.iconHTML, selected: inMusic && !isLive, disabled: !musicAvailable,
+                icon: copy?.lyrics?.iconHTML || '', selected: !isLive,
+                detail: 'Choose an artist or mix songs',
                 onSelect: () => window.desktopTrailActions?.chooseMusic(lang),
             }),
             option('Spotify playlists', {
-                icon: spotifyIcon, selected: inMusic && isLive, disabled: !musicAvailable,
+                icon: spotifyIcon, selected: isLive,
+                detail: 'Build decks from your Spotify playlists',
                 onSelect: () => window.desktopTrailActions?.openPlaylists(lang),
             }),
         );
@@ -156,23 +179,29 @@ function initDesktopTrail(closePages) {
         const live = window.playlistLiveDeck?.();
         const current = window.activeArtist;
         menu.replaceChildren();
-        for (const entry of sourceEntries) {
-            const isMix = entry.slug === '__custom__' || /^mix several/i.test(entry.name);
-            const selected = Boolean(current) && !live
-                && (isMix ? current.customSongSource === true : (current.slug === entry.slug || current.name === entry.name));
-            menu.appendChild(option(isMix ? 'Mix artists' : entry.name, {
-                icon: photoFor(entry), selected,
-                onSelect: () => window.desktopTrailActions.chooseArtist(entry, lang),
+        if (live && !current) {
+            const spotify = document.createElement('span');
+            spotify.className = 'desktop-trail-note-icon';
+            spotify.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
+            menu.appendChild(option(live.playlistName || 'Current playlist', {
+                icon: spotify, selected: true,
+                onSelect: () => window.desktopTrailActions.openPlaylists(lang),
             }));
+            menu.appendChild(option('Change Spotify playlist…', {
+                icon: spotify, selected: false,
+                onSelect: () => window.desktopTrailActions.openPlaylists(lang),
+            }));
+        } else {
+            for (const entry of sourceEntries) {
+                const isMix = entry.slug === '__custom__' || /^mix several/i.test(entry.name);
+                const selected = Boolean(current) && !live
+                    && (isMix ? current.customSongSource === true : (current.slug === entry.slug || current.name === entry.name));
+                menu.appendChild(option(isMix ? 'Mix artists' : entry.name, {
+                    icon: photoFor(entry), selected,
+                    onSelect: () => window.desktopTrailActions.chooseArtist(entry, lang),
+                }));
+            }
         }
-        const spotify = document.createElement('span');
-        spotify.className = 'desktop-trail-note-icon';
-        spotify.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
-        menu.appendChild(option('Spotify playlists', {
-            icon: spotify, selected: Boolean(live),
-            detail: live?.playlistName || '',
-            onSelect: () => window.desktopTrailActions.openPlaylists(lang),
-        }));
     }
 
     function refresh() {
@@ -189,27 +218,37 @@ function initDesktopTrail(closePages) {
         const inMusic = current.mode === 'lyrics' || current.mode === 'live';
         const live = window.playlistLiveDeck?.();
         const artist = window.activeArtist;
+        const spotifyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
+
+        // Level 1: Vocabulary (Speech vs Music)
         const modeChip = levels.mode.querySelector('.desktop-trail-chip');
         const modeIcon = modeChip.querySelector('.desktop-trail-icon');
-        const spotifyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
-        let modeText = 'Choose…';
-        if (current.mode === 'speech') {
-            modeText = 'Speech';
-            modeIcon.innerHTML = copy?.speech.iconHTML || '';
-        } else if (live && !artist) {
-            modeText = 'Spotify playlists';
-            modeIcon.innerHTML = spotifyIcon;
-        } else if (inMusic) {
-            modeText = 'Artists';
-            modeIcon.innerHTML = copy?.lyrics.iconHTML || '';
-        } else {
-            modeIcon.innerHTML = '';
-        }
-        modeChip.querySelector('strong').textContent = modeText;
+        modeChip.querySelector('strong').textContent = current.mode === 'speech' ? 'Speech'
+            : inMusic ? 'Music' : 'Choose…';
         modeChip.querySelector('small').textContent = 'Vocabulary';
+        modeIcon.innerHTML = current.mode === 'speech' ? (copy?.speech.iconHTML || '')
+            : inMusic ? (copy?.lyrics.iconHTML || '') : '';
         levels.mode.dataset.state = current.mode || 'empty';
         if (levels.mode.querySelector('.desktop-trail-menu').hidden) renderModeMenu(current);
 
+        // Level 2: Music option subrow (Artists vs Spotify playlists)
+        levels.music.hidden = !inMusic;
+        if (inMusic) {
+            const isLive = Boolean(live && !artist);
+            const musicChip = levels.music.querySelector('.desktop-trail-chip');
+            const musicIcon = musicChip.querySelector('.desktop-trail-icon');
+            musicChip.querySelector('small').textContent = 'Music';
+            musicChip.querySelector('strong').textContent = isLive ? 'Spotify playlists' : 'Artists';
+            musicIcon.innerHTML = isLive ? spotifyIcon : (copy?.lyrics.iconHTML || '');
+            levels.music.dataset.state = 'chosen';
+            if (levels.music.querySelector('.desktop-trail-menu').hidden) renderMusicMenu(current);
+        } else {
+            const menu = levels.music.querySelector('.desktop-trail-menu');
+            menu.hidden = true;
+            levels.music.querySelector('.desktop-trail-chip').setAttribute('aria-expanded', 'false');
+        }
+
+        // Level 3: Source (Artist name or Playlist name)
         const hasSource = Boolean(artist || live);
         levels.source.hidden = !inMusic || !hasSource;
         if (inMusic && hasSource) {
@@ -242,6 +281,7 @@ function initDesktopTrail(closePages) {
             closeMenus(level);
             if (!opening) { menu.hidden = true; button.setAttribute('aria-expanded', 'false'); return; }
             if (key === 'source') renderSourceMenu(state());
+            else if (key === 'music') renderMusicMenu(state());
             else renderModeMenu(state());
             menu.hidden = false;
             button.setAttribute('aria-expanded', 'true');

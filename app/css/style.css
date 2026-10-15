@@ -253,8 +253,14 @@
             border-radius: 16px;
             pointer-events: none;
             z-index: 0;
-            background: var(--card-ambient-glow, transparent);
+            background: transparent;
             transition: background 0.3s ease;
+        }
+        .card-front .card-tint {
+            background: var(--card-ambient-glow, transparent);
+        }
+        .card-back .card-tint {
+            background: transparent;
         }
         .card.swipe-correct .card-tint {
             background: rgba(55, 210, 105, 0.2) !important;
@@ -25341,32 +25347,18 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   background: rgba(212, 218, 245, 0.10);
   box-shadow: 0 0 0 1px rgba(212, 218, 245, 0.3);
 }
-.fw-relation-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 4px;
-}
 .fw-relation-formula {
   font-size: 17px;
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.2px;
-  white-space: nowrap;
-}
-.fw-relation-tag {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: rgb(212, 218, 245);
-  opacity: 0.85;
+  margin-bottom: 6px;
+  line-height: 1.25;
 }
 .fw-relation-rule {
   font-size: 14px;
-  line-height: 1.4;
-  color: var(--text-muted);
+  line-height: 1.45;
+  color: #cbd5e1;
   margin: 0;
 }
 
