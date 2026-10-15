@@ -1,0 +1,3023 @@
+[
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Verbal Valency",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Complement</span>",
+      "rule": "Required link: the preceding verb governs 'de' before its object or action."
+    },
+    "after": {
+      "tag": "Verbs with de",
+      "formulaHTML": "<span class=\"fw-token-v\">a verb used with de</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">someone, something or an action</span>",
+      "rule": "Some verbs use de to link to what follows. Learn the verb and de together."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Gosto</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>música</span>.",
+      "translation": "I like music.",
+      "source": "Ainda Bem · Marisa Monte"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Gosto</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>música</span>.",
+      "translation": "I like music.",
+      "source": "Ainda Bem · Marisa Monte"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Gostamos</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>passear por aí</span>.",
+      "translation": "We like to stroll around.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Gostamos</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>passear por aí</span>.",
+      "translation": "We like to stroll around.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Ele <span class='fw-token-v'>precisa</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>ajuda agora</span>.",
+      "translation": "He needs help now.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "Ele <span class='fw-token-v'>precisa</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>ajuda</span> agora.",
+      "translation": "He needs help now.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Lembro-me</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>tudo perfeitamente</span>.",
+      "translation": "I remember everything perfectly.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "<span class=\"fw-token-v\">Eu me lembro</span> <span class=\"fw-token-connector\">de</span> <span class=\"fw-token-c\">tudo</span>.",
+      "translation": "I remember everything.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Use a straightforward Brazilian example; original Lembro-me remains preserved in the review."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Isso <span class='fw-token-v'>depende</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>muitas coisas</span>.",
+      "translation": "That depends on many things.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "Isso <span class='fw-token-v'>depende</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>muitas coisas</span>.",
+      "translation": "That depends on many things.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": 5,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Não podemos <span class='fw-token-v'>desistir</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>lutar</span>.",
+      "translation": "We cannot give up fighting.",
+      "source": "Film dialogue"
+    },
+    "after": {
+      "targetHTML": "Não podemos <span class='fw-token-v'>desistir</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>lutar</span>.",
+      "translation": "We cannot give up fighting.",
+      "source": "Film dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Noun Attribution",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Noun / Origin</span>",
+      "rule": "Nominal binding: connects a head noun to its owner, origin, or material."
+    },
+    "after": {
+      "tag": "Adding a detail",
+      "formulaHTML": "<span class=\"fw-token-v\">a thing or time</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">a detail or an action</span>",
+      "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de partir = time to leave."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 1,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Quero um <span class='fw-token-v'>copo</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>água</span>.",
+      "translation": "I want a glass of water.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "Quero um <span class='fw-token-v'>copo</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>água</span>.",
+      "translation": "I want a glass of water.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 1,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Uma <span class='fw-token-v'>mesa</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>madeira maciça</span>.",
+      "translation": "A solid wood table.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Uma <span class='fw-token-v'>mesa</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>madeira maciça</span>.",
+      "translation": "A solid wood table.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 1,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "É <span class='fw-token-v'>hora</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>partir</span>.",
+      "translation": "It is time to leave.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "É <span class='fw-token-v'>hora</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>partir</span>.",
+      "translation": "It is time to leave.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 1,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Um <span class='fw-token-v'>dia</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>sol</span> na praia.",
+      "translation": "A sunny day at the beach.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Um <span class='fw-token-v'>dia</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>sol</span> na praia.",
+      "translation": "A sunny day at the beach.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 1,
+    "example": 4,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Ele é um <span class='fw-token-v'>homem</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>palavra</span>.",
+      "translation": "He is a man of his word.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "A <span class=\"fw-token-v\">casa</span> <span class=\"fw-token-connector\">de</span> <span class=\"fw-token-c\">Ana</span> é pequena.",
+      "translation": "Ana’s house is small.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Use a transparent ownership example instead of the idiom homem de palavra."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Clausal Link",
+      "formulaHTML": "<span class=\"fw-token-v\">Thought / Speech</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Clause</span>",
+      "rule": "Subordination: bridges what someone thinks, says, or knows to the statement."
+    },
+    "after": {
+      "tag": "Saying what you think",
+      "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+      "rule": "Links what someone thinks, says, knows or hopes to a statement."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Acho</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vai chover</span>.",
+      "translation": "I think it’s going to rain.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Acho</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vai chover</span>.",
+      "translation": "I think it’s going to rain.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ela <span class='fw-token-v'>disse</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>viria hoje</span>.",
+      "translation": "She said she would come today.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Ela <span class='fw-token-v'>disse</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>viria hoje</span>.",
+      "translation": "She said she would come today.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Sei</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>você tem razão</span>.",
+      "translation": "I know you are right.",
+      "source": "Contemporary speech"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Sei</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>você tem razão</span>.",
+      "translation": "I know you are right.",
+      "source": "Contemporary speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Espero</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>tudo corra bem</span>.",
+      "translation": "I hope everything goes well.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Espero</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>tudo corra bem</span>.",
+      "translation": "I hope everything goes well.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ele <span class='fw-token-v'>pensou</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>estava sozinho</span>.",
+      "translation": "He thought he was alone.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Ele <span class='fw-token-v'>pensou</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>estava sozinho</span>.",
+      "translation": "He thought he was alone.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Relative Pronoun",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Description</span>",
+      "rule": "Relativization: refers back to a noun while connecting more information."
+    },
+    "after": {
+      "tag": "Adding information",
+      "formulaHTML": "<span class=\"fw-token-v\">someone or something</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">more about them or it</span>",
+      "rule": "Adds information about the person or thing just mentioned."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 1,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Este é o <span class='fw-token-v'>livro</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>estou lendo</span>.",
+      "translation": "This is the book that I’m reading.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Este é o <span class='fw-token-v'>livro</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>estou lendo</span>.",
+      "translation": "This is the book that I’m reading.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 1,
+    "example": 1,
+    "status": "revise",
+    "before": {
+      "targetHTML": "A <span class='fw-token-v'>pessoa</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>me ligou não falou nada</span>.",
+      "translation": "The person who called me said nothing.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "A <span class='fw-token-v'>pessoa</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>me ligou</span> não falou nada.",
+      "translation": "The person who called me said nothing.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 1,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "O <span class='fw-token-v'>filme</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vimos ontem foi ótimo</span>.",
+      "translation": "The movie we saw yesterday was great.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "O <span class='fw-token-v'>filme</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vimos ontem</span> foi ótimo.",
+      "translation": "The movie we saw yesterday was great.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 1,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "O <span class='fw-token-v'>lugar</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>visitamos era lindo</span>.",
+      "translation": "The place we visited was beautiful.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "O <span class='fw-token-v'>lugar</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>visitamos</span> era lindo.",
+      "translation": "The place we visited was beautiful.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 1,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "São <span class='fw-token-v'>coisas</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>acontecem na vida</span>.",
+      "translation": "These are things that happen in life.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "São <span class='fw-token-v'>coisas</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>acontecem na vida</span>.",
+      "translation": "These are things that happen in life.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Comparison",
+      "formulaHTML": "<span class=\"fw-token-v\">Degree</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Standard</span>",
+      "rule": "Comparison: connects the two sides of a degree or quality difference."
+    },
+    "after": {
+      "tag": "Comparing",
+      "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+      "rule": "Means “than” when comparing people, things or situations."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ela é <span class='fw-token-v'>mais alta</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>eu</span>.",
+      "translation": "She is taller than me.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Ela é <span class='fw-token-v'>mais alta</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>eu</span>.",
+      "translation": "She is taller than me.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Isto é <span class='fw-token-v'>melhor</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>o esperado</span>.",
+      "translation": "This is better than expected.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Isto é <span class='fw-token-v'>melhor</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>o esperado</span>.",
+      "translation": "This is better than expected.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Gastamos <span class='fw-token-v'>menos tempo</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>ontem</span>.",
+      "translation": "We spent less time than yesterday.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "Gastamos <span class='fw-token-v'>menos tempo</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>ontem</span>.",
+      "translation": "We spent less time than yesterday.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "A casa é <span class='fw-token-v'>maior</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>o apartamento</span>.",
+      "translation": "The house is bigger than the apartment.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "A casa é <span class='fw-token-v'>maior</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>o apartamento</span>.",
+      "translation": "The house is bigger than the apartment.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Hoje está <span class='fw-token-v'>mais frio</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>semana passada</span>.",
+      "translation": "Today is colder than last week.",
+      "source": "Contemporary speech"
+    },
+    "after": {
+      "targetHTML": "Hoje está <span class='fw-token-v'>mais frio</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>semana passada</span>.",
+      "translation": "Today is colder than last week.",
+      "source": "Contemporary speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Condition",
+      "formulaHTML": "<span class=\"fw-token-connector\">Se</span> + <span class=\"fw-token-v\">Condition</span> , <span class=\"fw-token-c\">Result</span>",
+      "rule": "Conditional marker: introduces a hypothetical situation before its consequence."
+    },
+    "after": {
+      "tag": "If",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a possible situation</span> + <span class=\"fw-token-c\">what happens then</span>",
+      "rule": "Means “if”: gives a possible situation and what happens then."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>chover</span>, <span class='fw-token-c'>fico em casa</span>.",
+      "translation": "If it rains, I’ll stay home.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>chover</span>, <span class='fw-token-c'>fico em casa</span>.",
+      "translation": "If it rains, I’ll stay home.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 0,
+    "example": 1,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> você <span class='fw-token-v'>quiser</span>, <span class='fw-token-c'>podemos ir juntos</span>.",
+      "translation": "If you want, we can go together.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>você quiser</span>, <span class='fw-token-c'>podemos ir juntos</span>.",
+      "translation": "If you want, we can go together.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 0,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> eu <span class='fw-token-v'>souber</span> de algo, <span class='fw-token-c'>aviso</span>.",
+      "translation": "If I know anything, I'll let you know.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>eu souber de algo</span>, <span class='fw-token-c'>aviso</span>.",
+      "translation": "If I know anything, I'll let you know.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 0,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>tiver tempo</span>, <span class='fw-token-c'>leia este artigo</span>.",
+      "translation": "If you have time, read this article.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>tiver tempo</span>, <span class='fw-token-c'>leia este artigo</span>.",
+      "translation": "If you have time, read this article.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 0,
+    "example": 4,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>precisares</span>, <span class='fw-token-c'>estou aqui</span>.",
+      "translation": "If you need, I am here.",
+      "source": "Contemporary dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class=\"fw-token-connector\">Se</span> <span class=\"fw-token-v\">você precisar de ajuda</span>, <span class=\"fw-token-c\">estou aqui</span>.",
+      "translation": "If you need help, I’m here.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Use você consistently in the Brazilian pilot; precisares is valid with tu, not an error."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Reflexive Clitic",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">Verb of self-action</span>",
+      "rule": "Reflexive clitic: action reflects back onto the person doing it."
+    },
+    "after": {
+      "tag": "Oneself / part of a verb",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a verb</span>",
+      "rule": "Can mean “oneself”, or belong with a verb such as sentir-se (feel). It does not always mean “oneself”."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ela <span class='fw-token-connector'>se</span> <span class='fw-token-v'>olhou</span> no espelho.",
+      "translation": "She looked at herself in the mirror.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Ela <span class='fw-token-connector'>se</span> <span class='fw-token-v'>olhou</span> no espelho.",
+      "translation": "She looked at herself in the mirror.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ele <span class='fw-token-connector'>se</span> <span class='fw-token-v'>sente</span> muito melhor hoje.",
+      "translation": "He feels much better today.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Ele <span class='fw-token-connector'>se</span> <span class='fw-token-v'>sente</span> muito melhor hoje.",
+      "translation": "He feels much better today.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Eles <span class='fw-token-connector'>se</span> <span class='fw-token-v'>levantaram</span> cedo.",
+      "translation": "They got up early.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Eles <span class='fw-token-connector'>se</span> <span class='fw-token-v'>levantaram</span> cedo.",
+      "translation": "They got up early.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "O menino <span class='fw-token-connector'>se</span> <span class='fw-token-v'>vestiu</span> rapidamente.",
+      "translation": "The boy got dressed quickly.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "O menino <span class='fw-token-connector'>se</span> <span class='fw-token-v'>vestiu</span> rapidamente.",
+      "translation": "The boy got dressed quickly.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ela <span class='fw-token-connector'>se</span> <span class='fw-token-v'>sentou</span> junto à janela.",
+      "translation": "She sat down by the window.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "Ela <span class='fw-token-connector'>se</span> <span class='fw-token-v'>sentou</span> junto à janela.",
+      "translation": "She sat down by the window.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Definite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">Masculine Noun</span>",
+      "rule": "Definite determiner: points to a specific masculine singular noun."
+    },
+    "after": {
+      "tag": "The",
+      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">a masculine singular noun</span>",
+      "rule": "Means “the” before a masculine singular noun, such as livro (book)."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>livro</span> está na mesa.",
+      "translation": "The book is on the table.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>livro</span> está na mesa.",
+      "translation": "The book is on the table.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 0,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>carro</span> novo funciona bem.",
+      "translation": "The new car works well.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>carro</span> novo funciona bem.",
+      "translation": "The new car works well.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 0,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>dia</span> começou ensolarado.",
+      "translation": "The day began sunny.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>dia</span> começou ensolarado.",
+      "translation": "The day started out sunny.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Use natural English while preserving the Portuguese."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 0,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>trabalho</span> foi concluído com sucesso.",
+      "translation": "The work was completed successfully.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "<span class=\"fw-token-connector\">O</span> <span class=\"fw-token-c\">trabalho</span> está pronto.",
+      "translation": "The work is ready.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Remove a passive construction that distracts from learning the article."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 0,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>sol</span> brilha forte lá fora.",
+      "translation": "The sun shines brightly outside.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>sol</span> brilha forte lá fora.",
+      "translation": "The sun shines brightly outside.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Object Clitic",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">o</span>",
+      "rule": "Direct object pronoun: replaces a 3rd-person masculine singular object ('him / it')."
+    },
+    "after": {
+      "tag": "Him / it",
+      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-v\">a verb</span>",
+      "rule": "Refers to “him” or a masculine “it”. These examples place o before the verb; other positions also occur."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 1,
+    "example": 0,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Eu <span class='fw-token-connector'>o</span> <span class='fw-token-v'>vi</span> ontem no parque.",
+      "translation": "I saw him yesterday in the park.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Eu <span class=\"fw-token-connector\">o</span> <span class=\"fw-token-v\">vi</span> ontem.",
+      "translation": "I saw him yesterday.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Remove an unnecessary location from the first example; retain the pronoun form for recognition."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 1,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Não <span class='fw-token-connector'>o</span> <span class='fw-token-v'>encontrei</span> em lugar nenhum.",
+      "translation": "I didn't find it anywhere.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "Não <span class='fw-token-connector'>o</span> <span class='fw-token-v'>encontrei</span> em lugar nenhum.",
+      "translation": "I didn't find it anywhere.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 1,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Todos <span class='fw-token-connector'>o</span> <span class='fw-token-v'>conhecem</span> na cidade.",
+      "translation": "Everyone knows him in town.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Todos <span class='fw-token-connector'>o</span> <span class='fw-token-v'>conhecem</span> na cidade.",
+      "translation": "Everyone knows him in town.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 1,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Eu <span class='fw-token-connector'>o</span> <span class='fw-token-v'>deixei</span> sobre a bancada.",
+      "translation": "I left it on the counter.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "Eu <span class='fw-token-connector'>o</span> <span class='fw-token-v'>deixei</span> sobre a bancada.",
+      "translation": "I left it on the counter.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 1,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "O guarda <span class='fw-token-connector'>o</span> <span class='fw-token-v'>ouviu</span> gritar.",
+      "translation": "The guard heard him yell.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "O guarda <span class='fw-token-connector'>o</span> <span class='fw-token-v'>ouviu</span> gritar.",
+      "translation": "The guard heard him yell.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Pronominal argument: represents 'us / to us' receiving the action of a verb."
+    },
+    "after": {
+      "tag": "Us / to us",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">a verb</span>",
+      "rule": "Refers to us: someone sees or helps us, or tells us something."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ela <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>chamou</span> para jantar.",
+      "translation": "She called us for dinner.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Ela <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>chamou</span> para jantar.",
+      "translation": "She called us for dinner.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 0,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "O professor <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>ensinou</span> muito.",
+      "translation": "The teacher taught us a lot.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "O professor <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>ensinou</span> muito.",
+      "translation": "The teacher taught us a lot.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 0,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Eles <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>viram</span> no centro.",
+      "translation": "They saw us downtown.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Eles <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>viram</span> no centro.",
+      "translation": "They saw us downtown.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 0,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Alguém <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>ajudou</span> a tempo.",
+      "translation": "Someone helped us in time.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "Alguém <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>ajudou</span> a tempo.",
+      "translation": "Someone helped us in time.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 0,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ela <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>contou</span> a verdade.",
+      "translation": "She told us the truth.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Ela <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>contou</span> a verdade.",
+      "translation": "She told us the truth.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Contraction",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + os</span> + <span class=\"fw-token-c\">Plural Noun</span>",
+      "rule": "Contraction of 'em + os' (in / on / at the) before a masculine plural noun."
+    },
+    "after": {
+      "tag": "In / on / at the",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-c\">a masculine plural noun</span>",
+      "rule": "Combines em + os: “in”, “on” or “at the”, before a masculine plural noun."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 1,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Está <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>livros</span>.",
+      "translation": "It’s in the books.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "Está <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>livros</span>.",
+      "translation": "It’s in the books.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 1,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Vi a tristeza <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>olhos dele</span>.",
+      "translation": "I saw sadness in his eyes.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Vi a tristeza <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>olhos dele</span>.",
+      "translation": "I saw sadness in his eyes.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 1,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Passeamos <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>parques da cidade</span>.",
+      "translation": "We strolled in the city parks.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Passeamos <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>parques da cidade</span>.",
+      "translation": "We strolled in the city parks.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 1,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Nos</span> <span class='fw-token-c'>dias de festa</span>, a vila enche-se.",
+      "translation": "On festival days, the village fills up.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "<span class=\"fw-token-connector\">Nos</span> <span class=\"fw-token-c\">dias de festa</span>, a vila fica cheia.",
+      "translation": "On festival days, the village fills up.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Keep the contraction, remove unrelated attached se from the sentence."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 1,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "O peso caiu <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>nossos ombros</span>.",
+      "translation": "The weight fell on our shoulders.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "O peso caiu <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>nossos ombros</span>.",
+      "translation": "The weight fell on our shoulders.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Deictic Location",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + aquele</span> + <span class=\"fw-token-c\">Place / Time</span>",
+      "rule": "Contraction formula pointing to a distant place or past moment."
+    },
+    "after": {
+      "tag": "In / on / at that",
+      "formulaHTML": "<span class=\"fw-token-connector\">naquele</span> + <span class=\"fw-token-c\">a masculine singular noun</span>",
+      "rule": "Combines em + aquele: “in”, “on” or “at that”. It can refer to places, things or times."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Eu estava <span class='fw-token-connector'>naquele</span> <span class='fw-token-c'>lugar</span>.",
+      "translation": "I was in that place.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Eu estava <span class='fw-token-connector'>naquele</span> <span class='fw-token-c'>lugar</span>.",
+      "translation": "I was in that place.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "pattern": 0,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Naquele</span> <span class='fw-token-c'>momento</span>, tudo mudou.",
+      "translation": "At that moment, everything changed.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Naquele</span> <span class='fw-token-c'>momento</span>, tudo mudou.",
+      "translation": "At that moment, everything changed.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "pattern": 0,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Nos conhecemos <span class='fw-token-connector'>naquele</span> <span class='fw-token-c'>ano inesquecível</span>.",
+      "translation": "We met in that unforgettable year.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Nós nos conhecemos <span class=\"fw-token-connector\">naquele</span> <span class=\"fw-token-c\">ano</span>.",
+      "translation": "We met that year.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Remove decorative vocabulary and make the subject explicit."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "pattern": 0,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Deixei as chaves <span class='fw-token-connector'>naquele</span> <span class='fw-token-c'>quarto</span>.",
+      "translation": "I left the keys in that room.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "Deixei as chaves <span class='fw-token-connector'>naquele</span> <span class='fw-token-c'>quarto</span>.",
+      "translation": "I left the keys in that room.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "pattern": 0,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Naquele</span> <span class='fw-token-c'>dia</span> choveu sem parar.",
+      "translation": "On that day it rained without stopping.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Naquele</span> <span class='fw-token-c'>dia</span> choveu sem parar.",
+      "translation": "On that day it rained without stopping.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Verbal Valency",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Complement</span>",
+      "rule": "Required link: preceding verb governs 'de' before its object or action."
+    },
+    "after": {
+      "tag": "Verbs with de",
+      "formulaHTML": "<span class=\"fw-token-v\">a verb used with de</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">someone, something or an action</span>",
+      "rule": "Some verbs use de to link to what follows. Learn the verb and de together."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Me acuerdo</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>ti</span>.",
+      "translation": "I remember you.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Me acuerdo</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>ti</span>.",
+      "translation": "I remember you.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "example": 1,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Antonio dice que no <span class='fw-token-v'>se acuerda</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>ella</span>.",
+      "translation": "Antonio says he doesn't remember her.",
+      "source": "Dictionary speech"
+    },
+    "after": {
+      "targetHTML": "No <span class=\"fw-token-v\">se acuerda</span> <span class=\"fw-token-connector\">de</span> <span class=\"fw-token-c\">ella</span>.",
+      "translation": "He doesn’t remember her.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Remove the surrounding reported-speech clause; English supplies a possible subject."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Se <span class='fw-token-v'>trata</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>un asunto importante</span>.",
+      "translation": "It's about an important matter.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Se trata</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>un asunto importante</span>.",
+      "translation": "It's about an important matter.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Eso <span class='fw-token-v'>depende</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>muchos factores</span>.",
+      "translation": "That depends on many factors.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Eso <span class='fw-token-v'>depende</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>muchos factores</span>.",
+      "translation": "That depends on many factors.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "example": 4,
+    "status": "revise",
+    "before": {
+      "targetHTML": "No te <span class='fw-token-v'>olvides</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>cerrar la puerta</span>.",
+      "translation": "Don't forget to close the door.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "No <span class='fw-token-v'>te olvides</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>cerrar la puerta</span>.",
+      "translation": "Don't forget to close the door.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Nominal Binding",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Noun / Origin</span>",
+      "rule": "Nominal binding: marks possession, origin, content, or material."
+    },
+    "after": {
+      "tag": "Adding a detail",
+      "formulaHTML": "<span class=\"fw-token-v\">a thing or time</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">a detail or an action</span>",
+      "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de comer = time to eat."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Quiero un <span class='fw-token-v'>vaso</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>agua</span>.",
+      "translation": "I want a glass of water.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Quiero un <span class='fw-token-v'>vaso</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>agua</span>.",
+      "translation": "I want a glass of water.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Una hermosa <span class='fw-token-v'>mesa</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>madera</span>.",
+      "translation": "A beautiful wooden table.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Una hermosa <span class='fw-token-v'>mesa</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>madera</span>.",
+      "translation": "A beautiful wooden table.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Es <span class='fw-token-v'>hora</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>comer</span>.",
+      "translation": "It is time to eat.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "Es <span class='fw-token-v'>hora</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>comer</span>.",
+      "translation": "It is time to eat.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Un <span class='fw-token-v'>amigo</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>mi hermano nos visitó</span>.",
+      "translation": "A friend of my brother visited us.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Un <span class='fw-token-v'>amigo</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>mi hermano</span> nos visitó.",
+      "translation": "A friend of my brother visited us.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Un <span class='fw-token-v'>día</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>descanso muy merecido</span>.",
+      "translation": "A well-deserved day of rest.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Un <span class='fw-token-v'>día</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>descanso muy merecido</span>.",
+      "translation": "A well-deserved day of rest.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Clausal Link",
+      "formulaHTML": "<span class=\"fw-token-v\">Thought / Speech</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Clause</span>",
+      "rule": "Subordination: bridges what someone thinks, says, or knows to the statement."
+    },
+    "after": {
+      "tag": "Saying what you think",
+      "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+      "rule": "Links what someone thinks, says, knows or hopes to a statement."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Creo</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>va a llover</span>.",
+      "translation": "I think it’s going to rain.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Creo</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>va a llover</span>.",
+      "translation": "I think it’s going to rain.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ella <span class='fw-token-v'>dijo</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vendría temprano</span>.",
+      "translation": "She said she would come early.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Ella <span class='fw-token-v'>dijo</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vendría temprano</span>.",
+      "translation": "She said she would come early.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Sé</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>tienes toda la razón</span>.",
+      "translation": "I know you are completely right.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Sé</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>tienes toda la razón</span>.",
+      "translation": "I know you are completely right.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-v'>Espero</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>todo salga bien</span>.",
+      "translation": "I hope everything turns out well.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-v'>Espero</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>todo salga bien</span>.",
+      "translation": "I hope everything turns out well.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Él <span class='fw-token-v'>pensaba</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>era el momento oportuno</span>.",
+      "translation": "He thought it was the right moment.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Él <span class='fw-token-v'>pensaba</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>era el momento oportuno</span>.",
+      "translation": "He thought it was the right moment.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Relative Pronoun",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Description</span>",
+      "rule": "Relativization: refers back to a noun while introducing descriptive detail."
+    },
+    "after": {
+      "tag": "Adding information",
+      "formulaHTML": "<span class=\"fw-token-v\">someone or something</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">more about them or it</span>",
+      "rule": "Adds information about the person or thing just mentioned."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 1,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Es el <span class='fw-token-v'>libro</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>estoy leyendo</span>.",
+      "translation": "It is the book that I am reading.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Es el <span class='fw-token-v'>libro</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>estoy leyendo</span>.",
+      "translation": "It is the book that I am reading.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 1,
+    "example": 1,
+    "status": "revise",
+    "before": {
+      "targetHTML": "La <span class='fw-token-v'>persona</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>llamó no dejó mensaje</span>.",
+      "translation": "The person who called left no message.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "La <span class='fw-token-v'>persona</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>llamó</span> no dejó mensaje.",
+      "translation": "The person who called left no message.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 1,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "La <span class='fw-token-v'>película</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vimos fue excelente</span>.",
+      "translation": "The movie we saw was excellent.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "La <span class='fw-token-v'>película</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vimos</span> fue excelente.",
+      "translation": "The movie we saw was excellent.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 1,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "El <span class='fw-token-v'>lugar</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>conocimos era precioso</span>.",
+      "translation": "The place we visited was lovely.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "El <span class='fw-token-v'>lugar</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>conocimos</span> era precioso.",
+      "translation": "The place we visited was lovely.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 1,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Son <span class='fw-token-v'>cosas</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>pasan todos los días</span>.",
+      "translation": "These are things that happen every day.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Son <span class='fw-token-v'>cosas</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>pasan todos los días</span>.",
+      "translation": "These are things that happen every day.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Comparison",
+      "formulaHTML": "<span class=\"fw-token-v\">Degree</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Standard</span>",
+      "rule": "Comparison: connects the two sides of a degree or quality contrast."
+    },
+    "after": {
+      "tag": "Comparing",
+      "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+      "rule": "Means “than” when comparing people, things or situations."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ella es <span class='fw-token-v'>más alta</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>yo</span>.",
+      "translation": "She is taller than me.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Ella es <span class='fw-token-v'>más alta</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>yo</span>.",
+      "translation": "She is taller than me.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Esto es <span class='fw-token-v'>mejor</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>lo que teníamos</span>.",
+      "translation": "This is better than what we had.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Esto es <span class='fw-token-v'>mejor</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>lo que teníamos</span>.",
+      "translation": "This is better than what we had.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Tardamos <span class='fw-token-v'>menos tiempo</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>ayer</span>.",
+      "translation": "We took less time than yesterday.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Tardamos <span class='fw-token-v'>menos tiempo</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>ayer</span>.",
+      "translation": "We took less time than yesterday.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "La casa es <span class='fw-token-v'>mayor</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>el piso anterior</span>.",
+      "translation": "The house is larger than the previous flat.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "La casa es <span class=\"fw-token-v\">más grande</span> <span class=\"fw-token-connector\">que</span> <span class=\"fw-token-c\">el piso anterior</span>.",
+      "translation": "The house is bigger than the previous flat.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Use the more transparent size comparison; preserve piso as valid Spanish vocabulary."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Hoy hace <span class='fw-token-v'>más calor</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>la semana pasada</span>.",
+      "translation": "Today is hotter than last week.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Hoy hace <span class='fw-token-v'>más calor</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>la semana pasada</span>.",
+      "translation": "Today is hotter than last week.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Reflexive Clitic",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">Verb of self-action</span>",
+      "rule": "Reflexive clitic: action turns back upon the person doing it."
+    },
+    "after": {
+      "tag": "Oneself / part of a verb",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a verb</span>",
+      "rule": "Can mean “oneself”, or belong with a verb such as sentirse (feel). It does not always mean “oneself”."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Él <span class='fw-token-connector'>se</span> <span class='fw-token-v'>lava</span> la cara.",
+      "translation": "He washes his face.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Él <span class='fw-token-connector'>se</span> <span class='fw-token-v'>lava</span> la cara.",
+      "translation": "He washes his face.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ella <span class='fw-token-connector'>se</span> <span class='fw-token-v'>miró</span> en el espejo.",
+      "translation": "She looked at herself in the mirror.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Ella <span class='fw-token-connector'>se</span> <span class='fw-token-v'>miró</span> en el espejo.",
+      "translation": "She looked at herself in the mirror.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>siente</span> mucho más tranquilo ahora.",
+      "translation": "Feels much calmer now.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>siente</span> mucho más tranquilo ahora.",
+      "translation": "He feels much calmer now.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Complete the English sentence; the Spanish permits an omitted subject."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Los niños <span class='fw-token-connector'>se</span> <span class='fw-token-v'>levantaron</span> temprano.",
+      "translation": "The children got up early.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Los niños <span class='fw-token-connector'>se</span> <span class='fw-token-v'>levantaron</span> temprano.",
+      "translation": "The children got up early.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "example": 4,
+    "status": "revise",
+    "before": {
+      "targetHTML": "El actor <span class='fw-token-connector'>se</span> <span class='fw-token-v'>vistió</span> con elegancia.",
+      "translation": "The actor dressed with elegance.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "El actor <span class='fw-token-connector'>se</span> <span class='fw-token-v'>vistió</span> con elegancia.",
+      "translation": "The actor dressed elegantly.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Use idiomatic English."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Impersonal / Passive",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">Verb (Passive/Impersonal)</span>",
+      "rule": "Impersonal / Passive marker: signals general or collective truth ('one does')."
+    },
+    "after": {
+      "tag": "Without saying who",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a verb</span>",
+      "rule": "Describes what happens without naming who does it. Compare se habla (people speak) and se venden libros (books are sold)."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 1,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Aquí <span class='fw-token-connector'>se</span> <span class='fw-token-v'>habla</span> español.",
+      "translation": "Spanish is spoken here.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Aquí <span class='fw-token-connector'>se</span> <span class='fw-token-v'>habla</span> español.",
+      "translation": "Spanish is spoken here.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 1,
+    "example": 1,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>venden</span> libros antiguos.",
+      "translation": "Old books are sold here.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>venden</span> libros antiguos.",
+      "translation": "Old books are for sale.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Remove “here”, which the Spanish does not specify."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 1,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>come</span> muy bien en este restaurante.",
+      "translation": "One eats very well in this restaurant.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>come</span> muy bien en este restaurante.",
+      "translation": "The food is very good at this restaurant.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Use natural English for impersonal se come bien."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 1,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>vive</span> con tranquilidad en este pueblo.",
+      "translation": "One lives peacefully in this village.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>vive</span> con tranquilidad en este pueblo.",
+      "translation": "Life is peaceful in this village.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Avoid stiff English “one lives”; retain the general meaning."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 1,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>espera</span> una gran multitud hoy.",
+      "translation": "A large crowd is expected today.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>espera</span> una gran multitud hoy.",
+      "translation": "A large crowd is expected today.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Neuter Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">Adjective / Abstract</span>",
+      "rule": "Neuter article: nominalizes an adjective into an abstract quality ('the ... thing')."
+    },
+    "after": {
+      "tag": "The … thing / part",
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">a describing word</span>",
+      "rule": "With a describing word, means “the … thing” or “the … part”: lo importante = the important thing."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-c'>importante</span> es participar.",
+      "translation": "The important thing is to participate.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-c'>importante</span> es participar.",
+      "translation": "The important thing is to participate.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-c'>bueno</span> es que tenemos tiempo de sobra.",
+      "translation": "The good thing is that we have plenty of time.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-c'>bueno</span> es que tenemos tiempo de sobra.",
+      "translation": "The good thing is that we have plenty of time.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-c'>difícil</span> ya ha pasado.",
+      "translation": "The difficult part has already passed.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-c'>difícil</span> ya ha pasado.",
+      "translation": "The difficult part has already passed.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Hizo <span class='fw-token-connector'>lo</span> <span class='fw-token-c'>mejor</span> que pudo dadas las circunstancias.",
+      "translation": "Did the best that he could given the circumstances.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Hizo <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">mejor</span> que pudo.",
+      "translation": "He did the best he could.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Remove a dispensable circumstance phrase and complete the English subject."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-c'>curioso</span> es que nadie notó la diferencia.",
+      "translation": "The curious thing is that nobody noticed the difference.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-c'>curioso</span> es que nadie notó la diferencia.",
+      "translation": "The curious thing is that nobody noticed the difference.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Direct Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Direct object pronoun: replaces a masculine singular item or concept ('it / him')."
+    },
+    "after": {
+      "tag": "Him / it / that",
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">a verb</span>",
+      "rule": "Refers to “him”, a masculine “it”, or an idea: lo sé = I know that."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 1,
+    "example": 0,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Ya <span class='fw-token-connector'>lo</span> <span class='fw-token-v'>sé</span>.",
+      "translation": "I already know it.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Ya <span class='fw-token-connector'>lo</span> <span class='fw-token-v'>sé</span>.",
+      "translation": "I already know that.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Make the reference to an idea explicit; lo need not refer to a masculine object."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 1,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "No <span class='fw-token-connector'>lo</span> <span class='fw-token-v'>entiendo</span> con claridad.",
+      "translation": "I do not understand it clearly.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "No <span class='fw-token-connector'>lo</span> <span class='fw-token-v'>entiendo</span> con claridad.",
+      "translation": "I do not understand it clearly.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 1,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "¿<span class='fw-token-connector'>Lo</span> <span class='fw-token-v'>has visto</span> por aquí?",
+      "translation": "Have you seen him around here?",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "¿<span class='fw-token-connector'>Lo</span> <span class='fw-token-v'>has visto</span> por aquí?",
+      "translation": "Have you seen him around here?",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 1,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-v'>hice</span> exactamente como me pediste.",
+      "translation": "I did it exactly as you asked me.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-v'>hice</span> exactamente como me pediste.",
+      "translation": "I did it exactly as you asked me.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 1,
+    "example": 4,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Si tienes el informe, <span class='fw-token-connector'>lo</span> <span class='fw-token-v'>leo</span> esta noche.",
+      "translation": "If you have the report, I'll read it tonight.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Si tienes el informe, <span class='fw-token-connector'>lo</span> <span class='fw-token-v'>leo</span> esta noche.",
+      "translation": "If you have the report, I'll read it tonight.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Object pronoun: represents 1st-person plural 'us / to us'."
+    },
+    "after": {
+      "tag": "Us / to us",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">a verb</span>",
+      "rule": "Refers to us: someone sees or helps us, or tells us something."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "El profesor <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>enseña</span> bien.",
+      "translation": "The teacher teaches us well.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "El profesor <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>enseña</span> bien.",
+      "translation": "The teacher teaches us well.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "pattern": 0,
+    "example": 1,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Ellos <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>invitaron</span> a cenar.",
+      "translation": "They invited us for dinner.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Ellos <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>invitaron</span> a cenar.",
+      "translation": "They invited us for dinner.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "pattern": 0,
+    "example": 2,
+    "status": "retain",
+    "before": {
+      "targetHTML": "El guía <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>mostró</span> la ciudad vieja.",
+      "translation": "The guide showed us the old city.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "El guía <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>mostró</span> la ciudad vieja.",
+      "translation": "The guide showed us the old city.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "pattern": 0,
+    "example": 3,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Un vecino <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>ayudó</span> con el coche.",
+      "translation": "A neighbour helped us with the car.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "Un vecino <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>ayudó</span> con el coche.",
+      "translation": "A neighbour helped us with the car.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "pattern": 0,
+    "example": 4,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Nos</span> <span class='fw-token-v'>alegramos</span> mucho de verte.",
+      "translation": "We are very glad to see you.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Ella <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">espera</span> aquí.",
+      "translation": "She is waiting for us here.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Original nos alegramos belongs with alegrarse, not the us/to us pattern. Preserve it in the ledger for a later usage review."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 0,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Direction / Goal",
+      "formulaHTML": "<span class=\"fw-token-connector\">a + el</span> + <span class=\"fw-token-c\">Masculine Destination</span>",
+      "rule": "Mandatory contraction of 'a + el' (to the / at the) before masculine nouns."
+    },
+    "after": {
+      "tag": "To / at the",
+      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-c\">a destination with el</span>",
+      "rule": "Here, a + el becomes al: “to the” or “at the”."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 0,
+    "example": 0,
+    "status": "retain",
+    "before": {
+      "targetHTML": "Vamos <span class='fw-token-connector'>al</span> <span class='fw-token-c'>cine</span> esta noche.",
+      "translation": "We are going to the cinema tonight.",
+      "source": "Everyday dialogue"
+    },
+    "after": {
+      "targetHTML": "Vamos <span class='fw-token-connector'>al</span> <span class='fw-token-c'>cine</span> esta noche.",
+      "translation": "We are going to the cinema tonight.",
+      "source": "Everyday dialogue"
+    },
+    "reasons": [
+      "Reviewed sentence, translation, pattern fit and highlighting; retain."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 0,
+    "example": 1,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Llegamos <span class='fw-token-connector'>al</span> <span class='fw-token-c'>parque al atardecer</span>.",
+      "translation": "We arrived at the park at sunset.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "Llegamos <span class='fw-token-connector'>al</span> <span class='fw-token-c'>parque</span> al atardecer.",
+      "translation": "We arrived at the park at sunset.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 0,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Tuve que ir <span class='fw-token-connector'>al</span> <span class='fw-token-c'>médico por la mañana</span>.",
+      "translation": "I had to go to the doctor in the morning.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Tuve que ir <span class='fw-token-connector'>al</span> <span class='fw-token-c'>médico</span> por la mañana.",
+      "translation": "I had to go to the doctor in the morning.",
+      "source": "Subtitles"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 0,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Acompañó a su abuelo <span class='fw-token-connector'>al</span> <span class='fw-token-c'>aeropuerto</span>.",
+      "translation": "Accompanied his grandfather to the airport.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "Acompañó a su abuelo <span class='fw-token-connector'>al</span> <span class='fw-token-c'>aeropuerto</span>.",
+      "translation": "He accompanied his grandfather to the airport.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Complete the English subject; one possible reading of omitted Spanish subject."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 0,
+    "example": 4,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Volvieron <span class='fw-token-connector'>al</span> <span class='fw-token-c'>trabajo con energía</span>.",
+      "translation": "They returned to work with energy.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "Volvieron <span class='fw-token-connector'>al</span> <span class='fw-token-c'>trabajo</span> con energía.",
+      "translation": "They returned to work with energy.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Highlight only the phrase described by the formula; keep the rest outside the coloured chunk."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "example": null,
+    "status": "revise",
+    "before": {
+      "tag": "Temporal Nexus",
+      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">Infinitive</span>",
+      "rule": "Temporal nexus: expresses 'upon doing' or 'when doing'."
+    },
+    "after": {
+      "tag": "When doing something",
+      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">a verb in its dictionary form</span>",
+      "rule": "Means “when” doing something: al llegar = when someone arrives."
+    },
+    "reasons": [
+      "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
+    ]
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "example": 0,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Al</span> <span class='fw-token-v'>llegar</span> a casa, descansé.",
+      "translation": "Upon arriving home, I rested.",
+      "source": "Dialogue"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Al</span> <span class='fw-token-v'>llegar</span> a casa, descansé.",
+      "translation": "When I got home, I rested.",
+      "source": "Dialogue"
+    },
+    "reasons": [
+      "Use everyday English instead of “upon arriving”."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "example": 1,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Al</span> <span class='fw-token-v'>oír</span> la campana, salieron todos.",
+      "translation": "Upon hearing the bell, everyone left.",
+      "source": "Conversation"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Al</span> <span class='fw-token-v'>oír</span> la campana, salieron todos.",
+      "translation": "When everyone heard the bell, they left.",
+      "source": "Conversation"
+    },
+    "reasons": [
+      "Use a natural when-clause."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "example": 2,
+    "status": "revise",
+    "before": {
+      "targetHTML": "Sonrió <span class='fw-token-connector'>al</span> <span class='fw-token-v'>ver</span> la sorpresa preparada.",
+      "translation": "Smiled upon seeing the surprise prepared.",
+      "source": "Subtitles"
+    },
+    "after": {
+      "targetHTML": "Sonrió <span class=\"fw-token-connector\">al</span> <span class=\"fw-token-v\">ver</span> el regalo.",
+      "translation": "She smiled when she saw the gift.",
+      "source": "Original teaching example · Function-word pilot"
+    },
+    "reasons": [
+      "Replace an awkward, context-heavy surprise phrase; English supplies a possible subject."
+    ],
+    "provenance": "New teaching sentence; original source retained only in before record."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "example": 3,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Al</span> <span class='fw-token-v'>abrir</span> la ventana entró aire fresco.",
+      "translation": "Upon opening the window, fresh air entered.",
+      "source": "Everyday speech"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Al</span> <span class='fw-token-v'>abrir</span> la ventana entró aire fresco.",
+      "translation": "When the window was opened, fresh air came in.",
+      "source": "Everyday speech"
+    },
+    "reasons": [
+      "Avoid a dangling English modifier that makes fresh air appear to open the window."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "example": 4,
+    "status": "revise",
+    "before": {
+      "targetHTML": "<span class='fw-token-connector'>Al</span> <span class='fw-token-v'>terminar</span> el discurso, todos aplaudieron.",
+      "translation": "Upon finishing the speech, everyone applauded.",
+      "source": "Literature"
+    },
+    "after": {
+      "targetHTML": "<span class='fw-token-connector'>Al</span> <span class='fw-token-v'>terminar</span> el discurso, todos aplaudieron.",
+      "translation": "When the speech ended, everyone applauded.",
+      "source": "Literature"
+    },
+    "reasons": [
+      "Make the timing natural without implying everyone delivered the speech."
+    ],
+    "provenance": "Original attribution retained verbatim; not independently authenticated."
+  }
+]

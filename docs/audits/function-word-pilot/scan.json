@@ -1,0 +1,432 @@
+[
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "valency",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "complement",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "governs",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 1,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "nominal binding",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "clausal",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "subordination",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 1,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "relativization",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "degree, standard",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "degree",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "pattern": 0,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "deictic",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 0,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "pronominal argument",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "clitic",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "clitic",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 0,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "determiner",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 1,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "clitic",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "para",
+    "pattern": 1,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "infinitive",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "como",
+    "pattern": 0,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "standard",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "me",
+    "pattern": 1,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "clitic",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "me",
+    "pattern": 1,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "clitic",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "ao",
+    "pattern": 1,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "nexus",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "ao",
+    "pattern": 1,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "infinitive",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "ao",
+    "pattern": 1,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "nexus",
+    "severity": "review"
+  },
+  {
+    "language": "pt",
+    "word": "quando",
+    "pattern": 0,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "subordination",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "valency",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "complement",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "governs",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "nominal binding",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "nominal binding",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "clausal",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "subordination",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 1,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "relativization",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "degree, standard",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "degree",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "para",
+    "pattern": 0,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "infinitive",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "clitic",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "clitic",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "nexus",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "infinitive",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "nexus",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "abstract",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "example": null,
+    "field": "rule",
+    "code": "jargon",
+    "detail": "abstract, nominalizes",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "como",
+    "pattern": 0,
+    "example": null,
+    "field": "formulaHTML",
+    "code": "jargon",
+    "detail": "standard",
+    "severity": "review"
+  },
+  {
+    "language": "es",
+    "word": "cuando",
+    "pattern": 0,
+    "example": null,
+    "field": "tag",
+    "code": "jargon",
+    "detail": "nexus",
+    "severity": "review"
+  }
+]
