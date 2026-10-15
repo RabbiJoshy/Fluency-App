@@ -100,8 +100,13 @@ function readStudySession(key) {
     try {
         let raw = localStorage.getItem(studySessionStorageKey(key));
         // Earlier snapshots had no account scope. Preserve them only for
-        // legacy initials profiles, never for a newly separated profile.
-        if (!raw && currentUser && !currentUser.isGuest && !String(currentUser.initials).startsWith('profile_')) {
+        // legacy initials profiles, never for a newly separated profile or Clerk account.
+        const isLegacyInitials = Boolean(currentUser && !currentUser.isGuest
+            && !currentUser.authProvider
+            && !String(currentUser.initials).startsWith('profile_')
+            && !String(currentUser.initials).startsWith('clerk_')
+            && /^[A-Z]{2,4}$/.test(String(currentUser.initials || '')));
+        if (!raw && isLegacyInitials) {
             raw = localStorage.getItem(key);
             if (raw) {
                 localStorage.setItem(studySessionStorageKey(key), raw);

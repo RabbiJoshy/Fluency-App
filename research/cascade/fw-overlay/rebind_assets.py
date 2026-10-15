@@ -20,6 +20,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -43,9 +44,9 @@ def sha(path: Path) -> str:
 
 
 def live_path(rel: str) -> str:
-    """The live file a config path was rebound from (config may already name the -fw1 copy)."""
+    """The live file a config path was rebound from (config may already name an -fwN copy)."""
     stem, ext = rel.rsplit(".", 1)
-    return f"{stem.removesuffix('-' + overlay.TAG)}.{ext}"
+    return f"{re.sub(r'-fw[0-9]+$', '', stem)}.{ext}"
 
 
 def suffixed(rel: str) -> str:

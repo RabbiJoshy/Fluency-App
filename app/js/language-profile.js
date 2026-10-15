@@ -23,7 +23,8 @@ function read() {
     // Adopt the old browser preference once; never seed unrelated accounts.
     const owner = get(OWNER);
     const legacy = parse(get(LEGACY));
-    if (Array.isArray(legacy) && (!owner || owner === account())) {
+    const isLegacyAccount = /^[A-Z]{2,4}$/.test(account());
+    if (Array.isArray(legacy) && ((!owner && isLegacyAccount) || owner === account())) {
         const migrated = normalize({languages: legacy, confirmed: true, updatedAt: 0});
         store(migrated);
         try { localStorage.setItem(OWNER, account()); } catch (_) {}

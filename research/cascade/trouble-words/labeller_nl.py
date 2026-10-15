@@ -6,6 +6,9 @@ te / aan het / om te > grammar role from Stanza UPOS/deprel > none.
 """
 import json, re
 KAIKKI = "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/wiktionary/enwiktionary-2026-09-09/kaikki.org-dictionary-Dutch.jsonl"
+from gloss_filter import Glosses
+_G = Glosses(KAIKKI)
+_clean = _G.clean  # shared: drops entry notes, follows 'spelling of' pointers
 PHRASE_POS = {"phrase", "prep_phrase", "adv", "particle", "conj", "intj", "prep"}
 
 def _load():
@@ -15,8 +18,7 @@ def _load():
         if e.get("pos") == "verb" and " " not in e["word"]:
             for f in e.get("forms", []):
                 forms.setdefault(f.get("form", "").lower(), e["word"].lower())
-        gl = [g for s in e.get("senses", []) for g in s.get("glosses", [])
-              if "form of" not in g and "inflection of" not in g and "Used other than" not in g]
+        gl = _clean(g for s in e.get("senses", []) for g in s.get("glosses", []))
         if not gl: continue
         w = e["word"].lower()
         if e.get("pos") == "verb" and " " not in w: verbs.setdefault(w, gl[0])
@@ -25,6 +27,10 @@ def _load():
     phrases.update({"aan het": "be ...-ing (in progress)", "om te": "in order to"})
     return verbs, phrases, forms
 VERBS, PHRASES, FORMS = _load()
+# Wiktionary marks these 'used other than figuratively or idiomatically', so gloss_filter drops them;
+# in running text the idiom dominates, so they are kept (hand-checked on deck sentences, 2026-10-13).
+IDIOMS = {"des te meer"}  # "aan het" has a handwritten gloss in _load
+PHRASES.update({w: _G.idiom[w] for w in IDIOMS if w in _G.idiom})
 BY_TOKEN = {}
 for p in PHRASES:
     for t in p.split(): BY_TOKEN.setdefault(t, []).append(p)

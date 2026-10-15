@@ -9,13 +9,14 @@ pronoun or determiner > conjunction > none.
 """
 import json, re
 KAIKKI = "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/wiktionary/enwiktionary-2026-08-20/kaikki.org-dictionary-Portuguese.jsonl"
+from gloss_filter import Glosses
+from grammar_context import phrase_is_literal, clitic_label, feat
 PHRASE_POS = {"phrase", "prep_phrase", "adv", "adj", "particle", "conj", "intj", "prep", "pron", "contraction"}
 PREPS = ("de", "a", "que", "em", "com", "por", "para")
 
 
-def _clean(glosses):
-    return [g for g in glosses if "form of" not in g and "inflection of" not in g and "contraction of" not in g.lower()
-            and "Used other than" not in g]
+_G = Glosses(KAIKKI)
+_clean = _G.clean  # shared: drops entry notes, follows 'spelling of' pointers
 
 
 PHRASE_KIND = {}
@@ -33,7 +34,7 @@ def _load():
         e = json.loads(line)
         w = e["word"].lower(); pos = e.get("pos")
         senses = e.get("senses", [])
-        gl = _clean([g for s in senses for g in s.get("glosses", [])])
+        gl = _G.senses(senses)
         if not gl: continue
         # two-word adjective entries are mostly 'do mundo' (non-religious): keep only longer ones and 'a salvo'-type
         if " " in w and pos in PHRASE_POS and not (pos == "adj" and w.split()[0] not in ("a", "em", "de", "sem")):
@@ -56,6 +57,11 @@ def _load():
 
 
 PHRASES, PRONOMINAL, VERB_FRAMES, VERBS = _load()
+# Wiktionary marks these 'used other than figuratively or idiomatically', so gloss_filter drops them;
+# in running text the idiom dominates, so they are kept (hand-checked on deck sentences, 2026-10-13).
+IDIOMS = {"por que", "do que", "o senhor", "um pouco", "um dia", "uma vez", "por que não", "quem sabe", "muito menos",
+          "daqui a", "quanto mais", "a gente", "entre outros", "numa palavra", "cada vez mais"}
+PHRASES.update({w: _G.idiom[w] for w in IDIOMS if w in _G.idiom})
 # Ambiguous or misleading entries the rules handle themselves.
 for p in ("o que", "é que", "do que", "no que", "a que", "de que", "em que", "que nem", "se não", "a minha", "o meu", "a gente que"):
     PHRASES.pop(p, None)
@@ -158,7 +164,7 @@ def _tokens(sent):
 
 
 def _phrase(sent, i):
-    toks = _tokens(sent); pos = next(n for n, t in enumerate(toks) if t[1] == i)
+    toks = _tokens(sent); pos = next(n for n, t in enumerate(toks) if sent[t[1]].parent is sent[i].parent)
     best = None
     for p in BY_TOKEN.get(toks[pos][0], []):
         parts = p.split(); n = len(parts)
@@ -171,20 +177,40 @@ def _phrase(sent, i):
     return best
 
 
-def label(sent, i, surface=None):
+def label(sent, i, surface=None, reflexive_decisions=None):
     w = sent[i]; t = (surface or w.parent.text or w.text).lower()
     head = sent[w.head - 1] if w.head else None
     kids = lambda h: [x for x in sent if x.head == h.id]
     prev = sent[i - 1].text.lower() if i > 0 else ""
-    toks = _tokens(sent); tpos = next(n for n, x in enumerate(toks) if x[1] == i)
+    toks = _tokens(sent); tpos = next(n for n, x in enumerate(toks) if sent[x[1]].parent is w.parent)
     nxt_tok = toks[tpos + 1][0] if tpos + 1 < len(toks) else ""
     prev_tok = toks[tpos - 1][0] if tpos > 0 else ""
+
+    if t in ("se", "me", "te", "nos", "vos"):
+        clitic = clitic_label(sent, i, t, "pt", PRONOMINAL, reflexive_decisions, VERBS)
+        if clitic is not None:
+            return clitic
+    if t in ("um", "uma", "uns", "umas") and w.upos == "NUM":
+        return _role("quantifier", {"um": "one", "uma": "one", "uns": "some", "umas": "some"}[t], "partitive_number")
+    if t == "que" and prev_tok in ("", "-", "¿") and nxt_tok in ("é", "foi"):
+        return _role("interrogative", "what", "question_cleft")
+    # Productive degree/time constructions survive dictionary-note filtering.
+    if t in ("cada", "vez"):
+        start = tpos if t == "cada" else tpos - 1
+        if start >= 0 and start + 1 < len(toks) and [x[0] for x in toks[start:start + 2]] == ["cada", "vez"]:
+            modifier = toks[start + 2][0] if start + 2 < len(toks) else ""
+            if modifier in ("mais", "menos", "maior", "menor", "melhor", "pior"):
+                return _unit("cada vez", "progressively / increasingly", "progressive_degree")
+            if start and toks[start - 1][0] == "de":
+                return _unit("de cada vez", "at a time", "distributive_time")
 
     # 1. fixed multiword entries, longest first ('se' goes to its verb instead: não se preocupe -> preocupar-se)
     if t in ("o", "no", "do") and nxt_tok == "que":
         if t == "do" and any(x[0] in COMPARATIVE for x in toks[:tpos]): return _unit("do que", "than", "comparative")
         if t == "o": return _unit("o que", "what / which", "o_que")
     ph = _phrase(sent, i) if t != "se" else None
+    if ph and phrase_is_literal(sent, toks, tpos, ph[0], PHRASE_KIND):
+        ph = None
     if ph and ph[1] == 2 and ph[0].split()[0] == t and tpos + 1 < len(toks):
         # 'significado da vida' is literal (vida modifies a noun); the idiom 'da vida' (extremely) is not
         nxt_word = sent[toks[tpos + 1][1]]
@@ -227,9 +253,7 @@ def label(sent, i, surface=None):
             if head.upos == "NUM" or any(k.deprel == "nummod" for k in kids(head)) or head.text.lower() in TIME_NOUNS: continue
             lem = v.lemma.lower()
             if f"{lem} {t}" in VERB_FRAMES: return _unit(f"{lem} {t}", VERB_FRAMES[f"{lem} {t}"], "verb_frame")
-            if any(k.text.lower() == "se" for k in kids(v)) and lem in PRONOMINAL:
-                return _unit(f"{lem}-se {t}", PRONOMINAL[lem], "pronominal_verb_frame")
-        if w.deprel == "mark" and t in PREP_GLOSS: return _role("prep", PREP_GLOSS[t] + " (+ verb)")
+        if w.deprel == "mark" and t in PREP_GLOSS: return _role("prep", PREP_GLOSS[t])  # same meaning before a verb; one row on the card
     # 4. se: conjunction 'if' or a clitic on a (pronominal) verb
     if t == "se":
         if w.upos in ("SCONJ", "CCONJ") or w.deprel == "mark": return _role("conj_if", "if / whether")
@@ -241,7 +265,7 @@ def label(sent, i, surface=None):
                     and not re.search(r"Mood=(Imp|Sub)", head.feats or ""):  # 'não se esqueça' is a command, not 'one forgets'
                 return _role("impersonal_se", "one / (it) is done", "role")
             if head.upos == "VERB" and lem in VERBS:  # 'vão se juntar' -> juntar-se
-                return _unit(lem + "-se", VERBS[lem] + " (oneself)", "se_verb")
+                return _role("pronominal", "", "uncertain_pronominal_sense")
             return _role("reflexive", "himself / herself / themselves", "role")
     # clitic me/te/nos on a pronominal verb (preocupo-me, lembras-te)
     if t in ("me", "te", "nos", "vos") and head is not None and head.upos == "VERB" and head.lemma.lower() in PRONOMINAL \

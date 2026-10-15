@@ -8,13 +8,14 @@ for pronouns come from the lemma and the case Stanza reads.
 """
 import json, re
 KAIKKI = "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/wiktionary/enwiktionary-2026-09-06/kaikki.org-dictionary-Czech.jsonl"
+from gloss_filter import Glosses
 PREPS = ("na", "o", "v", "ve", "s", "se", "z", "ze", "do", "k", "ke", "po", "za", "od", "pro", "u", "před", "přede",
          "mezi", "pod", "při", "přes", "proti", "bez", "beze")
 PHRASE_POS = {"phrase", "prep_phrase", "adv", "conj", "intj", "prep", "pron"}
 
 
-def _clean(glosses):
-    return [g for g in glosses if "form of" not in g and "inflection of" not in g and "Used other than" not in g]
+_G = Glosses(KAIKKI)
+_clean = _G.clean  # shared: drops entry notes, follows 'spelling of' pointers
 
 
 VERBS = {}
@@ -44,6 +45,10 @@ def _load():
 
 
 PHRASES, PRONOMINAL, FRAMES = _load()
+# Wiktionary marks these 'used other than figuratively or idiomatically', so gloss_filter drops them;
+# in running text the idiom dominates, so they are kept (hand-checked on deck sentences, 2026-10-13).
+IDIOMS = set()
+PHRASES.update({w: _G.idiom[w] for w in IDIOMS if w in _G.idiom})
 BY_TOKEN = {}
 for p in PHRASES:
     for t in p.split(): BY_TOKEN.setdefault(t, []).append(p)

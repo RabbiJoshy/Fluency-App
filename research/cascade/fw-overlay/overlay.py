@@ -44,8 +44,10 @@ LIVE_RELEASE = {
     "cs": "cs/speech/cs-speech-v22-10000x30-slim",
 }
 STANZA_LANG = {"pt": "pt", "es": "es", "cs": "cs"}
-TAG = "fw1"
-RUNS_FILE = "fw-overlay-runs.json"
+# fw1: first overlay (2026-10-13). fw2: shared gloss filter (no Wiktionary entry notes or
+# literal-use phrases) and one preposition role before verbs. Each tag has its own runs.
+TAG = "fw2"
+RUNS_FILE = "fw-overlay-runs.json" if TAG == "fw1" else f"fw-overlay-runs-{TAG}.json"
 
 
 def _json(path: Path):

@@ -531,7 +531,7 @@
             <div id="step2" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
                     <span class="step-number">2</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels and sessions">Choose a level<span id="studySessionLevel" class="study-session-level"></span> <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels and sessions">Choose a level <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div class="step-header-actions">
                         <span id="levelInfoLine" class="level-info-line" style="display: none;"></span>
                         <button type="button" id="levelModeToggle" class="level-mode-btn" style="display: none;" aria-hidden="true" tabindex="-1">CEFR</button>
@@ -587,10 +587,12 @@
                             <button type="button" data-ss-master="off" aria-pressed="true">Off</button>
                             <button type="button" data-ss-master="on" aria-pressed="false">On</button>
                         </div>
+                        <button type="button" id="fastTrackHubBtn" class="smart-skip-details-icon-btn" aria-label="Smart Skip details" title="Smart Skip details">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg>
+                        </button>
                         <span class="smart-skip-meta">
                             <small id="fastTrackHubSummary" class="smart-skip-hub-summary">Fewer cards to study</small>
                             <span id="fastTrackHubExamples" class="smart-skip-hub-examples" hidden></span>
-                            <button type="button" id="fastTrackHubBtn" class="smart-skip-details" aria-label="Smart Skip details">Details</button>
                         </span>
                     </div>
                 </div>
@@ -1211,6 +1213,10 @@
                         <div class="smart-skip-shortcut-detail" hidden>
                             <p class="fast-mode-explainer">Words that look similar <em>and</em> mean the same in English, like <em>idea</em> or <em>familia</em>.</p>
                             <div id="knownLanguagesContainer" class="known-languages-context" style="display: none;">
+                                <div class="known-languages-bar-header">
+                                    <span class="known-languages-bar-title">Skip look-alikes from</span>
+                                    <button type="button" class="known-languages-manage-btn" data-edit-language-profile>Manage</button>
+                                </div>
                                 <div id="knownLanguagesSelector" class="known-languages-selector"></div>
                             </div>
                         </div>
@@ -1293,16 +1299,6 @@
                 <p>Entirely optional. Smart Skip works well without these, so leave them off unless you want a leaner deck.</p>
             </div>
             <div class="fast-mode-controls smart-skip-shortcuts">
-                    <div id="bridgeToggleContainer" class="smart-skip-shortcut" hidden>
-                        <div class="smart-skip-shortcut-row">
-                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Words from other languages</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
-                            <button type="button" id="bridgeToggle" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Use words learned in other languages"></button>
-                        </div>
-                        <div class="smart-skip-shortcut-detail" hidden>
-                            <p class="fast-mode-explainer">Skip matching words you’ve already learned in other languages you study.</p>
-                            <p id="bridgeSourcesSummary" class="fast-mode-explainer"></p>
-                        </div>
-                    </div>
                     <div id="grammarToggleContainer" class="smart-skip-shortcut" data-ss-kind="grammar" style="display: none;">
                         <div class="smart-skip-shortcut-row">
                             <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Skip pronouns &amp; particles</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>

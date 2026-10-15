@@ -83,7 +83,10 @@ async function resolveProfile(user, container) {
         form.append(heading, note, label, input, error, submit); container.append(form);
         form.onsubmit = async event => {
             event.preventDefault(); submit.disabled = true; error.textContent = '';
-            try { resolve(await account(input.value.trim())); }
+            try {
+                const created = await account(input.value.trim());
+                resolve({ ...created, isNew: true });
+            }
             catch (failure) { error.textContent = failure.message; submit.disabled = false; }
         };
         input.focus();
@@ -140,7 +143,8 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
                 await onSignedIn({
                     initials: IS_STAGING ? profile.id.replace(/^stg_/, '') : profile.id,
                     profileId: profile.id, authProvider: 'clerk',
-                    username: profile.name, isGuest: false
+                    username: profile.name, isGuest: false,
+                    isNew: Boolean(profile?.isNew)
                 });
                 window.dispatchEvent(new Event('fluency-auth-restored'));
             };

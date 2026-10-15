@@ -745,7 +745,7 @@ let _ssRendered = 0;
 let _ssObserver = null;
 let _ssSignature = '';
 
-let _activeCognateFilterLang = 'all';
+let _activeCognateFilterLang = 'en';
 
 function skipEntriesFor(extras, category) {
     if (category === 'song:all') return extras.supplementary || [];
@@ -1004,16 +1004,15 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
             || options.find(option => option.id !== 'all')?.id
             || options[0]?.id || 'all');
     const activeKnown = g().activeKnownLanguages?.() || [];
-    if (_activeCognateFilterLang !== 'all' && !activeKnown.includes(_activeCognateFilterLang)) {
-        _activeCognateFilterLang = 'all';
+    if (!_activeCognateFilterLang || _activeCognateFilterLang === 'all' || !activeKnown.includes(_activeCognateFilterLang)) {
+        _activeCognateFilterLang = activeKnown.includes('en') ? 'en' : (activeKnown[0] || 'en');
     }
     const showLangBtn = category === 'cognate' && activeKnown.length > 1;
     const langBtn = document.getElementById('smartSkipCognateLangFilter');
     if (langBtn) {
         langBtn.hidden = !showLangBtn;
         if (showLangBtn) {
-            const allCount = (extras.byCategory?.cognate || []).length;
-            const optionsHtml = [`<option value="all">All languages (${allCount.toLocaleString()})</option>`];
+            const optionsHtml = [];
             const check = g().isCognateKnownForLanguage;
             for (const code of activeKnown) {
                 const flag = g().knownLanguageFlag?.(code) || '';

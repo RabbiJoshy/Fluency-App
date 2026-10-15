@@ -291,6 +291,16 @@ function setupTooltipHandlers() {
         tooltip.classList.toggle('visible');
     });
 
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            const bar = e.target.closest?.('.study-level-bar.step-help-btn');
+            if (bar) {
+                e.preventDefault();
+                bar.click();
+            }
+        }
+    });
+
     // Close tooltip modal on backdrop click (click on outer overlay, not inner content)
     document.querySelectorAll('.step-info-tooltip').forEach(tooltip => {
         tooltip.addEventListener('click', function(e) {
@@ -3002,7 +3012,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     container.innerHTML = `
         <div class="study-set-panel">
             <div class="study-set-choice">
-                <div class="study-level-bar" role="img" aria-label="Level progress: ${description}" style="${progressStyle}"></div>
+                <div class="study-level-bar step-help-btn" role="button" tabindex="0" data-tooltip="levelColoursTooltip" aria-label="Level progress: ${description}. Click for details" aria-haspopup="dialog" title="Click for level progress details" style="${progressStyle}"></div>
                 <div class="study-set-current-copy">
                     <span>
                         <b class="study-set-stat"><i class="is-unseen"></i>${levelNewCount} New</b>
@@ -3010,7 +3020,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                         <b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>
                         ${levelEstimatedCount > 0 ? `<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated familiar</b>` : ''}
                         ${levelSkippedCount > 0 ? `<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>` : ''}
-                        <button type="button" class="study-legend-info step-help-btn" data-tooltip="levelColoursTooltip" aria-label="What the level colours mean" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     </span>
                 </div>
                 ${nextCount === 0

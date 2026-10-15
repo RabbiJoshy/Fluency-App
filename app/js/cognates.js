@@ -502,29 +502,40 @@ function renderKnownLanguagePicker() {
     const selector = document.getElementById('knownLanguagesSelector');
     if (!container || !selector) return;
     container.style.display = 'block';
-    const active = activeKnownLanguages();
+
+    const selectedCodes = readSelected();
+    const codesToShow = [...new Set([...(selectedCodes.length ? selectedCodes : ['en']), ...activeKnownLanguages()])];
+    const active = new Set(activeKnownLanguages());
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    
-    // Display active languages as clean pills with a subtle + button to open the modal
-    const chipsHtml = (active.length ? active : ['en']).map(code => {
+
+    const chipsHtml = codesToShow.map(code => {
         const flag = knownLanguageFlag(code);
         const shownFlag = flag ? `${flag} ` : '';
-        return `<button type="button" class="known-language-chip" data-edit-language-profile title="Language look-alikes from ${escape(languageLabel(code))}. Click to manage.">
-            ${shownFlag}${escape(languageLabel(code))}
+        const isActive = active.has(code);
+        return `<button type="button" class="known-language-chip ${isActive ? 'is-active' : 'is-inactive'}" data-known-language="${code}" aria-pressed="${isActive}" title="${isActive ? 'Look-alikes active for ' + escape(languageLabel(code)) + '. Click to turn off.' : 'Look-alikes off for ' + escape(languageLabel(code)) + '. Click to turn on.'}">
+            <span class="known-language-chip-status" aria-hidden="true">${isActive ? '✓ ' : '+ '}</span>${shownFlag}${escape(languageLabel(code))}
         </button>`;
     }).join('');
 
     selector.innerHTML = `
         <div class="known-languages-folded-row">
             ${chipsHtml}
-            <button type="button" class="known-language-add-btn" data-edit-language-profile title="Add more languages or transfer words from other languages" aria-label="Add more languages">
-                <span class="known-language-add-plus" aria-hidden="true">+</span>
+            <button type="button" class="known-language-add-btn" data-edit-language-profile title="Add more languages you know" aria-label="Add more languages">
+                <span class="known-language-add-plus" aria-hidden="true">+</span> Add language
             </button>
         </div>
     `;
 
+    selector.querySelectorAll('[data-known-language]').forEach(button => {
+        button.addEventListener('click', () => toggleKnownLanguage(button.dataset.knownLanguage));
+    });
+
     selector.querySelectorAll('[data-edit-language-profile]').forEach(button => {
         button.addEventListener('click', () => globalThis.openKnownLanguagesSettings?.());
+    });
+
+    container.querySelectorAll('.known-languages-manage-btn').forEach(button => {
+        button.onclick = () => globalThis.openKnownLanguagesSettings?.();
     });
 }
 

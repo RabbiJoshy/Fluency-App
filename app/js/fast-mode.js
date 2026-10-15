@@ -77,11 +77,95 @@ function shortcutOn(kind) {
     return kind === 'lemma' ? selected.dataset.lemma === 'on' : selected.dataset[kind] === 'exclude';
 }
 
+let _smartSkipAnimationTimer = null;
+let _smartSkipFlashInterval = null;
+
+function triggerSmartSkipActivationAnimation() {
+    const extras = globalThis.collectExtras?.() || {};
+    const skippedCardsCount = (extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0))
+        + (extras.lemmas?.length || 0);
+    const candidates = [...(extras.allSkipped || extras.cognates || []), ...(extras.lemmas || [])]
+        .map(entry => entry.item || entry);
+    let words = [...new Set(candidates.map(item => String(item?.word || '').trim()).filter(Boolean))].slice(0, 15);
+    if (!words.length) {
+        const previewCandidates = lookAlikeCandidates();
+        words = [...new Set(previewCandidates.map(item => String(item?.word || '').trim()).filter(Boolean))].slice(0, 15);
+    }
+
+    let toast = document.getElementById('smartSkipAnimationToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'smartSkipAnimationToast';
+        toast.className = 'smart-skip-animation-toast';
+        document.body.appendChild(toast);
+    }
+
+    if (_smartSkipAnimationTimer) clearTimeout(_smartSkipAnimationTimer);
+    if (_smartSkipFlashInterval) clearInterval(_smartSkipFlashInterval);
+
+    const countText = skippedCardsCount > 0 ? `${skippedCardsCount.toLocaleString()}` : '';
+    const initialWord = words[0] || '';
+
+    toast.innerHTML = `
+        <div class="smart-skip-toast-inner">
+            <div class="smart-skip-toast-spinner" aria-hidden="true"></div>
+            <div class="smart-skip-toast-content">
+                <div class="smart-skip-toast-title">Skipping ${countText ? countText + ' words...' : 'words...'}</div>
+                <div class="smart-skip-toast-flasher">
+                    <span class="smart-skip-flashed-word" id="smartSkipFlashedWord">${initialWord}</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    toast.classList.remove('fade-out');
+    toast.classList.add('visible');
+
+    let wordIdx = 0;
+    const wordEl = document.getElementById('smartSkipFlashedWord');
+    if (words.length > 1 && wordEl) {
+        _smartSkipFlashInterval = setInterval(() => {
+            wordIdx = (wordIdx + 1) % words.length;
+            wordEl.textContent = words[wordIdx];
+            wordEl.classList.remove('word-pop');
+            void wordEl.offsetWidth;
+            wordEl.classList.add('word-pop');
+        }, 220);
+    }
+
+    _smartSkipAnimationTimer = setTimeout(() => {
+        if (_smartSkipFlashInterval) clearInterval(_smartSkipFlashInterval);
+        const spinner = toast.querySelector('.smart-skip-toast-spinner');
+        if (spinner) {
+            spinner.className = 'smart-skip-toast-check';
+            spinner.textContent = '✓';
+        }
+        const freshExtras = globalThis.collectExtras?.() || {};
+        const freshCount = (freshExtras.allSkipped ? freshExtras.allSkipped.length : (freshExtras.cognates?.length || 0))
+            + (freshExtras.lemmas?.length || 0);
+        const finalCountText = freshCount > 0 ? freshCount.toLocaleString() : countText;
+        const titleEl = toast.querySelector('.smart-skip-toast-title');
+        if (titleEl) {
+            titleEl.textContent = finalCountText ? `${finalCountText} words skipped` : 'Smart Skip active';
+        }
+        const flasherEl = toast.querySelector('.smart-skip-toast-flasher');
+        if (flasherEl) flasherEl.style.opacity = '0.7';
+
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => {
+                toast.classList.remove('visible', 'fade-out');
+            }, 300);
+        }, 850);
+    }, 1800);
+}
+
 // Turning fast mode on or off drives the real controls, so every side effect
 // they own — recounting the deck, invalidating the prepared vocabulary,
 // re-rendering the level bands — happens exactly once and exactly as it does
 // when the learner changes them by hand.
 function applyFastMode(on) {
+    if (on) triggerSmartSkipActivationAnimation();
     const previous = readFastTrack(selectedLanguage);
     const hasChoices = previous.merge || previous.skip || previous.bridge || previous.skipGrammar || previous.skipSlang || previous.skipEntities;
     let merge = hasChoices ? previous.merge : lemmaAvailable();
@@ -150,12 +234,6 @@ function refresh() {
     // Advanced options sheet, which is listed only where one can do something.
     let advancedAvailable = 0;
     let advancedOn = 0;
-    const bridgeContainer = document.getElementById('bridgeToggleContainer');
-    const bridgeAvailable = bridgeContainer && !bridgeContainer.hidden;
-    if (bridgeAvailable) {
-        advancedAvailable++;
-        if (globalThis.isBridgeEnabled?.()) advancedOn++;
-    }
     for (const kind of ['grammar', 'slang', 'entity']) {
         const container = document.getElementById(`${kind}ToggleContainer`);
         if (!container) continue;
@@ -230,7 +308,7 @@ function refresh() {
     }
     const secondaryState = document.getElementById('smartSkipSecondaryState');
     if (secondaryState) {
-        const activeCount = Number(lemmaOn()) + advancedOn + Number(Boolean(globalThis.isBridgeEnabled?.()));
+        const activeCount = Number(lemmaOn()) + advancedOn;
         secondaryState.textContent = activeCount ? `${activeCount} on` : 'Combine forms · Advanced';
     }
     updateMappingStatus();

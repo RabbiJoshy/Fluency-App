@@ -87,7 +87,7 @@ const {createHarness} = require('./estimation_harness.cjs');
     vm.runInContext(ui.slice(ui.indexOf('async function renderRangeSelector('),ui.indexOf('function _escapeHtml(')),context);
     await context.renderRangeSelector();
     const html=node('rangeSelector').innerHTML;
-    assert.equal((html.match(/class="study-level-bar"/g)||[]).length,1);
+    assert.equal((html.match(/class="study-level-bar(?:\s+[^"]*)?"/g)||[]).length,1);
     assert.ok(!html.includes('study-level-segment'));
     assert.match(html,/--level-new-end:50%;--level-review-end:55%;--level-known-end:75%;--level-estimated-end:90%/);
     assert.ok(!html.includes('study-set-dot'));

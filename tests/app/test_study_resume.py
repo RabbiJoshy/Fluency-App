@@ -166,3 +166,60 @@ vm.runInNewContext(ui.slice(a,b).replace('const lyricsViewRow','var lyricsViewRo
 visibility.modeKey='lyrics';vm.runInNewContext(ui.slice(a,b).replace('const lyricsViewRow','var lyricsViewRow'),visibility);assert.equal(row.hidden,false);
 ''')
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_unscoped_session_not_adopted_by_clerk_accounts(self):
+        result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r'''
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const source = fs.readFileSync('app/js/vocab.js', 'utf8');
+
+const start = source.indexOf('function studySessionStorageKey(');
+const end = source.indexOf('function studySessionScope(', start);
+
+const session = { range: '1-25', order: ['w1', 'w2'] };
+
+// 1. Clerk account must NOT inherit unscoped session
+const storeClerk = new Map([['fluency_last_study_session_v1', JSON.stringify(session)]]);
+const contextClerk = {
+    currentUser: { initials: 'clerk_user_xyz', username: 'Artis', authProvider: 'clerk', isGuest: false },
+    localStorage: {
+        getItem: k => storeClerk.get(k) || null,
+        setItem: (k, v) => storeClerk.set(k, v),
+        removeItem: k => storeClerk.delete(k)
+    }
+};
+vm.runInNewContext(source.slice(start, end), contextClerk);
+assert.equal(contextClerk.readStudySession('fluency_last_study_session_v1'), null);
+assert.equal(storeClerk.has('fluency_last_study_session_v1:user:clerk_user_xyz'), false);
+
+// 2. Modern UUID profile must NOT inherit unscoped session
+const storeProfile = new Map([['fluency_last_study_session_v1', JSON.stringify(session)]]);
+const contextProfile = {
+    currentUser: { initials: 'profile_028abec8-a887-469a-9772-424e78ff9397', isGuest: false },
+    localStorage: {
+        getItem: k => storeProfile.get(k) || null,
+        setItem: (k, v) => storeProfile.set(k, v),
+        removeItem: k => storeProfile.delete(k)
+    }
+};
+vm.runInNewContext(source.slice(start, end), contextProfile);
+assert.equal(contextProfile.readStudySession('fluency_last_study_session_v1'), null);
+
+// 3. Legacy 2-4 uppercase initials account DOES inherit unscoped session
+const storeLegacy = new Map([['fluency_last_study_session_v1', JSON.stringify(session)]]);
+const contextLegacy = {
+    currentUser: { initials: 'JP', isGuest: false },
+    localStorage: {
+        getItem: k => storeLegacy.get(k) || null,
+        setItem: (k, v) => storeLegacy.set(k, v),
+        removeItem: k => storeLegacy.delete(k)
+    }
+};
+vm.runInNewContext(source.slice(start, end), contextLegacy);
+const legacyResumed = contextLegacy.readStudySession('fluency_last_study_session_v1');
+assert.equal(legacyResumed?.range, '1-25');
+assert.equal(legacyResumed?.order?.[0], 'w1');
+assert.equal(storeLegacy.has('fluency_last_study_session_v1:user:JP'), true);
+''')
+        self.assertEqual(result.returncode, 0, result.stderr)

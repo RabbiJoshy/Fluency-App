@@ -333,13 +333,37 @@ async function submitLogin() {
     return submitProfileLogin(completeProfileLogin);
 }
 
+function clearDeviceSessionState() {
+    try {
+        localStorage.removeItem('fluencyPreferredLanguageV1');
+        localStorage.removeItem('fluency_language_profile_v1|guest');
+        localStorage.removeItem('fluency_known_languages_v1');
+        localStorage.removeItem('fluency_last_study_session_v1');
+        localStorage.removeItem('fluency_last_study_session_v1:user:guest');
+        sessionStorage.removeItem('fluency_resume_prompt_seen_v1');
+        sessionStorage.removeItem('fluencyPendingSpeechLanguage');
+        sessionStorage.removeItem('flashcardGuestSession');
+    } catch (_) {}
+    document.getElementById('resumeLastSetCard')?.remove();
+}
+
 async function completeProfileLogin(user) {
     currentUser = user;
+    if (user.isNew) {
+        clearDeviceSessionState();
+        document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+    }
     window.applyGlobalStudyDefaults?.();
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
     hideAuthModal();
-    setTimeout(_openFirstRunTutorialUnlessLinked, 250);
+    if (user.isNew) {
+        setTimeout(() => {
+            window.showLanguagePicker?.(config.languages);
+        }, 150);
+    } else {
+        setTimeout(_openFirstRunTutorialUnlessLinked, 250);
+    }
 
     // Load user progress from Google Sheets
     await loadUserProgressFromSheet();
@@ -493,6 +517,7 @@ async function logout() {
     if (PASSWORDLESS_ENABLED) {
         await window.flushQueue?.().catch(() => {});
         localStorage.removeItem('flashcardUser');
+        clearDeviceSessionState();
         await window.Clerk?.signOut();
         window.location.reload();
         return;
@@ -507,8 +532,7 @@ async function logout() {
         localStorage.removeItem(`progress_cache_${getIsolatedSyncUser(currentUser.initials)}`);
     }
     localStorage.removeItem('flashcardUser');
-    // Clean the legacy sessionStorage guest marker too, in case it's lingering.
-    sessionStorage.removeItem('flashcardGuestSession');
+    clearDeviceSessionState();
     currentUser = null;
     window.applyGlobalStudyDefaults?.();
     progressData = {}; window.bumpProgressEpoch?.();

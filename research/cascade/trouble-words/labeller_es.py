@@ -6,13 +6,15 @@ from Wiktionary's pronominal/reflexive senses of the base verb.
 """
 import json, re
 KAIKKI = "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/wiktionary/enwiktionary-2026-09-13/kaikki.org-dictionary-Spanish.jsonl"
+from gloss_filter import Glosses
+from grammar_context import phrase_is_literal, clitic_label, feat
 PHRASE_POS = {"phrase", "prep_phrase", "adv", "adj", "particle", "conj", "intj", "prep", "pron", "contraction"}
 PREPS = ("de", "a", "que", "en", "con", "por", "para")
 
 
-def _clean(glosses):
-    return [g for g in glosses if "form of" not in g and "inflection of" not in g and "combined with" not in g
-            and "contraction of" not in g.lower() and "misspelling" not in g]
+_G = Glosses(KAIKKI)
+_clean = _G.clean  # shared: drops entry notes, follows 'spelling of' pointers
+PHRASE_KIND = {}
 
 
 def _load():
@@ -21,10 +23,11 @@ def _load():
         e = json.loads(line)
         w = e["word"].lower(); pos = e.get("pos")
         senses = e.get("senses", [])
-        gl = _clean([g for s in senses for g in s.get("glosses", [])])
+        gl = _G.senses(senses)
         if not gl: continue
         if " " in w and pos in PHRASE_POS and not (pos == "adj" and w.split()[0] not in ("a", "en", "de", "sin")):
             phrases.setdefault(w, gl[0])
+            PHRASE_KIND.setdefault(w, pos)
         if " " in w and len(w.split()) == 2 and w.split()[-1] in PREPS and pos in ("verb", "phrase"):
             verb_frames.setdefault(w, gl[0])
         if pos == "verb" and " " not in w:
@@ -42,6 +45,10 @@ def _load():
 
 
 PHRASES, PRONOMINAL, VERB_FRAMES, VERBS = _load()
+# Wiktionary marks these 'used other than figuratively or idiomatically', so gloss_filter drops them;
+# in running text the idiom dominates, so they are kept (hand-checked on deck sentences, 2026-10-13).
+IDIOMS = {"todo el mundo", "otra vez", "como si", "lo de"}
+PHRASES.update({w: _G.idiom[w] for w in IDIOMS if w in _G.idiom})
 for p in ("lo que", "el que", "la que", "los que", "las que", "de que", "en que", "a que", "es que", "se lo", "a la", "a lo", "de la", "en el"):
     PHRASES.pop(p, None)
 # Common verb + preposition frames Wiktionary glosses do not mark with '[with ...]'.
@@ -49,7 +56,8 @@ VERB_FRAMES.update({"volver a": "to do again", "acabar de": "to have just (done)
                     "empezar a": "to start to", "comenzar a": "to begin to", "tratar de": "to try to",
                     "pensar en": "to think about", "soñar con": "to dream of", "casarse con": "to marry",
                     "enamorarse de": "to fall in love with", "deber de": "must (probably)", "ponerse a": "to start to"})
-PHRASES.update({"por la mañana": "in the morning", "por la tarde": "in the afternoon / evening"})
+PHRASES.update({"por la mañana": "in the morning", "por la tarde": "in the afternoon / evening",
+                "bajo la manga": "up one's sleeve"})  # Wiktionary: "under the counter"
 LIGHT_VERBS = {"ser", "estar", "ir", "hacer", "dar", "haber", "poner", "llevar", "ver", "venir", "pasar"}
 BY_TOKEN = {}
 for p in PHRASES:
@@ -148,7 +156,7 @@ def _tokens(sent):
 
 
 def _phrase(sent, i):
-    toks = _tokens(sent); pos = next(n for n, t in enumerate(toks) if t[1] == i)
+    toks = _tokens(sent); pos = next(n for n, t in enumerate(toks) if sent[t[1]].parent is sent[i].parent)
     best = None
     for p in BY_TOKEN.get(toks[pos][0], []):
         parts = p.split(); n = len(parts)
@@ -161,19 +169,37 @@ def _phrase(sent, i):
     return best
 
 
-def label(sent, i, surface=None):
+def label(sent, i, surface=None, reflexive_decisions=None):
     w = sent[i]; t = (surface or w.parent.text or w.text).lower()
     head = sent[w.head - 1] if w.head else None
     kids = lambda h: [x for x in sent if x.head == h.id]
-    toks = _tokens(sent); tpos = next(n for n, x in enumerate(toks) if x[1] == i)
+    toks = _tokens(sent); tpos = next(n for n, x in enumerate(toks) if sent[x[1]].parent is w.parent)
     nxt_tok = toks[tpos + 1][0] if tpos + 1 < len(toks) else ""
     prev_tok = toks[tpos - 1][0] if tpos > 0 else ""
 
     # 1. 'lo que' / 'del que' before the dictionary; fixed multiword entries, longest first
     if t == "lo" and nxt_tok == "que": return _unit("lo que", "what / that which", "lo_que")
-    if t == "lo" and w.upos == "DET" and nxt_tok and toks[tpos + 1][2] and sent[toks[tpos + 1][1]].upos == "ADJ":
+    if t == "lo" and nxt_tok and sent[toks[tpos + 1][1]].upos == "ADJ" and w.deprel == "det":
         return _role("article", "the (+ adjective: the ... thing)")
+    if t == "que" and prev_tok in COMPARATIVE and not (prev_tok == "mejor" and tpos >= 2 and toks[tpos - 2][2] == "ser"):
+        return _role("than", "than", "comparative")
+    if t == "que" and nxt_tok == "ver" and tpos + 2 < len(toks) and toks[tpos + 2][0] == "con" and any(x[2] == "tener" for x in toks[:tpos]):
+        return _unit("tener que ver con", "have to do with", "connection_frame")
+    if t == "de" and nxt_tok == "lo" and tpos + 2 < len(toks) and toks[tpos + 2][0] == "que" and any(x[0] in COMPARATIVE for x in toks[:tpos]):
+        return _unit("de lo que", "than what", "comparative")
+    if t == "qué" and nxt_tok == "tal":
+        return _unit("qué tal", "how / how about", "interrogative_construction")
+    if t == "al" and head is not None and "Inf" in feat(head, "VerbForm"):
+        return _unit("al + infinitive", "when / upon", "temporal_infinitive")
+    if t == "al" and head is not None and head.lemma in ("día", "semana", "mes", "año"):
+        return _role("prep", "per", "distributive_time")
+    if t in ("se", "me", "te", "nos", "os"):
+        clitic = clitic_label(sent, i, t, "es", PRONOMINAL, reflexive_decisions, VERBS)
+        if clitic is not None:
+            return clitic
     ph = _phrase(sent, i) if t != "se" else None
+    if ph and phrase_is_literal(sent, toks, tpos, ph[0], PHRASE_KIND):
+        ph = None
     if ph:
         s0 = tpos - ph[0].split().index(t) if t in ph[0].split() else tpos
         # 'fui a ver si', 'los vas a matar': after ir, 'a' is the motion / going-to 'a', not an idiom
@@ -189,6 +215,10 @@ def label(sent, i, surface=None):
     if ph and ph[1] >= 2: return _unit(ph[0], PHRASES[ph[0]], "phrase")
     # 2. que
     if t == "que":
+        if prev_tok == "por":
+            return {"kind": "none", "value": None, "gloss": None, "rule": "ambiguous_spaced_por_que"}
+        if any(x[0] == "tiempo" for x in toks[max(0, tpos - 4):tpos]) and any(x[2] == "hacer" for x in toks[max(0, tpos - 5):tpos]):
+            return _unit("hace tiempo que", "for (a length of time)", "elapsed_duration")
         if prev_tok == "lo": return _unit("lo que", "what / that which", "lo_que")
         # spaCy attaches 'tengo que esperar' as cc + conj, so read the frame from the surface
         if tpos > 0 and nxt_tok and "VerbForm=Inf" in (sent[toks[tpos + 1][1]].feats or ""):
@@ -219,10 +249,12 @@ def label(sent, i, surface=None):
                 return _unit("ir a", "going to (+ verb)", "ir_a")
             if lem in LIGHT_VERBS or w.id < gov.id: lem = None  # 'estuvo ... por la mañana'; fronted 'A este libro le faltan'
         if gov is not None and gov.upos in ("VERB", "AUX", "ADJ") and lem:
-            if any(k.text.lower() in ("se", "me", "te", "nos", "os") for k in kids(gov)) and lem in PRONOMINAL:
-                return _unit(f"{lem}se {p}", PRONOMINAL[lem], "pronominal_verb_frame")
-            if f"{lem} {p}" in VERB_FRAMES: return _unit(f"{lem} {p}", VERB_FRAMES[f"{lem} {p}"], "verb_frame")
-        if w.deprel == "mark" and t in PREP_GLOSS: return _role("prep", PREP_GLOSS[t] + " (+ verb)")
+            if f"{lem} {p}" in VERB_FRAMES:
+                if lem in ("volver", "acabar", "dejar", "empezar", "comenzar", "deber", "ponerse") and head.upos != "VERB":
+                    pass  # Aspect/modality frames require an infinitive, not a destination noun.
+                else:
+                    return _unit(f"{lem} {p}", VERB_FRAMES[f"{lem} {p}"], "verb_frame")
+        if w.deprel == "mark" and t in PREP_GLOSS: return _role("prep", PREP_GLOSS[t])  # same meaning before a verb; one row on the card
     # 4. se: pronominal verb, impersonal/passive, indirect 'se lo', reflexive
     if t == "se" and head is not None:
         lem = head.lemma.lower()
@@ -232,7 +264,7 @@ def label(sent, i, surface=None):
         if not subj and "Person=3" in (head.feats or "") and not any(k.deprel == "aux" for k in kids(head)):
             return _role("impersonal_se", "one / (it) is done", "role")
         if head.upos == "VERB" and lem in VERBS:
-            return _unit(lem + "se", VERBS[lem] + " (oneself)", "se_verb")
+            return _role("pronominal", "", "uncertain_pronominal_sense")
         return _role("reflexive", "himself / herself / themselves", "role")
     if t in ("me", "te", "nos", "os") and head is not None and head.upos == "VERB" and head.lemma.lower() in PRONOMINAL \
             and ("Reflex=Yes" in (w.feats or "") or w.deprel in ("expl", "expl:pv")):
@@ -245,8 +277,13 @@ def label(sent, i, surface=None):
     # 6. prepositions
     if t in CONTRACTION: return _role("prep", CONTRACTION[t])
     if w.upos == "ADP" and t in PREP_GLOSS:
-        if t == "a" and head is not None and head.upos in ("PRON", "PROPN", "NOUN") and head.deprel in ("obj", "iobj"):
-            return _role("personal_a", "(marks a person as object)")
+        if t == "a" and head is not None and head.upos in ("PRON", "PROPN", "NOUN") and head.deprel == "obj":
+            gov = sent[head.head - 1] if head.head else None
+            siblings = [x for x in sent if gov is not None and x.head == gov.id]
+            dative = any("Dat" in feat(x, "Case") for x in siblings if x.text.lower() in ("me", "te", "le", "les", "nos", "os"))
+            animate = head.upos == "PROPN" or head.lemma in ("persona", "gente", "niño", "niña", "hombre", "mujer", "hermano", "hermana", "padre", "madre", "amigo", "amiga", "tú", "yo", "él", "ella", "nadie", "alguien")
+            if animate and not dative and (gov is None or gov.lemma not in ("gustar", "faltar", "responder", "hablar", "enseñar", "parecer")):
+                return _role("personal_a", "(marks a person as object)")
         return _role("prep", PREP_GLOSS[t])
     # 7. pronouns and determiners
     pd = pron_det(sent, i, t)
