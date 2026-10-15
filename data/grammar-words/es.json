@@ -1,0 +1,612 @@
+{
+  "de": {
+    "word": "de",
+    "role": "Preposition",
+    "rank": 2,
+    "frequency": 32926,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Complement</span>",
+        "rule": "Required link: preceding verb governs 'de' before its object or action.",
+        "targetHTML": "<span class='fw-token-v'>Me acuerdo</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>ti</span>.",
+        "translation": "I remember you."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Noun / Origin</span>",
+        "rule": "Nominal binding: marks possession, origin, content, or material.",
+        "targetHTML": "Quiero un <span class='fw-token-v'>vaso</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>agua</span>.",
+        "translation": "I want a glass of water."
+      }
+    ]
+  },
+  "que": {
+    "word": "que",
+    "role": "Connector",
+    "rank": 1,
+    "frequency": 33170,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Thought / Speech</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Clause</span>",
+        "rule": "Subordination: bridges what someone thinks, says, or knows to the statement.",
+        "targetHTML": "<span class='fw-token-v'>Creo</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>va a llover</span>.",
+        "translation": "I think it’s going to rain."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Description</span>",
+        "rule": "Relativization: refers back to a noun while introducing descriptive detail.",
+        "targetHTML": "Es el <span class='fw-token-v'>libro</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>estoy leyendo</span>.",
+        "translation": "It is the book that I am reading."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Degree</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Standard</span>",
+        "rule": "Comparison: connects the two sides of a degree or quality contrast.",
+        "targetHTML": "Ella es <span class='fw-token-v'>más alta</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>yo</span>.",
+        "translation": "She is taller than me."
+      }
+    ]
+  },
+  "a": {
+    "word": "a",
+    "role": "Preposition",
+    "rank": 3,
+    "frequency": 22580,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">Destination</span>",
+        "rule": "Directional goal: indicates movement toward a place or terminus.",
+        "targetHTML": "Voy <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Madrid</span>.",
+        "translation": "I am going to Madrid."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">Person</span>",
+        "rule": "Personal 'a': marks a specific human or personalized direct object.",
+        "targetHTML": "Veo <span class='fw-token-connector'>a</span> <span class='fw-token-c'>María</span> todos los días.",
+        "translation": "I see María every day."
+      }
+    ]
+  },
+  "en": {
+    "word": "en",
+    "role": "Preposition",
+    "rank": 7,
+    "frequency": 15660,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb / State</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">Location</span>",
+        "rule": "Spatial framing: anchors an action or entity within a place or space.",
+        "targetHTML": "Vivo <span class='fw-token-connector'>en</span> <span class='fw-token-c'>Sevilla</span>.",
+        "translation": "I live in Seville."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">Time Period</span>",
+        "rule": "Temporal framing: situates an event inside a month, year, or duration.",
+        "targetHTML": "Viajamos <span class='fw-token-connector'>en</span> <span class='fw-token-c'>julio</span>.",
+        "translation": "We travel in July."
+      }
+    ]
+  },
+  "por": {
+    "word": "por",
+    "role": "Preposition",
+    "rank": 10,
+    "frequency": 10320,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">State / Gratitude</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">Motive / Cause</span>",
+        "rule": "Causal ground: links an emotion, gratitude, or outcome back to its reason.",
+        "targetHTML": "Gracias <span class='fw-token-connector'>por</span> <span class='fw-token-c'>venir</span>.",
+        "translation": "Thank you for coming."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Movement</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">Transit Space</span>",
+        "rule": "Trajectory: marks the route, medium, or space through which motion happens.",
+        "targetHTML": "Paseo <span class='fw-token-connector'>por</span> <span class='fw-token-c'>el parque</span>.",
+        "translation": "I stroll through the park."
+      }
+    ]
+  },
+  "para": {
+    "word": "para",
+    "role": "Preposition",
+    "rank": 19,
+    "frequency": 6488,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Infinitive Objective</span>",
+        "rule": "Purpose and aim: establishes the intended goal or outcome of an action.",
+        "targetHTML": "Estudio <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
+        "translation": "I study in order to learn."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Entity</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Recipient</span>",
+        "rule": "Beneficiary / Target: designates the person meant to receive something.",
+        "targetHTML": "Esto es <span class='fw-token-connector'>para</span> <span class='fw-token-c'>ti</span>.",
+        "translation": "This is for you."
+      }
+    ]
+  },
+  "con": {
+    "word": "con",
+    "role": "Preposition",
+    "rank": 18,
+    "frequency": 7024,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">Companion</span>",
+        "rule": "Accompaniment: joins an action to the companion sharing it.",
+        "targetHTML": "Ceno <span class='fw-token-connector'>con</span> <span class='fw-token-c'>mis amigos</span>.",
+        "translation": "I have dinner with my friends."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">Tool / Manner</span>",
+        "rule": "Instrument and attitude: describes the tool used or care applied.",
+        "targetHTML": "Escribo <span class='fw-token-connector'>con</span> <span class='fw-token-c'>cuidado</span>.",
+        "translation": "I write with care."
+      }
+    ]
+  },
+  "sin": {
+    "word": "sin",
+    "role": "Preposition",
+    "rank": 36,
+    "frequency": 2180,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Noun / Action</span> + <span class=\"fw-token-connector\">sin</span> + <span class=\"fw-token-c\">Missing Element</span>",
+        "rule": "Privative preposition: marks absence, lack, or omission.",
+        "targetHTML": "Café <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>azúcar</span>, por favor.",
+        "translation": "Coffee without sugar, please."
+      }
+    ]
+  },
+  "se": {
+    "word": "se",
+    "role": "Pronoun Clitic",
+    "rank": 17,
+    "frequency": 7410,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">Verb of self-action</span>",
+        "rule": "Reflexive clitic: action turns back upon the person doing it.",
+        "targetHTML": "Él <span class='fw-token-connector'>se</span> <span class='fw-token-v'>lava</span> la cara.",
+        "translation": "He washes his face."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">Verb (Passive/Impersonal)</span>",
+        "rule": "Impersonal / Passive marker: signals general or collective truth ('one does').",
+        "targetHTML": "Aquí <span class='fw-token-connector'>se</span> <span class='fw-token-v'>habla</span> español.",
+        "translation": "Spanish is spoken here."
+      }
+    ]
+  },
+  "me": {
+    "word": "me",
+    "role": "Object Pronoun",
+    "rank": 11,
+    "frequency": 9642,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Object pronoun: represents 1st-person 'me / to me' receiving the verb action.",
+        "targetHTML": "Ella <span class='fw-token-connector'>me</span> <span class='fw-token-v'>llamó</span> por teléfono.",
+        "translation": "She called me on the phone."
+      }
+    ]
+  },
+  "te": {
+    "word": "te",
+    "role": "Object Pronoun",
+    "rank": 14,
+    "frequency": 7670,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Object pronoun: represents 2nd-person 'you / to you' (informal).",
+        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>quiero</span> mucho.",
+        "translation": "I love you very much."
+      }
+    ]
+  },
+  "nos": {
+    "word": "nos",
+    "role": "Object Pronoun",
+    "rank": 38,
+    "frequency": 2100,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Object pronoun: represents 1st-person plural 'us / to us'.",
+        "targetHTML": "El profesor <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>enseña</span> bien.",
+        "translation": "The teacher teaches us well."
+      }
+    ]
+  },
+  "le": {
+    "word": "le",
+    "role": "Indirect Pronoun",
+    "rank": 30,
+    "frequency": 3589,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">le</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Indirect object pronoun: represents 3rd-person singular 'to him / to her / to you'.",
+        "targetHTML": "Yo <span class='fw-token-connector'>le</span> <span class='fw-token-v'>escribí</span> una carta.",
+        "translation": "I wrote him a letter."
+      }
+    ]
+  },
+  "al": {
+    "word": "al",
+    "role": "Contraction",
+    "rank": 13,
+    "frequency": 7673,
+    "parts": [
+      "a",
+      "el"
+    ],
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">a + el</span> + <span class=\"fw-token-c\">Masculine Destination</span>",
+        "rule": "Mandatory contraction of 'a + el' (to the / at the) before masculine nouns.",
+        "targetHTML": "Vamos <span class='fw-token-connector'>al</span> <span class='fw-token-c'>cine</span> esta noche.",
+        "translation": "We are going to the cinema tonight."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">Infinitive</span>",
+        "rule": "Temporal nexus: expresses 'upon doing' or 'when doing'.",
+        "targetHTML": "<span class='fw-token-connector'>Al</span> <span class='fw-token-v'>llegar</span> a casa, descansé.",
+        "translation": "Upon arriving home, I rested."
+      }
+    ]
+  },
+  "del": {
+    "word": "del",
+    "role": "Contraction",
+    "rank": 15,
+    "frequency": 7638,
+    "parts": [
+      "de",
+      "el"
+    ],
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">de + el</span> + <span class=\"fw-token-c\">Masculine Noun / Origin</span>",
+        "rule": "Mandatory contraction of 'de + el' (of the / from the).",
+        "targetHTML": "La puerta <span class='fw-token-connector'>del</span> <span class='fw-token-c'>hotel</span> está cerrada.",
+        "translation": "The door of the hotel is closed."
+      }
+    ]
+  },
+  "el": {
+    "word": "el",
+    "role": "Definite Article",
+    "rank": 5,
+    "frequency": 18067,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">el</span> + <span class=\"fw-token-c\">Masculine Singular Noun</span>",
+        "rule": "Definite article: designates a specific masculine singular referent.",
+        "targetHTML": "<span class='fw-token-connector'>El</span> <span class='fw-token-c'>sol</span> brilla en el cielo.",
+        "translation": "The sun shines in the sky."
+      }
+    ]
+  },
+  "la": {
+    "word": "la",
+    "role": "Article & Pronoun",
+    "rank": 4,
+    "frequency": 21524,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-c\">Feminine Singular Noun</span>",
+        "rule": "Definite article: designates a specific feminine singular referent.",
+        "targetHTML": "<span class='fw-token-connector'>La</span> <span class='fw-token-c'>puerta</span> está abierta.",
+        "translation": "The door is open."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Direct object pronoun: replaces a 3rd-person feminine singular noun ('her / it').",
+        "targetHTML": "Yo <span class='fw-token-connector'>la</span> <span class='fw-token-v'>vi</span> ayer.",
+        "translation": "I saw her yesterday."
+      }
+    ]
+  },
+  "los": {
+    "word": "los",
+    "role": "Article & Pronoun",
+    "rank": 16,
+    "frequency": 7540,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-c\">Masculine Plural Noun</span>",
+        "rule": "Definite article: designates specific masculine plural entities.",
+        "targetHTML": "<span class='fw-token-connector'>Los</span> <span class='fw-token-c'>niños</span> juegan fuera.",
+        "translation": "The children play outside."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Direct object pronoun: replaces 3rd-person masculine plural objects ('them').",
+        "targetHTML": "Yo <span class='fw-token-connector'>los</span> <span class='fw-token-v'>compré</span> ayer.",
+        "translation": "I bought them yesterday."
+      }
+    ]
+  },
+  "las": {
+    "word": "las",
+    "role": "Article & Pronoun",
+    "rank": 24,
+    "frequency": 4810,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">las</span> + <span class=\"fw-token-c\">Feminine Plural Noun</span>",
+        "rule": "Definite article: designates specific feminine plural entities.",
+        "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>llaves</span> están en la mesa.",
+        "translation": "The keys are on the table."
+      }
+    ]
+  },
+  "lo": {
+    "word": "lo",
+    "role": "Article & Pronoun",
+    "rank": 8,
+    "frequency": 14130,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">Adjective / Abstract</span>",
+        "rule": "Neuter article: nominalizes an adjective into an abstract quality ('the ... thing').",
+        "targetHTML": "<span class='fw-token-connector'>Lo</span> <span class='fw-token-c'>importante</span> es participar.",
+        "translation": "The important thing is to participate."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Direct object pronoun: replaces a masculine singular item or concept ('it / him').",
+        "targetHTML": "Ya <span class='fw-token-connector'>lo</span> <span class='fw-token-v'>sé</span>.",
+        "translation": "I already know it."
+      }
+    ]
+  },
+  "un": {
+    "word": "un",
+    "role": "Indefinite Article",
+    "rank": 9,
+    "frequency": 13352,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">un</span> + <span class=\"fw-token-c\">Masculine Singular Noun</span>",
+        "rule": "Indefinite article: introduces a single unspecific masculine noun.",
+        "targetHTML": "Tengo <span class='fw-token-connector'>un</span> <span class='fw-token-c'>amigo</span> en Madrid.",
+        "translation": "I have a friend in Madrid."
+      }
+    ]
+  },
+  "una": {
+    "word": "una",
+    "role": "Indefinite Article",
+    "rank": 12,
+    "frequency": 8937,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">una</span> + <span class=\"fw-token-c\">Feminine Singular Noun</span>",
+        "rule": "Indefinite article: introduces a single unspecific feminine noun.",
+        "targetHTML": "Es <span class='fw-token-connector'>una</span> <span class='fw-token-c'>buena idea</span>.",
+        "translation": "It is a good idea."
+      }
+    ]
+  },
+  "y": {
+    "word": "y",
+    "role": "Connector",
+    "rank": 6,
+    "frequency": 16518,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Element</span> + <span class=\"fw-token-connector\">y</span> + <span class=\"fw-token-c\">Addition</span>",
+        "rule": "Copulative conjunction: coordinates items, clauses, or thoughts of equal status.",
+        "targetHTML": "Compré pan <span class='fw-token-connector'>y</span> <span class='fw-token-c'>leche</span>.",
+        "translation": "I bought bread and milk."
+      }
+    ]
+  },
+  "pero": {
+    "word": "pero",
+    "role": "Connector",
+    "rank": 22,
+    "frequency": 5378,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Statement</span> + <span class=\"fw-token-connector\">pero</span> + <span class=\"fw-token-c\">Contrast</span>",
+        "rule": "Adversative bridge: introduces a qualification, limitation, or unexpected contrast.",
+        "targetHTML": "Quería salir, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>llovía</span>.",
+        "translation": "I wanted to go out, but it was raining."
+      }
+    ]
+  },
+  "si": {
+    "word": "si",
+    "role": "Connector",
+    "rank": 21,
+    "frequency": 5720,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">Si</span> + <span class=\"fw-token-v\">Condition</span> , <span class=\"fw-token-c\">Result</span>",
+        "rule": "Conditional marker: establishes a hypothesis preceding its outcome.",
+        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>tienes tiempo</span>, <span class='fw-token-c'>ven a verme</span>.",
+        "translation": "If you have time, come see me."
+      }
+    ]
+  },
+  "como": {
+    "word": "como",
+    "role": "Connector",
+    "rank": 29,
+    "frequency": 3832,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">Model / Standard</span>",
+        "rule": "Simile and comparison: links an action to a model or manner standard.",
+        "targetHTML": "Canta <span class='fw-token-connector'>como</span> <span class='fw-token-c'>un ángel</span>.",
+        "translation": "She sings like an angel."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">Capacity / Role</span>",
+        "rule": "Capacity marker: defines the role or capacity in which someone acts.",
+        "targetHTML": "Trabaja <span class='fw-token-connector'>como</span> <span class='fw-token-c'>abogado</span>.",
+        "translation": "He works as a lawyer."
+      }
+    ]
+  },
+  "mi": {
+    "word": "mi",
+    "role": "Possessive",
+    "rank": 20,
+    "frequency": 5724,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">mi</span> + <span class=\"fw-token-c\">Singular Noun</span>",
+        "rule": "Possessive determiner: denotes 1st-person ownership of a singular noun.",
+        "targetHTML": "Este es <span class='fw-token-connector'>mi</span> <span class='fw-token-c'>coche</span>.",
+        "translation": "This is my car."
+      }
+    ]
+  },
+  "su": {
+    "word": "su",
+    "role": "Possessive",
+    "rank": 25,
+    "frequency": 4679,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">su</span> + <span class=\"fw-token-c\">Singular Noun</span>",
+        "rule": "Possessive determiner: denotes 3rd-person ownership ('his / her / their / your').",
+        "targetHTML": "Ella buscaba <span class='fw-token-connector'>su</span> <span class='fw-token-c'>teléfono</span>.",
+        "translation": "She was looking for her phone."
+      }
+    ]
+  },
+  "tu": {
+    "word": "tu",
+    "role": "Possessive",
+    "rank": 28,
+    "frequency": 3942,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">tu</span> + <span class=\"fw-token-c\">Singular Noun</span>",
+        "rule": "Possessive determiner: denotes 2nd-person informal ownership ('your').",
+        "targetHTML": "¿Dónde está <span class='fw-token-connector'>tu</span> <span class='fw-token-c'>casa</span>?",
+        "translation": "Where is your house?"
+      }
+    ]
+  },
+  "yo": {
+    "word": "yo",
+    "role": "Subject Pronoun",
+    "rank": 27,
+    "frequency": 4612,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">Yo</span> + <span class=\"fw-token-v\">Verb (1st Sing)</span>",
+        "rule": "Subject pronoun: emphasizes the 1st-person singular actor ('I').",
+        "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>vivo</span> en Barcelona.",
+        "translation": "I live in Barcelona."
+      }
+    ]
+  },
+  "tú": {
+    "word": "tú",
+    "role": "Subject Pronoun",
+    "rank": 35,
+    "frequency": 2215,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">Tú</span> + <span class=\"fw-token-v\">Verb (2nd Sing)</span>",
+        "rule": "Subject pronoun: marks the informal 2nd-person actor ('you').",
+        "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>sabes</span> la verdad.",
+        "translation": "You know the truth."
+      }
+    ]
+  },
+  "eso": {
+    "word": "eso",
+    "role": "Demonstrative Pronoun",
+    "rank": 26,
+    "frequency": 4676,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">eso</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Neuter demonstrative: refers to a stated matter, idea, or object near the listener.",
+        "targetHTML": "<span class='fw-token-connector'>Eso</span> <span class='fw-token-v'>es</span> verdad.",
+        "translation": "That is true."
+      }
+    ]
+  },
+  "esto": {
+    "word": "esto",
+    "role": "Demonstrative Pronoun",
+    "rank": 31,
+    "frequency": 2988,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">esto</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Neuter demonstrative: refers to an immediate topic or object near the speaker.",
+        "targetHTML": "<span class='fw-token-connector'>Esto</span> <span class='fw-token-v'>es</span> para ti.",
+        "translation": "This is for you."
+      }
+    ]
+  },
+  "todo": {
+    "word": "todo",
+    "role": "Indefinite Pronoun",
+    "rank": 32,
+    "frequency": 2979,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">todo</span> + <span class=\"fw-token-v\">State / Verb</span>",
+        "rule": "Universal pronoun: signifies the totality of matters ('everything / all').",
+        "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class='fw-token-v'>está</span> bien.",
+        "translation": "Everything is fine."
+      }
+    ]
+  },
+  "algo": {
+    "word": "algo",
+    "role": "Indefinite Pronoun",
+    "rank": 34,
+    "frequency": 2452,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">algo</span>",
+        "rule": "Indefinite entity: marks an unspecified thing or amount ('something').",
+        "targetHTML": "Quiero comer <span class='fw-token-connector'>algo</span>.",
+        "translation": "I want to eat something."
+      }
+    ]
+  },
+  "porque": {
+    "word": "porque",
+    "role": "Connector",
+    "rank": 40,
+    "frequency": 2080,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Result</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">Cause</span>",
+        "rule": "Causal conjunction: explains the underlying reason or motive.",
+        "targetHTML": "No fui <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>estaba cansado</span>.",
+        "translation": "I did not go because I was tired."
+      }
+    ]
+  },
+  "cuando": {
+    "word": "cuando",
+    "role": "Connector",
+    "rank": 41,
+    "frequency": 2040,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">Cuando</span> + <span class=\"fw-token-v\">Time Condition</span> , <span class=\"fw-token-c\">Main Action</span>",
+        "rule": "Temporal connector: situates an event at a point in time.",
+        "targetHTML": "<span class='fw-token-connector'>Cuando</span> <span class='fw-token-v'>llegué</span>, <span class='fw-token-c'>todos sonrieron</span>.",
+        "translation": "When I arrived, everyone smiled."
+      }
+    ]
+  }
+}
