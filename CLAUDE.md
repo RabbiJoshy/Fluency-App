@@ -193,10 +193,7 @@ named examples he can look at, not a commit or a passing test on its own.
 - **Concurrent sessions are normal.** Check `git status` before committing;
   commit only your own paths. Others' uncommitted work is routinely present.
   Named jobs: **`CHAT_ROADMAP.md`** — do only your codename.
-- **Stage every change for review (AIRLOCK workflow).** Any edit to files under `app/`
-  or candidate decks must reach **STAGING** (`https://fluency-staging.pages.dev/`) so Josh
-  can review proposed changes in the full app on his laptop and actual phone while production
-  remains stable and usable.
+- **Every single UI change goes to Staging (`https://fluency-staging.pages.dev/`) automatically unless Josh explicitly specifies otherwise.** It is the literal purpose of staging so he can immediately look at, touch, and review proposed changes in the full app on his laptop and actual phone while production remains stable. Do NOT ask whether to put a UI change on staging — just deploy it to staging as part of completing the task.
   **Do NOT push or deploy directly to production `main` without Josh's explicit approval.**
   Production (`https://rabbijoshy.github.io/Fluency-App/`) is updated only via deliberate
   promotion of the reviewed staging build.
