@@ -480,6 +480,7 @@ function paintLearningContextPhoto(el, artist) {
 function currentLearningMode() {
     if (window.playlistLiveActive?.()) return 'live';
     if (activeArtist) return 'lyrics';
+    if (window.musicWorkspaceActive?.()) return 'lyrics';
     if (document.getElementById('step1')?.classList.contains('source-speech-active')) return 'speech';
     return null;
 }
@@ -525,7 +526,8 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     // gets its own chip beneath it (desktop-shell.js trail).
     const languageOnlyEl = document.getElementById('learningContextLanguageOnly');
     if (languageOnlyEl) {
-        const plainLanguage = activeArtist?.language || selectedLanguage;
+        const plainLanguage = (activeArtist && activeArtist.language === selectedLanguage)
+            ? activeArtist.language : selectedLanguage;
         languageOnlyEl.textContent = window._normalModeLangConfigs?.[plainLanguage]?.name
             || config.languages?.[plainLanguage]?.name || languageConfig.name || selectedLanguage;
     }
@@ -828,6 +830,9 @@ function setupLanguageTabs() {
                 window.resetLanguageOptionalData?.();
                 if (window.playlistLiveDeck?.()?.language !== newLanguage) {
                     window.clearPlaylistLiveSession?.();
+                }
+                if (window.activeArtist && window.activeArtist.language !== newLanguage) {
+                    window.resetActiveArtist?.();
                 }
             }
 

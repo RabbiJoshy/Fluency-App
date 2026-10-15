@@ -60,7 +60,12 @@ function initDesktopTrail(closePages) {
 
     const inWorkspace = () => document.body.classList.contains('desktop-workspace');
     const busy = () => Boolean(window.musicWorkspaceBusy?.());
-    const language = () => window.activeArtist?.language || window.selectedLanguage;
+    const language = () => {
+        if (window.activeArtist && window.activeArtist.language && window.activeArtist.language === window.selectedLanguage) {
+            return window.activeArtist.language;
+        }
+        return window.selectedLanguage;
+    };
     function state() {
         let mode = window.currentLearningMode?.() || null;
         if (!mode && window.musicWorkspaceActive?.()) mode = 'lyrics';
@@ -135,10 +140,12 @@ function initDesktopTrail(closePages) {
         menu.append(
             option(copy.speech.label, {
                 icon: copy.speech.iconHTML, selected: mode === 'speech', disabled: !speechAvailable,
+                detail: 'Spoken frequency vocabulary · Everyday conversation',
                 onSelect: () => window.desktopTrailActions?.chooseSpeech(lang),
             }),
             option(copy.lyrics.label, {
                 icon: copy.lyrics.iconHTML, selected: inMusic, disabled: !musicAvailable,
+                detail: 'Song lyrics · Curated artists & Spotify playlists',
                 onSelect: () => window.desktopTrailActions?.chooseMusic(lang),
             }),
         );
@@ -154,12 +161,12 @@ function initDesktopTrail(closePages) {
         menu.append(
             option('Artists', {
                 icon: copy?.lyrics?.iconHTML || '', selected: !isLive && (stage === 'artists' || !stage),
-                detail: 'Choose an artist or mix songs',
+                detail: 'Curated song catalogs from popular artists',
                 onSelect: () => window.desktopTrailActions?.chooseArtists ? window.desktopTrailActions.chooseArtists(lang) : window.desktopTrailActions?.chooseMusic(lang, 'artists'),
             }),
             option('Spotify playlists', {
                 icon: spotifyIcon, selected: isLive,
-                detail: 'Build decks from your Spotify playlists',
+                detail: 'Build decks from your Spotify playlists & tracks',
                 onSelect: () => window.desktopTrailActions?.openPlaylists(lang),
             }),
         );

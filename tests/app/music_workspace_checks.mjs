@@ -14,7 +14,8 @@ class Element {
     set innerHTML(_html) {
         // The workspace template is static. Only these buttons need selectors.
         for (const id of ['musicBackBtn', 'musicWorkspaceTitle', 'musicWorkspaceLanguage',
-            'musicSourceChoices', 'musicArtistBrowser', 'musicArtistList', 'musicPickerHost', 'musicStudySetup',
+            'musicSourceChoices', 'musicArtistsChoiceDesc', 'musicPlaylistsChoiceDesc',
+            'musicArtistBrowser', 'musicArtistList', 'musicPickerHost', 'musicStudySetup',
             'musicSelectionTitle', 'musicSelectionCount', 'musicSelectionPreview', 'musicEditSongsBtn']) {
             const element = new Element(id); elements.set(id, element); this.appendChild(element);
         }

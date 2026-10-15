@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-15T14:58:00+01:00",
+      "date": "2026-10-15 14:58 BST",
+      "agent": "Antigravity",
+      "summary": "Fix language and mode state persistence bugs and enrich choice information across music and vocabulary",
+      "detail": [
+        "Fixed critical bug where changing language or mode left activeArtist or window.activeArtist set, causing the sidebar and UI to still say Spanish when another language or mode was chosen.",
+        "Synced currentLearningMode() to accurately recognize music workspace without being masked by stale speech classes.",
+        "Enriched the Music choices screen with language-specific catalog counts, curated artist previews, and clear Spotify guidance.",
+        "Added informative album counts and vocabulary size metrics to catalog artist cards, plus clear descriptions in desktop trail dropdowns."
+      ],
+      "commit": "82a43df2"
+    },
+    {
       "timestamp": "2026-10-15T14:40:00+01:00",
       "date": "2026-10-15 14:40 BST",
       "agent": "Antigravity",

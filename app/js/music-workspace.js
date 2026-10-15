@@ -47,7 +47,7 @@ function init() {
                             <span class="music-source-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18.5 14.5A6.5 6.5 0 0 1 21.5 20"></path></svg></span>
                             <span class="music-source-card-copy">
                                 <strong>Artists</strong>
-                                <small>Learn from catalog songs and popular artists</small>
+                                <small id="musicArtistsChoiceDesc">Learn from catalog songs and popular artists</small>
                             </span>
                             <span class="music-source-card-arrow" aria-hidden="true">›</span>
                         </button>
@@ -55,7 +55,7 @@ function init() {
                             <span class="music-source-card-icon music-source-spotify" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z"/></svg></span>
                             <span class="music-source-card-copy">
                                 <strong>Spotify playlists</strong>
-                                <small>Build custom decks from your Spotify playlists</small>
+                                <small id="musicPlaylistsChoiceDesc">Build custom decks from your Spotify playlists</small>
                             </span>
                             <span class="music-source-card-arrow" aria-hidden="true">›</span>
                         </button>
@@ -100,6 +100,7 @@ function enter() {
     active = true;
     workspace.hidden = false;
     document.body.classList.add('music-workspace-active');
+    document.getElementById('step1')?.classList.remove('source-speech-active');
     const studyNav = document.querySelector('#desktopStudyBtn .desktop-shell-label');
     if (studyNav) studyNav.textContent = 'Music';
     // Moving the real controls preserves all their handlers and source state.
@@ -117,10 +118,13 @@ function enter() {
         panel.setAttribute('role', 'region');
         panel.removeAttribute('aria-modal');
     }
-    const language = options.language || window.activeArtist?.language || window.selectedLanguage;
-    document.getElementById('musicWorkspaceLanguage').textContent = options.languageName || language || '';
+    const language = options.language || window.selectedLanguage;
+    const langDisplayName = options.languageName || (window._normalModeLangConfigs?.[language]?.name || window.config?.languages?.[language]?.name || language);
+    document.getElementById('musicWorkspaceLanguage').textContent = `${langDisplayName} · Music`;
     document.getElementById('musicSetupBtn').disabled = !hasDeck();
     updateMusicSelection();
+    window.updateLearningContextUI?.();
+    window.refreshDesktopTrail?.();
 }
 
 function showStage(next, { focus = true } = {}) {
@@ -234,6 +238,21 @@ export function openMusicWorkspace(nextOptions = {}) {
         empty.textContent = 'No artists are available for this language yet. You can build from a Spotify playlist.';
         list.appendChild(empty);
     }
+    const realArtists = entries.filter(e => e.slug !== '__custom__');
+    const artistDescEl = document.getElementById('musicArtistsChoiceDesc');
+    const playlistDescEl = document.getElementById('musicPlaylistsChoiceDesc');
+    const langName = options.languageName || (window._normalModeLangConfigs?.[options.language]?.name || window.config?.languages?.[options.language]?.name || options.language) || '';
+    if (artistDescEl) {
+        if (realArtists.length) {
+            const names = realArtists.slice(0, 3).map(a => a.name).join(', ');
+            artistDescEl.textContent = `Curated catalog: ${names}${realArtists.length > 3 ? '…' : ''} · Full lyrics & vocabulary`;
+        } else {
+            artistDescEl.textContent = `No curated catalog artists in ${langName} yet · Use Spotify instead`;
+        }
+    }
+    if (playlistDescEl) {
+        playlistDescEl.textContent = `Build custom decks from any ${langName} playlist, album, or track with Spotify`;
+    }
     const requested = nextOptions.stage || (hasDeck() ? 'artists' : 'choices');
     if (requested === 'setup') showMusicStudySetup();
     else if (requested === 'songs') window.showSongSetPicker?.();
@@ -298,6 +317,8 @@ export function dismissMusicWorkspace() {
     document.body.classList.remove('music-workspace-active');
     const studyNav = document.querySelector('#desktopStudyBtn .desktop-shell-label');
     if (studyNav) studyNav.textContent = 'Choose a set';
+    window.updateLearningContextUI?.();
+    window.refreshDesktopTrail?.();
 }
 
 export function leaveMusicWorkspace() {

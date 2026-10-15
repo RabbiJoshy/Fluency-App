@@ -649,9 +649,11 @@ window._allArtistsConfig = allArtistsConfig;
 window._selectedArtistSlugs = selectedArtistSlugs;
 window.resetActiveArtist = () => {
     activeArtist = null;
+    window.activeArtist = null;
     window._urlArtistSlug = null;
     selectedArtistSlugs = [];
     window._selectedArtistSlugs = [];
+    document.body.classList.remove('artist-mode');
 };
 
 // Add artist mode class to body and load albums dictionary
@@ -1652,9 +1654,18 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null, { sta
 // The artists a language offers, plus the "mix" entry. One list feeds the music
 // workspace and the desktop sidebar trail, so they cannot offer different things.
 function musicArtistEntries(resolvedArtists) {
-    const entries = Object.entries(resolvedArtists).map(([slug, cfg]) => ({
-        slug, name: cfg.name, image: artistPickerImage(cfg), initials: artistInitials(cfg.name)
-    }));
+    const entries = Object.entries(resolvedArtists).map(([slug, cfg]) => {
+        const albumsCount = Object.keys(cfg.albumImageMap || {}).length;
+        const maxLevel = cfg.maxLevel ? `${cfg.maxLevel.toLocaleString()} words` : '';
+        const albumText = albumsCount ? `${albumsCount} album${albumsCount === 1 ? '' : 's'}` : '';
+        const detail = [albumText, maxLevel].filter(Boolean).join(' · ') || 'Catalog collection';
+        return {
+            slug, name: cfg.name, image: artistPickerImage(cfg), initials: artistInitials(cfg.name),
+            description: detail,
+            maxLevel: cfg.maxLevel,
+            albumsCount,
+        };
+    });
     if (Object.values(resolvedArtists).some(cfg => cfg.songsPath)) entries.push({
         slug: CUSTOM_ARTIST_SLUG, name: 'Mix several artists', initials: '♪',
         description: 'Choose individual songs from across the library.'
@@ -1733,10 +1744,20 @@ function chooseSpeechVocabulary(language) {
         goToRoute({ kind: 'language', language: routeCodeFor(language, config?.languages) });
         return;
     }
-    if (activeArtist || window.musicWorkspaceActive?.()) {
+    if (activeArtist) {
         showAppLoading('Switching to Speech vocabulary', 'Preparing your language and progress…', true);
+        window.resetActiveArtist?.();
         sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
         goToRoute({ kind: 'language', language: routeCodeFor(language, config.languages) }, { keepSearch: false });
+    } else if (window.musicWorkspaceActive?.()) {
+        window.dismissMusicWorkspace?.();
+        window.clearPlaylistLiveSession?.();
+        window.resetActiveArtist?.();
+        document.getElementById('step1')?.classList.add('source-speech-active');
+        replaceRoute({ kind: 'language', language: routeCodeFor(language, config.languages) });
+        document.getElementById('standardSourceSpeechBtn')?.click();
+        window.updateLearningContextUI?.();
+        window.refreshDesktopTrail?.();
     } else {
         document.getElementById('standardSourceSpeechBtn')?.click();
     }
@@ -1896,19 +1917,29 @@ function showLanguagePicker(languages) {
             disabled: cfg.hasData === false,
             selected: key === selectedLanguage,
             onSelect: () => {
-                // An artist deck is its own page: leaving it for another
-                // language reloads; its own language keeps it open.
+                if (window.musicWorkspaceActive?.()) {
+                    window.resetActiveArtist?.();
+                    window.clearPlaylistLiveSession?.();
+                    selectedLanguage = key;
+                    try { localStorage.setItem('fluencyPreferredLanguageV1', key); } catch (_) {}
+                    showArtistPicker(null, null, key, { stage: 'choices' });
+                    return;
+                }
                 if (activeArtist) {
                     if (key === (activeArtist.language || 'spanish')) return;
+                    window.resetActiveArtist?.();
                     try { localStorage.setItem('fluencyPreferredLanguageV1', key); } catch (_) {}
                     showAppLoading('Switching language', 'Preparing your language and progress…', true);
                     goToRoute({ kind: 'language', language: routeCodeFor(key, languages) }, { keepSearch: false });
                     return;
                 }
+                window.resetActiveArtist?.();
+                window.dismissMusicWorkspace?.();
                 if (isPortuguese) {
                     showPortugueseVarietyPicker();
                 } else {
                     document.querySelector(`.lang-tab[data-lang="${key}"]`)?.click();
+                    replaceRoute({ kind: 'language', language: routeCodeFor(key, languages) });
                 }
             }
         };
