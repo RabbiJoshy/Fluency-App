@@ -25288,30 +25288,26 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .fw-header {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .fw-heading {
-  font: 700 36px/1.1 var(--font-emphasis, "Space Grotesk");
+  font: 700 38px/1.1 var(--font-emphasis, "Space Grotesk");
   letter-spacing: -1.2px;
   color: #ffffff;
-  margin: 0;
+  margin: 0 0 5px 0;
   text-align: center;
 }
-.fw-header-cue {
+.fw-section-header {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #64748b;
-  padding: 3px 8px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  line-height: 1;
-  align-self: center;
+  margin: 0;
+  text-align: center;
 }
 .fw-parts-box {
   display: inline-flex;
