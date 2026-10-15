@@ -579,10 +579,10 @@ export function functionWordBlockHTML(card, lang) {
             <div class="fw-deterministic-card" data-word="${esc(wordKey)}">
                 <div class="fw-header">
                     <h2 class="fw-heading">${esc(wordKey)}</h2>
+                    <span class="fw-header-cue">Core patterns</span>
                 </div>
                 ${partsBoxHTML}
                 ${dynamicPartsHTML}
-                <div class="fw-section-header">Core patterns</div>
                 <div class="fw-relations-list">
                     ${relationsHTML}
                 </div>
