@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-15T11:28:00+01:00",
+      "date": "2026-10-15 11:28 BST",
+      "agent": "Antigravity",
+      "summary": "Desktop sidebar trail refined: 3-tier hierarchy with Vocabulary (Speech/Music) -> Music (Artists/Spotify) -> Source",
+      "detail": [
+        "The primary Vocabulary chip now cleanly offers the Speech vs Music choice.",
+        "Underneath Vocabulary in Music mode, a dedicated subrow chip offers the music options (Artists vs Spotify playlists).",
+        "The source chip sits beneath the music options chip, displaying the selected artist or playlist name with quick switching."
+      ],
+      "commit": "974d2d21"
+    },
+    {
       "timestamp": "2026-10-15T11:08:00+01:00",
       "date": "2026-10-15 11:08 BST",
       "agent": "Antigravity",
