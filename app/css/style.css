@@ -22926,17 +22926,10 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     #cardTutorialMobileNext.is-hinting { animation: none; }
 }
 
-/* Front lemma/POS map, ~10% larger. A bare POS pill stands on its own; a
-   "POS from x" pair keeps its capsule so the "from x" plainly belongs to the
-   pill beside it and not to a neighbour. */
+/* Front lemma/POS map, ~10% larger. Every pair, with or without a "from x",
+   keeps its dark capsule: it is the backing the POS glow is read against. */
 .card-front .card-pos-list.is-lemma-map .front-lemma-pair {
   zoom: 1.1;
-}
-.card-front .card-pos-list.is-lemma-map .front-lemma-pair.is-pos-only {
-  background: none;
-  border: 0;
-  padding: 0;
-  min-height: 0;
 }
 
 /* "Flashcard 1 of 2": plain text directly under the lemma/POS pills,
@@ -25628,6 +25621,12 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .known-language-flag.is-code { font: 700 11px var(--font-emphasis); color: var(--text-secondary); }
 
-/* Companion cards: one "Card N of M" cue under the card's own pill(s). */
+/* Companion cards: one plain "Card N of M" cue under the card's own pill(s).
+   Neutral text, no tint; tapping it opens the explanation. */
 .card-pos-list .split-card-note.is-counter { margin-top: 2px; }
-.card-pos-list .split-card-note.is-counter .split-pill-count::after { content: " ?"; opacity: 0.7; }
+.card-pos-list .split-card-note.is-counter .split-pill-count {
+  background: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 2px 4px;
+}

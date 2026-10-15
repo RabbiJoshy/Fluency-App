@@ -17,10 +17,11 @@
       "timestamp": "2026-10-16T00:15:00+01:00",
       "date": "2026-10-16 00:15 BST",
       "agent": "Claude",
-      "summary": "Companion cards show only their own lemma/POS pills, with one \"Card 1 of 2\" cue underneath",
+      "summary": "Companion cards show only their own lemma/POS pills, with one plain \"Card 1 of 2\" cue underneath; every POS pill keeps its dark backing",
       "detail": [
         "Each companion card now lists the lemma/POS pill(s) built from its own senses; the dimmed sibling pill is gone.",
-        "A single \"Card N of M ?\" label sits under the pills and still opens the \"why separate cards?\" note.",
+        "A single neutral \"Card N of M\" label sits under the pills and still opens the \"why separate cards?\" note.",
+        "POS-only pills now keep the dark capsule behind them (as \"from lemma\" pills do), for legibility against the glow.",
         "Switching to the sibling is by the next/previous card, as the pair is adjacent in the deck."
       ],
       "commit": "pending"
