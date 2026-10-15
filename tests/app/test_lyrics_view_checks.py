@@ -46,6 +46,45 @@ class CatalogueBake(unittest.TestCase):
                 else:
                     self.assertNotIn("lrclibDurationMs", song)
 
+    def test_baked_french_songs_are_playable_or_plain(self):
+        import json, re
+        songs = json.loads((Path(__file__).parents[2] / "app/turbo/fr_probe_songs.json").read_text("utf-8"))
+        self.assertGreaterEqual(len(songs), 10)
+        for song in songs:
+            with self.subTest(song=song["title"]):
+                self.assertRegex(song.get("spotifyId", ""), r"^[A-Za-z0-9]{22}$")
+                if song.get("syncedLyrics"):
+                    self.assertGreater(len(re.findall(r"^\[\d+:\d+", song["syncedLyrics"], re.M)), 5)
+                    self.assertGreater(song["lrclibDurationMs"], 60_000)
+                else:
+                    self.assertNotIn("lrclibDurationMs", song)
+
+    def test_baked_dutch_songs_are_playable_or_plain(self):
+        import json, re
+        songs = json.loads((Path(__file__).parents[2] / "app/turbo/nl_probe_songs.json").read_text("utf-8"))
+        self.assertGreaterEqual(len(songs), 6)
+        for song in songs:
+            with self.subTest(song=song["title"]):
+                self.assertRegex(song.get("spotifyId", ""), r"^[A-Za-z0-9]{22}$")
+                if song.get("syncedLyrics"):
+                    self.assertGreater(len(re.findall(r"^\[\d+:\d+", song["syncedLyrics"], re.M)), 5)
+                    self.assertGreater(song["lrclibDurationMs"], 60_000)
+                else:
+                    self.assertNotIn("lrclibDurationMs", song)
+
+    def test_baked_finnish_songs_are_playable_or_plain(self):
+        import json, re
+        songs = json.loads((Path(__file__).parents[2] / "app/turbo/fi_probe_songs.json").read_text("utf-8"))
+        self.assertGreaterEqual(len(songs), 5)
+        for song in songs:
+            with self.subTest(song=song["title"]):
+                self.assertRegex(song.get("spotifyId", ""), r"^[A-Za-z0-9]{22}$")
+                if song.get("syncedLyrics"):
+                    self.assertGreater(len(re.findall(r"^\[\d+:\d+", song["syncedLyrics"], re.M)), 5)
+                    self.assertGreater(song["lrclibDurationMs"], 60_000)
+                else:
+                    self.assertNotIn("lrclibDurationMs", song)
+
     def test_catalogue_index_matches_its_song_files(self):
         import json, re
         root = Path(__file__).parents[2] / "app/turbo/catalogue"

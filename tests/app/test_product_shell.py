@@ -216,7 +216,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertTrue(config["languages"]["spanish"]["capabilities"]["speech"])
         self.assertTrue(config["languages"]["spanish"]["capabilities"]["lyrics"])
         self.assertTrue(config["languages"]["french"]["capabilities"]["speech"])
-        self.assertFalse(config["languages"]["french"]["capabilities"]["lyrics"])
+        self.assertTrue(config["languages"]["french"]["capabilities"]["lyrics"])
         self.assertIn("if (speechSourceButton.disabled) return", ui)
 
     def test_learning_context_replaces_repeated_language_setup(self) -> None:

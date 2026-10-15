@@ -198,6 +198,32 @@ export class TurboEngine {
             let expanded = this.elisions[cleaned] || null;
             let isElision = Boolean(this.elisions[cleaned] && this.elisions[cleaned] !== cleaned);
 
+            // Handle French apostrophe clitics (c'est -> c' [ce] + est, l'amour -> l' [le] + amour, d'accord -> d' [de] + accord)
+            if (this.language === 'fr' && !expanded) {
+                const frCliticMatch = cleaned.match(/^(c|j|d|l|m|n|s|t|qu|y)[']([\p{L}\p{N}]+)$/u);
+                if (frCliticMatch) {
+                    const clitic = frCliticMatch[1] + "'";
+                    const remainder = frCliticMatch[2];
+                    const cliticRaw = raw.slice(0, clitic.length);
+                    const remainderRaw = raw.slice(clitic.length);
+                    const cliticExp = this.elisions[clitic] || (clitic === "c'" ? 'ce' : clitic === "j'" ? 'je' : clitic === "d'" ? 'de' : clitic === "l'" ? 'le' : clitic === "qu'" ? 'que' : clitic);
+
+                    tokens.push({
+                        raw: cliticRaw,
+                        normalized: cliticExp.normalize('NFC').toLowerCase().trim(),
+                        isElision: true
+                    });
+
+                    const remExp = this.elisions[remainder] || remainder;
+                    tokens.push({
+                        raw: remainderRaw,
+                        normalized: remExp.normalize('NFC').toLowerCase().trim(),
+                        isElision: Boolean(this.elisions[remainder] && this.elisions[remainder] !== remainder)
+                    });
+                    continue;
+                }
+            }
+
             // Handle Caribbean / urban s-aspiration and trailing apostrophe elisions:
             // 1. "e'" -> "es" (e' libre -> es libre, e' que -> es que)
             // 2. "no'" -> "nos" (no' vemo' -> nos vemos, no' perdemo' -> nos perdemos)

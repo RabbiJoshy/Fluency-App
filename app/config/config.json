@@ -277,7 +277,7 @@
       },
       "cefrLevelsNote": "Prototype (CASCADE-WSD): function words labelled by rule, other senses by the embedding + LLM cascade. Comprehension percentages are not measured for this deck.",
       "hasData": true,
-      "capabilities": {"speech": true, "lyrics": false, "mergeLemmas": true, "cognateFilter": false},
+      "capabilities": {"speech": true, "lyrics": true, "mergeLemmas": true, "cognateFilter": false},
       "flag": "🇳🇱",
       "routeCode": "nl",
       "shortCode": "NL",
@@ -311,7 +311,7 @@
       "hasData": true,
       "capabilities": {
         "speech": true,
-        "lyrics": false,
+        "lyrics": true,
         "mergeLemmas": true,
         "cognateFilter": true
       },
@@ -335,7 +335,7 @@
       "hasData": true,
       "capabilities": {
         "speech": true,
-        "lyrics": false,
+        "lyrics": true,
         "mergeLemmas": false,
         "cognateFilter": true
       },
