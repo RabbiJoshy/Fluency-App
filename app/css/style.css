@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=c41f3718");
+@import url("./appearance.css?v=a1319ebd");
 
 
         * {
@@ -17474,9 +17474,10 @@
 /* Smart Skip Activation Feedback Toast (especially prominent on mobile) */
 .smart-skip-animation-toast {
   position: fixed;
-  bottom: 24px;
+  top: var(--toast-top, auto);
+  bottom: var(--toast-bottom, 24px);
   left: 50%;
-  transform: translateX(-50%) translateY(20px) scale(0.95);
+  transform: translateX(-50%) translateY(10px) scale(0.95);
   z-index: 10000;
   pointer-events: none;
   opacity: 0;
@@ -17515,8 +17516,8 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #15803d;
-  color: #fff;
+  background: var(--accent-primary);
+  color: var(--accent-primary-text, #fff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25574,6 +25575,28 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   font-size: 15px;
   color: var(--text-muted);
   margin: 0;
+}
+.fw-example-credit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  min-height: 18px;
+}
+.fw-credit-start {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.fw-sentence-ticks-container {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
 }
 
 /* Languages you know: flags, not a sentence. */
