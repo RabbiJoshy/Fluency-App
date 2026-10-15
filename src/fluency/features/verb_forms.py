@@ -7,12 +7,21 @@ DIMENSIONS = {
     'tense': {'present', 'past', 'preterite', 'imperfect', 'future', 'pluperfect'},
     'mood': {'indicative', 'subjunctive', 'conditional', 'imperative'},
     'aspect': {'perfective', 'imperfective'},
-    'voice': {'active', 'passive', 'middle'},
+    'voice': {'passive', 'middle'},
+    'gender': {'masculine', 'feminine', 'neuter'},
 }
 
 
 def signatures(tags):
     tags = set(tags)
+    if 'past-historic' in tags:
+        tags.add('preterite')
+    # Slavic past l-forms are tagged as active past participles with gender.
+    # Distinguish these finite 3rd-person past tense forms from adjectival/passive participles.
+    if 'participle' in tags and 'past' in tags and (tags & {'masculine', 'feminine', 'neuter'}) and not (tags & {'passive'}):
+        tags.discard('participle')
+        tags.add('third-person')
+        tags.add('past')
     if tags & {'combined-form', 'multiword-construction', 'participle', 'gerund'}:
         return set()
     if 'infinitive' in tags:
@@ -22,6 +31,8 @@ def signatures(tags):
         return {('infinitive',)}
     if not all(tags & DIMENSIONS[key] for key in ('person', 'number', 'tense')):
         return set()
+    if not (tags & DIMENSIONS['mood']):
+        tags.add('indicative')
     choices = [sorted(tags & values) or [''] for values in DIMENSIONS.values()]
     return {('finite', *values) for values in product(*choices)}
 

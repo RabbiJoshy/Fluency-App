@@ -2412,9 +2412,22 @@ let introSelectedCodes = new Set();
 let introLanguageLabels = {};
 let knownLanguagesScoped = false;
 
-function getKnownLanguagesForTarget() {
-    return window.knownLanguageOptions?.() || ['en', 'es', 'fr', 'pt', 'pl', 'de', 'it', 'ru', 'sk', 'uk', 'nl', 'sv', 'cs', 'fi'];
+function targetRouteCode(target) {
+    if (!target) return null;
+    const clean = String(target).split('-')[0].trim().toLowerCase();
+    const languages = (typeof config !== 'undefined' && config?.languages) || null;
+    const key = languageKeyFor(clean, languages) || languageKeyFor(target, languages) || (languages && languages[clean] ? clean : null);
+    const code = key ? routeCodeFor(key, languages) : clean;
+    return String(code || '').trim().toLowerCase();
 }
+
+function getKnownLanguagesForTarget(targetLang) {
+    const all = window.knownLanguageOptions?.() || ['en', 'es', 'fr', 'pt', 'pl', 'de', 'it', 'ru', 'sk', 'uk', 'nl', 'sv', 'cs', 'fi'];
+    const target = targetLang || (typeof selectedLanguage !== 'undefined' ? selectedLanguage : null);
+    const targetCode = targetRouteCode(target);
+    return targetCode ? all.filter(c => c !== targetCode) : all;
+}
+window.getKnownLanguagesForTarget = getKnownLanguagesForTarget;
 
 function hasSeenKnownLanguagesIntro() {
     return window.readLanguageProfile?.().confirmed === true;
@@ -2458,10 +2471,6 @@ function renderKnownLanguagesModalChoices(availableCodes) {
     container.innerHTML = '';
 
     const codes = availableCodes;
-    // English is the app’s translation language; deck availability comes from config.
-    const studyLanguages = new Set(['en', ...Object.values(config.languages || {})
-        .filter(language => language.hasData !== false && (language.indexPath || language.dataPath))
-        .map(language => String(language.speechLang || '').split('-')[0])]);
     const ready = new Set(window.availableKnownLanguages?.() || []);
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     codes.forEach(code => {
@@ -2477,8 +2486,8 @@ function renderKnownLanguagesModalChoices(availableCodes) {
 
         const flag = window.knownLanguageFlag?.(code) || '🌐';
         const label = introLanguageLabels[code] || window.knownLanguageLabel?.(code) || code.toUpperCase();
-        const comingSoon = knownLanguagesScoped ? !ready.has(code) : !studyLanguages.has(code);
-        button.disabled = knownLanguagesScoped && comingSoon;
+        const comingSoon = knownLanguagesScoped && !ready.has(code);
+        button.disabled = comingSoon;
 
         button.innerHTML = `
             <span class="known-language-choice-flag" aria-hidden="true">${flag}</span>
@@ -2505,6 +2514,7 @@ function renderKnownLanguagesModalChoices(availableCodes) {
         container.appendChild(button);
     });
 }
+window.renderKnownLanguagesModalChoices = renderKnownLanguagesModalChoices;
 
 function maybeShowKnownLanguagesIntro(targetLang) {
     const lang = targetLang || selectedLanguage;
