@@ -25621,12 +25621,14 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .known-language-flag.is-code { font: 700 11px var(--font-emphasis); color: var(--text-secondary); }
 
-/* Companion cards: one plain "Card N of M" cue under the card's own pill(s).
-   Neutral text, no tint; tapping it opens the explanation. */
-.card-pos-list .split-card-note.is-counter { margin-top: 2px; }
+/* Companion cards: one small "Card N of M" cue under the card's own pill(s).
+   Plain text, no tint; tapping it opens the explanation. */
+.card-pos-list .split-card-note.is-counter { margin-top: 4px; }
 .card-pos-list .split-card-note.is-counter .split-pill-count {
   background: none;
-  color: var(--text-secondary);
-  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
   padding: 2px 4px;
+  opacity: 0.85;
 }

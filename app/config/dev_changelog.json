@@ -17,14 +17,11 @@
       "timestamp": "2026-10-16T00:15:00+01:00",
       "date": "2026-10-16 00:15 BST",
       "agent": "Claude",
-      "summary": "Companion cards show only their own lemma/POS pills, with one plain \"Card 1 of 2\" cue underneath; every POS pill keeps its dark backing",
+      "summary": "Lemma/POS pills lose their dark backing: each is its own colour, darkened, with white text; companion cue is small plain text",
       "detail": [
-        "Each companion card now lists the lemma/POS pill(s) built from its own senses; the dimmed sibling pill is gone.",
-        "A single neutral \"Card N of M\" label sits under the pills and still opens the \"why separate cards?\" note.",
-        "POS-only pills now keep the dark capsule behind them (as \"from lemma\" pills do), for legibility against the glow.",
-        "Experiment: a bare POS pill has no capsule; the pill itself is dark with white text and a POS-colour ring. Lemma pairs keep the capsule.",
-        "The capsule is a fixed dark backing with white text (POS, lemma and \"from\") in light and dark themes; the POS colour stays in the pill's wash.",
-        "Switching to the sibling is by the next/previous card, as the pair is adjacent in the deck."
+        "Each companion card lists the lemma/POS pill(s) built from its own senses; the dimmed sibling pill is gone.",
+        "A single small \"Card N of M\" label sits under the pills and still opens the \"why separate cards?\" note.",
+        "No capsule behind any lemma/POS pill: the pill is the POS colour at about two-thirds brightness with white text, straight on the card glow; a lemma is plain text beside it."
       ],
       "commit": "pending"
     },
