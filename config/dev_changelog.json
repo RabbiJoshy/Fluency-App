@@ -2,6 +2,31 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-16T00:19:31+01:00",
+      "date": "2026-10-16 00:19 BST",
+      "agent": "Codex",
+      "summary": "Compact two-line Smart Skip panel on desktop and mobile",
+      "detail": [
+        "Smart Skip and On/Off share the first row; “Fewer cards, less repetition” and Details share the second.",
+        "Removed the home-page information icon, example words and changing count to keep the panel compact.",
+        "Details opens the existing Smart Skip screen without changing the On/Off selection."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-16T00:15:00+01:00",
+      "date": "2026-10-16 00:15 BST",
+      "agent": "Claude",
+      "summary": "Lemma/POS pills lose their dark backing: each is its own colour, darkened, with white text; companion cue is small plain text",
+      "detail": [
+        "Each companion card lists the lemma/POS pill(s) built from its own senses; the dimmed sibling pill is gone.",
+        "A single small \"Card N of M\" label sits on its own line under the pills and still opens the \"why separate cards?\" note.",
+        "Parts of speech of one lemma are one joined pill (hairline gap, only the outer ends rounded); full names, short names only when they do not fit.",
+        "No capsule behind any lemma/POS pill: the pill is a muted, darkened POS colour (mixed toward slate) with white text and no outline, straight on the card glow; a lemma is plain text beside it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-15T14:58:00+01:00",
       "date": "2026-10-15 14:58 BST",
       "agent": "Antigravity",
@@ -340,94 +365,6 @@
       "summary": "Account creation starts with an empty username",
       "detail": [
         "Removed all suggested usernames and the special case for the owner’s email address. Everyone enters their username explicitly."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T19:08:23+01:00",
-      "date": "2026-10-13 19:08 BST",
-      "agent": "Codex",
-      "summary": "Google and email-code accounts now open the main app",
-      "detail": [
-        "New signed-in users choose a username once; their profile is bound to the verified Clerk account.",
-        "Staging and production use separate databases and account keys. Progress URLs are normalized before attaching session tokens.",
-        "Previous accounts and complete learning data are archived for manual restoration after the replacement accounts are created."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T18:45:06+01:00",
-      "date": "2026-10-13 18:45 BST",
-      "agent": "Codex",
-      "summary": "Google and email sign-in trial on the live Fluency address",
-      "detail": [
-        "A separate sign-in check page uses the existing free Clerk development setup.",
-        "The trial verifies a real signed session with the isolated authentication API; it does not change or link existing progress."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T15:07:59+01:00",
-      "date": "2026-10-13 15:07 BST",
-      "agent": "Claude",
-      "summary": "Grammar-word cards for Spanish, Portuguese and Czech (and Dutch pronouns): function words shown by role and pattern, not a sense list",
-      "detail": [
-        "Spanish (179 cards), Portuguese (198) and Czech (241) now show the 'Grammar word' block on function-word cards: articles, prepositions, conjunctions, pronouns, determiners, se/si. Each example carries its role or construction (gostar de, tener que, lo que, bát se).",
-        "Labels come from rules over a parser (Spanish: es_dep_news_trf; Portuguese, Czech: Stanza) plus Wiktionary. Hand-checked on random samples: about 95 percent right in each language.",
-        "Nothing else changed: every card, sense and example is identical to the live decks (pt v25 r4, es v25 r6, cs v22); new releases are the same decks with -fw1, and their side files (frequency, pools, cognates, merge lists, BRIDGE) are rebound copies.",
-        "Wording of role names is a draft for review."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T14:29:13+01:00",
-      "date": "2026-10-13 14:29 BST",
-      "agent": "Claude",
-      "summary": "Dutch prototype: pronouns and determiners now shown as grammar words too",
-      "detail": [
-        "Dutch release nl-speech-cascade-proto2-6000x10: 150 cards get the 'Grammar word' block, up from 69. The 81 new ones are pronouns and determiners (je, ze, die, wat, mijn, haar, geen, alle, veel...).",
-        "Roles come from the parser: subject, object, possessive, reflexive (-self), question word, relative pronoun, pointing word, amount word. Glosses follow the sentence: 'ze' reads 'she' or 'they' from the verb.",
-        "Card summaries now keep one chip per role and gloss, so 'ze' shows both 'subject · she' and 'subject · they'.",
-        "Wording is a draft for review."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T14:15:43+01:00",
-      "date": "2026-10-13 14:15 BST",
-      "agent": "Claude",
-      "summary": "Grouped meaning rows centred again; front lemma capsule back to plain grey",
-      "detail": [
-        "Back: rows that group several meanings (e.g. llevar's 'to take / to transport / to spend time on') no longer sit pushed to the right; an extra empty left column from today's ui-refinements.css is removed.",
-        "Front: the 'Verb from querer' capsule loses the POS-coloured outer ring and tint added in the same file; it is the neutral grey capsule again.",
-        "Cause: commit c3988450 (ui-refinements.css); no new overrides added."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T12:56:37+01:00",
-      "date": "2026-10-13 12:56 BST",
-      "agent": "Claude",
-      "summary": "Dutch prototype deck (CASCADE-WSD): function words shown as grammar words; other senses chosen by a cheap embedding + LLM cascade",
-      "detail": [
-        "Dutch is enabled with release nl-speech-cascade-proto-6000x10 (6,000 cards, 10 examples each, published to Fluency-Releases-nl).",
-        "69 function words (de, het, een, van, op, aan, er, te, dat, als...) are labelled by rule, not WSD: the card back shows a 'Grammar word' block with 'Used as' roles and recurring patterns (aan het, om te, meegaan), and each example carries its role or construction label.",
-        "Other words: Qwen3-Embedding-4B picks the sense, e5-small checks it, and DeepSeek V4.1 Flash decides the 34% where they disagree. Single-sense cards need no model.",
-        "Prototype wording ('Grammar word', 'Used as', 'Patterns') is a draft for review."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T12:55:00+01:00",
-      "date": "2026-10-13 12:55 BST",
-      "agent": "Gemini",
-      "summary": "SHOWCASE: Tutorial copy tightened, Walkthrough unclipped & full-bleed on phones, About demo card alignment fixed",
-      "detail": [
-        "Shortened tutorial explanations to <= 180 characters across Spanish, Portuguese, Czech, and French with no unreplaced placeholders.",
-        "Walkthrough modal is full-bleed on phones (<= 700px) with single-card scaling so cards are never clipped, even on 375x667.",
-        "Walkthrough pin labels support pinTitle ('How common') and pinAnchor ('.breakdown-trigger') so they never overlap headwords, context tags, or example sentences.",
-        "Fixed About modal demo cards (.about-demo-card) whose 3-column meaning rows were broken by global .meaning-row rules.",
-        "Updated About project button hint to 'A quick look at a card · about 30 seconds', accurate for both phone (3 screens) and desktop (2 screens)."
       ],
       "commit": "pending"
     }

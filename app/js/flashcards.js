@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=a1319ebd';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=a1319ebd';
-import { songCreditHTML } from './song-credit.js?v=a1319ebd';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=a1319ebd';
+import './state.js?v=f7bbd433';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=f7bbd433';
+import { songCreditHTML } from './song-credit.js?v=f7bbd433';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=f7bbd433';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=a1319ebd';
-import './speech.js?v=a1319ebd';
-import { goToRoute, routeCodeFor } from './routes.js?v=a1319ebd';
-import { memoryTipTileHTML } from './memory-tips.js?v=a1319ebd';
+import { fitSenseRowText } from './card-row-layout.js?v=f7bbd433';
+import './speech.js?v=f7bbd433';
+import { goToRoute, routeCodeFor } from './routes.js?v=f7bbd433';
+import { memoryTipTileHTML } from './memory-tips.js?v=f7bbd433';
 import {
     functionWordBlockHTML,
     functionWordExampleHTML,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=a1319ebd';
-import './side-dock.js?v=a1319ebd';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=a1319ebd';
+} from './function-word-card.js?v=f7bbd433';
+import './side-dock.js?v=f7bbd433';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=f7bbd433';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=a1319ebd';
+} from './example-personalisation.js?v=f7bbd433';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=a1319ebd';
+} from './spanishdict-usage.js?v=f7bbd433';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=a1319ebd';
+} from './reverse-cues.js?v=f7bbd433';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -68,7 +68,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=a1319ebd';
+} from './card-metadata-pills.js?v=f7bbd433';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -4671,6 +4671,16 @@ function posDisplayName(pos) {
         || String(pos || '').toLowerCase().replace(/^./, char => char.toUpperCase());
 }
 
+// Short forms for a joined POS pill, used only when the full names do not fit.
+function posShortName(pos) {
+    const labels = {
+        NOUN: 'Noun', VERB: 'Verb', AUX: 'Aux', ADJ: 'Adj', ADV: 'Adv', PREP: 'Prep',
+        ADP: 'Prep', CONJ: 'Conj', CCONJ: 'Conj', SCONJ: 'Conj', PRON: 'Pron',
+        DET: 'Det', INTJ: 'Intj', NUM: 'Num', PROPN: 'Name'
+    };
+    return labels[String(pos || '').toUpperCase()] || posDisplayName(pos);
+}
+
 function rareSenseFieldKey(value) {
     const raw = String(value || '').trim();
     if (!raw) return '';
@@ -6260,7 +6270,7 @@ function renderCardWikipediaBadge(card) {
         const p = String(pos || '').toLowerCase();
         return p.includes('verb') || p === 'v' || p === 'vb';
     };
-    const posLabelHTML = pos => `<span class="pos-full-label">${posDisplayName(pos)}</span>`;
+    const posLabelHTML = pos => `<span class="pos-full-label">${posDisplayName(pos)}</span><span class="pos-short-label" aria-hidden="true">${posShortName(pos)}</span>`;
     // The verb POS pill retains the complete popover on every face. In the
     // production direction its coupled subject + tense/mood rows are also
     // repeated as a compact, always-visible cue beneath the English senses;
@@ -6393,72 +6403,52 @@ function renderCardWikipediaBadge(card) {
         if (pairs.length === 0) {
             frontPOSEl.style.display = 'none';
         } else {
+            // Parts of speech of one lemma are one joined pill; a different
+            // lemma ("from x") is its own pill.
+            const targetKey = foldSurfaceForm(displayedTargetHeadword);
+            const pillGroups = [];
+            const groupByLemma = new Map();
+            pairs.forEach(pair => {
+                const key = !pair.lemma || foldSurfaceForm(pair.lemma) === targetKey
+                    ? '' : foldSurfaceForm(pair.lemma);
+                let group = groupByLemma.get(key);
+                if (!group) {
+                    group = { lemma: key ? pair.lemma : '', pairs: [] };
+                    groupByLemma.set(key, group);
+                    pillGroups.push(group);
+                }
+                group.pairs.push(pair);
+            });
+            const pillsHTML = pillGroups.map(group => {
+                const units = group.pairs.map(pair =>
+                    renderFrontPosUnit(pair.pos, isVerbPos(pair.pos))).join('');
+                const joined = group.pairs.length > 1
+                    ? `<span class="front-pos-joined">${units}</span>` : units;
+                if (!group.lemma) return `<span class="front-lemma-pair is-pos-only">${joined}</span>`;
+                return `<span class="front-lemma-pair">${joined}<span class="front-lemma-name"><span class="front-lemma-from">from </span>${escapeCardText(group.lemma)}</span></span>`;
+            }).join('');
             const isSplitCard = Boolean(card.splitInfo);
             if (isSplitCard) {
                 const s = card.splitInfo;
-                const readings = s.readings || [
-                    { headword: s.index === 1 ? s.headword : s.siblingHeadword,
-                        pos: s.index === 1 ? s.pos : s.siblingPos },
-                    { headword: s.index === 2 ? s.headword : s.siblingHeadword,
-                        pos: s.index === 2 ? s.pos : s.siblingPos }
-                ];
-                const renderSplitPill = (pair, cardNum, isActive) => {
-                    const posUnit = renderFrontPosUnit(pair.pos, isActive && isVerbPos(pair.pos));
-                    const statusClass = isActive ? 'is-active-split' : 'is-companion-split';
-                    const fromPrefix = foldSurfaceForm(pair.lemma) !== foldSurfaceForm(displayedTargetHeadword)
-                        ? '<span class="front-lemma-from">from </span>'
-                        : '';
-                    const lemmaHTML = foldSurfaceForm(pair.lemma) !== foldSurfaceForm(displayedTargetHeadword)
-                        ? `<span class="front-lemma-name">${fromPrefix}${escapeCardText(pair.lemma)}</span>`
-                        : '';
-                    const posOnlyClass = !lemmaHTML ? ' is-pos-only' : '';
-                    // Each pill names its own card, so the count can only mean
-                    // that card, and the dimmed "Card 2" says another is coming.
-                    // The active one opens the explanation.
-                    const countHTML = isActive
-                        ? `<button type="button" class="split-pill-count" aria-expanded="false" aria-label="Card ${cardNum} of ${s.total}: why separate cards?" onclick="toggleSplitCardTip(event)">Card ${cardNum} of ${s.total}</button>`
-                        : `<span class="split-pill-count">Card ${cardNum}</span>`;
-                    const switchAttrs = isActive ? '' : ` role="button" tabindex="0" aria-label="Switch to card ${cardNum}: ${escapeCardText(pair.lemma)}, ${escapeCardText(posDisplayName(pair.pos))}" onclick="selectSplitCompanion(event, ${cardNum})" onkeydown="if (event.key === 'Enter' || event.key === ' ') selectSplitCompanion(event, ${cardNum})"`;
-                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}" style="--split-accent: ${getPosAccentRgb(pair.pos)}"${switchAttrs}>${posUnit}${lemmaHTML}${countHTML}</span>`;
-                };
-
-                const splitPairsHTML = readings.map((reading, index) =>
-                    renderSplitPill({ lemma: reading.headword, pos: reading.pos }, index + 1,
-                        s.index === index + 1)).join('');
-
+                // A companion card shows only its own lemma/POS pill(s), built
+                // from its own senses; one "Card N of M" cue sits under them.
+                frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
+                if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
                 const noteRgb = getPosAccentRgb(s.pos || card.partOfSpeech);
                 frontPOSEl.style.setProperty('--split-accent', noteRgb);
-                const splitNoteHTML = '<div class="split-card-note is-tip-only">'
+                const splitNoteHTML = '<div class="split-card-note is-counter">'
+                    + `<button type="button" class="split-pill-count" aria-expanded="false" aria-label="Card ${s.index} of ${s.total}: why separate cards?" onclick="toggleSplitCardTip(event)">Card ${s.index} of ${s.total}</button>`
                     + '<span class="split-card-tip" role="tooltip" hidden>'
                     + (s.kind === 'reflexive'
                         ? 'This verb has ordinary and pronominal uses, so each gets its own flashcard. '
                         : 'This spelling represents different headwords, so each main reading gets its own flashcard. ')
                     + 'Learning them separately keeps one reading from crowding out another. '
                     + 'You see the cards one after the other.</span></div>';
-
-                frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(readings.length, 4)}`, 'is-split-deck-map');
-                frontPOSEl.innerHTML = splitPairsHTML + splitNoteHTML;
-                // Side by side, the note runs under both pills; when they wrap
-                // onto two lines it moves to their right, level with the pair,
-                // so it never reads as a caption for the lower pill alone.
-                const [firstPill, secondPill] = frontPOSEl.querySelectorAll('.front-lemma-pair');
-                // Stacked means the second pill starts below the first one's
-                // bottom: side-by-side pills of different heights, centred on
-                // one line, also differ in top.
-                if (firstPill && secondPill
-                    && secondPill.offsetTop >= firstPill.offsetTop + firstPill.offsetHeight - 2) {
-                    frontPOSEl.classList.add('is-split-stacked');
-                }
+                frontPOSEl.innerHTML = pillsHTML + splitNoteHTML;
             } else {
                 frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
                 if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
-                frontPOSEl.innerHTML = pairs.map(pair => {
-                    const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
-                    if (!pair.lemma || foldSurfaceForm(pair.lemma) === foldSurfaceForm(displayedTargetHeadword)) {
-                        return `<span class="front-lemma-pair is-pos-only">${posUnit}</span>`;
-                    }
-                    return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name"><span class="front-lemma-from">from </span>${escapeCardText(pair.lemma)}</span></span>`;
-                }).join('');
+                frontPOSEl.innerHTML = pillsHTML;
             }
             frontPOSEl.style.display = 'grid';
             // Keep every label in a group at the same size. The grid reserves
@@ -6474,6 +6464,16 @@ function renderCardWikipediaBadge(card) {
                 names.forEach(name => { name.style.fontSize = `${labelSize - 0.5}px`; });
             }
             names.forEach(name => { name.title = name.textContent; });
+            // A joined pill keeps its full names unless they genuinely do not fit.
+            frontPOSEl.querySelectorAll('.front-pos-joined').forEach(group => {
+                group.classList.remove('is-short');
+                const pair = group.closest('.front-lemma-pair');
+                const room = frontPOSEl.clientWidth;
+                if ((pair && pair.scrollWidth > pair.clientWidth + 1)
+                    || (room && group.getBoundingClientRect().width > room - 4)) {
+                    group.classList.add('is-short');
+                }
+            });
         }
     } else {
         frontPOSEl.style.display = 'none';
@@ -10628,8 +10628,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'a1319ebd';
-const MODALS_ASSET_VERSION = 'a1319ebd';
+const ASSET_VERSION = 'f7bbd433';
+const MODALS_ASSET_VERSION = 'f7bbd433';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

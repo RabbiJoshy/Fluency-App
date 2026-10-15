@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=a1319ebd';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=a1319ebd';
+import './state.js?v=f7bbd433';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=f7bbd433';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -240,8 +240,6 @@ function refresh() {
 
     const on = state === 'on';
     const extras = globalThis.collectExtras?.() || {};
-    const skippedCardsCount = (extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0))
-        + (extras.lemmas?.length || 0);
 
     // A shortcut is listed only where it can do something: look-alikes and
     // combined forms need the release's mapping, the other three need at least
@@ -281,7 +279,8 @@ function refresh() {
         const shortcut = toggle?.closest('.smart-skip-shortcut');
         const detail = shortcut?.querySelector('.smart-skip-shortcut-detail');
         if (detail && !shortcut.dataset.userExpanded) {
-            const expanded = kind === (cognateAvailable() ? 'cognate' : 'lemma');
+            const expanded = kind === (cognateAvailable() ? 'cognate' : 'lemma')
+                || (kind === 'lemma' && window.matchMedia('(min-width: 900px)').matches);
             detail.hidden = !expanded;
             shortcut.querySelector('.smart-skip-shortcut-name')?.setAttribute('aria-expanded', String(expanded));
         }
@@ -302,25 +301,6 @@ function refresh() {
     if (hubRow) {
         hubRow.classList.toggle('is-unseen', !hasSeenFastTrackPage());
         hubRow.classList.toggle('is-on', on);
-    }
-    const hubSummary = document.getElementById('fastTrackHubSummary');
-    if (hubSummary) {
-        // The control already says on or off, so this line says something else:
-        // what turning it on does, then what it is doing.
-        hubSummary.classList.toggle('is-slogan', !on);
-        hubSummary.textContent = !on ? 'Fewer cards to study'
-            : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} skipped`
-            : 'None skipped';
-    }
-    const examples = document.getElementById('fastTrackHubExamples');
-    if (examples) {
-        // Use real candidates from this deck, with different copy for enabled
-        // exclusions and the preview while Smart Skip is off.
-        const candidates = on ? [...(extras.allSkipped || extras.cognates || []), ...(extras.lemmas || [])]
-            .map(entry => entry.item || entry) : lookAlikeCandidates();
-        const words = [...new Set(candidates.map(item => String(item?.word || '').trim()).filter(Boolean))].slice(0, 3);
-        examples.textContent = words.length ? `${on ? 'e.g.' : 'Could skip:'} ${words.join(', ')}` : '';
-        examples.hidden = !words.length;
     }
     const secondaryState = document.getElementById('smartSkipSecondaryState');
     if (secondaryState) {
@@ -547,9 +527,7 @@ function updateStreamlineLanguageExamples() {
 
     const lemmaExplainer = document.querySelector('#lemmaToggleContainer .fast-mode-explainer');
     if (lemmaExplainer) {
-        // Forms with a meaning of their own (fue, al, au) are never combined.
-        const keeps = config.lemmaKeeps ? `, like ${config.lemmaKeeps},` : '';
-        lemmaExplainer.innerHTML = `${config.lemmaExplainer} Forms with a meaning of their own${keeps} keep their own card.`;
+        lemmaExplainer.innerHTML = `Related forms, such as ${config.lemmaExplainer.replace(' share one flashcard.', ', share one flashcard.')}`;
     }
     const cognateExplainer = document.querySelector('#cognateToggleContainer .fast-mode-explainer');
     if (cognateExplainer) {
@@ -614,6 +592,7 @@ function init() {
     window.matchMedia('(max-width: 899px)').addEventListener('change', event => {
         const secondary = document.getElementById('smartSkipSecondarySettings');
         if (secondary && 'open' in secondary) secondary.open = !event.matches || !cognateAvailable();
+        refresh();
     });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
     document.querySelectorAll('[data-ss-master]').forEach(button => {

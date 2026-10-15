@@ -4,9 +4,21 @@
 .app-loading-mark-text.is-flag { font-size: 88px; }
 .app-loading-mark-text.is-flag .flag-img { width: 104px; height: 78px; }
 
+/* No capsule: each POS pill is its own colour, darkened for white text, and
+   sits straight on the card glow. A lemma is plain text beside it. */
+.card-front .front-lemma-pair,
+.card-front .front-lemma-pair.is-pos-only {
+    background: none;
+    border: 0;
+    padding: 0;
+    min-height: 0;
+}
+.card-front .front-lemma-pair .front-lemma-name { color: var(--text-primary); }
+.card-front .front-lemma-pair .front-lemma-from { color: var(--text-primary); opacity: 0.75; }
 .card-front .front-lemma-pair .card-pos {
-    background: rgba(var(--front-pos-rgb, 160, 160, 160), 0.12);
-    color: color-mix(in srgb, rgb(var(--front-pos-rgb, 160, 160, 160)) 80%, var(--text-primary));
+    background: color-mix(in srgb, rgb(var(--front-pos-rgb, 160, 160, 160)) 52%, #10151a);
+    border-color: transparent;
+    color: #fff;
     font-weight: 700;
     text-shadow: none;
 }
@@ -47,11 +59,151 @@
 }
 .study-level-label[hidden] { display: none; }
 .card-back-scrubber { gap: 10px; }
-.account-ai { padding: 18px 0; border-bottom: 1px solid var(--border-color); }
-.account-ai p { margin: 8px 0 14px; color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
-.preferred-ai-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
-.preferred-ai-actions select { padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-secondary); color: var(--text-primary); font: inherit; }
-.preferred-ai-actions a { color: var(--accent-primary); font-size: 14px; }
+.account-ai {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 18px 0 0;
+    padding: 18px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 0;
+}
+.account-avatar--ai {
+    display: grid !important;
+    place-items: center;
+    flex: none;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.account-avatar--ai.is-chatgpt {
+    background: #10a37f;
+    color: #ffffff;
+}
+.account-avatar--ai.is-claude {
+    background: #d97757;
+    color: #ffffff;
+}
+.account-avatar--ai svg {
+    width: 38px;
+    height: 38px;
+    display: block;
+}
+.preferred-ai-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+.preferred-ai-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.preferred-ai-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font: 600 14px/1 var(--font-reading);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.preferred-ai-trigger:hover {
+    border-color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+.preferred-ai-trigger-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex: none;
+}
+.preferred-ai-trigger-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+.account-ai:has(.account-avatar--ai.is-chatgpt) .preferred-ai-trigger-icon {
+    color: #10a37f;
+}
+.account-ai:has(.account-avatar--ai.is-claude) .preferred-ai-trigger-icon {
+    color: #d97757;
+}
+.preferred-ai-chevron {
+    color: var(--text-muted);
+    transition: transform 0.15s ease;
+}
+.preferred-ai-dropdown.is-open .preferred-ai-chevron {
+    transform: rotate(180deg);
+}
+.preferred-ai-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 160px;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.preferred-ai-menu[hidden] {
+    display: none !important;
+}
+.preferred-ai-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text-primary);
+    font: 600 14px/1.2 var(--font-reading);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+.preferred-ai-option:hover {
+    background: var(--bg-tertiary);
+}
+.preferred-ai-option.is-selected {
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    font-weight: 700;
+}
+.ai-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex: none;
+}
+.ai-menu-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+.ai-menu-icon--chatgpt {
+    color: #10a37f;
+}
+.ai-menu-icon--claude {
+    color: #d97757;
+}
 /* The first action gets the same deliberate full-width placement as source choices. */
 #step1:not(.language-summary-active) #step1Header {
     width: 100%;
@@ -169,17 +321,30 @@
     box-shadow: none;
 }
 
-/* Explicit Smart Skip choices, with the outcome separate from Details. */
+/* Compact two-row Smart Skip panel at every screen size. */
 #setupOptions .fast-track-hub-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 12px;
-    padding: 6px 0;
+    gap: 0 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
     background: transparent;
     box-shadow: none;
 }
+#setupOptions .smart-skip-hub-label { grid-area: 1 / 1; }
+#setupOptions .smart-skip-choice { grid-area: 1 / 2; justify-self: end; }
+#setupOptions .smart-skip-summary-row {
+    grid-area: 2 / 1 / 3 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+}
+#setupOptions .smart-skip-hub-summary { margin: 0; }
+#setupOptions .smart-skip-details-btn { flex-shrink: 0; }
 .smart-skip-hub-label {
     text-align: left;
     text-transform: none;
@@ -220,55 +385,23 @@
     color: var(--accent-primary-text, #fff);
     box-shadow: 0 2px 8px color-mix(in srgb, var(--accent-primary) 35%, transparent);
 }
-.smart-skip-meta { display: contents; }
-.smart-skip-hub-examples { max-width: 240px; color: var(--text-secondary); font: 400 13px/1.3 var(--font-reading); }
-.smart-skip-hub-examples[hidden] { display: none; }
-.smart-skip-hub-summary { text-align: left; color: var(--text-secondary); font: 500 13px/1.3 var(--font-reading); }
-.smart-skip-details-icon-btn {
+.smart-skip-hub-summary { text-align: left; color: var(--text-secondary); font: 400 13px/1.4 var(--font-reading); }
+.smart-skip-details-btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    padding: 4px;
+    justify-content: flex-end;
+    gap: 6px;
+    min-height: 40px;
+    padding: 4px 0 4px 8px;
+    border: 0;
     background: transparent;
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
     color: var(--text-secondary);
+    font: 600 13px/1.4 var(--font-reading);
     cursor: pointer;
-    transition: all 0.15s ease;
-    flex-shrink: 0;
 }
-.smart-skip-details-icon-btn:hover {
-    color: var(--text-primary);
-    border-color: var(--accent-primary);
-    background: color-mix(in srgb, var(--accent-primary) 10%, transparent);
-}
-.smart-skip-details-icon-btn svg {
-    width: 20px;
-    height: 20px;
-    fill: none;
-    stroke: var(--accent-primary);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
+.smart-skip-details-btn:hover { color: var(--text-primary); }
 .smart-skip-choice button:focus-visible,
-.smart-skip-details-icon-btn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
-@media (max-width: 767px) {
-    #setupOptions .fast-track-hub-row {
-        display: grid;
-        grid-template-columns: auto auto auto;
-        justify-content: center;
-        align-items: center;
-        gap: 8px 10px;
-    }
-    .smart-skip-hub-label { grid-row: 1; grid-column: 1; }
-    .smart-skip-choice { grid-row: 1; grid-column: 2; }
-    .smart-skip-details-icon-btn { grid-row: 1; grid-column: 3; }
-    .smart-skip-meta { display: flex; justify-content: center; align-items: center; gap: 8px; grid-row: 2; grid-column: 1 / -1; }
-    .smart-skip-hub-examples { display: none; }
-}
+.smart-skip-details-btn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
 
 .level-help-section { margin: 16px 0; }
 .level-help-section h4 { margin: 0 0 6px; color: var(--text-primary); font: 700 16px/1.3 var(--font-emphasis); }
@@ -282,3 +415,51 @@
 
 .step-info-tooltip-inner .level-deck-total { display: block; margin-top: 12px; }
 .step-info-tooltip-inner .level-deck-total[hidden] { display: none; }
+
+/* Settings rows share the same inset across Study, App and Your words. */
+#settingsModal .settings-default-row,
+#settingsModal .settings-link-row,
+#settingsModal .settings-overview-footer .appearance-settings-card,
+#settingsModal .settings-words-saved-head {
+  box-sizing: border-box;
+  padding-inline: 16px;
+}
+
+/* Each legend swatch uses the exact fill of its progress-bar segment. */
+#levelColoursTooltip .info-point-badge {
+  min-width: 88px;
+  border: 1px solid var(--border-color);
+}
+#levelColoursTooltip .info-point-badge.is-new { background: var(--set-new); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-practice { background: var(--set-review); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-done { background: var(--set-known); color: #fff; }
+#levelColoursTooltip .info-point-badge.is-estimated { background: var(--set-estimated); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-skip { background: var(--set-skipped); color: #fff; }
+#levelEstimatedLegend[hidden] { display: none; }
+
+.smart-skip-language-name { display: none; }
+@media (min-width: 900px) {
+  .smart-skip-language-name { display: inline; }
+  .smart-skip-language-code { display: none; }
+}
+.smart-skip-browser-actions:has(> #smartSkipResultsCount:empty):has(> button[hidden]) { display: none; }
+
+/* Parts of speech of one lemma form one joined pill: a hairline gap between
+   segments, only the outer ends rounded. Short names show only when the full
+   names do not fit (.is-short, set by the card renderer). */
+.pos-short-label { display: none; }
+.card-front .front-pos-joined {
+    display: inline-flex;
+    gap: 2px;
+    max-width: 100%;
+}
+.card-front .front-pos-joined.is-short .pos-full-label { display: none; }
+.card-front .front-pos-joined.is-short .pos-short-label { display: inline; }
+.card-front .front-pos-joined > .front-pos-unit:not(:last-child) .card-pos {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.card-front .front-pos-joined > .front-pos-unit:not(:first-child) .card-pos {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
