@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Update card_preview.html with full Portuguese and Spanish datasets and language toggle."""
+"""Update card_preview.html with full Portuguese and Spanish datasets, allowed_lemmas, pips, and cycling."""
 import json
 from pathlib import Path
 
@@ -122,7 +122,7 @@ html_content = f"""<!DOCTYPE html>
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 24px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    padding: 28px 24px;
+    padding: 26px 22px;
     min-height: 520px;
     display: flex;
     flex-direction: column;
@@ -212,13 +212,13 @@ html_content = f"""<!DOCTYPE html>
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }}
   .back-word {{
-    font-size: 38px;
+    font-size: 44px;
     font-weight: 700;
     letter-spacing: -1.2px;
-    margin: 0 0 5px 0;
+    margin: 0 0 4px 0;
     line-height: 1.1;
     color: #ffffff;
     text-align: center;
@@ -242,9 +242,9 @@ html_content = f"""<!DOCTYPE html>
     background: #111a22;
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    padding: 5px 12px;
-    font-size: 14px;
-    margin: 0 auto 12px auto;
+    padding: 4px 12px;
+    font-size: 13.5px;
+    margin: 0 auto 10px auto;
     width: fit-content;
   }}
   .parts-pill {{
@@ -255,19 +255,19 @@ html_content = f"""<!DOCTYPE html>
     color: var(--text-muted);
   }}
 
-  /* Relationship duty boxes */
+  /* Relationship duty boxes — open by default */
   .relations-list {{
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 18px;
+    gap: 7px;
+    margin-bottom: 12px;
   }}
   .relation-box {{
     width: 100%;
     text-align: left;
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 10px 16px;
+    padding: 10px 14px;
     background: rgba(255, 255, 255, 0.02);
     color: var(--text-primary);
     cursor: pointer;
@@ -281,49 +281,48 @@ html_content = f"""<!DOCTYPE html>
     border-color: rgba(var(--fw-glow-rgb), 0.85);
     background: rgba(var(--fw-glow-rgb), 0.10);
     box-shadow: 0 0 0 1px rgba(var(--fw-glow-rgb), 0.3);
-    padding: 13px 16px;
   }}
   .relation-formula {{
-    font-size: 16px;
+    font-size: 15.5px;
     font-weight: 700;
     color: #fff;
     letter-spacing: -0.2px;
-    margin-bottom: 0;
+    margin-bottom: 4px;
     line-height: 1.25;
-  }}
-  .relation-box.selected .relation-formula {{
-    margin-bottom: 6px;
   }}
   .relation-formula .token-v, .relation-formula .fw-token-v {{ color: var(--color-verb); }}
   .relation-formula .token-c, .relation-formula .fw-token-c {{ color: var(--color-noun); }}
   .relation-formula .token-fw, .relation-formula .fw-token-connector {{ color: var(--color-connector); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }}
 
   .relation-rule {{
-    font-size: 13.5px;
-    line-height: 1.45;
+    font-size: 13.8px;
+    line-height: 1.4;
     color: #cbd5e1;
     margin: 0;
-    display: none;
-  }}
-  .relation-box.selected .relation-rule {{
     display: block;
   }}
 
-  /* Clean Example Panel */
+  /* Clean Example Panel with Cycling & Pips */
   .sentence-panel {{
     margin-top: auto;
     background: #0d151c;
     border: 1px solid var(--border-subtle);
-    border-radius: 16px;
-    padding: 20px 18px;
+    border-radius: 15px;
+    padding: 16px 18px;
     text-align: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease;
+  }}
+  .sentence-panel:hover {{
+    background: #111a24;
   }}
   .sentence-target {{
-    font-size: 24px;
+    font-size: 23px;
     font-weight: 700;
     line-height: 1.35;
     color: #f4f5f6;
-    margin: 0 0 6px;
+    margin: 0 0 5px;
   }}
   .sentence-target .token-v, .sentence-target .fw-token-v {{ color: var(--color-verb); }}
   .sentence-target .token-fw, .sentence-target .fw-token-connector {{
@@ -334,47 +333,87 @@ html_content = f"""<!DOCTYPE html>
   }}
   .sentence-target .token-c, .sentence-target .fw-token-c {{ color: var(--color-noun); }}
   .sentence-translation {{
-    font-size: 15px;
+    font-size: 14.5px;
     color: var(--text-muted);
     margin: 0;
   }}
+
+  /* Credit & Pips Row */
+  .fw-example-credit-row {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    min-height: 18px;
+  }}
+  .fw-credit-start {{
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }}
+  .fw-sentence-ticks-container {{
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }}
+  .example-ticks {{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }}
+  .example-tick {{
+    width: 7.5px;
+    height: 7.5px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }}
+  .example-tick.is-current {{
+    background: #ffffff;
+    transform: scale(1.15);
+  }}
+
   .tap-flip-hint {{
     text-align: center;
     font-size: 12px;
     color: var(--text-muted);
-    opacity: 0.6;
     margin-top: 12px;
   }}
 </style>
 </head>
 <body>
 
-  <!-- Controls -->
+  <!-- Language & Side Controls -->
   <div class="top-controls">
     <div class="toggle-group">
-      <button class="toggle-btn active" id="btnPT" onclick="setLang('pt')">Portuguese ({len(pt_data)})</button>
-      <button class="toggle-btn" id="btnES" onclick="setLang('es')">Spanish ({len(es_data)})</button>
+      <button id="btnPT" class="toggle-btn active" onclick="setLang('pt')">Portuguese (44)</button>
+      <button id="btnES" class="toggle-btn" onclick="setLang('es')">Spanish (37)</button>
     </div>
     <div class="toggle-group">
-      <button class="toggle-btn" id="btnFront" onclick="setSide('front')">Front</button>
-      <button class="toggle-btn active" id="btnBack" onclick="setSide('back')">Back</button>
+      <button id="btnFront" class="toggle-btn" onclick="setSide('front')">Front</button>
+      <button id="btnBack" class="toggle-btn active" onclick="setSide('back')">Back</button>
     </div>
     <div class="toggle-group">
-      <button class="toggle-btn active" id="btnMobile" onclick="setViewport('mobile')">Mobile (390px)</button>
-      <button class="toggle-btn" id="btnDesktop" onclick="setViewport('desktop')">Desktop (520px)</button>
+      <button id="btnMobile" class="toggle-btn active" onclick="setViewport('mobile')">Mobile (390px)</button>
+      <button id="btnDesktop" class="toggle-btn" onclick="setViewport('desktop')">Desktop (520px)</button>
     </div>
   </div>
 
-  <!-- Words Nav -->
+  <!-- Word Selector Bar -->
   <div class="controls-bar" id="wordNav"></div>
 
-  <!-- Real Card Viewport -->
+  <!-- Card Frame -->
   <div class="card-viewport" id="viewport">
     <div class="card-shell" onclick="handleCardClick(event)">
       <div class="card-tint"></div>
       <div id="cardContent"></div>
     </div>
-    <div class="tap-flip-hint">Click card background to flip</div>
+    <div class="tap-flip-hint">Click card background to flip · Click sentence panel to cycle examples</div>
   </div>
 
 <script>
@@ -384,9 +423,10 @@ const SUITES = {{
 }};
 
 let currentLang = "pt";
-let activeWord = "de";
+let activeWord = "que";
 let currentSide = "back";
 let activeRelIdx = 0;
+let activeExIdx = 0;
 
 function setLang(lang) {{
   currentLang = lang;
@@ -395,6 +435,7 @@ function setLang(lang) {{
   const words = Object.keys(SUITES[lang]);
   activeWord = words[0];
   activeRelIdx = 0;
+  activeExIdx = 0;
   renderNav();
   renderCard();
 }}
@@ -418,6 +459,7 @@ function setViewport(mode) {{
 function selectWord(w) {{
   activeWord = w;
   activeRelIdx = 0;
+  activeExIdx = 0;
   renderNav();
   renderCard();
 }}
@@ -425,11 +467,24 @@ function selectWord(w) {{
 function selectRelation(event, idx) {{
   event.stopPropagation();
   activeRelIdx = idx;
+  activeExIdx = 0;
+  renderCard();
+}}
+
+function cycleExample(event) {{
+  event.stopPropagation();
+  const item = SUITES[currentLang][activeWord];
+  if (!item) return;
+  const relations = item.relations || item.uses || [];
+  const currentRel = relations[activeRelIdx] || relations[0];
+  const examples = currentRel?.examples || (currentRel?.targetHTML ? [currentRel] : []);
+  if (examples.length <= 1) return;
+  activeExIdx = (activeExIdx + 1) % examples.length;
   renderCard();
 }}
 
 function handleCardClick(event) {{
-  if (event.target.closest("button")) return;
+  if (event.target.closest("button") || event.target.closest(".sentence-panel")) return;
   setSide(currentSide === "front" ? "back" : "front");
 }}
 
@@ -439,6 +494,14 @@ function renderNav() {{
   container.innerHTML = words.map(w => `
     <button class="pill-btn ${{w === activeWord ? 'active' : ''}}" onclick="selectWord('${{w}}')">${{w}}</button>
   `).join("");
+}}
+
+function renderTicks(total, current) {{
+  if (total < 2) return "";
+  const ticks = Array.from({{ length: total }}, (_, i) =>
+    `<span class="example-tick${{i === current ? ' is-current' : ''}}"></span>`
+  ).join("");
+  return `<div class="example-ticks" role="img" aria-label="Example ${{current + 1}} of ${{total}}">${{ticks}}</div>`;
 }}
 
 function renderCard() {{
@@ -501,6 +564,14 @@ function renderCard() {{
     </button>
   `).join("");
 
+  const examples = currentRel?.examples || (currentRel?.targetHTML ? [currentRel] : []);
+  if (activeExIdx >= examples.length) activeExIdx = 0;
+  const currentEx = examples[activeExIdx] || currentRel;
+  const targetHTML = currentEx?.targetHTML || currentRel?.targetHTML || "";
+  const transHTML = currentEx?.translation || currentRel?.translation || "";
+  const sourceText = currentEx?.source || "";
+  const ticksHTML = renderTicks(examples.length, activeExIdx);
+
   container.innerHTML = `
     <div class="back-view">
       <div class="back-header">
@@ -511,9 +582,13 @@ function renderCard() {{
       <div class="relations-list">
         ${{relationsHTML}}
       </div>
-      <div class="sentence-panel">
-        <div class="sentence-target">${{currentRel?.targetHTML || currentRel?.target || ''}}</div>
-        <div class="sentence-translation">${{currentRel?.translation || ''}}</div>
+      <div class="sentence-panel" onclick="cycleExample(event)">
+        <div class="sentence-target">${{targetHTML}}</div>
+        <div class="sentence-translation">${{transHTML}}</div>
+        <div class="fw-example-credit-row">
+          <span class="fw-credit-start">${{sourceText}}</span>
+          <div class="fw-sentence-ticks-container">${{ticksHTML}}</div>
+        </div>
       </div>
     </div>
   `;
@@ -529,4 +604,4 @@ renderCard();
 with open(PREVIEW_FILE, "w") as f:
     f.write(html_content)
 
-print(f"Updated {PREVIEW_FILE} with PT ({len(pt_data)}) and ES ({len(es_data)}) suites.")
+print(f"Updated {PREVIEW_FILE} with PT ({len(pt_data)}) and ES ({len(es_data)}) suites, pips, and cycling.")
