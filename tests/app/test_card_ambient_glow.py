@@ -42,6 +42,9 @@ class CardAmbientGlowTests(unittest.TestCase):
                     'ADJ': '245, 166, 35',
                     'adj': '245, 166, 35',
                     'pos-adj': '245, 166, 35',
+                    'PREP': '236, 72, 153',
+                    'prep': '236, 72, 153',
+                    'pos-prep': '236, 72, 153',
                 };
                 return map[pos] || '148, 163, 184';
             };
@@ -126,6 +129,24 @@ class CardAmbientGlowTests(unittest.TestCase):
             const sameColorGlow = getGlow(sameColorCard);
             if (!sameColorGlow.includes('circle at 50% 20%')) {
                 throw new Error('Same-color POS meanings should produce a single centered glow: ' + sameColorGlow);
+            }
+
+            // 5. Function word: should NOT have white halo (212, 218, 245), should have normal POS glow
+            const functionWordCard = {
+                word: 'de',
+                targetWord: 'de',
+                functionWord: true,
+                partOfSpeech: 'PREP',
+                meanings: [
+                    { pos: 'PREP', meaning: 'of / from', percentage: 1.0, targetSentence: 'de nada' }
+                ]
+            };
+            const fwGlow = getGlow(functionWordCard, 'pt');
+            if (fwGlow.includes('212, 218, 245')) {
+                throw new Error('Function word should NOT have white halo: ' + fwGlow);
+            }
+            if (!fwGlow.includes('rgba(236, 72, 153, 0.18)')) {
+                throw new Error('Function word should have preposition POS glow: ' + fwGlow);
             }
         """
         result = subprocess.run(

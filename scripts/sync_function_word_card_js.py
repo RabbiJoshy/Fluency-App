@@ -148,19 +148,14 @@ export function getSpanishGrammarDefinition(card, lang) {{
 export function getCardAmbientGlow(card, lang, activePos, isSplitCard, getPosAccentRgbFn) {{
     const getRgb = getPosAccentRgbFn || (typeof window !== 'undefined' ? window.getPosAccentRgb : null) || (() => '148, 163, 184');
 
-    // 1. Function words get the dedicated Periwinkle Moonstone Off-White halo
-    if (isFunctionWordCard(card, lang)) {{
-        return `radial-gradient(circle at 50% 20%, rgba(${{FW_SIGNATURE_GLOW_RGB}}, 0.18), transparent 70%)`;
-    }}
-
-    // 2. Companion card ("Card 1 of 2"): single POS color matching active companion card
+    // 1. Companion card ("Card 1 of 2"): single POS color matching active companion card
     if (isSplitCard && card?.splitInfo) {{
         const splitPos = card.splitInfo.pos || card.partOfSpeech || activePos;
         const rgb = getRgb(splitPos);
         return `radial-gradient(circle at 50% 20%, rgba(${{rgb}}, 0.18), transparent 70%)`;
     }}
 
-    // 3. Merged lemmas: merged cards represent a single unified lexeme (verb).
+    // 2. Merged lemmas: merged cards represent a single unified lexeme (verb).
     // Always emits a single centered radial glow in the verb color (green).
     if (card?.mergedLemma) {{
         const mergedPos = (card.partOfSpeech && !/verb|aux/i.test(card.partOfSpeech))
@@ -235,8 +230,12 @@ export function getCardAmbientGlow(card, lang, activePos, isSplitCard, getPosAcc
     }}
 
     if (distinctRgb.length === 0) {{
-        const fallbackPos = card?.partOfSpeech || activePos;
-        distinctRgb = [getRgb(fallbackPos)];
+        let fallbackPos = card?.partOfSpeech;
+        if (!fallbackPos || String(fallbackPos).toUpperCase() === 'FW') {{
+            const gw = typeof getGrammarWordDefinition === 'function' ? getGrammarWordDefinition(card, lang) : null;
+            fallbackPos = gw?.role || gw?.pos || card?.pos || activePos;
+        }}
+        distinctRgb = [getRgb(fallbackPos || activePos)];
     }}
 
     const activeRgb = activePos ? getRgb(activePos) : null;
