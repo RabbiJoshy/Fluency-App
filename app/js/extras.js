@@ -3,8 +3,8 @@
 // vocabulary in the same browser, with no coverage gate or separate setup.
 // The filtered vocabulary snapshot supplies the active songs and original IDs.
 // Each supplementary word has one home even when it also resembles a cognate.
-import './state.js?v=5e20c62b';
-import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=5e20c62b';
+import './state.js?v=fe7d652a';
+import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=fe7d652a';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -745,7 +745,7 @@ let _ssRendered = 0;
 let _ssObserver = null;
 let _ssSignature = '';
 
-let _activeCognateFilterLang = 'all';
+let _activeCognateFilterLang = 'en';
 
 function skipEntriesFor(extras, category) {
     if (category === 'song:all') return extras.supplementary || [];
@@ -1004,16 +1004,15 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
             || options.find(option => option.id !== 'all')?.id
             || options[0]?.id || 'all');
     const activeKnown = g().activeKnownLanguages?.() || [];
-    if (_activeCognateFilterLang !== 'all' && !activeKnown.includes(_activeCognateFilterLang)) {
-        _activeCognateFilterLang = 'all';
+    if (!_activeCognateFilterLang || _activeCognateFilterLang === 'all' || !activeKnown.includes(_activeCognateFilterLang)) {
+        _activeCognateFilterLang = activeKnown.includes('en') ? 'en' : (activeKnown[0] || 'en');
     }
     const showLangBtn = category === 'cognate' && activeKnown.length > 1;
     const langBtn = document.getElementById('smartSkipCognateLangFilter');
     if (langBtn) {
         langBtn.hidden = !showLangBtn;
         if (showLangBtn) {
-            const allCount = (extras.byCategory?.cognate || []).length;
-            const optionsHtml = [`<option value="all">All languages (${allCount.toLocaleString()})</option>`];
+            const optionsHtml = [];
             const check = g().isCognateKnownForLanguage;
             for (const code of activeKnown) {
                 const flag = g().knownLanguageFlag?.(code) || '';

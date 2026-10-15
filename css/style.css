@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=5e20c62b");
+@import url("./appearance.css?v=fe7d652a");
 
 
         * {
@@ -17368,27 +17368,78 @@
 }
 .known-languages-context {
   margin-top: 10px;
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.12);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.15);
   border: 1px solid var(--border-color);
+}
+.known-languages-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.known-languages-bar-title {
+  font: 700 12px/1.2 var(--font-emphasis);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.known-languages-manage-btn {
+  background: transparent;
+  border: 0;
+  padding: 2px 4px;
+  color: var(--accent-primary);
+  font: 600 12px/1.2 var(--font-reading);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.known-languages-manage-btn:hover {
+  color: var(--text-primary);
 }
 .known-languages-folded-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .known-language-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 8px;
+  gap: 6px;
+  padding: 5px 10px;
   border-radius: 999px;
   background: var(--bg-tertiary, rgba(255, 255, 255, 0.08));
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   font: 500 12px/1.2 var(--font-reading);
   color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.known-language-chip.is-active {
+  background: color-mix(in srgb, var(--accent-primary) 18%, var(--bg-card, #1c2430));
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 0 8px rgba(var(--accent-primary-rgb, 255, 107, 53), 0.2);
+}
+.known-language-chip.is-active:hover {
+  background: color-mix(in srgb, var(--accent-primary) 28%, var(--bg-card, #1c2430));
+}
+.known-language-chip.is-inactive {
+  background: transparent;
+  border-style: dashed;
+  opacity: 0.65;
+}
+.known-language-chip.is-inactive:hover {
+  opacity: 1;
+  border-color: var(--text-secondary);
+}
+.known-language-chip-status {
+  font-size: 11px;
+  font-weight: 750;
+  opacity: 0.9;
 }
 .known-language-chip-flag {
   font-size: 13px;
@@ -17401,10 +17452,10 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 9px;
+  padding: 5px 10px;
   border-radius: 999px;
   background: transparent;
-  border: 1px dashed color-mix(in srgb, var(--accent-primary) 50%, var(--border-color));
+  border: 1.5px dashed color-mix(in srgb, var(--accent-primary) 60%, var(--border-color));
   color: var(--accent-primary);
   font: 600 12px/1.2 var(--font-reading);
   cursor: pointer;
@@ -17418,6 +17469,90 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1;
+}
+
+/* Smart Skip Activation Feedback Toast (especially prominent on mobile) */
+.smart-skip-animation-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px) scale(0.95);
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.smart-skip-animation-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+.smart-skip-animation-toast.fade-out {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-10px) scale(0.95);
+}
+.smart-skip-toast-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  background: color-mix(in srgb, var(--bg-card, #1c2430) 90%, #000);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 45%, var(--border-color));
+  border-radius: 999px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 18px rgba(var(--accent-primary-rgb, 255, 107, 53), 0.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.smart-skip-toast-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(var(--accent-primary-rgb, 255, 107, 53), 0.25);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: smartSkipSpin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+.smart-skip-toast-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #15803d;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.smart-skip-toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.smart-skip-toast-title {
+  font: 700 13px/1.2 var(--font-emphasis);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.smart-skip-toast-flasher {
+  font: 500 12px/1.2 var(--font-reading);
+  color: var(--accent-primary);
+  height: 15px;
+  overflow: hidden;
+}
+.smart-skip-flashed-word {
+  display: inline-block;
+  font-style: italic;
+}
+.smart-skip-flashed-word.word-pop {
+  animation: wordPop 0.2s ease-out;
+}
+@keyframes smartSkipSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes wordPop {
+  0% { transform: translateY(4px); opacity: 0.5; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 /* The shared toggle style scrolls and shrinks. On this row the label has to
    stay readable beside the view link, so the switch keeps its own width. */
@@ -24007,10 +24142,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 /* Landing page, 2026-10-09: the set legend reads at the size of "Set 1" (a touch
    smaller on a phone so four counts still fit), the level readout's two halves
    share one size, and the level box's example words fill desktop width. */
-#step4 .study-set-current-copy span { font-size: 16px; }
-#step4 .study-set-current-copy { gap: 2px 12px; }
-.study-set-stat + .study-set-stat { margin-left: 14px; }
-.study-set-stat i { width: 12px; height: 12px; }
+#step4 .study-set-current-copy span { font-size: 13px; }
+#step4 .study-set-current-copy { gap: 2px 8px; }
+.study-set-stat + .study-set-stat { margin-left: 10px; }
+.study-set-stat i { width: 10px; height: 10px; }
 .study-set-stat i.is-skipped {
   background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0 2px, transparent 2px 4px);
 }
@@ -24018,16 +24153,17 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .lsw-readout .lsw-rank { font-size: 20px; }
 .lsw-examples .lsw-eg-extra { display: none; }
 @media (min-width: 760px) {
-  #step4 .study-set-current-copy span { font-size: 18px; }
+  #step4 .study-set-current-copy span { font-size: 14px; }
   .lsw-readout,
   .lsw-readout .lsw-rank { font-size: 22px; }
   .lsw-examples .lsw-eg-extra { display: inline; }
   .lsw-examples .lsw-egs { max-width: 92%; }
 }
 @media (max-width: 480px) {
-  #step4 .study-set-current-copy span { font-size: 15px; }
-  .study-set-stat + .study-set-stat { margin-left: 10px; }
-  .study-set-stat i { margin-right: 5px; }
+  #step4 .study-set-current-copy span { font-size: 11px; flex-wrap: nowrap; gap: 2px 5px; }
+  .study-set-stat { font-size: 11px; }
+  .study-set-stat + .study-set-stat { margin-left: 4px; }
+  .study-set-stat i { width: 8px; height: 8px; margin-right: 3px; }
   .lsw-readout,
   .lsw-readout .lsw-rank { font-size: 18px; }
 }
@@ -24633,8 +24769,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 6px 12px;
-  font-size: 14px;
+  gap: 3px 8px;
+  font-size: 13px;
   color: var(--text-secondary);
 }
 #step4 .study-set-stat + .study-set-stat { margin-left: 0; }
@@ -24717,12 +24853,20 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   border-radius: 6px;
   overflow: hidden;
   margin: 8px 0;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
   background: linear-gradient(to right,
     var(--set-new) 0 var(--level-new-end),
     var(--set-review) var(--level-new-end) var(--level-review-end),
     var(--set-known) var(--level-review-end) var(--level-known-end),
     var(--set-estimated) var(--level-known-end) var(--level-estimated-end),
     var(--set-skipped) var(--level-estimated-end) 100%);
+}
+#step4 .study-level-bar:hover,
+#step4 .study-level-bar:focus-visible {
+  box-shadow: 0 0 10px rgba(var(--accent-primary-rgb, 255, 107, 53), 0.45);
+  transform: scaleY(1.15);
+  outline: none;
 }
 #step4 .study-set-choice { min-width: 0; }
 #step4 .study-set-current-copy span { color: var(--text-primary); }
@@ -24999,15 +25143,22 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 
 /* The selected level carries its word band and the size of the level ladder. */
 .lsw-segments.lsw-scrubber .lsw-seg.selected {
-  width: 172px;
-  height: 94px;
+  width: 184px;
+  height: 98px;
   box-shadow: 0 0 20px color-mix(in srgb, var(--accent-primary) 35%, transparent),
     0 4px 14px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(255, 255, 255, .15);
 }
-.lsw-seg-heading { display: flex; align-items: baseline; justify-content: center; gap: 7px; }
+.lsw-seg-heading { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
 .lsw-segments.lsw-scrubber .lsw-seg.selected .lsw-seg-eyebrow {
-  font-size: 17px;
+  font-size: 22px;
+  font-weight: 850;
+  letter-spacing: 0.06em;
   margin-bottom: 0;
+}
+.lsw-segments.lsw-scrubber .lsw-seg.selected .lsw-seg-num {
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1;
 }
 .lsw-seg-words, .lsw-seg-total { display: none; white-space: nowrap; }
 .lsw-segments.lsw-scrubber .lsw-seg.selected .lsw-seg-words {

@@ -1,13 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=5e20c62b';
-import { readJsonWithTimeout } from './read-request.js?v=5e20c62b';
-import { validateVocabularyIndex } from './data-contracts.js?v=5e20c62b';
-import { formatRoute } from './routes.js?v=5e20c62b';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=5e20c62b';
-import { releaseUrl } from './release-host.js?v=5e20c62b';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=5e20c62b';
+import './state.js?v=fe7d652a';
+import { readJsonWithTimeout } from './read-request.js?v=fe7d652a';
+import { validateVocabularyIndex } from './data-contracts.js?v=fe7d652a';
+import { formatRoute } from './routes.js?v=fe7d652a';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=fe7d652a';
+import { releaseUrl } from './release-host.js?v=fe7d652a';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=fe7d652a';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -100,8 +100,13 @@ function readStudySession(key) {
     try {
         let raw = localStorage.getItem(studySessionStorageKey(key));
         // Earlier snapshots had no account scope. Preserve them only for
-        // legacy initials profiles, never for a newly separated profile.
-        if (!raw && currentUser && !currentUser.isGuest && !String(currentUser.initials).startsWith('profile_')) {
+        // legacy initials profiles, never for a newly separated profile or Clerk account.
+        const isLegacyInitials = Boolean(currentUser && !currentUser.isGuest
+            && !currentUser.authProvider
+            && !String(currentUser.initials).startsWith('profile_')
+            && !String(currentUser.initials).startsWith('clerk_')
+            && /^[A-Z]{2,4}$/.test(String(currentUser.initials || '')));
+        if (!raw && isLegacyInitials) {
             raw = localStorage.getItem(key);
             if (raw) {
                 localStorage.setItem(studySessionStorageKey(key), raw);

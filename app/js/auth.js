@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=5e20c62b';
-import { readJsonWithTimeout } from './read-request.js?v=5e20c62b';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=5e20c62b';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=5e20c62b';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=5e20c62b';
-import { dbGet, dbPut } from './offline-db.js?v=5e20c62b';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=5e20c62b';
+import './state.js?v=fe7d652a';
+import { readJsonWithTimeout } from './read-request.js?v=fe7d652a';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=fe7d652a';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=fe7d652a';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=fe7d652a';
+import { dbGet, dbPut } from './offline-db.js?v=fe7d652a';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=fe7d652a';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=5e20c62b';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=5e20c62b';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=5e20c62b';
+} from './sync-queue.js?v=fe7d652a';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=fe7d652a';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=fe7d652a';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -333,13 +333,37 @@ async function submitLogin() {
     return submitProfileLogin(completeProfileLogin);
 }
 
+function clearDeviceSessionState() {
+    try {
+        localStorage.removeItem('fluencyPreferredLanguageV1');
+        localStorage.removeItem('fluency_language_profile_v1|guest');
+        localStorage.removeItem('fluency_known_languages_v1');
+        localStorage.removeItem('fluency_last_study_session_v1');
+        localStorage.removeItem('fluency_last_study_session_v1:user:guest');
+        sessionStorage.removeItem('fluency_resume_prompt_seen_v1');
+        sessionStorage.removeItem('fluencyPendingSpeechLanguage');
+        sessionStorage.removeItem('flashcardGuestSession');
+    } catch (_) {}
+    document.getElementById('resumeLastSetCard')?.remove();
+}
+
 async function completeProfileLogin(user) {
     currentUser = user;
+    if (user.isNew) {
+        clearDeviceSessionState();
+        document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+    }
     window.applyGlobalStudyDefaults?.();
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
     hideAuthModal();
-    setTimeout(_openFirstRunTutorialUnlessLinked, 250);
+    if (user.isNew) {
+        setTimeout(() => {
+            window.showLanguagePicker?.(config.languages);
+        }, 150);
+    } else {
+        setTimeout(_openFirstRunTutorialUnlessLinked, 250);
+    }
 
     // Load user progress from Google Sheets
     await loadUserProgressFromSheet();
@@ -493,6 +517,7 @@ async function logout() {
     if (PASSWORDLESS_ENABLED) {
         await window.flushQueue?.().catch(() => {});
         localStorage.removeItem('flashcardUser');
+        clearDeviceSessionState();
         await window.Clerk?.signOut();
         window.location.reload();
         return;
@@ -507,8 +532,7 @@ async function logout() {
         localStorage.removeItem(`progress_cache_${getIsolatedSyncUser(currentUser.initials)}`);
     }
     localStorage.removeItem('flashcardUser');
-    // Clean the legacy sessionStorage guest marker too, in case it's lingering.
-    sessionStorage.removeItem('flashcardGuestSession');
+    clearDeviceSessionState();
     currentUser = null;
     window.applyGlobalStudyDefaults?.();
     progressData = {}; window.bumpProgressEpoch?.();

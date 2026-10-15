@@ -1,6 +1,6 @@
 // One language background per account, independent of any deck's skip policy.
-import { sendOrQueue } from './sync-queue.js?v=5e20c62b';
-import { getIsolatedSyncUser } from './env.js?v=5e20c62b';
+import { sendOrQueue } from './sync-queue.js?v=fe7d652a';
+import { getIsolatedSyncUser } from './env.js?v=fe7d652a';
 
 const PREFIX = 'fluency_language_profile_v1';
 const LEGACY = 'fluency_known_languages_v1';
@@ -23,7 +23,8 @@ function read() {
     // Adopt the old browser preference once; never seed unrelated accounts.
     const owner = get(OWNER);
     const legacy = parse(get(LEGACY));
-    if (Array.isArray(legacy) && (!owner || owner === account())) {
+    const isLegacyAccount = /^[A-Z]{2,4}$/.test(account());
+    if (Array.isArray(legacy) && ((!owner && isLegacyAccount) || owner === account())) {
         const migrated = normalize({languages: legacy, confirmed: true, updatedAt: 0});
         store(migrated);
         try { localStorage.setItem(OWNER, account()); } catch (_) {}
