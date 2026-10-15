@@ -22,6 +22,7 @@
         "Each companion card now lists the lemma/POS pill(s) built from its own senses; the dimmed sibling pill is gone.",
         "A single neutral \"Card N of M\" label sits under the pills and still opens the \"why separate cards?\" note.",
         "POS-only pills now keep the dark capsule behind them (as \"from lemma\" pills do), for legibility against the glow.",
+        "Experiment: a bare POS pill has no capsule; the pill itself is dark with white text and a POS-colour ring. Lemma pairs keep the capsule.",
         "The capsule is a fixed dark backing with white text (POS, lemma and \"from\") in light and dark themes; the POS colour stays in the pill's wash.",
         "Switching to the sibling is by the next/previous card, as the pair is adjacent in the deck."
       ],
