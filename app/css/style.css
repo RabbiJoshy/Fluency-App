@@ -25445,10 +25445,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   margin-bottom: 14px;
 }
 .fw-heading {
-  font: 700 38px/1.1 var(--font-emphasis, "Space Grotesk");
+  font: 700 44px/1.1 var(--font-emphasis, "Space Grotesk");
   letter-spacing: -1.2px;
   color: #ffffff;
-  margin: 0 0 5px 0;
+  margin: 0 0 4px 0;
   text-align: center;
 }
 .fw-section-header {
@@ -25468,9 +25468,9 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   background: #111a22;
   border: 1px solid var(--border-color, #2d3f50);
   border-radius: 10px;
-  padding: 5px 12px;
-  font-size: 14px;
-  margin: 0 auto 14px auto;
+  padding: 4px 12px;
+  font-size: 13.5px;
+  margin: 0 auto 10px auto;
   width: fit-content;
 }
 .fw-part-pill {
@@ -25487,15 +25487,15 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-relations-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: 7px;
+  margin-bottom: 14px;
 }
 .fw-relation-box {
   width: 100%;
   text-align: left;
   border: 1px solid var(--border-color, #283745);
   border-radius: 12px;
-  padding: 10px 16px;
+  padding: 10px 14px;
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-primary);
   cursor: pointer;
@@ -25510,29 +25510,20 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   border-color: rgba(212, 218, 245, 0.85);
   background: rgba(212, 218, 245, 0.10);
   box-shadow: 0 0 0 1px rgba(212, 218, 245, 0.3);
-  padding: 13px 16px;
 }
 .fw-relation-formula {
-  font-size: 16px;
+  font-size: 15.5px;
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.2px;
-  margin-bottom: 0;
+  margin-bottom: 4px;
   line-height: 1.25;
 }
-.fw-relation-box.is-selected .fw-relation-formula,
-.fw-relation-box[aria-pressed="true"] .fw-relation-formula {
-  margin-bottom: 6px;
-}
 .fw-relation-rule {
-  font-size: 13.5px;
-  line-height: 1.45;
+  font-size: 13.8px;
+  line-height: 1.4;
   color: #cbd5e1;
   margin: 0;
-  display: none;
-}
-.fw-relation-box.is-selected .fw-relation-rule,
-.fw-relation-box[aria-pressed="true"] .fw-relation-rule {
   display: block;
 }
 
@@ -25555,8 +25546,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   margin-top: auto;
   background: #0d151c;
   border: 1px solid #23313f;
-  border-radius: 16px;
-  padding: 20px 18px;
+  border-radius: 15px;
+  padding: 16px 18px;
   text-align: center;
   cursor: pointer;
 }
@@ -25565,7 +25556,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   font-weight: 700;
   line-height: 1.35;
   color: #f4f5f6;
-  margin: 0 0 6px;
+  margin: 0 0 5px;
 }
 .fw-sentence-target .fw-token-v {
   color: #38bdf8;
