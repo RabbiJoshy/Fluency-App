@@ -14,6 +14,14 @@ const LANGUAGE_KEY = {
     spanish: 'spanish', es: 'spanish',
     portuguese: 'portuguese', portuguese_brazilian: 'portuguese', pt: 'portuguese',
     french: 'french', fr: 'french',
+    italian: 'italian', it: 'italian',
+};
+
+const LANGUAGE_DISPLAY = {
+    spanish: 'Spanish',
+    portuguese: 'Portuguese',
+    french: 'French',
+    italian: 'Italian',
 };
 
 // [target ending, English ending]. Longest first so -ciones is tried before
@@ -21,6 +29,21 @@ const LANGUAGE_KEY = {
 const ROMANCE_VERBS = [
     ['ar', 'ate'], ['ar', 'e'], ['ar', ''], ['er', ''], ['er', 'e'], ['ir', ''], ['ir', 'e'],
 ];
+
+const PREFIX_RULES = {
+    spanish: [
+        ['es', 's'],
+    ],
+    portuguese: [
+        ['es', 's'],
+    ],
+    french: [
+        ['é', 's'],
+        ['es', 's'],
+    ],
+    italian: [],
+};
+
 const RULES = {
     spanish: [
         ['idades', 'ities'], ['idad', 'ity'], ['dades', 'ties'], ['dad', 'ty'],
@@ -53,13 +76,65 @@ const RULES = {
         ['able', 'able'], ['ible', 'ible'], ['eur', 'or'], ['ie', 'y'],
         ['er', ''], ['er', 'e'], ['ir', ''], ['ir', 'e'], ['é', 'ed'], ['e', ''],
     ],
+    italian: [
+        ['ità', 'ity'], ['zioni', 'tions'], ['zione', 'tion'],
+        ['sioni', 'sions'], ['sione', 'sion'], ['mente', 'ly'],
+        ['oso', 'ous'], ['osa', 'ous'], ['osi', 'ous'], ['ose', 'ous'],
+        ['ismo', 'ism'], ['ista', 'ist'], ['isti', 'ists'], ['iste', 'ists'],
+        ['ivo', 'ive'], ['iva', 'ive'], ['ivi', 'ive'], ['ive', 'ive'],
+        ['ico', 'ic'], ['ica', 'ic'], ['ici', 'ic'], ['iche', 'ic'],
+        ['ario', 'ary'], ['aria', 'ary'], ['anza', 'ance'], ['enza', 'ence'],
+        ['ante', 'ant'], ['ente', 'ent'], ['abile', 'able'], ['ibile', 'ible'],
+        ['ore', 'or'], ['ale', 'al'], ['are', 'ate'], ['are', 'e'], ['are', ''],
+        ['ere', ''], ['ire', ''], ['o', ''], ['a', ''], ['e', ''],
+    ],
+};
+
+// Twin examples that show how a rule transfers across familiar words
+const RULE_TWINS = {
+    'mente': ['totalmente → totally', 'perfectamente → perfectly'],
+    'ment': ['totalement → totally', 'parfaitement → perfectly'],
+    'ción': ['nación → nation', 'acción → action'],
+    'ciones': ['naciones → nations', 'acciones → actions'],
+    'ção': ['nação → nation', 'acção → action'],
+    'ções': ['nações → nations', 'acções → actions'],
+    'zione': ['nazione → nation', 'azione → action'],
+    'zioni': ['nazioni → nations', 'azioni → actions'],
+    'tion': ['nation → nation', 'action → action'],
+    'tions': ['nations → nations', 'actions → actions'],
+    'dad': ['ciudad → city', 'realidad → reality'],
+    'dade': ['cidade → city', 'realidade → reality'],
+    'ità': ['città → city', 'realtà → reality'],
+    'ité': ['cité → city', 'réalité → reality'],
+    'oso': ['famoso → famous', 'curioso → curious'],
+    'osa': ['famosa → famous', 'curiosa → curious'],
+    'eux': ['fameux → famous', 'curieux → curious'],
+    'ismo': ['optimismo → optimism', 'turismo → tourism'],
+    'isme': ['optimisme → optimism', 'tourisme → tourism'],
+    'ista': ['artista → artist', 'turista → tourist'],
+    'iste': ['artiste → artist', 'touriste → tourist'],
+    'ivo': ['activo → active', 'creativo → creative'],
+    'iva': ['activa → active', 'creativa → creative'],
+    'ico': ['mágico → magic', 'público → public'],
+    'ica': ['mágica → magic', 'pública → public'],
+    'ique': ['magique → magic', 'publique → public'],
+    'ante': ['importante → important', 'constante → constant'],
+    'ente': ['diferente → different', 'evidente → evident'],
+    'able': ['probable → probable', 'flexible → flexible'],
+    'ible': ['posible → possible', 'terrible → terrible'],
+    'ar': ['crear → create', 'preparar → prepare'],
+    'er': ['responder → respond', 'ofrecer → offer'],
+    'ir': ['decidir → decide', 'admitir → admit'],
+    'are': ['creare → create', 'preparare → prepare'],
+    'es': ['escuela → school', 'espacio → space'],
 };
 
 // Words a gloss line is full of that are never the cognate.
 const STOP = new Set([
-    'to', 'the', 'and', 'for', 'with', 'that', 'this', 'from', 'into', 'onto', 'your', 'their',
+    'a', 'an', 'to', 'the', 'and', 'for', 'with', 'that', 'this', 'from', 'into', 'onto', 'your', 'their',
     'someone', 'something', 'oneself', 'one', 'who', 'what', 'when', 'where', 'which',
     'have', 'been', 'being', 'does', 'make', 'used', 'also', 'such', 'than', 'then',
+    'relating', 'pertaining', 'pertaining to', 'act', 'action', 'state', 'quality',
 ]);
 
 const TIER_COST = { same: 0, pattern: 0.2, close: 0.3, loose: 0.46 };
@@ -204,7 +279,7 @@ function glossWords(meanings) {
         if (!text || NOT_A_MEANING.test(text)) return;
         const bare = text.replace(/\([^)]*\)/g, ' ');
         for (const clause of bare.split(/[;,/]/)) {
-            const words = clause.toLowerCase().split(/[^a-z']+/).filter(Boolean).slice(0, 3);
+            const words = clause.toLowerCase().split(/[^a-z']+/).filter(Boolean).slice(0, 6);
             for (const piece of words) {
                 if (piece.length < 3 || STOP.has(piece) || seen.has(piece)) continue;
                 seen.add(piece);
@@ -233,37 +308,89 @@ function tierFor(cost, ruleUsed, identical, anchored, kept, keptCount, englishLe
     return null;
 }
 
-function evaluate(word, plain, gloss, rules) {
+function evaluate(word, plain, gloss, rules, prefixRules = []) {
     const english = gloss.word;
-    const options = [{ built: plain, rule: null }];
-    for (const [from, to] of rules) {
-        const stem = stripAccents(from);
-        if (plain.endsWith(stem) && plain.length - stem.length >= 2) {
-            // A rule only counts when the English word actually wears the
-            // ending it names, otherwise it is just a re-spelling.
-            if (to && !english.endsWith(to)) continue;
-            if (!to && english.length > plain.length - stem.length + 2) continue;
-            options.push({ built: plain.slice(0, plain.length - stem.length) + to, rule: { from, to, stem } });
+    const options = [{ built: plain, rule: null, prefixRule: null }];
+
+    const prefixOptions = [{ text: plain, prefixRule: null }];
+    for (const [from, to] of prefixRules) {
+        const pStem = stripAccents(from);
+        if (plain.startsWith(pStem) && plain.length - pStem.length >= 2) {
+            if (pStem === 'es' && !'bcdfghjklmnpqrstvwxz'.includes(plain[pStem.length])) {
+                continue;
+            }
+            if (to && !english.startsWith(to)) continue;
+            const transformed = to + plain.slice(pStem.length);
+            prefixOptions.push({ text: transformed, prefixRule: { from, to, stem: pStem } });
         }
     }
+
+    for (const pOpt of prefixOptions) {
+        if (pOpt.prefixRule) {
+            options.push({ built: pOpt.text, rule: null, prefixRule: pOpt.prefixRule });
+        }
+        for (const [from, to] of rules) {
+            const stem = stripAccents(from);
+            if (pOpt.text.endsWith(stem) && pOpt.text.length - stem.length >= 2) {
+                // A rule only counts when the English word actually wears the
+                // ending it names, otherwise it is just a re-spelling.
+                if (to && !english.endsWith(to)) continue;
+                if (!to && english.length > pOpt.text.length - stem.length + 2) continue;
+                const built = pOpt.text.slice(0, pOpt.text.length - stem.length) + to;
+                options.push({ built, rule: { from, to, stem }, prefixRule: pOpt.prefixRule });
+            }
+        }
+    }
+
     let best = null;
     for (const option of options) {
         const result = align(option.built, english);
         const cost = normalised(result.cost, option.built, english);
-        const ruleBonus = option.rule ? -0.001 : 0;
+        let ruleBonus = 0;
+        if (option.rule) ruleBonus -= 0.001;
+        if (option.prefixRule) ruleBonus -= 0.001;
         const score = cost + ruleBonus;
         if (!best || score < best.score) best = { ...option, result, cost, score };
     }
-    const anchored = SOUND_CLASSES.some(g => g.includes(plain[0]) && g.includes(english[0])) || plain[0] === english[0];
+    const anchored = SOUND_CLASSES.some(g => g.includes(plain[0]) && g.includes(english[0]))
+        || plain[0] === english[0]
+        || Boolean(best.prefixRule);
     // A gloss that is only the front of the word and no rule explains is a
     // clipped token (protecção / prote), not a partner.
     if (best.cost > 0 && english.length >= 3 && plain.startsWith(english)
         && plain.length - english.length <= 3) return null;
     const keptCount = best.result.ops.filter(item => item.op === 'match').length;
     const kept = keptCount / english.length;
-    const tier = tierFor(best.cost, Boolean(best.rule), plain === english, anchored, kept, keptCount, english.length);
+    const ruleUsed = Boolean(best.rule || best.prefixRule);
+    const tier = tierFor(best.cost, ruleUsed, plain === english, anchored, kept, keptCount, english.length);
     if (!tier) return null;
     return { ...best, tier, english, sense: gloss.sense };
+}
+
+function generateTakeaway(best, langDisplay) {
+    if (best.cost === 0 && !best.rule && !best.prefixRule) {
+        return `This word is spelled identically in English and ${langDisplay}.`;
+    }
+    const clauses = [];
+    if (best.prefixRule) {
+        clauses.push(`Prefix <strong>${escapeText(best.prefixRule.from)}-</strong> corresponds to English <strong>${escapeText(best.prefixRule.to)}-</strong>`);
+    }
+    if (best.rule) {
+        if (best.rule.from === best.rule.to) {
+            clauses.push(`ending <strong>-${escapeText(best.rule.from)}</strong> is kept the same in English`);
+        } else if (best.rule.to) {
+            clauses.push(`ending <strong>-${escapeText(best.rule.from)}</strong> becomes <strong>-${escapeText(best.rule.to)}</strong>`);
+        } else {
+            clauses.push(`English drops the ending <strong>-${escapeText(best.rule.from)}</strong>`);
+        }
+    }
+    if (clauses.length > 0) {
+        return `${clauses.join(', and ')} to reveal English <strong>${escapeText(best.english)}</strong>.`;
+    }
+    if (best.tier === 'close') {
+        return `Shares the root of English <strong>${escapeText(best.english)}</strong> with minor spelling adjustments.`;
+    }
+    return `Connected to English <strong>${escapeText(best.english)}</strong>.`;
 }
 
 // The best tip for one card, or null. `card` needs a headword and `meanings`
@@ -272,7 +399,7 @@ export function memoryTipFor(card, language) {
     const key = LANGUAGE_KEY[String(language || '').toLowerCase()];
     if (!key) return null;
     const word = String(card?.displaySurface || card?.targetWord || card?.word || '').trim().toLowerCase();
-    if (word.length < 4 || /\s/.test(word)) return null;
+    if (word.length < 3 || /\s/.test(word)) return null;
     const plain = stripAccents(word);
     // Words that are the deck language's own lemma, never an English partner.
     // The spelling of the card itself is allowed: that is how a same-spelled
@@ -291,7 +418,8 @@ export function memoryTipFor(card, language) {
     const tierRank = { same: 0, pattern: 1, close: 2, loose: 3 };
     let best = null;
     for (const gloss of glosses) {
-        const found = evaluate(word, plain, gloss, RULES[key] || []);
+        if (word.length === 3 && plain !== gloss.word) continue;
+        const found = evaluate(word, plain, gloss, RULES[key] || [], PREFIX_RULES[key] || []);
         if (!found) continue;
         if (!best
             || tierRank[found.tier] < tierRank[best.tier]
@@ -315,8 +443,22 @@ export function memoryTipFor(card, language) {
             to: '',
         });
     }
+
+    if (best.prefixRule) {
+        const rest = plain.slice(best.prefixRule.stem.length);
+        current = best.prefixRule.to + rest;
+        steps.push({
+            kind: 'prefix',
+            label: `Prefix ${best.prefixRule.from}- becomes ${best.prefixRule.to}-`,
+            note: `Words starting with ${best.prefixRule.from}- + consonant regularly correspond to English ${best.prefixRule.to}-.`,
+            after: partsFor('', best.prefixRule.to, rest),
+            from: best.prefixRule.from,
+            to: best.prefixRule.to,
+        });
+    }
+
     if (best.rule) {
-        const prefix = plain.slice(0, plain.length - best.rule.stem.length);
+        const prefix = current.slice(0, current.length - best.rule.stem.length);
         current = prefix + best.rule.to;
         steps.push({
             kind: 'rule',
@@ -341,16 +483,57 @@ export function memoryTipFor(card, language) {
 
     // The strip shows the whole word against its English partner in columns,
     // independent of how the steps were grouped.
-    // A named ending shows as one block (mente -> ly) instead of a run of
-    // single letters, because the point is that the ending moves as a unit.
     let columns;
     if (best.rule && best.english.endsWith(best.rule.to)) {
         const englishStem = best.rule.to ? best.english.slice(0, -best.rule.to.length) : best.english;
-        columns = align(plain.slice(0, plain.length - best.rule.stem.length), englishStem).ops;
+        const plainStem = plain.slice(
+            best.prefixRule ? best.prefixRule.stem.length : 0,
+            plain.length - best.rule.stem.length
+        );
+        columns = align(plainStem, englishStem).ops;
+        if (best.prefixRule) {
+            columns.unshift({ op: 'rule', a: best.prefixRule.from + '-', b: best.prefixRule.to + '-' });
+        }
         columns.push({ op: 'rule', a: best.rule.from, b: best.rule.to });
     } else {
         columns = align(plain, best.english).ops;
     }
+
+    const langDisplay = LANGUAGE_DISPLAY[key] || 'the target language';
+    const twins = (best.rule && RULE_TWINS[best.rule.from])
+        || (best.prefixRule && RULE_TWINS[best.prefixRule.from])
+        || [];
+
+    let sourceStem = plain;
+    let targetStem = best.english;
+    let sourcePrefix = best.prefixRule ? best.prefixRule.from + '-' : '';
+    let targetPrefix = best.prefixRule ? best.prefixRule.to + '-' : '';
+    let sourceSuffix = best.rule ? '-' + best.rule.from : '';
+    let targetSuffix = best.rule ? (best.rule.to ? '-' + best.rule.to : '') : '';
+
+    if (best.prefixRule) {
+        sourceStem = sourceStem.slice(best.prefixRule.stem.length);
+        if (best.english.startsWith(best.prefixRule.to)) {
+            targetStem = targetStem.slice(best.prefixRule.to.length);
+        }
+    }
+    if (best.rule) {
+        if (sourceStem.endsWith(best.rule.stem)) {
+            sourceStem = sourceStem.slice(0, sourceStem.length - best.rule.stem.length);
+        }
+        if (best.rule.to && targetStem.endsWith(best.rule.to)) {
+            targetStem = targetStem.slice(0, targetStem.length - best.rule.to.length);
+        }
+    }
+
+    const chunks = {
+        source: { prefix: sourcePrefix, stem: sourceStem, suffix: sourceSuffix },
+        target: { prefix: targetPrefix, stem: targetStem, suffix: targetSuffix },
+        identical: plain === best.english,
+    };
+
+    const takeaway = generateTakeaway(best, langDisplay);
+
     return {
         word,
         english: best.english,
@@ -358,11 +541,16 @@ export function memoryTipFor(card, language) {
         tier: best.tier,
         steps,
         columns,
-        // Kept for callers that only want the named ending shift.
-        kind: best.rule ? 'ending' : 'spelling',
+        kind: best.rule ? 'ending' : (best.prefixRule ? 'prefix' : 'spelling'),
         from: best.rule ? best.rule.from : null,
         to: best.rule ? best.rule.to : null,
+        prefixFrom: best.prefixRule ? best.prefixRule.from : null,
+        prefixTo: best.prefixRule ? best.prefixRule.to : null,
         unchanged: Boolean(best.rule && best.rule.from === best.rule.to),
+        twins,
+        chunks,
+        takeaway,
+        langDisplay,
     };
 }
 
@@ -459,6 +647,140 @@ const STYLE = `
 .memory-tip-modal .mt-badge[data-tier="same"], .memory-tip-modal .mt-badge[data-tier="pattern"] { color:#5ec98a; }
 .memory-tip-modal .mt-badge[data-tier="close"] { color:#7aa7ff; }
 .memory-tip-modal .mt-badge[data-tier="loose"] { color:#e0b25a; }
+
+/* Hero card */
+.memory-tip-modal .mt-hero-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    padding: 16px 14px;
+    margin-bottom: 14px;
+    text-align: center;
+}
+.memory-tip-modal .mt-anchor-kicker {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #e0b25a;
+    margin-bottom: 4px;
+}
+.memory-tip-modal .mt-anchor-headline {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: #ffffff;
+    line-height: 1.3;
+}
+.memory-tip-modal .mt-anchor-word {
+    color: #5ec98a;
+    text-decoration: underline;
+    text-decoration-color: rgba(94, 201, 138, 0.4);
+    text-underline-offset: 4px;
+}
+.memory-tip-modal .mt-morpheme-flow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.28);
+    border-radius: 10px;
+    margin: 0 auto;
+}
+.memory-tip-modal .mt-chunk {
+    display: inline-flex;
+    align-items: baseline;
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+    letter-spacing: 0.02em;
+}
+.memory-tip-modal .mt-stem {
+    color: #7fe0a6;
+    background: rgba(94, 201, 138, 0.16);
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+.memory-tip-modal .mt-affix {
+    color: #f0c878;
+    background: rgba(224, 178, 90, 0.18);
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-left: 2px;
+}
+.memory-tip-modal .mt-affix.is-prefix {
+    margin-left: 0;
+    margin-right: 2px;
+}
+.memory-tip-modal .mt-flow-arrow {
+    font-size: 1.15rem;
+    color: rgba(255,255,255,0.45);
+    font-weight: 300;
+}
+.memory-tip-modal .mt-hero-caption {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 6px;
+}
+.memory-tip-modal .mt-takeaway {
+    font-size: 0.94rem;
+    line-height: 1.45;
+    margin: 12px 0 0;
+    color: rgba(255,255,255,0.9);
+}
+.memory-tip-modal .mt-takeaway strong {
+    color: #ffffff;
+}
+
+/* Twin Examples */
+.memory-tip-modal .mt-twins {
+    margin: 12px 0 14px;
+    padding: 10px 12px;
+    background: rgba(94, 201, 138, 0.08);
+    border: 1px dashed rgba(94, 201, 138, 0.25);
+    border-radius: 10px;
+}
+.memory-tip-modal .mt-twins-header {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #7fe0a6;
+    margin-bottom: 6px;
+}
+.memory-tip-modal .mt-twins-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.memory-tip-modal .mt-twin-pill {
+    font-size: 0.84rem;
+    font-weight: 500;
+    background: rgba(255,255,255,0.06);
+    padding: 3px 9px;
+    border-radius: 999px;
+    color: rgba(255,255,255,0.85);
+}
+
+/* Collapsible technical breakdown */
+.memory-tip-modal details.mt-details-toggle {
+    margin-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 8px;
+}
+.memory-tip-modal summary.mt-details-summary {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+}
+.memory-tip-modal summary.mt-details-summary:hover {
+    color: rgba(255,255,255,0.85);
+}
+
 .memory-tip-modal .mt-strip { display:flex; gap:3px; overflow-x:auto; padding:2px 0 12px; justify-content:center; }
 .memory-tip-modal .mt-col { display:flex; flex-direction:column; align-items:center; gap:3px; }
 .memory-tip-modal .mt-cell { width:26px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:7px; font-size:1.15rem; font-weight:600; background:rgba(255,255,255,.05); }
@@ -478,7 +800,7 @@ const STYLE = `
 .memory-tip-modal .mt-chain mark { background:rgba(94,201,138,.25); color:inherit; border-radius:4px; padding:0 2px; }
 .memory-tip-modal .mt-prev { opacity:.6; }
 .memory-tip-modal .mt-result { margin-top:14px; padding:10px 12px; border-radius:10px; background:rgba(94,201,138,.12); font-size:1.05rem; }
-.memory-tip-modal .mt-caution { margin-top:12px; font-size:.86rem; opacity:.78; }
+.memory-tip-modal .mt-caution { margin-top:10px; font-size:.86rem; opacity:.78; color:#f0c878; }
 `;
 
 function ensureStyles() {
@@ -550,13 +872,66 @@ export function openMemoryTip(event) {
     const caution = tip.tier === 'loose'
         ? `<div class="mt-caution">Check this one against the meaning before you rely on it. It matches the sense “${escapeText(tip.sense.split(/[;(]/)[0].trim())}”.</div>`
         : '';
+
+    let heroFlowHTML = '';
+    if (tip.chunks?.identical) {
+        heroFlowHTML = `
+            <div class="mt-morpheme-flow">
+                <span class="mt-chunk"><span class="mt-stem">${escapeText(tip.word)}</span></span>
+                <span class="mt-flow-arrow">≡</span>
+                <span class="mt-chunk"><span class="mt-stem">${escapeText(tip.english)}</span></span>
+            </div>
+            <div class="mt-hero-caption">Identical Cognate</div>
+        `;
+    } else {
+        const srcPrefix = tip.chunks?.source.prefix ? `<span class="mt-affix is-prefix">${escapeText(tip.chunks.source.prefix)}</span>` : '';
+        const srcStem = tip.chunks?.source.stem ? `<span class="mt-stem">${escapeText(tip.chunks.source.stem)}</span>` : '';
+        const srcSuffix = tip.chunks?.source.suffix ? `<span class="mt-affix">${escapeText(tip.chunks.source.suffix)}</span>` : '';
+
+        const tgtPrefix = tip.chunks?.target.prefix ? `<span class="mt-affix is-prefix">${escapeText(tip.chunks.target.prefix)}</span>` : '';
+        const tgtStem = tip.chunks?.target.stem ? `<span class="mt-stem">${escapeText(tip.chunks.target.stem)}</span>` : '';
+        const tgtSuffix = tip.chunks?.target.suffix ? `<span class="mt-affix">${escapeText(tip.chunks.target.suffix)}</span>` : '';
+
+        heroFlowHTML = `
+            <div class="mt-morpheme-flow">
+                <span class="mt-chunk">${srcPrefix}${srcStem}${srcSuffix}</span>
+                <span class="mt-flow-arrow">→</span>
+                <span class="mt-chunk">${tgtPrefix}${tgtStem}${tgtSuffix}</span>
+            </div>
+        `;
+    }
+
+    let twinsHTML = '';
+    if (tip.twins && tip.twins.length > 0) {
+        const pills = tip.twins.map(t => `<span class="mt-twin-pill">${escapeText(t)}</span>`).join('');
+        twinsHTML = `
+            <div class="mt-twins">
+                <div class="mt-twins-header">✨ Same rule unlocks:</div>
+                <div class="mt-twins-list">${pills}</div>
+            </div>
+        `;
+    }
+
     modal.querySelector('#memoryTipBody').innerHTML = `
-        <span class="mt-badge" data-tier="${escapeText(tip.tier)}">${escapeText(tierName)}</span>
-        <p style="margin:0 0 10px;opacity:.8;">${escapeText(tierNote)}</p>
-        ${stripHTML(tip)}
-        ${stepsHTML(tip)}
-        <div class="mt-result"><strong>${escapeText(tip.word)}</strong> ≈ <strong>${escapeText(tip.english)}</strong></div>
-        ${caution}`;
+        <div class="mt-hero-card">
+            <div class="mt-anchor-kicker">💡 Memory Anchor</div>
+            <h3 class="mt-anchor-headline">Think of English: <span class="mt-anchor-word">“${escapeText(tip.english)}”</span></h3>
+            ${heroFlowHTML}
+            <p class="mt-takeaway">${tip.takeaway || ''}</p>
+        </div>
+        ${twinsHTML}
+        ${caution}
+        <details class="mt-details-toggle">
+            <summary class="mt-details-summary">Show step-by-step breakdown ▾</summary>
+            <div style="padding-top:12px;">
+                <span class="mt-badge" data-tier="${escapeText(tip.tier)}">${escapeText(tierName)}</span>
+                <p style="margin:0 0 10px;font-size:0.86rem;opacity:.8;">${escapeText(tierNote)}</p>
+                ${stripHTML(tip)}
+                ${stepsHTML(tip)}
+                <div class="mt-result"><strong>${escapeText(tip.word)}</strong> ≈ <strong>${escapeText(tip.english)}</strong></div>
+            </div>
+        </details>
+    `;
     modal.hidden = false;
     modal.querySelector('.knowledge-overview-close')?.focus();
 }

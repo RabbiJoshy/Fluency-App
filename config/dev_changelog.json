@@ -2,6 +2,203 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-15T14:58:00+01:00",
+      "date": "2026-10-15 14:58 BST",
+      "agent": "Antigravity",
+      "summary": "Fix language and mode state persistence bugs and enrich choice information across music and vocabulary",
+      "detail": [
+        "Fixed critical bug where changing language or mode left activeArtist or window.activeArtist set, causing the sidebar and UI to still say Spanish when another language or mode was chosen.",
+        "Synced currentLearningMode() to accurately recognize music workspace without being masked by stale speech classes.",
+        "Enriched the Music choices screen with language-specific catalog counts, curated artist previews, and clear Spotify guidance.",
+        "Added informative album counts and vocabulary size metrics to catalog artist cards, plus clear descriptions in desktop trail dropdowns."
+      ],
+      "commit": "82a43df2"
+    },
+    {
+      "timestamp": "2026-10-15T14:40:00+01:00",
+      "date": "2026-10-15 14:40 BST",
+      "agent": "Antigravity",
+      "summary": "Guided on-page music mode selection and removal of redundant 'Back to vocabulary' button",
+      "detail": [
+        "Landing on Music mode now visually guides the learner on the page with dedicated cards for Artists and Spotify playlists rather than jumping straight into artist browsing.",
+        "Removed the redundant '‹ Back to vocabulary' button since sidebar chips handle mode and language switching.",
+        "In sub-pages (Artists, Spotify playlists, Songs), the on-page '‹ Back' button returns to the previous guided step (e.g. from Artists back to music source choices).",
+        "Sidebar trail Level 2 reflects 'Choose…' until a source option is picked, keeping the sidebar and page in full alignment."
+      ],
+      "commit": "1168755a"
+    },
+    {
+      "timestamp": "2026-10-15T11:28:00+01:00",
+      "date": "2026-10-15 11:28 BST",
+      "agent": "Antigravity",
+      "summary": "Desktop sidebar trail refined: 3-tier hierarchy with Vocabulary (Speech/Music) -> Music (Artists/Spotify) -> Source",
+      "detail": [
+        "The primary Vocabulary chip now cleanly offers the Speech vs Music choice.",
+        "Underneath Vocabulary in Music mode, a dedicated subrow chip offers the music options (Artists vs Spotify playlists).",
+        "The source chip sits beneath the music options chip, displaying the selected artist or playlist name with quick switching."
+      ],
+      "commit": "974d2d21"
+    },
+    {
+      "timestamp": "2026-10-15T11:08:00+01:00",
+      "date": "2026-10-15 11:08 BST",
+      "agent": "Antigravity",
+      "summary": "Streamlined music navigation: eliminated nested sidebars, direct choosing set menu flow, and clear sidebar hierarchy",
+      "detail": [
+        "Eliminated the nested secondary sidebar (Artists, Spotify playlists, Study setup) in the music complex; replaced with a clean horizontal source switcher.",
+        "Selecting an artist or Spotify playlist takes the learner directly through selection into the main choosing set menu without nested workspaces.",
+        "Desktop sidebar trail now reads clearly: Spanish -> Vocabulary: Artists / Spotify playlists -> Artist / Playlist name."
+      ],
+      "commit": "df2ff1a9"
+    },
+    {
+      "timestamp": "2026-10-15T10:41:00+01:00",
+      "date": "2026-10-15 10:41 BST",
+      "agent": "Antigravity",
+      "summary": "Streamlined 'Languages you know' modal with punchy Smart Skip copy and concrete bridge examples",
+      "detail": [
+        "Replaced verbose modal instructions and 'coming soon' disclaimers with a punchy single sentence explaining the purpose of known languages for skipping familiar words.",
+        "Removed the redundant 'Manage all languages in Settings' button to declutter the modal.",
+        "Simplified the cross-language transfer explanation with clear, concrete examples (e.g., learn noche in Spanish → skip noite in Portuguese)."
+      ],
+      "commit": "0bccb82c"
+    },
+    {
+      "timestamp": "2026-10-15T09:15:00+01:00",
+      "date": "2026-10-15 09:15 BST",
+      "agent": "Antigravity",
+      "summary": "Mnemonic memory tips redesigned for intuitive cognitive clarity with hero morpheme flow & pattern twins",
+      "detail": [
+        "Memory tips modal now leads immediately with the English anchor word ('Think of English: rapidly') rather than an edit script.",
+        "Replaced single-letter DNA alignment grid with visual morpheme chunking: emerald for shared roots and amber for shifting affixes (-mente → -ly, es- → s-).",
+        "Added pattern twins section showing how rules transfer across familiar words (e.g. totalmente → totally, perfectamente → perfectly).",
+        "Added Romance initial prefix rules (es- → s-), Italian language support, and amber lightbulb tile accent."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-15T00:41:00+01:00",
+      "date": "2026-10-15 00:41 BST",
+      "agent": "Antigravity",
+      "summary": "Modernized Portuguese function words with deterministic content cycling & ambient glow system",
+      "detail": [
+        "Closed-class focus words (que, de, se, o, nos, naquele) now feature a deterministic grammatical layout on card backs with content-word variation pills (e.g. gostar, precisar, depender for de) and clean contraction breakdown formulas (em + aquele for naquele; contextual em + os for nos).",
+        "Function words receive a single, dedicated signature ambient glow: Periwinkle Moonstone Off-White (rgb(212, 218, 245)), giving structural grammar words elevated distinction without competing with the chromatic POS spectrum.",
+        "Non-function words receive ambient glow per Part of Speech: multi-corner radial lighting on unified cards with multiple parts of speech, and single-POS lighting on companion cards ('Card 1 of 2')."
+      ],
+      "commit": "69c66a4c"
+    },
+    {
+      "timestamp": "2026-10-14T22:18:59+01:00",
+      "date": "2026-10-14 22:18 BST",
+      "agent": "Claude",
+      "summary": "“Languages you know” moved into Settings → Study and shows flags instead of a sentence.",
+      "detail": [
+        "Now sits under Show first on the Study tab (it was on the App tab).",
+        "The row shows one flag per language you know; hover a flag for its name. The explanatory line is now a tooltip.",
+        "Closing the editor returns you to the Study tab."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T22:08:31+01:00",
+      "date": "2026-10-14 22:08 BST",
+      "agent": "Claude",
+      "summary": "“Flag a meaning” is now “Revisit a meaning”, with a cards-and-arrow icon and a number.",
+      "detail": [
+        "The card-back tile shows an arrow dropping onto a stack, meaning “back into the practice pile”; the number beside it is blank until you pick a meaning, then counts how many on this card.",
+        "The sheet title, tutorial step and demo card use the new name. What the button does is unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T22:02:45+01:00",
+      "date": "2026-10-14 22:02 BST",
+      "agent": "Claude",
+      "summary": "Portuguese (and other Wiktionary decks): meanings that all read the same, like fazer's five 'to make', now show what each one means",
+      "detail": [
+        "fazer shows 'to do; to execute; to perform', 'to create; to produce' and 'to cause to' instead of three 'to make's; 'to make' moves to the note line.",
+        "Only when two or more meanings on a card share the same English, and only for short sub-glosses: explanations, topic labels (music, firearms) and long definitions stay as notes.",
+        "Portuguese: 159 distinct meanings change, e.g. seu 'his / her / their', bico 'beak', corte 'haircut', parada 'halt'. Spanish (SpanishDict) is untouched.",
+        "Display only: progress keys keep the original wording."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T21:57:16+01:00",
+      "date": "2026-10-14 21:57 BST",
+      "agent": "Claude",
+      "summary": "Desktop sidebar now shows your path as stacked chips (language, then Speech or Music, then artist) and each chip switches its own level.",
+      "detail": [
+        "Under the language chip: a Vocabulary chip (Speech / Music) and, in Music, an Artist chip (artist, Mix artists, or a Spotify playlist). Click one to see its siblings and switch without going back to the start.",
+        "The language chip always names the language on desktop and opens the language picker; the artist moved to its own chip.",
+        "Learning settings (verbs, song translation) is now the Explore item in the sidebar.",
+        "Phone and narrow windows are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T20:46:55+01:00",
+      "date": "2026-10-14 20:46 BST",
+      "agent": "Codex",
+      "summary": "Explain level goals and studying cards from first principles",
+      "detail": [
+        "Level help explains what a level contains and the goal of learning its words, including the music-specific introduction.",
+        "Go describes studying unseen words, flipping a flashcard and marking whether you knew it.",
+        "The deck total starts on its own line after the introductory guidance."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T20:36:08+01:00",
+      "date": "2026-10-14 20:36 BST",
+      "agent": "Codex",
+      "summary": "Restore the overheating repair alongside the latest staging interface changes.",
+      "detail": [
+        "A later staging deployment omitted the repair and restarted the recursive preload loop.",
+        "Combined the latest session help and colour legend with the cache repair, early worker update and missing-backend request fix.",
+        "Added a staging deployment check that prevents accidentally replacing the staged release with a branch missing its changes."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T20:29:48+01:00",
+      "date": "2026-10-14 20:29 BST",
+      "agent": "Codex",
+      "summary": "Shorter levels and sessions help",
+      "detail": [
+        "Combined the opening guidance into one paragraph and moved a short Go explanation to the bottom.",
+        "Moved colour definitions into a separate information modal opened beside the level legend."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T20:12:58+01:00",
+      "date": "2026-10-14 20:12 BST",
+      "agent": "Codex",
+      "summary": "Stop cached staging error pages from triggering recursive file preloads and excessive CPU use.",
+      "detail": [
+        "Use staging public service settings directly instead of requesting the unshipped backend/secrets.json file that triggers the old cached fallback.",
+        "Start the offline-worker update before the page finishes loading, so recursive preloads cannot prevent the repair from installing.",
+        "Reject HTML responses requested as scripts or data, including old cached fallback pages with recursive preload headers.",
+        "Evict the invalid asset cache entry and retry the real file; preserve valid assets, offline downloads and learner progress.",
+        "Verified cached-HTML recovery, HTML rejection without preload headers, valid script caching and normal page navigation."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-14T19:57:30+01:00",
+      "date": "2026-10-14 19:57 BST",
+      "agent": "Codex",
+      "summary": "Clearer level help and a centred Smart Skip row",
+      "detail": [
+        "Simplified level help around where to start, how Go sizes a batch, and what level progress means. Colour definitions can be expanded.",
+        "Smart Skip On uses a green selected state without a redundant tick.",
+        "Centred the compact controls and restored real skipped-word examples on desktop."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-14T19:42:54+01:00",
       "date": "2026-10-14 19:42 BST",
       "agent": "Codex",
@@ -231,198 +428,6 @@
         "Walkthrough pin labels support pinTitle ('How common') and pinAnchor ('.breakdown-trigger') so they never overlap headwords, context tags, or example sentences.",
         "Fixed About modal demo cards (.about-demo-card) whose 3-column meaning rows were broken by global .meaning-row rules.",
         "Updated About project button hint to 'A quick look at a card · about 30 seconds', accurate for both phone (3 screens) and desktop (2 screens)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T12:43:10+01:00",
-      "date": "2026-10-13 12:43 BST",
-      "agent": "Codex",
-      "summary": "Passwordless accounts on staging with Google and email codes",
-      "detail": [
-        "Staging uses Clerk sign-in without password creation or guest mode.",
-        "Signed-in accounts save progress in a separate staging database, with server checks for account ownership.",
-        "Existing production accounts and progress are unchanged. Staging accounts start with empty progress.",
-        "Sign-up stays inside Fluency, with readable sign-in controls and a scrollable layout on small screens."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T12:42:44+01:00",
-      "date": "2026-10-13 12:42 BST",
-      "agent": "Codex",
-      "summary": "Simpler desktop navigation with Settings and Progress",
-      "detail": [
-        "Remove the separate Your words shortcut from the desktop sidebar.",
-        "Keep Choose a set, Progress and Settings directly accessible, with Tutorial and Account below.",
-        "Settings retains its visible Study, App and Your words tabs."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T09:06:51+01:00",
-      "date": "2026-10-13 09:06 BST",
-      "agent": "Codex",
-      "summary": "Desktop sidebar for choosing sets, with a focused study view",
-      "detail": [
-        "Desktop setup has a left sidebar for choosing sets, Your words, progress, tutorial, settings and account.",
-        "Settings, learning context and progress fill the workspace beside the sidebar; setup sheets no longer dock in the gutters.",
-        "Starting a set hides navigation and restores the existing study side panels. Returning to the main menu restores the sidebar.",
-        "Phones and narrow windows retain the compact top bar and dialogs.",
-        "Checked desktop setup, workspace navigation, study entry/exit and phone layout; app tests pass."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T08:34:57+01:00",
-      "date": "2026-10-13 08:34 BST",
-      "agent": "Codex",
-      "summary": "Clearer flashcards, lyrics and progress, with a preferred AI setting",
-      "detail": [
-        "Tap companion lemma/POS pills on the front to switch readings; known meanings stay greyed and the front explains what remains to practise.",
-        "Brighter, lighter POS pills; aligned from labels; commonness appears before sense subrows and information follows them.",
-        "Larger artist photos and flags on progress screens; artist sources keep their own imagery.",
-        "Choose ChatGPT or Claude in Account settings and open its sign-in page; the preference chooses the lyric-view logo.",
-        "Larger English lyrics, level labels in study navigation and options, and word totals in the level scrubber.",
-        "Reuse the deployed Fλ icon throughout the app and give the startup language chooser a full-width placement.",
-        "Tutorial and unrelated in-progress edits are excluded from this staging commit."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T00:15:06+01:00",
-      "date": "2026-10-13 00:15 BST",
-      "agent": "Claude",
-      "summary": "The tutorial fills a phone screen: the card spans the full width and the explanation never moves the card",
-      "detail": [
-        "Phone tutorial is full-bleed: no modal inset or rounded corners; title and exit share one row.",
-        "The tallest explanation's height is reserved once (measured at the coach's real width, including a chapter's two-button last note), so changing steps cannot move the card or the navigation.",
-        "A card that has to shrink is laid out at stage width ÷ scale, so it still spans the stage instead of sitting in a narrow strip; height cap raised to 760 px.",
-        "Work left uncommitted by the tutorial (SHOWCASE) chat; committed and staged on Josh's instruction after a phone-width smoke check."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T00:11:41+01:00",
-      "date": "2026-10-13 00:11 BST",
-      "agent": "Claude",
-      "summary": "Song translation: a play bar, tap-a-line to play, an English toggle, 389 more songs, and a tidier entity box",
-      "detail": [
-        "Play bar at the bottom: previous line, play/pause, next line, and repeat this line. Repeat loops the line being sung, or the next one you tap. On a phone using Spotify's app, the highlight is kept in step by polling Spotify about every 1.5 s.",
-        "Tap anywhere on a line to play it from there (tapping a word still opens its card; the Spotify button still works).",
-        "EN button in the header hides or shows the English under each line; it is remembered on this device.",
-        "The song list grows from 30 to 419 songs: all of Bad Bunny, Rosalía and Young Miko in the lyrics release that LRCLIB has timed lyrics for (389 of 401). Search covers all of them; a song's lyrics are fetched when it is opened. 10 of them rest on a single LRCLIB record, so their timing is the least certain.",
-        "Song links now carry the song's Spotify id instead of its position in the list, so a saved link no longer shifts after importing a song. Old numeric links still open the song they used to.",
-        "Entity boxes are now a tight rectangle (4 px corners) that wraps the name, and the Wiktionary mark is a serif W at the start of the entity instead of the end.",
-        "Yonaguni's human translations load on the deployed site now: the build excluded the folder they were read from, so they never appeared there. They now match 51 of 60 lines.",
-        "Removed unused wiring: previous/next-song buttons, the compatibility anchors and the count badges."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T00:08:00+01:00",
-      "date": "2026-10-13 00:08 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip is one line on every screen, and the level picker takes the language's (or artist's) colour",
-      "detail": [
-        "Smart Skip on: the count moves up beside the name and the examples follow it, e.g. 'Smart Skip  3,115 skipped  e.g. idea, familia, minutos, importante, capitán'. The second 'N words skipped' line is gone.",
-        "At most five examples, set in the same type and colour as the level box's 'e.g.' line, and no trailing '...'. A narrow row shows fewer words, or none, rather than a cut-off list.",
-        "Phones get the same single line: name and Recommended badge when off, name and count when on (the 'Fewer cards, same coverage' line no longer has room and is dropped). Row height is 66px in every state; checked at 320, 375 and 800 wide in Speech and in Lyrics.",
-        "The selected level badge and its glow were fixed blue; they now use the language colour (Spanish red) or the artist's colour (Bad Bunny blue)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:56:52+01:00",
-      "date": "2026-10-12 23:56 BST",
-      "agent": "Claude",
-      "summary": "Song translation: catalogue songs now play from any line, the line being sung fills green, and the song list is just song and artist",
-      "detail": [
-        "All 30 catalogue songs carry their Spotify track and LRCLIB line timing, baked offline (scripts/bake_probe_timings.py): 30 of 30 have a track, 29 of 30 have timing. Soso - Remix has no matching timed lyrics, so it stays plain with no play buttons.",
-        "While Spotify plays, the current line is highlighted and its words turn green as they are reached; finished lines dim. Word timing is estimated from each word's length within its line, because LRCLIB times lines, not words.",
-        "The view scrolls to the line being sung and stops following for four seconds when you scroll yourself. If Spotify is playing a different cut of the song (length differs by over 3 s) the highlight turns off and says so.",
-        "Songs with no Spotify track or no timing show no play buttons and no explanatory banner.",
-        "Song list shows only song and artist: the number, the line count, the ONLINE badge and the 'Curated Catalog' header are gone.",
-        "Yonaguni's human translations are matched to the timed lines by text (28 exact, more by near-match), so they no longer drift when the lines change."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:50:05+01:00",
-      "date": "2026-10-12 23:50 BST",
-      "agent": "Claude",
-      "summary": "Czech level coverage is now right for every level, and opening a deck does less repeated work",
-      "detail": [
-        "Level coverage read each card's share under its dictionary form (ten) instead of the word actually spoken (to). Czech level 1 showed 32.0% of speech; it is 43.9%. Level 31 showed 0.9%; it is 0.3%.",
-        "Czech coverage now covers all 10,000 deck words (rebuilt from the same OpenSubtitles 2018 counts for release v22), so levels 31 to 100 show a figure.",
-        "Smart Skip works out its categories once per burst of work instead of about a dozen times when a deck opens: setup work on opening Czech ~800 ms to ~460 ms.",
-        "The hidden loading spinner no longer animates behind the app."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:35:32+01:00",
-      "date": "2026-10-12 23:35 BST",
-      "agent": "Claude",
-      "summary": "Sessions are now chosen by time, and Go explains what to do when a level has little or nothing new left",
-      "detail": [
-        "Go and Practise share one session length: 5 min, 10 min or No limit. Tap the clock chip to change it; it is remembered on this device.",
-        "Time becomes cards at a fixed assumed pace (about 15 s per new card, 10 s per practice card): 5 min = 20 new or 30 practice cards.",
-        "When more of a level waits in Practise than is new (at least 10), Go asks: practise these, or learn the new ones. It asks once per level until the app reloads.",
-        "When a level has no new words left, Go shows either 'No new words left' (practise, next level, or redo) or 'You've mastered all the words' (next level, or redo).",
-        "Practice Errors is now Practise. It says how many words are waiting and when the next ones come back, e.g. 'Nothing to practise. 12 words come back tomorrow, 30 more this week.'",
-        "The level badge shows the word range only; the level total appears while you scrub the bar, and the deck size is in the Choose a Level help.",
-        "End of session: 'Keep going · 5 min' replaces 'Another 20'; finishing a level says how many words are waiting in Practise."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:20:29+01:00",
-      "date": "2026-10-12 23:20 BST",
-      "agent": "Claude",
-      "summary": "Go starts a session almost at once: its words and example sentences download while you're on the home screen",
-      "detail": [
-        "The home screen now starts the session's downloads (word rows and example sentences, ~1.5 MB for a Czech level) as soon as it shows Go.",
-        "Before, Go waited for them: about 2.5 s on production for Czech level 1. Timed locally after the change: 0.2 s, with nothing left to download.",
-        "Uses the same prefetch the end-of-session screen already used for the next session; repeat renders do not download twice."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:17:26+01:00",
-      "date": "2026-10-12 23:17 BST",
-      "agent": "Claude",
-      "summary": "Opening a deck freezes the screen for less time: Smart Skip stops re-reading your language settings for every word",
-      "detail": [
-        "Smart Skip asked which languages you read once per word (~140,000 times when a deck opened), re-reading and re-parsing two saved settings each time.",
-        "The answer is now worked out once per pass and dropped the moment either setting changes.",
-        "Czech, timed locally: Smart Skip refresh 817 ms to 214 ms; Smart Skip button 239 ms to 101 ms; skipped-word list 74 ms to 24 ms."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T23:10:20+01:00",
-      "date": "2026-10-12 23:10 BST",
-      "agent": "Claude",
-      "summary": "Czech coverage figures now show on Staging, and Staging no longer floods the browser with requests",
-      "detail": [
-        "Staging answers missing files with a real 404. Before, Cloudflare returned the app page with relative preload links, which recursed without end (~500 requests a minute per open tab).",
-        "Commit the Czech coverage file (coverage/cs/coverage.json) to the app, byte-identical to the one production already serves, so Staging builds it too."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-12T22:25:43+01:00",
-      "date": "2026-10-12 22:25 BST",
-      "agent": "Codex",
-      "summary": "Smart Skip is easier to browse; lyric credits put the song above the artist",
-      "detail": [
-        "Keep the cognate explanation open initially; other explanations stay folded. Mobile groups secondary controls under Other settings.",
-        "Group category, search and known-language filters; show live match counts and the exact number of words the supplementary study button will load.",
-        "Use a direct language picker instead of cycling. Empty comparisons remain selectable so learners can switch back.",
-        "Keep desktop settings and browser controls accessible while scrolling; add preview chevrons to word rows.",
-        "Render song titles without italics, above artist or vocalist credits, in both live cards and tutorial replicas.",
-        "All 268 app tests passed; desktop scrolling, phone layout, five-match study counts and two-line card credits checked in the browser."
       ],
       "commit": "pending"
     }

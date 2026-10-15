@@ -1,34 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=75601eb1';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=75601eb1';
-import { songCreditHTML } from './song-credit.js?v=75601eb1';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=75601eb1';
+import './state.js?v=47c0ef57';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=47c0ef57';
+import { songCreditHTML } from './song-credit.js?v=47c0ef57';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=47c0ef57';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=75601eb1';
-import './speech.js?v=75601eb1';
-import { goToRoute, routeCodeFor } from './routes.js?v=75601eb1';
-import { memoryTipTileHTML } from './memory-tips.js?v=75601eb1';
-import { functionWordBlockHTML, functionWordExampleHTML } from './function-word-card.js?v=75601eb1';
-import './side-dock.js?v=75601eb1';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=75601eb1';
+import { fitSenseRowText } from './card-row-layout.js?v=47c0ef57';
+import './speech.js?v=47c0ef57';
+import { goToRoute, routeCodeFor } from './routes.js?v=47c0ef57';
+import { memoryTipTileHTML } from './memory-tips.js?v=47c0ef57';
+import {
+    functionWordBlockHTML,
+    functionWordExampleHTML,
+    isFunctionWordCard,
+    getPortugueseGrammarDefinition,
+    getCardAmbientGlow
+} from './function-word-card.js?v=47c0ef57';
+import './side-dock.js?v=47c0ef57';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=47c0ef57';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=75601eb1';
+} from './example-personalisation.js?v=47c0ef57';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=75601eb1';
+} from './spanishdict-usage.js?v=47c0ef57';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=75601eb1';
+} from './reverse-cues.js?v=47c0ef57';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -62,7 +68,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=75601eb1';
+} from './card-metadata-pills.js?v=47c0ef57';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6037,6 +6043,8 @@ function updateCard({ announceHeadword = false } = {}) {
         ? (currentMeaning.cycle_pos || 'X')
         : (currentMeaning?.pos || card.partOfSpeech || '');
     document.getElementById('flashcard')?.style.setProperty('--card-pos-rgb', getPosAccentRgb(activeDisplayPos));
+    const ambientGlow = getCardAmbientGlow(card, selectedLanguage, activeDisplayPos, Boolean(card.splitInfo), getPosAccentRgb);
+    document.getElementById('flashcard')?.style.setProperty('--card-ambient-glow', ambientGlow);
     const activeProductionAnswer = getActiveProductionAnswer(card, currentMeaning);
     const mergedExampleFocus = getMergedLemmaExampleFocus(card, currentMeaning, {
         advanceOnEntry: announceHeadword
@@ -6753,12 +6761,14 @@ function renderCardWikipediaBadge(card) {
     // on narrow viewports) so the header grows by a reasonable amount
     // rather than adding a full line of whitespace each wrap. Single-line
     // cards are unaffected — line-height only matters when there are two
-    // or more rendered lines.
-    let backHTML = card.isChainChild
-        ? (card.chainChildKind === 'examples'
-            ? renderExamplesChildBack(card)
-            : renderPhraseSummaryBack(card))
-        : `
+    const ptGrammarWord = getPortugueseGrammarDefinition(card, selectedLanguage);
+    let backHTML = ptGrammarWord
+        ? functionWordBlockHTML(card, selectedLanguage)
+        : (card.isChainChild
+            ? (card.chainChildKind === 'examples'
+                ? renderExamplesChildBack(card)
+                : renderPhraseSummaryBack(card))
+            : `
         <div class="back-header">
             <div class="flip-back-area" id="flipBackArea">
                 <div class="back-headword-row">
@@ -6773,8 +6783,8 @@ function renderCardWikipediaBadge(card) {
             ${backDerivationHTML}
             ${homographChipHTML}
         </div>
-    `;
-    if (card.translationUnavailable) {
+    `);
+    if (!ptGrammarWord && card.translationUnavailable) {
         backHTML += `<div class="extra-translation-unavailable"><strong>No translation available yet.</strong><br>This one-off lyric remains available as corpus evidence.</div>`;
     }
 
@@ -6782,7 +6792,7 @@ function renderCardWikipediaBadge(card) {
     // learner, signed in or not, sees the same menu. Chain-child cards skip this entirely — renderPhraseChildHeader already
     // rendered the expression/translation, and renderPhraseChildExample
     // (below) is a self-contained example panel, not a sense-row list.
-    if (card.isMultiMeaning && !card.isChainChild) {
+    if (!ptGrammarWord && card.isMultiMeaning && !card.isChainChild) {
         // Two POS-section maps:
         //   - scrollSections: regular meanings + SENSE_CYCLE (these scroll)
         //   - traySections: MWE + CLITIC (always visible, pinned below the
@@ -8017,9 +8027,9 @@ function renderCardWikipediaBadge(card) {
         }
         // Emit the scroll region first, then the pinned tray underneath
         // (MWE/CLITIC rows that stay visible when the user scrolls).
-        if (scrollSections.size > 0) {
-            backHTML += card.functionWord
-                ? functionWordBlockHTML(card)
+        if (scrollSections.size > 0 || isFunctionWordCard(card, selectedLanguage)) {
+            backHTML += isFunctionWordCard(card, selectedLanguage)
+                ? functionWordBlockHTML(card, selectedLanguage)
                 : `<div class="meanings-scroll">${renderSections(scrollSections)}</div>`;
         }
         // Expressions mode off keeps the pinned tray; on, MWE/CLITIC entries
@@ -8071,7 +8081,10 @@ function renderCardWikipediaBadge(card) {
             // We still complete the variable computation here because
             // nothing in it is expensive or has side-effects — the only
             // suppression point is the `backHTML +=` at the bottom.
-            const suppressSentenceBlock = (isMWEOrCliticCycle && activeExamples.length === 0)
+            const isDeterministicFw = isFunctionWordCard(card, selectedLanguage)
+                && Boolean(getPortugueseGrammarDefinition(card, selectedLanguage) || card.functionWord?.uses);
+            const suppressSentenceBlock = isDeterministicFw
+                || (isMWEOrCliticCycle && activeExamples.length === 0)
                 || (!isMWEOrCliticCycle && activeExamples.length === 0 && !currentMeaning.targetSentence);
 
             const hasMultipleExamples = activeExamples.length > 1;
@@ -8351,8 +8364,8 @@ function renderCardWikipediaBadge(card) {
         } else if (currentMeaning?.exampleOnly) {
             backHTML += `<div class="sentence search-example-empty">No example is available for this source entry yet.</div>`;
         }
-    } else if (card.isChainChild) {
-        // renderPhraseSummaryBack already rendered every phrase's example.
+    } else if (card.isChainChild || ptGrammarWord) {
+        // renderPhraseSummaryBack or functionWordBlockHTML already rendered the complete card back.
     } else {
         // Legacy format
         backHTML += `<div style="font-size: 28px; color: var(--text-primary); margin-top: 12px; font-weight: 600; text-align: center; margin-bottom: 20px;">${backTranslation}${modelProposalMarkerHTML(currentMeaning)}</div>`;
@@ -8437,6 +8450,7 @@ function renderCardWikipediaBadge(card) {
     // The tile row is dropped entirely on small phones (see @media in
     // style.css); the handoff row / example already earn that vertical
     // space there.
+    if (!ptGrammarWord) {
     backHTML += `<div class="links-section" id="linksSection">`;
 
     if (rareAndExprItems.length > 0) {
@@ -8566,6 +8580,7 @@ function renderCardWikipediaBadge(card) {
 
     backHTML += buildProvenancePanelHTML(card);
     }
+    }
 
     const renderedBack = document.getElementById('backContent');
     const backDomChanged = renderedBack?._fluencyRenderedHTML !== backHTML;
@@ -8586,6 +8601,12 @@ function renderCardWikipediaBadge(card) {
         // face so flipping and card navigation still move them together.
         const backFace = renderedBack.closest('.card-back');
         backFace?.querySelector(':scope > .links-section')?.remove();
+        if (ptGrammarWord) {
+            backFace?.classList.remove('has-action-tray');
+            renderedBack.innerHTML = backHTML;
+            renderedBack._fluencyRenderedHTML = backHTML;
+            return;
+        }
         renderedBack.innerHTML = backHTML;
         const actionTray = renderedBack.querySelector(':scope > .links-section');
         if (actionTray && backFace) renderedBack.after(actionTray);
@@ -10607,8 +10628,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '75601eb1';
-const MODALS_ASSET_VERSION = '75601eb1';
+const ASSET_VERSION = '47c0ef57';
+const MODALS_ASSET_VERSION = '47c0ef57';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

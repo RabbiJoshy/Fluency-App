@@ -1,15 +1,25 @@
-import { preferredAi } from '../js/ai-preference.js?v=75601eb1';
-import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=75601eb1';
-import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=75601eb1';
-import { TurboEngine } from '../turbo/turbo-engine.js?v=75601eb1';
+import { preferredAi } from '../js/ai-preference.js?v=47c0ef57';
+import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=47c0ef57';
+import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=47c0ef57';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=47c0ef57';
 
-// Common Spanish & Latin urban ad-libs, interjections, and exclamations
-const INTERJECTIONS_SET = new Set([
+let currentLanguage = 'es';
+
+// Common Spanish & Portuguese ad-libs, interjections, and exclamations
+const SPANISH_INTERJECTIONS = new Set([
   'brr', 'wuh', 'ey', 'eh', 'ay', 'oh', 'ah', 'ja', 'jaja', 'yah', 'uh',
   'shh', 'prr', 'rra', 'amén', 'dale', 'oye', 'mera', 'woh', 'uah', 'pla',
   'pew', 'okey', 'bye', 'epa', 'uf', 'chao', 'hola', 'adiós', 'puñeta',
   'carajo', 'dios', 'mami'
 ]);
+
+const PORTUGUESE_INTERJECTIONS = new Set([
+  'opa', 'olha', 'ué', 'eita', 'nossa', 'oxe', 'valeu', 'falou', 'ai', 'ah',
+  'oh', 'eh', 'né', 'oba', 'uau', 'vixi', 'xi', 'ô', 'hein', 'aff', 'hum',
+  'psiu', 'tomara', 'amém', 'olá', 'tchau', 'beleza', 'cara', 'massa'
+]);
+
+const INTERJECTIONS_SET = new Set([...SPANISH_INTERJECTIONS, ...PORTUGUESE_INTERJECTIONS]);
 
 function escapeHtml(str) {
   if (!str) return '';
@@ -52,7 +62,7 @@ function formatElisionToken(raw, fullWord) {
     return escapeHtml(raw);
   }
 
-  // Irregular / common fixed contractions
+  // Irregular / common fixed contractions (Spanish & Portuguese)
   if (cleanCore === "pa'") return `${escapeHtml(lead)}pa<span class="elision-bracket">(</span><span class="elision-letter">ra</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
   if (cleanCore === "to'") return `${escapeHtml(lead)}to<span class="elision-bracket">(</span><span class="elision-letter">do</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
   if (cleanCore === "na'") return `${escapeHtml(lead)}na<span class="elision-bracket">(</span><span class="elision-letter">da</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
@@ -66,6 +76,21 @@ function formatElisionToken(raw, fullWord) {
   if (cleanCore === "'tás" || cleanCore === "tas'" || cleanCore === "tas") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tás${escapeHtml(trail)}`;
   if (cleanCore === "'tan" || cleanCore === "tan'") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tán${escapeHtml(trail)}`;
   if (cleanCore === "'taba" || cleanCore === "taba") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>taba${escapeHtml(trail)}`;
+
+  // Portuguese contractions
+  if (cleanCore === "pra") return `${escapeHtml(lead)}p<span class="elision-bracket">(</span><span class="elision-letter">a</span><span class="elision-bracket">)</span>ra${escapeHtml(trail)}`;
+  if (cleanCore === "pras") return `${escapeHtml(lead)}p<span class="elision-bracket">(</span><span class="elision-letter">a</span><span class="elision-bracket">)</span>ra<span class="elision-bracket">(</span><span class="elision-letter"> as</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+  if (cleanCore === "pro") return `${escapeHtml(lead)}p<span class="elision-bracket">(</span><span class="elision-letter">a</span><span class="elision-bracket">)</span>r<span class="elision-bracket">(</span><span class="elision-letter">a </span><span class="elision-bracket">)</span>o${escapeHtml(trail)}`;
+  if (cleanCore === "pros") return `${escapeHtml(lead)}p<span class="elision-bracket">(</span><span class="elision-letter">a</span><span class="elision-bracket">)</span>r<span class="elision-bracket">(</span><span class="elision-letter">a </span><span class="elision-bracket">)</span>os${escapeHtml(trail)}`;
+  if (cleanCore === "tô" || cleanCore === "'tô") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tou${escapeHtml(trail)}`;
+  if (cleanCore === "tava" || cleanCore === "'tava") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tava${escapeHtml(trail)}`;
+  if (cleanCore === "né") return `${escapeHtml(lead)}n<span class="elision-bracket">(</span><span class="elision-letter">ão </span><span class="elision-bracket">)</span>é${escapeHtml(trail)}`;
+  if (cleanCore === "cê" || cleanCore === "'cê") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">vo</span><span class="elision-bracket">)</span>cê${escapeHtml(trail)}`;
+  if (cleanCore === "cês" || cleanCore === "'cês") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">vo</span><span class="elision-bracket">)</span>cês${escapeHtml(trail)}`;
+  if (cleanCore === "dum") return `${escapeHtml(lead)}d<span class="elision-bracket">(</span><span class="elision-letter">e </span><span class="elision-bracket">)</span>um${escapeHtml(trail)}`;
+  if (cleanCore === "duma") return `${escapeHtml(lead)}d<span class="elision-bracket">(</span><span class="elision-letter">e </span><span class="elision-bracket">)</span>uma${escapeHtml(trail)}`;
+  if (cleanCore === "num") return `${escapeHtml(lead)}n<span class="elision-bracket">(</span><span class="elision-letter">em </span><span class="elision-bracket">)</span>um${escapeHtml(trail)}`;
+  if (cleanCore === "numa") return `${escapeHtml(lead)}n<span class="elision-bracket">(</span><span class="elision-letter">em </span><span class="elision-bracket">)</span>uma${escapeHtml(trail)}`;
 
   // Case 1: Trailing apostrophe (sabemo' -> sabemos, ere' -> eres, ojo' -> ojos)
   if (cleanCore.endsWith("'")) {
@@ -226,7 +251,8 @@ function songCacheKey(song) {
 
 function loadSavedCustomSongs() {
   try {
-    const raw = sessionStorage.getItem('fluency_turbo_custom_songs');
+    const key = `fluency_turbo_custom_songs_${currentLanguage}`;
+    const raw = sessionStorage.getItem(key) || sessionStorage.getItem('fluency_turbo_custom_songs');
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) return parsed;
@@ -254,20 +280,39 @@ async function init() {
     } catch (error) {
       console.warn('Could not initialize Spotify configuration:', error);
     }
-    await import('../js/spotify.js?v=75601eb1');
+    await import('../js/spotify.js?v=47c0ef57');
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');
+    const paramLang = (urlParams.get('lang') || urlParams.get('language') || '').toLowerCase();
+    currentLanguage = (paramLang === 'pt' || paramLang === 'portuguese') ? 'pt' : 'es';
+
+    document.documentElement.lang = currentLanguage;
+    const isPt = currentLanguage === 'pt';
+
+    // Update back links to retain language in Fluency hash
+    const backToStudyLink = document.getElementById('backToStudy');
+    if (backToStudyLink && isPt) {
+      backToStudyLink.href = '../#pt';
+    }
+    const topbarBackLink = document.querySelector('.topbar a.header-icon');
+    if (topbarBackLink && isPt) {
+      topbarBackLink.href = '../#pt';
+    }
+
+    const assetsFile = isPt ? 'pt_turbo_assets.json' : 'turbo_assets.json';
+    const extra50kFile = isPt ? 'pt_50k_data.json' : 'es_50k_data.json';
+    const songsFile = isPt ? 'pt_probe_songs.json' : 'probe_songs.json';
 
     // Robust asset paths relative to this module
-    const assetsUrl = new URL('../turbo/turbo_assets.json?v=20261009M', import.meta.url).href;
-    const extra50kUrl = new URL('../turbo/es_50k_data.json?v=20261009M', import.meta.url).href;
-    const songsUrl = new URL('../turbo/probe_songs.json?v=20261009M', import.meta.url).href;
+    const assetsUrl = new URL(`../turbo/${assetsFile}?v=20261015pt`, import.meta.url).href;
+    const extra50kUrl = new URL(`../turbo/${extra50kFile}?v=20261015pt`, import.meta.url).href;
+    const songsUrl = new URL(`../turbo/${songsFile}?v=20261015pt`, import.meta.url).href;
 
     // Load assets (read-only)
     engine = await TurboEngine.create(assetsUrl, extra50kUrl);
 
-    // Load 30 offline songs (read-only)
+    // Load offline songs (read-only)
     const songsResp = await fetch(songsUrl);
     if (!songsResp.ok) throw new Error(`HTTP ${songsResp.status} loading offline songs`);
     probeSongs = await songsResp.json();
@@ -277,34 +322,38 @@ async function init() {
       s.isOffline = true;
     });
 
-    // The wider catalogue: an index of title, artist and track. A song's
-    // timed lyrics are fetched when it is opened.
-    try {
-      const indexResp = await fetch(new URL('../turbo/catalogue/index.json?v=20261009M', import.meta.url));
-      if (indexResp.ok) {
-        extraSongs = (await indexResp.json()).map(entry => ({
-          ...entry, spotifyId: entry.id, isCatalogue: true, needsDetail: true
-        }));
-      }
-    } catch (_) { /* the curated 30 still work */ }
+    if (!isPt) {
+      // The wider catalogue: an index of title, artist and track. A song's
+      // timed lyrics are fetched when it is opened.
+      try {
+        const indexResp = await fetch(new URL('../turbo/catalogue/index.json?v=20261009M', import.meta.url));
+        if (indexResp.ok) {
+          extraSongs = (await indexResp.json()).map(entry => ({
+            ...entry, spotifyId: entry.id, isCatalogue: true, needsDetail: true
+          }));
+        }
+      } catch (_) { /* the curated 30 still work */ }
+    }
     catalogueSongs = [...probeSongs, ...extraSongs];
 
-    // Human English translations for curated songs, matched to their timed
-    // lines by text (the timed lines are LRCLIB's, not the translator's).
-    try {
-      const trResp = await fetch(new URL('../turbo/probe_translations.json?v=20261009M', import.meta.url));
-      if (trResp.ok) {
-        const { songs = {} } = await trResp.json();
-        probeSongs.forEach(song => {
-          const entry = songs[song.spotifyId];
-          if (!entry) return;
-          song.englishByText = entry.lines.map(l => ({
-            key: lineTextKey(l.text), words: new Set(lineTextKey(l.text).split(' ')), english: l.english
-          }));
-          song.translationSource = entry.source;
-        });
-      }
-    } catch (_) {}
+    if (!isPt) {
+      // Human English translations for curated songs, matched to their timed
+      // lines by text (the timed lines are LRCLIB's, not the translator's).
+      try {
+        const trResp = await fetch(new URL('../turbo/probe_translations.json?v=20261009M', import.meta.url));
+        if (trResp.ok) {
+          const { songs = {} } = await trResp.json();
+          probeSongs.forEach(song => {
+            const entry = songs[song.spotifyId];
+            if (!entry) return;
+            song.englishByText = entry.lines.map(l => ({
+              key: lineTextKey(l.text), words: new Set(lineTextKey(l.text).split(' ')), english: l.english
+            }));
+            song.translationSource = entry.source;
+          });
+        }
+      } catch (_) {}
+    }
 
     // Load session-generated songs
     customSongs = loadSavedCustomSongs();
@@ -455,7 +504,8 @@ function postProcessAnnotatedSong(song) {
               token.pos = resolved.pos;
               token.card = { ...resolved.dictEntry, word: resolved.word, translation: resolved.translation };
             } else if (resolved.rank) {
-              token.translation = `Top ${Math.ceil(resolved.rank / 1000) * 1000} Spanish word`;
+              const langLabel = currentLanguage === 'pt' ? 'Portuguese' : 'Spanish';
+              token.translation = `Top ${Math.ceil(resolved.rank / 1000) * 1000} ${langLabel} word`;
             }
           }
         }
@@ -475,7 +525,8 @@ function buildAiPromptText(lineText, songTitle, songArtist) {
   const cleanLine = (lineText || '').trim();
   const artistInfo = songArtist ? ` by ${songArtist}` : '';
   const trackInfo = songTitle ? ` from the song "${songTitle}"${artistInfo}` : (artistInfo ? ` by ${songArtist}` : '');
-  return `Please translate this Spanish lyric line into English, break down any slang, idioms, or cultural nuances, and tell me anything essential one needs to know about the artist or context behind it:\n\n"${cleanLine}"${trackInfo ? ` (${trackInfo})` : ''}`;
+  const langLabel = currentLanguage === 'pt' ? 'Portuguese' : 'Spanish';
+  return `Please translate this ${langLabel} lyric line into English, break down any slang, idioms, or cultural nuances, and tell me anything essential one needs to know about the artist or context behind it:\n\n"${cleanLine}"${trackInfo ? ` (${trackInfo})` : ''}`;
 }
 
 async function copyPromptToClipboard(promptText) {

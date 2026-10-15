@@ -1,4 +1,4 @@
-import { songCreditHTML } from './song-credit.js?v=75601eb1';
+import { songCreditHTML } from './song-credit.js?v=47c0ef57';
 // The replica card: real demo entries and the markup that draws them.
 //
 // Two features show a flashcard without the app having loaded a deck, and they
@@ -705,9 +705,11 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                         </div>
                         <span class="ref-tile-label">Rare uses</span>
                     </button>` : ''}
-                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Flag a meaning" aria-haspopup="dialog">
-                        <span class="ref-tile-fraction" aria-hidden="true">0/${Math.max(2, (card.meanings || []).length || 3)}</span>
-                        <span class="ref-tile-label">Flag a meaning</span>
+                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Revisit a meaning" aria-haspopup="dialog">
+                        <div class="ref-tile-icon-wrap">
+                            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5v7"></path><path d="m8.8 6.8 3.2 3.2 3.2-3.2"></path><rect x="4.5" y="13" width="15" height="4" rx="1.2"></rect><path d="M7 20.5h10"></path></svg>
+                        </div>
+                        <span class="ref-tile-label">Revisit a meaning</span>
                     </button>
                     <div class="ref-lookup-wrap"><button type="button" class="ref-tile ref-lookup-btn" aria-label="Look up" title="Look up">
                         <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

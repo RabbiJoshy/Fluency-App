@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v590-75601eb1';
+const CACHE_NAME = 'flashcards-v590-47c0ef57';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = '75601eb1';
+const ASSET_VERSION = '47c0ef57';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -26,20 +26,20 @@ const ASSET_VERSION = '75601eb1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=75601eb1',
-  '/css/appearance.css?v=75601eb1',
-  '/css/ui-refinements.css?v=75601eb1',
-  '/css/desktop-shell.css?v=75601eb1',
-  '/css/music-workspace.css?v=75601eb1',
-  '/js/music-workspace.js?v=75601eb1',
-  '/js/saved-items.js?v=75601eb1',
-  '/css/saved-items.css?v=75601eb1',
-  '/js/desktop-shell.js?v=75601eb1',
-  '/js/ai-preference.js?v=75601eb1',
-  '/js/appearance-bootstrap.js?v=75601eb1',
-  '/js/theme.js?v=75601eb1',
+  '/css/style.css?v=47c0ef57',
+  '/css/appearance.css?v=47c0ef57',
+  '/css/ui-refinements.css?v=47c0ef57',
+  '/css/desktop-shell.css?v=47c0ef57',
+  '/css/music-workspace.css?v=47c0ef57',
+  '/js/music-workspace.js?v=47c0ef57',
+  '/js/saved-items.js?v=47c0ef57',
+  '/css/saved-items.css?v=47c0ef57',
+  '/js/desktop-shell.js?v=47c0ef57',
+  '/js/ai-preference.js?v=47c0ef57',
+  '/js/appearance-bootstrap.js?v=47c0ef57',
+  '/js/theme.js?v=47c0ef57',
   `/css/progress-overview.css?v=${ASSET_VERSION}`,
-  '/css/light-theme.css?v=75601eb1',
+  '/css/light-theme.css?v=47c0ef57',
   '/config/config.json',
   '/data/speech-frequency/es-literal-ground-r6-fw1.json',
   '/data/speech-frequency/fi.json',
@@ -53,74 +53,75 @@ const urlsToCache = [
   '/data/estimation-pools/french.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/routes.js?v=75601eb1',
-  '/js/main.js?v=75601eb1',
-  '/js/theme.js?v=75601eb1',
-  '/js/state.js?v=75601eb1',
+  '/js/routes.js?v=47c0ef57',
+  '/js/main.js?v=47c0ef57',
+  '/js/theme.js?v=47c0ef57',
+  '/js/state.js?v=47c0ef57',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
   `/js/offline-db.js?v=${ASSET_VERSION}`,
   `/js/read-request.js?v=${ASSET_VERSION}`,
   `/js/sync-queue.js?v=${ASSET_VERSION}`,
   `/js/offline-content.js?v=${ASSET_VERSION}`,
-  '/js/speech.js?v=75601eb1',
+  '/js/speech.js?v=47c0ef57',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
-  '/js/auth.js?v=75601eb1',
+  '/js/auth.js?v=47c0ef57',
   `/js/learning-profiles.js?v=${ASSET_VERSION}`,
   `/js/swipe-onboarding.js?v=${ASSET_VERSION}`,
   `/css/learning-profiles.css?v=${ASSET_VERSION}`,
-  '/js/card-replica.js?v=75601eb1',
-  '/js/tutorial.js?v=75601eb1',
-  '/js/walkthrough.js?v=75601eb1',
-  '/js/spotify.js?v=75601eb1',
-  '/js/estimation.js?v=75601eb1',
-  '/js/release-host.js?v=75601eb1',
-  '/js/env.js?v=75601eb1',
-  '/js/config.js?v=75601eb1',
-  '/js/progress.js?v=75601eb1',
-  '/js/srs-policy.js?v=75601eb1',
-  '/js/progress-identity.js?v=75601eb1',
-  '/js/knowledge.js?v=75601eb1',
+  '/js/card-replica.js?v=47c0ef57',
+  '/js/tutorial.js?v=47c0ef57',
+  '/js/walkthrough.js?v=47c0ef57',
+  '/js/spotify.js?v=47c0ef57',
+  '/js/estimation.js?v=47c0ef57',
+  '/js/release-host.js?v=47c0ef57',
+  '/js/sense-gloss.js?v=47c0ef57',
+  '/js/env.js?v=47c0ef57',
+  '/js/config.js?v=47c0ef57',
+  '/js/progress.js?v=47c0ef57',
+  '/js/srs-policy.js?v=47c0ef57',
+  '/js/progress-identity.js?v=47c0ef57',
+  '/js/knowledge.js?v=47c0ef57',
   `/js/progress-overview.js?v=${ASSET_VERSION}`,
-  '/js/session-plan.js?v=75601eb1',
-  '/js/ui.js?v=75601eb1',
-  '/js/fast-track-preferences.js?v=75601eb1',
-  '/js/vocab.js?v=75601eb1',
-  '/js/grammar-cards.js?v=75601eb1',
-  '/js/language-profile.js?v=75601eb1',
-  '/js/bridge.js?v=75601eb1',
-  '/js/smart-skip-pairs.js?v=75601eb1',
+  '/js/session-plan.js?v=47c0ef57',
+  '/js/ui.js?v=47c0ef57',
+  '/js/fast-track-preferences.js?v=47c0ef57',
+  '/js/vocab.js?v=47c0ef57',
+  '/js/grammar-cards.js?v=47c0ef57',
+  '/js/language-profile.js?v=47c0ef57',
+  '/js/bridge.js?v=47c0ef57',
+  '/js/smart-skip-pairs.js?v=47c0ef57',
   '/config/smart-skip-pairs.json',
   '/data/bridge/es-fw1-ds25.json',
   '/data/bridge/fr-fw1-ds25.json',
   '/data/bridge/pt-fw1-ds25.json',
   '/data/bridge/cs-fw1.json',
-  '/js/cognates.js?v=75601eb1',
-  '/js/coverage.js?v=75601eb1',
-  '/js/fast-mode.js?v=75601eb1',
-  '/js/extras.js?v=75601eb1',
+  '/js/cognates.js?v=47c0ef57',
+  '/js/coverage.js?v=47c0ef57',
+  '/js/fast-mode.js?v=47c0ef57',
+  '/js/extras.js?v=47c0ef57',
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
-  '/js/song-sets.js?v=75601eb1',
-  '/js/spotify-playlist-import.js?v=75601eb1',
-  '/js/playlist-live.js?v=75601eb1',
+  '/js/song-sets.js?v=47c0ef57',
+  '/js/spotify-playlist-import.js?v=47c0ef57',
+  '/js/playlist-live.js?v=47c0ef57',
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
-  '/js/vocabulary-import.js?v=75601eb1',
+  '/js/vocabulary-import.js?v=47c0ef57',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
-  '/js/reverse-cues.js?v=75601eb1',
-  '/js/flags.js?v=75601eb1',
-  '/js/card-metadata-pills.js?v=75601eb1',
-  '/js/flashcards.js?v=75601eb1',
-  '/js/card-row-layout.js?v=75601eb1',
-  '/js/keyboard-guide.js?v=75601eb1',
+  '/js/reverse-cues.js?v=47c0ef57',
+  '/js/flags.js?v=47c0ef57',
+  '/js/card-metadata-pills.js?v=47c0ef57',
+  '/js/flashcards.js?v=47c0ef57',
+  '/js/card-row-layout.js?v=47c0ef57',
+  '/js/keyboard-guide.js?v=47c0ef57',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   '/icons/apple-touch-icon.png',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
-  '/js/flashcards-modals.js?v=75601eb1',
-  '/js/flashcards-conj.js?v=75601eb1',
-  '/js/side-dock.js?v=75601eb1',
-  '/js/review-home.js?v=75601eb1'
+  '/js/flashcards-modals.js?v=47c0ef57',
+  '/js/flashcards-conj.js?v=47c0ef57',
+  '/js/side-dock.js?v=47c0ef57',
+  '/js/review-home.js?v=47c0ef57'
 ];
 
 self.addEventListener('install', event => {
@@ -314,9 +315,20 @@ self.addEventListener('fetch', event => {
     matchRetainedContent(request).then(async retained => {
       if (retained) return retained;
       const cache = await caches.open(CACHE_NAME);
-      return cache.match(request).then(cached => {
-        if (cached) return cached;
+      return cache.match(request).then(async cached => {
+        // Older Pages deployments returned the HTML shell for missing assets.
+        // Its relative Link preloads recursively request js/js/... when replayed
+        // from cache. Never return that HTML (or its preload headers) as an asset.
+        const isHtml = response => /\btext\/html\b/i.test(response?.headers.get('content-type') || '');
+        if (cached && !isHtml(cached)) return cached;
+        if (cached) await cache.delete(request);
         return fetch(request).then(response => {
+          if (isHtml(response)) {
+            return new Response('Asset not found', {
+              status: 404,
+              headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' },
+            });
+          }
           // Only cache valid 200 responses. Don't poison the cache with
           // 404s, opaque cross-origin responses, or partial content.
           if (response && response.status === 200 && response.type === 'basic') {

@@ -1,6 +1,6 @@
 // Read-only transfer of verified source meaning knowledge. No target progress is written.
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=75601eb1';
-import { mergeProgressRecords } from './progress-identity.js?v=75601eb1';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=47c0ef57';
+import { mergeProgressRecords } from './progress-identity.js?v=47c0ef57';
 
 let bundle = null;
 let revision = 0;
@@ -76,10 +76,20 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
     // The precomputed requirements cover the exact release. Artist cards or
     // merged/loaded cards may add meanings: keep them unless all their senses
     // occur in the audited requirement set.
-    const meanings = (item?.meanings || []).flatMap(m => m.pos === 'SENSE_CYCLE' && m.allSenses?.length ? m.allSenses : [m]);
-    if (meanings.some(m => !target.meanings.some(t =>
-        normalize(t.translation || t.meaning) === normalize(m.translation || m.meaning)
-        && normalize(t.headword) === normalize(m.headword)))) return null;
+    const meanings = (item?.meanings || [])
+        .flatMap(m => m.pos === 'SENSE_CYCLE' && m.allSenses?.length ? m.allSenses : [m])
+        .filter(m => m && (m.translation || m.meaning) && m.unassigned !== true && m.assignment_method !== 'unassigned');
+    if (meanings.length && target.meanings?.length && meanings.some(m => {
+        const mh = normalize(m.headword || item?.headword || item?.lemma || '');
+        const mt = normalize(m.translation || m.meaning);
+        return !target.meanings.some(t => {
+            const th = normalize(t.headword || '');
+            const tt = normalize(t.translation || t.meaning);
+            const headwordMatch = !mh || !th || th === mh;
+            const transMatch = tt === mt || mt.includes(tt) || tt.includes(mt);
+            return headwordMatch && transMatch;
+        });
+    })) return null;
     const profile = useProfile ? new Set(globalThis.activeKnownLanguages?.() || []) : new Set();
     const useProgress = forceProgress || enabled();
     if (!profile.size && !useProgress) return null;
@@ -121,15 +131,34 @@ function refresh() {
     if (container) container.hidden = !bundle || window.bridgeSourceLanguages().length === 0;
     const toggle = document.getElementById('bridgeToggle');
     if (toggle) toggle.setAttribute('aria-checked', String(enabled()));
+    const modalToggle = document.getElementById('knownLanguagesBridgeToggle');
+    if (modalToggle) modalToggle.setAttribute('aria-checked', String(enabled()));
+    const bridgeExample = 'Skip words you’ve already learned in other languages you study (e.g. learn <em>noche</em> in Spanish → skip <em>noite</em> in Portuguese).';
+    const sourceLangs = window.bridgeSourceLanguages().map(code => window.knownLanguageLabel?.(code) || code.toUpperCase()).join(' and ');
+    const summaryText = bundle && sourceLangs ? `Uses your saved ${sourceLangs} progress (e.g. learn noche in Spanish → skip noite in Portuguese).` : '';
     const text = document.getElementById('bridgeSourcesSummary');
-    if (text) text.textContent = bundle ? `Uses your saved ${window.bridgeSourceLanguages()
-        .map(code => window.knownLanguageLabel?.(code) || code.toUpperCase()).join(' and ')} progress. Only matching meanings you know are used.` : '';
+    if (text) text.textContent = summaryText;
+    const modalDesc = document.getElementById('knownLanguagesBridgeDesc');
+    if (modalDesc) modalDesc.innerHTML = bridgeExample;
     const settingsSummary = document.getElementById('settingsKnownLanguagesSummary');
-    if (settingsSummary) settingsSummary.textContent = (window.readKnownLanguages?.() || [])
-        .map(code => window.knownLanguageLabel?.(code) || code.toUpperCase()).join(', ') || 'None selected';
+    if (settingsSummary) {
+        const codes = window.readKnownLanguages?.() || [];
+        const names = codes.map(code => window.knownLanguageLabel?.(code) || code.toUpperCase());
+        settingsSummary.replaceChildren(...codes.map((code, index) => {
+            const chip = document.createElement('span');
+            chip.className = 'known-language-flag';
+            chip.title = names[index];
+            const flag = window.knownLanguageFlag?.(code);
+            chip.textContent = flag || code.toUpperCase();
+            if (!flag) chip.classList.add('is-code');
+            return chip;
+        }));
+        if (!codes.length) settingsSummary.textContent = 'None selected';
+        settingsSummary.setAttribute('aria-label', names.join(', ') || 'None selected');
+    }
 }
 function init() {
-    document.getElementById('bridgeToggle')?.addEventListener('click', async () => {
+    const handleToggle = async () => {
         const previous = readFastTrack(selectedLanguage);
         const on = !enabled();
         saveFastTrack(selectedLanguage, {bridge: on, enabled: on || previous.merge || previous.skip || previous.skipGrammar || previous.skipSlang || previous.skipEntities});
@@ -140,7 +169,9 @@ function init() {
         window.refreshFastMode?.();
         window.renderSkippedWords?.('cognate', {force: true});
         refresh();
-    });
+    };
+    document.getElementById('bridgeToggle')?.addEventListener('click', handleToggle);
+    document.getElementById('knownLanguagesBridgeToggle')?.addEventListener('click', handleToggle);
     document.getElementById('settingsKnownLanguagesBtn')?.addEventListener('click', () => window.openKnownLanguagesSettings?.());
     window.addEventListener('language-profile-change', () => {
         cacheEpoch = '';

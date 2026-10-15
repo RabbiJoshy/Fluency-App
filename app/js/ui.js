@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=75601eb1';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=75601eb1';
-import { readFastTrack } from './fast-track-preferences.js?v=75601eb1';
-import './session-plan.js?v=75601eb1';
+import './state.js?v=47c0ef57';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=47c0ef57';
+import { readFastTrack } from './fast-track-preferences.js?v=47c0ef57';
+import './session-plan.js?v=47c0ef57';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -278,19 +278,17 @@ applyGlobalStudyDefaults();
 
 function setupTooltipHandlers() {
     // Step help tooltip handlers — open as modal
-    document.querySelectorAll('.step-help-btn, .step-title-trigger').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const tooltipId = this.dataset.tooltip;
-            const tooltip = document.getElementById(tooltipId);
-
-            // Close all other tooltips first
-            document.querySelectorAll('.step-info-tooltip').forEach(t => {
-                if (t.id !== tooltipId) t.classList.remove('visible');
-            });
-
-            tooltip.classList.toggle('visible');
+    // Delegation also covers the progress legend rebuilt with the session.
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest?.('.step-help-btn, .step-title-trigger');
+        if (!button) return;
+        const tooltip = document.getElementById(button.dataset.tooltip);
+        if (!tooltip) return;
+        e.stopPropagation();
+        document.querySelectorAll('.step-info-tooltip').forEach(other => {
+            if (other !== tooltip) other.classList.remove('visible');
         });
+        tooltip.classList.toggle('visible');
     });
 
     // Close tooltip modal on backdrop click (click on outer overlay, not inner content)
@@ -482,6 +480,7 @@ function paintLearningContextPhoto(el, artist) {
 function currentLearningMode() {
     if (window.playlistLiveActive?.()) return 'live';
     if (activeArtist) return 'lyrics';
+    if (window.musicWorkspaceActive?.()) return 'lyrics';
     if (document.getElementById('step1')?.classList.contains('source-speech-active')) return 'speech';
     return null;
 }
@@ -523,6 +522,15 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     const artistRow = document.getElementById('learningContextArtistBtn');
     const songsRow = document.getElementById('learningContextSongsBtn');
     flagEl.textContent = flag;
+    // The desktop sidebar names the language even in artist mode; the artist
+    // gets its own chip beneath it (desktop-shell.js trail).
+    const languageOnlyEl = document.getElementById('learningContextLanguageOnly');
+    if (languageOnlyEl) {
+        const plainLanguage = (activeArtist && activeArtist.language === selectedLanguage)
+            ? activeArtist.language : selectedLanguage;
+        languageOnlyEl.textContent = window._normalModeLangConfigs?.[plainLanguage]?.name
+            || config.languages?.[plainLanguage]?.name || languageConfig.name || selectedLanguage;
+    }
     document.getElementById('learningContextSheetFlag').textContent = flag;
     document.getElementById('learningContextSheetLanguage').textContent = languageConfig.name || selectedLanguage;
     document.getElementById('learningContextSheetMode').textContent = mode;
@@ -545,7 +553,9 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     if (lyricsViewRow) {
         const lyricsActive = modeKey === 'lyrics' || modeKey === 'live';
         lyricsViewRow.hidden = !lyricsActive;
-        lyricsViewRow.dataset.href = 'lyrics-view/';
+        const currentLang = (typeof activeArtist !== 'undefined' && activeArtist?.language) || (typeof selectedLanguage !== 'undefined' ? selectedLanguage : null);
+        const routes = typeof window !== 'undefined' ? window.fluencyRoutes : null;
+        lyricsViewRow.dataset.href = routes?.lyricsViewHref?.(null, currentLang) || (currentLang === 'portuguese' ? 'lyrics-view/?lang=pt' : 'lyrics-view/');
     }
     const activities = document.getElementById('learningContextActivities');
     if (activities) activities.hidden = Boolean(verbsRow?.hidden && lyricsViewRow?.hidden);
@@ -821,6 +831,9 @@ function setupLanguageTabs() {
                 if (window.playlistLiveDeck?.()?.language !== newLanguage) {
                     window.clearPlaylistLiveSession?.();
                 }
+                if (window.activeArtist && window.activeArtist.language !== newLanguage) {
+                    window.resetActiveArtist?.();
+                }
             }
 
             selectedLanguage = newLanguage;
@@ -1040,11 +1053,11 @@ function updateStep2Tooltip() {
     const estimateCallout = document.getElementById('step2LevelEstimateCallout');
     if (activeArtist) {
         const name = activeArtist.name;
-        if (description) description.textContent = `Levels arrange ${name}'s vocabulary from the words used most in these lyrics to less frequent ones.`;
+        if (description) description.textContent = `Each level is a group of words from ${name}'s lyrics. Earlier levels contain the words used most often in this music.`;
         if (estimateCallout) estimateCallout.style.display = 'none';
     } else {
         if (description) {
-            description.textContent = 'Levels arrange vocabulary from the most common daily words to less frequent ones.';
+            description.textContent = 'Each level is a group of words. Earlier levels contain the most common daily words.';
         }
         if (estimateCallout) estimateCallout.style.display = 'flex';
     }
@@ -1053,7 +1066,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    description.textContent = 'Go starts a batch of new words from your selected level. Choose a time to estimate its size. If fewer new words remain, the batch contains those words and the time choice is hidden. The progress bar and counts describe the selected level.';
+    description.textContent = 'Go starts a session of flashcards for words in this level that you have not studied yet. Flip each card to see its meaning and an example, then mark whether you knew it. Your time choice estimates how many cards to include.';
 }
 
 // Annotates every level control with its completion percentage and returns
@@ -2997,6 +3010,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                         <b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>
                         ${levelEstimatedCount > 0 ? `<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated familiar</b>` : ''}
                         ${levelSkippedCount > 0 ? `<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>` : ''}
+                        <button type="button" class="study-legend-info step-help-btn" data-tooltip="levelColoursTooltip" aria-label="What the level colours mean" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     </span>
                 </div>
                 ${nextCount === 0
@@ -3360,7 +3374,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=75601eb1')
+        import('./spotify.js?v=47c0ef57')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

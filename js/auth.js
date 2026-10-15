@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=75601eb1';
-import { readJsonWithTimeout } from './read-request.js?v=75601eb1';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=75601eb1';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=75601eb1';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=75601eb1';
-import { dbGet, dbPut } from './offline-db.js?v=75601eb1';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=75601eb1';
+import './state.js?v=47c0ef57';
+import { readJsonWithTimeout } from './read-request.js?v=47c0ef57';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=47c0ef57';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=47c0ef57';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=47c0ef57';
+import { dbGet, dbPut } from './offline-db.js?v=47c0ef57';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=47c0ef57';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=75601eb1';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=75601eb1';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=75601eb1';
+} from './sync-queue.js?v=47c0ef57';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=47c0ef57';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=47c0ef57';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -86,6 +86,11 @@ async function loadSecrets() {
         ? publicProgressSyncUrl.trim()
         : '';
     if (PASSWORDLESS_ENABLED) GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
+
+    // Pages never ships backend/. Older offline workers can replay a cached
+    // HTML fallback here and start recursive module preloads before updating.
+    // Staging already has every public endpoint above; do not probe that URL.
+    if (IS_STAGING) return;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);

@@ -1,12 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=75601eb1';
-import { readJsonWithTimeout } from './read-request.js?v=75601eb1';
-import { validateVocabularyIndex } from './data-contracts.js?v=75601eb1';
-import { formatRoute } from './routes.js?v=75601eb1';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=75601eb1';
-import { releaseUrl } from './release-host.js?v=75601eb1';
+import './state.js?v=47c0ef57';
+import { readJsonWithTimeout } from './read-request.js?v=47c0ef57';
+import { validateVocabularyIndex } from './data-contracts.js?v=47c0ef57';
+import { formatRoute } from './routes.js?v=47c0ef57';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=47c0ef57';
+import { releaseUrl } from './release-host.js?v=47c0ef57';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=47c0ef57';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1807,6 +1808,9 @@ async function fetchIndexRowShard(langConfig, shard) {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         trackDataFreshness(response);
         mergeIndexRowPayload(responseData);
+        for (const card of window._cachedJoinedIndex || []) {
+            if (responseData?.[card.id]) promoteSubglossTranslations(card.meanings);
+        }
         loadedIndexRowShards.add(key);
     }).finally(() => indexRowShardInflight.delete(key));
     indexRowShardInflight.set(key, pending);
@@ -1921,6 +1925,7 @@ async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
     }
 
     validateVocabularyIndex(data, { source: indexPath });
+    if (Array.isArray(data)) for (const card of data) promoteSubglossTranslations(card?.meanings);
 
     window._cachedJoinedIndex = data;
     window._cachedJoinedIndexPath = cacheKey;
@@ -2571,10 +2576,16 @@ function selectLemmaModeRepresentatives(items) {
 // there is no single score to compare against a single threshold. cognates.js
 // owns that decision; this falls back to the shipped scalar and the slider for
 // decks that predate the per-language contract.
+let _cognateSkippedLemmas = new Set();
+
 function isCognateAlreadyKnown(item) {
     const decide = globalThis.isCognateKnown;
     if (globalThis.bridgeVerdict?.(item, {useProfile: excludeCognates})) return true;
-    if (decide) return excludeCognates && Boolean(decide(item));
+    if (decide && excludeCognates && Boolean(decide(item))) return true;
+    if (useLemmaMode && lemmaFieldAvailable) {
+        const lKey = lemmaGroupKey(item);
+        if (lKey && _cognateSkippedLemmas.has(lKey)) return true;
+    }
     return Number(item?.cognate_score || 0) >= cognateThreshold;
 }
 
@@ -2708,6 +2719,38 @@ function buildFilteredVocab(vocabData) {
     const counts = { english: 0, cognates: 0, singleOcc: 0, lemma: 0 };
     const hasCorpusFrequency = vocabData.length > 0
         && vocabData[0].hasOwnProperty('corpus_count');
+
+    _cognateSkippedLemmas.clear();
+    const isExtraScope = Boolean(activeArtist && artistVocabularyScope === 'extra');
+    if (!isExtraScope && useLemmaMode && lemmaFieldAvailable && (excludeCognates || globalThis.isBridgeEnabled?.()) && (cognateFieldAvailable || globalThis.isBridgeEnabled?.())) {
+        const candidatesByLemma = new Map();
+        for (const item of vocabData) {
+            const lKey = lemmaGroupKey(item);
+            if (!lKey) continue;
+            const prev = candidatesByLemma.get(lKey);
+            const itemIsLemma = normalizeLemmaToken(item.word) === lKey;
+            const prevIsLemma = prev ? normalizeLemmaToken(prev.word) === lKey : false;
+            if (prev && itemIsLemma !== prevIsLemma) {
+                if (itemIsLemma) candidatesByLemma.set(lKey, item);
+                continue;
+            }
+            const itemStable = Number.isFinite(item.stableRank) ? item.stableRank : Infinity;
+            const prevStable = Number.isFinite(prev?.stableRank) ? prev.stableRank : Infinity;
+            if (!prev || itemStable < prevStable) {
+                candidatesByLemma.set(lKey, item);
+            }
+        }
+        for (const [lKey, rep] of candidatesByLemma.entries()) {
+            const decide = globalThis.isCognateKnown;
+            const isCognate = Boolean(globalThis.bridgeVerdict?.(rep, {useProfile: excludeCognates}))
+                || Boolean(decide && excludeCognates && decide(rep))
+                || Number(rep?.cognate_score || 0) >= cognateThreshold;
+            if (isCognate) {
+                _cognateSkippedLemmas.add(lKey);
+            }
+        }
+    }
+
     let result = [];
     for (const item of vocabData) {
         if (!item.word || item.word.trim() === '' || item.duplicate
@@ -2735,7 +2778,6 @@ function buildFilteredVocab(vocabData) {
         // loanwords, proper nouns, noise) instead of dropping them, so they
         // surface grouped by their `extra_category` rather than vanishing.
         // Main scope is unchanged — it still drops them so it stays clean.
-        const isExtraScope = activeArtist && artistVocabularyScope === 'extra';
         if (!isExtraScope) {
             // English borrowings — always filtered for artists (no toggle; they're not
             // Spanish words at all and have no Spanish meaning to teach).
@@ -3387,6 +3429,12 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 if (m.sense_id || m.id) meaning.senseId = m.sense_id || m.id;
                 if (m.sense_id_aliases?.length) meaning.senseIdAliases = m.sense_id_aliases;
                 if (m.context) meaning.context = m.context;
+                // Shown text may be a promoted sub-gloss (sense-gloss.js);
+                // progress keys stay on the release's own text.
+                if (m.original_translation != null) {
+                    meaning.originalMeaning = m.original_translation;
+                    meaning.originalContext = m.original_context || '';
+                }
                 if (m.headword) meaning.headword = m.headword;
                 if (m.source_reference) meaning.source_reference = m.source_reference;
                 if (m.metadata) meaning.metadata = m.metadata;

@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=75601eb1';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=75601eb1';
+import './state.js?v=47c0ef57';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=47c0ef57';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -150,6 +150,12 @@ function refresh() {
     // Advanced options sheet, which is listed only where one can do something.
     let advancedAvailable = 0;
     let advancedOn = 0;
+    const bridgeContainer = document.getElementById('bridgeToggleContainer');
+    const bridgeAvailable = bridgeContainer && !bridgeContainer.hidden;
+    if (bridgeAvailable) {
+        advancedAvailable++;
+        if (globalThis.isBridgeEnabled?.()) advancedOn++;
+    }
     for (const kind of ['grammar', 'slang', 'entity']) {
         const container = document.getElementById(`${kind}ToggleContainer`);
         if (!container) continue;
@@ -211,6 +217,16 @@ function refresh() {
         hubSummary.textContent = !on ? 'Fewer cards to study'
             : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} skipped`
             : 'None skipped';
+    }
+    const examples = document.getElementById('fastTrackHubExamples');
+    if (examples) {
+        // Use real candidates from this deck, with different copy for enabled
+        // exclusions and the preview while Smart Skip is off.
+        const candidates = on ? [...(extras.allSkipped || extras.cognates || []), ...(extras.lemmas || [])]
+            .map(entry => entry.item || entry) : lookAlikeCandidates();
+        const words = [...new Set(candidates.map(item => String(item?.word || '').trim()).filter(Boolean))].slice(0, 3);
+        examples.textContent = words.length ? `${on ? 'e.g.' : 'Could skip:'} ${words.join(', ')}` : '';
+        examples.hidden = !words.length;
     }
     const secondaryState = document.getElementById('smartSkipSecondaryState');
     if (secondaryState) {
@@ -480,7 +496,7 @@ function openFastModePage({ section } = {}) {
     if (!section) globalThis.resetSkippedCategory?.();
     // Cognates explain the benefit immediately; other explanations stay folded.
     const secondary = document.getElementById('smartSkipSecondarySettings');
-    if (secondary) secondary.open = !window.matchMedia('(max-width: 899px)').matches || !cognateAvailable();
+    if (secondary && 'open' in secondary) secondary.open = !window.matchMedia('(max-width: 899px)').matches || !cognateAvailable();
     closeAdvancedSkip();
     document.querySelectorAll('.smart-skip-shortcut').forEach(el => { delete el.dataset.userExpanded; });
     refresh();
@@ -503,7 +519,7 @@ function closeFastModePage({ reopenSettings = true } = {}) {
 function init() {
     window.matchMedia('(max-width: 899px)').addEventListener('change', event => {
         const secondary = document.getElementById('smartSkipSecondarySettings');
-        if (secondary) secondary.open = !event.matches || !cognateAvailable();
+        if (secondary && 'open' in secondary) secondary.open = !event.matches || !cognateAvailable();
     });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
     document.querySelectorAll('[data-ss-master]').forEach(button => {

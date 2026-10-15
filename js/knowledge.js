@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=75601eb1';
-import { sendOrQueue } from './sync-queue.js?v=75601eb1';
+import './state.js?v=47c0ef57';
+import { sendOrQueue } from './sync-queue.js?v=47c0ef57';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -132,7 +132,10 @@ function knowledgeItemsForMeaning(card, meaning, meaningIndex) {
     const stableAliases = meaning.senseIdAliases || meaning.sense_id_aliases || [];
     const isRare = Boolean(meaning.isRareSense);
     const type = isRare ? 'rare_sense' : 'sense';
-    const fallbackSignature = `${isRare ? 'rare-sense' : 'sense'}|${normalizeKnowledgeText(pos)}|${normalizeKnowledgeText(translation)}|${normalizeKnowledgeText(context)}`;
+    // A promoted sub-gloss changes only what is shown (sense-gloss.js).
+    const keyTranslation = meaning.originalMeaning ?? translation;
+    const keyContext = meaning.originalContext ?? context;
+    const fallbackSignature = `${isRare ? 'rare-sense' : 'sense'}|${normalizeKnowledgeText(pos)}|${normalizeKnowledgeText(keyTranslation)}|${normalizeKnowledgeText(keyContext)}`;
     const item = {
         ...makeKnowledgeItem(
             card,
@@ -721,7 +724,7 @@ function knowledgeSectionLabel(item) {
 }
 
 // Meanings the learner can mark for practice, counted exactly as the
-// "Flag a meaning" button counts them. Empty for guests and single-meaning cards.
+// "Revisit a meaning" button counts them. Empty for guests and single-meaning cards.
 function getKnowledgeFocusItems(card) {
     if (!currentUser || currentUser.isGuest) return [];
     const items = getCardKnowledgeItems(card);
@@ -759,7 +762,7 @@ function getPracticeMeaningIndices(card) {
     return getPracticeMeaningInfo(card).indices;
 }
 
-// The rows the "Flag a meaning" modal lists: the card's Meanings section (or
+// The rows the "Revisit a meaning" modal lists: the card's Meanings section (or
 // the first section), limited to the senses the card shows, in card order.
 // The button's fraction badge counts these same rows.
 function getKnowledgeOverviewRows(card) {
@@ -796,12 +799,15 @@ function getKnowledgeOverviewFraction(card) {
 
 function renderKnowledgeOverviewButton(card) {
     if (!getKnowledgeFocusItems(card).length) return '';
-    const { flagged, total } = getKnowledgeOverviewFraction(card);
-    const shown = `${flagged}/${total}`;
-    const aria = `Flag a meaning, ${flagged} of ${total} meanings flagged`;
+    const { flagged } = getKnowledgeOverviewFraction(card);
+    const aria = `Revisit a meaning, ${flagged} to revisit`;
+    // The number is blank until a meaning is saved, then counts them.
     return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="${aria}" aria-haspopup="dialog" onclick="showKnowledgeOverview(event)">
-        <span class="ref-tile-fraction" aria-hidden="true">${shown}</span>
-        <span class="ref-tile-label">Flag a meaning</span>
+        <div class="ref-tile-icon-wrap">
+            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5v7"></path><path d="m8.8 6.8 3.2 3.2 3.2-3.2"></path><rect x="4.5" y="13" width="15" height="4" rx="1.2"></rect><path d="M7 20.5h10"></path></svg>
+            ${flagged > 0 ? `<span class="ref-tile-count-badge" aria-hidden="true">${flagged}</span>` : ''}
+        </div>
+        <span class="ref-tile-label">Revisit a meaning</span>
     </button>`;
 }
 
@@ -819,7 +825,7 @@ function ensureKnowledgeOverviewModal() {
     modal.innerHTML = `
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
-                <h2 id="knowledgeOverviewTitle" class="visually-hidden">Flag a meaning</h2>
+                <h2 id="knowledgeOverviewTitle" class="visually-hidden">Revisit a meaning</h2>
                 <p id="knowledgeOverviewHint" class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>
                 <button type="button" class="knowledge-overview-close" aria-label="Close" onclick="closeKnowledgeOverview(event)">×</button>
             </header>

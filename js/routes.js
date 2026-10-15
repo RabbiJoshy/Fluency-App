@@ -136,10 +136,15 @@ export function conjugationDrillHref(key, verb, languages) {
     return `conjugation/?${params}`;
 }
 
-export function lyricsViewHref(songIndex = null) {
-    if (songIndex === null || songIndex === undefined) return 'lyrics-view/';
-    const params = new URLSearchParams({ song: String(songIndex) });
-    return `lyrics-view/?${params}`;
+export function lyricsViewHref(songIndex = null, language = null) {
+    const params = new URLSearchParams();
+    if (songIndex !== null && songIndex !== undefined) params.set('song', String(songIndex));
+    if (language) {
+        const langCode = routeCodeFor(language, window.config?.languages) || language;
+        if (langCode && langCode !== 'es') params.set('lang', langCode);
+    }
+    const qs = params.toString();
+    return qs ? `lyrics-view/?${qs}` : 'lyrics-view/';
 }
 
 // Rewrite the address bar from an old query link to its route, once, before

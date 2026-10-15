@@ -1,0 +1,328 @@
+{
+  "de": {
+    "word": "de",
+    "role": "Preposition",
+    "rank": 4,
+    "frequency": 25447,
+    "relations": [
+      {
+        "tag": "Verbal Valency",
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Complement</span>",
+        "rule": "Required link: the preceding verb governs 'de' before its object or action.",
+        "targetHTML": "<span class='fw-token-v'>Gosto</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>música</span>.",
+        "translation": "I like music."
+      },
+      {
+        "tag": "Noun Attribution",
+        "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Noun / Origin</span>",
+        "rule": "Nominal binding: connects a head noun to its owner, origin, or content.",
+        "targetHTML": "Quero um <span class='fw-token-v'>copo</span> <span class='fw-token-connector'>de</span> <span class='fw-token-c'>água</span>.",
+        "translation": "I want a glass of water."
+      }
+    ]
+  },
+  "que": {
+    "word": "que",
+    "role": "Connector",
+    "rank": 1,
+    "frequency": 38240,
+    "relations": [
+      {
+        "tag": "Clausal Link",
+        "formulaHTML": "<span class=\"fw-token-v\">Thought / Speech</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Clause</span>",
+        "rule": "Subordination: bridges what someone thinks, says, or knows to the statement.",
+        "targetHTML": "<span class='fw-token-v'>Acho</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>vai chover</span>.",
+        "translation": "I think it’s going to rain."
+      },
+      {
+        "tag": "Relative Pronoun",
+        "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Description</span>",
+        "rule": "Relativization: refers back to a noun while connecting more information.",
+        "targetHTML": "Este é o <span class='fw-token-v'>livro</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>estou lendo</span>.",
+        "translation": "This is the book that I’m reading."
+      },
+      {
+        "tag": "Comparison",
+        "formulaHTML": "<span class=\"fw-token-v\">Degree</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Standard</span>",
+        "rule": "Comparison: connects the two sides of a degree or quality difference.",
+        "targetHTML": "Ela é <span class='fw-token-v'>mais alta</span> <span class='fw-token-connector'>que</span> <span class='fw-token-c'>eu</span>.",
+        "translation": "She is taller than me."
+      }
+    ]
+  },
+  "naquele": {
+    "word": "naquele",
+    "role": "Contraction",
+    "rank": 1104,
+    "frequency": 88,
+    "parts": ["em", "aquele"],
+    "relations": [
+      {
+        "tag": "Deictic Location",
+        "formulaHTML": "<span class=\"fw-token-connector\">em + aquele</span> + <span class=\"fw-token-c\">Place / Time</span>",
+        "rule": "Contraction formula pointing to a distant place or past moment.",
+        "targetHTML": "Eu estava <span class='fw-token-connector'>naquele</span> <span class='fw-token-c'>lugar</span>.",
+        "translation": "I was in that place."
+      }
+    ]
+  },
+  "nos": {
+    "word": "nos",
+    "role": "Pronoun & Contraction",
+    "rank": 44,
+    "frequency": 1581,
+    "relations": [
+      {
+        "tag": "Object Pronoun",
+        "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">Verb</span>",
+        "rule": "Pronominal argument: represents 'us / to us' receiving the action of a verb.",
+        "targetHTML": "Ela <span class='fw-token-connector'>nos</span> <span class='fw-token-v'>chamou</span> para jantar.",
+        "translation": "She called us for dinner."
+      },
+      {
+        "tag": "Contraction",
+        "formulaHTML": "<span class=\"fw-token-connector\">em + os</span> + <span class=\"fw-token-c\">Plural Noun</span>",
+        "parts": ["em", "os"],
+        "rule": "Contraction of 'em + os' (in / on / at the) before a masculine plural noun.",
+        "targetHTML": "Está <span class='fw-token-connector'>nos</span> <span class='fw-token-c'>livros</span>.",
+        "translation": "It’s in the books."
+      }
+    ]
+  },
+  "se": {
+    "word": "se",
+    "role": "Conjunction & Clitic",
+    "rank": 11,
+    "frequency": 7806,
+    "relations": [
+      {
+        "tag": "Condition",
+        "formulaHTML": "<span class=\"fw-token-connector\">Se</span> + <span class=\"fw-token-v\">Condition</span> , <span class=\"fw-token-c\">Result</span>",
+        "rule": "Conditional marker: introduces a hypothetical situation before its consequence.",
+        "targetHTML": "<span class='fw-token-connector'>Se</span> <span class='fw-token-v'>chover</span>, <span class='fw-token-c'>fico em casa</span>.",
+        "translation": "If it rains, I’ll stay home."
+      },
+      {
+        "tag": "Reflexive Clitic",
+        "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">Verb of self-action</span>",
+        "rule": "Reflexive clitic: action reflects back onto the person doing it.",
+        "targetHTML": "Ela <span class='fw-token-connector'>se</span> <span class='fw-token-v'>olhou</span> no espelho.",
+        "translation": "She looked at herself in the mirror."
+      }
+    ]
+  },
+  "o": {
+    "word": "o",
+    "role": "Article & Clitic",
+    "rank": 3,
+    "frequency": 34538,
+    "relations": [
+      {
+        "tag": "Definite Article",
+        "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">Masculine Noun</span>",
+        "rule": "Definite determiner: points to a specific masculine singular noun.",
+        "targetHTML": "<span class='fw-token-connector'>O</span> <span class='fw-token-c'>livro</span> está na mesa.",
+        "translation": "The book is on the table."
+      },
+      {
+        "tag": "Object Clitic",
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">o</span>",
+        "rule": "Direct object pronoun: replaces a 3rd-person masculine singular object.",
+        "targetHTML": "Eu <span class='fw-token-connector'>o</span> <span class='fw-token-v'>vi</span> ontem no parque.",
+        "translation": "I saw him yesterday in the park."
+      }
+    ]
+  },
+  "em": {
+    "word": "em",
+    "role": "Preposition",
+    "rank": 21,
+    "frequency": 6025,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">Place</span>",
+        "rule": "Spatial location: anchors an action or state to an enclosed place, city, or space.",
+        "targetHTML": "<span class='fw-token-v'>Moro</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>Lisboa</span>.",
+        "translation": "I live in Lisbon."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">Time Period</span>",
+        "rule": "Temporal framing: situates an event within a month, year, or duration.",
+        "targetHTML": "<span class='fw-token-v'>Viajo</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>maio</span>.",
+        "translation": "I travel in May."
+      }
+    ]
+  },
+  "para": {
+    "word": "para",
+    "role": "Preposition",
+    "rank": 9,
+    "frequency": 11850,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Destination</span>",
+        "rule": "Direction and destination: points toward a final physical goal or place of arrival.",
+        "targetHTML": "<span class='fw-token-v'>Vou</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>casa</span>.",
+        "translation": "I am going home."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Infinitive Goal</span>",
+        "rule": "Purpose and objective: links an intentional action to what it aims to achieve.",
+        "targetHTML": "<span class='fw-token-v'>Estudo</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
+        "translation": "I study in order to learn."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Object</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Recipient</span>",
+        "rule": "Beneficiary: marks who receives or benefits from something.",
+        "targetHTML": "Isto é <span class='fw-token-v'>um presente</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>você</span>.",
+        "translation": "This is a gift for you."
+      }
+    ]
+  },
+  "com": {
+    "word": "com",
+    "role": "Preposition",
+    "rank": 17,
+    "frequency": 7842,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">Companion</span>",
+        "rule": "Accompaniment: joins an action to the person or entity sharing it.",
+        "targetHTML": "<span class='fw-token-v'>Falo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>você</span> amanhã.",
+        "translation": "I speak with you tomorrow."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">Tool / Manner</span>",
+        "rule": "Instrument and manner: describes the means used or attitude applied.",
+        "targetHTML": "<span class='fw-token-v'>Escrevo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>cuidado</span>.",
+        "translation": "I write with care."
+      }
+    ]
+  },
+  "por": {
+    "word": "por",
+    "role": "Preposition",
+    "rank": 16,
+    "frequency": 6938,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Verb / State</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">Motive / Cause</span>",
+        "rule": "Causal ground: links an emotion, gratitude, or outcome back to its reason.",
+        "targetHTML": "<span class='fw-token-v'>Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
+        "translation": "Thank you for helping."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Movement</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">Transit Space</span>",
+        "rule": "Trajectory: marks the path, medium, or space through which motion occurs.",
+        "targetHTML": "<span class='fw-token-v'>Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
+        "translation": "I walk around here."
+      }
+    ]
+  },
+  "no": {
+    "word": "no",
+    "role": "Contraction",
+    "rank": 13,
+    "frequency": 4450,
+    "parts": [
+      "em",
+      "o"
+    ],
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">em + o</span> + <span class=\"fw-token-c\">Masculine Noun / Place</span>",
+        "rule": "Contraction of 'em + o' (in the / at the) before a specific masculine noun.",
+        "targetHTML": "O livro está <span class='fw-token-connector'>no</span> <span class='fw-token-c'>quarto</span>.",
+        "translation": "The book is in the room."
+      }
+    ]
+  },
+  "na": {
+    "word": "na",
+    "role": "Contraction",
+    "rank": 31,
+    "frequency": 4170,
+    "parts": [
+      "em",
+      "a"
+    ],
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">em + a</span> + <span class=\"fw-token-c\">Feminine Noun / Place</span>",
+        "rule": "Contraction of 'em + a' (in the / at the) before a specific feminine noun.",
+        "targetHTML": "Ela está <span class='fw-token-connector'>na</span> <span class='fw-token-c'>praia</span>.",
+        "translation": "She is at the beach."
+      }
+    ]
+  },
+  "do": {
+    "word": "do",
+    "role": "Contraction",
+    "rank": 19,
+    "frequency": 7403,
+    "parts": [
+      "de",
+      "o"
+    ],
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">de + o</span> + <span class=\"fw-token-c\">Masculine Noun / Origin</span>",
+        "rule": "Contraction of 'de + o' (of the / from the) denoting possession, origin, or attribute.",
+        "targetHTML": "Este é o carro <span class='fw-token-connector'>do</span> <span class='fw-token-c'>meu pai</span>.",
+        "translation": "This is my father's car."
+      }
+    ]
+  },
+  "da": {
+    "word": "da",
+    "role": "Contraction",
+    "rank": 27,
+    "frequency": 5714,
+    "parts": [
+      "de",
+      "a"
+    ],
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">de + a</span> + <span class=\"fw-token-c\">Feminine Noun / Origin</span>",
+        "rule": "Contraction of 'de + a' (of the / from the) denoting possession, origin, or attribute.",
+        "targetHTML": "Esta é a chave <span class='fw-token-connector'>da</span> <span class='fw-token-c'>casa</span>.",
+        "translation": "This is the key to the house."
+      }
+    ]
+  },
+  "como": {
+    "word": "como",
+    "role": "Connector",
+    "rank": 23,
+    "frequency": 5447,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">Model / Standard</span>",
+        "rule": "Simile and manner: compares the style or way an action is performed to an archetype.",
+        "targetHTML": "Ela <span class='fw-token-v'>canta</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>um pássaro</span>.",
+        "translation": "She sings like a bird."
+      },
+      {
+        "formulaHTML": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">Role / Capacity</span>",
+        "rule": "Capacity and function: specifies the role, profession, or capacity someone acts in.",
+        "targetHTML": "Trabalho <span class='fw-token-connector'>como</span> <span class='fw-token-c'>engenheiro</span>.",
+        "translation": "I work as an engineer."
+      }
+    ]
+  },
+  "mas": {
+    "word": "mas",
+    "role": "Connector",
+    "rank": 26,
+    "frequency": 6058,
+    "relations": [
+      {
+        "formulaHTML": "<span class=\"fw-token-v\">Statement</span> + <span class=\"fw-token-connector\">mas</span> + <span class=\"fw-token-c\">Counterpoint</span>",
+        "rule": "Adversative bridge: introduces a contrast, restriction, or unexpected limitation.",
+        "targetHTML": "<span class='fw-token-v'>Tentei</span>, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>não consegui</span>.",
+        "translation": "I tried, but I could not."
+      }
+    ]
+  }
+}

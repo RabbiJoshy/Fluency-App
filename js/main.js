@@ -1,43 +1,43 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=75601eb1';
-import { releaseUrl } from './release-host.js?v=75601eb1';
-import './theme.js?v=75601eb1';
-import './desktop-shell.js?v=75601eb1';
-import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=75601eb1';
-import './ai-preference.js?v=75601eb1';
-import { installFlagRendering } from './flags.js?v=75601eb1';
-import { IS_STAGING } from './env.js?v=75601eb1';
-import './state.js?v=75601eb1';
-import './offline-db.js?v=75601eb1';
-import './sync-queue.js?v=75601eb1';
-import { initOfflineContent } from './offline-content.js?v=75601eb1';
-import './speech.js?v=75601eb1';
-import './artist-ui.js?v=75601eb1';
-import './auth.js?v=75601eb1';
-import './tutorial.js?v=75601eb1';
-import './walkthrough.js?v=75601eb1';
-import './estimation.js?v=75601eb1';
-import './config.js?v=75601eb1';
-import './progress.js?v=75601eb1';
-import './knowledge.js?v=75601eb1';
-import './session-plan.js?v=75601eb1';
-import './ui.js?v=75601eb1';
-import './vocab.js?v=75601eb1';
-import './language-profile.js?v=75601eb1';
-import './smart-skip-pairs.js?v=75601eb1';
-import './bridge.js?v=75601eb1';
-import './cognates.js?v=75601eb1';
-import './coverage.js?v=75601eb1';
-import './fast-mode.js?v=75601eb1';
-import './extras.js?v=75601eb1';
-import './review-home.js?v=75601eb1';
-import './song-sets.js?v=75601eb1';
-import './playlist-live.js?v=75601eb1';
-import './spotify-playlist-import.js?v=75601eb1';
-import './vocabulary-import.js?v=75601eb1';
-import './flashcards.js?v=75601eb1';
-import { validateArtistCatalog } from './data-contracts.js?v=75601eb1';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=47c0ef57';
+import { releaseUrl } from './release-host.js?v=47c0ef57';
+import './theme.js?v=47c0ef57';
+import './desktop-shell.js?v=47c0ef57';
+import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=47c0ef57';
+import './ai-preference.js?v=47c0ef57';
+import { installFlagRendering } from './flags.js?v=47c0ef57';
+import { IS_STAGING } from './env.js?v=47c0ef57';
+import './state.js?v=47c0ef57';
+import './offline-db.js?v=47c0ef57';
+import './sync-queue.js?v=47c0ef57';
+import { initOfflineContent } from './offline-content.js?v=47c0ef57';
+import './speech.js?v=47c0ef57';
+import './artist-ui.js?v=47c0ef57';
+import './auth.js?v=47c0ef57';
+import './tutorial.js?v=47c0ef57';
+import './walkthrough.js?v=47c0ef57';
+import './estimation.js?v=47c0ef57';
+import './config.js?v=47c0ef57';
+import './progress.js?v=47c0ef57';
+import './knowledge.js?v=47c0ef57';
+import './session-plan.js?v=47c0ef57';
+import './ui.js?v=47c0ef57';
+import './vocab.js?v=47c0ef57';
+import './language-profile.js?v=47c0ef57';
+import './smart-skip-pairs.js?v=47c0ef57';
+import './bridge.js?v=47c0ef57';
+import './cognates.js?v=47c0ef57';
+import './coverage.js?v=47c0ef57';
+import './fast-mode.js?v=47c0ef57';
+import './extras.js?v=47c0ef57';
+import './review-home.js?v=47c0ef57';
+import './song-sets.js?v=47c0ef57';
+import './playlist-live.js?v=47c0ef57';
+import './spotify-playlist-import.js?v=47c0ef57';
+import './vocabulary-import.js?v=47c0ef57';
+import './flashcards.js?v=47c0ef57';
+import { validateArtistCatalog } from './data-contracts.js?v=47c0ef57';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -91,7 +91,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=75601eb1').catch(error => {
+    ? import('./spotify.js?v=47c0ef57').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -463,35 +463,35 @@ checkAuthentication();
 perfMark('after early authentication');
 setTimeout(() => window.checkAndShowAdminUpdateModal?.(), 500);
 
-// Register service worker for PWA functionality
+// Register before window.load: a broken cached preload can keep that event
+// pending forever, preventing the replacement worker from repairing the cache.
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-            .then(registration => {
-                console.log('SW registered');
-                const announceUpdate = () => {
-                    if (!registration.waiting) return;
-                    const indicator = document.getElementById('syncStatusIndicator');
-                    if (indicator) {
-                        indicator.className = 'sync-status is-update';
-                        indicator.textContent = 'Update ready';
-                        indicator.onclick = () => {
-                            sessionStorage.setItem('fluency_admin_update_pending', 'true');
-                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                        };
-                    }
-                };
-                announceUpdate();
-                registration.addEventListener('updatefound', () => {
-                    registration.installing?.addEventListener('statechange', announceUpdate);
-                });
-                let reloading = false;
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    if (!reloading) { reloading = true; location.reload(); }
-                });
-            })
-            .catch(err => console.log('SW registration failed'));
-    });
+    navigator.serviceWorker.register('service-worker.js')
+        .then(registration => {
+            console.log('SW registered');
+            registration.update().catch(error => console.warn('SW update failed:', error.message));
+            const announceUpdate = () => {
+                if (!registration.waiting) return;
+                const indicator = document.getElementById('syncStatusIndicator');
+                if (indicator) {
+                    indicator.className = 'sync-status is-update';
+                    indicator.textContent = 'Update ready';
+                    indicator.onclick = () => {
+                        sessionStorage.setItem('fluency_admin_update_pending', 'true');
+                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    };
+                }
+            };
+            announceUpdate();
+            registration.addEventListener('updatefound', () => {
+                registration.installing?.addEventListener('statechange', announceUpdate);
+            });
+            let reloading = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!reloading) { reloading = true; location.reload(); }
+            });
+        })
+        .catch(err => console.log('SW registration failed'));
 }
 
 // All available artist configs, keyed by slug. Loaded once from artists.json.
@@ -649,9 +649,11 @@ window._allArtistsConfig = allArtistsConfig;
 window._selectedArtistSlugs = selectedArtistSlugs;
 window.resetActiveArtist = () => {
     activeArtist = null;
+    window.activeArtist = null;
     window._urlArtistSlug = null;
     selectedArtistSlugs = [];
     window._selectedArtistSlugs = [];
+    document.body.classList.remove('artist-mode');
 };
 
 // Add artist mode class to body and load albums dictionary
@@ -823,10 +825,14 @@ loadConfig().then(async () => {
         openActivityChoice('verbs', event.currentTarget.dataset.href);
     });
     document.getElementById('learningContextLyricsViewBtn')?.addEventListener('click', event => {
-        openActivityChoice('translation', event.currentTarget.dataset.href || 'lyrics-view/');
+        const currentLang = activeArtist?.language || selectedLanguage;
+        const defaultHref = window.fluencyRoutes?.lyricsViewHref?.(null, currentLang) || (currentLang === 'portuguese' ? 'lyrics-view/?lang=pt' : 'lyrics-view/');
+        openActivityChoice('translation', event.currentTarget.dataset.href || defaultHref);
     });
     document.getElementById('artistSourceLyricsViewBtn')?.addEventListener('click', () => {
-        openActivityChoice('translation', 'lyrics-view/');
+        const currentLang = activeArtist?.language || selectedLanguage;
+        const href = window.fluencyRoutes?.lyricsViewHref?.(null, currentLang) || (currentLang === 'portuguese' ? 'lyrics-view/?lang=pt' : 'lyrics-view/');
+        openActivityChoice('translation', href);
     });
     document.getElementById('learningContextSongsBtn')?.addEventListener('click', () => {
         closeLearningContext();
@@ -947,7 +953,7 @@ loadConfig().then(async () => {
         window.updateLearningContextUI?.();
         sessionStorage.setItem('fluencyPendingSpeechLanguage', selectedLanguage);
         sessionStorage.removeItem('fluencyPendingLiveStudy');
-        await showArtistPicker(null, null, selectedLanguage, { stage: 'setup' });
+        window.dismissMusicWorkspace?.();
         const liveTab = document.querySelector(`.lang-tab[data-lang="${selectedLanguage}"]`);
         if (liveTab && !liveTab.disabled) {
             liveTab.click();
@@ -965,7 +971,7 @@ loadConfig().then(async () => {
             // Hide step 1 entirely (language auto-selected)
             document.getElementById('step1').style.display = 'none';
             renderArtistSourceSummary();
-            await showArtistPicker(null, allArtistsConfig, selectedLanguage, { stage: 'setup' });
+            window.dismissMusicWorkspace?.();
             await loadPpmData(activeArtist.language || 'spanish');
             document.getElementById('step2').style.display = 'block';
             // Title is now static ("Choose level" in the HTML); the
@@ -1622,19 +1628,13 @@ async function ensureArtistCatalog() {
 
 // The music source choice is a persistent page, including song subsets and
 // study setup. Reloading a source carries a workspace handoff, never home.
-async function showArtistPicker(anchorBtn, artists, targetLanguage = null, { stage = 'artists' } = {}) {
+async function showArtistPicker(anchorBtn, artists, targetLanguage = null, { stage = (activeArtist || window.playlistLiveActive?.() ? 'artists' : 'choices') } = {}) {
     if (!document.getElementById('appContent')?.classList.contains('hidden')) await window.goBackToSetup?.();
     const language = targetLanguage || Object.values(artists || {})[0]?.language || selectedLanguage || 'spanish';
     const catalog = artists && Object.keys(artists).length ? artists : await ensureArtistCatalog();
     const resolvedArtists = Object.fromEntries(Object.entries(catalog || {}).filter(([, cfg]) =>
         (cfg.language || 'spanish') === language));
-    const entries = Object.entries(resolvedArtists).map(([slug, cfg]) => ({
-        slug, name: cfg.name, image: artistPickerImage(cfg), initials: artistInitials(cfg.name)
-    }));
-    if (Object.values(resolvedArtists).some(cfg => cfg.songsPath)) entries.push({
-        slug: CUSTOM_ARTIST_SLUG, name: 'Mix several artists', initials: '♪',
-        description: 'Choose individual songs from across the library.'
-    });
+    const entries = musicArtistEntries(resolvedArtists);
     window.closeChoiceSheet?.('lyricsSourceSheet', true);
     window.closeChoiceSheet?.('artistChoiceSheet', true);
     window.closeChoiceSheet?.('learningSourceChoiceSheet', true);
@@ -1643,22 +1643,46 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null, { sta
     }
     openMusicWorkspace({
         language, languageName: languageDisplayName(language), artists: entries, stage,
-        onSelectArtist: entry => {
-            if (entry.slug === window._urlArtistSlug && window.showSongSetPicker && artistSongCatalog?.songs?.length) {
-                window.showSongSetPicker();
-                return;
-            }
-            window.clearPlaylistLiveSession?.();
-            showAppLoading(`Loading ${entry.name}`, 'Preparing your songs…', true);
-            navigateMusicWorkspace(entry.slug === CUSTOM_ARTIST_SLUG
-                ? { kind: 'songs', language: routeCodeFor(language, config.languages) }
-                : { kind: 'artist', artist: entry.slug });
-        },
+        onSelectArtist: entry => selectMusicArtist(entry, language),
         onSelectPlaylist: () => window.openSpotifyPlaylistImport?.(resolvedArtists, language, { mode: 'choose' }),
         onLeave: () => {
             goToRoute({ kind: 'language', language: routeCodeFor(language, config.languages) });
         }
     });
+}
+
+// The artists a language offers, plus the "mix" entry. One list feeds the music
+// workspace and the desktop sidebar trail, so they cannot offer different things.
+function musicArtistEntries(resolvedArtists) {
+    const entries = Object.entries(resolvedArtists).map(([slug, cfg]) => {
+        const albumsCount = Object.keys(cfg.albumImageMap || {}).length;
+        const maxLevel = cfg.maxLevel ? `${cfg.maxLevel.toLocaleString()} words` : '';
+        const albumText = albumsCount ? `${albumsCount} album${albumsCount === 1 ? '' : 's'}` : '';
+        const detail = [albumText, maxLevel].filter(Boolean).join(' · ') || 'Catalog collection';
+        return {
+            slug, name: cfg.name, image: artistPickerImage(cfg), initials: artistInitials(cfg.name),
+            description: detail,
+            maxLevel: cfg.maxLevel,
+            albumsCount,
+        };
+    });
+    if (Object.values(resolvedArtists).some(cfg => cfg.songsPath)) entries.push({
+        slug: CUSTOM_ARTIST_SLUG, name: 'Mix several artists', initials: '♪',
+        description: 'Choose individual songs from across the library.'
+    });
+    return entries;
+}
+
+function selectMusicArtist(entry, language) {
+    if (entry.slug === window._urlArtistSlug && window.showSongSetPicker && artistSongCatalog?.songs?.length) {
+        window.showSongSetPicker();
+        return;
+    }
+    window.clearPlaylistLiveSession?.();
+    showAppLoading(`Loading ${entry.name}`, 'Preparing your songs…', true);
+    navigateMusicWorkspace(entry.slug === CUSTOM_ARTIST_SLUG
+        ? { kind: 'songs', language: routeCodeFor(language, config.languages) }
+        : { kind: 'artist', artist: entry.slug });
 }
 
 function artistsIcon() {
@@ -1693,7 +1717,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=75601eb1')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=47c0ef57')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
@@ -1710,6 +1734,54 @@ window.renderSpotifyStatus = renderSpotifyStatus;
 function languageDisplayName(language) {
     return window._normalModeLangConfigs?.[language]?.name || config.languages?.[language]?.name || language;
 }
+
+// Switching to Speech from wherever the learner is. Shared by the vocabulary
+// sheet and the desktop sidebar trail.
+function chooseSpeechVocabulary(language) {
+    if (window.playlistLiveActive?.()) {
+        window.clearPlaylistLiveSession?.();
+        sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
+        goToRoute({ kind: 'language', language: routeCodeFor(language, config?.languages) });
+        return;
+    }
+    if (activeArtist) {
+        showAppLoading('Switching to Speech vocabulary', 'Preparing your language and progress…', true);
+        window.resetActiveArtist?.();
+        sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
+        goToRoute({ kind: 'language', language: routeCodeFor(language, config.languages) }, { keepSearch: false });
+    } else if (window.musicWorkspaceActive?.()) {
+        window.dismissMusicWorkspace?.();
+        window.clearPlaylistLiveSession?.();
+        window.resetActiveArtist?.();
+        document.getElementById('step1')?.classList.add('source-speech-active');
+        replaceRoute({ kind: 'language', language: routeCodeFor(language, config.languages) });
+        document.getElementById('standardSourceSpeechBtn')?.click();
+        window.updateLearningContextUI?.();
+        window.refreshDesktopTrail?.();
+    } else {
+        document.getElementById('standardSourceSpeechBtn')?.click();
+    }
+}
+
+// What the desktop sidebar trail (desktop-shell.js) calls. Each chip in the
+// trail switches its own level in place, so none of these start from the
+// beginning: they are the same handlers the modal pickers use.
+window.desktopTrailActions = {
+    changeLanguage() {
+        if (activeArtist) showLanguagePicker(config.languages);
+        else window.reopenLanguagePicker?.();
+    },
+    chooseSpeech(language) { chooseSpeechVocabulary(language); },
+    chooseMusic(language, stage = 'choices') { return showArtistPicker(null, null, language, { stage }); },
+    chooseArtists(language) { return showArtistPicker(null, null, language, { stage: 'artists' }); },
+    openPlaylists(language) { return showArtistPicker(null, null, language, { stage: 'playlists' }); },
+    chooseArtist(entry, language) { selectMusicArtist(entry, language); },
+    async artistEntries(language) {
+        const catalog = await ensureArtistCatalog();
+        return musicArtistEntries(Object.fromEntries(Object.entries(catalog || {}).filter(([, cfg]) =>
+            (cfg.language || 'spanish') === language)));
+    },
+};
 
 function openLearningSourcePicker() {
     const language = activeArtist?.language || selectedLanguage || 'spanish';
@@ -1738,19 +1810,7 @@ function openLearningSourcePicker() {
                 onSelect: () => {
                     // Already here: the sheet just closes. Nothing reloads.
                     if (inSpeech) return;
-                    if (window.playlistLiveActive?.()) {
-                        window.clearPlaylistLiveSession?.();
-                        sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
-                        goToRoute({ kind: 'language', language: routeCodeFor(language, config?.languages) });
-                        return;
-                    }
-                    if (activeArtist) {
-                        showAppLoading('Switching to Speech vocabulary', 'Preparing your language and progress…', true);
-                        sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
-                        goToRoute({ kind: 'language', language: routeCodeFor(language, config.languages) }, { keepSearch: false });
-                    } else {
-                        document.getElementById('standardSourceSpeechBtn')?.click();
-                    }
+                    chooseSpeechVocabulary(language);
                 }
             },
             {
@@ -1857,19 +1917,29 @@ function showLanguagePicker(languages) {
             disabled: cfg.hasData === false,
             selected: key === selectedLanguage,
             onSelect: () => {
-                // An artist deck is its own page: leaving it for another
-                // language reloads; its own language keeps it open.
+                if (window.musicWorkspaceActive?.()) {
+                    window.resetActiveArtist?.();
+                    window.clearPlaylistLiveSession?.();
+                    selectedLanguage = key;
+                    try { localStorage.setItem('fluencyPreferredLanguageV1', key); } catch (_) {}
+                    showArtistPicker(null, null, key, { stage: 'choices' });
+                    return;
+                }
                 if (activeArtist) {
                     if (key === (activeArtist.language || 'spanish')) return;
+                    window.resetActiveArtist?.();
                     try { localStorage.setItem('fluencyPreferredLanguageV1', key); } catch (_) {}
                     showAppLoading('Switching language', 'Preparing your language and progress…', true);
                     goToRoute({ kind: 'language', language: routeCodeFor(key, languages) }, { keepSearch: false });
                     return;
                 }
+                window.resetActiveArtist?.();
+                window.dismissMusicWorkspace?.();
                 if (isPortuguese) {
                     showPortugueseVarietyPicker();
                 } else {
                     document.querySelector(`.lang-tab[data-lang="${key}"]`)?.click();
+                    replaceRoute({ kind: 'language', language: routeCodeFor(key, languages) });
                 }
             }
         };
@@ -2342,9 +2412,22 @@ let introSelectedCodes = new Set();
 let introLanguageLabels = {};
 let knownLanguagesScoped = false;
 
-function getKnownLanguagesForTarget() {
-    return window.knownLanguageOptions?.() || ['en', 'es', 'fr', 'pt', 'pl', 'de', 'it', 'ru', 'sk', 'uk', 'nl', 'sv', 'cs', 'fi'];
+function targetRouteCode(target) {
+    if (!target) return null;
+    const clean = String(target).split('-')[0].trim().toLowerCase();
+    const languages = (typeof config !== 'undefined' && config?.languages) || null;
+    const key = languageKeyFor(clean, languages) || languageKeyFor(target, languages) || (languages && languages[clean] ? clean : null);
+    const code = key ? routeCodeFor(key, languages) : clean;
+    return String(code || '').trim().toLowerCase();
 }
+
+function getKnownLanguagesForTarget(targetLang) {
+    const all = window.knownLanguageOptions?.() || ['en', 'es', 'fr', 'pt', 'pl', 'de', 'it', 'ru', 'sk', 'uk', 'nl', 'sv', 'cs', 'fi'];
+    const target = targetLang || (typeof selectedLanguage !== 'undefined' ? selectedLanguage : null);
+    const targetCode = targetRouteCode(target);
+    return targetCode ? all.filter(c => c !== targetCode) : all;
+}
+window.getKnownLanguagesForTarget = getKnownLanguagesForTarget;
 
 function hasSeenKnownLanguagesIntro() {
     return window.readLanguageProfile?.().confirmed === true;
@@ -2360,18 +2443,17 @@ function openKnownLanguagesSettings() {
     else document.getElementById('settingsModal')?.classList.add('hidden');
     knownLanguagesEditorReturn = () => {
         if (fromFast) window.openFastModePage?.();
-        else window.showSettingsModalWithTab?.('appearance');
+        else window.showSettingsModalWithTab?.('study');
     };
     introSelectedCodes = new Set(window.readKnownLanguages?.() || []);
     introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
     knownLanguagesScoped = Boolean(fromFast);
-    document.getElementById('knownLanguagesManageAllBtn').hidden = !knownLanguagesScoped;
-    document.getElementById('knownLanguagesModalIntro').textContent = knownLanguagesScoped
-        ? 'Only useful pairs for this learning language appear here. Coming soon means the mapping is not available yet. Your other languages stay saved in Settings.'
-        : 'Choose from the listed languages you can comfortably read. Coming soon marks study languages we have not added yet. Smart Skip uses only useful, supported language pairs.';
+    document.getElementById('knownLanguagesModalIntro').textContent =
+        'Smart Skip uses languages you know to skip words you already understand, so you only study what’s new.';
     renderKnownLanguagesModalChoices(knownLanguagesScoped ? (window.relevantSmartSkipLanguages?.() || []) : getKnownLanguagesForTarget());
     document.getElementById('knownLanguagesModalTitle').textContent = 'Languages you know';
     document.getElementById('continueKnownLanguagesBtn').textContent = 'Save';
+    window.refreshBridge?.();
     modal.classList.remove('hidden');
     modal.querySelector('button')?.focus();
 }
@@ -2389,10 +2471,6 @@ function renderKnownLanguagesModalChoices(availableCodes) {
     container.innerHTML = '';
 
     const codes = availableCodes;
-    // English is the app’s translation language; deck availability comes from config.
-    const studyLanguages = new Set(['en', ...Object.values(config.languages || {})
-        .filter(language => language.hasData !== false && (language.indexPath || language.dataPath))
-        .map(language => String(language.speechLang || '').split('-')[0])]);
     const ready = new Set(window.availableKnownLanguages?.() || []);
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     codes.forEach(code => {
@@ -2408,8 +2486,8 @@ function renderKnownLanguagesModalChoices(availableCodes) {
 
         const flag = window.knownLanguageFlag?.(code) || '🌐';
         const label = introLanguageLabels[code] || window.knownLanguageLabel?.(code) || code.toUpperCase();
-        const comingSoon = knownLanguagesScoped ? !ready.has(code) : !studyLanguages.has(code);
-        button.disabled = knownLanguagesScoped && comingSoon;
+        const comingSoon = knownLanguagesScoped && !ready.has(code);
+        button.disabled = comingSoon;
 
         button.innerHTML = `
             <span class="known-language-choice-flag" aria-hidden="true">${flag}</span>
@@ -2436,6 +2514,7 @@ function renderKnownLanguagesModalChoices(availableCodes) {
         container.appendChild(button);
     });
 }
+window.renderKnownLanguagesModalChoices = renderKnownLanguagesModalChoices;
 
 function maybeShowKnownLanguagesIntro(targetLang) {
     const lang = targetLang || selectedLanguage;
@@ -2463,9 +2542,9 @@ function maybeShowKnownLanguagesIntro(targetLang) {
     knownLanguagesEditorReturn = null;
     knownLanguagesScoped = false;
     introLanguageLabels = {...(window.readLanguageProfile?.().labels || {})};
-    document.getElementById('knownLanguagesManageAllBtn').hidden = true;
-    document.getElementById('knownLanguagesModalIntro').textContent = 'Choose languages where most everyday words are already familiar. Saved for every language you study; you can change this in Settings. Coming soon marks study languages we have not added yet.';
-    document.getElementById('knownLanguagesModalTitle').textContent = 'Which languages can you comfortably read?';
+    document.getElementById('knownLanguagesModalIntro').textContent =
+        'Smart Skip uses languages you know to skip words you already understand, so you only study what’s new.';
+    document.getElementById('knownLanguagesModalTitle').textContent = 'Languages you know';
     document.getElementById('continueKnownLanguagesBtn').textContent = 'Continue';
     renderKnownLanguagesModalChoices(available);
     modal.classList.remove('hidden');
@@ -2473,11 +2552,6 @@ function maybeShowKnownLanguagesIntro(targetLang) {
 }
 
 function setupKnownLanguagesIntro() {
-    document.getElementById('knownLanguagesManageAllBtn')?.addEventListener('click', () => {
-        closeKnownLanguagesModal();
-        knownLanguagesEditorReturn = null;
-        window.showSettingsModalWithTab?.('appearance');
-    });
     const continueBtn = document.getElementById('continueKnownLanguagesBtn');
     if (continueBtn) {
         continueBtn.addEventListener('click', () => {
