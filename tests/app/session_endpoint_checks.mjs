@@ -69,11 +69,10 @@ try{
    assert.equal(await page.locator('[data-ss-master="off"]').getAttribute('aria-pressed'),'true');
    await page.locator('[data-ss-master="on"]').click();
    await page.waitForFunction(()=>document.querySelector('[data-ss-master="on"]').getAttribute('aria-pressed')==='true');
-   assert.equal(await page.locator('#fastTrackHubSummary').textContent(),'32 skipped');
+   assert.equal(await page.locator('#fastTrackHubSummary').textContent(),'Fewer cards, less repetition');
    assert.equal(await page.locator('.smart-skip-check').count(),0);
    assert.equal(await page.locator('[data-ss-master="on"]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(21, 128, 61)');
-   assert.equal(await page.locator('#fastTrackHubExamples').isVisible(),width>=768);
-   assert.equal(await page.locator('#fastTrackHubExamples').textContent(),'e.g. hotel, animal, hospital');
+   assert.equal(await page.locator('#fastTrackHubExamples').count(),0);
    assert(await page.evaluate(()=>window.testFastTrackPrefs.readFastTrack('spanish').enabled));
    const changes=await page.evaluate(()=>window.masterChangeEvents);
    await page.locator('[data-ss-master="on"]').click();
@@ -89,7 +88,7 @@ try{
        return {sameLine:Math.abs((label.top+label.bottom)/2-(summary.top+summary.bottom)/2)<2,below:summary.top>=label.bottom,overflow:row.scrollWidth>row.clientWidth};
    });
    assert(!skipLayout.overflow);
-   assert(width<768?skipLayout.below:skipLayout.sameLine);
+   assert(skipLayout.below);
    if(process.env.SESSION_ENDPOINT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.SESSION_ENDPOINT_SCREENSHOTS,`smart-skip-on-${theme}-${width}.png`)});
    if(name==='long') {
        await page.evaluate(()=>{
@@ -114,7 +113,7 @@ try{
    }
    await page.locator('[data-ss-master="off"]').focus();await page.keyboard.press('Enter');
    await page.waitForFunction(()=>document.querySelector('[data-ss-master="off"]').getAttribute('aria-pressed')==='true');
-   assert.equal(await page.locator('#fastTrackHubSummary').textContent(),'Fewer cards to study');
+   assert.equal(await page.locator('#fastTrackHubSummary').textContent(),'Fewer cards, less repetition');
    assert.equal(await page.locator('#quickReviewBtn').textContent(),'Practise');
    const sizes=await page.locator('.review-deck-summary-copy').evaluate(el=>({main:parseFloat(getComputedStyle(el.querySelector('strong')).fontSize),later:parseFloat(getComputedStyle(el.querySelector('small')).fontSize)}));
    assert(sizes.later<sizes.main);

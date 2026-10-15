@@ -240,8 +240,6 @@ function refresh() {
 
     const on = state === 'on';
     const extras = globalThis.collectExtras?.() || {};
-    const skippedCardsCount = (extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0))
-        + (extras.lemmas?.length || 0);
 
     // A shortcut is listed only where it can do something: look-alikes and
     // combined forms need the release's mapping, the other three need at least
@@ -303,25 +301,6 @@ function refresh() {
     if (hubRow) {
         hubRow.classList.toggle('is-unseen', !hasSeenFastTrackPage());
         hubRow.classList.toggle('is-on', on);
-    }
-    const hubSummary = document.getElementById('fastTrackHubSummary');
-    if (hubSummary) {
-        // The control already says on or off, so this line says something else:
-        // what turning it on does, then what it is doing.
-        hubSummary.classList.toggle('is-slogan', !on);
-        hubSummary.textContent = !on ? 'Fewer cards to study'
-            : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} skipped`
-            : 'None skipped';
-    }
-    const examples = document.getElementById('fastTrackHubExamples');
-    if (examples) {
-        // Use real candidates from this deck, with different copy for enabled
-        // exclusions and the preview while Smart Skip is off.
-        const candidates = on ? [...(extras.allSkipped || extras.cognates || []), ...(extras.lemmas || [])]
-            .map(entry => entry.item || entry) : lookAlikeCandidates();
-        const words = [...new Set(candidates.map(item => String(item?.word || '').trim()).filter(Boolean))].slice(0, 3);
-        examples.textContent = words.length ? `${on ? 'e.g.' : 'Could skip:'} ${words.join(', ')}` : '';
-        examples.hidden = !words.length;
     }
     const secondaryState = document.getElementById('smartSkipSecondaryState');
     if (secondaryState) {
