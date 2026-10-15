@@ -47,11 +47,151 @@
 }
 .study-level-label[hidden] { display: none; }
 .card-back-scrubber { gap: 10px; }
-.account-ai { padding: 18px 0; border-bottom: 1px solid var(--border-color); }
-.account-ai p { margin: 8px 0 14px; color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
-.preferred-ai-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
-.preferred-ai-actions select { padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-secondary); color: var(--text-primary); font: inherit; }
-.preferred-ai-actions a { color: var(--accent-primary); font-size: 14px; }
+.account-ai {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 18px 0 0;
+    padding: 18px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 0;
+}
+.account-avatar--ai {
+    display: grid !important;
+    place-items: center;
+    flex: none;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.account-avatar--ai.is-chatgpt {
+    background: #10a37f;
+    color: #ffffff;
+}
+.account-avatar--ai.is-claude {
+    background: #d97757;
+    color: #ffffff;
+}
+.account-avatar--ai svg {
+    width: 38px;
+    height: 38px;
+    display: block;
+}
+.preferred-ai-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+.preferred-ai-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.preferred-ai-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font: 600 14px/1 var(--font-reading);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.preferred-ai-trigger:hover {
+    border-color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+.preferred-ai-trigger-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex: none;
+}
+.preferred-ai-trigger-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+.account-ai:has(.account-avatar--ai.is-chatgpt) .preferred-ai-trigger-icon {
+    color: #10a37f;
+}
+.account-ai:has(.account-avatar--ai.is-claude) .preferred-ai-trigger-icon {
+    color: #d97757;
+}
+.preferred-ai-chevron {
+    color: var(--text-muted);
+    transition: transform 0.15s ease;
+}
+.preferred-ai-dropdown.is-open .preferred-ai-chevron {
+    transform: rotate(180deg);
+}
+.preferred-ai-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 160px;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.preferred-ai-menu[hidden] {
+    display: none !important;
+}
+.preferred-ai-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text-primary);
+    font: 600 14px/1.2 var(--font-reading);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+.preferred-ai-option:hover {
+    background: var(--bg-tertiary);
+}
+.preferred-ai-option.is-selected {
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    font-weight: 700;
+}
+.ai-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex: none;
+}
+.ai-menu-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+.ai-menu-icon--chatgpt {
+    color: #10a37f;
+}
+.ai-menu-icon--claude {
+    color: #d97757;
+}
 /* The first action gets the same deliberate full-width placement as source choices. */
 #step1:not(.language-summary-active) #step1Header {
     width: 100%;

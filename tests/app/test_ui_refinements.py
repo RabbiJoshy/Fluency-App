@@ -100,3 +100,64 @@ class UiRefinementTests(unittest.TestCase):
         """
         result = subprocess.run(['node', '-'], input=script, text=True, capture_output=True, cwd=ROOT)
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_settings_modal_hierarchy_and_preferred_ai_dropdown(self):
+        index_html = (ROOT / 'app' / 'index.html').read_text(encoding='utf-8')
+        style_css = (ROOT / 'app' / 'css' / 'style.css').read_text(encoding='utf-8')
+        ui_css = (ROOT / 'app' / 'css' / 'ui-refinements.css').read_text(encoding='utf-8')
+        ai_pref_js = (ROOT / 'app' / 'js' / 'ai-preference.js').read_text(encoding='utf-8')
+
+        # 1. Languages you know is at the top of Study settings pane (before settings-preference-group)
+        study_pane_start = index_html.find('id="settingsPaneStudy"')
+        self.assertNotEqual(study_pane_start, -1)
+        study_pane = index_html[study_pane_start:index_html.find('</section>', study_pane_start)]
+        known_langs_idx = study_pane.find('id="settingsKnownLanguagesBtn"')
+        pref_group_idx = study_pane.find('class="settings-preference-group"')
+        self.assertNotEqual(known_langs_idx, -1)
+        self.assertNotEqual(pref_group_idx, -1)
+        self.assertLess(known_langs_idx, pref_group_idx, "Languages you know must be above settings-preference-group")
+
+        # 2. About this app is removed from App pane
+        app_pane_start = index_html.find('id="settingsPaneApp"')
+        self.assertNotEqual(app_pane_start, -1)
+        app_pane = index_html[app_pane_start:index_html.find('</section>', app_pane_start)]
+        self.assertNotIn('settingsAboutBtn', app_pane)
+
+        # 3. Your Words buttons do not have is-primary (purple)
+        words_pane_start = index_html.find('id="settingsPaneWords"')
+        self.assertNotEqual(words_pane_start, -1)
+        words_pane = index_html[words_pane_start:index_html.find('</section>', words_pane_start)]
+        self.assertNotIn('settings-words-row is-primary', words_pane)
+
+        # 4. Account tab: User profile is at the top, Preferred AI is at the bottom
+        account_tab_start = index_html.find('id="accountTabContent"')
+        self.assertNotEqual(account_tab_start, -1)
+        account_tab = index_html[account_tab_start:index_html.find('id="aboutTabContent"')]
+        profile_idx = account_tab.find('class="account-profile" aria-label="Your profile"')
+        spotify_idx = account_tab.find('class="account-profile account-spotify"')
+        ai_idx = account_tab.find('class="account-profile account-ai"')
+        self.assertNotEqual(profile_idx, -1)
+        self.assertNotEqual(spotify_idx, -1)
+        self.assertNotEqual(ai_idx, -1)
+        self.assertLess(profile_idx, spotify_idx, "User profile must come before Spotify")
+        self.assertLess(spotify_idx, ai_idx, "Preferred AI must be at the bottom of Account tab")
+
+        # 5. Preferred AI has no sign in link and has punchy description
+        self.assertNotIn('preferredAiLogin', account_tab)
+        self.assertIn('Used when copying and pasting to AI', account_tab)
+
+        # 6. Preferred AI has circular avatar, trigger, and menu with both logos
+        self.assertIn('id="preferredAiAvatar"', account_tab)
+        self.assertIn('id="preferredAiDropdown"', account_tab)
+        self.assertIn('id="preferredAiTrigger"', account_tab)
+        self.assertIn('id="preferredAiMenu"', account_tab)
+        self.assertIn('data-value="chatgpt"', account_tab)
+        self.assertIn('data-value="claude"', account_tab)
+
+        # 7. Words action buttons do not turn purple on hover
+        self.assertNotIn('button.settings-words-row:hover .settings-words-action {\n  border-color: var(--accent-primary);', style_css)
+
+        # 8. AI preferences script paints circular avatar and dropdown
+        self.assertIn('account-avatar--ai', ai_pref_js)
+        self.assertIn('preferredAiTrigger', ai_pref_js)
+        self.assertIn('preferredAiMenu', ai_pref_js)

@@ -22882,14 +22882,14 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   height: 18px;
 }
 #settingsModal .settings-link-row.settings-words-row.is-primary > span.settings-words-action {
-  border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color));
-  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
-  color: var(--accent-primary);
+  border-color: var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 #settingsModal button.settings-words-row:hover .settings-words-action {
-  border-color: var(--accent-primary);
-  background: color-mix(in srgb, var(--accent-primary) 20%, transparent);
-  color: var(--accent-primary);
+  border-color: var(--text-secondary);
+  background: var(--bg-card);
+  color: var(--text-primary);
   transform: scale(1.06);
 }
 #settingsModal button.settings-words-row:disabled { cursor: not-allowed; }
@@ -24497,6 +24497,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 
 /* Settings use neutral surfaces and explicit selected states in both themes. */
 #settingsModal .settings-pane-tabs {
+  display: flex;
+  align-items: stretch;
   gap: 6px;
   padding: 5px;
   margin-bottom: 24px;
@@ -24506,12 +24508,26 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   box-shadow: none;
 }
 #settingsModal .settings-pane-tab {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: 46px;
   padding: 10px 12px;
+  border: 0;
+  outline: none;
   border-radius: 11px;
+  background: transparent;
   color: var(--text-secondary);
   font-size: 16px;
   letter-spacing: 0;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+#settingsModal .settings-pane-tab:hover:not(.selected) {
+  background: color-mix(in srgb, var(--text-primary) 8%, var(--bg-tertiary));
+  color: var(--text-primary);
+  border-radius: 11px;
 }
 #settingsModal .settings-pane-tab.selected {
   background: var(--bg-card);
@@ -24524,20 +24540,21 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 #settingsModal .settings-row-explanation,
 #settingsModal .settings-compact-note { color: var(--text-secondary); font-size: 14px; line-height: 1.55; }
 #settingsModal .settings-row-explanation { margin-top: 5px; max-width: 42ch; }
-#settingsModal .settings-toggle { padding: 4px; background: var(--bg-tertiary); border: 1px solid var(--border-color); box-shadow: none; }
-#settingsModal .settings-toggle .group-size-btn { flex: 1 0 auto; min-width: max-content; min-height: 40px; padding: 8px 14px; color: var(--text-secondary); font-size: 14px; }
+#settingsModal .settings-toggle { display: inline-flex; align-items: stretch; padding: 4px; gap: 3px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 999px; box-shadow: none; }
+#settingsModal .settings-toggle .group-size-btn { flex: 1 0 auto; min-width: max-content; min-height: 40px; padding: 8px 14px; border: 0; border-radius: 999px; background: transparent; color: var(--text-secondary); font-size: 14px; transition: background 0.15s ease, color 0.15s ease; }
+#settingsModal .settings-toggle .group-size-btn:hover:not(.selected) { background: color-mix(in srgb, var(--text-primary) 10%, transparent); color: var(--text-primary); }
 #settingsModal .settings-toggle .group-size-btn.selected {
   background: var(--text-primary);
   color: var(--bg-card);
   box-shadow: none;
 }
-#settingsModal .settings-link-row { padding: 18px 0; }
+#settingsModal .settings-link-row { box-sizing: border-box; padding: 14px 16px; margin: 2px 0; border-radius: 12px; transition: background 0.15s ease; }
 #settingsModal .settings-link-row strong,
 #settingsModal .settings-overview-footer .appearance-settings-copy strong { font-size: 17px; line-height: 1.4; }
 #settingsModal .settings-link-row small { font-size: 14px; line-height: 1.5; color: var(--text-secondary); }
 #settingsModal .settings-footer-link { font-size: 14px; padding: 10px 0; color: var(--text-secondary); }
 #settingsModal button:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
-#settingsModal .settings-link-row:hover { background: var(--bg-tertiary); border-radius: 10px; }
+#settingsModal .settings-link-row:hover { background: var(--bg-tertiary); }
 @media (max-width: 600px) {
   #settingsModal .settings-pane-tab { padding: 10px 6px; font-size: 14px; }
   #settingsModal .settings-default-row { flex-wrap: wrap; gap: 12px; }
