@@ -100,6 +100,22 @@ function triggerSmartSkipActivationAnimation() {
         document.body.appendChild(toast);
     }
 
+    // Anchor the toast close to the Smart Skip toggle if visible on screen
+    const toggleEl = document.getElementById('fastTrackHubSwitch') || document.getElementById('setupOptions');
+    if (toggleEl && toggleEl.offsetParent !== null) {
+        const rect = toggleEl.getBoundingClientRect();
+        if (window.innerHeight - rect.bottom >= 75) {
+            toast.style.setProperty('--toast-top', `${Math.round(rect.bottom + 12)}px`);
+            toast.style.setProperty('--toast-bottom', 'auto');
+        } else {
+            toast.style.setProperty('--toast-top', `${Math.max(10, Math.round(rect.top - 65))}px`);
+            toast.style.setProperty('--toast-bottom', 'auto');
+        }
+    } else {
+        toast.style.removeProperty('--toast-top');
+        toast.style.setProperty('--toast-bottom', '24px');
+    }
+
     if (_smartSkipAnimationTimer) clearTimeout(_smartSkipAnimationTimer);
     if (_smartSkipFlashInterval) clearInterval(_smartSkipFlashInterval);
 

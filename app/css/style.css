@@ -17474,9 +17474,10 @@
 /* Smart Skip Activation Feedback Toast (especially prominent on mobile) */
 .smart-skip-animation-toast {
   position: fixed;
-  bottom: 24px;
+  top: var(--toast-top, auto);
+  bottom: var(--toast-bottom, 24px);
   left: 50%;
-  transform: translateX(-50%) translateY(20px) scale(0.95);
+  transform: translateX(-50%) translateY(10px) scale(0.95);
   z-index: 10000;
   pointer-events: none;
   opacity: 0;
@@ -17515,8 +17516,8 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #15803d;
-  color: #fff;
+  background: var(--accent-primary);
+  color: var(--accent-primary-text, #fff);
   display: flex;
   align-items: center;
   justify-content: center;

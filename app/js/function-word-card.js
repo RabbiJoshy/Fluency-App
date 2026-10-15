@@ -2410,47 +2410,109 @@ export function getCardAmbientGlow(card, lang, activePos, isSplitCard, getPosAcc
         return `radial-gradient(circle at 50% 20%, rgba(${FW_SIGNATURE_GLOW_RGB}, 0.18), transparent 70%)`;
     }
 
-    // 2. Non-function words
-    // Companion card ("Card 1 of 2"): single POS color matching active companion card
+    // 2. Companion card ("Card 1 of 2"): single POS color matching active companion card
     if (isSplitCard && card?.splitInfo) {
         const splitPos = card.splitInfo.pos || card.partOfSpeech || activePos;
         const rgb = getRgb(splitPos);
         return `radial-gradient(circle at 50% 20%, rgba(${rgb}, 0.18), transparent 70%)`;
     }
 
-    // Collect distinct POS realized on this card (prioritize active/non-rare meanings)
-    const nonRareMeanings = (card?.meanings || []).filter(m =>
-        m && !m.isRareSense && m.prominenceLabel !== 'Rare' && !m.exampleOnly && !m.unassigned
-    );
-    const candidateMeanings = nonRareMeanings.length > 0 ? nonRareMeanings : (card?.meanings || []);
-
-    const distinctPos = [...new Set(
-        candidateMeanings
-            .map(m => m?.pos)
-            .filter(p => p && !['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(p))
-    )];
-    if (distinctPos.length === 0 && (card?.partOfSpeech || activePos)) {
-        distinctPos.push(card.partOfSpeech || activePos);
-    }
-
-    // Single POS: single centered radial glow
-    if (distinctPos.length <= 1) {
-        const rgb = getRgb(distinctPos[0] || activePos);
+    // 3. Merged lemmas: merged cards represent a single unified lexeme (verb).
+    // Always emits a single centered radial glow in the verb color (green).
+    if (card?.mergedLemma) {
+        const mergedPos = (card.partOfSpeech && !/verb|aux/i.test(card.partOfSpeech))
+            ? card.partOfSpeech
+            : (activePos || card.partOfSpeech || 'VERB');
+        const rgb = getRgb(mergedPos);
         return `radial-gradient(circle at 50% 20%, rgba(${rgb}, 0.18), transparent 70%)`;
     }
 
-    // Multi-POS Unified: multi-corner glow
-    if (distinctPos.length === 2) {
-        const rgb1 = getRgb(distinctPos[0]);
-        const rgb2 = getRgb(distinctPos[1]);
-        return `radial-gradient(circle at 22% 16%, rgba(${rgb1}, 0.17), transparent 58%), radial-gradient(circle at 78% 16%, rgba(${rgb2}, 0.17), transparent 58%)`;
+    const NON_LEXICAL_POS = new Set(['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY', 'PHRASE']);
+
+    const isRareMeaning = m => {
+        if (!m) return true;
+        if (m.isRareSense || m.lowShare || m.rare || m.unassigned || m.exampleOnly) return true;
+        if (m.assignment_method === 'unassigned') return true;
+        const prom = String(m.prominenceLabel || '').trim().toLowerCase();
+        if (prom === 'rare') return true;
+        if (typeof window !== 'undefined' && typeof window.getSenseProminenceInfo === 'function') {
+            try {
+                if (window.getSenseProminenceInfo(m)?.key === 'rare') return true;
+            } catch (_) {}
+        }
+        const share = Number(m.shownShare ?? m.percentage);
+        const hasExplicitShare = (m.shownShare != null || m.percentage != null) && !isNaN(share);
+        const hasExamples = Boolean(
+            m.targetSentence ||
+            (Array.isArray(m.allExamples) && m.allExamples.length > 0) ||
+            (Array.isArray(m.examples) && m.examples.length > 0)
+        );
+        if (hasExplicitShare && share <= 0) return true;
+        if (!hasExamples && hasExplicitShare && share < 0.10) return true;
+        return false;
+    };
+
+    const cardMeanings = (card?.meanings || []).filter(m => {
+        if (!m) return false;
+        const pos = m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || '') : (m.pos || '');
+        if (!pos || NON_LEXICAL_POS.has(String(pos).toUpperCase())) return false;
+        if (typeof window !== 'undefined' && typeof window.isHiddenExpressionOnParent === 'function' && window.isHiddenExpressionOnParent(card, m)) return false;
+        return true;
+    });
+
+    const nonRareMeanings = cardMeanings.filter(m => !isRareMeaning(m));
+    const candidateMeanings = nonRareMeanings.length > 0 ? nonRareMeanings : cardMeanings;
+
+    const totalWeight = candidateMeanings.reduce(
+        (sum, m) => sum + (Number(m.shownShare ?? m.percentage) || 0),
+        0
+    );
+
+    const rgbWeights = new Map();
+    const rgbOrder = [];
+
+    for (const m of candidateMeanings) {
+        const pos = m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || '') : (m.pos || '');
+        const rgb = getRgb(pos);
+        if (!rgb) continue;
+        const weight = Number(m.shownShare ?? m.percentage) || 0;
+        if (!rgbWeights.has(rgb)) {
+            rgbWeights.set(rgb, 0);
+            rgbOrder.push(rgb);
+        }
+        rgbWeights.set(rgb, rgbWeights.get(rgb) + weight);
     }
 
-    // 3 or more POS
-    const rgb1 = getRgb(distinctPos[0]);
-    const rgb2 = getRgb(distinctPos[1]);
-    const rgb3 = getRgb(distinctPos[2]);
-    return `radial-gradient(circle at 18% 16%, rgba(${rgb1}, 0.15), transparent 50%), radial-gradient(circle at 50% 12%, rgba(${rgb2}, 0.15), transparent 50%), radial-gradient(circle at 82% 16%, rgba(${rgb3}, 0.15), transparent 50%)`;
+    let distinctRgb = rgbOrder;
+    if (totalWeight > 0 && rgbOrder.length > 1) {
+        const significant = rgbOrder.filter(rgb => (rgbWeights.get(rgb) / totalWeight) >= 0.10);
+        if (significant.length > 0) {
+            distinctRgb = significant;
+        }
+    }
+
+    if (distinctRgb.length === 0) {
+        const fallbackPos = card?.partOfSpeech || activePos;
+        distinctRgb = [getRgb(fallbackPos)];
+    }
+
+    const activeRgb = activePos ? getRgb(activePos) : null;
+    if (activeRgb && distinctRgb.includes(activeRgb) && distinctRgb[0] !== activeRgb) {
+        distinctRgb = [activeRgb, ...distinctRgb.filter(c => c !== activeRgb)];
+    }
+
+    // Single POS color: single centered radial glow
+    if (distinctRgb.length <= 1) {
+        return `radial-gradient(circle at 50% 20%, rgba(${distinctRgb[0]}, 0.18), transparent 70%)`;
+    }
+
+    // 2 POS colors: multi-corner glow
+    if (distinctRgb.length === 2) {
+        return `radial-gradient(circle at 22% 16%, rgba(${distinctRgb[0]}, 0.17), transparent 58%), radial-gradient(circle at 78% 16%, rgba(${distinctRgb[1]}, 0.17), transparent 58%)`;
+    }
+
+    // 3 or more POS colors
+    return `radial-gradient(circle at 18% 16%, rgba(${distinctRgb[0]}, 0.15), transparent 50%), radial-gradient(circle at 50% 12%, rgba(${distinctRgb[1]}, 0.15), transparent 50%), radial-gradient(circle at 82% 16%, rgba(${distinctRgb[2]}, 0.15), transparent 50%)`;
 }
 
 // Active state for deterministic card back navigation
