@@ -290,7 +290,8 @@
   function loadExamples() {
     var language = deck.language;
     if (!(language in examplesByLanguage)) {
-      examplesByLanguage[language] = fetch('data/' + language + '-examples.json')
+      var basePath = window._conjugationBasePath || 'data/';
+      examplesByLanguage[language] = fetch(basePath + language + '-examples.json')
         .then(function (response) { return response.ok ? response.json() : null; })
         .catch(function () { return null; });
     }
@@ -1370,9 +1371,10 @@
     });
     // A table is a detour with its own "Back to drill"; two backs read as two
     // different exits.
-    $('back-to-study').hidden = name === 'tables';
+    if ($('back-to-study')) $('back-to-study').hidden = name === 'tables';
+    if ($('extraConjugationsBackBtn')) $('extraConjugationsBackBtn').hidden = name === 'tables';
     if (name === 'tables') {
-      $('tables-back').lastChild.textContent = queue.length ? ' Back to drill' : ' Back';
+      if ($('tables-back')) $('tables-back').lastChild.textContent = queue.length ? ' Back to drill' : ' Back';
     }
     Array.prototype.forEach.call(document.querySelectorAll('#tabs .tab'), function (tab) {
       tab.classList.toggle('is-active', tab.dataset.screen === name);
@@ -1402,6 +1404,7 @@
     } else if (!tables && soloVerb) {
       params.set('verb', soloVerb.h);
     }
+    if (window._embeddedConjugation) return;
     var next = window.location.pathname + '?' + params.toString();
     if (next !== window.location.pathname + window.location.search) {
       history.replaceState(null, '', next);
@@ -1479,6 +1482,9 @@
   }
 
   function requestedLanguage() {
+    if (window._requestedConjugationLang && decks[window._requestedConjugationLang]) {
+      return window._requestedConjugationLang;
+    }
     var params = new URLSearchParams(window.location.search);
     var lang = (params.get('lang') || '').trim().toLowerCase();
     if (lang && decks[lang]) return lang;
@@ -1488,6 +1494,10 @@
 
   function leaveConjugationMode(event) {
     if (event) event.preventDefault();
+    if (typeof window.onLeaveConjugationMode === 'function') {
+      window.onLeaveConjugationMode();
+      return;
+    }
     try {
       if (document.referrer && window.history.length > 1) {
         var origin = new URL(document.referrer);
@@ -1504,6 +1514,16 @@
    * config (the language whose conjugationDrill names this deck). Everything
    * else keeps this page's palette. */
   function applyLanguageAccent() {
+    var languages = (window.config && window.config.languages) || null;
+    if (languages) {
+      Object.keys(languages).forEach(function (key) {
+        var cfg = languages[key];
+        if (cfg.conjugationDrill === deck.language && cfg.colorTheme && cfg.colorTheme.primary) {
+          document.documentElement.style.setProperty('--start-accent', cfg.colorTheme.primary);
+        }
+      });
+      return;
+    }
     fetch('../config/config.json').then(function (response) {
       return response.ok ? response.json() : null;
     }).then(function (config) {
@@ -1560,80 +1580,91 @@
     return true;
   }
 
-  window.conjugationBoot = function () {
+  window.conjugationBoot = function (targetLang) {
+    if (targetLang && decks[targetLang]) {
+      window._requestedConjugationLang = targetLang;
+    }
     var codes = Object.keys(decks);
     if (!codes.length) {
-      document.querySelector('main').innerHTML =
-        '<p class="empty">No deck loaded. Run ' +
-        '<code>scripts/build_conjugation_drill.py</code> first.</p>';
+      var container = $('extraConjugationsContainer') || document.querySelector('main');
+      if (container) {
+        container.innerHTML =
+          '<p class="empty">No deck loaded. Run ' +
+          '<code>scripts/build_conjugation_drill.py</code> first.</p>';
+      }
       return;
     }
 
-    loadDeck(decks[requestedLanguage()]);
+    var req = targetLang && decks[targetLang] ? targetLang : requestedLanguage();
+    loadDeck(decks[req]);
 
-    $('back-to-study').onclick = leaveConjugationMode;
+    if ($('back-to-study')) $('back-to-study').onclick = leaveConjugationMode;
     // The table is a detour from a card: back returns to that card, or to
     // Choose when the table was opened by a link with no drill running.
-    $('tables-back').onclick = function () { showScreen(queue.length ? 'drill' : 'setup'); };
+    if ($('tables-back')) $('tables-back').onclick = function () { showScreen(queue.length ? 'drill' : 'setup'); };
     applyLanguageAccent();
-    $('scope').oninput = function () {
+    if ($('scope')) $('scope').oninput = function () {
       state.scope = parseInt(this.value, 10);
       refreshSummary();
     };
-    $('start').onclick = startDrill;
-    $('resume').onclick = resumeRound;
-    $('progress-reset').onclick = resetProgress;
-    $('grade-hit').onclick = function () { gradeCurrent(true); blurActive(); };
-    $('grade-miss').onclick = function () { gradeCurrent(false); blurActive(); };
-    $('done-again').onclick = function () {
+    if ($('start')) $('start').onclick = startDrill;
+    if ($('resume')) $('resume').onclick = resumeRound;
+    if ($('progress-reset')) $('progress-reset').onclick = resetProgress;
+    if ($('grade-hit')) $('grade-hit').onclick = function () { gradeCurrent(true); blurActive(); };
+    if ($('grade-miss')) $('grade-miss').onclick = function () { gradeCurrent(false); blurActive(); };
+    if ($('done-again')) $('done-again').onclick = function () {
       soloVerb = null;
       restoreSelection();
       beginRound(buildQueue(currentSelection()));
       blurActive();
     };
-    $('done-setup').onclick = function () { queue = []; finished = false; showScreen('setup'); };
-    // Another tab answering cards writes the same store; pick its answers up.
-    // Flashcards studied in another tab update the study app's cache the same way.
-    window.addEventListener('storage', function (event) {
-      if (!deck || !event.key) return;
-      if (event.key.indexOf('progress_cache_') === 0) {
-        refreshCardMisses();
-        if ($('screen-setup').classList.contains('is-active')) refreshSummary();
-        return;
-      }
-      if (event.key.indexOf('conj_progress_v2_') !== 0) return;
-      progress = P.load(deck.language);
-      if ($('screen-setup').classList.contains('is-active')) refreshSummary();
-    });
-    $('table-search').oninput = function () { renderTableResults(this.value); };
+    if ($('done-setup')) $('done-setup').onclick = function () { queue = []; finished = false; showScreen('setup'); };
+    if ($('table-search')) $('table-search').oninput = function () { renderTableResults(this.value); };
 
-    $('patterns-all').onclick = function () { setPatterns(function () { return true; }); };
-    $('patterns-none').onclick = function () { setPatterns(function () { return false; }); };
-    $('patterns-irregular').onclick = function () {
+    if ($('patterns-all')) $('patterns-all').onclick = function () { setPatterns(function () { return true; }); };
+    if ($('patterns-none')) $('patterns-none').onclick = function () { setPatterns(function () { return false; }); };
+    if ($('patterns-irregular')) $('patterns-irregular').onclick = function () {
       setPatterns(function (pattern) { return pattern.d !== ''; });
     };
-    bindGestures($('card'));
+    if ($('card')) bindGestures($('card'));
 
-    Array.prototype.forEach.call(document.querySelectorAll('[data-screen]'), function (node) {
-      node.addEventListener('click', function () { showScreen(node.dataset.screen); });
-    });
+    if (!window._conjugationListenersBound) {
+      window._conjugationListenersBound = true;
+      // Another tab answering cards writes the same store; pick its answers up.
+      // Flashcards studied in another tab update the study app's cache the same way.
+      window.addEventListener('storage', function (event) {
+        if (!deck || !event.key) return;
+        if (event.key.indexOf('progress_cache_') === 0) {
+          refreshCardMisses();
+          if ($('screen-setup') && $('screen-setup').classList.contains('is-active')) refreshSummary();
+          return;
+        }
+        if (event.key.indexOf('conj_progress_v2_') !== 0) return;
+        progress = P.load(deck.language);
+        if ($('screen-setup') && $('screen-setup').classList.contains('is-active')) refreshSummary();
+      });
 
-    document.addEventListener('keydown', function (event) {
-      if (!$('screen-drill').classList.contains('is-active')) return;
-      var isSpace = event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar';
-      if (isSpace) { event.preventDefault(); flipOrAdvance(); }
-      if (event.key === 'Enter' && revealed) { event.preventDefault(); gradeCurrent(true); }
-      if ((event.key === 'x' || event.key === 'X') && revealed) {
-        event.preventDefault();
-        gradeCurrent(false);
-      }
-      if (event.key === 't' || event.key === 'T') inspectCurrent();
-      if ((event.key === 's' || event.key === 'S') && revealed && queue.length) {
-        speak(queue[position].form);
-      }
-      if (event.key === 'ArrowRight') advance(1);
-      if (event.key === 'ArrowLeft') advance(-1);
-    });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-screen]'), function (node) {
+        node.addEventListener('click', function () { showScreen(node.dataset.screen); });
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (!$('screen-drill') || !$('screen-drill').classList.contains('is-active')) return;
+        var isSpace = event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar';
+        if (isSpace) { event.preventDefault(); flipOrAdvance(); }
+        if (event.key === 'Enter' && revealed) { event.preventDefault(); gradeCurrent(true); }
+        if ((event.key === 'x' || event.key === 'X') && revealed) {
+          event.preventDefault();
+          gradeCurrent(false);
+        }
+        if (event.key === 't' || event.key === 'T') inspectCurrent();
+        if ((event.key === 's' || event.key === 'S') && revealed && queue.length) {
+          speak(queue[position].form);
+        }
+        if (event.key === 'ArrowRight') advance(1);
+        if (event.key === 'ArrowLeft') advance(-1);
+      });
+    }
 
     if (!applyDeepLink()) showScreen('setup');
   };
