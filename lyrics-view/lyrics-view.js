@@ -1,7 +1,7 @@
-import { preferredAi } from '../js/ai-preference.js?v=a9b5105a';
-import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=a9b5105a';
-import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=a9b5105a';
-import { TurboEngine } from '../turbo/turbo-engine.js?v=a9b5105a';
+import { preferredAi } from '../js/ai-preference.js?v=10f8ad9d';
+import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=10f8ad9d';
+import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=10f8ad9d';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=10f8ad9d';
 
 let currentLanguage = 'es';
 
@@ -324,7 +324,7 @@ async function init() {
     } catch (error) {
       console.warn('Could not initialize Spotify configuration:', error);
     }
-    await import('../js/spotify.js?v=a9b5105a');
+    await import('../js/spotify.js?v=10f8ad9d');
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');

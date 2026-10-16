@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-16T16:58:00+01:00",
+      "date": "2026-10-16 16:58 BST",
+      "agent": "Antigravity",
+      "summary": "Fix practice session loading and prevent multi-meaning cards from showing all senses greyed out",
+      "detail": [
+        "Include related and knowledge-level review need in buildKnowledgeAwareCard so practice sessions retain due cards instead of dropping them and aborting.",
+        "Clear known sense flags when all senses on a card are learned and none are explicitly marked for practice, presenting the card whole rather than greying out every sense.",
+        "Add safeguards in updateCard and meaningTierClass to prevent fully learned cards from displaying as part-known cards."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-16T14:21:50.072167+00:00",
       "date": "2026-10-16 14:21 UTC",
       "agent": "Codex",

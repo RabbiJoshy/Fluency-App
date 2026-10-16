@@ -1,15 +1,15 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=a9b5105a';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=a9b5105a';
-import { songCreditHTML } from './song-credit.js?v=a9b5105a';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=a9b5105a';
+import './state.js?v=10f8ad9d';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=10f8ad9d';
+import { songCreditHTML } from './song-credit.js?v=10f8ad9d';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=10f8ad9d';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=a9b5105a';
-import './speech.js?v=a9b5105a';
-import { goToRoute, routeCodeFor } from './routes.js?v=a9b5105a';
-import { memoryTipTileHTML } from './memory-tips.js?v=a9b5105a';
+import { fitSenseRowText } from './card-row-layout.js?v=10f8ad9d';
+import './speech.js?v=10f8ad9d';
+import { goToRoute, routeCodeFor } from './routes.js?v=10f8ad9d';
+import { memoryTipTileHTML } from './memory-tips.js?v=10f8ad9d';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
@@ -17,25 +17,25 @@ import {
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=a9b5105a';
-import './side-dock.js?v=a9b5105a';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=a9b5105a';
+} from './function-word-card.js?v=10f8ad9d';
+import './side-dock.js?v=10f8ad9d';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=10f8ad9d';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=a9b5105a';
+} from './example-personalisation.js?v=10f8ad9d';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=a9b5105a';
+} from './spanishdict-usage.js?v=10f8ad9d';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=a9b5105a';
+} from './reverse-cues.js?v=10f8ad9d';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,7 +69,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=a9b5105a';
+} from './card-metadata-pills.js?v=10f8ad9d';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6059,6 +6059,11 @@ function updateCard({ announceHeadword = false } = {}) {
         card.meanings?.forEach((meaning, index) => {
             meaning.isKnownSense = knowledgeInfo.known.has(index);
         });
+        if (card.meanings?.length && card.meanings.every(m => m.isKnownSense)) {
+            card.meanings.forEach(meaning => {
+                meaning.isKnownSense = false;
+            });
+        }
     }
     const langConfig = config.languages[selectedLanguage];
     const displaySurface = card.displaySurface || card.targetWord;
@@ -6996,9 +7001,13 @@ function renderCardWikipediaBadge(card) {
         // practice (full colour, top), neither (normal), already known (greyed,
         // bottom). renderSections orders by the tier class on each row.
         const knownMeaningIndices = window.getPracticeMeaningInfo?.(card)?.known || new Set();
+        const allCardMeaningsKnown = card.meanings?.length > 1
+            && card.meanings.every((_, i) => knownMeaningIndices.has(i))
+            && practiceIndices.size === 0;
         const meaningTierClass = indices => {
             if (!indices.length) return '';
             if (indices.some(i => practiceIndices.has(i))) return ' is-practice-meaning';
+            if (allCardMeaningsKnown) return '';
             return indices.every(i => knownMeaningIndices.has(i)) ? ' is-known-meaning' : '';
         };
         const rowTier = html => html.includes('is-practice-meaning') ? 0
@@ -10754,8 +10763,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'a9b5105a';
-const MODALS_ASSET_VERSION = 'a9b5105a';
+const ASSET_VERSION = '10f8ad9d';
+const MODALS_ASSET_VERSION = '10f8ad9d';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
