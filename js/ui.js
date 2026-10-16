@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=b42d1c29';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=b42d1c29';
-import { readFastTrack } from './fast-track-preferences.js?v=b42d1c29';
-import './session-plan.js?v=b42d1c29';
+import './state.js?v=899aa716';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=899aa716';
+import { readFastTrack } from './fast-track-preferences.js?v=899aa716';
+import './session-plan.js?v=899aa716';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -719,12 +719,17 @@ function renderLanguageTabs() {
 
     const step = document.getElementById('step1');
     const header = document.getElementById('step1Header');
-    const openLanguagePicker = () => window.showLanguagePicker?.(config.languages);
+    const openLanguagePicker = () => window.showLanguagePicker?.(config.languages, { fromMainScreen: true });
     header.setAttribute('role', 'button');
     header.setAttribute('tabindex', '0');
     header.setAttribute('aria-haspopup', 'dialog');
     header.onclick = () => {
         if (!step.classList.contains('language-summary-active')) openLanguagePicker();
+    };
+    step.onclick = event => {
+        if (!step.classList.contains('language-summary-active') && event.target !== header && !header.contains(event.target)) {
+            openLanguagePicker();
+        }
     };
     header.onkeydown = event => {
         if (!step.classList.contains('language-summary-active')
@@ -3385,7 +3390,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=b42d1c29')
+        import('./spotify.js?v=899aa716')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

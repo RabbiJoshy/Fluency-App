@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=b42d1c29';
-import { readJsonWithTimeout } from './read-request.js?v=b42d1c29';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=b42d1c29';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=b42d1c29';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=b42d1c29';
-import { dbGet, dbPut } from './offline-db.js?v=b42d1c29';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=b42d1c29';
+import './state.js?v=899aa716';
+import { readJsonWithTimeout } from './read-request.js?v=899aa716';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=899aa716';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=899aa716';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=899aa716';
+import { dbGet, dbPut } from './offline-db.js?v=899aa716';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=899aa716';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=b42d1c29';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=b42d1c29';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=b42d1c29';
+} from './sync-queue.js?v=899aa716';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=899aa716';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=899aa716';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -383,10 +383,17 @@ async function completeProfileLogin(user) {
     window.applyGlobalStudyDefaults?.();
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
-    hideAuthModal();
-    if (user.isNew) {
+    const activeLangTab = document.querySelector('.lang-tab.active');
+    const hasEstablishedLanguage = Boolean(
+        !user.isNew
+        && (localStorage.getItem('fluencyPreferredLanguageV1') || activeLangTab)
+    );
+    if (!hasEstablishedLanguage) {
         setTimeout(() => {
-            window.showLanguagePicker?.(config.languages);
+            const step1 = document.getElementById('step1');
+            if (!step1?.classList.contains('language-summary-active')) {
+                window.showLanguagePicker?.(config.languages, { fromMainScreen: true });
+            }
         }, 150);
     } else {
         setTimeout(_openFirstRunTutorialUnlessLinked, 250);
