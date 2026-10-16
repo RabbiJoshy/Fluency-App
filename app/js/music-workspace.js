@@ -106,6 +106,7 @@ function enter() {
     // Moving the real controls preserves all their handlers and source state.
     for (const id of SETUP_IDS) {
         const element = document.getElementById(id);
+        if (id === 'step4' && element?.parentElement?.classList?.contains('level-choosing')) continue;
         rememberHome(element);
         if (element) document.getElementById('musicStudySetup').appendChild(element);
     }

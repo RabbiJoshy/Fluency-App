@@ -575,19 +575,21 @@
                         <span id="rangeStepNumber" hidden>3</span>
                         <div id="rangeSelector" class="range-selector"></div>
                     </div>
-
-                </div>
-                <!-- Smart Skip applies to the chosen level and next batch. -->
-                <div id="setupOptions" class="setup-options" style="display: none;">
-                    <div class="fast-track-hub-row">
-                        <strong id="smartSkipLabel" class="smart-skip-hub-label">Smart Skip</strong>
-                        <div id="fastTrackHubSwitch" class="smart-skip-choice" role="group" aria-labelledby="smartSkipLabel">
-                            <button type="button" data-ss-master="off" aria-pressed="true">Off</button>
-                            <button type="button" data-ss-master="on" aria-pressed="false">On</button>
-                        </div>
-                        <div class="smart-skip-summary-row">
-                            <small id="fastTrackHubSummary" class="smart-skip-hub-summary">Fewer cards, less repetition</small>
-                            <button type="button" id="fastTrackHubBtn" class="smart-skip-details-btn" aria-label="Smart Skip details">Details <span aria-hidden="true">›</span></button>
+                    <!-- Smart Skip applies to the chosen level and next batch. -->
+                    <div id="setupOptions" class="setup-options" style="display: none;">
+                        <div class="fast-track-hub-row">
+                            <div class="smart-skip-copy">
+                                <div class="smart-skip-title-row">
+                                    <strong id="smartSkipLabel" class="smart-skip-hub-label">Smart Skip</strong>
+                                    <span class="smart-skip-dot" aria-hidden="true">·</span>
+                                    <button type="button" id="fastTrackHubBtn" class="smart-skip-details-btn" aria-label="Smart Skip details">Details <span aria-hidden="true">›</span></button>
+                                </div>
+                                <small id="fastTrackHubSummary" class="smart-skip-hub-summary">Fewer cards, less repetition</small>
+                            </div>
+                            <div id="fastTrackHubSwitch" class="smart-skip-choice" role="group" aria-labelledby="smartSkipLabel">
+                                <button type="button" data-ss-master="off" aria-pressed="true">Off</button>
+                                <button type="button" data-ss-master="on" aria-pressed="false">On</button>
+                            </div>
                         </div>
                     </div>
                 </div>
