@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=bb13137e';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=bb13137e';
-import { songCreditHTML } from './song-credit.js?v=bb13137e';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=bb13137e';
+import './state.js?v=711117f4';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=711117f4';
+import { songCreditHTML } from './song-credit.js?v=711117f4';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=711117f4';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=bb13137e';
-import './speech.js?v=bb13137e';
-import { goToRoute, routeCodeFor } from './routes.js?v=bb13137e';
-import { memoryTipTileHTML } from './memory-tips.js?v=bb13137e';
+import { fitSenseRowText } from './card-row-layout.js?v=711117f4';
+import './speech.js?v=711117f4';
+import { goToRoute, routeCodeFor } from './routes.js?v=711117f4';
+import { memoryTipTileHTML } from './memory-tips.js?v=711117f4';
 import {
     functionWordBlockHTML,
     functionWordExampleHTML,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=bb13137e';
-import './side-dock.js?v=bb13137e';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=bb13137e';
+} from './function-word-card.js?v=711117f4';
+import './side-dock.js?v=711117f4';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=711117f4';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=bb13137e';
+} from './example-personalisation.js?v=711117f4';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=bb13137e';
+} from './spanishdict-usage.js?v=711117f4';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=bb13137e';
+} from './reverse-cues.js?v=711117f4';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -68,7 +68,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=bb13137e';
+} from './card-metadata-pills.js?v=711117f4';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -3069,6 +3069,76 @@ function inferOccurrenceFromSentence(surface, sentence) {
     return best;
 }
 
+function getConjugationEntry(conjData, lemma) {
+    if (!conjData || !lemma) return null;
+    if (conjData[lemma]) return conjData[lemma];
+    const folded = foldSurfaceForm(lemma);
+    if (conjData[folded]) return conjData[folded];
+    for (const key of Object.keys(conjData)) {
+        if (foldSurfaceForm(key) === folded) return conjData[key];
+    }
+    return null;
+}
+
+function extractAllConjugationForms(entry) {
+    if (!entry || typeof entry !== 'object') return [];
+    const forms = new Set();
+    const addForm = (val) => {
+        if (!val || typeof val !== 'string') return;
+        const cleaned = val.trim();
+        if (!cleaned || cleaned === '—' || cleaned === '-') return;
+        const parts = cleaned.split(/[\/,]/);
+        for (const part of parts) {
+            const raw = part.trim();
+            if (!raw || raw === '—' || raw === '-') continue;
+            forms.add(raw);
+            const bare = raw.replace(/^(?:me|te|se|nos|os)\s+/iu, '').trim();
+            if (bare && bare !== raw) {
+                forms.add(bare);
+            }
+        }
+    };
+
+    if (entry.gerund) {
+        if (Array.isArray(entry.gerund)) entry.gerund.forEach(addForm);
+        else addForm(entry.gerund);
+    }
+    if (entry.past_participle) {
+        const pps = Array.isArray(entry.past_participle) ? entry.past_participle : [entry.past_participle];
+        for (const pp of pps) {
+            addForm(pp);
+            if (typeof pp === 'string' && pp.endsWith('o')) {
+                const stem = pp.slice(0, -1);
+                addForm(`${stem}a`);
+                addForm(`${stem}os`);
+                addForm(`${stem}as`);
+            }
+        }
+    }
+    if (entry.tenses && typeof entry.tenses === 'object') {
+        for (const tenseForms of Object.values(entry.tenses)) {
+            if (Array.isArray(tenseForms)) {
+                tenseForms.forEach(addForm);
+            }
+        }
+    }
+    return Array.from(forms);
+}
+
+function getRegularPluralForms(base) {
+    const raw = String(base || '').trim();
+    if (!raw) return [];
+    const forms = new Set();
+    forms.add(`${raw}s`);
+    forms.add(`${raw}es`);
+    if (raw.endsWith('z')) {
+        forms.add(`${raw.slice(0, -1)}ces`);
+    } else if (raw.endsWith('Z')) {
+        forms.add(`${raw.slice(0, -1)}CES`);
+    }
+    return Array.from(forms);
+}
+
 // The one place that answers "which word is this example actually about?".
 // The card header and the sentence underline both read this, because when they
 // answered it separately they could disagree: a pooled example missing
@@ -3086,10 +3156,11 @@ function resolveExampleOccurrence(card, example, sentence) {
     const declared = [
         example?.surface,
         example?.matched_surface,
-        card?.targetWord,
-        card?.displaySurface,
         example?.pooledFrom,
-        card?.representativeSurface
+        card?.displaySurface,
+        card?.targetWord,
+        card?.representativeSurface,
+        ...(card?.mergedSurfaces || [])
     ];
     const seen = new Set();
     const tried = [];
@@ -3113,6 +3184,57 @@ function resolveExampleOccurrence(card, example, sentence) {
         const hit = matched(form);
         if (hit) return { surface: hit, kind: 'declared' };
     }
+
+    const conjData = card?.conjugationData
+        || (typeof _conjugationData !== 'undefined' ? _conjugationData : null)
+        || (typeof window !== 'undefined' ? window._conjugationData : null)
+        || (typeof globalThis !== 'undefined' ? globalThis._conjugationData : null);
+    const cardPosList = [
+        card?.partOfSpeech,
+        ...(Array.isArray(card?.meanings) ? card.meanings.map(m => m?.pos) : [])
+    ].filter(Boolean).map(p => String(p).toLowerCase());
+
+    const isVerb = cardPosList.some(p => p.includes('verb') || p === 'v' || p === 'vb');
+    const isNoun = cardPosList.some(p => p.includes('noun') || p === 'n');
+
+    if (isVerb || (!cardPosList.length && conjData)) {
+        const lemmaCandidates = [
+            card?.citationForm,
+            card?.lemma,
+            card?.displaySurface,
+            card?.targetWord,
+            card?.representativeSurface
+        ].filter(Boolean);
+        for (const lem of lemmaCandidates) {
+            const entry = getConjugationEntry(conjData, lem);
+            if (entry) {
+                const conjForms = extractAllConjugationForms(entry);
+                conjForms.sort((a, b) => b.length - a.length);
+                for (const form of conjForms) {
+                    const hit = matched(form);
+                    if (hit) return { surface: hit, kind: 'declared' };
+                }
+            }
+        }
+    }
+
+    if (isNoun || (!cardPosList.length && !isVerb)) {
+        const nounBases = [
+            card?.displaySurface,
+            card?.targetWord,
+            card?.lemma,
+            card?.citationForm,
+            card?.representativeSurface
+        ].filter(Boolean);
+        for (const base of nounBases) {
+            const pluralForms = getRegularPluralForms(base);
+            for (const form of pluralForms) {
+                const hit = matched(form);
+                if (hit) return { surface: hit, kind: 'declared' };
+            }
+        }
+    }
+
     // Nothing declared is in the sentence. Peel enclitics off each candidate —
     // a card on `verte` against a line carrying `ver`.
     for (const form of tried) {
@@ -3781,8 +3903,9 @@ function applyPooledExampleGloss(card, meaning, example) {
         _pooledGlossOverride.meaning.meaning = _pooledGlossOverride.original;
         _pooledGlossOverride = null;
     }
+    if (card?.mergedLemma) return;
     const gloss = String(example?.pooledTranslation || '').trim();
-    if (!card?.mergedLemma || !meaning?.senseId || !gloss || gloss === meaning.meaning) return;
+    if (!meaning?.senseId || !gloss || gloss === meaning.meaning) return;
     _pooledGlossOverride = { meaning, original: meaning.meaning };
     meaning.meaning = gloss;
 }
@@ -3850,9 +3973,6 @@ function headwordCase(card, surface) {
 
 function getDisplayedTargetHeadword(card) {
     if (!card) return '';
-    if (!isFlipped && card.mergedLemma && card._activeExampleSurface) {
-        return card._activeExampleSurface;
-    }
     return card.displaySurface || card.targetWord;
 }
 
@@ -5452,7 +5572,7 @@ function extractCanonicalDictionaryExamples(meaning, card = null) {
 
 // Dictionary prose is clean spelling, so matching is exact apart from case.
 // No accent folding, guessed stems or clitic stripping: hacerlo is not hacer.
-function canonicalOccurrenceSurface(card, example, sentence) {
+function canonicalOccurrenceSurface(card, example, sentence, { skipFallback = false } = {}) {
     const forms = card?.mergedLemma
         ? [...(card.mergedSurfaces || []), card.displaySurface, card.targetWord]
         : [card?.representativeSurface || card?.targetWord || card?.displaySurface];
@@ -5461,13 +5581,18 @@ function canonicalOccurrenceSurface(card, example, sentence) {
     for (const range of example?.bold_text_offsets || []) {
         if (!Array.isArray(range) || range[0] < 0 || range[1] > text.length || range[1] <= range[0]) continue;
         const marked = text.slice(range[0], range[1]);
-        if (allowed.has(marked.toLocaleLowerCase())) return marked;
+        if (marked.trim() && (card?.mergedLemma || allowed.has(marked.toLocaleLowerCase()))) return marked;
     }
     for (const form of forms) {
         if (!form) continue;
         const escaped = String(form).normalize('NFC').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const hit = text.match(_cachedRegex(`(?<![\\p{L}\\p{N}])(${escaped})(?![\\p{L}\\p{N}])`, 'iu'));
         if (hit) return hit[1];
+    }
+    if (!skipFallback && card?.mergedLemma && typeof resolveExampleOccurrence === 'function') {
+        const fallbackExample = example ? { ...example, canonical: false } : { canonical: false };
+        const resolved = resolveExampleOccurrence(card, fallbackExample, text);
+        if (resolved?.surface) return resolved.surface;
     }
     return '';
 }
@@ -6259,7 +6384,7 @@ function renderCardWikipediaBadge(card) {
     // metadata strip. Build it once so both front directions can nest it
     // beneath the relevant verb badge.
     const displayedMorphology = card.mergedLemma
-        ? card._activeExampleMorphology
+        ? null
         : card.morphology;
     const morphLabels = displayedMorphology
         ? compactMorphLabels(Array.isArray(displayedMorphology)
@@ -8216,7 +8341,7 @@ function renderCardWikipediaBadge(card) {
                 const regex = exampleOccurrenceSurfaceRegex(occurrence.surface);
                 if (regex) {
                     const nonCanonical = foldSurfaceForm(occurrence.surface)
-                        !== foldSurfaceForm(card.targetWord);
+                        !== foldSurfaceForm(card.displaySurface || card.targetWord);
                     // How the form was found is part of what the learner is
                     // being shown. A declared occurrence is evidence; a stem
                     // left by peeling an enclitic, or a form matched by
@@ -10628,8 +10753,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'bb13137e';
-const MODALS_ASSET_VERSION = 'bb13137e';
+const ASSET_VERSION = '711117f4';
+const MODALS_ASSET_VERSION = '711117f4';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
