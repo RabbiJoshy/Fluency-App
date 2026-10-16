@@ -1,11 +1,11 @@
-import { REVIEW_INTERVAL_DAYS, reviewStage, reviewIntervalDays, reviewNextAt } from './srs-policy.js?v=899aa716';
-import './state.js?v=899aa716';
+import { REVIEW_INTERVAL_DAYS, reviewStage, reviewIntervalDays, reviewNextAt } from './srs-policy.js?v=04d4c129';
+import './state.js?v=04d4c129';
 import {
     crossModeProgressId,
     matchingProgressRecords,
     mergeProgressRecords,
     normalizeProgressSurface
-} from './progress-identity.js?v=899aa716';
+} from './progress-identity.js?v=04d4c129';
 
 const SRS_DAY_MS = 24 * 60 * 60 * 1000;
 const SRS_INTERVAL_DAYS = REVIEW_INTERVAL_DAYS;

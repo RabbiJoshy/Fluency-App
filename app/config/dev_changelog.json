@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-16T14:21:50.072167+00:00",
+      "date": "2026-10-16 14:21 UTC",
+      "agent": "Codex",
+      "summary": "Clearer Portuguese and Spanish function-word cards",
+      "detail": [
+        "Centre pattern formulas, keep explanations left-aligned, and show contraction parts below the word without pills.",
+        "Place examples directly below patterns and match typed chunks to the app’s POS colours.",
+        "Simplify all 81 cards; use 71 traceable examples for the twelve reviewed pilot cards. Remaining source labels are explicitly unverified."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-16T01:02:00+01:00",
       "date": "2026-10-16 01:02 BST",
       "agent": "Antigravity",

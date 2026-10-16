@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=899aa716");
+@import url("./appearance.css?v=04d4c129");
 
 
         * {
@@ -25643,3 +25643,17 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   padding: 2px 4px;
   opacity: 0.85;
 }
+
+/* Function-word cards: typed chunks, centred formulas and compact construction header. */
+.fw-relation-formula { text-align: center; }
+.fw-relation-rule { text-align: left; }
+.fw-parts-box { background:none; border:0; border-radius:0; padding:0; margin:2px 0 10px; gap:7px; font:500 22px/1.2 var(--font-emphasis,"Space Grotesk"); }
+.fw-part-pill { font:inherit; color:var(--text-secondary); }
+.fw-part-plus { font:inherit; color:var(--text-muted); }
+.fw-sentence-panel { margin-top:4px; }
+.fw-sentence-target { font-weight:400; }
+.fw-token-connector, .fw-sentence-target .fw-token-connector { color:#fff; font-weight:700; text-decoration-thickness:1px; text-underline-offset:4px; }
+.fw-relation-box.is-selected, .fw-relation-box[aria-pressed="true"] { border-color:rgba(212,218,245,.4); background:rgba(212,218,245,.06); box-shadow:none; }
+.fw-credit-start { overflow:visible; white-space:normal; min-width:0; max-width:75%; display:flex; align-items:center; }
+.fw-credit-start .example-source-chip { max-width:100%; }
+.fw-example-credit-row { min-height:42px; }
