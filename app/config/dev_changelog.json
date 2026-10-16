@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-16T17:16:00+01:00",
+      "date": "2026-10-16 17:16 BST",
+      "agent": "Antigravity",
+      "summary": "Fix card and level scrubbers getting stuck and jumping cards/levels",
+      "detail": [
+        "Replaced artificial hold plateau and dead-zone calculation in card-position seek bar with direct, proportional rail positioning.",
+        "Set deck scrubber active state during card-position seek bar drag to prevent smooth-scroll fighting.",
+        "Prevented level ruler scrubber from executing premature level commits and programmatic centering while pointer drags are in progress."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-16T16:58:00+01:00",
       "date": "2026-10-16 16:58 BST",
       "agent": "Antigravity",

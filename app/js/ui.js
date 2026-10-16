@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=10f8ad9d';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=10f8ad9d';
-import { readFastTrack } from './fast-track-preferences.js?v=10f8ad9d';
-import './session-plan.js?v=10f8ad9d';
+import './state.js?v=a2cdb2bb';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=a2cdb2bb';
+import { readFastTrack } from './fast-track-preferences.js?v=a2cdb2bb';
+import './session-plan.js?v=a2cdb2bb';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1456,7 +1456,9 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
                 const idx = buttons.indexOf(this);
                 if (idx >= 0) {
                     if (+segBar.dataset.value !== idx) setLevelSegmentSelection(idx);
-                    _scrollLevelSegToCenter(idx, false); // keep the scrubber centered on the picked level
+                    if (!_levelScrubberInitiated) {
+                        _scrollLevelSegToCenter(idx, false); // keep the scrubber centered on the picked level
+                    }
                 }
             }
         });
@@ -1995,6 +1997,7 @@ function setLevelSegmentSelection(idx) {
 // level (magnified). It reuses setLevelSegmentSelection + the hidden .level-btn,
 // so all downstream selection logic is unchanged — only the presentation is.
 let _levelProgrammaticScroll = false;
+let _levelScrubberInitiated = false;
 
 function _levelCenteredIdx(bar) {
     const mid = bar.scrollLeft + bar.clientWidth / 2;
@@ -2021,18 +2024,29 @@ function _scrollLevelSegToCenter(idx, smooth) {
 
 function wireLevelScrubber(segBar, buttons) {
     let commitTimer = null;
-    let userScrubbing = false;
+    let pointerActive = false;
 
-    segBar.addEventListener('pointerdown', () => { userScrubbing = true; }, { passive: true });
-    window.addEventListener('pointerup', () => { setTimeout(() => { userScrubbing = false; }, 300); }, { passive: true });
-    window.addEventListener('pointercancel', () => { userScrubbing = false; }, { passive: true });
+    segBar.addEventListener('pointerdown', () => { pointerActive = true; }, { passive: true });
+    window.addEventListener('pointerup', () => {
+        if (!pointerActive) return;
+        pointerActive = false;
+        clearTimeout(commitTimer);
+        commitTimer = setTimeout(commit, 80);
+    }, { passive: true });
+    window.addEventListener('pointercancel', () => { pointerActive = false; }, { passive: true });
 
     const commit = () => {
-        if (_levelProgrammaticScroll || !userScrubbing) return;
-        const btn = buttons[_levelCenteredIdx(segBar)];
+        if (_levelProgrammaticScroll || pointerActive) return;
+        const targetIdx = _levelCenteredIdx(segBar);
+        const btn = buttons[targetIdx];
         if (btn) {
             _setupLevelSelectionWasManual = true;
-            btn.click(); // → renderRangeSelector (resets the set options)
+            _levelScrubberInitiated = true;
+            try {
+                btn.click(); // → renderRangeSelector (resets the set options)
+            } finally {
+                _levelScrubberInitiated = false;
+            }
         }
     };
     // While the learner scrubs, the badge swaps its word range for the level
@@ -2044,18 +2058,20 @@ function wireLevelScrubber(segBar, buttons) {
         totalTimer = setTimeout(() => segBar.classList.remove('is-scrubbing'), 1000);
     };
     segBar.addEventListener('scroll', () => {
-        if (userScrubbing) showTotalWhileScrubbing();
+        showTotalWhileScrubbing();
         const i = _levelCenteredIdx(segBar);
         if (+segBar.dataset.value !== i) setLevelSegmentSelection(i); // live magnify + readout
-        if (_levelProgrammaticScroll || !userScrubbing) return;
+        if (_levelProgrammaticScroll) return;
         clearTimeout(commitTimer);
-        commitTimer = setTimeout(commit, 150); // fallback for browsers without scrollend
+        if (!pointerActive) {
+            commitTimer = setTimeout(commit, 200);
+        }
     }, { passive: true });
     // scrollend fires once the snap animation settles — the reliable commit.
     segBar.addEventListener('scrollend', () => {
-        if (_levelProgrammaticScroll || !userScrubbing) return;
+        if (_levelProgrammaticScroll) return;
         clearTimeout(commitTimer);
-        commit();
+        if (!pointerActive) commit();
     }, { passive: true });
     // Tapping a segment commits it directly. We must NOT rely on the scroll
     // handler to commit here: _scrollLevelSegToCenter marks the scroll as
@@ -3390,7 +3406,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=10f8ad9d')
+        import('./spotify.js?v=a2cdb2bb')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
