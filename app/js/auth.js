@@ -17,7 +17,7 @@ import {
     applyPendingMetaProgressOverlay
 } from './sync-queue.js?v=20260825ak';
 import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=20261010airlock';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=1';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=20261016auth';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -156,12 +156,39 @@ function _openFirstRunTutorialUnlessLinked() {
 //   - mode/artist switch   → keep guest session → app, no landing
 //   - new tab at app URL   → no session → landing
 //   - new tab at #/about   → no session → landing + About on top
-//   - named user, any case → logged in (localStorage)
+function onPasswordlessSignedOut() {
+    if (currentUser?.initials) {
+        localStorage.removeItem(`progress_cache_${currentUser.initials}`);
+        localStorage.removeItem(`progress_cache_${getIsolatedSyncUser(currentUser.initials)}`);
+    }
+    localStorage.removeItem('flashcardUser');
+    clearDeviceSessionState();
+    currentUser = null;
+    showUserInfo();
+    showAuthModal();
+}
+
 function checkAuthentication() {
     if (PASSWORDLESS_ENABLED) {
         GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
+        const savedUser = localStorage.getItem('flashcardUser');
+        if (savedUser) {
+            try {
+                const parsed = JSON.parse(savedUser);
+                if (parsed && !parsed.isGuest) {
+                    currentUser = parsed;
+                    window.applyGlobalStudyDefaults?.();
+                    showUserInfo();
+                    hideAuthModal();
+                    _markAuthReady();
+                    setTimeout(() => window.checkAndShowAdminUpdateModal?.(), 300);
+                    startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
+                    return;
+                }
+            } catch (_) {}
+        }
         showAuthModal();
-        startPasswordlessAuth(completeProfileLogin, () => window.location.reload());
+        startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
         return;
     }
     // User-initiated refresh should drop guest mode so the landing reappears.
@@ -274,7 +301,7 @@ function enterGuestMode() {
 // Show login form
 function showLoginForm(mode = 'login') {
     if (PASSWORDLESS_ENABLED) {
-        startPasswordlessAuth(completeProfileLogin, () => window.location.reload());
+        startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
         return;
     }
     resetProfileLogin();
@@ -329,7 +356,7 @@ function hideLoginForm() {
 
 // Submit initials and login
 async function submitLogin() {
-    if (PASSWORDLESS_ENABLED) return startPasswordlessAuth(completeProfileLogin, () => window.location.reload());
+    if (PASSWORDLESS_ENABLED) return startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
     return submitProfileLogin(completeProfileLogin);
 }
 
@@ -516,9 +543,15 @@ function wireAccountPassword() {
 async function logout() {
     if (PASSWORDLESS_ENABLED) {
         await window.flushQueue?.().catch(() => {});
+        if (currentUser?.initials) {
+            localStorage.removeItem(`progress_cache_${currentUser.initials}`);
+            localStorage.removeItem(`progress_cache_${getIsolatedSyncUser(currentUser.initials)}`);
+        }
         localStorage.removeItem('flashcardUser');
         clearDeviceSessionState();
-        await window.Clerk?.signOut();
+        currentUser = null;
+        showUserInfo();
+        await signOutPasswordless();
         window.location.reload();
         return;
     }
