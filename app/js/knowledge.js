@@ -556,10 +556,24 @@ function buildKnowledgeAwareCard(card, { skipWhenNothingToPractise = false } = {
         // Every sense is current on its own schedule. Review still shows the
         // word whole when the card itself is due, so the answer can resolve it
         // rather than leave a word counted in Review that never appears.
-        const cardNeedsReview = window.getWordProgressState?.(card.fullId, card.targetWord)?.needsReview;
-        return skipWhenNothingToPractise && !cardNeedsReview ? null : card;
+        const cardNeedsReview = Boolean(
+            (typeof window.relatedWordNeedsReview === 'function' && window.relatedWordNeedsReview(card.fullId, card.targetWord))
+            || (typeof window.wordNeedsKnowledgeReview === 'function' ? window.wordNeedsKnowledgeReview(card.fullId, card.targetWord) : wordNeedsKnowledgeReview(card.fullId, card.targetWord))
+            || window.getWordProgressState?.(card.fullId, card.targetWord)?.needsReview
+        );
+        if (skipWhenNothingToPractise && !cardNeedsReview) return null;
+        if (card.meanings?.some(m => m.isKnownSense)) {
+            return {
+                ...card,
+                meanings: card.meanings.map(m => m.isKnownSense ? { ...m, isKnownSense: false } : m)
+            };
+        }
+        return card;
     }
     if (!shaped) return card;
+    if (focusedMeanings.length > 0 && focusedMeanings.every(meaning => meaning.isKnownSense)) {
+        focusedMeanings.forEach(meaning => { meaning.isKnownSense = false; });
+    }
     const focusedRareIds = new Set(focusedMeanings
         .filter(meaning => meaning.isRareSense)
         .map(meaning => meaning.senseId || meaning.sense_id)
@@ -755,6 +769,11 @@ function getPracticeMeaningInfo(card) {
         }
     });
     rowLearned.forEach((learned, index) => { if (learned) known.add(index); });
+    // If every row is learned and none are explicitly marked for practice,
+    // the card is shown whole — never grey out every single sense as known.
+    if (indices.size === 0 && rowLearned.size > 1 && known.size >= rowLearned.size) {
+        known.clear();
+    }
     return { indices, known, knownCount, practising, total: focusItems.length };
 }
 

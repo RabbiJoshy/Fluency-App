@@ -138,6 +138,12 @@ RUNNER = r"""
         // Nothing left and the card not due: Review skips it, a set shows it whole.
         out.reviewSkips = context.buildKnowledgeAwareCard(card, { skipWhenNothingToPractise: true }) === null;
         out.setShowsWhole = context.buildKnowledgeAwareCard(card) === card;
+        // When every meaning is learned, getPracticeMeaningInfo must not grey out all senses
+        out.allLearnedKnownSetSize = context.getPracticeMeaningInfo(card).known.size;
+        // But if the card needs review (e.g. wordNeedsKnowledgeReview is true), review must NOT skip it
+        context.window.wordNeedsKnowledgeReview = (id, word) => id === card.fullId;
+        out.reviewKeepsWhenNeedsReview = context.buildKnowledgeAwareCard(card, { skipWhenNothingToPractise: true }) !== null;
+        context.window.wordNeedsKnowledgeReview = null;
 
         // A card with no known senses answers as a whole.
         out.plainCardHandled = await context.saveWholeCardKnowledgeAnswer(card, true);
@@ -236,6 +242,8 @@ class KnownSenseTests(unittest.TestCase):
     def test_review_skips_a_finished_word_and_a_set_shows_it_whole(self) -> None:
         self.assertTrue(self.out["reviewSkips"])
         self.assertTrue(self.out["setShowsWhole"])
+        self.assertEqual(self.out["allLearnedKnownSetSize"], 0)
+        self.assertTrue(self.out["reviewKeepsWhenNeedsReview"])
         self.assertFalse(self.out["plainCardHandled"])
 
     def test_one_tap_exception_marks_siblings_known_on_leaving(self) -> None:

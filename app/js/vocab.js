@@ -625,6 +625,9 @@ function hasRelatedWordProgress(fullId, word = '') {
 function relatedWordNeedsReview(fullId, word = '') {
     return relatedWordIds(fullId, word).some(id => wordNeedsKnowledgeReview(id, word));
 }
+window.relatedWordIds = relatedWordIds;
+window.hasRelatedWordProgress = hasRelatedWordProgress;
+window.relatedWordNeedsReview = relatedWordNeedsReview;
 
 /**
  * Join per-artist index entries with the shared master vocabulary.

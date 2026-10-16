@@ -6059,6 +6059,11 @@ function updateCard({ announceHeadword = false } = {}) {
         card.meanings?.forEach((meaning, index) => {
             meaning.isKnownSense = knowledgeInfo.known.has(index);
         });
+        if (card.meanings?.length && card.meanings.every(m => m.isKnownSense)) {
+            card.meanings.forEach(meaning => {
+                meaning.isKnownSense = false;
+            });
+        }
     }
     const langConfig = config.languages[selectedLanguage];
     const displaySurface = card.displaySurface || card.targetWord;
@@ -6996,9 +7001,13 @@ function renderCardWikipediaBadge(card) {
         // practice (full colour, top), neither (normal), already known (greyed,
         // bottom). renderSections orders by the tier class on each row.
         const knownMeaningIndices = window.getPracticeMeaningInfo?.(card)?.known || new Set();
+        const allCardMeaningsKnown = card.meanings?.length > 1
+            && card.meanings.every((_, i) => knownMeaningIndices.has(i))
+            && practiceIndices.size === 0;
         const meaningTierClass = indices => {
             if (!indices.length) return '';
             if (indices.some(i => practiceIndices.has(i))) return ' is-practice-meaning';
+            if (allCardMeaningsKnown) return '';
             return indices.every(i => knownMeaningIndices.has(i)) ? ' is-known-meaning' : '';
         };
         const rowTier = html => html.includes('is-practice-meaning') ? 0
