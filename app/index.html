@@ -50,11 +50,13 @@
     <link rel="stylesheet" href="css/style.css?v=20261014clarity">
     <link rel="stylesheet" href="css/progress-overview.css?v=20260927pa">
     <link rel="stylesheet" href="css/light-theme.css?v=20261011style">
+    <link rel="stylesheet" href="css/extra.css?v=20261016">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
+    <link rel="modulepreload" href="js/extra-workspace.js?v=20261016">
     <link rel="modulepreload" href="js/main.js?v=20261014clarity">
     <link rel="modulepreload" href="js/routes.js?v=20261013music">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
@@ -387,7 +389,7 @@
                     </button>
                     <div class="top-bar-right-controls">
                     <button id="desktopStudyBtn" class="desktop-shell-nav" type="button" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M9 9h6M9 13h6M9 17h3"></path></svg><span class="desktop-shell-label">Vocabulary</span></button>
-                    <button id="desktopExploreBtn" class="desktop-shell-nav" type="button" hidden aria-haspopup="dialog" aria-controls="learningContextModal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10"></path><path d="M4 12h7"></path><path d="M4 17h10"></path><path d="m16 10 4 2-4 2"></path></svg><span class="desktop-shell-label">Conjugations</span></button>
+                    <button id="desktopExploreBtn" class="desktop-shell-nav" type="button" hidden aria-haspopup="dialog" aria-controls="extraModal"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg><span class="desktop-shell-label">Extra</span></button>
                     <button id="envBadge" class="env-badge env-staging" type="button" hidden aria-label="Environment: Staging" title="Staging environment — Tap for details">STAGING</button>
                     <button id="topBarUserName" class="top-bar-user-name" type="button" title="Open account settings"></button>
                     <button id="topBarProgressBtn" class="top-bar-icon-btn" type="button" hidden title="Your progress" aria-label="Open your progress" aria-haspopup="dialog" aria-controls="totalStatsModal">
@@ -835,6 +837,264 @@
                 </button>
                 </div>
             </section>
+        </div>
+    </div>
+
+    <!-- Extra Activities / Practice Modal (Desktop Workspace Page) -->
+    <div id="extraModal" class="modal hidden" role="region" aria-label="Extra activities">
+        <div class="modal-content extra-modal-content">
+            <button class="modal-close" id="closeExtraModal" aria-label="Close Extra" hidden>&#10005;</button>
+
+            <!-- Extra Menu: Grid of options (currently 1 box: Conjugations) -->
+            <div id="extraMenuView" class="extra-menu-view">
+                <header class="extra-header">
+                    <span id="extraLanguageContext" class="extra-context-pill"></span>
+                    <h1 class="extra-title">Extra</h1>
+                    <p class="extra-subtitle">Practice modes and tools beyond everyday vocabulary.</p>
+                </header>
+                <div class="extra-options-grid" id="extraOptionsGrid">
+                    <button type="button" class="extra-card" id="extraConjugationsCard">
+                        <span class="extra-card-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 7h10"></path>
+                                <path d="M4 12h7"></path>
+                                <path d="M4 17h10"></path>
+                                <path d="m16 10 4 2-4 2"></path>
+                            </svg>
+                        </span>
+                        <span class="extra-card-copy">
+                            <strong>Conjugations</strong>
+                            <small id="extraConjugationsDesc">Master verb endings, tenses, and irregular forms across all persons.</small>
+                        </span>
+                        <span class="extra-card-arrow" aria-hidden="true">›</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Embedded Conjugations Screen -->
+            <div id="extraConjugationsView" class="extra-conjugations-view" hidden>
+                <div class="extra-conjugations-topbar">
+                    <button type="button" class="extra-back-btn" id="extraConjugationsBackBtn">
+                        <span aria-hidden="true">‹</span> Extra
+                    </button>
+                    <nav class="tabs" id="tabs">
+                        <button type="button" class="tab is-active" data-screen="setup">Set up</button>
+                        <button type="button" class="tab" data-screen="drill">Practise</button>
+                    </nav>
+                </div>
+
+                <div id="extraConjugationsContainer" class="extra-conjugations-container">
+                    <!-- SETUP SCREEN -->
+                    <section class="screen is-active" id="screen-setup">
+                        <div class="stack">
+                            <div class="setup-intro">
+                                <h1>Verb drills</h1>
+                                <p>Pick the verbs and tenses to practise, then press Start.</p>
+                            </div>
+
+                            <details class="section">
+                                <summary>
+                                    <span class="section-name">Verb type</span>
+                                    <span class="section-state" id="state-types"></span>
+                                </summary>
+                                <div class="section-body">
+                                    <p class="hint">Worked out from the tenses you picked — a verb that is
+                                      irregular in the preterite can still be regular in the imperfect.</p>
+                                    <div class="checks" id="types"></div>
+                                </div>
+                            </details>
+
+                            <details class="section">
+                                <summary>
+                                    <span class="section-name">How common</span>
+                                    <span class="section-state" id="state-scope"></span>
+                                </summary>
+                                <div class="section-body">
+                                    <input type="range" id="scope" min="10" max="100" step="5" value="50">
+                                    <p class="hint" id="scope-hint"></p>
+                                </div>
+                            </details>
+
+                            <details class="section">
+                                <summary>
+                                    <span class="section-name">Tenses</span>
+                                    <span class="section-state" id="state-tenses"></span>
+                                </summary>
+                                <div class="section-body">
+                                    <p class="hint">A grey dot marks a compound tense — auxiliary plus
+                                      participle, so only the participle varies.</p>
+                                    <div id="tenses"></div>
+                                </div>
+                            </details>
+
+                            <details class="section">
+                                <summary>
+                                    <span class="section-name">Persons</span>
+                                    <span class="section-state" id="state-persons"></span>
+                                </summary>
+                                <div class="section-body">
+                                    <div class="checks checks-inline" id="persons"></div>
+                                </div>
+                            </details>
+
+                            <details class="section">
+                                <summary>
+                                    <span class="section-name">Stem hints</span>
+                                    <span class="section-state" id="state-clue"></span>
+                                </summary>
+                                <div class="section-body">
+                                    <p class="hint">Before you answer, the verb is coloured to warn you
+                                      when its form is unusual: green means it follows the normal rule,
+                                      orange or red means it doesn’t. For example, <em>tener</em> is
+                                      orange for <em>yo</em> (<em>tengo</em>) but green for
+                                      <em>nosotros</em> (<em>tenemos</em>).</p>
+                                    <div class="checks" id="clue"></div>
+                                </div>
+                            </details>
+
+                            <details class="section">
+                                <summary>
+                                    <span class="section-name">Progress</span>
+                                    <span class="section-state" id="state-focus"></span>
+                                </summary>
+                                <div class="section-body">
+                                    <p class="hint" id="progress-hint"></p>
+                                    <div class="checks" id="focus"></div>
+                                    <div class="pattern-actions">
+                                        <button class="linkish" id="progress-reset" type="button">reset progress for this language</button>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <details class="section section-advanced">
+                                <summary>
+                                    <span class="section-name">Advanced settings</span>
+                                    <span class="section-state" id="state-advanced"></span>
+                                </summary>
+                                <div class="section-body section-body-nested">
+                                    <details class="section" hidden>
+                                        <summary>
+                                            <span class="section-name">Patterns</span>
+                                            <span class="section-state" id="state-patterns"></span>
+                                        </summary>
+                                        <div class="section-body">
+                                            <p class="hint">Each row is one stem alternation, derived from the
+                                              forms themselves. <code>0&gt;g</code> is the <em>tengo</em> group,
+                                              <code>o&gt;ue</code> the <em>puedo</em> group.</p>
+                                            <div class="pattern-actions">
+                                                <button class="linkish" id="patterns-all" type="button">all</button>
+                                                <button class="linkish" id="patterns-none" type="button">none</button>
+                                                <button class="linkish" id="patterns-irregular" type="button">only the odd ones</button>
+                                            </div>
+                                            <div class="checks" id="patterns"></div>
+                                        </div>
+                                    </details>
+                                    <details class="section" hidden>
+                                        <summary>
+                                            <span class="section-name">Repetition</span>
+                                            <span class="section-state" id="state-coverage"></span>
+                                        </summary>
+                                        <div class="section-body">
+                                            <div class="checks" id="coverage"></div>
+                                            <p class="hint" id="coverage-hint"></p>
+                                        </div>
+                                    </details>
+                                    <details class="section">
+                                        <summary>
+                                            <span class="section-name">Prompt</span>
+                                            <span class="section-state" id="state-prompt"></span>
+                                        </summary>
+                                        <div class="section-body">
+                                            <div class="checks" id="direction"></div>
+                                            <div class="field">
+                                                <label class="field-label" for="deck">Language</label>
+                                                <select id="deck"></select>
+                                            </div>
+                                        </div>
+                                    </details>
+                                    <details class="section" hidden>
+                                        <summary>
+                                            <span class="section-name">Where this data comes from</span>
+                                            <span class="section-state"></span>
+                                        </summary>
+                                        <div class="section-body" id="provenance-body"></div>
+                                    </details>
+                                </div>
+                            </details>
+                        </div>
+
+                        <div class="summary" id="summary">
+                            <div class="summary-main">
+                                <span class="summary-count" id="sum-cards">0</span>
+                                <span class="summary-unit">cards</span>
+                            </div>
+                            <div class="summary-detail" id="sum-detail"></div>
+                            <div class="summary-actions">
+                                <button class="secondary" id="resume" type="button" hidden>Resume</button>
+                                <button class="primary" id="start" disabled type="button">Start</button>
+                            </div>
+                            <div class="summary-bar" id="sum-bar"></div>
+                            <div class="summary-progress" id="sum-progress"></div>
+                        </div>
+                    </section>
+
+                    <!-- DRILL SCREEN -->
+                    <section class="screen" id="screen-drill">
+                        <div class="drill-wrap">
+                            <div class="drill-head">
+                                <span id="drill-progress" class="drill-progress"></span>
+                            </div>
+
+                            <div class="card" id="card">
+                                <div class="card-tense" id="card-tense"></div>
+                                <div class="card-clue" id="card-clue" hidden></div>
+                                <div class="card-person" id="card-person"></div>
+                                <div class="card-verb">
+                                    <span id="card-headword"></span>
+                                    <span class="card-translation" id="card-translation"></span>
+                                </div>
+
+                                <div class="card-answer" id="card-answer" hidden>
+                                    <div class="card-form" id="card-form"></div>
+                                    <div class="card-chips" id="card-chips"></div>
+                                    <ul class="card-examples" id="card-examples" hidden></ul>
+                                </div>
+                            </div>
+
+                            <div class="grade" id="grade" hidden>
+                                <button class="secondary grade-miss" id="grade-miss" type="button">Missed it <kbd>x</kbd></button>
+                                <button class="primary grade-hit" id="grade-hit" type="button">Got it <kbd>space</kbd></button>
+                            </div>
+
+                            <div class="done" id="drill-done" hidden>
+                                <h2 id="done-title">Round complete</h2>
+                                <p class="done-score" id="done-score"></p>
+                                <ul class="done-missed" id="done-missed"></ul>
+                                <div class="done-actions">
+                                    <button class="primary" id="done-retry" type="button">Drill the missed ones</button>
+                                    <button class="secondary" id="done-again" type="button">New round</button>
+                                    <button class="ghost" id="done-setup" type="button">Back to set up</button>
+                                </div>
+                            </div>
+
+                            <p class="hint centred" id="drill-hint"></p>
+                        </div>
+                    </section>
+
+                    <!-- TABLES SCREEN -->
+                    <section class="screen" id="screen-tables">
+                        <div class="tables-wrap">
+                            <button class="ghost tables-back" id="tables-back" type="button"><span aria-hidden="true">‹</span> Back to drill</button>
+                            <div class="lookup">
+                                <input type="search" id="table-search" placeholder="Look up a verb — e.g. tener" autocomplete="off">
+                                <select id="table-tense"></select>
+                            </div>
+                            <div class="results" id="table-results"></div>
+                            <div id="table-body"></div>
+                        </div>
+                    </section>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -4,6 +4,7 @@ import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCod
 import { releaseUrl } from './release-host.js?v=20260921rh';
 import './theme.js?v=20260922ui';
 import './desktop-shell.js?v=1';
+import './extra-workspace.js?v=20261016';
 import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=20261013music';
 import './ai-preference.js?v=20261013';
 import { installFlagRendering } from './flags.js?v=20260929flags';
@@ -817,7 +818,13 @@ loadConfig().then(async () => {
                 label: translation ? 'Open song translation' : 'Start practising',
                 description: translation ? 'Choose a song from the library.' : 'Choose what you want to practise.',
                 iconHTML: document.getElementById(translation ? 'learningContextLyricsViewBtn' : 'learningContextVerbsBtn')?.querySelector('.learning-context-mode-icon')?.innerHTML || '',
-                onSelect: () => { window.location.href = href; }
+                onSelect: () => {
+                    if (activity === 'verbs' && typeof window.openConjugationsScreen === 'function') {
+                        window.openConjugationsScreen();
+                    } else {
+                        window.location.href = href;
+                    }
+                }
             }]
         });
     };

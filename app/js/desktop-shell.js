@@ -4,6 +4,7 @@ const PAGE_IDS = [
     'settingsModal', 'totalStatsModal', 'reviewHomeModal', 'helpModal',
     'learningContextModal', 'extrasModal', 'cognateRulesModal',
     'fastModeModal', 'vocabularyImportModal', 'aboutProjectModal',
+    'extraModal',
 ];
 const NAV_IDS = ['desktopStudyBtn', 'desktopExploreBtn', 'topBarProgressBtn',
     'topBarGearBtn', 'topBarUserName', 'helpBtn'];
@@ -320,8 +321,12 @@ function initDesktopTrail(closePages) {
     }, { capture: true });
     const explore = document.getElementById('desktopExploreBtn');
     explore?.addEventListener('click', () => {
-        window.updateLearningContextUI?.();
-        document.getElementById('learningContextModal')?.classList.remove('hidden');
+        if (typeof window.openExtraModal === 'function') {
+            window.openExtraModal();
+        } else {
+            window.updateLearningContextUI?.();
+            document.getElementById('learningContextModal')?.classList.remove('hidden');
+        }
     });
 
     let queued = false;
