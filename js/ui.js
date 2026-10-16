@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=f7bbd433';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=f7bbd433';
-import { readFastTrack } from './fast-track-preferences.js?v=f7bbd433';
-import './session-plan.js?v=f7bbd433';
+import './state.js?v=bb13137e';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=bb13137e';
+import { readFastTrack } from './fast-track-preferences.js?v=bb13137e';
+import './session-plan.js?v=bb13137e';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1063,11 +1063,11 @@ function updateStep2Tooltip() {
     const estimateCallout = document.getElementById('step2LevelEstimateCallout');
     if (activeArtist) {
         const name = activeArtist.name;
-        if (description) description.textContent = `Each level is a group of words from ${name}'s lyrics. Earlier levels contain the words used most often in this music.`;
+        if (description) description.textContent = `Words from ${name}'s lyrics are ordered from most to least common.`;
         if (estimateCallout) estimateCallout.style.display = 'none';
     } else {
         if (description) {
-            description.textContent = 'Each level is a group of words. Earlier levels contain the most common daily words.';
+            description.textContent = 'Words are ordered from most to least common.';
         }
         if (estimateCallout) estimateCallout.style.display = 'flex';
     }
@@ -1076,7 +1076,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    description.textContent = 'Go starts a session of flashcards for words in this level that you have not studied yet. Flip each card to see its meaning and an example, then mark whether you knew it. Your time choice estimates how many cards to include.';
+    description.innerHTML = 'Words you know are marked <strong>Known</strong>. Words you don\'t know yet go to <strong>Practise</strong> for review.';
 }
 
 // Annotates every level control with its completion percentage and returns
@@ -3385,7 +3385,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=f7bbd433')
+        import('./spotify.js?v=bb13137e')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

@@ -1,4 +1,4 @@
-import { songCreditHTML } from './song-credit.js?v=f7bbd433';
+import { songCreditHTML } from './song-credit.js?v=bb13137e';
 // The replica card: real demo entries and the markup that draws them.
 //
 // Two features show a flashcard without the app having loaded a deck, and they
@@ -449,13 +449,17 @@ export function renderFront(card) {
     // capsule (.front-lemma-pair), which is how a learner sees that `tem` is
     // a form of `ter`. The replica dropped the lemma and showed a bare pill.
     const lemma = card.lemma || card.word;
-    const posUnit = `<span class="front-pos-unit"><span class="card-pos ${posClass(card.pos)}">${posName(card.pos)}</span></span>`;
+    const accent = posAccentRgb(card.pos);
+    const posUnit = `<span class="front-pos-unit" style="--front-pos-rgb: ${accent};"><span class="card-pos ${posClass(card.pos)}">${posName(card.pos)}</span></span>`;
+    const lemmaPrefix = String(lemma).toLowerCase() !== String(card.word || '').toLowerCase()
+        ? '<span class="front-lemma-from">from </span>'
+        : '';
 
     return `
         <div class="card-face card-front">
             <div class="card-word">${esc(card.word)}</div>
             <div class="card-pos-list is-lemma-map pos-count-1" style="display: flex;">
-                <span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${esc(lemma)}</span></span>
+                <span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${lemmaPrefix}${esc(lemma)}</span></span>
             </div>
             <div class="card-ranking" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 12px;">${rankLabel}${freqLabel}</div>
             <div class="card-tint" aria-hidden="true"></div>
@@ -552,7 +556,7 @@ function renderMeaningRows(card, selectedIdx) {
         const pct = prominence
             ? (typeof window.prominenceBadgeHTML === 'function'
                 ? window.prominenceBadgeHTML(prominence, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
-                : `<button type="button" class="replica-pct sense-prominence-badge prominence-${esc(prominence.key)}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%);">${esc(prominence.label)}</button>`)
+                : `<span class="replica-pct sense-prominence-badge prominence-${esc(prominence.key)}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%);">${esc(prominence.label)}</span>`)
             : '';
         return `
             <div class="meaning-row meaning-row-regular${isSelected ? ' selected is-current-sense' : ''}" data-meaning-index="${idx}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bg}; border-radius: 8px; cursor: pointer; min-height: 44px;">
@@ -842,9 +846,11 @@ export function fitReplicaCard(inner, { floor = 430, ceiling = 0.78, height = nu
 // One card, one face up. `flipped` picks the face; both faces are always built
 // so the real 0.6s flip transition can play when a caller toggles the class.
 export function replicaCardHTML(card, { flipped = false, meaningIndex = 0, exampleIndex = 0, extraClass = '' } = {}) {
+    const accent = posAccentRgb(card.pos);
+    const glow = `radial-gradient(circle at 50% 20%, rgba(${accent}, 0.18), transparent 70%)`;
     return `
         <div class="card-replica${extraClass ? ` ${extraClass}` : ''}">
-            <div class="card${flipped ? ' flipped' : ''}" data-rank="${card.rank}">
+            <div class="card${flipped ? ' flipped' : ''}" data-rank="${card.rank}" style="--card-pos-rgb: ${accent}; --card-ambient-glow: ${glow};">
                 ${renderFront(card)}
                 ${renderBack(card, meaningIndex, exampleIndex)}
             </div>

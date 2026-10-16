@@ -64,9 +64,9 @@ body.desktop-workspace #topBar :is(.desktop-shell-nav, .top-bar-icon-btn, .top-b
 body.desktop-workspace .desktop-shell-label { display: inline; }
 body.desktop-workspace #desktopStudyBtn { order: 1; }
 body.desktop-workspace #desktopExploreBtn { order: 2; }
-body.desktop-workspace #topBarProgressBtn { order: 3; }
-body.desktop-workspace #topBar #helpBtn { order: 4; margin-top: auto; }
-body.desktop-workspace #topBarGearBtn { order: 5; }
+body.desktop-workspace #topBar #helpBtn { order: 3; }
+body.desktop-workspace #topBarProgressBtn { order: 4; }
+body.desktop-workspace #topBarGearBtn { order: 5; margin-top: auto; }
 body.desktop-workspace #topBar #topBarUserName { order: 6; border-top: 1px solid var(--border-color); border-radius: 0; padding-top: 16px; }
 body.desktop-workspace #topBarUserName.is-icon { width: 100%; justify-content: flex-start; padding: 12px; }
 body.desktop-workspace #topBarUserName.is-icon::after { content: 'Account'; }

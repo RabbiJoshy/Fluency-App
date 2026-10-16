@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=f7bbd433';
-import { readJsonWithTimeout } from './read-request.js?v=f7bbd433';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=f7bbd433';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=f7bbd433';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=f7bbd433';
-import { dbGet, dbPut } from './offline-db.js?v=f7bbd433';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=f7bbd433';
+import './state.js?v=bb13137e';
+import { readJsonWithTimeout } from './read-request.js?v=bb13137e';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=bb13137e';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=bb13137e';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=bb13137e';
+import { dbGet, dbPut } from './offline-db.js?v=bb13137e';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=bb13137e';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=f7bbd433';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=f7bbd433';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=f7bbd433';
+} from './sync-queue.js?v=bb13137e';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=bb13137e';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=bb13137e';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -1467,9 +1467,8 @@ function _appendAboutFootnotes(body) {
     notes.innerHTML =
         '<p id="about-footnote-1">'
         + '<sup class="about-footnote-number">1</sup> '
-        + 'Right now three Spanish artists (Bad Bunny, Rosalía, Young Miko) and one French playlist are built in. '
-        + 'The pipeline itself runs on any Spotify playlist — '
-        + 'the goal is to let anyone paste in a playlist URL and generate a full vocabulary deck from its lyrics.'
+        + 'Three Spanish artists (Bad Bunny, Rosalía, Young Miko) and a curated French playlist are built in, '
+        + 'or you can connect Spotify and study a live vocabulary deck from any playlist of your own.'
         + '</p>'
         + '<p class="about-references">'
         + '<strong>Sources:</strong> lyrics from Genius, synced timestamps via LRCLIB and Spotify, '
@@ -1657,7 +1656,6 @@ function _buildAboutDemoCard(mode) {
                 <div class="card-details">
                     <div class="back-header">
                         <div class="about-demo-back-word"></div>
-                        <div class="about-demo-pos-legend"></div>
                     </div>
                     <div class="meanings-scroll"></div>
                     <div class="about-demo-example">
@@ -1764,7 +1762,6 @@ async function _runAboutDemo(container, mode) {
     const posEl = container.querySelector('.card-pos');
     const rankEl = container.querySelector('.card-ranking');
     const backWordEl = container.querySelector('.about-demo-back-word');
-    const backPosLegendEl = container.querySelector('.about-demo-pos-legend');
     const meaningsEl = container.querySelector('.meanings-scroll');
     const exampleTargetEl = container.querySelector('.about-demo-example-target');
     const exampleEnglishEl = container.querySelector('.about-demo-example-english');
@@ -1778,13 +1775,8 @@ async function _runAboutDemo(container, mode) {
         posEl.className = 'card-pos';
         const cls = _posColorClass(pos);
         if (cls) posEl.classList.add(cls);
+        posEl.style.setProperty('--front-pos-rgb', posAccentRgb(pos));
         posEl.textContent = _posDisplayName(pos);
-    };
-
-    const setBackPos = (pos) => {
-        if (!backPosLegendEl) return;
-        const cls = _posColorClass(pos);
-        backPosLegendEl.innerHTML = `<span class="card-pos ${cls}"><span class="back-pos-dot" aria-hidden="true"></span>${_posDisplayName(pos)}</span>`;
     };
 
     while (stillMounted()) {
@@ -1795,9 +1787,11 @@ async function _runAboutDemo(container, mode) {
             card.classList.remove('flipped');
             wordEl.textContent = entry.word;
             // Every colour on the back reads this one property, as on a live card.
-            container.style.setProperty('--sense-match-rgb', posAccentRgb(entry.pos));
+            const accent = posAccentRgb(entry.pos);
+            container.style.setProperty('--sense-match-rgb', accent);
+            card.style.setProperty('--card-pos-rgb', accent);
+            card.style.setProperty('--card-ambient-glow', `radial-gradient(circle at 50% 20%, rgba(${accent}, 0.18), transparent 70%)`);
             setFrontPos(entry.pos);
-            setBackPos(entry.pos);
             // Mirror the live labels while keeping this small demo on one line.
             if (entry.rank && entry.corpusCount) {
                 rankEl.textContent = mode === 'artist'

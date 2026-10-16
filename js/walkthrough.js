@@ -23,7 +23,7 @@
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
     measureReplicaCard, fitReplicaCard,
-} from './card-replica.js?v=f7bbd433';
+} from './card-replica.js?v=bb13137e';
 
 // ---------------------------------------------------------------------------
 // Content

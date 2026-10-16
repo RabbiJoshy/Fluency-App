@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-16T01:02:00+01:00",
+      "date": "2026-10-16 01:02 BST",
+      "agent": "Antigravity",
+      "summary": "Align Tutorial, Walkthrough, About, and replica cards with current POS pills, ambient glow, and Smart Skip panel",
+      "detail": [
+        "Set darkened POS pill colour (--front-pos-rgb), ambient card glow (--card-ambient-glow), and inflected 'from <lemma>' prefix on replica cards in Tutorial and Walkthrough.",
+        "Updated the Tutorial Smart Skip page and notes to match the two-line Off/On + 'Fewer cards, less repetition' + Details panel on the home screen.",
+        "Aligned About demo cards and footnote with the current single-POS back header, darkened front POS pill, and live Spotify playlist deck support."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-16T00:19:31+01:00",
       "date": "2026-10-16 00:19 BST",
       "agent": "Codex",

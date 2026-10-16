@@ -13,7 +13,7 @@
 
 import {
     REPLICA_CARDS, esc, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=f7bbd433';
+} from './card-replica.js?v=bb13137e';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -310,19 +310,19 @@ const TUTORIAL_DECKS = [
 const TUTORIAL_PAGES = {
     smartSkip: {
         title: 'Smart Skip',
-        blurb: 'Study fewer cards for the same coverage.',
+        blurb: 'Fewer cards, less repetition.',
         notes: [
             {
                 side: 'left',
                 anchor: '.tutorial-page-switch-row',
                 title: 'Turn it on',
-                text: 'Smart Skip is the switch under Choose level. It is recommended, and you can turn it off at any time.',
+                text: 'Smart Skip sits under Choose a level with Off and On choices. Turn it on or off at any time, or tap Details to fine-tune.',
             },
             {
                 side: 'left',
                 anchor: '.tutorial-page-lookalike',
                 title: 'Look-alikes are skipped',
-                text: 'Words that look and mean the same as in a language you know, like {smartSkipLookalike} in English. Tap Smart Skip to browse them; you can still study any.',
+                text: 'Words that look and mean the same as in a language you know, like {smartSkipLookalike} in English. Tap Details to browse them; you can still study any.',
             },
             {
                 side: 'right',
@@ -380,12 +380,17 @@ function smartSkipPageHTML(adapter) {
     return `
         <div class="tutorial-page" aria-label="Example of Smart Skip">
             <div class="tutorial-page-switch-row">
-                <svg class="tutorial-page-skip-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5v13l8-6.5-8-6.5Z"></path><path d="M12 5.5v13l8-6.5-8-6.5Z"></path></svg>
-                <span class="tutorial-page-switch-copy">
-                    <strong>Smart Skip <span class="streamline-rec-badge">Recommended</span></strong>
-                    <small>Fewer cards, same coverage</small>
-                </span>
-                <span class="tutorial-page-switch" aria-hidden="true"><i></i></span>
+                <div class="tutorial-page-ss-top">
+                    <strong class="smart-skip-hub-label">Smart Skip</strong>
+                    <div class="smart-skip-choice" aria-hidden="true">
+                        <span class="smart-skip-choice-btn">Off</span>
+                        <span class="smart-skip-choice-btn is-selected">On</span>
+                    </div>
+                </div>
+                <div class="tutorial-page-ss-bottom">
+                    <small class="smart-skip-hub-summary">Fewer cards, less repetition</small>
+                    <span class="smart-skip-details-btn" aria-hidden="true"><span>Details</span><span class="smart-skip-details-chevron">›</span></span>
+                </div>
             </div>
             <div class="tutorial-page-example tutorial-page-lookalike">
                 <span class="tutorial-page-label">Skip look-alikes</span>
@@ -418,8 +423,10 @@ function smartSkipPageHTML(adapter) {
 // copy cannot drift from the picker it shows. The fallback is for tests.
 function modesPageHTML(adapter) {
     const copy = window.learningModeCopy?.(tutorialLanguageKey()) || {
-        speech: { label: 'Speech', description: 'From films and TV shows.' },
-        lyrics: { label: 'Music', description: 'The words in the songs you choose.' },
+        speech: { label: 'Speech', description: 'Words and examples come from films and TV shows.' },
+        lyrics: { label: 'Music', description: adapter.lyrics
+            ? 'Words and examples come from songs, artists, and your Spotify playlists.'
+            : 'Words and examples come from your Spotify playlists.' },
     };
     const current = state.mode === 'lyrics' ? 'lyrics' : 'speech';
     const source = id => `

@@ -106,6 +106,7 @@ function enter() {
     // Moving the real controls preserves all their handlers and source state.
     for (const id of SETUP_IDS) {
         const element = document.getElementById(id);
+        if (id === 'step4' && element?.parentElement?.classList?.contains('level-choosing')) continue;
         rememberHome(element);
         if (element) document.getElementById('musicStudySetup').appendChild(element);
     }
@@ -316,7 +317,7 @@ export function dismissMusicWorkspace() {
     if (workspace) workspace.hidden = true;
     document.body.classList.remove('music-workspace-active');
     const studyNav = document.querySelector('#desktopStudyBtn .desktop-shell-label');
-    if (studyNav) studyNav.textContent = 'Choose a set';
+    if (studyNav) studyNav.textContent = 'Vocabulary';
     window.updateLearningContextUI?.();
     window.refreshDesktopTrail?.();
 }
