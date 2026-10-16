@@ -1429,6 +1429,12 @@ function buildCardFormModel(item, meanings = [], options = {}) {
         || displaySurface
     ).trim();
 
+    const combinedSurfaces = Array.from(new Set([
+        ...(Array.isArray(item?._mergedDeckSurfaces) ? item._mergedDeckSurfaces : []),
+        ...(Array.isArray(item?._dictionaryMergedSurfaces) ? item._dictionaryMergedSurfaces : []),
+        ...(Array.isArray(item?.mergedSurfaces) ? item.mergedSurfaces : [])
+    ])).filter(Boolean);
+
     return {
         displaySurface,
         representativeSurface,
@@ -1437,7 +1443,7 @@ function buildCardFormModel(item, meanings = [], options = {}) {
         isPronominal,
         mergedLemma,
         dictionaryExamples: item?._dictionaryExamples || null,
-        mergedSurfaces: item?._dictionaryMergedSurfaces || null
+        mergedSurfaces: combinedSurfaces.length > 0 ? combinedSurfaces : null
     };
 }
 
@@ -2541,12 +2547,19 @@ function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Se
 function selectLemmaModeRepresentatives(items) {
     globalThis.forgetSmartSkipExtras?.();
     const representativeByLemma = new Map();
+    const surfacesByLemma = new Map();
     for (const item of items) {
         item._lemmaModeRepresentative = false;
         const lemmaKey = lemmaGroupKey(item);
         if (!lemmaKey) {
             item._lemmaModeRepresentative = true;
             continue;
+        }
+        if (!surfacesByLemma.has(lemmaKey)) {
+            surfacesByLemma.set(lemmaKey, new Set());
+        }
+        if (item.word) {
+            surfacesByLemma.get(lemmaKey).add(item.word);
         }
         const previous = representativeByLemma.get(lemmaKey);
         // The lemma's own spelling fronts the merged card whenever it is in
@@ -2571,8 +2584,9 @@ function selectLemmaModeRepresentatives(items) {
             representativeByLemma.set(lemmaKey, item);
         }
     }
-    for (const representative of representativeByLemma.values()) {
+    for (const [lemmaKey, representative] of representativeByLemma.entries()) {
         representative._lemmaModeRepresentative = true;
+        representative._mergedDeckSurfaces = Array.from(surfacesByLemma.get(lemmaKey) || []);
     }
     return items.filter(item => item._lemmaModeRepresentative === true);
 }

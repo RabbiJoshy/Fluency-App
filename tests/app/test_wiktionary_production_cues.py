@@ -129,7 +129,7 @@ const cases = [
         representativeSurface: 'hablo',
         mergedLemma: true,
         _activeExampleSurface: 'hablo',
-    }, verb('hablar', 'to speak'), tables, 'I speak'],
+    }, verb('hablar', 'to speak'), tables, null],
     [{
         targetWord: 'hablo',
         lemma: 'hablar',
@@ -139,7 +139,7 @@ const cases = [
         representativeSurface: 'hablo',
         mergedLemma: true,
         _activeExampleSurface: 'hablo',
-    }, { pos: 'verb', translation: 'to speak' }, tables, 'I speak'],
+    }, { pos: 'verb', translation: 'to speak' }, tables, null],
     [{
         targetWord: 'aime',
         citationForm: 'aimer',
@@ -649,3 +649,56 @@ console.log(JSON.stringify(cases.map(([surface, sense, expected]) => ({
         )
         for row in json.loads(result.stdout):
             self.assertEqual(row["actual"], row["expected"], row)
+
+    def test_merged_lemma_disables_verb_and_noun_inflection(self) -> None:
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required to execute reverse-cues.js")
+        script = r"""
+import { englishProductionCue } from %s;
+
+const tables = {
+    hablar: {
+        tenses: {
+            Presente: ['hablo', 'hablas', 'habla', 'hablamos', 'habláis', 'hablan'],
+        },
+    },
+};
+const verbSense = { pos: 'verb', translation: 'to speak', headword: 'hablar' };
+const nounSense = { pos: 'noun', translation: 'house', headword: 'casa' };
+
+// 1. Verbs: regular card inflects, mergedLemma card returns null in both directions
+const verbUnmerged = { targetWord: 'hablo', lemma: 'hablar' };
+const verbMerged = { targetWord: 'hablo', lemma: 'hablar', mergedLemma: true, displaySurface: 'hablar' };
+
+// 2. Plural nouns: regular card pluralizes to 'houses', mergedLemma card returns null in both directions
+const nounUnmerged = { targetWord: 'casas', lemma: 'casa', productionAnswer: 'casas' };
+const nounMerged = { targetWord: 'casas', lemma: 'casa', productionAnswer: 'casas', mergedLemma: true, displaySurface: 'casa' };
+
+const cases = [
+    // Unmerged verb
+    { actual: englishProductionCue(verbUnmerged, verbSense, null, { conjugationData: tables }), expected: 'I speak' },
+    // Merged verb - normal direction
+    { actual: englishProductionCue(verbMerged, verbSense, null, { conjugationData: tables }), expected: null },
+    // Merged verb - reverse direction
+    { actual: englishProductionCue(verbMerged, verbSense, null, { conjugationData: tables, reverseDirection: true }), expected: null },
+
+    // Unmerged plural noun
+    { actual: englishProductionCue(nounUnmerged, nounSense, null), expected: 'houses' },
+    // Merged plural noun - normal direction
+    { actual: englishProductionCue(nounMerged, nounSense, null), expected: null },
+    // Merged plural noun - reverse direction
+    { actual: englishProductionCue(nounMerged, nounSense, null, { reverseDirection: true }), expected: null },
+];
+
+console.log(JSON.stringify(cases));
+""" % json.dumps(REVERSE_CUES.as_uri())
+        result = subprocess.run(
+            [node, "--input-type=module", "-e", script],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        for row in json.loads(result.stdout):
+            self.assertEqual(row["actual"], row["expected"], row)
+

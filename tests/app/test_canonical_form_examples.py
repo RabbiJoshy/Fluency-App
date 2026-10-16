@@ -21,13 +21,16 @@ class CanonicalFormExamplesTests(unittest.TestCase):
             start = source.index(f'function {name}(')
             end = source.index('\n}\n', start) + 3
             snippets.append(source[start:end])
+        resolve_start = source.index('function foldSurfaceForm(')
+        resolve_end = source.index('function getExampleOccurrenceSurface', resolve_start)
+        resolve_block = source[resolve_start:resolve_end]
         script = '''const assert = require('assert');
 const currentMWEIndex = 0;
 const WSD_EXAMPLE_LEVEL_RANK = {leaf:3, glosskey:2, tuple:1};
 const _cachedRegex = (pattern, flags) => new RegExp(pattern, flags);
 const dictionaryProviderForMeaning = m => m.source || 'SpanishDict';
 const sortExamplesByRelevance = x => x;
-''' + '\n'.join(snippets) + '\n' + checks
+''' + resolve_block + '\n' + '\n'.join(snippets) + '\n' + checks
         result = subprocess.run(['node', '-e', script], text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -54,6 +57,9 @@ const example = {canonical:true, target:'Estaba en casa.', bold_text_offsets:[[0
 assert.equal(canonicalOccurrenceSurface(card, example, example.target), 'Estaba');
 assert.equal(canonicalOccurrenceSurface(card, {}, 'Estás en casa.'), 'Estás');
 assert.equal(canonicalOccurrenceSurface(card, {}, 'Fue a casa.'), '');
+// Bold text offsets allow marked span even if inflected surface wasn't in card.mergedSurfaces
+const exampleUnlisted = {canonical:true, target:'Estuve en casa.', bold_text_offsets:[[0,6]]};
+assert.equal(canonicalOccurrenceSurface(card, exampleUnlisted, exampleUnlisted.target), 'Estuve');
 const meaning = {canonicalExample:{text:example.target, translation:'He was at home.'}};
 assert.equal(findCanonicalForCard(card, meaning).target, example.target);
 ''')
@@ -106,4 +112,60 @@ const readJsonWithTimeout=async path=>{reads++;return {response:{ok:true},data:{
 '''
         result = subprocess.run(['node', '-e', script], text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_merged_lemma_resolves_and_highlights_inflected_examples(self):
+        self.run_js('''
+// 1. Verb with conjugation data
+const conjCard = {
+    targetWord: 'hablar',
+    displaySurface: 'hablar',
+    mergedLemma: true,
+    partOfSpeech: 'VERB',
+    mergedSurfaces: ['hablar', 'hablo'],
+    conjugationData: {
+        hablar: {
+            tenses: {
+                Presente: ['hablo', 'hablas', 'habla', 'hablamos', 'habláis', 'hablan'],
+                Imperfecto: ['hablaba', 'hablabas', 'hablaba', 'hablábamos', 'hablabais', 'hablaban'],
+            }
+        }
+    }
+};
+
+// Sibling pooled example: surface in card.mergedSurfaces
+const pooledExample = { target: 'Yo hablo español todos los días.', pooledFrom: 'hablo' };
+const resPooled = resolveExampleOccurrence(conjCard, pooledExample, pooledExample.target);
+assert.equal(resPooled.surface, 'hablo');
+assert.equal(resPooled.kind, 'declared');
+
+// Sentence with inflected form not in mergedSurfaces, resolved via conjugationData
+const inflectedExample = { target: 'Nosotros hablábamos mucho de jóvenes.' };
+const resInflected = resolveExampleOccurrence(conjCard, inflectedExample, inflectedExample.target);
+assert.equal(resInflected.surface, 'hablábamos');
+assert.equal(resInflected.kind, 'declared');
+
+// Canonical dictionary example on merged lemma card falling back to resolveExampleOccurrence
+const canonicalExample = { canonical: true, target: 'A menudo hablábamos por teléfono.' };
+assert.equal(canonicalOccurrenceSurface(conjCard, canonicalExample, canonicalExample.target), 'hablábamos');
+
+// 2. Regular plural noun on merged lemma card
+const nounCard = {
+    targetWord: 'casa',
+    displaySurface: 'casa',
+    mergedLemma: true,
+    partOfSpeech: 'NOUN',
+    mergedSurfaces: ['casa'],
+};
+const nounExample = { target: 'Hay muchas casas en este barrio.' };
+const resNoun = resolveExampleOccurrence(nounCard, nounExample, nounExample.target);
+assert.equal(resNoun.surface, 'casas');
+assert.equal(resNoun.kind, 'declared');
+
+// 3. Highlight comparison against displaySurface || targetWord
+const nonCanonical = foldSurfaceForm(resInflected.surface) !== foldSurfaceForm(conjCard.displaySurface || conjCard.targetWord);
+assert.equal(nonCanonical, true, 'inflected word differs from lemma headword so it gets nonCanonical highlight');
+const sameAsLemma = foldSurfaceForm(conjCard.displaySurface) !== foldSurfaceForm(conjCard.displaySurface || conjCard.targetWord);
+assert.equal(sameAsLemma, false);
+''')
+
 

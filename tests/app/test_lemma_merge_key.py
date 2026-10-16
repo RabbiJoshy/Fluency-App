@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 VOCAB = Path(__file__).resolve().parents[2] / "app/js/vocab.js"
+FLASHCARDS = Path(__file__).resolve().parents[2] / "app/js/flashcards.js"
 
 
 class LemmaMergeKeyTests(unittest.TestCase):
@@ -134,6 +135,9 @@ class LemmaMergeExceptionTests(unittest.TestCase):
             const estar = { word: 'estar', stableRank: 9, rank: 9, meanings: [{ headword: 'estar', pos: 'VERB', translation: 'to be' }] };
             const kept = selectLemmaModeRepresentatives([estaba, estar]);
             if (kept.length !== 1 || kept[0] !== estar) fail('estar should host the merged card');
+            if (!kept[0]._mergedDeckSurfaces || !kept[0]._mergedDeckSurfaces.includes('estaba') || !kept[0]._mergedDeckSurfaces.includes('estar')) {
+                fail('estar representative should collect sibling surfaces in _mergedDeckSurfaces');
+            }
             const alone = selectLemmaModeRepresentatives([{ ...estaba }]);
             if (alone.length !== 1 || alone[0].word !== 'estaba') fail('without estar the most frequent form hosts');
         """
@@ -206,13 +210,41 @@ class CitationFormTests(unittest.TestCase):
             const estaba = { word: 'estaba', meanings: [{ headword: 'estar', pos: 'VERB', frequency: '1' }] };
             const estabaForm = merged(estaba);
             if (estabaForm.displaySurface !== 'estar' || !estabaForm.mergedLemma) fail('estaba merges into estar');
+
+            // buildCardFormModel merges _mergedDeckSurfaces and _dictionaryMergedSurfaces into card.mergedSurfaces
+            const hostItem = {
+                word: 'estar',
+                _mergedDeckSurfaces: ['estar', 'estaba'],
+                _dictionaryMergedSurfaces: ['estás'],
+                meanings: [{ headword: 'estar', pos: 'VERB', frequency: '1' }]
+            };
+            const hostForm = merged(hostItem);
+            if (!hostForm.mergedSurfaces || !hostForm.mergedSurfaces.includes('estaba') || !hostForm.mergedSurfaces.includes('estás')) {
+                fail('buildCardFormModel should combine _mergedDeckSurfaces and _dictionaryMergedSurfaces into mergedSurfaces');
+            }
+
+            // Merged lemma cards keep their lemma headword instead of switching to _activeExampleSurface
+            const flashSource = fs.readFileSync(process.env.FLASHCARDS_JS, 'utf8');
+            const headwordStart = flashSource.indexOf('function getDisplayedTargetHeadword');
+            const headwordEnd = flashSource.indexOf('\n}\n', headwordStart) + 3;
+            vm.runInNewContext(flashSource.slice(headwordStart, headwordEnd), context);
+            const { getDisplayedTargetHeadword } = context;
+            const cardWithActiveExample = {
+                targetWord: 'estar',
+                displaySurface: 'estar',
+                mergedLemma: true,
+                _activeExampleSurface: 'estaba'
+            };
+            if (getDisplayedTargetHeadword(cardWithActiveExample) !== 'estar') {
+                fail('merged lemma cards must keep lemma headword instead of switching to _activeExampleSurface');
+            }
         """
         completed = subprocess.run(
             ["node", "-e", script],
             check=False,
             capture_output=True,
             text=True,
-            env={**os.environ, "LEMMA_VOCAB": str(VOCAB)},
+            env={**os.environ, "LEMMA_VOCAB": str(VOCAB), "FLASHCARDS_JS": str(FLASHCARDS)},
         )
         if completed.returncode != 0:
             self.fail(completed.stderr or completed.stdout)

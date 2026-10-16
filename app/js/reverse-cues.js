@@ -1206,9 +1206,9 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
     const translation = meaning ? cueText(meaning) : String(meaningOrTranslation || '').trim();
     if (!translation) return null;
 
-    // Merged reverse cards ask for the lemma rather than the visible surface,
-    // so surface morphology would be a misleading prompt in that direction.
-    if (card.mergedLemma && options.reverseDirection) return null;
+    // Merged cards ask for the lemma rather than the visible surface,
+    // so surface morphology would be a misleading prompt in either direction.
+    if (card.mergedLemma) return null;
 
     const nounCue = meaning ? nounProductionCue(card, meaning, translation) : null;
     if (nounCue) return nounCue;
