@@ -1063,11 +1063,11 @@ function updateStep2Tooltip() {
     const estimateCallout = document.getElementById('step2LevelEstimateCallout');
     if (activeArtist) {
         const name = activeArtist.name;
-        if (description) description.textContent = `Each level is a group of words from ${name}'s lyrics. Earlier levels contain the words used most often in this music.`;
+        if (description) description.textContent = `Words from ${name}'s lyrics are ordered from most to least common.`;
         if (estimateCallout) estimateCallout.style.display = 'none';
     } else {
         if (description) {
-            description.textContent = 'Each level is a group of words. Earlier levels contain the most common daily words.';
+            description.textContent = 'Words are ordered from most to least common.';
         }
         if (estimateCallout) estimateCallout.style.display = 'flex';
     }
@@ -1076,7 +1076,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    description.textContent = 'Go starts a session of flashcards for words in this level that you have not studied yet. Flip each card to see its meaning and an example, then mark whether you knew it. Your time choice estimates how many cards to include.';
+    description.innerHTML = 'Words you know are marked <strong>Known</strong>. Words you don\'t know yet go to <strong>Practise</strong> for review.';
 }
 
 // Annotates every level control with its completion percentage and returns

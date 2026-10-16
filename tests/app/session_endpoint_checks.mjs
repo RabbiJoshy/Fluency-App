@@ -98,8 +98,8 @@ try{
        await page.locator('[data-tooltip="step2Tooltip"]').click();
        assert(await page.locator('#step2Tooltip').isVisible());
        assert.equal(await page.locator('#step2Tooltip .level-help-section').count(),1);
-       assert.match(await page.locator('#step2LevelDescription').textContent(),/group of words from Selected music/);
-       assert.match(await page.locator('#step5Description').textContent(),/Flip each card/);
+       assert.match(await page.locator('#step2LevelDescription').textContent(),/Words from Selected music's lyrics are ordered/);
+       assert.match(await page.locator('#step5Description').textContent(),/Words you don't know yet go to Practise/);
        assert(await page.locator('#step2DeckTotal').evaluate(el=>el.getBoundingClientRect().top>=el.previousElementSibling.getBoundingClientRect().bottom));
        assert(!await page.locator('#step2Tooltip').textContent().then(text=>text.includes('countdown')));
        assert.equal(await page.locator('#step2Tooltip .level-help-legend').count(),0);

@@ -385,8 +385,8 @@
                         <span class="learning-context-chevron" aria-hidden="true">›</span>
                     </button>
                     <div class="top-bar-right-controls">
-                    <button id="desktopStudyBtn" class="desktop-shell-nav" type="button" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M9 9h6M9 13h6M9 17h3"></path></svg><span>Choose a set</span></button>
-                    <button id="desktopExploreBtn" class="desktop-shell-nav" type="button" hidden aria-haspopup="dialog" aria-controls="learningContextModal"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m15.5 8.5-2 5-5 2 2-5z"></path></svg><span>Explore</span></button>
+                    <button id="desktopStudyBtn" class="desktop-shell-nav" type="button" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M9 9h6M9 13h6M9 17h3"></path></svg><span class="desktop-shell-label">Vocabulary</span></button>
+                    <button id="desktopExploreBtn" class="desktop-shell-nav" type="button" hidden aria-haspopup="dialog" aria-controls="learningContextModal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10"></path><path d="M4 12h7"></path><path d="M4 17h10"></path><path d="m16 10 4 2-4 2"></path></svg><span class="desktop-shell-label">Conjugations</span></button>
                     <button id="envBadge" class="env-badge env-staging" type="button" hidden aria-label="Environment: Staging" title="Staging environment — Tap for details">STAGING</button>
                     <button id="topBarUserName" class="top-bar-user-name" type="button" title="Open account settings"></button>
                     <button id="topBarProgressBtn" class="top-bar-icon-btn" type="button" hidden title="Your progress" aria-label="Open your progress" aria-haspopup="dialog" aria-controls="totalStatsModal">
@@ -538,23 +538,21 @@
                     </div>
                     <div id="step2Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="levelHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header is-centered">
-                            <h3 id="levelHelpTitle">Levels and sessions</h3>
+                            <h3 id="levelHelpTitle">Choose a level</h3>
                             <button type="button" class="info-sheet-close" aria-label="Close level information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead"><span id="step2LevelDescription">Each level is a group of words. Earlier levels contain the most common words.</span> Start at Level 1, or jump ahead to words that are new to you.</p>
-                        <p class="info-sheet-lead level-deck-total" id="step2DeckTotal" hidden></p>
+                        <p class="info-sheet-lead"><span id="step2LevelDescription">Words are ordered from most to least common.</span> Pick a level where the words look new, then press <strong>Go</strong> to start flashcards.</p>
                         <section class="level-help-section">
-                            <h4>Your goal</h4>
-                            <p>Learn the words in the level you choose. As you study, the progress bar shows how many you know and how many still need practice. Words you miss go to Practise, where you can revisit them.</p>
+                            <p id="step5Description">Words you know are marked <strong>Known</strong>. Words you don't know yet go to <strong>Practise</strong> for review.</p>
                         </section>
+                        <p class="info-sheet-lead level-deck-total" id="step2DeckTotal" hidden></p>
 
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
                             <div class="level-estimate-modal-body">
-                                <strong>Not sure where to begin?</strong>
+                                <strong>Not sure where to start?</strong>
                             </div>
-                            <button type="button" class="level-estimate-modal-btn" id="openEstimationFromLevelHelpBtn">Estimate my level · about 2 min →</button>
+                            <button type="button" class="level-estimate-modal-btn" id="openEstimationFromLevelHelpBtn">Estimate my level · ~2 min →</button>
                         </div>
-                        <p class="level-help-session-note" id="step5Description">Go starts a session of flashcards for words in this level that you have not studied yet. Flip each card to see its meaning and an example, then mark whether you knew it. Your time choice estimates how many cards to include.</p>
                     </div></div>
                 </div>
                 <div id="levelColoursTooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="levelColoursTitle"><div class="step-info-tooltip-inner">

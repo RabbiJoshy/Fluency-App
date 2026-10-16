@@ -316,7 +316,7 @@ export function dismissMusicWorkspace() {
     if (workspace) workspace.hidden = true;
     document.body.classList.remove('music-workspace-active');
     const studyNav = document.querySelector('#desktopStudyBtn .desktop-shell-label');
-    if (studyNav) studyNav.textContent = 'Choose a set';
+    if (studyNav) studyNav.textContent = 'Vocabulary';
     window.updateLearningContextUI?.();
     window.refreshDesktopTrail?.();
 }
