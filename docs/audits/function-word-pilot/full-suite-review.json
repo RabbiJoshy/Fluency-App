@@ -1,0 +1,2359 @@
+[
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "before": {
+      "tag": "Verbal Valency",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Complement</span>",
+      "rule": "Required link: the preceding verb governs 'de' before its object or action."
+    },
+    "after": {
+      "tag": "Verbs with de",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
+      "rule": "Some verbs use de to link to what follows. Learn the verb and de together.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "mixed"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 1,
+    "before": {
+      "tag": "Noun Attribution",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Noun / Origin</span>",
+      "rule": "Nominal binding: connects a head noun to its owner, origin, or material."
+    },
+    "after": {
+      "tag": "Adding a detail",
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
+      "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de partir = time to leave.",
+      "slotTypes": {
+        "v": "noun",
+        "c": "mixed"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "before": {
+      "tag": "Clausal Link",
+      "formulaHTML": "<span class=\"fw-token-v\">Thought / Speech</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Clause</span>",
+      "rule": "Subordination: bridges what someone thinks, says, or knows to the statement."
+    },
+    "after": {
+      "tag": "Saying what you think",
+      "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+      "rule": "Links what someone thinks, says, knows or hopes to a statement.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "clause"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 1,
+    "before": {
+      "tag": "Relative Pronoun",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Description</span>",
+      "rule": "Relativization: refers back to a noun while connecting more information."
+    },
+    "after": {
+      "tag": "Adding information",
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+      "rule": "Adds information about the noun.",
+      "slotTypes": {
+        "v": "noun",
+        "c": "clause"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "before": {
+      "tag": "Comparison",
+      "formulaHTML": "<span class=\"fw-token-v\">Degree</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Standard</span>",
+      "rule": "Comparison: connects the two sides of a degree or quality difference."
+    },
+    "after": {
+      "tag": "Comparing",
+      "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+      "rule": "Means “than” when comparing people, things or situations.",
+      "slotTypes": {
+        "v": "phrase",
+        "c": "phrase"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "pattern": 0,
+    "before": {
+      "tag": "Deictic Location",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + aquele</span> + <span class=\"fw-token-c\">Place / Time</span>",
+      "rule": "Contraction formula pointing to a distant place or past moment."
+    },
+    "after": {
+      "tag": "In / on / at that",
+      "formulaHTML": "<span class=\"fw-token-connector\">naquele</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+      "rule": "Combines em + aquele: “in”, “on” or “at that”. It can refer to places, things or times.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 0,
+    "before": {
+      "tag": "Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Pronominal argument: represents 'us / to us' receiving the action of a verb."
+    },
+    "after": {
+      "tag": "Us / to us",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to us: someone sees or helps us, or tells us something.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 1,
+    "before": {
+      "tag": "Contraction",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + os</span> + <span class=\"fw-token-c\">Plural Noun</span>",
+      "rule": "Contraction of 'em + os' (in / on / at the) before a masculine plural noun."
+    },
+    "after": {
+      "tag": "In / on / at the",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-c\">masculine plural noun</span>",
+      "rule": "Combines em + os: “in”, “on” or “at the”, before a masculine plural noun.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 0,
+    "before": {
+      "tag": "Condition",
+      "formulaHTML": "<span class=\"fw-token-connector\">Se</span> + <span class=\"fw-token-v\">Condition</span> , <span class=\"fw-token-c\">Result</span>",
+      "rule": "Conditional marker: introduces a hypothetical situation before its consequence."
+    },
+    "after": {
+      "tag": "If",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a possible situation</span> + <span class=\"fw-token-c\">what happens then</span>",
+      "rule": "Means “if”: gives a possible situation and what happens then.",
+      "slotTypes": {
+        "v": "clause",
+        "c": "clause"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "before": {
+      "tag": "Reflexive Clitic",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">Verb of self-action</span>",
+      "rule": "Reflexive clitic: action reflects back onto the person doing it."
+    },
+    "after": {
+      "tag": "Oneself / part of a verb",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Can mean “oneself”, or belong with a verb such as sentir-se (feel). It does not always mean “oneself”.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 0,
+    "before": {
+      "tag": "Definite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">Masculine Noun</span>",
+      "rule": "Definite determiner: points to a specific masculine singular noun."
+    },
+    "after": {
+      "tag": "The",
+      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+      "rule": "Means “the” before a masculine singular noun, such as livro (book).",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 1,
+    "before": {
+      "tag": "Object Clitic",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">o</span>",
+      "rule": "Direct object pronoun: replaces a 3rd-person masculine singular object ('him / it')."
+    },
+    "after": {
+      "tag": "Him / it",
+      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “him” or a masculine “it”. These examples place o before the verb; other positions also occur.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "em",
+    "pattern": 0,
+    "before": {
+      "tag": "Spatial Location",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">Place</span>",
+      "rule": "Spatial location: anchors an action or state to an enclosed place, city, or space."
+    },
+    "after": {
+      "tag": "Where",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a place</span>",
+      "rule": "Shows where something happens or is located.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "em",
+    "pattern": 1,
+    "before": {
+      "tag": "Temporal Framing",
+      "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">Time Period</span>",
+      "rule": "Temporal framing: situates an event within a month, year, or duration."
+    },
+    "after": {
+      "tag": "When",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a time / period</span>",
+      "rule": "Places an event in a time period, such as a month or year.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "para",
+    "pattern": 0,
+    "before": {
+      "tag": "Destination",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Destination</span>",
+      "rule": "Direction and destination: points toward a final physical goal or place of arrival."
+    },
+    "after": {
+      "tag": "Where to",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a place</span>",
+      "rule": "Shows where someone or something is going.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "para",
+    "pattern": 1,
+    "before": {
+      "tag": "Purpose",
+      "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Infinitive Goal</span>",
+      "rule": "Purpose and objective: links an intentional action to what it aims to achieve."
+    },
+    "after": {
+      "tag": "What for",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+      "rule": "Links an action to its purpose: what someone wants to do or achieve.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "para",
+    "pattern": 2,
+    "before": {
+      "tag": "Recipient",
+      "formulaHTML": "<span class=\"fw-token-v\">Object</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Recipient</span>",
+      "rule": "Beneficiary: marks who receives or benefits from something."
+    },
+    "after": {
+      "tag": "Who for",
+      "formulaHTML": "<span class=\"fw-token-v\">noun / noun phrase</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+      "rule": "Shows who something is for.",
+      "slotTypes": {
+        "v": "noun",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "com",
+    "pattern": 0,
+    "before": {
+      "tag": "Accompaniment",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">Companion</span>",
+      "rule": "Accompaniment: joins an action to the person or entity sharing it."
+    },
+    "after": {
+      "tag": "Who with",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a person</span>",
+      "rule": "Shows who shares an action or is together with someone.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "com",
+    "pattern": 1,
+    "before": {
+      "tag": "Instrument and Manner",
+      "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">Tool / Manner</span>",
+      "rule": "Instrument and manner: describes the means used or attitude applied."
+    },
+    "after": {
+      "tag": "How / with what",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+      "rule": "Shows the tool used or the way something is done.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "por",
+    "pattern": 0,
+    "before": {
+      "tag": "Cause / Motive",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb / State</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">Motive / Cause</span>",
+      "rule": "Causal ground: links an emotion, gratitude, or outcome back to its reason."
+    },
+    "after": {
+      "tag": "Why",
+      "formulaHTML": "<span class=\"fw-token-v\">verb / expression</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+      "rule": "Gives the reason for an action, feeling or result.",
+      "slotTypes": {
+        "v": "mixed",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "por",
+    "pattern": 1,
+    "before": {
+      "tag": "Trajectory",
+      "formulaHTML": "<span class=\"fw-token-v\">Movement</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">Transit Space</span>",
+      "rule": "Trajectory: marks the path, medium, or space through which motion occurs."
+    },
+    "after": {
+      "tag": "Through / along",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+      "rule": "Shows the route or place someone or something moves through.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "no",
+    "pattern": 0,
+    "before": {
+      "tag": "Spatial / Temporal Location",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + o</span> + <span class=\"fw-token-c\">Masculine Noun / Place</span>",
+      "rule": "Contraction of 'em + o' (in the / at the) before a specific masculine noun."
+    },
+    "after": {
+      "tag": "In / on / at the",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + o</span> + <span class=\"fw-token-c\">masculine noun</span>",
+      "rule": "Combines em + o: “in / on / at the”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "na",
+    "pattern": 0,
+    "before": {
+      "tag": "Spatial / Temporal Location",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + a</span> + <span class=\"fw-token-c\">Feminine Noun / Place</span>",
+      "rule": "Contraction of 'em + a' (in the / at the) before a specific feminine noun."
+    },
+    "after": {
+      "tag": "In / on / at the",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + a</span> + <span class=\"fw-token-c\">feminine noun</span>",
+      "rule": "Combines em + a: “in / on / at the”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "do",
+    "pattern": 0,
+    "before": {
+      "tag": "Possession / Origin",
+      "formulaHTML": "<span class=\"fw-token-connector\">de + o</span> + <span class=\"fw-token-c\">Masculine Noun / Origin</span>",
+      "rule": "Contraction of 'de + o' (of the / from the) denoting possession, origin, or attribute."
+    },
+    "after": {
+      "tag": "Of / from the",
+      "formulaHTML": "<span class=\"fw-token-connector\">de + o</span> + <span class=\"fw-token-c\">masculine noun</span>",
+      "rule": "Combines de + o: “of / from the”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "da",
+    "pattern": 0,
+    "before": {
+      "tag": "Possession / Origin",
+      "formulaHTML": "<span class=\"fw-token-connector\">de + a</span> + <span class=\"fw-token-c\">Feminine Noun / Origin</span>",
+      "rule": "Contraction of 'de + a' (of the / from the) denoting possession, origin, or attribute."
+    },
+    "after": {
+      "tag": "Of / from the",
+      "formulaHTML": "<span class=\"fw-token-connector\">de + a</span> + <span class=\"fw-token-c\">feminine noun</span>",
+      "rule": "Combines de + a: “of / from the”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "como",
+    "pattern": 0,
+    "before": {
+      "tag": "Manner / Simile",
+      "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">Model / Standard</span>",
+      "rule": "Simile and manner: compares the style or way an action is performed to an archetype."
+    },
+    "after": {
+      "tag": "Like / in the same way",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">what you compare with</span>",
+      "rule": "Compares how something is done with another example.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "como",
+    "pattern": 1,
+    "before": {
+      "tag": "Capacity / Role",
+      "formulaHTML": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">Role / Capacity</span>",
+      "rule": "Capacity and function: specifies the role, profession, or capacity someone acts in."
+    },
+    "after": {
+      "tag": "As / in a role",
+      "formulaHTML": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">a role / job</span>",
+      "rule": "Shows the role or job someone has in a situation.",
+      "slotTypes": {
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "mas",
+    "pattern": 0,
+    "before": {
+      "tag": "Contrast",
+      "formulaHTML": "<span class=\"fw-token-v\">Statement</span> + <span class=\"fw-token-connector\">mas</span> + <span class=\"fw-token-c\">Counterpoint</span>",
+      "rule": "Adversative bridge: introduces a contrast, restriction, or unexpected limitation."
+    },
+    "after": {
+      "tag": "But",
+      "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">mas</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+      "rule": "Adds a contrasting idea or an unexpected difference.",
+      "slotTypes": {
+        "v": "clause",
+        "c": "clause"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "a",
+    "pattern": 0,
+    "before": {
+      "tag": "Directional Link",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">Destination</span>",
+      "rule": "Directional link: points to a target destination or recipient."
+    },
+    "after": {
+      "tag": "Where to",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+      "rule": "Points to a destination or recipient.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "a",
+    "pattern": 1,
+    "before": {
+      "tag": "Definite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">Feminine Noun</span>",
+      "rule": "Definite feminine article: specifies a singular feminine entity."
+    },
+    "after": {
+      "tag": "The",
+      "formulaHTML": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">feminine noun</span>",
+      "rule": "Means “the”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "a",
+    "pattern": 2,
+    "before": {
+      "tag": "Direct Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">a</span>",
+      "rule": "Direct object pronoun: replaces a singular 3rd-person feminine noun ('her / it')."
+    },
+    "after": {
+      "tag": "Her / it",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span>",
+      "rule": "Refers to “her / it”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "e",
+    "pattern": 0,
+    "before": {
+      "tag": "Addition",
+      "formulaHTML": "<span class=\"fw-token-v\">Item / Clause</span> + <span class=\"fw-token-connector\">e</span> + <span class=\"fw-token-c\">Addition</span>",
+      "rule": "Copulative coordinator: links equal grammatical items or consecutive actions."
+    },
+    "after": {
+      "tag": "And",
+      "formulaHTML": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">e</span> + <span class=\"fw-token-c\">an item / idea</span>",
+      "rule": "Joins items, ideas or actions.",
+      "slotTypes": {
+        "v": "mixed",
+        "c": "mixed"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "eu",
+    "pattern": 0,
+    "before": {
+      "tag": "Subject Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">Eu</span> + <span class=\"fw-token-v\">Verb (1st Sing)</span>",
+      "rule": "Subject pronoun: emphasizes or clarifies the first-person singular actor."
+    },
+    "after": {
+      "tag": "I",
+      "formulaHTML": "<span class=\"fw-token-connector\">Eu</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Means “I”. Names who does the action; the pronoun can often be left out.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "ele",
+    "pattern": 0,
+    "before": {
+      "tag": "Subject Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">Ele</span> + <span class=\"fw-token-v\">Verb (3rd Sing)</span>",
+      "rule": "Subject pronoun: marks a 3rd-person masculine singular actor ('he / it')."
+    },
+    "after": {
+      "tag": "he / it",
+      "formulaHTML": "<span class=\"fw-token-connector\">Ele</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Means “he / it”. Names who does the action; the pronoun can often be left out.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "ele",
+    "pattern": 1,
+    "before": {
+      "tag": "Prepositional Object",
+      "formulaHTML": "<span class=\"fw-token-v\">Preposition</span> + <span class=\"fw-token-connector\">ele</span>",
+      "rule": "Prepositional object: follows prepositions like 'com ele' or 'para ele'."
+    },
+    "after": {
+      "tag": "After a preposition",
+      "formulaHTML": "<span class=\"fw-token-v\">preposition</span> + <span class=\"fw-token-connector\">ele</span>",
+      "rule": "Refers to him after a preposition: com ele (with him), para ele (for him).",
+      "slotTypes": {
+        "v": "prep"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "ela",
+    "pattern": 0,
+    "before": {
+      "tag": "Subject Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">Ela</span> + <span class=\"fw-token-v\">Verb (3rd Sing)</span>",
+      "rule": "Subject pronoun: marks a 3rd-person feminine singular actor ('she / it')."
+    },
+    "after": {
+      "tag": "she / it",
+      "formulaHTML": "<span class=\"fw-token-connector\">Ela</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Means “she / it”. Names who does the action; the pronoun can often be left out.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "um",
+    "pattern": 0,
+    "before": {
+      "tag": "Indefinite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">um</span> + <span class=\"fw-token-c\">Masculine Noun</span>",
+      "rule": "Indefinite article: introduces an unspecific singular masculine noun."
+    },
+    "after": {
+      "tag": "A / an",
+      "formulaHTML": "<span class=\"fw-token-connector\">um</span> + <span class=\"fw-token-c\">masculine noun</span>",
+      "rule": "Means “a / an”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "uma",
+    "pattern": 0,
+    "before": {
+      "tag": "Indefinite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">uma</span> + <span class=\"fw-token-c\">Feminine Noun</span>",
+      "rule": "Indefinite article: introduces an unspecific singular feminine noun."
+    },
+    "after": {
+      "tag": "A / an",
+      "formulaHTML": "<span class=\"fw-token-connector\">uma</span> + <span class=\"fw-token-c\">feminine noun</span>",
+      "rule": "Means “a / an”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "os",
+    "pattern": 0,
+    "before": {
+      "tag": "Definite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">os</span> + <span class=\"fw-token-c\">Plural Masculine Noun</span>",
+      "rule": "Definite article: introduces specific masculine plural nouns."
+    },
+    "after": {
+      "tag": "The",
+      "formulaHTML": "<span class=\"fw-token-connector\">os</span> + <span class=\"fw-token-c\">plural masculine noun</span>",
+      "rule": "Means “the”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "os",
+    "pattern": 1,
+    "before": {
+      "tag": "Direct Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">os</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Direct object pronoun: replaces 3rd-person masculine plural objects ('them')."
+    },
+    "after": {
+      "tag": "Them",
+      "formulaHTML": "<span class=\"fw-token-connector\">os</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “them”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "as",
+    "pattern": 0,
+    "before": {
+      "tag": "Definite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">as</span> + <span class=\"fw-token-c\">Plural Feminine Noun</span>",
+      "rule": "Definite article: introduces specific feminine plural nouns."
+    },
+    "after": {
+      "tag": "The",
+      "formulaHTML": "<span class=\"fw-token-connector\">as</span> + <span class=\"fw-token-c\">plural feminine noun</span>",
+      "rule": "Means “the”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "me",
+    "pattern": 0,
+    "before": {
+      "tag": "Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Object pronoun: represents 'me / to me' receiving direct or indirect action."
+    },
+    "after": {
+      "tag": "Me / to me",
+      "formulaHTML": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “me / to me”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "me",
+    "pattern": 1,
+    "before": {
+      "tag": "Reflexive Clitic",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">-me</span>",
+      "rule": "Reflexive clitic: action reflects back onto the speaker ('myself')."
+    },
+    "after": {
+      "tag": "Myself / part of a verb",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">-me</span>",
+      "rule": "Can mean “myself”, or belong with a verb, such as lembrar-se (remember). These examples use the after-verb form.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "te",
+    "pattern": 0,
+    "before": {
+      "tag": "Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Object pronoun: represents 2nd-person 'you / to you' (informal)."
+    },
+    "after": {
+      "tag": "You / to you",
+      "formulaHTML": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “you / to you”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "lhe",
+    "pattern": 0,
+    "before": {
+      "tag": "Indirect Object",
+      "formulaHTML": "<span class=\"fw-token-connector\">lhe</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Indirect object pronoun: represents 'to him / to her / to you'."
+    },
+    "after": {
+      "tag": "To him / her / you",
+      "formulaHTML": "<span class=\"fw-token-connector\">lhe</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “to him / her / you”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "ao",
+    "pattern": 0,
+    "before": {
+      "tag": "Direction / Destination",
+      "formulaHTML": "<span class=\"fw-token-connector\">a + o</span> + <span class=\"fw-token-c\">Masculine Destination / Time</span>",
+      "rule": "Contraction of 'a + o' (to the / at the) before masculine singular nouns."
+    },
+    "after": {
+      "tag": "To / at the",
+      "formulaHTML": "<span class=\"fw-token-connector\">a + o</span> + <span class=\"fw-token-c\">a place / time</span>",
+      "rule": "Combines a + o: “to / at the”.",
+      "slotTypes": {
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "ao",
+    "pattern": 1,
+    "before": {
+      "tag": "Temporal Nexus",
+      "formulaHTML": "<span class=\"fw-token-connector\">ao</span> + <span class=\"fw-token-v\">Infinitive</span>",
+      "rule": "Temporal nexus: expresses 'upon doing' or 'at the moment of'."
+    },
+    "after": {
+      "tag": "When doing something",
+      "formulaHTML": "<span class=\"fw-token-connector\">ao</span> + <span class=\"fw-token-v\">infinitive (dictionary form)</span>",
+      "rule": "Means “when” doing something; followed by the infinitive (dictionary form).",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "à",
+    "pattern": 0,
+    "before": {
+      "tag": "Destination / Time",
+      "formulaHTML": "<span class=\"fw-token-connector\">a + a</span> + <span class=\"fw-token-c\">Feminine Destination / Time</span>",
+      "rule": "Crasis contraction of 'a + a' (to the / at the) before feminine singular nouns."
+    },
+    "after": {
+      "tag": "To / at the",
+      "formulaHTML": "<span class=\"fw-token-connector\">a + a</span> + <span class=\"fw-token-c\">a place / time</span>",
+      "rule": "Combines a + a: “to / at the”.",
+      "slotTypes": {
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "pelo",
+    "pattern": 0,
+    "before": {
+      "tag": "Path / Motive",
+      "formulaHTML": "<span class=\"fw-token-connector\">por + o</span> + <span class=\"fw-token-c\">Masculine Path / Reason</span>",
+      "rule": "Contraction of 'por + o' (through the / by the / for the)."
+    },
+    "after": {
+      "tag": "Through / by / for the",
+      "formulaHTML": "<span class=\"fw-token-connector\">por + o</span> + <span class=\"fw-token-c\">a route / reason</span>",
+      "rule": "Combines por + o: “through / by / for the”.",
+      "slotTypes": {
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "pela",
+    "pattern": 0,
+    "before": {
+      "tag": "Path / Motive",
+      "formulaHTML": "<span class=\"fw-token-connector\">por + a</span> + <span class=\"fw-token-c\">Feminine Path / Reason</span>",
+      "rule": "Contraction of 'por + a' (through the / by the / for the)."
+    },
+    "after": {
+      "tag": "Through / by / for the",
+      "formulaHTML": "<span class=\"fw-token-connector\">por + a</span> + <span class=\"fw-token-c\">a route / reason</span>",
+      "rule": "Combines por + a: “through / by / for the”.",
+      "slotTypes": {
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "num",
+    "pattern": 0,
+    "before": {
+      "tag": "Location / State",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + um</span> + <span class=\"fw-token-c\">Masculine Noun</span>",
+      "rule": "Contraction of 'em + um' (in a / on a)."
+    },
+    "after": {
+      "tag": "In / on / at a",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + um</span> + <span class=\"fw-token-c\">masculine noun</span>",
+      "rule": "Combines em + um: “in / on / at a”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "numa",
+    "pattern": 0,
+    "before": {
+      "tag": "Location / State",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + uma</span> + <span class=\"fw-token-c\">Feminine Noun</span>",
+      "rule": "Contraction of 'em + uma' (in a / on a)."
+    },
+    "after": {
+      "tag": "In / on / at a",
+      "formulaHTML": "<span class=\"fw-token-connector\">em + uma</span> + <span class=\"fw-token-c\">feminine noun</span>",
+      "rule": "Combines em + uma: “in / on / at a”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "dele",
+    "pattern": 0,
+    "before": {
+      "tag": "Possession",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">dele</span>",
+      "rule": "Possessive contraction of 'de + ele' (his / of him)."
+    },
+    "after": {
+      "tag": "His / of him",
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">dele</span>",
+      "rule": "Shows who something belongs to: “his / of him”.",
+      "slotTypes": {
+        "v": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "dela",
+    "pattern": 0,
+    "before": {
+      "tag": "Possession",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">dela</span>",
+      "rule": "Possessive contraction of 'de + ela' (her / of her)."
+    },
+    "after": {
+      "tag": "Hers / of her",
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">dela</span>",
+      "rule": "Shows who something belongs to: “hers / of her”.",
+      "slotTypes": {
+        "v": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "sem",
+    "pattern": 0,
+    "before": {
+      "tag": "Privation / Absence",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb / Noun</span> + <span class=\"fw-token-connector\">sem</span> + <span class=\"fw-token-c\">Missing Element</span>",
+      "rule": "Privative preposition: marks absence, exclusion, or lack."
+    },
+    "after": {
+      "tag": "Without",
+      "formulaHTML": "<span class=\"fw-token-v\">noun / verb</span> + <span class=\"fw-token-connector\">sem</span> + <span class=\"fw-token-c\">what is missing</span>",
+      "rule": "Shows what is missing or absent.",
+      "slotTypes": {
+        "v": "mixed",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "sobre",
+    "pattern": 0,
+    "before": {
+      "tag": "Thematic Topic",
+      "formulaHTML": "<span class=\"fw-token-v\">Discussion / Thought</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">Topic</span>",
+      "rule": "Thematic marker: introduces the subject matter or topic."
+    },
+    "after": {
+      "tag": "About",
+      "formulaHTML": "<span class=\"fw-token-v\">verb / noun phrase</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a topic</span>",
+      "rule": "Introduces the topic someone talks or thinks about.",
+      "slotTypes": {
+        "v": "mixed",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "sobre",
+    "pattern": 1,
+    "before": {
+      "tag": "Spatial Surface",
+      "formulaHTML": "<span class=\"fw-token-v\">Position</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">Surface</span>",
+      "rule": "Spatial relation: located on top of a surface ('upon / above')."
+    },
+    "after": {
+      "tag": "On / above",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a place</span>",
+      "rule": "Shows that something is on or above a surface.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "até",
+    "pattern": 0,
+    "before": {
+      "tag": "Terminal Boundary",
+      "formulaHTML": "<span class=\"fw-token-v\">Movement / Time</span> + <span class=\"fw-token-connector\">até</span> + <span class=\"fw-token-c\">Limit / Endpoint</span>",
+      "rule": "Terminal boundary: points to the spatial or temporal stopping point."
+    },
+    "after": {
+      "tag": "Until / as far as",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">até</span> + <span class=\"fw-token-c\">an endpoint</span>",
+      "rule": "Shows where a movement ends or how long something lasts.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "até",
+    "pattern": 1,
+    "before": {
+      "tag": "Scalar Focus",
+      "formulaHTML": "<span class=\"fw-token-connector\">Até</span> + <span class=\"fw-token-c\">Surprising Subject</span>",
+      "rule": "Scalar focus particle: emphasizes an extreme case ('even')."
+    },
+    "after": {
+      "tag": "Even",
+      "formulaHTML": "<span class=\"fw-token-connector\">Até</span> + <span class=\"fw-token-c\">an unexpected example</span>",
+      "rule": "Includes an example that may be surprising.",
+      "slotTypes": {
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "porque",
+    "pattern": 0,
+    "before": {
+      "tag": "Causal Reason",
+      "formulaHTML": "<span class=\"fw-token-v\">Result</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">Cause</span>",
+      "rule": "Causal conjunction: explains the reason or motive behind an action."
+    },
+    "after": {
+      "tag": "Because",
+      "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+      "rule": "Gives the reason why something happens.",
+      "slotTypes": {
+        "v": "clause",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "quando",
+    "pattern": 0,
+    "before": {
+      "tag": "Temporal Subordination",
+      "formulaHTML": "<span class=\"fw-token-connector\">Quando</span> + <span class=\"fw-token-v\">Time Condition</span> , <span class=\"fw-token-c\">Main Clause</span>",
+      "rule": "Temporal subordinator: anchors the action to a specific time or event."
+    },
+    "after": {
+      "tag": "When",
+      "formulaHTML": "<span class=\"fw-token-connector\">Quando</span> + <span class=\"fw-token-v\">a situation</span> , <span class=\"fw-token-c\">what happens</span>",
+      "rule": "Connects an event to the time or situation when it happens.",
+      "slotTypes": {
+        "v": "clause",
+        "c": "clause"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "isso",
+    "pattern": 0,
+    "before": {
+      "tag": "Neutral Demonstrative",
+      "formulaHTML": "<span class=\"fw-token-connector\">isso</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Neutral demonstrative: refers to a stated fact, concept, or object near the listener."
+    },
+    "after": {
+      "tag": "That",
+      "formulaHTML": "<span class=\"fw-token-connector\">isso</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to an idea, situation or thing already mentioned or near the listener.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "isto",
+    "pattern": 0,
+    "before": {
+      "tag": "Immediate Demonstrative",
+      "formulaHTML": "<span class=\"fw-token-connector\">isto</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Neutral demonstrative: refers to an immediate object or idea near the speaker."
+    },
+    "after": {
+      "tag": "This",
+      "formulaHTML": "<span class=\"fw-token-connector\">isto</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to a thing or idea close to the speaker or being introduced now.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "pt",
+    "word": "tudo",
+    "pattern": 0,
+    "before": {
+      "tag": "Universal Totality",
+      "formulaHTML": "<span class=\"fw-token-connector\">tudo</span> + <span class=\"fw-token-v\">State / Verb</span>",
+      "rule": "Universal pronoun: represents the totality of things ('everything / all')."
+    },
+    "after": {
+      "tag": "Everything",
+      "formulaHTML": "<span class=\"fw-token-connector\">tudo</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to everything in the situation.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": [
+      {
+        "example": 3,
+        "issue": "The focus word is an object before no following verb here; this example needs a separate word-order pattern."
+      }
+    ]
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "before": {
+      "tag": "Verbal Valency",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Complement</span>",
+      "rule": "Required link: preceding verb governs 'de' before its object or action."
+    },
+    "after": {
+      "tag": "Verbs with de",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
+      "rule": "Some verbs use de to link to what follows. Learn the verb and de together.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "mixed"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "before": {
+      "tag": "Nominal Binding",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">Noun / Origin</span>",
+      "rule": "Nominal binding: marks possession, origin, content, or material."
+    },
+    "after": {
+      "tag": "Adding a detail",
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
+      "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de comer = time to eat.",
+      "slotTypes": {
+        "v": "noun",
+        "c": "mixed"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "before": {
+      "tag": "Clausal Link",
+      "formulaHTML": "<span class=\"fw-token-v\">Thought / Speech</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Clause</span>",
+      "rule": "Subordination: bridges what someone thinks, says, or knows to the statement."
+    },
+    "after": {
+      "tag": "Saying what you think",
+      "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+      "rule": "Links what someone thinks, says, knows or hopes to a statement.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "clause"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 1,
+    "before": {
+      "tag": "Relative Pronoun",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Description</span>",
+      "rule": "Relativization: refers back to a noun while introducing descriptive detail."
+    },
+    "after": {
+      "tag": "Adding information",
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+      "rule": "Adds information about the noun.",
+      "slotTypes": {
+        "v": "noun",
+        "c": "clause"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "before": {
+      "tag": "Comparison",
+      "formulaHTML": "<span class=\"fw-token-v\">Degree</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">Standard</span>",
+      "rule": "Comparison: connects the two sides of a degree or quality contrast."
+    },
+    "after": {
+      "tag": "Comparing",
+      "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+      "rule": "Means “than” when comparing people, things or situations.",
+      "slotTypes": {
+        "v": "phrase",
+        "c": "phrase"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "a",
+    "pattern": 0,
+    "before": {
+      "tag": "Directional Goal",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">Destination</span>",
+      "rule": "Directional goal: indicates movement toward a place or terminus."
+    },
+    "after": {
+      "tag": "Where to",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+      "rule": "Shows where someone or something is going.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "a",
+    "pattern": 1,
+    "before": {
+      "tag": "Personal 'a'",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">Person</span>",
+      "rule": "Personal 'a': marks a specific human or personalized direct object."
+    },
+    "after": {
+      "tag": "Before a person",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a person</span>",
+      "rule": "Used before a specific person receiving the action, as in veo a Ana (I see Ana).",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "en",
+    "pattern": 0,
+    "before": {
+      "tag": "Spatial Framing",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb / State</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">Location</span>",
+      "rule": "Spatial framing: anchors an action or entity within a place or space."
+    },
+    "after": {
+      "tag": "Where",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a place</span>",
+      "rule": "Shows where something happens or is located.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "en",
+    "pattern": 1,
+    "before": {
+      "tag": "Temporal Framing",
+      "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">Time Period</span>",
+      "rule": "Temporal framing: situates an event inside a month, year, or duration."
+    },
+    "after": {
+      "tag": "When",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a time / period</span>",
+      "rule": "Places an event in a time period, such as a month or year.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "por",
+    "pattern": 0,
+    "before": {
+      "tag": "Cause / Motive",
+      "formulaHTML": "<span class=\"fw-token-v\">State / Gratitude</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">Motive / Cause</span>",
+      "rule": "Causal ground: links an emotion, gratitude, or outcome back to its reason."
+    },
+    "after": {
+      "tag": "Why",
+      "formulaHTML": "<span class=\"fw-token-v\">verb / expression</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+      "rule": "Gives the reason for an action, feeling or result.",
+      "slotTypes": {
+        "v": "mixed",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "por",
+    "pattern": 1,
+    "before": {
+      "tag": "Trajectory",
+      "formulaHTML": "<span class=\"fw-token-v\">Movement</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">Transit Space</span>",
+      "rule": "Trajectory: marks the route, medium, or space through which motion happens."
+    },
+    "after": {
+      "tag": "Through / along",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+      "rule": "Shows the route or place someone or something moves through.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "para",
+    "pattern": 0,
+    "before": {
+      "tag": "Purpose",
+      "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Infinitive Objective</span>",
+      "rule": "Purpose and aim: establishes the intended goal or outcome of an action."
+    },
+    "after": {
+      "tag": "What for",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+      "rule": "Links an action to its purpose: what someone wants to do or achieve.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "para",
+    "pattern": 1,
+    "before": {
+      "tag": "Beneficiary / Target",
+      "formulaHTML": "<span class=\"fw-token-v\">Entity</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">Recipient</span>",
+      "rule": "Beneficiary / Target: designates the person meant to receive something."
+    },
+    "after": {
+      "tag": "Who for",
+      "formulaHTML": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+      "rule": "Shows who something is for.",
+      "slotTypes": {
+        "v": "mixed",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "con",
+    "pattern": 0,
+    "before": {
+      "tag": "Accompaniment",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">Companion</span>",
+      "rule": "Accompaniment: joins an action to the companion sharing it."
+    },
+    "after": {
+      "tag": "Who with",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a person</span>",
+      "rule": "Shows who shares an action or is together with someone.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "con",
+    "pattern": 1,
+    "before": {
+      "tag": "Instrument and Manner",
+      "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">Tool / Manner</span>",
+      "rule": "Instrument and attitude: describes the tool used or care applied."
+    },
+    "after": {
+      "tag": "How / with what",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+      "rule": "Shows the tool used or the way something is done.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "sin",
+    "pattern": 0,
+    "before": {
+      "tag": "Absence / Omission",
+      "formulaHTML": "<span class=\"fw-token-v\">Noun / Action</span> + <span class=\"fw-token-connector\">sin</span> + <span class=\"fw-token-c\">Missing Element</span>",
+      "rule": "Privative preposition: marks absence, lack, or omission."
+    },
+    "after": {
+      "tag": "Without",
+      "formulaHTML": "<span class=\"fw-token-v\">noun / verb</span> + <span class=\"fw-token-connector\">sin</span> + <span class=\"fw-token-c\">what is missing</span>",
+      "rule": "Shows what is missing or left out.",
+      "slotTypes": {
+        "v": "mixed",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "before": {
+      "tag": "Reflexive Clitic",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">Verb of self-action</span>",
+      "rule": "Reflexive clitic: action turns back upon the person doing it."
+    },
+    "after": {
+      "tag": "Oneself / part of a verb",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Can mean “oneself”, or belong with a verb such as sentirse (feel). It does not always mean “oneself”.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 1,
+    "before": {
+      "tag": "Impersonal / Passive",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">Verb (Passive/Impersonal)</span>",
+      "rule": "Impersonal / Passive marker: signals general or collective truth ('one does')."
+    },
+    "after": {
+      "tag": "Without saying who",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Describes what happens without naming who does it. Compare se habla (people speak) and se venden libros (books are sold).",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "me",
+    "pattern": 0,
+    "before": {
+      "tag": "Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Object pronoun: represents 1st-person 'me / to me' receiving the verb action."
+    },
+    "after": {
+      "tag": "Me / to me",
+      "formulaHTML": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “me / to me”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "te",
+    "pattern": 0,
+    "before": {
+      "tag": "Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Object pronoun: represents 2nd-person 'you / to you' (informal)."
+    },
+    "after": {
+      "tag": "You / to you",
+      "formulaHTML": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “you / to you”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "pattern": 0,
+    "before": {
+      "tag": "Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Object pronoun: represents 1st-person plural 'us / to us'."
+    },
+    "after": {
+      "tag": "Us / to us",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to us: someone sees or helps us, or tells us something.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "le",
+    "pattern": 0,
+    "before": {
+      "tag": "Indirect Object",
+      "formulaHTML": "<span class=\"fw-token-connector\">le</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Indirect object pronoun: represents 3rd-person singular 'to him / to her / to you'."
+    },
+    "after": {
+      "tag": "To him / her / you",
+      "formulaHTML": "<span class=\"fw-token-connector\">le</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “to him / her / you”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 0,
+    "before": {
+      "tag": "Direction / Goal",
+      "formulaHTML": "<span class=\"fw-token-connector\">a + el</span> + <span class=\"fw-token-c\">Masculine Destination</span>",
+      "rule": "Mandatory contraction of 'a + el' (to the / at the) before masculine nouns."
+    },
+    "after": {
+      "tag": "To / at the",
+      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-c\">destination</span>",
+      "rule": "Here, a + el becomes al: “to the” or “at the”.",
+      "slotTypes": {
+        "c": "phrase"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "before": {
+      "tag": "Temporal Nexus",
+      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">Infinitive</span>",
+      "rule": "Temporal nexus: expresses 'upon doing' or 'when doing'."
+    },
+    "after": {
+      "tag": "When doing something",
+      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">infinitive (dictionary form)</span>",
+      "rule": "Means “when” doing something: al llegar = when someone arrives.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "del",
+    "pattern": 0,
+    "before": {
+      "tag": "Origin / Attribute",
+      "formulaHTML": "<span class=\"fw-token-connector\">de + el</span> + <span class=\"fw-token-c\">Masculine Noun / Origin</span>",
+      "rule": "Mandatory contraction of 'de + el' (of the / from the)."
+    },
+    "after": {
+      "tag": "Of / from the",
+      "formulaHTML": "<span class=\"fw-token-connector\">de + el</span> + <span class=\"fw-token-c\">masculine noun</span>",
+      "rule": "Combines de + el: “of / from the”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "el",
+    "pattern": 0,
+    "before": {
+      "tag": "Definite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">el</span> + <span class=\"fw-token-c\">Masculine Singular Noun</span>",
+      "rule": "Definite article: designates a specific masculine singular referent."
+    },
+    "after": {
+      "tag": "The",
+      "formulaHTML": "<span class=\"fw-token-connector\">el</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+      "rule": "Means “the”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "la",
+    "pattern": 0,
+    "before": {
+      "tag": "Definite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-c\">Feminine Singular Noun</span>",
+      "rule": "Definite article: designates a specific feminine singular referent."
+    },
+    "after": {
+      "tag": "The",
+      "formulaHTML": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-c\">feminine singular noun</span>",
+      "rule": "Means “the”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "la",
+    "pattern": 1,
+    "before": {
+      "tag": "Direct Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Direct object pronoun: replaces a 3rd-person feminine singular noun ('her / it')."
+    },
+    "after": {
+      "tag": "Her / it",
+      "formulaHTML": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “her / it”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "los",
+    "pattern": 0,
+    "before": {
+      "tag": "Definite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-c\">Masculine Plural Noun</span>",
+      "rule": "Definite article: designates specific masculine plural entities."
+    },
+    "after": {
+      "tag": "The",
+      "formulaHTML": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-c\">masculine plural noun</span>",
+      "rule": "Means “the”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "los",
+    "pattern": 1,
+    "before": {
+      "tag": "Direct Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Direct object pronoun: replaces 3rd-person masculine plural objects ('them')."
+    },
+    "after": {
+      "tag": "Them",
+      "formulaHTML": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “them”. The surrounding verb and sentence show who or what is meant.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "las",
+    "pattern": 0,
+    "before": {
+      "tag": "Definite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">las</span> + <span class=\"fw-token-c\">Feminine Plural Noun</span>",
+      "rule": "Definite article: designates specific feminine plural entities."
+    },
+    "after": {
+      "tag": "The",
+      "formulaHTML": "<span class=\"fw-token-connector\">las</span> + <span class=\"fw-token-c\">feminine plural noun</span>",
+      "rule": "Means “the”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "before": {
+      "tag": "Neuter Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">Adjective / Abstract</span>",
+      "rule": "Neuter article: nominalizes an adjective into an abstract quality ('the ... thing')."
+    },
+    "after": {
+      "tag": "The … thing / part",
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">adjective</span>",
+      "rule": "With an adjective, means “the … thing” or “the … part”: lo importante = the important thing.",
+      "slotTypes": {
+        "c": "adj"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 1,
+    "before": {
+      "tag": "Direct Object Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Direct object pronoun: replaces a masculine singular item or concept ('it / him')."
+    },
+    "after": {
+      "tag": "Him / it / that",
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to “him”, a masculine “it”, or an idea: lo sé = I know that.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "source-reviewed",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "un",
+    "pattern": 0,
+    "before": {
+      "tag": "Indefinite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">un</span> + <span class=\"fw-token-c\">Masculine Singular Noun</span>",
+      "rule": "Indefinite article: introduces a single unspecific masculine noun."
+    },
+    "after": {
+      "tag": "A / an",
+      "formulaHTML": "<span class=\"fw-token-connector\">un</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+      "rule": "Means “a / an”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "una",
+    "pattern": 0,
+    "before": {
+      "tag": "Indefinite Article",
+      "formulaHTML": "<span class=\"fw-token-connector\">una</span> + <span class=\"fw-token-c\">Feminine Singular Noun</span>",
+      "rule": "Indefinite article: introduces a single unspecific feminine noun."
+    },
+    "after": {
+      "tag": "A / an",
+      "formulaHTML": "<span class=\"fw-token-connector\">una</span> + <span class=\"fw-token-c\">feminine singular noun</span>",
+      "rule": "Means “a / an”. Use the form that matches the noun’s gender and number.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "y",
+    "pattern": 0,
+    "before": {
+      "tag": "Addition",
+      "formulaHTML": "<span class=\"fw-token-v\">Element</span> + <span class=\"fw-token-connector\">y</span> + <span class=\"fw-token-c\">Addition</span>",
+      "rule": "Copulative conjunction: coordinates items, clauses, or thoughts of equal status."
+    },
+    "after": {
+      "tag": "And",
+      "formulaHTML": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">y</span> + <span class=\"fw-token-c\">an item / idea</span>",
+      "rule": "Joins items, ideas or actions.",
+      "slotTypes": {
+        "v": "mixed",
+        "c": "mixed"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "pero",
+    "pattern": 0,
+    "before": {
+      "tag": "Contrast",
+      "formulaHTML": "<span class=\"fw-token-v\">Statement</span> + <span class=\"fw-token-connector\">pero</span> + <span class=\"fw-token-c\">Contrast</span>",
+      "rule": "Adversative bridge: introduces a qualification, limitation, or unexpected contrast."
+    },
+    "after": {
+      "tag": "But",
+      "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">pero</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+      "rule": "Adds a contrasting idea or an unexpected difference.",
+      "slotTypes": {
+        "v": "clause",
+        "c": "clause"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "si",
+    "pattern": 0,
+    "before": {
+      "tag": "Condition",
+      "formulaHTML": "<span class=\"fw-token-connector\">Si</span> + <span class=\"fw-token-v\">Condition</span> , <span class=\"fw-token-c\">Result</span>",
+      "rule": "Conditional marker: establishes a hypothesis preceding its outcome."
+    },
+    "after": {
+      "tag": "If",
+      "formulaHTML": "<span class=\"fw-token-connector\">Si</span> + <span class=\"fw-token-v\">a situation</span> , <span class=\"fw-token-c\">what happens</span>",
+      "rule": "Gives a possible situation and what happens if it is true.",
+      "slotTypes": {
+        "v": "clause",
+        "c": "clause"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "como",
+    "pattern": 0,
+    "before": {
+      "tag": "Manner / Simile",
+      "formulaHTML": "<span class=\"fw-token-v\">Action</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">Standard</span>",
+      "rule": "Simile and manner: compares action execution against an exemplar."
+    },
+    "after": {
+      "tag": "Like / in the same way",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">what you compare with</span>",
+      "rule": "Compares how something is done with another example.",
+      "slotTypes": {
+        "v": "verb",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "como",
+    "pattern": 1,
+    "before": {
+      "tag": "Capacity / Role",
+      "formulaHTML": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">Capacity / Profession</span>",
+      "rule": "Capacity and role: designates the status or function held."
+    },
+    "after": {
+      "tag": "As / in a role",
+      "formulaHTML": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">a role / job</span>",
+      "rule": "Shows the role or job someone has in a situation.",
+      "slotTypes": {
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "mi",
+    "pattern": 0,
+    "before": {
+      "tag": "Possession",
+      "formulaHTML": "<span class=\"fw-token-connector\">mi</span> + <span class=\"fw-token-c\">Singular Noun</span>",
+      "rule": "1st-person singular possessive: introduces something belonging to the speaker."
+    },
+    "after": {
+      "tag": "My",
+      "formulaHTML": "<span class=\"fw-token-connector\">mi</span> + <span class=\"fw-token-c\">singular noun</span>",
+      "rule": "Shows who something belongs to: “my”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "su",
+    "pattern": 0,
+    "before": {
+      "tag": "Possession",
+      "formulaHTML": "<span class=\"fw-token-connector\">su</span> + <span class=\"fw-token-c\">Singular Noun</span>",
+      "rule": "3rd-person possessive: denotes something belonging to him, her, them, or formal 'you'."
+    },
+    "after": {
+      "tag": "His / her / their / your (formal)",
+      "formulaHTML": "<span class=\"fw-token-connector\">su</span> + <span class=\"fw-token-c\">singular noun</span>",
+      "rule": "Shows who something belongs to: “his / her / their / your (formal)”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "tu",
+    "pattern": 0,
+    "before": {
+      "tag": "Possession",
+      "formulaHTML": "<span class=\"fw-token-connector\">tu</span> + <span class=\"fw-token-c\">Singular Noun</span>",
+      "rule": "2nd-person informal possessive: introduces something belonging to the listener."
+    },
+    "after": {
+      "tag": "Your (informal)",
+      "formulaHTML": "<span class=\"fw-token-connector\">tu</span> + <span class=\"fw-token-c\">singular noun</span>",
+      "rule": "Shows who something belongs to: “your (informal)”.",
+      "slotTypes": {
+        "c": "noun"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "yo",
+    "pattern": 0,
+    "before": {
+      "tag": "Subject Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">Yo</span> + <span class=\"fw-token-v\">Verb (1st Sing)</span>",
+      "rule": "Subject pronoun: explicitly emphasizes or contrasts the 1st-person actor."
+    },
+    "after": {
+      "tag": "I",
+      "formulaHTML": "<span class=\"fw-token-connector\">Yo</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Means “I”. Names who does the action; the pronoun can often be left out.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "tú",
+    "pattern": 0,
+    "before": {
+      "tag": "Subject Pronoun",
+      "formulaHTML": "<span class=\"fw-token-connector\">Tú</span> + <span class=\"fw-token-v\">Verb (2nd Sing)</span>",
+      "rule": "Subject pronoun: explicitly clarifies or contrasts the 2nd-person actor."
+    },
+    "after": {
+      "tag": "you",
+      "formulaHTML": "<span class=\"fw-token-connector\">Tú</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Means “you”. Names who does the action; the pronoun can often be left out.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "eso",
+    "pattern": 0,
+    "before": {
+      "tag": "Neuter Demonstrative",
+      "formulaHTML": "<span class=\"fw-token-connector\">eso</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Neuter demonstrative: refers to a stated matter, idea, or object near the listener."
+    },
+    "after": {
+      "tag": "That",
+      "formulaHTML": "<span class=\"fw-token-connector\">eso</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to an idea, situation or thing already mentioned or near the listener.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "esto",
+    "pattern": 0,
+    "before": {
+      "tag": "Immediate Demonstrative",
+      "formulaHTML": "<span class=\"fw-token-connector\">esto</span> + <span class=\"fw-token-v\">Verb</span>",
+      "rule": "Neuter demonstrative: refers to an immediate topic or object near the speaker."
+    },
+    "after": {
+      "tag": "This",
+      "formulaHTML": "<span class=\"fw-token-connector\">esto</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to a thing or idea close to the speaker or being introduced now.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "todo",
+    "pattern": 0,
+    "before": {
+      "tag": "Universal Totality",
+      "formulaHTML": "<span class=\"fw-token-connector\">todo</span> + <span class=\"fw-token-v\">State / Verb</span>",
+      "rule": "Universal pronoun: signifies the totality of matters ('everything / all')."
+    },
+    "after": {
+      "tag": "Everything",
+      "formulaHTML": "<span class=\"fw-token-connector\">todo</span> + <span class=\"fw-token-v\">verb</span>",
+      "rule": "Refers to everything in the situation.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": [
+      {
+        "example": 3,
+        "issue": "The focus word is an object before no following verb here; this example needs a separate word-order pattern."
+      }
+    ]
+  },
+  {
+    "language": "es",
+    "word": "algo",
+    "pattern": 0,
+    "before": {
+      "tag": "Indefinite Entity",
+      "formulaHTML": "<span class=\"fw-token-v\">Verb</span> + <span class=\"fw-token-connector\">algo</span>",
+      "rule": "Indefinite entity: marks an unspecified thing or amount ('something')."
+    },
+    "after": {
+      "tag": "Something",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">algo</span>",
+      "rule": "Refers to an unspecified thing or amount.",
+      "slotTypes": {
+        "v": "verb"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "porque",
+    "pattern": 0,
+    "before": {
+      "tag": "Causal Reason",
+      "formulaHTML": "<span class=\"fw-token-v\">Result</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">Cause</span>",
+      "rule": "Causal conjunction: explains the underlying reason or motive."
+    },
+    "after": {
+      "tag": "Because",
+      "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+      "rule": "Gives the reason why something happens.",
+      "slotTypes": {
+        "v": "clause",
+        "c": "phrase"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  },
+  {
+    "language": "es",
+    "word": "cuando",
+    "pattern": 0,
+    "before": {
+      "tag": "Temporal Nexus",
+      "formulaHTML": "<span class=\"fw-token-connector\">Cuando</span> + <span class=\"fw-token-v\">Time Condition</span> , <span class=\"fw-token-c\">Main Action</span>",
+      "rule": "Temporal connector: situates an event at a point in time."
+    },
+    "after": {
+      "tag": "When",
+      "formulaHTML": "<span class=\"fw-token-connector\">Cuando</span> + <span class=\"fw-token-v\">a situation</span> , <span class=\"fw-token-c\">what happens</span>",
+      "rule": "Connects an event to the time or situation when it happens.",
+      "slotTypes": {
+        "v": "clause",
+        "c": "clause"
+      }
+    },
+    "example_review": "copy-reviewed; source review pending",
+    "slot_notes": []
+  }
+]

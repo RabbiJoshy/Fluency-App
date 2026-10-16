@@ -80,7 +80,8 @@ def scan(suites, rule_limit=20, sentence_limit=15):
                     findings.append(dict(language=lang, word=word, pattern=i, example=example,
                                          field=field, code=code, detail=detail, severity='review'))
                 for field in ('tag', 'formulaHTML', 'rule'):
-                    terms = sorted({m.group().lower() for m in JARGON.finditer(plain(rel.get(field, '')))})
+                    copy = re.sub(r'\binfinitive\s*\(dictionary form\)', '', plain(rel.get(field, '')), flags=re.I)
+                    terms = sorted({m.group().lower() for m in JARGON.finditer(copy)})
                     if terms:
                         add('jargon', field, ', '.join(terms))
                 if count_words(rel.get('rule')) > rule_limit:

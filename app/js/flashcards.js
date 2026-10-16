@@ -12,11 +12,12 @@ import { goToRoute, routeCodeFor } from './routes.js?v=20261013music';
 import { memoryTipTileHTML } from './memory-tips.js?v=1';
 import {
     functionWordBlockHTML,
+    configureFunctionWordPresentation,
     functionWordExampleHTML,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=20261015';
+} from './function-word-card.js?v=20261016slots';
 import './side-dock.js?v=20260927pa';
 import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=20261005kb';
 import {
@@ -10803,3 +10804,6 @@ window.describeCliticForm = describeCliticForm;
 window.openSenseCrossReference = openSenseCrossReference;
 window.toggleSenseMetadataChip = toggleSenseMetadataChip;
 window.toggleProminenceBadge = toggleProminenceBadge;
+
+// Function-word cards share the main card palette and source controls.
+configureFunctionWordPresentation({posRgb: getPosAccentRgb, provenanceHTML: exampleProvenanceHTML});

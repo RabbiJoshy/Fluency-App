@@ -31,6 +31,13 @@ class AuditTests(unittest.TestCase):
         self.assertIn('long_sentence',[f['code'] for f in scan(data)])
         self.assertNotIn('long_sentence',[f['code'] for f in scan(data,sentence_limit=16)])
 
+    def test_explained_familiar_term_is_allowed(self):
+        data=suite();r=data['pt']['é']['relations'][0]
+        r['rule']='Use an infinitive (dictionary form).'
+        self.assertNotIn('jargon',[f['code'] for f in scan(data)])
+        r['rule']='Use an infinitive.'
+        self.assertIn('jargon',[f['code'] for f in scan(data)])
+
     def test_missing_translation_and_duplicate_identity(self):
         data=suite(translation=' ');r=data['pt']['é']['relations'][0]
         r['examples'].append(dict(r['examples'][0]))
@@ -74,7 +81,7 @@ class AuditTests(unittest.TestCase):
         paths=[ROOT/f'app/data/grammar-words/{l}.json' for l in ('es','pt')]
         before=[p.read_bytes() for p in paths]
         run=subprocess.run([sys.executable,str(ROOT/'research/function_word_audit/check.py'),'--format','json'],check=True,text=True,capture_output=True)
-        self.assertTrue(json.loads(run.stdout))
+        self.assertIsInstance(json.loads(run.stdout),list)
         self.assertEqual(before,[p.read_bytes() for p in paths])
 
 

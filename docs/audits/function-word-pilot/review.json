@@ -12,7 +12,7 @@
     },
     "after": {
       "tag": "Verbs with de",
-      "formulaHTML": "<span class=\"fw-token-v\">a verb used with de</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">someone, something or an action</span>",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
       "rule": "Some verbs use de to link to what follows. Learn the verb and de together."
     },
     "reasons": [
@@ -158,7 +158,7 @@
     },
     "after": {
       "tag": "Adding a detail",
-      "formulaHTML": "<span class=\"fw-token-v\">a thing or time</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">a detail or an action</span>",
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
       "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de partir = time to leave."
     },
     "reasons": [
@@ -408,8 +408,8 @@
     },
     "after": {
       "tag": "Adding information",
-      "formulaHTML": "<span class=\"fw-token-v\">someone or something</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">more about them or it</span>",
-      "rule": "Adds information about the person or thing just mentioned."
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+      "rule": "Adds information about the noun."
     },
     "reasons": [
       "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
@@ -783,7 +783,7 @@
     },
     "after": {
       "tag": "Oneself / part of a verb",
-      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a verb</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
       "rule": "Can mean “oneself”, or belong with a verb such as sentir-se (feel). It does not always mean “oneself”."
     },
     "reasons": [
@@ -908,7 +908,7 @@
     },
     "after": {
       "tag": "The",
-      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">a masculine singular noun</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
       "rule": "Means “the” before a masculine singular noun, such as livro (book)."
     },
     "reasons": [
@@ -1033,7 +1033,7 @@
     },
     "after": {
       "tag": "Him / it",
-      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-v\">a verb</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-v\">verb</span>",
       "rule": "Refers to “him” or a masculine “it”. These examples place o before the verb; other positions also occur."
     },
     "reasons": [
@@ -1158,7 +1158,7 @@
     },
     "after": {
       "tag": "Us / to us",
-      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">a verb</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
       "rule": "Refers to us: someone sees or helps us, or tells us something."
     },
     "reasons": [
@@ -1283,7 +1283,7 @@
     },
     "after": {
       "tag": "In / on / at the",
-      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-c\">a masculine plural noun</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-c\">masculine plural noun</span>",
       "rule": "Combines em + os: “in”, “on” or “at the”, before a masculine plural noun."
     },
     "reasons": [
@@ -1408,7 +1408,7 @@
     },
     "after": {
       "tag": "In / on / at that",
-      "formulaHTML": "<span class=\"fw-token-connector\">naquele</span> + <span class=\"fw-token-c\">a masculine singular noun</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">naquele</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
       "rule": "Combines em + aquele: “in”, “on” or “at that”. It can refer to places, things or times."
     },
     "reasons": [
@@ -1533,7 +1533,7 @@
     },
     "after": {
       "tag": "Verbs with de",
-      "formulaHTML": "<span class=\"fw-token-v\">a verb used with de</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">someone, something or an action</span>",
+      "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
       "rule": "Some verbs use de to link to what follows. Learn the verb and de together."
     },
     "reasons": [
@@ -1658,7 +1658,7 @@
     },
     "after": {
       "tag": "Adding a detail",
-      "formulaHTML": "<span class=\"fw-token-v\">a thing or time</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">a detail or an action</span>",
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
       "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de comer = time to eat."
     },
     "reasons": [
@@ -1908,8 +1908,8 @@
     },
     "after": {
       "tag": "Adding information",
-      "formulaHTML": "<span class=\"fw-token-v\">someone or something</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">more about them or it</span>",
-      "rule": "Adds information about the person or thing just mentioned."
+      "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+      "rule": "Adds information about the noun."
     },
     "reasons": [
       "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
@@ -2158,7 +2158,7 @@
     },
     "after": {
       "tag": "Oneself / part of a verb",
-      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a verb</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
       "rule": "Can mean “oneself”, or belong with a verb such as sentirse (feel). It does not always mean “oneself”."
     },
     "reasons": [
@@ -2283,7 +2283,7 @@
     },
     "after": {
       "tag": "Without saying who",
-      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a verb</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
       "rule": "Describes what happens without naming who does it. Compare se habla (people speak) and se venden libros (books are sold)."
     },
     "reasons": [
@@ -2408,8 +2408,8 @@
     },
     "after": {
       "tag": "The … thing / part",
-      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">a describing word</span>",
-      "rule": "With a describing word, means “the … thing” or “the … part”: lo importante = the important thing."
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">adjective</span>",
+      "rule": "With an adjective, means “the … thing” or “the … part”: lo importante = the important thing."
     },
     "reasons": [
       "Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word."
@@ -2533,7 +2533,7 @@
     },
     "after": {
       "tag": "Him / it / that",
-      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">a verb</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">verb</span>",
       "rule": "Refers to “him”, a masculine “it”, or an idea: lo sé = I know that."
     },
     "reasons": [
@@ -2658,7 +2658,7 @@
     },
     "after": {
       "tag": "Us / to us",
-      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">a verb</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
       "rule": "Refers to us: someone sees or helps us, or tells us something."
     },
     "reasons": [
@@ -2783,7 +2783,7 @@
     },
     "after": {
       "tag": "To / at the",
-      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-c\">a destination with el</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-c\">destination</span>",
       "rule": "Here, a + el becomes al: “to the” or “at the”."
     },
     "reasons": [
@@ -2908,7 +2908,7 @@
     },
     "after": {
       "tag": "When doing something",
-      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">a verb in its dictionary form</span>",
+      "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">infinitive (dictionary form)</span>",
       "rule": "Means “when” doing something: al llegar = when someone arrives."
     },
     "reasons": [

@@ -78,6 +78,28 @@ const ROLE_NAMES = {{
     clitic: 'clitic'
 }};
 
+
+// Reuse the app palette and provenance component without a circular import.
+let fwPresentation = {{}};
+export function configureFunctionWordPresentation(options) {{
+    fwPresentation = options || {{}};
+}}
+function fwSlotHTML(html, relation) {{
+    return String(html || '').replace(/<span class=['"]fw-token-([vc])['"]>/g, (tag, side) => {{
+        const type = relation?.slotTypes?.[side];
+        const isPOS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det'].includes(type);
+        const rgb = isPOS ? fwPresentation.posRgb?.(type) : null;
+        const colour = rgb ? `rgb(${{rgb}})` : (side === 'v' ? '#8fb8d8' : '#c3a6df');
+        return `<span class="fw-token-${{side}}" style="color:${{colour}}">`;
+    }});
+}}
+function fwCreditHTML(example) {{
+    if (example?.metadata?.source?.source_record_id) {{
+        return fwPresentation.provenanceHTML?.(example) || '';
+    }}
+    return String(example?.source || '').startsWith('Original teaching example') ? 'Teaching example' : 'Source not verified';
+}}
+
 function esc(str) {{
     return String(str || '')
         .replace(/&/g, '&amp;')
@@ -347,7 +369,7 @@ function refreshFunctionWordCardBack() {{
     // Update sentence target and translation
     const sentenceEl = container.querySelector('.fw-sentence-target');
     if (sentenceEl && currentEx) {{
-        sentenceEl.innerHTML = currentEx.targetHTML || currentEx.target || '';
+        sentenceEl.innerHTML = fwSlotHTML(currentEx.targetHTML || currentEx.target || '', currentRel);
     }}
 
     const transEl = container.querySelector('.fw-sentence-translation');
@@ -357,7 +379,7 @@ function refreshFunctionWordCardBack() {{
 
     const creditStartEl = container.querySelector('.fw-credit-start');
     if (creditStartEl) {{
-        creditStartEl.textContent = currentEx?.source || '';
+        creditStartEl.innerHTML = fwCreditHTML(currentEx);
     }}
 
     const ticksContainer = container.querySelector('.fw-sentence-ticks-container');
@@ -429,7 +451,7 @@ export function functionWordBlockHTML(card, lang) {{
             const isSelected = i === _activeRelIndex;
             return `
                 <button type="button" class="fw-relation-box${{isSelected ? ' is-selected' : ''}}" aria-pressed="${{isSelected}}" onclick="event.stopPropagation(); window.selectFunctionWordRelation(${{i}})">
-                    <div class="fw-relation-formula">${{rel.formulaHTML || esc(rel.formula || '')}}</div>
+                    <div class="fw-relation-formula">${{fwSlotHTML(rel.formulaHTML || esc(rel.formula || ''), rel)}}</div>
                     <p class="fw-relation-rule">${{esc(rel.rule || rel.description || '')}}</p>
                 </button>`;
         }}).join('');
@@ -447,18 +469,18 @@ export function functionWordBlockHTML(card, lang) {{
             <div class="fw-deterministic-card" data-word="${{esc(wordKey)}}" data-lang="${{esc(lang || 'pt')}}">
                 <div class="fw-header">
                     <h2 class="fw-heading">${{esc(wordKey)}}</h2>
+                    ${{partsBoxHTML}}
+                    ${{dynamicPartsHTML}}
                     <div class="fw-section-header">Function Word · Example Patterns</div>
                 </div>
-                ${{partsBoxHTML}}
-                ${{dynamicPartsHTML}}
                 <div class="fw-relations-list">
                     ${{relationsHTML}}
                 </div>
                 <div class="fw-sentence-panel" onclick="event.stopPropagation(); window.cycleFunctionWordExample();">
-                    <div class="fw-sentence-target">${{targetHTML}}</div>
+                    <div class="fw-sentence-target">${{fwSlotHTML(targetHTML, currentRel)}}</div>
                     <div class="fw-sentence-translation">${{esc(currentEx?.translation || currentRel?.translation || '')}}</div>
                     <div class="fw-example-credit-row">
-                        <span class="fw-credit-start">${{esc(sourceText)}}</span>
+                        <span class="fw-credit-start">${{fwCreditHTML(currentEx)}}</span>
                         <div class="fw-sentence-ticks-container">${{ticksHTML}}</div>
                     </div>
                 </div>

@@ -20,41 +20,41 @@ def formula(*parts):
 COPY = {
  'pt': {
   'de': [
-   ('Verbs with de', [('v','a verb used with de'),('connector','de'),('c','someone, something or an action')], 'Some verbs use de to link to what follows. Learn the verb and de together.'),
-   ('Adding a detail', [('v','a thing or time'),('connector','de'),('c','a detail or an action')], 'Adds a detail: whose it is, what it contains, what it is made of, or what it is for.')],
+   ('Verbs with de', [('v','verb'),('connector','de'),('c','noun / verb / pronoun')], 'Some verbs use de to link to what follows. Learn the verb and de together.'),
+   ('Adding a detail', [('v','noun'),('connector','de'),('c','detail / action')], 'Adds a detail: whose it is, what it contains, what it is made of, or what it is for.')],
   'que': [
    ('Saying what you think', [('v','think, say, know or hope'),('connector','que'),('c','what happens')], 'Links what someone thinks, says, knows or hopes to a statement.'),
-   ('Adding information', [('v','someone or something'),('connector','que'),('c','more about them or it')], 'Adds information about the person or thing just mentioned.'),
+   ('Adding information', [('v','noun'),('connector','que'),('c','description')], 'Adds information about the noun.'),
    ('Comparing', [('v','more, less or better'),('connector','que'),('c','what you compare with')], 'Means “than” when comparing people, things or situations.')],
   'se': [
    ('If', [('connector','se'),('v','a possible situation'),('c','what happens then')], 'Means “if”: gives a possible situation and what happens then.'),
-   ('Oneself / part of a verb', [('connector','se'),('v','a verb')], 'Can mean “oneself”, or belong with a verb such as sentir-se (feel). It does not always mean “oneself”.')],
+   ('Oneself / part of a verb', [('connector','se'),('v','verb')], 'Can mean “oneself”, or belong with a verb such as sentir-se (feel). It does not always mean “oneself”.')],
   'o': [
-   ('The', [('connector','o'),('c','a masculine singular noun')], 'Means “the” before a masculine singular noun, such as livro (book).'),
-   ('Him / it', [('connector','o'),('v','a verb')], 'Refers to “him” or a masculine “it”. These examples place o before the verb; other positions also occur.')],
+   ('The', [('connector','o'),('c','masculine singular noun')], 'Means “the” before a masculine singular noun, such as livro (book).'),
+   ('Him / it', [('connector','o'),('v','verb')], 'Refers to “him” or a masculine “it”. These examples place o before the verb; other positions also occur.')],
   'nos': [
-   ('Us / to us', [('connector','nos'),('v','a verb')], 'Refers to us: someone sees or helps us, or tells us something.'),
-   ('In / on / at the', [('connector','nos'),('c','a masculine plural noun')], 'Combines em + os: “in”, “on” or “at the”, before a masculine plural noun.')],
-  'naquele': [('In / on / at that', [('connector','naquele'),('c','a masculine singular noun')], 'Combines em + aquele: “in”, “on” or “at that”. It can refer to places, things or times.')]
+   ('Us / to us', [('connector','nos'),('v','verb')], 'Refers to us: someone sees or helps us, or tells us something.'),
+   ('In / on / at the', [('connector','nos'),('c','masculine plural noun')], 'Combines em + os: “in”, “on” or “at the”, before a masculine plural noun.')],
+  'naquele': [('In / on / at that', [('connector','naquele'),('c','masculine singular noun')], 'Combines em + aquele: “in”, “on” or “at that”. It can refer to places, things or times.')]
  },
  'es': {
   'de': [
-   ('Verbs with de', [('v','a verb used with de'),('connector','de'),('c','someone, something or an action')], 'Some verbs use de to link to what follows. Learn the verb and de together.'),
-   ('Adding a detail', [('v','a thing or time'),('connector','de'),('c','a detail or an action')], 'Adds a detail: whose it is, what it contains, what it is made of, or what it is for.')],
+   ('Verbs with de', [('v','verb'),('connector','de'),('c','noun / verb / pronoun')], 'Some verbs use de to link to what follows. Learn the verb and de together.'),
+   ('Adding a detail', [('v','noun'),('connector','de'),('c','detail / action')], 'Adds a detail: whose it is, what it contains, what it is made of, or what it is for.')],
   'que': [
    ('Saying what you think', [('v','think, say, know or hope'),('connector','que'),('c','what happens')], 'Links what someone thinks, says, knows or hopes to a statement.'),
-   ('Adding information', [('v','someone or something'),('connector','que'),('c','more about them or it')], 'Adds information about the person or thing just mentioned.'),
+   ('Adding information', [('v','noun'),('connector','que'),('c','description')], 'Adds information about the noun.'),
    ('Comparing', [('v','more, less or better'),('connector','que'),('c','what you compare with')], 'Means “than” when comparing people, things or situations.')],
   'se': [
-   ('Oneself / part of a verb', [('connector','se'),('v','a verb')], 'Can mean “oneself”, or belong with a verb such as sentirse (feel). It does not always mean “oneself”.'),
-   ('Without saying who', [('connector','se'),('v','a verb')], 'Describes what happens without naming who does it. Compare se habla (people speak) and se venden libros (books are sold).')],
+   ('Oneself / part of a verb', [('connector','se'),('v','verb')], 'Can mean “oneself”, or belong with a verb such as sentirse (feel). It does not always mean “oneself”.'),
+   ('Without saying who', [('connector','se'),('v','verb')], 'Describes what happens without naming who does it. Compare se habla (people speak) and se venden libros (books are sold).')],
   'lo': [
-   ('The … thing / part', [('connector','lo'),('c','a describing word')], 'With a describing word, means “the … thing” or “the … part”: lo importante = the important thing.'),
-   ('Him / it / that', [('connector','lo'),('v','a verb')], 'Refers to “him”, a masculine “it”, or an idea: lo sé = I know that.')],
-  'nos': [('Us / to us', [('connector','nos'),('v','a verb')], 'Refers to us: someone sees or helps us, or tells us something.')],
+   ('The … thing / part', [('connector','lo'),('c','adjective')], 'With an adjective, means “the … thing” or “the … part”: lo importante = the important thing.'),
+   ('Him / it / that', [('connector','lo'),('v','verb')], 'Refers to “him”, a masculine “it”, or an idea: lo sé = I know that.')],
+  'nos': [('Us / to us', [('connector','nos'),('v','verb')], 'Refers to us: someone sees or helps us, or tells us something.')],
   'al': [
-   ('To / at the', [('connector','al'),('c','a destination with el')], 'Here, a + el becomes al: “to the” or “at the”.'),
-   ('When doing something', [('connector','al'),('v','a verb in its dictionary form')], 'Means “when” doing something: al llegar = when someone arrives.')]
+   ('To / at the', [('connector','al'),('c','destination')], 'Here, a + el becomes al: “to the” or “at the”.'),
+   ('When doing something', [('connector','al'),('v','infinitive (dictionary form)')], 'Means “when” doing something: al llegar = when someone arrives.')]
  }
 }
 # Shorten a rule without forcing away necessary meaning.
@@ -63,7 +63,7 @@ for language in COPY.values():
 
 
 def build():
-    originals = {l: json.loads((ROOT / f'app/data/grammar-words/{l}.json').read_text()) for l in WORDS}
+    originals = {l: json.loads((OUT / f'{l}.original.json').read_text()) for l in WORDS}
     proposals = {l: {w: deepcopy(originals[l][w]) for w in words} for l, words in WORDS.items()}
     notes = {}
     def ex(l,w,i,j): return proposals[l][w]['relations'][i]['examples'][j]
@@ -140,6 +140,12 @@ def build():
 def main():
     from preview import render
     originals,proposals,ledger=build()
+    from traceable import attach, write_report
+    proposals, source_review = attach(proposals)
+    write_report(source_review)
+    from expand import expand, write_report as write_full_report
+    proposals, full_review = expand(originals, proposals)
+    write_full_report(OUT, full_review)
     OUT.mkdir(parents=True,exist_ok=True)
     for l,data in proposals.items(): (OUT/f'{l}.proposed.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
     (OUT/'review.json').write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
@@ -147,7 +153,7 @@ def main():
     (OUT/'scan.json').write_text(json.dumps(findings,ensure_ascii=False,indent=2)+'\n')
     (OUT/'scan.md').write_text(markdown(findings))
     (OUT/'proposal-scan.json').write_text(json.dumps(scan(proposals),ensure_ascii=False,indent=2)+'\n')
-    lines=['# Twelve-word editorial review','', 'All existing examples in the pilot were reviewed. Indexes are zero-based. No live data was changed.', '',
+    lines=['# Twelve-word editorial review','', 'Historical editorial pass: all existing pilot examples were reviewed. The current preview uses the separate traceable-review.md source selections. Indexes are zero-based. No live data was changed.', '',
            'First examples remain in their existing order: they already provide short, representative anchors. Revised sentences are original teaching examples, not quotations from the old sources.', '',
            'The JSON ledger preserves complete original and proposed markup and source labels. Original attributions have not been independently authenticated.', '']
     for row in ledger:

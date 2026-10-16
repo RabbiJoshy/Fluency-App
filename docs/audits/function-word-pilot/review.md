@@ -1,6 +1,6 @@
 # Twelve-word editorial review
 
-All existing examples in the pilot were reviewed. Indexes are zero-based. No live data was changed.
+Historical editorial pass: all existing pilot examples were reviewed. The current preview uses the separate traceable-review.md source selections. Indexes are zero-based. No live data was changed.
 
 First examples remain in their existing order: they already provide short, representative anchors. Revised sentences are original teaching examples, not quotations from the old sources.
 
@@ -12,7 +12,7 @@ The JSON ledger preserves complete original and proposed markup and source label
 
 Required link: the preceding verb governs 'de' before its object or action.
 
-**After:** Verbs with de · a verb used with de + de + someone, something or an action
+**After:** Verbs with de · verb + de + noun / verb / pronoun
 
 Some verbs use de to link to what follows. Learn the verb and de together.
 
@@ -96,7 +96,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Nominal binding: connects a head noun to its owner, origin, or material.
 
-**After:** Adding a detail · a thing or time + de + a detail or an action
+**After:** Adding a detail · noun + de + detail / action
 
 Adds a detail about ownership, contents, material or purpose, including an action: hora de partir = time to leave.
 
@@ -240,9 +240,9 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Relativization: refers back to a noun while connecting more information.
 
-**After:** Adding information · someone or something + que + more about them or it
+**After:** Adding information · noun + que + description
 
-Adds information about the person or thing just mentioned.
+Adds information about the noun.
 
 Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word.
 
@@ -456,7 +456,7 @@ Use você consistently in the Brazilian pilot; precisares is valid with tu, not 
 
 Reflexive clitic: action reflects back onto the person doing it.
 
-**After:** Oneself / part of a verb · se + a verb
+**After:** Oneself / part of a verb · se + verb
 
 Can mean “oneself”, or belong with a verb such as sentir-se (feel). It does not always mean “oneself”.
 
@@ -528,7 +528,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Definite determiner: points to a specific masculine singular noun.
 
-**After:** The · o + a masculine singular noun
+**After:** The · o + masculine singular noun
 
 Means “the” before a masculine singular noun, such as livro (book).
 
@@ -600,7 +600,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Direct object pronoun: replaces a 3rd-person masculine singular object ('him / it').
 
-**After:** Him / it · o + a verb
+**After:** Him / it · o + verb
 
 Refers to “him” or a masculine “it”. These examples place o before the verb; other positions also occur.
 
@@ -672,7 +672,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Pronominal argument: represents 'us / to us' receiving the action of a verb.
 
-**After:** Us / to us · nos + a verb
+**After:** Us / to us · nos + verb
 
 Refers to us: someone sees or helps us, or tells us something.
 
@@ -744,7 +744,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Contraction of 'em + os' (in / on / at the) before a masculine plural noun.
 
-**After:** In / on / at the · nos + a masculine plural noun
+**After:** In / on / at the · nos + masculine plural noun
 
 Combines em + os: “in”, “on” or “at the”, before a masculine plural noun.
 
@@ -816,7 +816,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Contraction formula pointing to a distant place or past moment.
 
-**After:** In / on / at that · naquele + a masculine singular noun
+**After:** In / on / at that · naquele + masculine singular noun
 
 Combines em + aquele: “in”, “on” or “at that”. It can refer to places, things or times.
 
@@ -888,7 +888,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Required link: preceding verb governs 'de' before its object or action.
 
-**After:** Verbs with de · a verb used with de + de + someone, something or an action
+**After:** Verbs with de · verb + de + noun / verb / pronoun
 
 Some verbs use de to link to what follows. Learn the verb and de together.
 
@@ -960,7 +960,7 @@ Highlight only the phrase described by the formula; keep the rest outside the co
 
 Nominal binding: marks possession, origin, content, or material.
 
-**After:** Adding a detail · a thing or time + de + a detail or an action
+**After:** Adding a detail · noun + de + detail / action
 
 Adds a detail about ownership, contents, material or purpose, including an action: hora de comer = time to eat.
 
@@ -1104,9 +1104,9 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Relativization: refers back to a noun while introducing descriptive detail.
 
-**After:** Adding information · someone or something + que + more about them or it
+**After:** Adding information · noun + que + description
 
-Adds information about the person or thing just mentioned.
+Adds information about the noun.
 
 Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word.
 
@@ -1248,7 +1248,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Reflexive clitic: action turns back upon the person doing it.
 
-**After:** Oneself / part of a verb · se + a verb
+**After:** Oneself / part of a verb · se + verb
 
 Can mean “oneself”, or belong with a verb such as sentirse (feel). It does not always mean “oneself”.
 
@@ -1320,7 +1320,7 @@ Use idiomatic English.
 
 Impersonal / Passive marker: signals general or collective truth ('one does').
 
-**After:** Without saying who · se + a verb
+**After:** Without saying who · se + verb
 
 Describes what happens without naming who does it. Compare se habla (people speak) and se venden libros (books are sold).
 
@@ -1392,9 +1392,9 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Neuter article: nominalizes an adjective into an abstract quality ('the ... thing').
 
-**After:** The … thing / part · lo + a describing word
+**After:** The … thing / part · lo + adjective
 
-With a describing word, means “the … thing” or “the … part”: lo importante = the important thing.
+With an adjective, means “the … thing” or “the … part”: lo importante = the important thing.
 
 Use everyday wording and match the formula to the displayed sentence order. Rules describe this usage, not every use of the word.
 
@@ -1464,7 +1464,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Direct object pronoun: replaces a masculine singular item or concept ('it / him').
 
-**After:** Him / it / that · lo + a verb
+**After:** Him / it / that · lo + verb
 
 Refers to “him”, a masculine “it”, or an idea: lo sé = I know that.
 
@@ -1536,7 +1536,7 @@ Reviewed sentence, translation, pattern fit and highlighting; retain.
 
 Object pronoun: represents 1st-person plural 'us / to us'.
 
-**After:** Us / to us · nos + a verb
+**After:** Us / to us · nos + verb
 
 Refers to us: someone sees or helps us, or tells us something.
 
@@ -1608,7 +1608,7 @@ Original nos alegramos belongs with alegrarse, not the us/to us pattern. Preserv
 
 Mandatory contraction of 'a + el' (to the / at the) before masculine nouns.
 
-**After:** To / at the · al + a destination with el
+**After:** To / at the · al + destination
 
 Here, a + el becomes al: “to the” or “at the”.
 
@@ -1680,7 +1680,7 @@ Highlight only the phrase described by the formula; keep the rest outside the co
 
 Temporal nexus: expresses 'upon doing' or 'when doing'.
 
-**After:** When doing something · al + a verb in its dictionary form
+**After:** When doing something · al + infinitive (dictionary form)
 
 Means “when” doing something: al llegar = when someone arrives.
 
