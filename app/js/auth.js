@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=711117f4';
-import { readJsonWithTimeout } from './read-request.js?v=711117f4';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=711117f4';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=711117f4';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=711117f4';
-import { dbGet, dbPut } from './offline-db.js?v=711117f4';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=711117f4';
+import './state.js?v=b42d1c29';
+import { readJsonWithTimeout } from './read-request.js?v=b42d1c29';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=b42d1c29';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=b42d1c29';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=b42d1c29';
+import { dbGet, dbPut } from './offline-db.js?v=b42d1c29';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=b42d1c29';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=711117f4';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=711117f4';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, hideLegacyAuthChoices } from './passwordless-auth.js?v=711117f4';
+} from './sync-queue.js?v=b42d1c29';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=b42d1c29';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=b42d1c29';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -156,12 +156,39 @@ function _openFirstRunTutorialUnlessLinked() {
 //   - mode/artist switch   → keep guest session → app, no landing
 //   - new tab at app URL   → no session → landing
 //   - new tab at #/about   → no session → landing + About on top
-//   - named user, any case → logged in (localStorage)
+function onPasswordlessSignedOut() {
+    if (currentUser?.initials) {
+        localStorage.removeItem(`progress_cache_${currentUser.initials}`);
+        localStorage.removeItem(`progress_cache_${getIsolatedSyncUser(currentUser.initials)}`);
+    }
+    localStorage.removeItem('flashcardUser');
+    clearDeviceSessionState();
+    currentUser = null;
+    showUserInfo();
+    showAuthModal();
+}
+
 function checkAuthentication() {
     if (PASSWORDLESS_ENABLED) {
         GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
+        const savedUser = localStorage.getItem('flashcardUser');
+        if (savedUser) {
+            try {
+                const parsed = JSON.parse(savedUser);
+                if (parsed && !parsed.isGuest) {
+                    currentUser = parsed;
+                    window.applyGlobalStudyDefaults?.();
+                    showUserInfo();
+                    hideAuthModal();
+                    _markAuthReady();
+                    setTimeout(() => window.checkAndShowAdminUpdateModal?.(), 300);
+                    startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
+                    return;
+                }
+            } catch (_) {}
+        }
         showAuthModal();
-        startPasswordlessAuth(completeProfileLogin, () => window.location.reload());
+        startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
         return;
     }
     // User-initiated refresh should drop guest mode so the landing reappears.
@@ -274,7 +301,7 @@ function enterGuestMode() {
 // Show login form
 function showLoginForm(mode = 'login') {
     if (PASSWORDLESS_ENABLED) {
-        startPasswordlessAuth(completeProfileLogin, () => window.location.reload());
+        startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
         return;
     }
     resetProfileLogin();
@@ -329,7 +356,7 @@ function hideLoginForm() {
 
 // Submit initials and login
 async function submitLogin() {
-    if (PASSWORDLESS_ENABLED) return startPasswordlessAuth(completeProfileLogin, () => window.location.reload());
+    if (PASSWORDLESS_ENABLED) return startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
     return submitProfileLogin(completeProfileLogin);
 }
 
@@ -516,9 +543,15 @@ function wireAccountPassword() {
 async function logout() {
     if (PASSWORDLESS_ENABLED) {
         await window.flushQueue?.().catch(() => {});
+        if (currentUser?.initials) {
+            localStorage.removeItem(`progress_cache_${currentUser.initials}`);
+            localStorage.removeItem(`progress_cache_${getIsolatedSyncUser(currentUser.initials)}`);
+        }
         localStorage.removeItem('flashcardUser');
         clearDeviceSessionState();
-        await window.Clerk?.signOut();
+        currentUser = null;
+        showUserInfo();
+        await signOutPasswordless();
         window.location.reload();
         return;
     }

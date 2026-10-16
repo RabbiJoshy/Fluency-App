@@ -1,4 +1,4 @@
-import { IS_STAGING } from './env.js?v=711117f4';
+import { IS_STAGING } from './env.js?v=b42d1c29';
 
 export const PASSWORDLESS_ENABLED = true;
 export const PASSWORDLESS_SYNC_URL = IS_STAGING
@@ -93,6 +93,60 @@ async function resolveProfile(user, container) {
     });
 }
 
+export async function signOutPasswordless() {
+    activeUserId = null;
+    resolvingUserId = null;
+    mounted = false;
+    if (loading) {
+        try { await loading; } catch (_) {}
+    }
+    if (window.Clerk) {
+        try {
+            await window.Clerk.signOut();
+        } catch (error) {
+            console.warn('Clerk signOut error:', error);
+        }
+    }
+}
+
+function mountSignInUI(container) {
+    if (mounted || !window.Clerk) return;
+    const modal = document.getElementById('authModal');
+    const subtitle = modal?.querySelector('.auth-welcome-copy p');
+    if (subtitle) subtitle.style.display = '';
+    const notice = document.getElementById('passwordlessEmailNotice');
+    if (notice) {
+        notice.classList.remove('hidden');
+        notice.style.display = '';
+    }
+    container.replaceChildren();
+    const returnUrl = window.location.origin + window.location.pathname + window.location.hash;
+    const signupUrl = new URL(window.location.href);
+    signupUrl.searchParams.set('account', 'create');
+    const props = {
+        routing: 'virtual', forceRedirectUrl: returnUrl,
+        signInForceRedirectUrl: returnUrl, signUpForceRedirectUrl: returnUrl,
+        signInUrl: returnUrl, signUpUrl: signupUrl.href,
+        appearance: { layout: { socialButtonsVariant: 'blockButton' }, elements: {
+            header: { display: 'none' },
+            socialButtons: { display: 'flex', flexDirection: 'column', gap: '10px' },
+            card: { boxShadow: 'none', background: 'transparent', border: 'none', padding: '0' },
+            cardBox: { boxShadow: 'none', width: '100%', borderRadius: '0' },
+            socialButtonsBlockButton: { minHeight: '44px', width: '100%' }
+        }, variables: {
+            colorPrimary: '#a5b4fc', colorForeground: '#f8fafc', colorMutedForeground: '#cbd5e1',
+            colorBackground: '#1a222c', colorInputBackground: '#111827',
+            colorInputText: '#f8fafc', borderRadius: '12px'
+        } }
+    };
+    if (new URLSearchParams(window.location.search).get('account') === 'create') {
+        window.Clerk.mountSignUp(container, props);
+    } else {
+        window.Clerk.mountSignIn(container, props);
+    }
+    mounted = true;
+}
+
 export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
     hideLegacyAuthChoices();
     let container = document.getElementById('passwordlessSignIn');
@@ -120,9 +174,21 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
         stylesheet.href = stylesheetUrl.href;
         document.head.appendChild(stylesheet);
     }
+    const modal = document.getElementById('authModal');
+    const subtitle = modal?.querySelector('.auth-welcome-copy p');
+    const notice = document.getElementById('passwordlessEmailNotice');
+    if (!mounted && !window.Clerk?.user) {
+        if (subtitle) subtitle.style.display = 'none';
+        if (notice) notice.style.display = 'none';
+        container.innerHTML = `
+            <div class="passwordless-loading-container" role="status">
+                <div class="passwordless-spinner" aria-hidden="true"></div>
+                <span class="passwordless-loading-text">Loading secure sign-in…</span>
+            </div>
+        `;
+    }
     container.style.display = 'flex';
     if (!loading) {
-        container.textContent = 'Loading secure sign-in…';
         loading = (async () => {
             await loadScript(`https://${CLERK_DOMAIN}/npm/@clerk/ui@1/dist/ui.browser.js`);
             await loadScript(`https://${CLERK_DOMAIN}/npm/@clerk/clerk-js@6/dist/clerk.browser.js`, {
@@ -131,7 +197,15 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
             await window.Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } });
             const handle = async ({ user, session }) => {
                 if (!user || !session) {
-                    if (activeUserId) { activeUserId = null; onSignedOut(); }
+                    if (activeUserId) {
+                        activeUserId = null;
+                        onSignedOut();
+                    } else if (localStorage.getItem('flashcardUser')) {
+                        onSignedOut();
+                    }
+                    if (!mounted && window.Clerk) {
+                        mountSignInUI(container);
+                    }
                     return;
                 }
                 if (activeUserId === user.id || resolvingUserId === user.id) return;
@@ -149,6 +223,8 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
                 window.dispatchEvent(new Event('fluency-auth-restored'));
             };
             window.Clerk.addListener(state => { handle(state).catch(error => {
+                if (subtitle) subtitle.style.display = 'none';
+                if (notice) notice.style.display = 'none';
                 container.replaceChildren();
                 const message = document.createElement('p'); message.textContent = error.message;
                 const retry = document.createElement('button'); retry.className = 'auth-submit-btn'; retry.textContent = 'Retry sign-in';
@@ -159,35 +235,12 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
     }
     try {
         await loading;
-        if (!window.Clerk.user && !mounted) {
-            container.replaceChildren();
-            const returnUrl = window.location.origin + window.location.pathname + window.location.hash;
-            const signupUrl = new URL(window.location.href);
-            signupUrl.searchParams.set('account', 'create');
-            const props = {
-                routing: 'virtual', forceRedirectUrl: returnUrl,
-                signInForceRedirectUrl: returnUrl, signUpForceRedirectUrl: returnUrl,
-                signInUrl: returnUrl, signUpUrl: signupUrl.href,
-                appearance: { layout: { socialButtonsVariant: 'blockButton' }, elements: {
-                    header: { display: 'none' },
-                    socialButtons: { display: 'flex', flexDirection: 'column', gap: '10px' },
-                    card: { boxShadow: 'none', background: 'transparent', border: 'none', padding: '0' },
-                    cardBox: { boxShadow: 'none', width: '100%', borderRadius: '0' },
-                    socialButtonsBlockButton: { minHeight: '44px', width: '100%' }
-                }, variables: {
-                    colorPrimary: '#a5b4fc', colorForeground: '#f8fafc', colorMutedForeground: '#cbd5e1',
-                    colorBackground: '#1a222c', colorInputBackground: '#111827',
-                    colorInputText: '#f8fafc', borderRadius: '12px'
-                } }
-            };
-            if (new URLSearchParams(window.location.search).get('account') === 'create') {
-                window.Clerk.mountSignUp(container, props);
-            } else {
-                window.Clerk.mountSignIn(container, props);
-            }
-            mounted = true;
+        if (!window.Clerk.user) {
+            mountSignInUI(container);
         }
     } catch (error) {
+        if (subtitle) subtitle.style.display = 'none';
+        if (notice) notice.style.display = 'none';
         container.replaceChildren();
         const message = document.createElement('p');
         message.textContent = error.message;
