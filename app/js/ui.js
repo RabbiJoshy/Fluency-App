@@ -719,12 +719,17 @@ function renderLanguageTabs() {
 
     const step = document.getElementById('step1');
     const header = document.getElementById('step1Header');
-    const openLanguagePicker = () => window.showLanguagePicker?.(config.languages);
+    const openLanguagePicker = () => window.showLanguagePicker?.(config.languages, { fromMainScreen: true });
     header.setAttribute('role', 'button');
     header.setAttribute('tabindex', '0');
     header.setAttribute('aria-haspopup', 'dialog');
     header.onclick = () => {
         if (!step.classList.contains('language-summary-active')) openLanguagePicker();
+    };
+    step.onclick = event => {
+        if (!step.classList.contains('language-summary-active') && event.target !== header && !header.contains(event.target)) {
+            openLanguagePicker();
+        }
     };
     header.onkeydown = event => {
         if (!step.classList.contains('language-summary-active')

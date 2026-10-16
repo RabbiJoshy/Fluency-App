@@ -383,10 +383,17 @@ async function completeProfileLogin(user) {
     window.applyGlobalStudyDefaults?.();
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
-    hideAuthModal();
-    if (user.isNew) {
+    const activeLangTab = document.querySelector('.lang-tab.active');
+    const hasEstablishedLanguage = Boolean(
+        !user.isNew
+        && (localStorage.getItem('fluencyPreferredLanguageV1') || activeLangTab)
+    );
+    if (!hasEstablishedLanguage) {
         setTimeout(() => {
-            window.showLanguagePicker?.(config.languages);
+            const step1 = document.getElementById('step1');
+            if (!step1?.classList.contains('language-summary-active')) {
+                window.showLanguagePicker?.(config.languages, { fromMainScreen: true });
+            }
         }, 150);
     } else {
         setTimeout(_openFirstRunTutorialUnlessLinked, 250);

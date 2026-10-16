@@ -1019,6 +1019,17 @@ loadConfig().then(async () => {
         else {
             if (preferredIsReady && !isResumeNavigation) {
                 document.querySelector(`.lang-tab[data-lang="${preferredLanguage}"]`)?.click();
+            } else if (!isResumeNavigation && !activeArtist && !wordRoute && bootRoute.kind !== 'music') {
+                setTimeout(() => {
+                    const step1 = document.getElementById('step1');
+                    if (step1 && !step1.classList.contains('language-summary-active')) {
+                        const setupPanel = document.getElementById('setupPanel');
+                        const authModal = document.getElementById('authModal');
+                        if (setupPanel && setupPanel.style.display !== 'none' && (!authModal || authModal.classList.contains('hidden'))) {
+                            window.showLanguagePicker?.(config.languages, { fromMainScreen: true });
+                        }
+                    }
+                }, 150);
             }
             if (!isResumeNavigation) hideAppLoading();
         }
@@ -1860,13 +1871,14 @@ window.showLyricsPicker = showLyricsPicker;
 window.showArtistPicker = showArtistPicker;
 
 function showPortugueseVarietyPicker() {
+    const fromMainScreen = Boolean(arguments[0]?.fromMainScreen || window._fromMainScreenLanguagePicker);
     showChoiceSheet({
         id: 'portugueseVarietyChoiceSheet',
         ariaLabel: 'Choose Portuguese variety',
         title: 'Portuguese',
         intro: 'Choose variety',
         variant: 'list',
-        onBack: () => showLanguagePicker(config.languages),
+        onBack: () => showLanguagePicker(config.languages, { fromMainScreen }),
         entries: [
             {
                 label: 'European Portuguese',
@@ -1875,6 +1887,9 @@ function showPortugueseVarietyPicker() {
                 accent: (config.languages?.portuguese?.colorTheme?.primary) || '#046A38',
                 selected: selectedLanguage === 'portuguese',
                 onSelect: () => {
+                    if (fromMainScreen) {
+                        window._forceKnownLanguagesIntro = true;
+                    }
                     document.querySelector('.lang-tab[data-lang="portuguese"]')?.click();
                 }
             },
@@ -1893,7 +1908,7 @@ window.showPortugueseVarietyPicker = showPortugueseVarietyPicker;
 
 // Standard-mode language adapter: flag pictures + existing hidden language
 // buttons, so all loading/theme/progress behavior stays in ui.js.
-function showLanguagePicker(languages) {
+function showLanguagePicker(languages, { fromMainScreen = false } = {}) {
     const languageOrder = config.languageDisplayOrder || Object.keys(config.languages);
     // Flags live on each language's own config entry.
     const flags = Object.fromEntries(
@@ -1939,6 +1954,12 @@ function showLanguagePicker(languages) {
                 }
                 window.resetActiveArtist?.();
                 window.dismissMusicWorkspace?.();
+                if (fromMainScreen) {
+                    window._forceKnownLanguagesIntro = true;
+                    window._fromMainScreenLanguagePicker = true;
+                } else {
+                    window._fromMainScreenLanguagePicker = false;
+                }
                 if (isPortuguese) {
                     showPortugueseVarietyPicker();
                 } else {
@@ -2520,10 +2541,13 @@ function renderKnownLanguagesModalChoices(availableCodes) {
 }
 window.renderKnownLanguagesModalChoices = renderKnownLanguagesModalChoices;
 
-function maybeShowKnownLanguagesIntro(targetLang) {
+function maybeShowKnownLanguagesIntro(targetLang, { force = false } = {}) {
+    const shouldForce = force || window._forceKnownLanguagesIntro === true;
+    window._forceKnownLanguagesIntro = false;
+
     const lang = targetLang || selectedLanguage;
     if (!lang) return false;
-    if (hasSeenKnownLanguagesIntro(lang)) return false;
+    if (!shouldForce && hasSeenKnownLanguagesIntro(lang)) return false;
 
     const available = getKnownLanguagesForTarget(lang);
     if (!available || available.length === 0) return false;
@@ -2534,8 +2558,9 @@ function maybeShowKnownLanguagesIntro(targetLang) {
     if (auth && !auth.classList.contains('hidden')) return false;
 
     const modal = document.getElementById('knownLanguagesModal');
-    if (!modal || !modal.classList.contains('hidden')) return false;
-    if (document.querySelector('.modal:not(.hidden)')) return false;
+    if (!modal) return false;
+    const otherModal = Array.from(document.querySelectorAll('.modal:not(.hidden)')).find(m => m.id !== 'knownLanguagesModal');
+    if (otherModal) return false;
 
     window.closeChoiceSheet?.('languageChoiceSheet');
     window.closeChoiceSheet?.('portugueseVarietyChoiceSheet');
