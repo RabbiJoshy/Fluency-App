@@ -74,3 +74,49 @@ for (const lang of languages) {
         self.assertIn("pinAnchor", wt_js)
         self.assertIn("pinTitle: 'How common'", wt_js)
         self.assertIn("pinAnchor: '.breakdown-trigger'", wt_js)
+
+    def test_replica_and_tutorial_smart_skip_alignment(self):
+        """Replica front POS pills, ambient glow, and Tutorial Smart Skip page match live app controls."""
+        result = subprocess.run(
+            ['node', '--input-type=module', '-'], cwd=ROOT, text=True,
+            input=r'''
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import { REPLICA_CARDS, esc, renderFront, replicaCardHTML } from './app/js/card-replica.js';
+globalThis.window = {};
+
+const quieroFront = renderFront(REPLICA_CARDS.quieroSpeech);
+assert(quieroFront.includes('style="--front-pos-rgb: 0, 212, 170;"'));
+assert(quieroFront.includes('<span class="front-lemma-from">from </span>querer'));
+
+const cieloFront = renderFront(REPLICA_CARDS.cielo);
+assert(cieloFront.includes('style="--front-pos-rgb: 74, 158, 255;"'));
+assert(!cieloFront.includes('front-lemma-from'));
+
+const cardHtml = replicaCardHTML(REPLICA_CARDS.quieroSpeech);
+assert(cardHtml.includes('--card-pos-rgb: 0, 212, 170;'));
+assert(cardHtml.includes('--card-ambient-glow: radial-gradient('));
+
+const source = fs.readFileSync('./app/js/tutorial.js', 'utf8').replace(/import \{[\s\S]*?\} from '[^']+';/, '');
+const context = vm.createContext({
+  assert, REPLICA_CARDS, esc,
+  window: {}, document: {
+    readyState: 'loading', addEventListener() {}, querySelector() { return null; }, getElementById() { return null; }
+  },
+  localStorage: { getItem() { return null; } }
+});
+vm.runInContext(source + `
+const skipHtml = TUTORIAL_PAGES.smartSkip.html(tutorialAdapter('spanish'));
+assert(skipHtml.includes('smart-skip-choice-btn'));
+assert(skipHtml.includes('Fewer cards, less repetition'));
+assert(skipHtml.includes('Details'));
+assert(!skipHtml.includes('streamline-rec-badge'));
+`, context);
+''', capture_output=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        auth_js = (ROOT / 'app' / 'js' / 'auth.js').read_text(encoding='utf-8')
+        self.assertNotIn('<div class="about-demo-pos-legend">', auth_js)
+        self.assertIn("posEl.style.setProperty('--front-pos-rgb'", auth_js)
+
