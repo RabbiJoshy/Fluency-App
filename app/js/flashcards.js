@@ -2068,41 +2068,52 @@ function initializeApp() {
         deckScrubber.addEventListener('lostpointercapture', finishScrub);
     }
 
-    // Card-position seek bar: a short drag is one card; a wide plateau
-    // holds that step so skipping farther takes a longer pull.
+    // Card-position seek bar: smooth, direct track scrubbing with proportional
+    // positioning across the set.
     const cardBackPips = document.getElementById('cardBackPips');
     if (cardBackPips) {
         let pipPointerId = null;
-        let scrubOriginIndex = 0;
-        let scrubOriginX = 0;
+        const getScrubIndex = event => {
+            const track = cardBackPips.querySelector('.cbs-track-wrap') || cardBackPips;
+            const rect = track.getBoundingClientRect();
+            if (rect.width <= 0) return null;
+            const card = flashcards[currentIndex];
+            const onPhraseCard = card?.isChainChild === true && cardChainReturnIndex >= 0;
+            const scrubCount = onPhraseCard ? flashcards.length - 1 : flashcards.length;
+            const last = Math.max(0, scrubCount - 1);
+            if (last <= 0) return null;
+            const ratio = (event.clientX - rect.left) / rect.width;
+            const clamped = Math.max(0, Math.min(1, ratio));
+            return Math.round(clamped * last);
+        };
         const endPipDrag = event => {
             if (pipPointerId === null || (event && event.pointerId !== pipPointerId)) return;
-            if (cardBackPips.hasPointerCapture?.(pipPointerId)) {
-                cardBackPips.releasePointerCapture(pipPointerId);
-            }
+            const finishedPointerId = pipPointerId;
             pipPointerId = null;
+            if (cardBackPips.hasPointerCapture?.(finishedPointerId)) {
+                cardBackPips.releasePointerCapture(finishedPointerId);
+            }
+            _deckScrubberActive = false;
             cardBackPips.classList.remove('is-scrubbing');
         };
         cardBackPips.addEventListener('pointerdown', event => {
             if (event.button !== undefined && event.button !== 0) return;
-            const card = flashcards[currentIndex];
             pipPointerId = event.pointerId;
-            scrubOriginX = event.clientX;
-            scrubOriginIndex = (card?.isChainChild && cardChainReturnIndex >= 0)
-                ? cardChainReturnIndex
-                : currentIndex;
+            _deckScrubberActive = true;
             cardBackPips.classList.add('is-scrubbing');
             cardBackPips.setPointerCapture?.(event.pointerId);
+            const targetIndex = getScrubIndex(event);
+            if (targetIndex !== null) {
+                goToDeckCard(targetIndex, { announceHeadword: false });
+            }
         });
         cardBackPips.addEventListener('pointermove', event => {
             if (event.pointerId !== pipPointerId) return;
             event.preventDefault();
-            const last = Math.max(0, flashcards.length - 1);
-            const nextIndex = Math.max(0, Math.min(
-                last,
-                scrubOriginIndex + cardOffsetFromScrubDelta(event.clientX - scrubOriginX)
-            ));
-            goToDeckCard(nextIndex, { announceHeadword: false });
+            const targetIndex = getScrubIndex(event);
+            if (targetIndex !== null) {
+                goToDeckCard(targetIndex, { announceHeadword: false });
+            }
         });
         cardBackPips.addEventListener('pointerup', endPipDrag);
         cardBackPips.addEventListener('pointercancel', endPipDrag);
