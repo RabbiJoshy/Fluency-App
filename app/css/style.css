@@ -17211,12 +17211,13 @@
   padding: 0;
   border: 0;
 }
-.standard-source-choice-intro { display: grid; gap: 8px; }
+.standard-source-choice-intro { display: grid; gap: 14px; }
 .standard-source-choice-heading {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  margin-bottom: 2px;
 }
 .standard-source-choice-intro .standard-source-choice-title {
   color: var(--text-primary);
@@ -22805,7 +22806,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 /* One rhythm: the same space above the title as below the last control, and
    the same gap from the note to the first option as from the last option to
    the Spotify button. */
-#step1.language-summary-active #standardSourceCard { padding-top: 20px; padding-bottom: 18px; }
+#step1.language-summary-active #standardSourceCard { padding-top: 6px; padding-bottom: 18px; }
 #step1.language-summary-active #standardSourceCard .standard-source-choice-intro { margin-bottom: 0; }
 #step1.language-summary-active #standardSourceCard .standard-source-spotify { margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; }
 @media (min-width: 900px) {
@@ -23244,14 +23245,17 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 
 /* Each header owns the whole gap between surfaces, with equal space on
    either side of its title. Section margins must not add extra space above. */
+.container:has(#setupPanel:not(.hidden)) { padding-top: 10px; }
+#setupPanel.file-upload { padding-top: 2px; }
 #setupPanel > #step1 { margin-bottom: 0; }
 #step2, #step4, #reviewDeckSection.review-deck-step { padding-top: 0; padding-bottom: 0; margin-bottom: 0; }
-#step2 > .step-header,
+#step2 > .step-header { margin: 0; padding: 2px 4px 14px; }
 #step4 > .step-header,
-#reviewDeckSection > .step-header { margin: 0; padding: 8px 4px; }
+#reviewDeckSection > .step-header { margin: 0; padding: 6px 4px 12px; }
 #step2 > .step-header > .step-title-trigger,
 #step4 > .step-header > .step-title-trigger,
-#reviewDeckSection > .step-header > .step-title-trigger { min-height: 44px; padding-top: 4px; padding-bottom: 4px; }
+#reviewDeckSection > .step-header > .step-title-trigger { min-height: 40px; padding-top: 2px; padding-bottom: 2px; }
+#step2 .level-choosing { margin-top: 2px; }
 
 /* Landing page, dark theme: boxes are the darkest surface and the page behind
    them is lifted a step, so text sits on near-black and the boxes read as

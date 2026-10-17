@@ -187,4 +187,19 @@ class UiRefinementTests(unittest.TestCase):
         # CSS styles button with action pill styling
         self.assertIn('.smart-skip-toggle-btn', css)
         self.assertIn('.smart-skip-toggle-btn.is-on', css)
+        self.assertIn('.smart-skip-switch-track', css)
+        self.assertIn('.smart-skip-switch-thumb', css)
+        self.assertIn('class="smart-skip-switch-track"', index_html)
+
+    def test_setup_headings_and_level_spacing(self):
+        style_css = (ROOT / 'app/css/style.css').read_text(encoding='utf-8')
+        # Setup container/panel top padding trimmed so content starts higher
+        self.assertIn('.container:has(#setupPanel:not(.hidden)) { padding-top: 10px; }', style_css)
+        self.assertIn('#setupPanel.file-upload { padding-top: 2px; }', style_css)
+        # Choose a level header has tighter top padding and breathing room below
+        self.assertIn('#step2 > .step-header { margin: 0; padding: 2px 4px 14px; }', style_css)
+        self.assertIn('#step2 .level-choosing { margin-top: 2px; }', style_css)
+        # Choose your vocabulary header starts higher and has breathing gap to bullets
+        self.assertIn('#step1.language-summary-active #standardSourceCard { padding-top: 6px; padding-bottom: 18px; }', style_css)
+        self.assertIn('.standard-source-choice-intro { display: grid; gap: 14px; }', style_css)
 
