@@ -297,6 +297,15 @@ function refresh() {
     document.querySelectorAll('[data-ss-master]').forEach(button => {
         button.setAttribute('aria-pressed', String((button.dataset.ssMaster === 'on') === on));
     });
+    const toggleBtn = document.getElementById('smartSkipToggleBtn');
+    const stateLabel = document.getElementById('smartSkipStateLabel');
+    if (toggleBtn) {
+        toggleBtn.setAttribute('aria-checked', String(on));
+        toggleBtn.classList.toggle('is-on', on);
+    }
+    if (stateLabel) {
+        stateLabel.textContent = on ? 'On' : 'Off';
+    }
     const hubRow = document.getElementById('setupOptions')?.querySelector('.fast-track-hub-row');
     if (hubRow) {
         hubRow.classList.toggle('is-unseen', !hasSeenFastTrackPage());
@@ -595,6 +604,9 @@ function init() {
         refresh();
     });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
+    document.getElementById('smartSkipToggleBtn')?.addEventListener('click', () => {
+        applyFastMode(currentState() !== 'on');
+    });
     document.querySelectorAll('[data-ss-master]').forEach(button => {
         button.addEventListener('click', () => {
             const on = button.dataset.ssMaster === 'on';

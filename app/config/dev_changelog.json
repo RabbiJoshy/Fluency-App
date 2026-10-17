@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T15:12:00+01:00",
+      "date": "2026-10-17 15:12 BST",
+      "agent": "Antigravity",
+      "summary": "Omit zero counts from level picker progress legend and unify Smart Skip into action toggle button",
+      "detail": [
+        "Updated the level picker progress stats line to render only categories with counts > 0, eliminating '0 Practice' and '0 Known' when empty.",
+        "Unified Smart Skip label and segmented switch into a single centered action button ('Smart Skip · On' / 'Smart Skip · Off').",
+        "Styled the unified Smart Skip button to match the visual language, radius, and weight of the Study and Practise buttons.",
+        "Maintained centered secondary summary ('Fewer cards, less repetition · Details ›') directly below the toggle button."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T14:58:00+01:00",
       "date": "2026-10-17 14:58 BST",
       "agent": "Antigravity",

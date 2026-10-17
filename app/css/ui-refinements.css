@@ -364,29 +364,80 @@
     box-shadow: none;
 }
 
-/* Quiet attached footer row at the bottom of the Level card. */
+/* Quiet attached footer row at the bottom of the Level card: unified Smart Skip toggle button */
 #setupOptions .fast-track-hub-row {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 10px 16px;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+    padding: 14px 16px;
     border: 0;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
 }
-#setupOptions .smart-skip-copy {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    min-width: 0;
+.smart-skip-toggle-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background: color-mix(in srgb, var(--bg-card) 85%, transparent);
+    color: var(--text-secondary);
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+.smart-skip-toggle-btn:hover {
+    border-color: color-mix(in srgb, var(--text-primary) 30%, var(--border-color));
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+.smart-skip-toggle-btn.is-on {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary-text, #fff);
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--accent-primary) 38%, transparent);
+}
+.smart-skip-toggle-btn.is-on:hover {
+    filter: brightness(1.08);
+}
+.smart-skip-toggle-btn:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+.smart-skip-toggle-btn .smart-skip-start-label {
+    display: inline-flex;
+    align-items: center;
+    font: 750 15px/1 var(--font-emphasis);
+}
+.smart-skip-toggle-btn .study-session-divider {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: .65;
+    user-select: none;
+}
+.smart-skip-toggle-btn .smart-skip-state-label {
+    display: inline-flex;
+    align-items: center;
+    font: 600 14px/1 var(--font-emphasis);
+    opacity: .95;
 }
 #setupOptions .smart-skip-summary-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: 2px 6px;
     min-width: 0;
 }
@@ -394,51 +445,14 @@
     color: var(--text-muted);
     font: 600 13px/1 var(--font-reading);
 }
-#setupOptions .smart-skip-hub-summary { margin: 0; }
-#setupOptions .smart-skip-details-btn { flex-shrink: 0; }
-.smart-skip-hub-label {
-    text-align: left;
-    text-transform: none;
-    letter-spacing: -0.01em;
-    color: var(--text-primary);
-    font: 700 15px/1.25 var(--font-emphasis);
-    white-space: nowrap;
-}
-.smart-skip-choice {
-    flex-shrink: 0;
-    display: inline-flex;
-    padding: 3px;
-    border: 1px solid var(--border-color);
-    border-radius: 9px;
-    background: var(--bg-tertiary);
-}
-.smart-skip-choice button {
-    appearance: none;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    min-width: 46px;
-    min-height: 32px;
-    padding: 4px 12px;
-    background: transparent;
+#setupOptions .smart-skip-hub-summary {
+    margin: 0;
+    text-align: center;
     color: var(--text-secondary);
-    font: 600 13px/1 var(--font-reading);
-    cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    font: 400 12.5px/1.35 var(--font-reading);
 }
-.smart-skip-choice button[aria-pressed="true"] {
-    background: var(--bg-card);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-    box-shadow: 0 1px 3px rgba(0,0,0,.15);
-}
-.smart-skip-choice button[data-ss-master="on"][aria-pressed="true"] {
-    background: var(--accent-primary);
-    border-color: var(--accent-primary);
-    color: var(--accent-primary-text, #fff);
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--accent-primary) 35%, transparent);
-}
-.smart-skip-hub-summary { text-align: left; color: var(--text-secondary); font: 400 12.5px/1.35 var(--font-reading); }
-.smart-skip-details-btn {
+#setupOptions .smart-skip-details-btn {
+    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     gap: 3px;
@@ -452,43 +466,8 @@
     font: 600 13px/1.25 var(--font-reading);
     cursor: pointer;
 }
-.smart-skip-details-btn:hover { color: var(--text-primary); }
-.smart-skip-choice button:focus-visible,
-.smart-skip-details-btn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
-@media (min-width: 768px) {
-    #setupOptions .fast-track-hub-row {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        gap: 9px;
-        padding: 14px 20px;
-    }
-    #setupOptions .smart-skip-copy {
-        align-items: center;
-        gap: 3px;
-    }
-    #setupOptions .smart-skip-summary-row {
-        justify-content: center;
-    }
-    .smart-skip-hub-label {
-        text-align: center;
-        font-size: 16px;
-    }
-    .smart-skip-hub-summary {
-        text-align: center;
-        font-size: 13px;
-    }
-    .smart-skip-choice button {
-        min-width: 76px;
-        min-height: 34px;
-        padding: 6px 18px;
-        font-size: 13.5px;
-    }
-}
-@media (max-width: 767px) {
-    #setupOptions .fast-track-hub-row { padding: 10px 12px; gap: 10px; }
-}
+#setupOptions .smart-skip-details-btn:hover { color: var(--text-primary); }
+#setupOptions .smart-skip-details-btn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
 
 .level-help-section { margin: 16px 0; }
 .level-help-section h4 { margin: 0 0 6px; color: var(--text-primary); font: 700 16px/1.3 var(--font-emphasis); }

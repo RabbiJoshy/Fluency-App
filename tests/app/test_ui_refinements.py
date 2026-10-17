@@ -161,3 +161,30 @@ class UiRefinementTests(unittest.TestCase):
         self.assertIn('account-avatar--ai', ai_pref_js)
         self.assertIn('preferredAiTrigger', ai_pref_js)
         self.assertIn('preferredAiMenu', ai_pref_js)
+
+    def test_level_progress_legend_omits_zero_counts(self):
+        ui_js = (ROOT / 'app/js/ui.js').read_text(encoding='utf-8')
+        # Stats are only included if > 0
+        self.assertIn('if (levelNewCount > 0) stats.push', ui_js)
+        self.assertIn('if (levelReviewCount > 0) stats.push', ui_js)
+        self.assertIn('if (levelKnownCount > 0) stats.push', ui_js)
+
+    def test_smart_skip_unified_toggle_button(self):
+        index_html = (ROOT / 'app/index.html').read_text(encoding='utf-8')
+        fast_mode_js = (ROOT / 'app/js/fast-mode.js').read_text(encoding='utf-8')
+        css = (ROOT / 'app/css/ui-refinements.css').read_text(encoding='utf-8')
+
+        # Button exists with role switch and state label
+        self.assertIn('id="smartSkipToggleBtn"', index_html)
+        self.assertIn('class="smart-skip-toggle-btn"', index_html)
+        self.assertIn('id="smartSkipStateLabel"', index_html)
+
+        # JS wires click handler and updates label on refresh
+        self.assertIn("document.getElementById('smartSkipToggleBtn')?.addEventListener('click'", fast_mode_js)
+        self.assertIn("toggleBtn.classList.toggle('is-on', on)", fast_mode_js)
+        self.assertIn("stateLabel.textContent = on ? 'On' : 'Off'", fast_mode_js)
+
+        # CSS styles button with action pill styling
+        self.assertIn('.smart-skip-toggle-btn', css)
+        self.assertIn('.smart-skip-toggle-btn.is-on', css)
+

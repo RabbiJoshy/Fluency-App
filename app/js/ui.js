@@ -3043,17 +3043,20 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
     const description = `${levelNewCount} new, ${levelReviewCount} practice, ${levelKnownCount} known, ${levelEstimatedCount} estimated, ${levelSkippedCount} skipped`;
     const goDisabled = nextCount === 0 || _studySessionStarting;
+    const stats = [];
+    if (levelNewCount > 0) stats.push(`<b class="study-set-stat"><i class="is-unseen"></i>${levelNewCount} New</b>`);
+    if (levelReviewCount > 0) stats.push(`<b class="study-set-stat"><i class="is-review"></i>${levelReviewCount} Practice</b>`);
+    if (levelKnownCount > 0) stats.push(`<b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>`);
+    if (levelEstimatedCount > 0) stats.push(`<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated</b>`);
+    if (levelSkippedCount > 0) stats.push(`<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>`);
+    if (stats.length === 0) stats.push(`<b class="study-set-stat"><i class="is-unseen"></i>0 New</b>`);
     container.innerHTML = `
         <div class="study-set-panel">
             <div class="study-set-choice">
                 <div class="study-level-bar step-help-btn" role="button" tabindex="0" data-tooltip="levelColoursTooltip" aria-label="Level progress: ${description}. Click for details" aria-haspopup="dialog" title="Click for level progress details" style="${progressStyle}"></div>
                 <div class="study-set-current-copy">
                     <span>
-                        <b class="study-set-stat"><i class="is-unseen"></i>${levelNewCount} New</b>
-                        <b class="study-set-stat"><i class="is-review"></i>${levelReviewCount} Practice</b>
-                        <b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>
-                        ${levelEstimatedCount > 0 ? `<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated</b>` : ''}
-                        ${levelSkippedCount > 0 ? `<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>` : ''}
+                        ${stats.join('')}
                     </span>
                 </div>
                 ${nextCount === 0
