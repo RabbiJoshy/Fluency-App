@@ -340,10 +340,10 @@ async function deleteExactProgressRow(db, params) {
  * status, target, category, item, release — stays a real column.
  */
 async function saveFlag(db, params, env) {
-  const parsed = parseFullId(params.wordId || params.cardId || '');
+  const parsed = parseFullId(params.cardId || params.wordId || '');
   const flagId = params.flagId
     || `${params.user}:${params.wordId}:${params.flaggedAt || Date.now()}`;
-  await db.prepare(`
+  const { meta } = await db.prepare(`
     INSERT INTO flags (
       flag_id, user_id, created_at, item_id, item_type, lang_code, language,
       mode, source, release_id, target, category, note, event_id, payload_json,
@@ -351,7 +351,8 @@ async function saveFlag(db, params, env) {
     ) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,'open')
     ON CONFLICT(flag_id) DO UPDATE SET
       payload_json=excluded.payload_json, note=excluded.note,
-      target=excluded.target, category=excluded.category`)
+      target=excluded.target, category=excluded.category
+    WHERE flags.user_id=excluded.user_id`)
     .bind(
       flagId, params.user || '', params.flaggedAt || new Date().toISOString(),
       parsed ? parsed.itemId : '', normalizeItemType(params.itemType || 'word'),
@@ -360,6 +361,8 @@ async function saveFlag(db, params, env) {
       params.releaseId || '', params.target || '', params.category || '',
       params.note || '', params.eventId ?? null, JSON.stringify(params)
     ).run();
+
+  if (!meta.changes) throw Object.assign(new Error('This flag belongs to another account.'), { status: 403 });
 
   // Mirror to the audit tab. Best-effort: the sheet is an export, so a failure
   // there must not fail the learner's flag.

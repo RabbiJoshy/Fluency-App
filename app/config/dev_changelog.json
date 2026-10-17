@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T17:56:29+01:00",
+      "date": "2026-10-17 17:56 BST",
+      "agent": "Codex",
+      "summary": "Restore SafariMS admin and Joshua/JP reviewer access after sign-in migration",
+      "detail": [
+        "Bind admin and reviewer access to verified login identities in the app and server, including staging.",
+        "Quick reports capture the meaning and exact example currently displayed, with release/deck context.",
+        "Keep whole-card reporting available to JP; protect flags from cross-account overwrites."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T17:45:00+01:00",
       "date": "2026-10-17 17:45 BST",
       "agent": "Antigravity",
@@ -355,188 +367,6 @@
         "A later staging deployment omitted the repair and restarted the recursive preload loop.",
         "Combined the latest session help and colour legend with the cache repair, early worker update and missing-backend request fix.",
         "Added a staging deployment check that prevents accidentally replacing the staged release with a branch missing its changes."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T20:29:48+01:00",
-      "date": "2026-10-14 20:29 BST",
-      "agent": "Codex",
-      "summary": "Shorter levels and sessions help",
-      "detail": [
-        "Combined the opening guidance into one paragraph and moved a short Go explanation to the bottom.",
-        "Moved colour definitions into a separate information modal opened beside the level legend."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T20:12:58+01:00",
-      "date": "2026-10-14 20:12 BST",
-      "agent": "Codex",
-      "summary": "Stop cached staging error pages from triggering recursive file preloads and excessive CPU use.",
-      "detail": [
-        "Use staging public service settings directly instead of requesting the unshipped backend/secrets.json file that triggers the old cached fallback.",
-        "Start the offline-worker update before the page finishes loading, so recursive preloads cannot prevent the repair from installing.",
-        "Reject HTML responses requested as scripts or data, including old cached fallback pages with recursive preload headers.",
-        "Evict the invalid asset cache entry and retry the real file; preserve valid assets, offline downloads and learner progress.",
-        "Verified cached-HTML recovery, HTML rejection without preload headers, valid script caching and normal page navigation."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T19:57:30+01:00",
-      "date": "2026-10-14 19:57 BST",
-      "agent": "Codex",
-      "summary": "Clearer level help and a centred Smart Skip row",
-      "detail": [
-        "Simplified level help around where to start, how Go sizes a batch, and what level progress means. Colour definitions can be expanded.",
-        "Smart Skip On uses a green selected state without a redundant tick.",
-        "Centred the compact controls and restored real skipped-word examples on desktop."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T19:42:54+01:00",
-      "date": "2026-10-14 19:42 BST",
-      "agent": "Codex",
-      "summary": "Explicit Off and On choices for Smart Skip",
-      "detail": [
-        "Replaced the setup switch with Off and On buttons and a selected-state checkmark.",
-        "Desktop uses one line; mobile puts the skipped count and Details on a second line.",
-        "Removed the Recommended pill and example words from the setup row. Details still opens the individual options.",
-        "The control preserves the existing saved preference and recalculates the available cards."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T19:24:19+01:00",
-      "date": "2026-10-14 19:24 BST",
-      "agent": "Codex",
-      "summary": "Combine choosing a level with starting its next session",
-      "detail": [
-        "The level picker, selected-level progress and Go controls share one Choose a level section.",
-        "Smart Skip sits in a separate compact row directly underneath.",
-        "The time choice appears on the left of Go; short batches keep the full-width Go button.",
-        "The level information modal now includes the session and progress explanation."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T19:13:07+01:00",
-      "date": "2026-10-14 19:13 BST",
-      "agent": "Codex",
-      "summary": "Show session batch sizes and a clear scrubber endpoint",
-      "detail": [
-        "Go shows the number of new words in the selected batch, and the next-session heading names its level.",
-        "Future practice arrivals use smaller text; Practise keeps its plain button label.",
-        "Time choices hide for batches shorter than the saved duration permits. The selected duration stays saved.",
-        "The card scrubber shows the final position for every finite session, excluding temporary expression cards."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T16:10:24+01:00",
-      "date": "2026-10-14 16:10 BST",
-      "agent": "Claude",
-      "summary": "Portuguese: DeepSeek re-checked the 13,486 shakiest meanings on words 1–4,000 (temporary, labelled DEEPSEEK v25)",
-      "detail": [
-        "Same cards and same examples as before; only the meaning shown on 13,486 example sentences changes.",
-        "Those picks come from DeepSeek, each confirmed by a second head-to-head check, ranked above the normal v25 picks.",
-        "Kept in a separate assigner file, not in the pipeline run, so a future normal v26 can outrank it.",
-        "Spanish and French bridge files now point at the new Portuguese release."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T14:37:25+01:00",
-      "date": "2026-10-14 14:37 BST",
-      "agent": "Codex",
-      "summary": "Keep imported known progress reviewable without invented answers",
-      "detail": [
-        "The app and server use one review policy and repair answered stage-zero states.",
-        "Imported known cards have a separate 14-day review date, cleared by their next answer.",
-        "Stale device writes cannot reduce stored counts or replace newer answer dates."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T08:38:43+01:00",
-      "date": "2026-10-14 08:38 BST",
-      "agent": "Codex",
-      "summary": "Clearer companion cards and access to partly learned meanings",
-      "detail": [
-        "Partly learned meanings remain selectable, including possible-meaning groups and identical short glosses.",
-        "Companion pills select the exact card, keep their own colours, and show a subtle share of uses beside frequency.",
-        "Rare-use numbers use the emphasis font without a circle; level labels above the cards are larger."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T22:57:44+01:00",
-      "date": "2026-10-13 22:57 BST",
-      "agent": "Claude",
-      "summary": "Grammar-word cards take less room, and a contraction's parts (al = a + el) sit beside the word",
-      "detail": [
-        "The Grammar word badge now leads the role chips on one line; the separate badge row and the 'Used as' label are gone",
-        "Smaller chips and padding; at most 3 patterns; pattern meanings show only their first sense ('irse · to go away')",
-        "Dictionary notes such as 'Used other than figuratively…' and 'spelling of …' are no longer shown as a phrase meaning",
-        "'to / at' and 'to / at (+ verb)' show as one preposition chip",
-        "On contraction cards the a + el pill moves next to the word instead of its own line on the left",
-        "Measured at phone width: the block on al 126→63px, de 193→63px, se 298→116px, so the example sentence moves up"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T21:34:37+01:00",
-      "date": "2026-10-13 21:34 BST",
-      "agent": "Codex",
-      "summary": "Compact star controls for saved phrases",
-      "detail": [
-        "Moved saving to a star at the start of each expression, alongside the examples action, with Add to Saved confirmation.",
-        "Added a faint violet edge to expression boxes and a subtle star halo that remains visible when examples are closed."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T21:19:08+01:00",
-      "date": "2026-10-13 21:19 BST",
-      "agent": "Codex",
-      "summary": "Music workspace and saved phrases",
-      "detail": [
-        "Choose artists, playlists and song subsets inside a full-screen Music workspace, then continue to study setup.",
-        "Keep words and phrases with their meanings, highlighted examples and translations in Saved. Revisit them from Progress or Settings, remove them or export a copy. Saving stays separate from review."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T20:04:49+01:00",
-      "date": "2026-10-13 20:04 BST",
-      "agent": "Codex",
-      "summary": "Cleaner centred passwordless sign-in",
-      "detail": [
-        "One centred sign-in panel with full-width provider buttons and responsive spacing.",
-        "Added a temporary warning about iCloud and me.com email-code delivery. Microsoft is available alongside Google through Clerk."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T19:26:31+01:00",
-      "date": "2026-10-13 19:26 BST",
-      "agent": "Codex",
-      "summary": "Restored Joshua’s learning history to the new Google account",
-      "detail": [
-        "The approved new Joshua identity receives the archived progress and history, keeping new onboarding preferences.",
-        "The replacement account retains its reviewer flagging controls. Other users’ archives are not restored."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-13T19:16:28+01:00",
-      "date": "2026-10-13 19:16 BST",
-      "agent": "Codex",
-      "summary": "Account creation starts with an empty username",
-      "detail": [
-        "Removed all suggested usernames and the special case for the owner’s email address. Everyone enters their username explicitly."
       ],
       "commit": "pending"
     }
