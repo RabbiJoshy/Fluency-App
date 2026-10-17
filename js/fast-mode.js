@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=11609760';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=11609760';
+import './state.js?v=76c7e827';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=76c7e827';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -80,6 +80,15 @@ function shortcutOn(kind) {
 let _smartSkipAnimationTimer = null;
 let _smartSkipFlashInterval = null;
 
+function dismissSmartSkipActivationAnimation() {
+    if (_smartSkipAnimationTimer) clearTimeout(_smartSkipAnimationTimer);
+    if (_smartSkipFlashInterval) clearInterval(_smartSkipFlashInterval);
+    const toast = document.getElementById('smartSkipAnimationToast');
+    if (toast) toast.classList.remove('visible', 'fade-out');
+    const backdrop = document.getElementById('smartSkipBackdrop');
+    if (backdrop) backdrop.classList.remove('visible', 'fade-out');
+}
+
 function triggerSmartSkipActivationAnimation() {
     const extras = globalThis.collectExtras?.() || {};
     const skippedCardsCount = (extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0))
@@ -92,28 +101,20 @@ function triggerSmartSkipActivationAnimation() {
         words = [...new Set(previewCandidates.map(item => String(item?.word || '').trim()).filter(Boolean))].slice(0, 15);
     }
 
+    let backdrop = document.getElementById('smartSkipBackdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'smartSkipBackdrop';
+        backdrop.className = 'smart-skip-backdrop';
+        document.body.appendChild(backdrop);
+    }
+
     let toast = document.getElementById('smartSkipAnimationToast');
     if (!toast) {
         toast = document.createElement('div');
         toast.id = 'smartSkipAnimationToast';
         toast.className = 'smart-skip-animation-toast';
         document.body.appendChild(toast);
-    }
-
-    // Anchor the toast close to the Smart Skip toggle if visible on screen
-    const toggleEl = document.getElementById('fastTrackHubSwitch') || document.getElementById('setupOptions');
-    if (toggleEl && toggleEl.offsetParent !== null) {
-        const rect = toggleEl.getBoundingClientRect();
-        if (window.innerHeight - rect.bottom >= 75) {
-            toast.style.setProperty('--toast-top', `${Math.round(rect.bottom + 12)}px`);
-            toast.style.setProperty('--toast-bottom', 'auto');
-        } else {
-            toast.style.setProperty('--toast-top', `${Math.max(10, Math.round(rect.top - 65))}px`);
-            toast.style.setProperty('--toast-bottom', 'auto');
-        }
-    } else {
-        toast.style.removeProperty('--toast-top');
-        toast.style.setProperty('--toast-bottom', '24px');
     }
 
     if (_smartSkipAnimationTimer) clearTimeout(_smartSkipAnimationTimer);
@@ -134,6 +135,8 @@ function triggerSmartSkipActivationAnimation() {
         </div>
     `;
 
+    backdrop.classList.remove('fade-out');
+    backdrop.classList.add('visible');
     toast.classList.remove('fade-out');
     toast.classList.add('visible');
 
@@ -169,8 +172,10 @@ function triggerSmartSkipActivationAnimation() {
 
         setTimeout(() => {
             toast.classList.add('fade-out');
+            backdrop.classList.add('fade-out');
             setTimeout(() => {
                 toast.classList.remove('visible', 'fade-out');
+                backdrop.classList.remove('visible', 'fade-out');
             }, 300);
         }, 850);
     }, 1800);
@@ -182,6 +187,7 @@ function triggerSmartSkipActivationAnimation() {
 // when the learner changes them by hand.
 function applyFastMode(on) {
     if (on) triggerSmartSkipActivationAnimation();
+    else dismissSmartSkipActivationAnimation();
     const previous = readFastTrack(selectedLanguage);
     const hasChoices = previous.merge || previous.skip || previous.bridge || previous.skipGrammar || previous.skipSlang || previous.skipEntities;
     let merge = hasChoices ? previous.merge : lemmaAvailable();
