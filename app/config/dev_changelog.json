@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T20:06:00+01:00",
+      "date": "2026-10-17 20:06 BST",
+      "agent": "Antigravity",
+      "summary": "Modernised card swipe feedback with progressive edge glow, frosted SVG badges, and threshold haptic tick",
+      "detail": [
+        "Replaced the 72px raw Unicode ✗ and ✓ characters with frosted circular SVG badges that scale progressively with finger drag and snap solid with a spring bounce at the 50px commit threshold.",
+        "Added continuous emerald (right) and warm coral (left) edge wash and specular rim lighting on the card surface during horizontal swipes.",
+        "Added an 8ms micro-haptic tick at the exact frame the swipe crosses the 50px grade threshold, with no competing sound effects."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T20:00:00+01:00",
       "date": "2026-10-17 20:00 BST",
       "agent": "Antigravity",
@@ -354,19 +366,6 @@
         "Only when two or more meanings on a card share the same English, and only for short sub-glosses: explanations, topic labels (music, firearms) and long definitions stay as notes.",
         "Portuguese: 159 distinct meanings change, e.g. seu 'his / her / their', bico 'beak', corte 'haircut', parada 'halt'. Spanish (SpanishDict) is untouched.",
         "Display only: progress keys keep the original wording."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T21:57:16+01:00",
-      "date": "2026-10-14 21:57 BST",
-      "agent": "Claude",
-      "summary": "Desktop sidebar now shows your path as stacked chips (language, then Speech or Music, then artist) and each chip switches its own level.",
-      "detail": [
-        "Under the language chip: a Vocabulary chip (Speech / Music) and, in Music, an Artist chip (artist, Mix artists, or a Spotify playlist). Click one to see its siblings and switch without going back to the start.",
-        "The language chip always names the language on desktop and opens the language picker; the artist moved to its own chip.",
-        "Learning settings (verbs, song translation) is now the Explore item in the sidebar.",
-        "Phone and narrow windows are unchanged."
       ],
       "commit": "pending"
     }
