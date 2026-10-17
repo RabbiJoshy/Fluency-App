@@ -7,10 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <script src="../js/appearance-bootstrap.js?v=1a7569b6"></script>
-  <link rel="stylesheet" href="../css/appearance.css?v=1a7569b6">
-  <script type="module" src="../js/theme.js?v=1a7569b6"></script>
-  <link rel="stylesheet" href="./lyrics-view.css?v=1a7569b6">
+  <script src="../js/appearance-bootstrap.js?v=685c3a73"></script>
+  <link rel="stylesheet" href="../css/appearance.css?v=685c3a73">
+  <script type="module" src="../js/theme.js?v=685c3a73"></script>
+  <link rel="stylesheet" href="./lyrics-view.css?v=685c3a73">
   <link rel="icon" type="image/png" href="../icons/icon-192.png">
   <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 </head>
@@ -67,6 +67,14 @@
         <button class="modal-close" id="closeSongPickerBtn" aria-label="Close modal">&#10005;</button>
       </div>
 
+      <!-- Unified Vertical Search Bar -->
+      <div class="song-picker-search-wrap">
+        <div class="song-picker-search">
+          <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search catalog by song title or artist…" autocomplete="off">
+          <button type="button" id="songSearchClearBtn" class="turbo-clear-btn" style="display:none;" aria-label="Clear search">✕</button>
+        </div>
+      </div>
+
       <!-- Quick Action: Can't find what you're looking for? Choose from Spotify -->
       <div class="spotify-import-banner" id="spotifyImportBanner">
         <div class="spotify-banner-left">
@@ -119,14 +127,6 @@
             <input type="text" id="turboManualArtist" class="turbo-text-input" placeholder="Artist name (optional)" />
           </div>
           <textarea id="turboManualLyrics" class="turbo-textarea" rows="4" placeholder="Paste Spanish lyrics here..."></textarea>
-        </div>
-      </div>
-
-      <!-- Unified Vertical Search Bar -->
-      <div class="song-picker-search-wrap">
-        <div class="song-picker-search">
-          <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search catalog by song title or artist…" autocomplete="off">
-          <button type="button" id="songSearchClearBtn" class="turbo-clear-btn" style="display:none;" aria-label="Clear search">✕</button>
         </div>
       </div>
 
@@ -220,6 +220,6 @@
     </button>
   </div>
 
-  <script type="module" src="./lyrics-view.js?v=1a7569b6"></script>
+  <script type="module" src="./lyrics-view.js?v=685c3a73"></script>
 </body>
 </html>

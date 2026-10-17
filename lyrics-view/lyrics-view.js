@@ -1,7 +1,7 @@
-import { preferredAi } from '../js/ai-preference.js?v=1a7569b6';
-import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=1a7569b6';
-import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=1a7569b6';
-import { TurboEngine } from '../turbo/turbo-engine.js?v=1a7569b6';
+import { preferredAi } from '../js/ai-preference.js?v=685c3a73';
+import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=685c3a73';
+import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=685c3a73';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=685c3a73';
 
 let currentLanguage = 'es';
 
@@ -324,7 +324,7 @@ async function init() {
     } catch (error) {
       console.warn('Could not initialize Spotify configuration:', error);
     }
-    await import('../js/spotify.js?v=1a7569b6');
+    await import('../js/spotify.js?v=685c3a73');
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');
@@ -420,16 +420,24 @@ async function init() {
       const legacy = /^\d+$/.test(paramSong) ? probeSongs[parseInt(paramSong, 10)] : null;
       if (byId >= 0) {
         currentSongIndex = byId;
+        await selectSong(currentSongIndex);
       } else if (legacy) {
         currentSongIndex = allSongs.indexOf(legacy);
+        await selectSong(currentSongIndex);
       } else {
         const foundIdx = allSongs.findIndex(s =>
           (s.title || '').toLowerCase().includes(paramSong.toLowerCase()) ||
           (s.artist || '').toLowerCase().includes(paramSong.toLowerCase())
         );
-        if (foundIdx >= 0) currentSongIndex = foundIdx;
+        if (foundIdx >= 0) {
+          currentSongIndex = foundIdx;
+          await selectSong(currentSongIndex);
+        } else if (paramSong.includes('spotify') || /^[A-Za-z0-9]{22}$/.test(paramSong)) {
+          await handleRunTurbo({ input: paramSong });
+        } else {
+          await selectSong(0);
+        }
       }
-      await selectSong(currentSongIndex);
     } else {
       // Default initial view: Open the Song Library menu so user can choose a track
       await selectSong(0, false); // select song 0 in background without forcing URL param
@@ -1706,7 +1714,10 @@ async function resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyri
 
 async function handleRunTurbo(options = {}) {
   hideTurboError();
-  const input = turboTrackInput ? turboTrackInput.value.trim() : (songSearchInput ? songSearchInput.value.trim() : '');
+  const input = (options.input !== undefined ? options.input : (turboTrackInput ? turboTrackInput.value.trim() : (songSearchInput ? songSearchInput.value.trim() : ''))).trim();
+  if (turboTrackInput && options.input) {
+    turboTrackInput.value = options.input;
+  }
   const manualTitle = turboManualTitle ? turboManualTitle.value.trim() : '';
   const manualArtist = turboManualArtist ? turboManualArtist.value.trim() : '';
   const manualLyrics = turboManualLyrics ? turboManualLyrics.value.trim() : '';
