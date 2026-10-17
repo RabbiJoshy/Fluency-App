@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T18:11:42+01:00",
+      "date": "2026-10-17 18:11 BST",
+      "agent": "Codex",
+      "summary": "Keep newer answers safe while earlier saves are queued or retried",
+      "detail": [
+        "Coalesced offline saves now update both memory and durable storage.",
+        "Answers made during a save keep their own pending operation.",
+        "Coalesced retries append newly gained review history without reusing event identifiers."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T17:56:29+01:00",
       "date": "2026-10-17 17:56 BST",
       "agent": "Codex",
@@ -355,18 +367,6 @@
         "Level help explains what a level contains and the goal of learning its words, including the music-specific introduction.",
         "Go describes studying unseen words, flipping a flashcard and marking whether you knew it.",
         "The deck total starts on its own line after the introductory guidance."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T20:36:08+01:00",
-      "date": "2026-10-14 20:36 BST",
-      "agent": "Codex",
-      "summary": "Restore the overheating repair alongside the latest staging interface changes.",
-      "detail": [
-        "A later staging deployment omitted the repair and restarted the recursive preload loop.",
-        "Combined the latest session help and colour legend with the cache repair, early worker update and missing-backend request fix.",
-        "Added a staging deployment check that prevents accidentally replacing the staged release with a branch missing its changes."
       ],
       "commit": "pending"
     }

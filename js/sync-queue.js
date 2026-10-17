@@ -1,6 +1,6 @@
 // Durable, local-first synchronization queue.
-import './state.js?v=65650c91';
-import { dbDelete, dbGetAll, dbPut, makeOperationId, openOfflineDb } from './offline-db.js?v=65650c91';
+import './state.js?v=b6f98fbe';
+import { dbDelete, dbGetAll, dbPut, makeOperationId, openOfflineDb } from './offline-db.js?v=b6f98fbe';
 
 const LEGACY_QUEUE_KEY = 'fluency_sync_queue_v1';
 const LAST_SYNC_KEY = 'fluency_last_sync_v1';
@@ -89,12 +89,14 @@ async function enqueueWrite(payload, dedupeKey) {
     await ensureReady();
     const acct = accountId(payload);
     const existing = dedupeKey && queue.find(item =>
-        item.dedupeKey === dedupeKey && item.accountId === acct);
+        item.dedupeKey === dedupeKey && item.accountId === acct && item.retryState !== 'sending');
     const now = Date.now();
-    const entry = existing ? {
-        ...existing, payload, updatedAt: now, operationType: operationType(payload),
+    // Keep the in-memory queue and durable record on the same payload. Never
+    // replace an operation being sent: its acknowledgement owns only that save.
+    const entry = existing ? Object.assign(existing, {
+        payload, updatedAt: now, operationType: operationType(payload),
         attemptCount: 0, retryState: 'pending', lastError: null, nextAttemptAt: 0
-    } : {
+    }) : {
         id: makeOperationId(acct, dedupeKey, now),
         idempotencyKey: makeOperationId(acct, dedupeKey, now),
         dedupeKey: dedupeKey || null, accountId: acct,
