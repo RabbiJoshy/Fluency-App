@@ -186,9 +186,12 @@ class UiRefinementTests(unittest.TestCase):
 
         # CSS styles button with action pill styling and status dot indicator
         self.assertIn('.smart-skip-toggle-btn', css)
+        self.assertIn('min-height: 52px;', css)
+        self.assertIn('padding: 0 22px;', css)
         self.assertIn('.smart-skip-toggle-btn.is-on', css)
         self.assertIn('.smart-skip-status-dot', css)
         self.assertIn('.smart-skip-toggle-btn.is-on .smart-skip-status-dot', css)
+        self.assertIn('box-shadow: 0 0 10px rgba(255, 255, 255, 0.95)', css)
         self.assertIn('class="smart-skip-status-dot"', index_html)
 
     def test_setup_headings_and_level_spacing(self):
