@@ -179,6 +179,27 @@ class StagingBuildTests(unittest.TestCase):
         self.assertIn(".env-badge[hidden]", css)
         self.assertIn("display: none !important;", css)
 
+    def test_loading_screen_hidden_in_css_and_stops_rotation(self) -> None:
+        css = (APP / "css/style.css").read_text(encoding="utf-8")
+        self.assertIn(".app-loading-screen.is-hidden {", css)
+        self.assertIn("display: none !important;", css)
+        self.assertIn(".app-loading-screen.is-hidden .app-loading-mark-art", css)
+
+        # Node check: updateLoadingMark must not start intervals or force reflows when is-hidden
+        result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r'''
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const mainSource = fs.readFileSync('app/js/main.js', 'utf8');
+
+// Verify that applyLoadingMarkImage checks is-hidden before querying offsetWidth
+assert.ok(mainSource.includes("if (screen && screen.classList.contains('is-hidden'))"),
+  'applyLoadingMarkImage or updateLoadingMark must guard against hidden screen');
+assert.ok(mainSource.includes("(!screen || !screen.classList.contains('is-hidden'))"),
+  'pop animation reflow must not trigger on hidden screen');
+''')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+
 
 class StagingScriptsTests(unittest.TestCase):
     def test_staging_scripts_exist_and_are_executable(self) -> None:

@@ -197,9 +197,14 @@ function landLoadingMarkOnFlag(language) {
 // Language images are transparent clipart: contained and padded, with a small pop
 // on each swap. Artist art is a photo and keeps filling the tile edge to edge.
 function applyLoadingMarkImage(src, { clipart = false } = {}) {
+    const screen = document.getElementById('appLoadingScreen');
     const mark = document.getElementById('appLoadingMark');
     const art = document.getElementById('appLoadingMarkArt');
     if (!mark || !art) return;
+    if (screen && screen.classList.contains('is-hidden')) {
+        stopLoadingMarkRotation();
+        return;
+    }
     if (!src) {
         art.hidden = true;
         art.style.backgroundImage = '';
@@ -210,7 +215,7 @@ function applyLoadingMarkImage(src, { clipart = false } = {}) {
     const escaped = String(src).replace(/"/g, '%22');
     art.style.backgroundImage = `url("${escaped}")`;
     art.classList.toggle('is-clipart', clipart);
-    if (!prefersReducedMotion()) {
+    if (!prefersReducedMotion() && (!screen || !screen.classList.contains('is-hidden'))) {
         art.classList.remove('is-popping');
         void art.offsetWidth; // restart the pop animation
         art.classList.add('is-popping');
@@ -222,9 +227,15 @@ function applyLoadingMarkImage(src, { clipart = false } = {}) {
 }
 
 async function updateLoadingMark({ language = '', artist = null } = {}) {
+    const screen = document.getElementById('appLoadingScreen');
     const mark = document.getElementById('appLoadingMark');
     const art = document.getElementById('appLoadingMarkArt');
     if (!mark || !art) return;
+
+    if (screen && screen.classList.contains('is-hidden')) {
+        stopLoadingMarkRotation();
+        return;
+    }
 
     // 2. Language-specific rotating images
     const langKey = String(language || window.selectedLanguage || 'default').trim().toLowerCase();
@@ -253,6 +264,11 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
         const fallback = resolveArt(effectiveArtist.pickerImage || effectiveArtist.image || effectiveArtist.defaultAlbumArt || '');
         const images = albumImages.length > 0 ? albumImages : (fallback ? [fallback] : []);
 
+        if (screen && screen.classList.contains('is-hidden')) {
+            stopLoadingMarkRotation();
+            return;
+        }
+
         if (images.length === 0) {
             applyLoadingMarkImage(null);
             setLoadingMarkText(effectiveArtist.customSongSource ? '♫' : String(effectiveArtist.name || 'Music').split(/\s+/).map(word => word[0]).slice(0, 2).join(''));
@@ -264,9 +280,13 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
         currentLoadingImageIndex = Math.floor(Math.random() * images.length);
         applyLoadingMarkImage(images[currentLoadingImageIndex], { clipart: false });
 
-        if (images.length > 1 && !prefersReducedMotion()) {
+        if (images.length > 1 && !prefersReducedMotion() && (!screen || !screen.classList.contains('is-hidden'))) {
             loadingMarkRotationKey = `artist:${artistKey}`;
             loadingMarkRotationTimer = setInterval(() => {
+                if (screen && screen.classList.contains('is-hidden')) {
+                    stopLoadingMarkRotation();
+                    return;
+                }
                 currentLoadingImageIndex = (currentLoadingImageIndex + 1) % currentLoadingImages.length;
                 applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex], { clipart: false });
             }, LOADING_MARK_ROTATION_MS);
@@ -275,7 +295,10 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
     }
 
     const manifest = await fetchLoadingImagesManifest();
-    if (generation !== loadingMarkGeneration) return;
+    if (generation !== loadingMarkGeneration || (screen && screen.classList.contains('is-hidden'))) {
+        stopLoadingMarkRotation();
+        return;
+    }
     const images = (manifest && manifest[langKey] && manifest[langKey].length > 0)
         ? manifest[langKey]
         : ((manifest && manifest['default'] && manifest['default'].length > 0) ? manifest['default'] : []);
@@ -292,9 +315,13 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
     currentLoadingImageIndex = Math.floor(Math.random() * images.length);
     applyLoadingMarkImage(images[currentLoadingImageIndex], { clipart: true });
 
-    if (images.length > 1 && !prefersReducedMotion()) {
+    if (images.length > 1 && !prefersReducedMotion() && (!screen || !screen.classList.contains('is-hidden'))) {
         loadingMarkRotationKey = langKey;
         loadingMarkRotationTimer = setInterval(() => {
+            if (screen && screen.classList.contains('is-hidden')) {
+                stopLoadingMarkRotation();
+                return;
+            }
             currentLoadingImageIndex = (currentLoadingImageIndex + 1) % currentLoadingImages.length;
             applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex], { clipart: true });
         }, LOADING_MARK_ROTATION_MS);
@@ -341,9 +368,9 @@ function showAppLoading(title = 'Getting things ready', detail = 'Loading your l
     if (!screen) return;
     document.getElementById('appLoadingTitle').textContent = title;
     document.getElementById('appLoadingDetail').textContent = detail;
-    resetDeckLoadingVisual();
     screen.classList.remove('is-hidden');
     screen.setAttribute('aria-busy', 'true');
+    resetDeckLoadingVisual();
     if (persist) {
         try { sessionStorage.setItem(APP_LOADING_MESSAGE_KEY, JSON.stringify({ title, detail })); } catch (_) {}
     }
@@ -462,6 +489,7 @@ document.getElementById('appLoadingScreen')?.addEventListener('click', () => {
 
 function hideAppLoading() {
     stopLoadingMarkRotation();
+    loadingMarkGeneration++;
     const screen = document.getElementById('appLoadingScreen');
     document.documentElement.classList.remove('app-booting');
     screen?.classList.add('is-hidden');

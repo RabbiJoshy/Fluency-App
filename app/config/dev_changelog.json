@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T14:58:00+01:00",
+      "date": "2026-10-17 14:58 BST",
+      "agent": "Antigravity",
+      "summary": "Eliminate runaway loading mark reflow loop and detach hidden loading screen to stop CPU overheating",
+      "detail": [
+        "Enforced strict is-hidden checks in applyLoadingMarkImage and updateLoadingMark so background image rotation intervals never run when the loading screen is hidden.",
+        "Incremented loading mark generation on hideAppLoading so delayed async image manifest fetches immediately discard their results and never spawn background intervals.",
+        "Guarded synchronous offsetWidth layout reads and pop animations so hidden loading elements never trigger forced browser DOM reflows.",
+        "Added display: none !important and paused all child CSS keyframe animations on .app-loading-screen.is-hidden so the GPU and layout engine completely detach the overlay."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T13:15:00+01:00",
       "date": "2026-10-17 13:15 BST",
       "agent": "Antigravity",
