@@ -351,6 +351,27 @@ async function init() {
       topbarBackLink.href = `../#${currentLanguage}`;
     }
 
+    const isEmbedded = urlParams.get('embedded') === '1' || (window.self !== window.top);
+    if (isEmbedded) {
+      document.body.classList.add('is-embedded');
+      const notifyBack = (e) => {
+        e.preventDefault();
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'fluency-back-to-extra' }, '*');
+        }
+      };
+      backToStudyLink?.addEventListener('click', notifyBack);
+      topbarBackLink?.addEventListener('click', notifyBack);
+    }
+
+    window.addEventListener('message', async (event) => {
+      if (event.data?.type === 'fluency-pause') {
+        if (trackIsLoaded() && !followState.paused && window.spotifyTransport) {
+          try { await window.spotifyTransport.pause(); } catch (_) {}
+        }
+      }
+    });
+
     const assetsFile = isEs ? 'turbo_assets.json' : `${currentLanguage}_turbo_assets.json`;
     const extra50kFile = isEs ? 'es_50k_data.json' : `${currentLanguage}_50k_data.json`;
     const songsFile = isEs ? 'probe_songs.json' : `${currentLanguage}_probe_songs.json`;

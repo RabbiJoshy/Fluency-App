@@ -52,12 +52,18 @@ body{height:auto;min-height:100vh;overflow:auto;padding:20px 14px;user-select:te
 .preview-shell .preview-card.card-face.card-back{min-height:560px;}
 .preview-card .fw-deterministic-card{min-height:500px;height:auto;}
 @media(max-width:380px){.preview-card .fw-deterministic-card{min-height:460px;}}
+.preview-flat .fw-relation-box{border-color:transparent;border-radius:8px;background:transparent;padding:9px 14px;}
+.preview-flat .fw-relations-list{gap:4px;}
+.preview-flat .fw-relation-box:hover{background:rgba(255,255,255,.035);border-color:transparent;}
+.preview-flat .fw-relation-box.is-selected,.preview-flat .fw-relation-box[aria-pressed="true"]{background:rgba(212,218,245,.07);border-color:rgba(212,218,245,.18);box-shadow:none;}
+.preview-flat .fw-relation-rule{color:var(--text-secondary);font-size:max(13px,calc(var(--card-fs,18px)*.74));line-height:1.45;}
 </style></head><body><main class="preview-shell">
 <nav class="preview-toolbar" aria-label="Preview controls">
 <label for="language">Language <select id="language"><option value="pt">Portuguese</option><option value="es">Spanish</option></select></label>
 <label for="word">Word <select id="word"></select></label>
 <label for="version">Copy <select id="version"><option value="after">Revised</option><option value="before">Current</option></select></label>
 <label for="colours">Colours <select id="colours"><option value="pos">Clear chunks</option><option value="pattern">Original</option></select></label>
+<label for="rows">Rows <select id="rows"><option value="flat">Flatter</option><option value="boxed">Current</option></select></label>
 </nav>
 <section class="preview-card card-face card-back" aria-label="Learner card"><div id="backContent"></div></section>
 <div class="preview-footer"><span>Tap a pattern to explore it.</span><button id="next" type="button">Next example →</button></div>
@@ -67,7 +73,7 @@ body{height:auto;min-height:100vh;overflow:auto;padding:20px 14px;user-select:te
 </main><script>''' + renderer + '\nconst PREVIEW_DATA = ' + data + ';\nconst POS_PREVIEW = ' + json.dumps(payload(), ensure_ascii=False) + ';\n' + SCRIPT + '\n' + provenance_script() + ''';
 const previewElement=id=>document.getElementById(id);
 function previewWords(){const select=previewElement('word');select.replaceChildren(...Object.keys(PREVIEW_DATA.after[previewElement('language').value]).map(w=>{const o=document.createElement('option');o.value=w;o.textContent=w;return o}));previewDraw();}
-function previewDraw(){const lang=previewElement('language').value,word=previewElement('word').value,version=previewElement('version').value;
+function previewDraw(){document.querySelector('.preview-card').classList.toggle('preview-flat',previewElement('rows').value==='flat');const lang=previewElement('language').value,word=previewElement('word').value,version=previewElement('version').value;
 const suite=lang==='pt'?PORTUGUESE_GRAMMAR_WORDS:SPANISH_GRAMMAR_WORDS;
 const entry=structuredClone(PREVIEW_DATA[version][lang][word]);
 previewElement('review-status').textContent=version==='before'?'Original suite copy · source labels not verified.':entry.previewReviewStatus==='source-reviewed'?'Reviewed source examples · simplified copy.':'Simplified copy · existing examples await source review.';
@@ -77,5 +83,6 @@ previewElement('backContent').innerHTML=functionWordBlockHTML({word},lang);
 const panel=document.querySelector('.fw-sentence-panel');panel.tabIndex=0;panel.setAttribute('role','button');panel.setAttribute('aria-label','Next example');paintPreviewPOS();paintPreviewProvenance();panel.onkeydown=e=>{if(e.target===panel&&(e.key==='Enter'||e.key===' ')){e.preventDefault();cycleFunctionWordExample();}};
 }
 previewElement('language').onchange=previewWords;previewElement('word').onchange=previewDraw;previewElement('version').onchange=previewDraw;
+previewElement('rows').onchange=()=>document.querySelector('.preview-card').classList.toggle('preview-flat',previewElement('rows').value==='flat');
 previewElement('next').onclick=()=>cycleFunctionWordExample();previewElement('colours').onchange=paintPreviewPOS;previewWords();
 </script></body></html>'''

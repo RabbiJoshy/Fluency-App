@@ -29,6 +29,15 @@ vm.runInContext('_activeExampleIndex=2;refreshFunctionWordCardBack()',ctx);
 assert.ok(nodes['.fw-credit-start'].innerHTML.includes('opensubtitles'));
 assert.ok(nodes['.fw-sentence-target'].innerHTML.includes('rgb(0, 212, 170)'));
 assert.equal(vm.runInContext("fwCreditHTML({source:'Conversation'})",ctx),'Source not verified');
+assert.equal(vm.runInContext("functionWordBlockHTML({word:'qué',functionWord:{roles:[{value:'interrogative',gloss:'what'}],patterns:[]}},'es')",ctx),'');
+assert.ok(vm.runInContext("functionWordBlockHTML({word:'que'},'es')",ctx).includes('fw-deterministic-card'));
+
 '''
         run=subprocess.run(['node','-e',script],cwd=ROOT,text=True,capture_output=True)
         self.assertEqual(run.returncode,0,run.stderr)
+
+    def test_uncovered_words_keep_standard_rows(self):
+        source=(ROOT/'app/js/flashcards.js').read_text()
+        self.assertIn('backHTML += functionWordRows || `<div class="meanings-scroll">',source)
+        self.assertNotIn('functionWordExampleHTML(currentExample)',source)
+        self.assertNotIn('Grammar word',(ROOT/'app/js/function-word-card.js').read_text())

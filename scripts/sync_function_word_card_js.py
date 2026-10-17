@@ -487,21 +487,8 @@ export function functionWordBlockHTML(card, lang) {{
             </div>`;
     }}
 
-    // 2. Fallback to existing prototype for other languages/words
-    const summary = card?.functionWord;
-    if (!summary) return '';
-    const distinct = texts => [...new Set(texts.filter(Boolean))];
-    const roleTexts = distinct((summary.roles || []).map(r => functionWordLabelText({{ kind: 'role', ...r }}))).slice(0, 3);
-    const patternTexts = distinct((summary.patterns || []).filter(p => p.count >= 2 && meaningOf(p.gloss))
-        .map(p => functionWordLabelText({{ kind: 'unit', ...p }}))).slice(0, 3);
-    const roleChips = roleTexts.map(t => `<span class="fw-chip fw-chip-role">${{esc(t)}}</span>`).join('');
-    const patternChips = patternTexts.map(t => `<span class="fw-chip fw-chip-pattern">${{esc(t)}}</span>`).join('');
-
-    return `
-        <div class="fw-block">
-            <div class="fw-row"><span class="fw-badge">Grammar word</span>${{roleChips}}</div>
-            ${{patternChips ? `<div class="fw-row"><span class="fw-row-label">Patterns</span>${{patternChips}}</div>` : ''}}
-        </div>`;
+    // Uncovered words keep the normal meaning rows; legacy summary chips are retired.
+    return '';
 }}
 
 /** The label under one example's translation; empty when the rules gave none. */

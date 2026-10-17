@@ -853,6 +853,20 @@
                     <p class="extra-subtitle">Practice modes and tools beyond everyday vocabulary.</p>
                 </header>
                 <div class="extra-options-grid" id="extraOptionsGrid">
+                    <button type="button" class="extra-card" id="extraLyricsCard" hidden>
+                        <span class="extra-card-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18V5l12-2v13"></path>
+                                <circle cx="6" cy="18" r="3"></circle>
+                                <circle cx="18" cy="16" r="3"></circle>
+                            </svg>
+                        </span>
+                        <span class="extra-card-copy">
+                            <strong>Lyrics translation</strong>
+                            <small id="extraLyricsDesc">Read and listen to song lyrics line by line with synchronized translation and word lookups.</small>
+                        </span>
+                        <span class="extra-card-arrow" aria-hidden="true">›</span>
+                    </button>
                     <button type="button" class="extra-card" id="extraConjugationsCard">
                         <span class="extra-card-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1093,6 +1107,19 @@
                             <div id="table-body"></div>
                         </div>
                     </section>
+                </div>
+            </div>
+
+            <!-- Embedded Lyrics Translation Screen -->
+            <div id="extraLyricsView" class="extra-lyrics-view" hidden>
+                <div class="extra-lyrics-topbar">
+                    <button type="button" class="extra-back-btn" id="extraLyricsBackBtn">
+                        <span aria-hidden="true">‹</span> Extra
+                    </button>
+                    <span class="extra-embedded-title" id="extraLyricsTitle">Song translation</span>
+                </div>
+                <div id="extraLyricsContainer" class="extra-lyrics-container">
+                    <iframe id="extraLyricsIframe" class="extra-lyrics-iframe" allow="autoplay; encrypted-media; fullscreen" title="Song translation"></iframe>
                 </div>
             </div>
         </div>
