@@ -17495,12 +17495,34 @@
 }
 
 /* Smart Skip Activation Feedback Toast (especially prominent on mobile) */
+/* Smart Skip Activation Backdrop & Feedback Overlay */
+.smart-skip-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: auto;
+  transition: opacity 0.28s ease;
+}
+.smart-skip-backdrop.visible {
+  opacity: 1;
+}
+.smart-skip-backdrop.fade-out {
+  opacity: 0;
+}
+:root[data-theme="light"] .smart-skip-backdrop {
+  background: rgba(15, 23, 42, 0.28);
+}
+
 .smart-skip-animation-toast {
   position: fixed;
-  top: var(--toast-top, auto);
-  bottom: var(--toast-bottom, 24px);
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%) translateY(10px) scale(0.95);
+  bottom: auto;
+  transform: translate(-50%, -50%) scale(0.92);
   z-index: 10000;
   pointer-events: none;
   opacity: 0;
@@ -17508,23 +17530,28 @@
 }
 .smart-skip-animation-toast.visible {
   opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
+  transform: translate(-50%, -50%) scale(1);
 }
 .smart-skip-animation-toast.fade-out {
   opacity: 0;
-  transform: translateX(-50%) translateY(-10px) scale(0.95);
+  transform: translate(-50%, -50%) scale(0.94);
 }
 .smart-skip-toast-inner {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 18px;
-  background: color-mix(in srgb, var(--bg-card, #1c2430) 90%, #000);
-  border: 1px solid color-mix(in srgb, var(--accent-primary) 45%, var(--border-color));
-  border-radius: 999px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 18px rgba(var(--accent-primary-rgb, 255, 107, 53), 0.28);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  gap: 14px;
+  padding: 16px 24px;
+  background: color-mix(in srgb, var(--bg-card, #1c2430) 92%, #000);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 50%, var(--border-color));
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65), 0 0 28px color-mix(in srgb, var(--accent-primary) 30%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+:root[data-theme="light"] .smart-skip-toast-inner {
+  background: color-mix(in srgb, var(--bg-card, #ffffff) 96%, #000000);
+  border-color: color-mix(in srgb, var(--accent-primary) 40%, rgba(0, 0, 0, 0.15));
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2), 0 0 24px color-mix(in srgb, var(--accent-primary) 20%, transparent);
 }
 .smart-skip-toast-spinner {
   width: 20px;

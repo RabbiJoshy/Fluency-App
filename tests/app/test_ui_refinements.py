@@ -214,3 +214,20 @@ class UiRefinementTests(unittest.TestCase):
         self.assertIn('justify-content: center;', refinements_css)
         self.assertIn('text-align: center;', refinements_css)
 
+    def test_smart_skip_blur_backdrop_animation(self):
+        style_css = (ROOT / 'app/css/style.css').read_text(encoding='utf-8')
+        fast_mode_js = (ROOT / 'app/js/fast-mode.js').read_text(encoding='utf-8')
+        # Full screen backdrop blur CSS
+        self.assertIn('.smart-skip-backdrop', style_css)
+        self.assertIn('backdrop-filter: blur(10px);', style_css)
+        self.assertIn('.smart-skip-backdrop.visible', style_css)
+        # Centered toast CSS
+        self.assertIn('.smart-skip-animation-toast {', style_css)
+        self.assertIn('top: 50%;', style_css)
+        self.assertIn('transform: translate(-50%, -50%) scale(1);', style_css)
+        # JS attaches backdrop and handles lifecycle
+        self.assertIn("backdrop.id = 'smartSkipBackdrop'", fast_mode_js)
+        self.assertIn("backdrop.className = 'smart-skip-backdrop'", fast_mode_js)
+        self.assertIn("backdrop.classList.add('visible')", fast_mode_js)
+        self.assertIn("backdrop.classList.add('fade-out')", fast_mode_js)
+
