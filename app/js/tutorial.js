@@ -1244,7 +1244,7 @@ function reviewSheetHTML(card) {
 
 function demoPinBtnHTML(index, pinned = false) {
     const label = pinned ? 'Unpin this meaning' : 'Pin this meaning for practice';
-    return `<button type="button" class="sense-pin-btn${pinned ? ' is-pinned' : ''}" data-demo-pin="${index}" aria-pressed="${pinned}" aria-label="${label}" title="${label}" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%);"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="15" height="15" fill="${pinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
+    return `<button type="button" class="sense-pin-btn${pinned ? ' is-pinned' : ''}" data-demo-pin="${index}" aria-pressed="${pinned}" aria-label="${label}" title="${label}" style="position: absolute; left: 4px; top: 50%; transform: translateY(-50%);"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="18" height="18" fill="${pinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
 }
 
 function setDemoPinState(btn, pinned) {

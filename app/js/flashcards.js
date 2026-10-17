@@ -1095,6 +1095,10 @@ function availableHeightForMeaningScroll(backEl, scroll) {
 // sense never folds; there is nothing else to bring into view.
 function collapseSubsensesToFit(scroll, available) {
     scroll.classList.remove('collapse-subsenses');
+    if (flashcards?.[currentIndex]?._pinningMode) {
+        fitRowInformationButtons(scroll);
+        return;
+    }
     const senseRows = [...scroll.querySelectorAll('.meaning-row')]
         .filter(row => !row.closest('.pos-collapsible:not(.is-open)'));
     if (senseRows.length >= 2 && scroll.scrollHeight > available + 1
@@ -5970,7 +5974,7 @@ function sensePinButtonHTML(indices, isPinned, extraStyle = '') {
     const list = (Array.isArray(indices) ? indices : [indices]).filter(i => Number.isInteger(i) && i >= 0);
     const style = extraStyle ? ` style="${extraStyle}"` : '';
     const label = isPinned ? 'Unpin this meaning' : 'Pin this meaning for practice';
-    return `<button type="button" class="sense-pin-btn${isPinned ? ' is-pinned' : ''}"${style} aria-pressed="${Boolean(isPinned)}" aria-label="${label}" title="${label}" onclick="togglePinMeaningIndices(event, [${list.join(',')}])"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="15" height="15" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
+    return `<button type="button" class="sense-pin-btn${isPinned ? ' is-pinned' : ''}"${style} aria-pressed="${Boolean(isPinned)}" aria-label="${label}" title="${label}" onclick="togglePinMeaningIndices(event, [${list.join(',')}])"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="18" height="18" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
 }
 
 function prominenceBadgeHTML(promInfo, extraStyle = '') {
@@ -8053,12 +8057,16 @@ function renderCardWikipediaBadge(card) {
                             const pInfo = entry.memberIndices.length > 1
                                 ? prominenceInfoFromShare(clusteredMeanings)
                                 : (glossProminence.infoByIndex.get(memberIdx) || getSenseProminenceInfo(card.meanings[memberIdx]));
-                            const badge = (memberPinned || isPinningMode)
+                            const showPin = memberPinned || isPinningMode;
+                            const badge = showPin
                                 ? sensePinButtonHTML(entry.memberIndices, memberPinned)
                                 : (memberKnown ? knownSenseTagHTML('', entry.memberIndices) : prominenceBadgeHTML(pInfo));
-                            return `<div class="sense-prominence-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;">${badge}</div>`;
+                            const cellClick = showPin
+                                ? `togglePinMeaningIndices(event, [${entry.memberIndices.join(',')}])`
+                                : `event.stopPropagation(); selectMeaning(${memberIdx})`;
+                            return `<div class="sense-prominence-cell" onclick="${cellClick}" style="min-height: 36px; min-width: 40px; padding: 2px 4px; display: flex; align-items: center; justify-content: center; cursor: pointer;">${badge}</div>`;
                         }).join('');
-                        pctColumnHtml = `<div class="pct-column" style="display: flex; flex-direction: column; gap: 3px; padding-left: 4px;">${pctStackHtml}</div>`;
+                        pctColumnHtml = `<div class="pct-column" style="display: flex; flex-direction: column; gap: 3px; padding-left: 2px;">${pctStackHtml}</div>`;
                     } else if (useProminenceLabels && splitLeaves) {
                         const pctStackHtml = displayMemberEntries.map((entry) => {
                             const memberIdx = entry.representative;
@@ -8098,6 +8106,9 @@ function renderCardWikipediaBadge(card) {
                     if (!groupKnown && !isPinningMode && !groupPinned && splitLeaves && useProminenceLabels) {
                         pctColumnHtml = pctColumnHtml.replace(/<\/div>$/,
                             `<div class="pct-group-total">${prominenceBadgeHTML(groupPromInfo)}</div></div>`);
+                    } else if (groupPinned && !isPinningMode) {
+                        pctColumnHtml = pctColumnHtml.replace(/<\/div>$/,
+                            `<div class="pct-group-total">${sensePinButtonHTML(orderedMembers, true)}</div></div>`);
                     }
 
                     // Shared cell — spans all body rows.
@@ -8205,7 +8216,7 @@ function renderCardWikipediaBadge(card) {
                         : (!m.unassigned && displayPctVal < 100
                             ? `<span class="sense-percentage sense-percentage-tail" style="${edgeStyle} pointer-events: none;">${displayPctVal}%</span>`
                             : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, edgeStyle) : ''));
-                    const sidePad = (rowKnown && !rowPinned && !isPinningMode) ? '52px' : ((rowPinned || isPinningMode || useProminenceLabels) ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px'));
+                    const sidePad = (rowKnown && !rowPinned && !isPinningMode) ? '52px' : ((rowPinned || isPinningMode) ? '44px' : (useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px')));
                     target.push(`
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}${knownRowClass}${practiceRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
