@@ -184,12 +184,12 @@ class UiRefinementTests(unittest.TestCase):
         self.assertIn("toggleBtn.classList.toggle('is-on', on)", fast_mode_js)
         self.assertIn("stateLabel.textContent = on ? 'On' : 'Off'", fast_mode_js)
 
-        # CSS styles button with action pill styling
+        # CSS styles button with action pill styling and status dot indicator
         self.assertIn('.smart-skip-toggle-btn', css)
         self.assertIn('.smart-skip-toggle-btn.is-on', css)
-        self.assertIn('.smart-skip-switch-track', css)
-        self.assertIn('.smart-skip-switch-thumb', css)
-        self.assertIn('class="smart-skip-switch-track"', index_html)
+        self.assertIn('.smart-skip-status-dot', css)
+        self.assertIn('.smart-skip-toggle-btn.is-on .smart-skip-status-dot', css)
+        self.assertIn('class="smart-skip-status-dot"', index_html)
 
     def test_setup_headings_and_level_spacing(self):
         style_css = (ROOT / 'app/css/style.css').read_text(encoding='utf-8')
@@ -202,4 +202,12 @@ class UiRefinementTests(unittest.TestCase):
         # Choose your vocabulary header starts higher and has breathing gap to bullets
         self.assertIn('#step1.language-summary-active #standardSourceCard { padding-top: 6px; padding-bottom: 18px; }', style_css)
         self.assertIn('.standard-source-choice-intro { display: grid; gap: 14px; }', style_css)
+
+    def test_practice_text_centered(self):
+        style_css = (ROOT / 'app/css/style.css').read_text(encoding='utf-8')
+        refinements_css = (ROOT / 'app/css/ui-refinements.css').read_text(encoding='utf-8')
+        self.assertIn('.review-deck-content { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }', style_css)
+        self.assertIn('#reviewDeckBody .review-deck-summary', refinements_css)
+        self.assertIn('justify-content: center;', refinements_css)
+        self.assertIn('text-align: center;', refinements_css)
 

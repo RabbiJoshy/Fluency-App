@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T17:19:00+01:00",
+      "date": "2026-10-17 17:19 BST",
+      "agent": "Antigravity",
+      "summary": "Refine Smart Skip into unified status-dot action pill and center Practice summary text",
+      "detail": [
+        "Replaced the internal sliding switch with a sleek illuminated status dot indicator (○ Off / ● On) inside the unified Smart Skip action pill.",
+        "Tightened vertical spacing and removed dead-space padding around the Smart Skip footer so it sits cleanly and compactly beneath Study without large gaps.",
+        "Centered the Practice section summary text ('X waiting' / 'Nothing to practise yet') and chevron above the Practise button, matching the centered symmetry of Study."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T15:47:00+01:00",
       "date": "2026-10-17 15:47 BST",
       "agent": "Antigravity",

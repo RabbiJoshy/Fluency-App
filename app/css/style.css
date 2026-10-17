@@ -19681,25 +19681,27 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
   border-radius: 13px;
   background: var(--bg-card);
 }
-.review-deck-content { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.review-deck-content { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
 .review-deck-content .session-action-pill { align-self: center; margin: 0 auto; }
 .review-deck-section .study-set-review { width: auto; flex: none; min-height: 48px; padding: 10px 22px; font-size: 14px; justify-content: center; }
 .review-deck-summary {
-  width: 100%;
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
   min-width: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 2px 0;
+  justify-content: center;
+  gap: 6px;
+  padding: 2px 8px;
   border: 0;
   background: transparent;
   color: var(--text-primary);
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   transition: color 0.16s ease, transform 0.16s ease;
 }
-.review-deck-summary:hover { color: var(--accent-primary); transform: translateX(2px); }
+.review-deck-summary:hover { color: var(--accent-primary); transform: translateY(-1px); }
 .review-deck-summary:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 4px; border-radius: 6px; }
 .review-deck-summary-copy { min-width: 0; display: flex; align-items: center; }
 .review-deck-summary-text { font: 500 14px/1.4 var(--font-reading); color: var(--text-primary); }
@@ -20317,7 +20319,7 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
   #topBar .learning-context-flag { font-size: 22px; }
   #topBar .learning-context-chip-copy strong { font-size: 13px; }
   #step4 .study-set-choice { padding: 12px 10px; }
-  .review-deck-content { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .review-deck-content { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
   .review-deck-content .session-action-pill { align-self: center; margin: 0 auto; }
   .review-deck-section .study-set-review { width: auto; justify-content: center; }
   .review-home-content { width: min(96vw, 760px); max-height: calc(94dvh / var(--ui-zoom, 1)); padding-inline: 18px; }
