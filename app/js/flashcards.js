@@ -862,8 +862,15 @@ function dropNoteLinesShownIn(copy, ...scopes) {
     };
     copy.querySelectorAll('p').forEach(p => {
         // "At this time; at the present situation" under "at this time"
-        // keeps only "At the present situation".
-        const pieces = p.textContent.split(/;\s*/).filter(piece => piece.trim() && !isShown(piece));
+        // keeps only "At the present situation". Sub-pieces separated by commas
+        // (such as registers or region lists) also drop terms already visible on the row.
+        const pieces = p.textContent.split(/;\s*/).map(piece => {
+            if (piece.includes(', ')) {
+                const sub = piece.split(/,\s*/).filter(item => item.trim() && !isShown(item));
+                return sub.join(', ').trim();
+            }
+            return isShown(piece) ? '' : piece.trim();
+        }).filter(Boolean);
         const text = pieces.join('; ').trim();
         if (!text) p.remove();
         else p.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
@@ -922,8 +929,31 @@ function placeRowInformationButtons(root) {
             seen.add(source.innerHTML);
             copy.dataset.senseNoteTitle ||= source.dataset.senseNoteTitle;
             const ownCopy = source.cloneNode(true);
-            // Filter before combining: each source has its own citation gloss.
-            if (dropNoteLinesShownIn(ownCopy, rowScope)) copy.append(...ownCopy.children);
+            // Filter before combining: merge matching sections so duplicate
+            // headings (e.g. two "Usage" sections) are consolidated together.
+            if (dropNoteLinesShownIn(ownCopy, rowScope)) {
+                for (const child of ownCopy.children) {
+                    if (child.tagName === 'SECTION') {
+                        const childHeading = child.querySelector('h3')?.textContent.trim() || '';
+                        const match = [...copy.querySelectorAll(':scope > section')].find(sec => {
+                            const heading = sec.querySelector('h3')?.textContent.trim() || '';
+                            return heading === childHeading && sec.className === child.className;
+                        });
+                        if (match) {
+                            const seenTexts = new Set([...match.querySelectorAll('p')].map(p => p.textContent.trim().toLowerCase()));
+                            for (const p of child.querySelectorAll('p')) {
+                                const text = p.textContent.trim();
+                                if (text && !seenTexts.has(text.toLowerCase())) {
+                                    seenTexts.add(text.toLowerCase());
+                                    match.append(p.cloneNode(true));
+                                }
+                            }
+                            continue;
+                        }
+                    }
+                    copy.append(child.cloneNode(true));
+                }
+            }
         }
         if (!dropNoteLinesShownIn(copy, rowScope)) {
             rowButtons.forEach(el => el.remove());

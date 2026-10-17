@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T21:25:00+01:00",
+      "date": "2026-10-17 21:25 BST",
+      "agent": "Antigravity",
+      "summary": "Deduplicated sense note modals with consolidated sections, filtered row tags, and polished dialog styling",
+      "detail": [
+        "Changed modal eyebrow from \"Usage notes\" to \"Sense details\" to eliminate label repetition above \"Usage\" sections.",
+        "Filtered redundant raw context and gloss clauses under \"Original dictionary text\" that merely echoed previously rendered meaning and usage notes.",
+        "Consolidated matching sections across grouped card rows so duplicate \"Usage\" and \"Grammar\" headers are merged instead of stacked consecutively.",
+        "Enhanced modal overlay with animated scale/fade entrance, fallback border coloring, and dynamic inherit of the card's accent color."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T20:45:00+01:00",
       "date": "2026-10-17 20:45 BST",
       "agent": "Antigravity",
@@ -354,17 +367,6 @@
         "Now sits under Show first on the Study tab (it was on the App tab).",
         "The row shows one flag per language you know; hover a flag for its name. The explanatory line is now a tooltip.",
         "Closing the editor returns you to the Study tab."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T22:08:31+01:00",
-      "date": "2026-10-14 22:08 BST",
-      "agent": "Claude",
-      "summary": "“Flag a meaning” is now “Revisit a meaning”, with a cards-and-arrow icon and a number.",
-      "detail": [
-        "The card-back tile shows an arrow dropping onto a stack, meaning “back into the practice pile”; the number beside it is blank until you pick a meaning, then counts how many on this card.",
-        "The sheet title, tutorial step and demo card use the new name. What the button does is unchanged."
       ],
       "commit": "pending"
     }

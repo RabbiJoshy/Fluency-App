@@ -1816,18 +1816,27 @@ export function senseNoteHTML(presentation, options = {}) {
     // The curated sections take precedence. Original text earns a section
     // only when it contributes something not already explained in this note.
     const noteSeen = new Set();
-    const body = [
-        senseNoteSectionHTML('', noteGlossBeyondTitle(note.gloss, title), 'meaning', noteSeen),
-        senseNoteSectionHTML('Usage', usage.filter(addsDetail), 'usage', noteSeen),
-        senseNoteSectionHTML('How it is used', production.filter(addsDetail), 'production', noteSeen),
-        senseNoteSectionHTML('Grammar', grammar.length
-            ? [[...new Set(grammar)].join(', ').replace(/^./u, c => c.toLocaleUpperCase('en'))] : [], 'grammar', noteSeen),
-        senseNoteSectionHTML('Original dictionary text', note.original
-            // A label projection ("indicating time" → "time") is not extra
-            // usage detail. Keep original context only when the curated note
-            // actually has context to explain; provenance remains in the data.
-            ? [note.original.originalGloss, ...(note.context ? [note.original.originalContext] : [])].filter(addsDetail) : [], 'original', noteSeen),
-    ].join('');
+    const meaningHTML = senseNoteSectionHTML('', noteGlossBeyondTitle(note.gloss, title), 'meaning', noteSeen);
+    const usageHTML = senseNoteSectionHTML('Usage', usage.filter(addsDetail), 'usage', noteSeen);
+    const productionHTML = senseNoteSectionHTML('How it is used', production.filter(addsDetail), 'production', noteSeen);
+    const grammarHTML = senseNoteSectionHTML('Grammar', grammar.length
+        ? [[...new Set(grammar)].join(', ').replace(/^./u, c => c.toLocaleUpperCase('en'))] : [], 'grammar', noteSeen);
+    
+    // Original dictionary text is included only if it provides genuine detail
+    // not already presented in the meaning, usage, or grammar sections above.
+    const originalGlossAddition = (note.original?.originalGloss
+        && addsDetail(note.original.originalGloss) && !noteSeen.has(senseNoteTextKey(note.original.originalGloss)))
+        ? [note.original.originalGloss]
+        : [];
+    const originalContextAddition = (note.context && note.original?.originalContext)
+        ? splitLearnerContextClauses(note.original.originalContext).filter(c => addsDetail(c) && !noteSeen.has(senseNoteTextKey(c)))
+        : [];
+    const originalHTML = senseNoteSectionHTML('Original dictionary text', [
+        ...originalGlossAddition,
+        ...(originalContextAddition.length ? [originalContextAddition.join('; ')] : [])
+    ].filter(addsDetail), 'original', noteSeen);
+
+    const body = [meaningHTML, usageHTML, productionHTML, grammarHTML, originalHTML].join('');
     if (!body) return '';
     return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}" data-sense-note-base-gloss="${escapeCardText(note.baseGloss || title)}">${body}</div></template>`;
 }
@@ -1943,12 +1952,17 @@ export function openSenseNote(event, control) {
     const title = source.dataset.senseNoteTitle || 'This meaning';
     const overlay = document.createElement('div');
     overlay.className = 'sense-note-overlay';
-    const scopeLabel = source.dataset.senseNoteScope === 'all-contexts' ? 'Usage notes · All contexts' : 'Usage notes';
-    overlay.innerHTML = `<div class="sense-note-dialog" role="dialog" aria-modal="true" aria-labelledby="senseNoteTitle" tabindex="-1"><button type="button" class="sense-note-close" aria-label="Close usage notes">×</button><div class="sense-note-eyebrow">${scopeLabel}</div><h2 id="senseNoteTitle">${escapeCardText(title)}</h2><div class="sense-note-body"></div></div>`;
+    const scopeLabel = source.dataset.senseNoteScope === 'all-contexts' ? 'Sense details · All contexts' : 'Sense details';
+    overlay.innerHTML = `<div class="sense-note-dialog" role="dialog" aria-modal="true" aria-labelledby="senseNoteTitle" tabindex="-1"><button type="button" class="sense-note-close" aria-label="Close sense details">×</button><div class="sense-note-eyebrow">${scopeLabel}</div><h2 id="senseNoteTitle">${escapeCardText(title)}</h2><div class="sense-note-body"></div></div>`;
     overlay.querySelector('.sense-note-body').append(...source.cloneNode(true).children);
     document.body.appendChild(overlay);
 
     const dialog = overlay.querySelector('.sense-note-dialog');
+    const row = control.closest?.('.meaning-row, #flashcard, .card-replica');
+    if (row) {
+        const accent = getComputedStyle(row).getPropertyValue('--sense-match-rgb').trim();
+        if (accent) dialog.style.setProperty('--sense-match-rgb', accent);
+    }
     // On a phone the note opens beside the button that asked for it: just
     // below it, or just above when there is no room below.
     if (window.matchMedia?.('(max-width: 600px)').matches) {
