@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T15:47:00+01:00",
+      "date": "2026-10-17 15:47 BST",
+      "agent": "Antigravity",
+      "summary": "Balance setup headers spacing and add sliding switch affordance to Smart Skip toggle",
+      "detail": [
+        "Embedded a sliding iOS-style pill track and thumb inside the unified Smart Skip button with smooth CSS transforms and theme-adaptive coloring.",
+        "Trimmed excessive top padding above 'Choose your vocabulary' and 'Choose a level' so step content starts higher on screen.",
+        "Added healthy breathing margins and gaps directly below headers so title and content don't feel squashed together."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T15:25:00+01:00",
       "date": "2026-10-17 15:25 BST",
       "agent": "Antigravity",
