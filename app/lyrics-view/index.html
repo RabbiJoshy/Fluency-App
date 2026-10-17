@@ -67,6 +67,14 @@
         <button class="modal-close" id="closeSongPickerBtn" aria-label="Close modal">&#10005;</button>
       </div>
 
+      <!-- Unified Vertical Search Bar -->
+      <div class="song-picker-search-wrap">
+        <div class="song-picker-search">
+          <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search catalog by song title or artist…" autocomplete="off">
+          <button type="button" id="songSearchClearBtn" class="turbo-clear-btn" style="display:none;" aria-label="Clear search">✕</button>
+        </div>
+      </div>
+
       <!-- Quick Action: Can't find what you're looking for? Choose from Spotify -->
       <div class="spotify-import-banner" id="spotifyImportBanner">
         <div class="spotify-banner-left">
@@ -119,14 +127,6 @@
             <input type="text" id="turboManualArtist" class="turbo-text-input" placeholder="Artist name (optional)" />
           </div>
           <textarea id="turboManualLyrics" class="turbo-textarea" rows="4" placeholder="Paste Spanish lyrics here..."></textarea>
-        </div>
-      </div>
-
-      <!-- Unified Vertical Search Bar -->
-      <div class="song-picker-search-wrap">
-        <div class="song-picker-search">
-          <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search catalog by song title or artist…" autocomplete="off">
-          <button type="button" id="songSearchClearBtn" class="turbo-clear-btn" style="display:none;" aria-label="Clear search">✕</button>
         </div>
       </div>
 

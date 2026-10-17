@@ -882,6 +882,61 @@
                 </div>
             </div>
 
+            <!-- Embedded Song Picker Screen (Desktop Workspace) -->
+            <div id="extraSongPickerView" class="extra-song-picker-view" hidden>
+                <div class="extra-song-picker-topbar">
+                    <button type="button" class="extra-back-btn" id="extraSongPickerBackBtn">
+                        <span aria-hidden="true">‹</span> Extra
+                    </button>
+                </div>
+
+                <header class="extra-header">
+                    <h1 class="extra-title" id="extraSongPickerTitle">Choose a song</h1>
+                    <p class="extra-subtitle" id="extraSongPickerSubtitle">Search the library or load any song from Spotify to translate and read line by line.</p>
+                </header>
+
+                <!-- Search bar first -->
+                <div class="extra-song-search-wrap">
+                    <div class="extra-song-search">
+                        <svg class="extra-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="extraSongSearchInput" class="extra-song-search-input" placeholder="Search by song title or artist…" autocomplete="off">
+                        <button type="button" id="extraSongSearchClearBtn" class="extra-clear-btn" style="display:none;" aria-label="Clear search">✕</button>
+                    </div>
+                </div>
+
+                <!-- Spotify import banner strictly BELOW the search bar -->
+                <div class="extra-spotify-banner" id="extraSpotifyBanner">
+                    <div class="extra-spotify-banner-left">
+                        <svg class="extra-spotify-banner-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                            <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.563.387-.857.207-2.348-1.435-5.304-1.76-8.785-.963-.335.077-.67-.133-.746-.468-.077-.334.132-.67.467-.746 3.808-.87 7.076-.506 9.714 1.113.295.18.387.562.207.857zm1.225-2.723c-.226.368-.71.482-1.078.256-2.687-1.652-6.785-2.131-9.965-1.166-.413.126-.85-.11-1-.523-.125-.413.11-.85.524-.976 3.633-1.103 8.147-.568 11.263 1.341.368.226.482.71.256 1.078zm.106-2.836C14.692 8.93 9.38 8.753 6.3 9.688c-.494.15-1.018-.13-1.168-.624-.15-.494.13-1.018.624-1.168 3.532-1.072 9.404-.863 13.116 1.34.444.264.59.84.327 1.284-.264.444-.838.59-1.282.327z"/>
+                        </svg>
+                        <div class="extra-spotify-banner-text">
+                            <span class="extra-spotify-banner-title">Can't find what you're looking for? Load any song from Spotify</span>
+                        </div>
+                    </div>
+                    <button type="button" class="extra-spotify-action-btn" id="extraOpenSpotifyBtn">Paste link</button>
+                </div>
+
+                <!-- Collapsible Spotify Intake Tray -->
+                <div class="extra-spotify-tray" id="extraSpotifyTray" style="display: none;">
+                    <div class="extra-spotify-tray-inner">
+                        <input type="text" id="extraSpotifyInput" class="extra-spotify-input" placeholder="Paste Spotify track URL (or search title & artist)…" autocomplete="off" />
+                        <button type="button" id="extraSpotifySubmitBtn" class="extra-spotify-submit-btn">Load song</button>
+                    </div>
+                </div>
+
+                <!-- Song List Container -->
+                <div class="extra-songs-list" id="extraSongsList" role="list"></div>
+
+                <!-- Empty guidance -->
+                <div class="extra-songs-empty" id="extraSongsEmpty" style="display: none;">
+                    <p>No songs found matching your search. Try pasting a Spotify link above.</p>
+                </div>
+            </div>
+
             <!-- Embedded Conjugations Screen -->
             <div id="extraConjugationsView" class="extra-conjugations-view" hidden>
                 <div class="extra-conjugations-topbar">

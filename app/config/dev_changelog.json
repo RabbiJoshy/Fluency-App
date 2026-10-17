@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T13:15:00+01:00",
+      "date": "2026-10-17 13:15 BST",
+      "agent": "Antigravity",
+      "summary": "Integrate desktop song picker into Extra workspace and position Spotify banner below search bar",
+      "detail": [
+        "Integrated the song picking section into the desktop Extra workspace with sidebar and background intact.",
+        "Transition seamlessly to full-screen lyrics translation once a song is selected or loaded via Spotify URL.",
+        "Reordered the search bar to sit above the Spotify paste link banner across both desktop Extra and modal views.",
+        "Added search filtering and language-aware catalogue browsing directly inside desktop Extra."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T12:58:00+01:00",
       "date": "2026-10-17 12:58 BST",
       "agent": "Antigravity",

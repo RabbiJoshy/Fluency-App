@@ -1804,3 +1804,32 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
             self.assertIn(action, main)
         self.assertIn("chooseSpeechVocabulary(language);", main)
         self.assertIn("selectMusicArtist(entry, language),", main)
+
+    def test_desktop_extra_song_picker_workspace(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        lyrics_html = (APP_ROOT / "lyrics-view" / "index.html").read_text(encoding="utf-8")
+        extra_js = (APP_ROOT / "js" / "extra-workspace.js").read_text(encoding="utf-8")
+        lyrics_js = (APP_ROOT / "lyrics-view" / "lyrics-view.js").read_text(encoding="utf-8")
+
+        # Desktop Extra song picker markup inside extraModal
+        self.assertIn('id="extraSongPickerView"', html)
+        self.assertIn('id="extraSongPickerBackBtn"', html)
+        self.assertIn('id="extraSongSearchInput"', html)
+        self.assertIn('id="extraSpotifyBanner"', html)
+        self.assertIn('id="extraSpotifyTray"', html)
+        self.assertIn('id="extraSongsList"', html)
+
+        # Search bar sits strictly before Spotify banner in extra workspace
+        self.assertLess(html.index('id="extraSongSearchInput"'), html.index('id="extraSpotifyBanner"'))
+
+        # Search bar sits strictly before Spotify banner in lyrics-view modal
+        self.assertLess(lyrics_html.index('class="song-picker-search-wrap"'), lyrics_html.index('class="spotify-import-banner"'))
+
+        # extra-workspace wires lyrics card to openSongPickerScreen
+        self.assertIn("function openSongPickerScreen()", extra_js)
+        self.assertIn("openSongPickerScreen()", extra_js)
+        self.assertIn("function launchLyricsView(songParam)", extra_js)
+
+        # lyrics-view handles direct song selection and online turbo intake from paramSong
+        self.assertIn("paramSong.includes('spotify')", lyrics_js)
+
