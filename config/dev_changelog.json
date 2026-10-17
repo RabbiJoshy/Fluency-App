@@ -2,13 +2,13 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
-      "timestamp": "2026-10-17T20:31:00+01:00",
-      "date": "2026-10-17 20:31 BST",
+      "timestamp": "2026-10-17T20:43:00+01:00",
+      "date": "2026-10-17 20:43 BST",
       "agent": "Antigravity",
-      "summary": "Thicker sense-matched POS indent rail with tighter row indent and larger meaning pin targets",
+      "summary": "Unboxed 22x22 pushpin icons with full-gutter touch targets and 2px sense-matched POS indent rail",
       "detail": [
-        "Changed .pos-collapsible.is-open .meaning-pos-rows vertical rail to 2px solid rgb(var(--sense-match-rgb)) and reduced its indent from 13px to 9px to reclaim horizontal space on meaning rows.",
-        "Expanded .sense-pin-btn to a full-height 38x36px left-gutter button with an 18x18 pushpin icon and visible pill surface.",
+        "Removed box border and background from .sense-pin-btn while increasing the pushpin SVG icon to 22x22 inside a 38x36px full-height gutter hit zone.",
+        "Changed .pos-collapsible.is-open .meaning-pos-rows vertical rail to 2px solid rgb(var(--sense-match-rgb)) and reduced its indent from 13px to 9px.",
         "Widened .pct-column for pinned/pinning group rows and kept grouped sub-senses expanded while pinning mode is active."
       ],
       "commit": "pending"
