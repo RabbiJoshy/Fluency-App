@@ -1060,7 +1060,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Saying what you think",
-                "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Links what someone thinks, says, knows or hopes to a statement.",
                 "allowed_lemmas": [
                     "achar",
@@ -1713,7 +1713,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Saying what you think",
-                "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Links what someone thinks, says, knows or hopes to a statement.",
                 "allowed_lemmas": [
                     "achar",
@@ -11942,7 +11942,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Saying what you think",
-                "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Links what someone thinks, says, knows or hopes to a statement.",
                 "allowed_lemmas": [
                     "creer",
@@ -12655,7 +12655,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Saying what you think",
-                "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Links what someone thinks, says, knows or hopes to a statement.",
                 "allowed_lemmas": [
                     "creer",

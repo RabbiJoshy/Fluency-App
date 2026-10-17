@@ -23,7 +23,7 @@ COPY = {
    ('Verbs with de', [('v','verb'),('connector','de'),('c','noun / verb / pronoun')], 'Some verbs use de to link to what follows. Learn the verb and de together.'),
    ('Adding a detail', [('v','noun'),('connector','de'),('c','detail / action')], 'Adds a detail: whose it is, what it contains, what it is made of, or what it is for.')],
   'que': [
-   ('Saying what you think', [('v','think, say, know or hope'),('connector','que'),('c','what happens')], 'Links what someone thinks, says, knows or hopes to a statement.'),
+   ('Saying what you think', [('v','think / say / know / hope'),('connector','que')], 'Links what someone thinks, says, knows or hopes to a statement.'),
    ('Adding information', [('v','noun'),('connector','que'),('c','description')], 'Adds information about the noun.'),
    ('Comparing', [('v','more, less or better'),('connector','que'),('c','what you compare with')], 'Means “than” when comparing people, things or situations.')],
   'se': [
@@ -42,7 +42,7 @@ COPY = {
    ('Verbs with de', [('v','verb'),('connector','de'),('c','noun / verb / pronoun')], 'Some verbs use de to link to what follows. Learn the verb and de together.'),
    ('Adding a detail', [('v','noun'),('connector','de'),('c','detail / action')], 'Adds a detail: whose it is, what it contains, what it is made of, or what it is for.')],
   'que': [
-   ('Saying what you think', [('v','think, say, know or hope'),('connector','que'),('c','what happens')], 'Links what someone thinks, says, knows or hopes to a statement.'),
+   ('Saying what you think', [('v','think / say / know / hope'),('connector','que')], 'Links what someone thinks, says, knows or hopes to a statement.'),
    ('Adding information', [('v','noun'),('connector','que'),('c','description')], 'Adds information about the noun.'),
    ('Comparing', [('v','more, less or better'),('connector','que'),('c','what you compare with')], 'Means “than” when comparing people, things or situations.')],
   'se': [

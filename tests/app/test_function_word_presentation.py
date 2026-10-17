@@ -22,7 +22,7 @@ assert.ok(html.indexOf('fw-parts-box')<html.indexOf('fw-section-header'));
 assert.ok(html.includes('rgb(74, 158, 255)'));
 assert.ok(html.includes('<b>tatoeba</b>'));
 const que=vm.runInContext("functionWordBlockHTML({word:'que'},'pt')",ctx);
-assert.ok(que.includes('color:rgb(0, 212, 170)">think, say, know or hope'));
+assert.ok(que.includes('color:rgb(0, 212, 170)">think / say / know / hope'));
 const nodes={'.fw-sentence-target':{},'.fw-sentence-translation':{},'.fw-credit-start':{},'.fw-sentence-ticks-container':{}};
 ctx.document.querySelector=()=>({dataset:{word:'que',lang:'pt'},querySelectorAll:()=>[],querySelector:s=>nodes[s]});
 vm.runInContext('_activeExampleIndex=2;refreshFunctionWordCardBack()',ctx);

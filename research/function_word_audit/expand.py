@@ -15,7 +15,7 @@ SLOTS = {}
 def slots(labels, label, kind):
     for old in labels.split('|'): SLOTS[old] = (label, kind)
 slots('Verb|Verb (1st Sing)|Verb (2nd Sing)|Verb (3rd Sing)|Verb (Passive/Impersonal)|Verb of self-action', 'verb', 'verb')
-slots('Thought / Speech', 'think, say, know or hope', 'verb')
+slots('Thought / Speech', 'think / say / know / hope', 'verb')
 slots('Infinitive|Infinitive Goal|Infinitive Objective', 'infinitive (dictionary form)', 'verb')
 slots('Noun', 'noun', 'noun')
 for old in ['Feminine Noun','Feminine Singular Noun','Masculine Noun','Masculine Singular Noun','Feminine Plural Noun','Masculine Plural Noun','Plural Feminine Noun','Plural Masculine Noun','Plural Noun','Singular Noun']:
@@ -142,6 +142,8 @@ def expand(originals, pilot):
                             kind={'noun / verb / pronoun':'mixed','detail / action':'mixed','what happens':'clause','a possible situation':'clause','what happens then':'clause','masculine singular noun':'noun','masculine plural noun':'noun','destination':'phrase','pronoun':'pron'}.get(label)
                         if kind is None:raise ValueError(('Unreviewed pilot slot',label))
                         types[side]=kind
+                if reviewed and word=='que' and i==0:
+                    types['c']='clause'  # Implicit in formula, still typed in example highlights.
                 r['slotTypes']=types
                 slot_notes=apply_slot_review(lang,word,i,r)
                 ledger.append(dict(language=lang,word=word,pattern=i,before={k:before[k] for k in ('tag','formulaHTML','rule')},after={k:r[k] for k in ('tag','formulaHTML','rule','slotTypes')},example_review=entry['previewReviewStatus'],slot_notes=slot_notes))
