@@ -1,0 +1,122 @@
+[
+  {
+    "example_id": "example_386665f484766649b124bde7d0824091",
+    "decision": "hold",
+    "reason": "Referent and English correspondence are unclear without context; do not publish as a standalone example."
+  },
+  {
+    "example_id": "example_09d38bc845c0400cd4f2d565062be4ab",
+    "decision": "hold",
+    "reason": "Article before a name is grammatical but adds little variety; proper-name use needs regional context."
+  },
+  {
+    "example_id": "example_702a5681106ebca2fde4b5ba313bc080",
+    "decision": "hold",
+    "reason": "Precisas de + infinitive is European Portuguese; retain for regional review, not default Brazilian trial."
+  },
+  {
+    "example_id": "example_ec64c92a5e472cda62c2405ea256f133",
+    "decision": "hold",
+    "reason": "Article before a name is grammatical; avoid adding another Tom example without regional context."
+  },
+  {
+    "example_id": "example_5c124f68859ad5c0db533eae04b45a57",
+    "decision": "hold",
+    "reason": "O tempo inteiro is a fixed time expression; structurally a noun phrase but unsuitable as the simplest article demonstration."
+  },
+  {
+    "example_id": "example_cebbc53189c1c3db8e86469f7c93fd95",
+    "decision": "accept",
+    "reason": "Natural pronominal importar-se example; correct contiguous se + importa and faithful translation."
+  },
+  {
+    "example_id": "example_d3ae7d54ebaaa6544d895eb73133e586",
+    "decision": "appropriate_abstention",
+    "reason": "Interrogative é que construction is outside the displayed patterns."
+  },
+  {
+    "example_id": "example_9c2b7e1a35879c3b6fdf5fd31ffa7184",
+    "decision": "missed_match",
+    "reason": "Jeito de fazer is a noun plus action construction fitting the purpose/action explanation; v2 deliberately abstains on noun de semantics."
+  },
+  {
+    "example_id": "example_be1a940892b7756f5a006fb3406503f1",
+    "decision": "appropriate_abstention",
+    "reason": "Temporal noun detail is not covered clearly by the current de explanation."
+  },
+  {
+    "example_id": "example_e62345e76733ac0119f698855d06c294",
+    "decision": "appropriate_abstention",
+    "reason": "Whether clause, not a condition and result."
+  },
+  {
+    "example_id": "example_d155eec9b40e2075dc1291dc8a4396d9",
+    "decision": "missed_match",
+    "reason": "Impedir de is a governed verb construction; requires fuller verb frame handling."
+  },
+  {
+    "example_id": "example_fe0c5a9eb709b9880119d78c561a8312",
+    "decision": "appropriate_abstention",
+    "reason": "O que question clause is outside the displayed que patterns."
+  },
+  {
+    "example_id": "example_f5d9ebb5fc6606b8f06d147ed1813058",
+    "decision": "accept",
+    "reason": "Referirse is pronominal; imperfect can refer to usted, matching English you. Correct minimal verbal chunk."
+  },
+  {
+    "example_id": "example_a2f5f8f06c4b08bfafa04966bdaf3145",
+    "decision": "accept",
+    "reason": "Object lo resumes the topicalised book; natural Spanish and accurate translation."
+  },
+  {
+    "example_id": "example_5ac81bbb7051bd89a71bc2014477d11f",
+    "decision": "accept",
+    "reason": "Se ha acabado contains auxiliary plus participle in one generated verb chunk."
+  },
+  {
+    "example_id": "example_c12ccd66c1bb339649318aaaabdb2b6c",
+    "decision": "accept",
+    "reason": "Verse + adjective describes appearance here; pronominal row and translation fit."
+  },
+  {
+    "example_id": "example_fc33b0b5d9191f4ce6d6c835d2c4dbf3",
+    "decision": "accept",
+    "reason": "Llamarse is pronominal; natural sentence and faithful translation."
+  },
+  {
+    "example_id": "example_feaf69f5b319a8c3e3349a48a5b80131",
+    "decision": "hold",
+    "reason": "Statement construction fits, but ella no se encuentra is context-dependent without a place; retain for editorial review."
+  },
+  {
+    "example_id": "example_61583a7c9758b5e9247957545fc77644",
+    "decision": "missed_match",
+    "reason": "Volver al trabajo fits to/at the but trabajo is outside the deliberately narrow destination list."
+  },
+  {
+    "example_id": "example_43f8da76446d856f5e65192913c3455b",
+    "decision": "appropriate_abstention",
+    "reason": "Hace tiempo que temporal construction is outside the three que patterns."
+  },
+  {
+    "example_id": "example_366f171aa5e0638752767d7b94a58db3",
+    "decision": "appropriate_abstention",
+    "reason": "Fuera de is a phrase, not the displayed noun/verb pattern."
+  },
+  {
+    "example_id": "example_4f7d938b455e6e12088962fe9264fede",
+    "decision": "appropriate_abstention",
+    "reason": "Duda de que complement is outside the explicitly listed semantic de scope."
+  },
+  {
+    "example_id": "example_aa98d7838ba4b032be8441f5cb53e3cc",
+    "decision": "missed_match",
+    "reason": "Se ve describes appearance and fits pronominal se; retained label/parser conflict causes abstention."
+  },
+  {
+    "example_id": "example_75c565c41f587ead57127d961f455eb2",
+    "decision": "appropriate_abstention",
+    "reason": "Lo que free relative is outside noun-antecedent relative and thought-plus-statement patterns."
+  }
+]

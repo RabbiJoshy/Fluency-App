@@ -41,3 +41,30 @@ assert.ok(vm.runInContext("functionWordBlockHTML({word:'que'},'es')",ctx).includ
         self.assertIn('backHTML += functionWordRows || `<div class="meanings-scroll">',source)
         self.assertNotIn('functionWordExampleHTML(currentExample)',source)
         self.assertNotIn('Grammar word',(ROOT/'app/js/function-word-card.js').read_text())
+
+    @unittest.skipUnless(shutil.which('node'),'Node required')
+    def test_staging_trial_is_opt_in_and_does_not_mutate_base(self):
+        script=r'''
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const ctx={window:{location:{search:'?fwSyntaxTrial=1'}},URLSearchParams,document:{querySelector:()=>null}};vm.createContext(ctx);
+vm.runInContext(fs.readFileSync('app/js/function-word-card.js','utf8').replace(/^export /gm,''),ctx);
+const get=()=>vm.runInContext("getGrammarWordDefinition('se','spanish')",ctx);
+const base=get(),count=base.relations[0].examples.length;
+assert.equal(base.syntaxTrial,undefined); // Production ignores opt-in.
+ctx.window.__FLUENCY_ENV__='staging';ctx.window.location.search='';
+assert.equal(get(),base); // Staging default stays unchanged.
+ctx.window.location.search='?fwSyntaxTrial=1';
+const trial=get();assert.equal(trial.syntaxTrial,true);
+assert.ok(trial.relations[0].examples.length>count);
+assert.equal(base.relations[0].examples.length,count);
+assert.equal(trial.uses,trial.relations);
+assert.ok(vm.runInContext("functionWordBlockHTML({word:'se'},'es')",ctx).includes('Reviewed example trial'));
+const nodes={'.fw-sentence-target':{},'.fw-sentence-translation':{},'.fw-credit-start':{},'.fw-sentence-ticks-container':{}};
+ctx.document.querySelector=()=>({dataset:{word:'se',lang:'es'},querySelectorAll:()=>[],querySelector:s=>nodes[s]});
+vm.runInContext('_activeExampleIndex=1;refreshFunctionWordCardBack()',ctx);
+assert.ok(nodes['.fw-sentence-target'].innerHTML.includes('ha acabado'));
+ctx.window.location.search='?fwSyntaxTrial=0';assert.equal(get(),base);
+ctx.window.__FLUENCY_ENV__='production';ctx.window.location.search='?fwSyntaxTrial=1';assert.equal(get(),base);
+'''
+        run=subprocess.run(['node','-e',script],cwd=ROOT,text=True,capture_output=True)
+        self.assertEqual(run.returncode,0,run.stderr)

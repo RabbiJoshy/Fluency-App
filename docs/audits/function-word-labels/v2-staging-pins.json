@@ -1,0 +1,6 @@
+{
+  "docs/audits/function-word-labels/syntax-v2-findings.json": "6633620389158b9724b6088b8ae58b0d4d0f3b4ef2aa95e4d5ecdb02619ba0d3",
+  "docs/audits/function-word-labels/v2-fresh-predictions.json": "4597af69f6d0dc87f75cd2126f2b2fba8b8134c8bd757e0a264927f5a193e002",
+  "docs/audits/function-word-labels/v2-fresh-review.json": "9062a82e50085310335aed1821531d4757d9ecdf7ffef02beef387b3898241ab",
+  "research/function_word_audit/syntax_bridge_v2.py": "113e395f97778bb232f03a66a9a6761014a27a31a896b2922a2e72c71e1db63c"
+}

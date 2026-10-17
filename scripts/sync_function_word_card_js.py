@@ -23,6 +23,8 @@ for d in (pt_data, es_data):
 pt_json_str = json.dumps(pt_data, ensure_ascii=False, indent=4)
 es_json_str = json.dumps(es_data, ensure_ascii=False, indent=4)
 
+trial_json_str = (ROOT / "app/data/grammar-words/syntax-trial.json").read_text().strip()
+
 js_code = f"""// Function-word presentation & ambient lighting for Fluency.
 //
 // Function words -- articles, prepositions, particles, clitics, contractions -- are
@@ -46,6 +48,13 @@ export const GRAMMAR_WORDS = {{
     es: SPANISH_GRAMMAR_WORDS,
     spanish: SPANISH_GRAMMAR_WORDS,
 }};
+
+// Explicitly reviewed additions only; never enabled in production.
+const FW_SYNTAX_TRIAL = {trial_json_str};
+function syntaxTrialEnabled() {{
+    return typeof window !== 'undefined' && window.__FLUENCY_ENV__ === 'staging'
+        && new URLSearchParams(window.location?.search || '').get('fwSyntaxTrial') === '1';
+}}
 
 // Backward-compatibility: ensure .uses aliases
 for (const dict of [PORTUGUESE_GRAMMAR_WORDS, SPANISH_GRAMMAR_WORDS]) {{
@@ -131,7 +140,20 @@ export function getGrammarWordDefinition(cardOrWord, lang) {{
 
     const langKey = String(lang || 'pt').toLowerCase();
     const suite = GRAMMAR_WORDS[langKey] || PORTUGUESE_GRAMMAR_WORDS;
-    return suite[wordKey] || null;
+    const base = suite[wordKey] || null;
+    if (!base || !syntaxTrialEnabled()) return base;
+    const language = suite === SPANISH_GRAMMAR_WORDS ? 'es' : 'pt';
+    const additions = FW_SYNTAX_TRIAL[language]?.[wordKey];
+    if (!additions) return base;
+    const relations = base.relations.map((relation, index) => {{
+        const extra = additions[index];
+        if (!extra?.length) return relation;
+        const existing = relation.examples || [];
+        const ids = new Set(existing.map(example => example.example_id).filter(Boolean));
+        const examples = [...extra.filter(example => !ids.has(example.example_id)), ...existing];
+        return {{...relation, examples, targetHTML: examples[0].targetHTML, translation: examples[0].translation}};
+    }});
+    return {{...base, relations, uses: relations, syntaxTrial: true}};
 }}
 
 // Backward-compatibility alias:
@@ -472,6 +494,7 @@ export function functionWordBlockHTML(card, lang) {{
                     ${{partsBoxHTML}}
                     ${{dynamicPartsHTML}}
                     <div class="fw-section-header">Function Word · Example Patterns</div>
+                    ${{fwData.syntaxTrial ? '<div class="fw-section-header">Reviewed example trial</div>' : ''}}
                 </div>
                 <div class="fw-relations-list">
                     ${{relationsHTML}}

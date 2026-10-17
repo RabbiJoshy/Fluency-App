@@ -1,0 +1,2469 @@
+[
+  {
+    "status": "abstain",
+    "reason": "Time/rate noun: generic al label is not destination evidence.",
+    "evidence": {
+      "focus": {
+        "text": "al",
+        "lemma": "al",
+        "upos": "ADP",
+        "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+        "deprel": "case",
+        "id": 3,
+        "head": 7,
+        "token": {
+          "text": "al",
+          "start_char": 13,
+          "end_char": 15
+        }
+      },
+      "head": {
+        "text": "años",
+        "lemma": "año",
+        "upos": "NOUN",
+        "feats": "Gender=Masc|Number=Plur",
+        "deprel": "obl",
+        "id": 7,
+        "head": 2,
+        "token": {
+          "text": "años",
+          "start_char": 28,
+          "end_char": 32
+        }
+      },
+      "governor": {
+        "text": "preguntas",
+        "lemma": "preguntar",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=2|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 2,
+        "head": 0,
+        "token": {
+          "text": "preguntas",
+          "start_char": 3,
+          "end_char": 12
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "al",
+    "example_id": "example_f94674a1e817a7121a956c9b8b517a07",
+    "sentence": "Lo preguntas al cabo de dos años.",
+    "translation": "After two years, you ask that.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 1615791,
+        "line": "99",
+        "subtitle_id": "6829699",
+        "title_id": "5199262",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+      "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+      "source_record_id": "5199262:6829699:99:1615791",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Need destination versus personal-a/recipient evidence; no forced assignment.",
+    "evidence": {
+      "focus": {
+        "text": "al",
+        "lemma": "al",
+        "upos": "ADP",
+        "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+        "deprel": "case",
+        "id": 5,
+        "head": 6,
+        "token": {
+          "text": "al",
+          "start_char": 23,
+          "end_char": 25
+        }
+      },
+      "head": {
+        "text": "autobús",
+        "lemma": "autobús",
+        "upos": "NOUN",
+        "feats": "Gender=Masc|Number=Sing",
+        "deprel": "obl",
+        "id": 6,
+        "head": 4,
+        "token": {
+          "text": "autobús",
+          "start_char": 26,
+          "end_char": 33
+        }
+      },
+      "governor": {
+        "text": "subir",
+        "lemma": "subir",
+        "upos": "VERB",
+        "feats": "VerbForm=Inf",
+        "deprel": "advcl",
+        "id": 4,
+        "head": 2,
+        "token": {
+          "text": "subir",
+          "start_char": 17,
+          "end_char": 22
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "al",
+    "example_id": "example_2e2657447b9656ac568c0b748a0630ae",
+    "sentence": "Se apresuró para subir al autobús.",
+    "translation": "He hurried to get on the bus.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #342378 by tatoerique; English translation #10287812 by LimeGreenTeknii",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+      "source_record_id": "342378:10287812",
+      "translated_from_english": false,
+      "url": "https://tatoeba.org/en/sentences/show/342378"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Generic de label does not establish either displayed attachment.",
+    "evidence": {
+      "focus": {
+        "text": "de",
+        "lemma": "de",
+        "upos": "ADP",
+        "feats": null,
+        "deprel": "fixed",
+        "id": 7,
+        "head": 5,
+        "token": {
+          "text": "de",
+          "start_char": 26,
+          "end_char": 28
+        }
+      },
+      "head": {
+        "text": "a",
+        "lemma": "a",
+        "upos": "ADP",
+        "feats": null,
+        "deprel": "case",
+        "id": 5,
+        "head": 8,
+        "token": {
+          "text": "a",
+          "start_char": 17,
+          "end_char": 18
+        }
+      },
+      "governor": {
+        "text": "agua",
+        "lemma": "agua",
+        "upos": "NOUN",
+        "feats": "Gender=Fem|Number=Sing",
+        "deprel": "nmod",
+        "id": 8,
+        "head": 4,
+        "token": {
+          "text": "agua",
+          "start_char": 29,
+          "end_char": 33
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "de",
+    "example_id": "example_263c23c9e3b4d76158f825dfe5cee7dc",
+    "sentence": "Este es un reloj a prueba de agua.",
+    "translation": "This is a waterproof watch.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #1556617 by marcelostockle; English translation #1550023 by miflhanc",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+      "source_record_id": "1556617:1550023",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/1556617"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Generic de label does not establish either displayed attachment.",
+    "evidence": {
+      "focus": {
+        "text": "de",
+        "lemma": "de",
+        "upos": "ADP",
+        "feats": null,
+        "deprel": "case",
+        "id": 6,
+        "head": 7,
+        "token": {
+          "text": "de",
+          "start_char": 27,
+          "end_char": 29
+        }
+      },
+      "head": {
+        "text": "algo",
+        "lemma": "algo",
+        "upos": "PRON",
+        "feats": "Number=Sing|PronType=Ind",
+        "deprel": "nmod",
+        "id": 7,
+        "head": 5,
+        "token": {
+          "text": "algo",
+          "start_char": 30,
+          "end_char": 34
+        }
+      },
+      "governor": {
+        "text": "seguro",
+        "lemma": "seguro",
+        "upos": "ADJ",
+        "feats": "Gender=Masc|Number=Sing",
+        "deprel": "root",
+        "id": 5,
+        "head": 0,
+        "token": {
+          "text": "seguro",
+          "start_char": 20,
+          "end_char": 26
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "de",
+    "example_id": "example_51ee7e1b3db07e9769623a5e67d5f6ed",
+    "sentence": "Nunca he estado más seguro de algo en mi vida.",
+    "translation": "Never been more sure of anything in my life.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 2706874,
+        "line": "511",
+        "subtitle_id": "6781123",
+        "title_id": "6073240",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+      "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+      "source_record_id": "6073240:6781123:511:2706874",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "candidate",
+    "pattern": 1,
+    "chunks": [
+      {
+        "slot": "v",
+        "start": 3,
+        "end": 9,
+        "text": "número"
+      },
+      {
+        "slot": "connector",
+        "start": 10,
+        "end": 12,
+        "text": "de"
+      },
+      {
+        "slot": "c",
+        "start": 13,
+        "end": 26,
+        "text": "minas navales"
+      }
+    ],
+    "reason": "Noun-attached de detail.",
+    "evidence": {
+      "focus": {
+        "text": "de",
+        "lemma": "de",
+        "upos": "ADP",
+        "feats": null,
+        "deprel": "case",
+        "id": 3,
+        "head": 4,
+        "token": {
+          "text": "de",
+          "start_char": 10,
+          "end_char": 12
+        }
+      },
+      "head": {
+        "text": "minas",
+        "lemma": "mina",
+        "upos": "NOUN",
+        "feats": "Gender=Fem|Number=Plur",
+        "deprel": "nmod",
+        "id": 4,
+        "head": 2,
+        "token": {
+          "text": "minas",
+          "start_char": 13,
+          "end_char": 18
+        }
+      },
+      "governor": {
+        "text": "número",
+        "lemma": "número",
+        "upos": "NOUN",
+        "feats": "Gender=Masc|Number=Sing",
+        "deprel": "nsubj",
+        "id": 2,
+        "head": 7,
+        "token": {
+          "text": "número",
+          "start_char": 3,
+          "end_char": 9
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "de",
+    "example_id": "example_98ef0d0031e53721d9d2635be38fde84",
+    "sentence": "El número de minas navales no coincide.",
+    "translation": "The number of naval mines doesn't match up.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 1258652,
+        "line": "190",
+        "subtitle_id": "6857017",
+        "title_id": "4939066",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+      "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+      "source_record_id": "4939066:6857017:190:1258652",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "El <span class=\"fw-token-v\">número</span> <span class=\"fw-token-connector\">de</span> <span class=\"fw-token-c\">minas navales</span> no coincide."
+  },
+  {
+    "status": "candidate",
+    "pattern": 1,
+    "chunks": [
+      {
+        "slot": "v",
+        "start": 3,
+        "end": 10,
+        "text": "capital"
+      },
+      {
+        "slot": "connector",
+        "start": 11,
+        "end": 13,
+        "text": "de"
+      },
+      {
+        "slot": "c",
+        "start": 14,
+        "end": 20,
+        "text": "riesgo"
+      }
+    ],
+    "reason": "Noun-attached de detail.",
+    "evidence": {
+      "focus": {
+        "text": "de",
+        "lemma": "de",
+        "upos": "ADP",
+        "feats": null,
+        "deprel": "case",
+        "id": 3,
+        "head": 4,
+        "token": {
+          "text": "de",
+          "start_char": 11,
+          "end_char": 13
+        }
+      },
+      "head": {
+        "text": "riesgo",
+        "lemma": "riesgo",
+        "upos": "NOUN",
+        "feats": "Gender=Masc|Number=Sing",
+        "deprel": "nmod",
+        "id": 4,
+        "head": 2,
+        "token": {
+          "text": "riesgo",
+          "start_char": 14,
+          "end_char": 20
+        }
+      },
+      "governor": {
+        "text": "capital",
+        "lemma": "capital",
+        "upos": "NOUN",
+        "feats": "Gender=Masc|Number=Sing",
+        "deprel": "root",
+        "id": 2,
+        "head": 0,
+        "token": {
+          "text": "capital",
+          "start_char": 3,
+          "end_char": 10
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "de",
+    "example_id": "example_e60573f8f1d476dab70ed3bb615e3fc1",
+    "sentence": "El capital de riesgo.",
+    "translation": "Risk capital.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 2088670,
+        "line": "542",
+        "subtitle_id": "6542768",
+        "title_id": "5462486",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+      "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+      "source_record_id": "5462486:6542768:542:2088670",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "El <span class=\"fw-token-v\">capital</span> <span class=\"fw-token-connector\">de</span> <span class=\"fw-token-c\">riesgo</span>."
+  },
+  {
+    "status": "abstain",
+    "reason": "Article/object evidence does not fit the displayed formula.",
+    "evidence": {
+      "focus": {
+        "text": "lo",
+        "lemma": "él",
+        "upos": "PRON",
+        "feats": "Case=Acc|Definite=Def|Gender=Masc|Number=Sing|Person=3|PrepCase=Npr|PronType=Prs",
+        "deprel": "det",
+        "id": 5,
+        "head": 7,
+        "token": {
+          "text": "lo",
+          "start_char": 16,
+          "end_char": 18
+        }
+      },
+      "head": {
+        "text": "sé",
+        "lemma": "saber",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+        "deprel": "ccomp",
+        "id": 7,
+        "head": 3,
+        "token": {
+          "text": "sé",
+          "start_char": 23,
+          "end_char": 25
+        }
+      },
+      "governor": {
+        "text": "dije",
+        "lemma": "decir",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Past|VerbForm=Fin",
+        "deprel": "root",
+        "id": 3,
+        "head": 0,
+        "token": {
+          "text": "dije",
+          "start_char": 6,
+          "end_char": 10
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "lo",
+    "example_id": "example_c42f53ae703fd2b46835d2cc86c8a789",
+    "sentence": "Ya te dije todo lo que sé.",
+    "translation": "I already told you everything I know.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #2292560 by hayastan; English translation #2291645 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+      "source_record_id": "2292560:2291645",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/2292560"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Article/object evidence does not fit the displayed formula.",
+    "evidence": {
+      "focus": {
+        "text": "lo",
+        "lemma": "él",
+        "upos": "PRON",
+        "feats": "Case=Acc|Definite=Def|Gender=Masc|Number=Sing|Person=3|PrepCase=Npr|PronType=Prs",
+        "deprel": "det",
+        "id": 4,
+        "head": 7,
+        "token": {
+          "text": "lo",
+          "start_char": 13,
+          "end_char": 15
+        }
+      },
+      "head": {
+        "text": "gusta",
+        "lemma": "gustar",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+        "deprel": "ccomp",
+        "id": 7,
+        "head": 3,
+        "token": {
+          "text": "gusta",
+          "start_char": 23,
+          "end_char": 28
+        }
+      },
+      "governor": {
+        "text": "es",
+        "lemma": "ser",
+        "upos": "AUX",
+        "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 3,
+        "head": 0,
+        "token": {
+          "text": "es",
+          "start_char": 10,
+          "end_char": 12
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "lo",
+    "example_id": "example_08c4a4c3e99bd137e6ff3d2811ebc6f1",
+    "sentence": "Un equipo es lo que me gusta ver.",
+    "translation": "A team is what I like to see.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 1450047,
+        "line": "1008",
+        "subtitle_id": "6693365",
+        "title_id": "5090828",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+      "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+      "source_record_id": "5090828:6693365:1008:1450047",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "candidate",
+    "pattern": 1,
+    "chunks": [
+      {
+        "slot": "connector",
+        "start": 39,
+        "end": 41,
+        "text": "lo"
+      },
+      {
+        "slot": "v",
+        "start": 42,
+        "end": 46,
+        "text": "hace"
+      }
+    ],
+    "reason": "Object dependency and before-verb placement agree.",
+    "evidence": {
+      "focus": {
+        "text": "lo",
+        "lemma": "él",
+        "upos": "PRON",
+        "feats": "Case=Acc|Gender=Masc|Number=Sing|Person=3|PrepCase=Npr|PronType=Prs",
+        "deprel": "obj",
+        "id": 11,
+        "head": 12,
+        "token": {
+          "text": "lo",
+          "start_char": 39,
+          "end_char": 41
+        }
+      },
+      "head": {
+        "text": "hace",
+        "lemma": "hacer",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+        "deprel": "conj",
+        "id": 12,
+        "head": 5,
+        "token": {
+          "text": "hace",
+          "start_char": 42,
+          "end_char": 46
+        }
+      },
+      "governor": {
+        "text": "juega",
+        "lemma": "jugar",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 5,
+        "head": 0,
+        "token": {
+          "text": "juega",
+          "start_char": 16,
+          "end_char": 21
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "lo",
+    "example_id": "example_28cefab21855a9c391dba48cb4a01375",
+    "sentence": "Mi padre sí que juega al golf, pero no lo hace bien.",
+    "translation": "My father does play golf, but not well.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #1292162 by Shishir; English translation #318987 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+      "source_record_id": "1292162:318987",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/1292162"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Mi padre sí que juega al golf, pero no <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-v\">hace</span> bien."
+  },
+  {
+    "status": "candidate",
+    "pattern": 1,
+    "chunks": [
+      {
+        "slot": "connector",
+        "start": 3,
+        "end": 5,
+        "text": "lo"
+      },
+      {
+        "slot": "v",
+        "start": 6,
+        "end": 11,
+        "text": "dejes"
+      }
+    ],
+    "reason": "Object dependency and before-verb placement agree.",
+    "evidence": {
+      "focus": {
+        "text": "lo",
+        "lemma": "él",
+        "upos": "PRON",
+        "feats": "Case=Acc|Gender=Masc|Number=Sing|Person=3|PrepCase=Npr|PronType=Prs",
+        "deprel": "obj",
+        "id": 2,
+        "head": 3,
+        "token": {
+          "text": "lo",
+          "start_char": 3,
+          "end_char": 5
+        }
+      },
+      "head": {
+        "text": "dejes",
+        "lemma": "dejar",
+        "upos": "VERB",
+        "feats": "Mood=Sub|Number=Sing|Person=2|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 3,
+        "head": 0,
+        "token": {
+          "text": "dejes",
+          "start_char": 6,
+          "end_char": 11
+        }
+      },
+      "governor": null,
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "lo",
+    "example_id": "example_8bf2bd6a2117211786705719c40b6a77",
+    "sentence": "No lo dejes abierto.",
+    "translation": "Don't leave it open.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #1906338 by alexmarcelo; English translation #50852 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+      "source_record_id": "1906338:50852",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/1906338"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "No <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-v\">dejes</span> abierto."
+  },
+  {
+    "status": "abstain",
+    "reason": "No supported structural rule in this first pass.",
+    "evidence": {
+      "focus": {
+        "text": "que",
+        "lemma": "que",
+        "upos": "SCONJ",
+        "feats": null,
+        "deprel": "fixed",
+        "id": 2,
+        "head": 1,
+        "token": {
+          "text": "que",
+          "start_char": 4,
+          "end_char": 7
+        }
+      },
+      "head": {
+        "text": "Así",
+        "lemma": "así",
+        "upos": "ADV",
+        "feats": null,
+        "deprel": "advmod",
+        "id": 1,
+        "head": 4,
+        "token": {
+          "text": "Así",
+          "start_char": 0,
+          "end_char": 3
+        }
+      },
+      "governor": {
+        "text": "fué",
+        "lemma": "fué",
+        "upos": "AUX",
+        "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+        "deprel": "root",
+        "id": 4,
+        "head": 0,
+        "token": {
+          "text": "fué",
+          "start_char": 11,
+          "end_char": 14
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "que",
+    "example_id": "example_413d8183c04320452c994aefe0c23f2c",
+    "sentence": "Así que él fué.",
+    "translation": "So he came over.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 2047953,
+        "line": "171",
+        "subtitle_id": "6554328",
+        "title_id": "5444998",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+      "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+      "source_record_id": "5444998:6554328:171:2047953",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Conjunction label lacks a matching complement-clause attachment.",
+    "evidence": {
+      "focus": {
+        "text": "que",
+        "lemma": "que",
+        "upos": "SCONJ",
+        "feats": null,
+        "deprel": "mark",
+        "id": 4,
+        "head": 6,
+        "token": {
+          "text": "que",
+          "start_char": 12,
+          "end_char": 15
+        }
+      },
+      "head": {
+        "text": "ir",
+        "lemma": "ir",
+        "upos": "VERB",
+        "feats": "VerbForm=Inf",
+        "deprel": "xcomp",
+        "id": 6,
+        "head": 3,
+        "token": {
+          "text": "ir",
+          "start_char": 22,
+          "end_char": 24
+        }
+      },
+      "governor": {
+        "text": "creo",
+        "lemma": "creer",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 3,
+        "head": 0,
+        "token": {
+          "text": "creo",
+          "start_char": 7,
+          "end_char": 11
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "que",
+    "example_id": "example_1d7f172d6e0e04caf1b92c56ce5cf159",
+    "sentence": "Bueno, creo que debes ir a por ello.",
+    "translation": "Well, i think you should go for it.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 1383220,
+        "line": "120",
+        "subtitle_id": "6758063",
+        "title_id": "5042724",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+      "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+      "source_record_id": "5042724:6758063:120:1383220",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "candidate",
+    "pattern": 0,
+    "chunks": [
+      {
+        "slot": "v",
+        "start": 3,
+        "end": 7,
+        "text": "creo"
+      },
+      {
+        "slot": "connector",
+        "start": 8,
+        "end": 11,
+        "text": "que"
+      },
+      {
+        "slot": "c",
+        "start": 12,
+        "end": 36,
+        "text": "ella sepa hablar francés"
+      }
+    ],
+    "reason": "Complement clause attached to a licensed thought/speech verb.",
+    "evidence": {
+      "focus": {
+        "text": "que",
+        "lemma": "que",
+        "upos": "SCONJ",
+        "feats": null,
+        "deprel": "mark",
+        "id": 3,
+        "head": 5,
+        "token": {
+          "text": "que",
+          "start_char": 8,
+          "end_char": 11
+        }
+      },
+      "head": {
+        "text": "sepa",
+        "lemma": "saber",
+        "upos": "VERB",
+        "feats": "Mood=Sub|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+        "deprel": "ccomp",
+        "id": 5,
+        "head": 2,
+        "token": {
+          "text": "sepa",
+          "start_char": 17,
+          "end_char": 21
+        }
+      },
+      "governor": {
+        "text": "creo",
+        "lemma": "creer",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 2,
+        "head": 0,
+        "token": {
+          "text": "creo",
+          "start_char": 3,
+          "end_char": 7
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "que",
+    "example_id": "example_1a65b342314029e01213192325108d3b",
+    "sentence": "No creo que ella sepa hablar francés.",
+    "translation": "I don't think she can speak French.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #918713 by Shishir; English translation #312127 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+      "source_record_id": "918713:312127",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/918713"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "No <span class=\"fw-token-v\">creo</span> <span class=\"fw-token-connector\">que</span> <span class=\"fw-token-c\">ella sepa hablar francés</span>."
+  },
+  {
+    "status": "candidate",
+    "pattern": 0,
+    "chunks": [
+      {
+        "slot": "v",
+        "start": 0,
+        "end": 4,
+        "text": "Creo"
+      },
+      {
+        "slot": "connector",
+        "start": 5,
+        "end": 8,
+        "text": "que"
+      },
+      {
+        "slot": "c",
+        "start": 9,
+        "end": 33,
+        "text": "eran muy apreciados allí"
+      }
+    ],
+    "reason": "Complement clause attached to a licensed thought/speech verb.",
+    "evidence": {
+      "focus": {
+        "text": "que",
+        "lemma": "que",
+        "upos": "SCONJ",
+        "feats": null,
+        "deprel": "mark",
+        "id": 2,
+        "head": 5,
+        "token": {
+          "text": "que",
+          "start_char": 5,
+          "end_char": 8
+        }
+      },
+      "head": {
+        "text": "apreciados",
+        "lemma": "apreciado",
+        "upos": "ADJ",
+        "feats": "Gender=Masc|Number=Plur|VerbForm=Part",
+        "deprel": "ccomp",
+        "id": 5,
+        "head": 1,
+        "token": {
+          "text": "apreciados",
+          "start_char": 18,
+          "end_char": 28
+        }
+      },
+      "governor": {
+        "text": "Creo",
+        "lemma": "creer",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 1,
+        "head": 0,
+        "token": {
+          "text": "Creo",
+          "start_char": 0,
+          "end_char": 4
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "que",
+    "example_id": "example_1e1800f311c889a05217bc22fb3a8e28",
+    "sentence": "Creo que eran muy apreciados allí.",
+    "translation": "I believe they were much appreciated there.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 1975111,
+        "line": "221",
+        "subtitle_id": "6729848",
+        "title_id": "5351822",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+      "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+      "source_record_id": "5351822:6729848:221:1975111",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "<span class=\"fw-token-v\">Creo</span> <span class=\"fw-token-connector\">que</span> <span class=\"fw-token-c\">eran muy apreciados allí</span>."
+  },
+  {
+    "status": "abstain",
+    "reason": "Se needs agreement, valency and reflexive/passive checks; parser-label conflict is unresolved.",
+    "evidence": {
+      "focus": {
+        "text": "se",
+        "lemma": "él",
+        "upos": "PRON",
+        "feats": "Case=Acc|Person=3|PrepCase=Npr|PronType=Prs|Reflex=Yes",
+        "deprel": "expl:pass",
+        "id": 12,
+        "head": 14,
+        "token": {
+          "text": "se",
+          "start_char": 60,
+          "end_char": 62
+        }
+      },
+      "head": {
+        "text": "fijado",
+        "lemma": "fijar",
+        "upos": "VERB",
+        "feats": "Gender=Masc|Number=Sing|Tense=Past|VerbForm=Part",
+        "deprel": "root",
+        "id": 14,
+        "head": 0,
+        "token": {
+          "text": "fijado",
+          "start_char": 66,
+          "end_char": 72
+        }
+      },
+      "governor": null,
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "se",
+    "example_id": "example_677cc0a626c4baf81f75f3e95e1f2d07",
+    "sentence": "La fecha y el lugar de nuestro próximo concierto todavía no se ha fijado.",
+    "translation": "The date and venue for our next concert haven't been set yet.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #10201939 by Seael; English translation #10140631 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+      "source_record_id": "10201939:10140631",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/10201939"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Se needs agreement, valency and reflexive/passive checks; parser-label conflict is unresolved.",
+    "evidence": {
+      "focus": {
+        "text": "se",
+        "lemma": "él",
+        "upos": "PRON",
+        "feats": "Case=Dat|Person=3|PrepCase=Npr|PronType=Prs",
+        "deprel": "iobj",
+        "id": 6,
+        "head": 9,
+        "token": {
+          "text": "se",
+          "start_char": 21,
+          "end_char": 23
+        }
+      },
+      "head": {
+        "text": "contado",
+        "lemma": "contar",
+        "upos": "VERB",
+        "feats": "Gender=Masc|Number=Sing|Tense=Past|VerbForm=Part",
+        "deprel": "root",
+        "id": 9,
+        "head": 0,
+        "token": {
+          "text": "contado",
+          "start_char": 30,
+          "end_char": 37
+        }
+      },
+      "governor": null,
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "se",
+    "example_id": "example_5e88dbabf2547271110542e1d051cf44",
+    "sentence": "Eres el único al que se lo he contado.",
+    "translation": "You're the only one I've ever told.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 2710722,
+        "line": "842",
+        "subtitle_id": "6771102",
+        "title_id": "6076202",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+      "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+      "source_record_id": "6076202:6771102:842:2710722",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "candidate",
+    "pattern": 0,
+    "chunks": [
+      {
+        "slot": "connector",
+        "start": 6,
+        "end": 8,
+        "text": "se"
+      },
+      {
+        "slot": "v",
+        "start": 12,
+        "end": 18,
+        "text": "echado"
+      }
+    ],
+    "reason": "Pronominal label and dependency agree.",
+    "evidence": {
+      "focus": {
+        "text": "se",
+        "lemma": "él",
+        "upos": "PRON",
+        "feats": "Case=Acc|Person=3|PrepCase=Npr|PronType=Prs|Reflex=Yes",
+        "deprel": "expl:pv",
+        "id": 2,
+        "head": 4,
+        "token": {
+          "text": "se",
+          "start_char": 6,
+          "end_char": 8
+        }
+      },
+      "head": {
+        "text": "echado",
+        "lemma": "echar",
+        "upos": "VERB",
+        "feats": "Gender=Masc|Number=Sing|Tense=Past|VerbForm=Part",
+        "deprel": "root",
+        "id": 4,
+        "head": 0,
+        "token": {
+          "text": "echado",
+          "start_char": 12,
+          "end_char": 18
+        }
+      },
+      "governor": null,
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "se",
+    "example_id": "example_1334fd62d539abfc920dc94f1e21f5b7",
+    "sentence": "Jamás se ha echado para atrás en situaciones difíciles.",
+    "translation": "He's never backed down in difficult situations.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #9445440 by DJ_Saidez; English translation #11118011 by DJ_Saidez",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+      "source_record_id": "9445440:11118011",
+      "translated_from_english": false,
+      "url": "https://tatoeba.org/en/sentences/show/9445440"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Jamás <span class=\"fw-token-connector\">se</span> ha <span class=\"fw-token-v\">echado</span> para atrás en situaciones difíciles."
+  },
+  {
+    "status": "candidate",
+    "pattern": 0,
+    "chunks": [
+      {
+        "slot": "connector",
+        "start": 31,
+        "end": 33,
+        "text": "se"
+      },
+      {
+        "slot": "v",
+        "start": 34,
+        "end": 43,
+        "text": "interesan"
+      }
+    ],
+    "reason": "Pronominal dependency contradicts retained impersonal label; diagnostic correction requires review.",
+    "evidence": {
+      "focus": {
+        "text": "se",
+        "lemma": "él",
+        "upos": "PRON",
+        "feats": "Case=Acc|Person=3|PrepCase=Npr|PronType=Prs|Reflex=Yes",
+        "deprel": "expl:pv",
+        "id": 6,
+        "head": 7,
+        "token": {
+          "text": "se",
+          "start_char": 31,
+          "end_char": 33
+        }
+      },
+      "head": {
+        "text": "interesan",
+        "lemma": "interesar",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Plur|Person=3|Tense=Pres|VerbForm=Fin",
+        "deprel": "advcl",
+        "id": 7,
+        "head": 2,
+        "token": {
+          "text": "interesan",
+          "start_char": 34,
+          "end_char": 43
+        }
+      },
+      "governor": {
+        "text": "interesan",
+        "lemma": "interesar",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Plur|Person=3|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 2,
+        "head": 0,
+        "token": {
+          "text": "interesan",
+          "start_char": 4,
+          "end_char": 13
+        }
+      },
+      "parser": "es_dep_news_trf@3.8.0"
+    },
+    "language": "es",
+    "word": "se",
+    "example_id": "example_9502d08ea89c6ba73439e2a47bacab8b",
+    "sentence": "Nos interesan los demás cuando se interesan por nosotros.",
+    "translation": "We are interested in others, when they are interested in us.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #6133718 by Adelpa; English translation #6135274 by Mandalay",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+      "source_record_id": "6133718:6135274",
+      "translated_from_english": false,
+      "url": "https://tatoeba.org/en/sentences/show/6133718"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Nos interesan los demás cuando <span class=\"fw-token-connector\">se</span> <span class=\"fw-token-v\">interesan</span> por nosotros."
+  },
+  {
+    "status": "abstain",
+    "reason": "Multiple focus occurrences: occurrence selection is not established.",
+    "evidence": {},
+    "language": "pt",
+    "word": "de",
+    "example_id": "example_8743fa9d9379d21a750d6a76557782da",
+    "sentence": "Eu era a favor de ir e eles eram a favor de ficar.",
+    "translation": "I was in favor of going and they were in favor of staying.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #3491434 by piterkeo; English translation #2267130 by _undertoad",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "3491434:2267130",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/3491434"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Generic de label does not establish either displayed attachment.",
+    "evidence": {
+      "focus": {
+        "text": "de",
+        "lemma": "de",
+        "upos": "ADP",
+        "feats": null,
+        "deprel": "advmod",
+        "id": 7,
+        "head": 5,
+        "token": {
+          "text": "de",
+          "start_char": 37,
+          "end_char": 39
+        }
+      },
+      "head": {
+        "text": "fazer",
+        "lemma": "fazer",
+        "upos": "VERB",
+        "feats": "VerbForm=Inf",
+        "deprel": "xcomp",
+        "id": 5,
+        "head": 4,
+        "token": {
+          "text": "fazer",
+          "start_char": 26,
+          "end_char": 31
+        }
+      },
+      "governor": {
+        "text": "precisar",
+        "lemma": "precisar",
+        "upos": "VERB",
+        "feats": "VerbForm=Inf",
+        "deprel": "xcomp",
+        "id": 4,
+        "head": 3,
+        "token": {
+          "text": "precisar",
+          "start_char": 17,
+          "end_char": 25
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "de",
+    "example_id": "example_4120c8db365b262a19404749353feaed",
+    "sentence": "Você não deveria precisar fazer isso de novo.",
+    "translation": "You shouldn't need to do that again.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #11781591 by Advanced; English translation #6346004 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "11781591:6346004",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/11781591"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "candidate",
+    "pattern": 0,
+    "chunks": [
+      {
+        "slot": "v",
+        "start": 16,
+        "end": 24,
+        "text": "morrendo"
+      },
+      {
+        "slot": "connector",
+        "start": 25,
+        "end": 27,
+        "text": "de"
+      },
+      {
+        "slot": "c",
+        "start": 28,
+        "end": 32,
+        "text": "fome"
+      }
+    ],
+    "reason": "Governed de frame and dependency agree.",
+    "evidence": {
+      "focus": {
+        "text": "de",
+        "lemma": "de",
+        "upos": "ADP",
+        "feats": null,
+        "deprel": "case",
+        "id": 5,
+        "head": 6,
+        "token": {
+          "text": "de",
+          "start_char": 25,
+          "end_char": 27
+        }
+      },
+      "head": {
+        "text": "fome",
+        "lemma": "fome",
+        "upos": "NOUN",
+        "feats": "Gender=Fem|Number=Sing",
+        "deprel": "obj",
+        "id": 6,
+        "head": 4,
+        "token": {
+          "text": "fome",
+          "start_char": 28,
+          "end_char": 32
+        }
+      },
+      "governor": {
+        "text": "morrendo",
+        "lemma": "morrer",
+        "upos": "VERB",
+        "feats": "VerbForm=Ger",
+        "deprel": "xcomp",
+        "id": 4,
+        "head": 2,
+        "token": {
+          "text": "morrendo",
+          "start_char": 16,
+          "end_char": 24
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "de",
+    "example_id": "example_07217055d94377551840dfc270e9e1d8",
+    "sentence": "Você deve estar morrendo de fome.",
+    "translation": "You must be starving.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #5876721 by sergiomelo; English translation #2134203 by Hybrid",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "5876721:2134203",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/5876721"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Você deve estar <span class=\"fw-token-v\">morrendo</span> <span class=\"fw-token-connector\">de</span> <span class=\"fw-token-c\">fome</span>."
+  },
+  {
+    "status": "candidate",
+    "pattern": 0,
+    "chunks": [
+      {
+        "slot": "v",
+        "start": 4,
+        "end": 14,
+        "text": "precisamos"
+      },
+      {
+        "slot": "connector",
+        "start": 15,
+        "end": 17,
+        "text": "de"
+      },
+      {
+        "slot": "c",
+        "start": 18,
+        "end": 30,
+        "text": "mais pessoas"
+      }
+    ],
+    "reason": "Governed de frame and dependency agree.",
+    "evidence": {
+      "focus": {
+        "text": "de",
+        "lemma": "de",
+        "upos": "ADP",
+        "feats": null,
+        "deprel": "case",
+        "id": 3,
+        "head": 5,
+        "token": {
+          "text": "de",
+          "start_char": 15,
+          "end_char": 17
+        }
+      },
+      "head": {
+        "text": "pessoas",
+        "lemma": "pessoa",
+        "upos": "NOUN",
+        "feats": "Gender=Fem|Number=Plur",
+        "deprel": "obj",
+        "id": 5,
+        "head": 2,
+        "token": {
+          "text": "pessoas",
+          "start_char": 23,
+          "end_char": 30
+        }
+      },
+      "governor": {
+        "text": "precisamos",
+        "lemma": "precisar",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Plur|Person=1|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 2,
+        "head": 0,
+        "token": {
+          "text": "precisamos",
+          "start_char": 4,
+          "end_char": 14
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "de",
+    "example_id": "example_399c9c3d39e291440fc5f7495b118300",
+    "sentence": "Nós precisamos de mais pessoas como você.",
+    "translation": "We need more people like you.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #10321412 by Ricardo14; English translation #5521254 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "10321412:5521254",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/10321412"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Nós <span class=\"fw-token-v\">precisamos</span> <span class=\"fw-token-connector\">de</span> <span class=\"fw-token-c\">mais pessoas</span> como você."
+  },
+  {
+    "status": "abstain",
+    "reason": "Parser split or merged the focus token; do not guess the contraction/pronoun reading.",
+    "evidence": {},
+    "language": "pt",
+    "word": "nos",
+    "example_id": "example_dfbc0dd96353c76910dc5b3bb8f86e62",
+    "sentence": "O mau tempo nos impediu de sair.",
+    "translation": "The bad weather prevented us from leaving.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #4997914 by ToinhoAlam; English translation #28547 by Dejo",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "4997914:28547",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/4997914"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Parser split or merged the focus token; do not guess the contraction/pronoun reading.",
+    "evidence": {},
+    "language": "pt",
+    "word": "nos",
+    "example_id": "example_117fe697d7b7d267c46b063f583a554f",
+    "sentence": "Nos dê algumas horas.",
+    "translation": "Give us a couple of hours.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #8048443 by jvlopes91; English translation #3151427 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "8048443:3151427",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/8048443"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "candidate",
+    "pattern": 0,
+    "chunks": [
+      {
+        "slot": "connector",
+        "start": 20,
+        "end": 23,
+        "text": "nos"
+      },
+      {
+        "slot": "v",
+        "start": 24,
+        "end": 30,
+        "text": "vissem"
+      }
+    ],
+    "reason": "Unsplit nos object attached to a non-first-plural verb.",
+    "evidence": {
+      "focus": {
+        "text": "nos",
+        "lemma": "nós",
+        "upos": "PRON",
+        "feats": "Case=Acc|Number=Plur|Person=1|PronType=Prs",
+        "deprel": "obj",
+        "id": 5,
+        "head": 6,
+        "token": {
+          "text": "nos",
+          "start_char": 20,
+          "end_char": 23
+        }
+      },
+      "head": {
+        "text": "vissem",
+        "lemma": "vir",
+        "upos": "VERB",
+        "feats": "Mood=Sub|Number=Plur|Person=3|Tense=Imp|VerbForm=Fin",
+        "deprel": "ccomp",
+        "id": 6,
+        "head": 3,
+        "token": {
+          "text": "vissem",
+          "start_char": 24,
+          "end_char": 30
+        }
+      },
+      "governor": {
+        "text": "gostaria",
+        "lemma": "gostar",
+        "upos": "VERB",
+        "feats": "Mood=Cnd|Number=Sing|Person=1|VerbForm=Fin",
+        "deprel": "root",
+        "id": 3,
+        "head": 0,
+        "token": {
+          "text": "gostaria",
+          "start_char": 7,
+          "end_char": 15
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "nos",
+    "example_id": "example_10bf876147a204bca1322a3dab35bf1b",
+    "sentence": "Eu não gostaria que nos vissem juntas.",
+    "translation": "I wouldn't like us to be seen together.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #10074899 by Nylez; English translation #10074807 by Nylez",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "10074899:10074807",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/10074899"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Eu não gostaria que <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">vissem</span> juntas."
+  },
+  {
+    "status": "abstain",
+    "reason": "Article/object evidence does not fit the displayed formula.",
+    "evidence": {
+      "focus": {
+        "text": "o",
+        "lemma": "o",
+        "upos": "PRON",
+        "feats": "Gender=Masc|Number=Sing|PronType=Dem",
+        "deprel": "det",
+        "id": 4,
+        "head": 5,
+        "token": {
+          "text": "o",
+          "start_char": 15,
+          "end_char": 16
+        }
+      },
+      "head": {
+        "text": "que",
+        "lemma": "que",
+        "upos": "PRON",
+        "feats": "Gender=Masc|Number=Sing|PronType=Rel",
+        "deprel": "ccomp",
+        "id": 5,
+        "head": 3,
+        "token": {
+          "text": "que",
+          "start_char": 17,
+          "end_char": 20
+        }
+      },
+      "governor": {
+        "text": "saber",
+        "lemma": "saber",
+        "upos": "VERB",
+        "feats": "VerbForm=Inf",
+        "deprel": "xcomp",
+        "id": 3,
+        "head": 2,
+        "token": {
+          "text": "saber",
+          "start_char": 9,
+          "end_char": 14
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "o",
+    "example_id": "example_fbc1bf2de407091f9db394921586b8f4",
+    "sentence": "Eu quero saber o que é.",
+    "translation": "I want to know what it is.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #6034667 by bill; English translation #2012468 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "6034667:2012468",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/6034667"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Article/object evidence does not fit the displayed formula.",
+    "evidence": {
+      "focus": {
+        "text": "O",
+        "lemma": "o",
+        "upos": "PRON",
+        "feats": "Gender=Masc|Number=Sing|PronType=Dem",
+        "deprel": "det",
+        "id": 1,
+        "head": 2,
+        "token": {
+          "text": "O",
+          "start_char": 0,
+          "end_char": 1
+        }
+      },
+      "head": {
+        "text": "que",
+        "lemma": "que",
+        "upos": "PRON",
+        "feats": "Gender=Masc|Number=Sing|PronType=Rel",
+        "deprel": "obj",
+        "id": 2,
+        "head": 5,
+        "token": {
+          "text": "que",
+          "start_char": 2,
+          "end_char": 5
+        }
+      },
+      "governor": {
+        "text": "parece",
+        "lemma": "parecer",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+        "deprel": "root",
+        "id": 5,
+        "head": 0,
+        "token": {
+          "text": "parece",
+          "start_char": 12,
+          "end_char": 18
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "o",
+    "example_id": "example_375a4edb23bd4c34001233d031099ba0",
+    "sentence": "O que é que parece?",
+    "translation": "What does it look like?",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 804638,
+        "line": "250",
+        "subtitle_id": "6201327",
+        "title_id": "4019700",
+        "year": "2015"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+      "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+      "source_record_id": "4019700:6201327:250:804638",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "candidate",
+    "pattern": 0,
+    "chunks": [
+      {
+        "slot": "connector",
+        "start": 11,
+        "end": 12,
+        "text": "o"
+      },
+      {
+        "slot": "c",
+        "start": 13,
+        "end": 23,
+        "text": "Quincannon"
+      }
+    ],
+    "reason": "Article attached to noun.",
+    "evidence": {
+      "focus": {
+        "text": "o",
+        "lemma": "o",
+        "upos": "DET",
+        "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+        "deprel": "det",
+        "id": 3,
+        "head": 4,
+        "token": {
+          "text": "o",
+          "start_char": 11,
+          "end_char": 12
+        }
+      },
+      "head": {
+        "text": "Quincannon",
+        "lemma": "Quincannon",
+        "upos": "PROPN",
+        "feats": "Gender=Masc|Number=Sing",
+        "deprel": "nsubj",
+        "id": 4,
+        "head": 6,
+        "token": {
+          "text": "Quincannon",
+          "start_char": 13,
+          "end_char": 23
+        }
+      },
+      "governor": {
+        "text": "lá",
+        "lemma": "lá",
+        "upos": "ADV",
+        "feats": null,
+        "deprel": "ccomp",
+        "id": 6,
+        "head": 1,
+        "token": {
+          "text": "lá",
+          "start_char": 27,
+          "end_char": 29
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "o",
+    "example_id": "example_7959719a810f78e5c5ca7c58040a2cca",
+    "sentence": "Sabias que o Quincannon ia lá estar?",
+    "translation": "Did you know Quincannon was gonna be there?",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 3458256,
+        "line": "93",
+        "subtitle_id": "6762168",
+        "title_id": "5236124",
+        "year": "2016"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+      "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+      "source_record_id": "5236124:6762168:93:3458256",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Sabias que <span class=\"fw-token-connector\">o</span> <span class=\"fw-token-c\">Quincannon</span> ia lá estar?"
+  },
+  {
+    "status": "candidate",
+    "pattern": 0,
+    "chunks": [
+      {
+        "slot": "connector",
+        "start": 21,
+        "end": 22,
+        "text": "o"
+      },
+      {
+        "slot": "c",
+        "start": 23,
+        "end": 32,
+        "text": "teu filho"
+      }
+    ],
+    "reason": "Article attached to noun.",
+    "evidence": {
+      "focus": {
+        "text": "o",
+        "lemma": "o",
+        "upos": "DET",
+        "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+        "deprel": "det",
+        "id": 7,
+        "head": 9,
+        "token": {
+          "text": "o",
+          "start_char": 21,
+          "end_char": 22
+        }
+      },
+      "head": {
+        "text": "filho",
+        "lemma": "filho",
+        "upos": "NOUN",
+        "feats": "Gender=Masc|Number=Sing",
+        "deprel": "obj",
+        "id": 9,
+        "head": 6,
+        "token": {
+          "text": "filho",
+          "start_char": 27,
+          "end_char": 32
+        }
+      },
+      "governor": {
+        "text": "falava",
+        "lemma": "falar",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Imp|VerbForm=Fin",
+        "deprel": "ccomp",
+        "id": 6,
+        "head": 1,
+        "token": {
+          "text": "falava",
+          "start_char": 14,
+          "end_char": 20
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "o",
+    "example_id": "example_0dcdb7b5bbfec62b9b2e3b6f6005853d",
+    "sentence": "Diz-me do que falava o teu filho.",
+    "translation": "Tell me what your son was talking about.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 4657823,
+        "line": "493",
+        "subtitle_id": "7050185",
+        "title_id": "5729004",
+        "year": "2017"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+      "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+      "source_record_id": "5729004:7050185:493:4657823",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Diz-me do que falava <span class=\"fw-token-connector\">o</span> <span class=\"fw-token-c\">teu filho</span>."
+  },
+  {
+    "status": "abstain",
+    "reason": "No supported structural rule in this first pass.",
+    "evidence": {
+      "focus": {
+        "text": "que",
+        "lemma": "que",
+        "upos": "PRON",
+        "feats": "Gender=Masc|Number=Sing|PronType=Ind",
+        "deprel": "obl",
+        "id": 2,
+        "head": 4,
+        "token": {
+          "text": "que",
+          "start_char": 4,
+          "end_char": 7
+        }
+      },
+      "head": {
+        "text": "rindo",
+        "lemma": "rir",
+        "upos": "VERB",
+        "feats": "VerbForm=Ger",
+        "deprel": "root",
+        "id": 4,
+        "head": 0,
+        "token": {
+          "text": "rindo",
+          "start_char": 16,
+          "end_char": 21
+        }
+      },
+      "governor": null,
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "que",
+    "example_id": "example_2422e404f33c58a5a40eef2fd38ff9d3",
+    "sentence": "Por que estamos rindo?",
+    "translation": "Why are we laughing?",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #4814053 by Ricardo14; English translation #4700916 by adamtrousers",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "4814053:4700916",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/4814053"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "No supported structural rule in this first pass.",
+    "evidence": {
+      "focus": {
+        "text": "que",
+        "lemma": "que",
+        "upos": "SCONJ",
+        "feats": null,
+        "deprel": "mark",
+        "id": 2,
+        "head": 4,
+        "token": {
+          "text": "que",
+          "start_char": 2,
+          "end_char": 5
+        }
+      },
+      "head": {
+        "text": "jogarmos",
+        "lemma": "jogar",
+        "upos": "VERB",
+        "feats": "Mood=Sub|Number=Plur|Person=1|Tense=Fut|VerbForm=Fin",
+        "deprel": "root",
+        "id": 4,
+        "head": 0,
+        "token": {
+          "text": "jogarmos",
+          "start_char": 10,
+          "end_char": 18
+        }
+      },
+      "governor": null,
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "que",
+    "example_id": "example_8ece1c806bd0d03ca274f1c55ad41a02",
+    "sentence": "E que tal jogarmos uma partida?",
+    "translation": "How about we play a match?",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #3246029 by Ricardo14; English translation #10750103 by DJ_Saidez",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "3246029:10750103",
+      "translated_from_english": false,
+      "url": "https://tatoeba.org/en/sentences/show/3246029"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Se needs agreement, valency and reflexive/passive checks; parser-label conflict is unresolved.",
+    "evidence": {
+      "focus": {
+        "text": "se",
+        "lemma": "se",
+        "upos": "PRON",
+        "feats": "Case=Acc|PronType=Prs",
+        "deprel": "nsubj",
+        "id": 4,
+        "head": 6,
+        "token": {
+          "text": "se",
+          "start_char": 20,
+          "end_char": 22
+        }
+      },
+      "head": {
+        "text": "mover",
+        "lemma": "mover",
+        "upos": "VERB",
+        "feats": "VerbForm=Inf",
+        "deprel": "xcomp",
+        "id": 6,
+        "head": 5,
+        "token": {
+          "text": "mover",
+          "start_char": 29,
+          "end_char": 34
+        }
+      },
+      "governor": {
+        "text": "possa",
+        "lemma": "poder",
+        "upos": "VERB",
+        "feats": "Mood=Sub|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+        "deprel": "acl:relcl",
+        "id": 5,
+        "head": 2,
+        "token": {
+          "text": "possa",
+          "start_char": 23,
+          "end_char": 28
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "se",
+    "example_id": "example_f6cd80c3c81cdb55ed4b7d9d3b796d7d",
+    "sentence": "Encontra alguém que se possa mover no mundo dele.",
+    "translation": "Find someone who can move in his world.",
+    "source": {
+      "adapter": "opensubtitles-aligned/v1",
+      "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+      "document": {
+        "aligned_row": 1560943,
+        "line": "463",
+        "subtitle_id": "6659544",
+        "title_id": "4480780",
+        "year": "2015"
+      },
+      "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+      "name": "opensubtitles",
+      "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+      "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+      "source_record_id": "4480780:6659544:463:1560943",
+      "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "abstain",
+    "reason": "Parser split or merged the focus token; do not guess the contraction/pronoun reading.",
+    "evidence": {},
+    "language": "pt",
+    "word": "se",
+    "example_id": "example_d5161219cb80f5c237bafe1fbb2e9494",
+    "sentence": "Suspeita-se que ela seja uma espiã.",
+    "translation": "She is suspected of being a spy.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #3657358 by carlosalberto; English translation #3652039 by karloelkebekio",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "3657358:3652039",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/3657358"
+    },
+    "prior_review": null,
+    "parser_available": true
+  },
+  {
+    "status": "candidate",
+    "pattern": 1,
+    "chunks": [
+      {
+        "slot": "connector",
+        "start": 17,
+        "end": 19,
+        "text": "se"
+      },
+      {
+        "slot": "v",
+        "start": 20,
+        "end": 28,
+        "text": "acordado"
+      }
+    ],
+    "reason": "Pronominal label and dependency agree.",
+    "evidence": {
+      "focus": {
+        "text": "se",
+        "lemma": "se",
+        "upos": "PRON",
+        "feats": "Case=Acc|Gender=Fem|Number=Sing|Person=3|PronType=Prs",
+        "deprel": "expl",
+        "id": 4,
+        "head": 5,
+        "token": {
+          "text": "se",
+          "start_char": 17,
+          "end_char": 19
+        }
+      },
+      "head": {
+        "text": "acordado",
+        "lemma": "acordar",
+        "upos": "VERB",
+        "feats": "VerbForm=Part",
+        "deprel": "xcomp",
+        "id": 5,
+        "head": 2,
+        "token": {
+          "text": "acordado",
+          "start_char": 20,
+          "end_char": 28
+        }
+      },
+      "governor": {
+        "text": "deveria",
+        "lemma": "dever",
+        "upos": "VERB",
+        "feats": "Mood=Cnd|Number=Sing|Person=3|VerbForm=Fin",
+        "deprel": "root",
+        "id": 2,
+        "head": 0,
+        "token": {
+          "text": "deveria",
+          "start_char": 5,
+          "end_char": 12
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "se",
+    "example_id": "example_3796c686d2f2182d74b77f0c99103a9b",
+    "sentence": "Você deveria ter se acordado mais cedo.",
+    "translation": "You should've gotten up earlier.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #4902351 by ToinhoAlam; English translation #2718535 by CK",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "4902351:2718535",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/4902351"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Você deveria ter <span class=\"fw-token-connector\">se</span> <span class=\"fw-token-v\">acordado</span> mais cedo."
+  },
+  {
+    "status": "candidate",
+    "pattern": 1,
+    "chunks": [
+      {
+        "slot": "connector",
+        "start": 25,
+        "end": 27,
+        "text": "se"
+      },
+      {
+        "slot": "v",
+        "start": 28,
+        "end": 34,
+        "text": "juntar"
+      }
+    ],
+    "reason": "Pronominal label and dependency agree.",
+    "evidence": {
+      "focus": {
+        "text": "se",
+        "lemma": "se",
+        "upos": "PRON",
+        "feats": "Case=Acc|Gender=Masc|Number=Plur|Person=3|PronType=Prs",
+        "deprel": "expl",
+        "id": 6,
+        "head": 7,
+        "token": {
+          "text": "se",
+          "start_char": 25,
+          "end_char": 27
+        }
+      },
+      "head": {
+        "text": "juntar",
+        "lemma": "juntar",
+        "upos": "VERB",
+        "feats": "VerbForm=Inf",
+        "deprel": "ccomp",
+        "id": 7,
+        "head": 3,
+        "token": {
+          "text": "juntar",
+          "start_char": 28,
+          "end_char": 34
+        }
+      },
+      "governor": {
+        "text": "disseram",
+        "lemma": "dizer",
+        "upos": "VERB",
+        "feats": "Mood=Ind|Number=Plur|Person=3|Tense=Past|VerbForm=Fin",
+        "deprel": "root",
+        "id": 3,
+        "head": 0,
+        "token": {
+          "text": "disseram",
+          "start_char": 8,
+          "end_char": 16
+        }
+      },
+      "parser": "stanza-pt-default@1.14.0"
+    },
+    "language": "pt",
+    "word": "se",
+    "example_id": "example_4b6353c4bae6347a837952f2eaaf1883",
+    "sentence": "Eles me disseram que vão se juntar a nós mais tarde.",
+    "translation": "They told me that they'll join us later.",
+    "source": {
+      "adapter": "tatoeba-weekly/v1",
+      "attribution": "Tatoeba sentence #9948049 by Ricardo14; English translation #7444179 by CH",
+      "license": "CC BY 2.0 FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "name": "tatoeba",
+      "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+      "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+      "source_record_id": "9948049:7444179",
+      "translated_from_english": true,
+      "url": "https://tatoeba.org/en/sentences/show/9948049"
+    },
+    "prior_review": null,
+    "parser_available": true,
+    "targetHTML": "Eles me disseram que vão <span class=\"fw-token-connector\">se</span> <span class=\"fw-token-v\">juntar</span> a nós mais tarde."
+  }
+]

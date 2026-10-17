@@ -1,0 +1,329 @@
+[
+  {
+    "language": "pt",
+    "word": "que",
+    "example_id": "example_6cdfcd279fd04255e9dae98d829ed6b6",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "v",
+        "achas"
+      ],
+      [
+        "connector",
+        "que"
+      ],
+      [
+        "c",
+        "eu te trouxe comigo"
+      ]
+    ],
+    "reason": "Thought verb plus statement fits. Tu-form retained for recognition; not a default Brazilian anchor."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "example_id": "example_78e16b05b9a86615cc39db9d22a3faf6",
+    "decision": "reject",
+    "reason": "Relative label is plausible, but antecedent isso is a pronoun, not the displayed noun slot."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "example_id": "example_b19d29a00d514c5e04c497eaa10e624d",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "connector",
+        "O"
+      ],
+      [
+        "c",
+        "caso"
+      ]
+    ],
+    "reason": "Article before masculine singular noun. European progressive appears outside the teaching chunk."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "example_id": "example_95397143370b558ff6f9e830cfec6069",
+    "decision": "reject",
+    "reason": "O melhor is a nominalised adjective; does not demonstrate the displayed noun formula."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "example_id": "example_129a35c5b4ab12e828202346ef36099d",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "v",
+        "Tenho"
+      ],
+      [
+        "connector",
+        "de"
+      ],
+      [
+        "c",
+        "admitir"
+      ]
+    ],
+    "reason": "Retained governed frame ter de matches verb + de + verb."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "example_id": "example_fdcf978a25315864f903a83472a701e5",
+    "decision": "reject",
+    "reason": "Origin predicate é de Boston is not a noun + de detail, nor a governed lexical verb frame."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "example_id": "example_5de5aa09f9399f7c55c1e9c2bb9dfc98",
+    "decision": "accept",
+    "pattern": 1,
+    "chunks": [
+      [
+        "connector",
+        "se"
+      ],
+      [
+        "v",
+        "preocupe"
+      ]
+    ],
+    "reason": "Pronominal preocupar-se fits the explicitly broad part-of-a-verb row."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "example_id": "example_55143d2aa238635349259dc09306b14b",
+    "decision": "reject",
+    "reason": "Embedded whether, not a conditional situation and result."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "example_id": "example_4970a72aaaf048e0eb5205e04a6ad6ca",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "connector",
+        "nos"
+      ],
+      [
+        "v",
+        "dizer"
+      ]
+    ],
+    "reason": "Us is the recipient of dizer; not reflexive/reciprocal."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "example_id": "example_3915d913847bd80ee1d463125e0b1124",
+    "decision": "reject",
+    "reason": "Nos sentar is pronominal/reflexive, not an us/to-us recipient. Retained object_pron label is insufficient."
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "example_id": "example_59603be911a3141aa1c7c5089c37fd79",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "connector",
+        "naquele"
+      ],
+      [
+        "c",
+        "momento"
+      ]
+    ],
+    "reason": "Contraction followed by masculine singular noun."
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "example_id": "example_65c0cd35c3b32cd6694a5535e3e940fd",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "connector",
+        "Naquele"
+      ],
+      [
+        "c",
+        "dia"
+      ]
+    ],
+    "reason": "Time use fits the contraction row; noun span stops before the separate place phrase."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "example_id": "example_6259289de04c4fd27049249fdcb0b81c",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "v",
+        "Supongo"
+      ],
+      [
+        "connector",
+        "que"
+      ],
+      [
+        "c",
+        "es un secreto"
+      ]
+    ],
+    "reason": "Supposition is a thought verb introducing a statement."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "example_id": "example_00483323f2dfdaa9f3562de0532394e2",
+    "decision": "reject",
+    "reason": "Tener que ver con is a separate construction; do not force into thought, relative or comparison rows."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "example_id": "example_e334170b8259753235fa07c8375118d9",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "v",
+        "Trataste"
+      ],
+      [
+        "connector",
+        "de"
+      ],
+      [
+        "c",
+        "repasar"
+      ]
+    ],
+    "reason": "Tratar de governs an infinitive; fits the displayed verb frame."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "example_id": "example_5bbd7024e1d70c4be9f9f87cf256a488",
+    "decision": "reject",
+    "reason": "Comparative más ... de lo que needs a separate construction; generic prep cannot choose either de row."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "example_id": "example_2787cd10d5724e6ee2bdcf38db1426f0",
+    "decision": "accept",
+    "pattern": 1,
+    "chunks": [
+      [
+        "connector",
+        "lo"
+      ],
+      [
+        "v",
+        "sabe"
+      ]
+    ],
+    "reason": "Object pronoun resumes the content known."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "example_id": "example_7eb389477abd97efa50a86c472508735",
+    "decision": "reject",
+    "reason": "Lo único is the adjective construction (pattern 0), but retained object_pron routes to pattern 1: label error."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "example_id": "example_20bfb0c77f86fef14908d26a90f44f3c",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "connector",
+        "al"
+      ],
+      [
+        "c",
+        "trabajo"
+      ]
+    ],
+    "reason": "Destination with a + el; fits the card scope."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "example_id": "example_ee3c9f97393c4de9248214c6bb557439",
+    "decision": "reject",
+    "reason": "Al año means per year, not a destination; generic prep is too broad."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "example_id": "example_c098f23cf74c0a4c84f1a1ba0f7182c3",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "connector",
+        "se"
+      ],
+      [
+        "v",
+        "ve"
+      ]
+    ],
+    "reason": "Verse meaning look/seem fits the part-of-a-verb row, not literal self-action."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "example_id": "example_1a0c7b5923bc374a6b0df3ec63d95813",
+    "decision": "reject",
+    "reason": "No se vaya addresses a person using pronominal irse; not impersonal. Retained label is wrong."
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "example_id": "example_789a7d94e380bfb1830bd467c971838b",
+    "decision": "accept",
+    "pattern": 0,
+    "chunks": [
+      [
+        "connector",
+        "nos"
+      ],
+      [
+        "v",
+        "pasa"
+      ]
+    ],
+    "reason": "To us is the affected recipient; fits the object row."
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "example_id": "example_52fada7b632a598776cbf3994d7cfdaf",
+    "decision": "reject",
+    "reason": "Reciprocal seeing each other is not the us/to-us row; unmapped pronominal label should remain unmapped."
+  }
+]

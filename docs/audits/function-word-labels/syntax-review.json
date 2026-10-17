@@ -1,0 +1,62 @@
+[
+  {
+    "example_id": "example_b67693a306f979d7e5231a308cc4e581",
+    "decision": "accept",
+    "reason": "Object o before veria; correct target and translation; generated spans fit."
+  },
+  {
+    "example_id": "example_f2e052020bf9dfcd4b4d4a1eb6c9517c",
+    "decision": "accept",
+    "reason": "Governed gostar de plus infinitive; generated spans match the verb frame."
+  },
+  {
+    "example_id": "example_dbf19b3c32fd9cd81c2afa788f927136",
+    "decision": "accept",
+    "reason": "Object nos before avise; longer context retained, but the local pattern is clear."
+  },
+  {
+    "example_id": "example_c8ffe84f3b8bf53661172a7aa867a023",
+    "decision": "accept",
+    "reason": "Acabar de plus infinitive fits the governed frame. Translation preserves recent completion."
+  },
+  {
+    "example_id": "example_3dbcdf0471194847b1443cca5f3b7a29",
+    "decision": "accept",
+    "reason": "Al plus infinitive is temporal; generated highlight is correct. Longer example is useful for this construction."
+  },
+  {
+    "example_id": "example_a59e9aa8001a2be65353d21ea2a8e654",
+    "decision": "accept",
+    "reason": "Irse fits the pronominal row. English you is a possible usted reading; not evidence of impersonal se."
+  },
+  {
+    "example_id": "example_d4f0f1636da2c53e732406c22005e37f",
+    "decision": "reject",
+    "reason": "Article structure is real, but o tempo todo is a fixed expression; poor generic article exemplar."
+  },
+  {
+    "example_id": "example_36b3e6db8b2bb8854662b10324d88ba8",
+    "decision": "reject",
+    "reason": "O senhor is polite address here; a bare noun-slot highlight hides its learner-relevant function."
+  },
+  {
+    "example_id": "example_1dee98b69d9d870284a36577cec17f14",
+    "decision": "reject",
+    "reason": "Medo de is structurally noun-attached, but the row describes ownership/contents/material/purpose; semantic scope mismatch."
+  },
+  {
+    "example_id": "example_8891363310aa5cda8cd1fc86b136a34c",
+    "decision": "reject",
+    "reason": "Parser match does not fix the awkward Spanish sentence; do not recommend it as a teaching example."
+  },
+  {
+    "example_id": "example_853efb83e673f9495ef0e9e13ebf5f69",
+    "decision": "reject",
+    "reason": "Fragment and mismatched translation make the example unsuitable despite a noun + de attachment."
+  },
+  {
+    "example_id": "example_f9dc70b4e534734f57d0f7fcb39bee61",
+    "decision": "reject",
+    "reason": "Lo + verb span is sound but en allí is awkward; reject the sentence as teaching copy."
+  }
+]

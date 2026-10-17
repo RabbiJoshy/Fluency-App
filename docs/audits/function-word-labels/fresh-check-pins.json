@@ -1,0 +1,9 @@
+{
+  "docs/audits/function-word-labels/syntax-findings.json": "84eb99039890bc284d4a4f5530a7cf0b184ab764eb0d03d0518d069ed3289503",
+  "docs/audits/function-word-labels/findings.json": "f3ce95c686f460f712243bb63665485986564e34e19604cd5c20c65f523fd09c",
+  "docs/audits/function-word-labels/parse-evidence.json": "5d741f81be405da41d0f08c0e2730ea632ea9afd6072558f0f68ced677b6b315",
+  "docs/audits/function-word-labels/sample-review.json": "e7a45ecb3d3f39045c737f608ede11c64d389e24379ed6b52a26e03b34c44e53",
+  "docs/audits/function-word-labels/syntax-review.json": "7b4e632010df8f5c4acab96725b3234cde42f76266f7646af356b417e82d29b4",
+  "docs/audits/function-word-pilot/source-selections.json": "434bc30e5133b0fbfff28bb85bae257431f6d17d25d747e295a38467c0e36c99",
+  "research/function_word_audit/syntax_bridge.py": "33d038ced2e3e366f23f67f2dae71daaecf9367368686ec05b6e8193c8cf05ce"
+}

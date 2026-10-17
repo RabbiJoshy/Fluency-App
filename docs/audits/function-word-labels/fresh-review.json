@@ -1,0 +1,277 @@
+[
+  {
+    "example_id": "example_f94674a1e817a7121a956c9b8b517a07",
+    "language": "es",
+    "word": "al",
+    "reason": "Fixed al cabo de expression; neither destination nor temporal infinitive.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_2e2657447b9656ac568c0b748a0630ae",
+    "language": "es",
+    "word": "al",
+    "reason": "Al autobús is a clear destination and fits pattern 0; conservative rule misses it.",
+    "abstention": "missed_match"
+  },
+  {
+    "example_id": "example_263c23c9e3b4d76158f825dfe5cee7dc",
+    "language": "es",
+    "word": "de",
+    "reason": "A prueba de is a fixed phrase outside these two de explanations.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_51ee7e1b3db07e9769623a5e67d5f6ed",
+    "language": "es",
+    "word": "de",
+    "reason": "Seguro de is adjective-governed, not the displayed verb or noun pattern.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_98ef0d0031e53721d9d2635be38fde84",
+    "language": "es",
+    "word": "de",
+    "reason": "Noun attachment is correct, but number/quantity is not covered by the displayed ownership/contents/material/purpose explanation.",
+    "pattern_fit": "fail",
+    "highlight_fit": "pass",
+    "teaching_ready": "no"
+  },
+  {
+    "example_id": "example_e60573f8f1d476dab70ed3bb615e3fc1",
+    "language": "es",
+    "word": "de",
+    "reason": "Risk capital is a lexical noun compound; relation to the listed semantic categories is unclear. Fragment also adds little teaching value.",
+    "pattern_fit": "uncertain",
+    "highlight_fit": "pass",
+    "teaching_ready": "no"
+  },
+  {
+    "example_id": "example_c42f53ae703fd2b46835d2cc86c8a789",
+    "language": "es",
+    "word": "lo",
+    "reason": "Todo lo que is outside lo + adjective / object lo.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_08c4a4c3e99bd137e6ff3d2811ebc6f1",
+    "language": "es",
+    "word": "lo",
+    "reason": "Lo que relative construction is outside the displayed two patterns.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_28cefab21855a9c391dba48cb4a01375",
+    "language": "es",
+    "word": "lo",
+    "reason": "Object lo before hace; translation conveys the meaning through English ellipsis.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "yes"
+  },
+  {
+    "example_id": "example_8bf2bd6a2117211786705719c40b6a77",
+    "language": "es",
+    "word": "lo",
+    "reason": "Object lo before dejes; clear natural example.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "yes"
+  },
+  {
+    "example_id": "example_413d8183c04320452c994aefe0c23f2c",
+    "language": "es",
+    "word": "que",
+    "reason": "Así que is a connector phrase; source also has obsolete accent fué and a loose translation.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_1d7f172d6e0e04caf1b92c56ce5cf159",
+    "language": "es",
+    "word": "que",
+    "reason": "Creo que debes… clearly fits thought verb plus statement; current gate misses it.",
+    "abstention": "missed_match"
+  },
+  {
+    "example_id": "example_1a65b342314029e01213192325108d3b",
+    "language": "es",
+    "word": "que",
+    "reason": "Thought verb plus complete subordinate statement; negative main clause is preserved.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "yes"
+  },
+  {
+    "example_id": "example_1e1800f311c889a05217bc22fb3a8e28",
+    "language": "es",
+    "word": "que",
+    "reason": "Thought verb and full subordinate statement are correctly separated.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "yes"
+  },
+  {
+    "example_id": "example_677cc0a626c4baf81f75f3e95e1f2d07",
+    "language": "es",
+    "word": "se",
+    "reason": "Conservative abstention is justified; passive-like use also has subject/verb number mismatch, so do not add this sentence.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_5e88dbabf2547271110542e1d051cf44",
+    "language": "es",
+    "word": "se",
+    "reason": "Se substitutes for le before lo, outside current reflexive/pronominal row.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_1334fd62d539abfc920dc94f1e21f5b7",
+    "language": "es",
+    "word": "se",
+    "reason": "Pronominal reading fits, but highlight omits ha and para atrás from se ha echado para atrás; coloured construction is incomplete.",
+    "pattern_fit": "pass",
+    "highlight_fit": "fail",
+    "teaching_ready": "no"
+  },
+  {
+    "example_id": "example_9502d08ea89c6ba73439e2a47bacab8b",
+    "language": "es",
+    "word": "se",
+    "reason": "Se interesan is pronominal and correctly highlighted; repeated interesar is natural here.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "yes"
+  },
+  {
+    "example_id": "example_8743fa9d9379d21a750d6a76557782da",
+    "language": "pt",
+    "word": "de",
+    "reason": "Repeated de occurrences and fixed a favor de phrase justify abstention.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_4120c8db365b262a19404749353feaed",
+    "language": "pt",
+    "word": "de",
+    "reason": "De novo is a fixed adverbial phrase, outside current patterns.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_07217055d94377551840dfc270e9e1d8",
+    "language": "pt",
+    "word": "de",
+    "reason": "Morrer de fome is a natural verb-with-de expression and translation preserves idiomatic meaning.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "yes"
+  },
+  {
+    "example_id": "example_399c9c3d39e291440fc5f7495b118300",
+    "language": "pt",
+    "word": "de",
+    "reason": "Verb-with-de reading is correct; noun chunk should retain como você as part of mais pessoas como você.",
+    "pattern_fit": "pass",
+    "highlight_fit": "fail",
+    "teaching_ready": "no"
+  },
+  {
+    "example_id": "example_dfbc0dd96353c76910dc5b3bb8f86e62",
+    "language": "pt",
+    "word": "nos",
+    "reason": "Nos impediu is a clear object us before verb, pattern 0.",
+    "abstention": "missed_match"
+  },
+  {
+    "example_id": "example_117fe697d7b7d267c46b063f583a554f",
+    "language": "pt",
+    "word": "nos",
+    "reason": "Nos dê is natural everyday Brazilian imperative with object us; matches pattern 0.",
+    "abstention": "missed_match"
+  },
+  {
+    "example_id": "example_10bf876147a204bca1322a3dab35bf1b",
+    "language": "pt",
+    "word": "nos",
+    "reason": "Nos is the object of third-person plural vissem; English passive preserves the meaning.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "yes"
+  },
+  {
+    "example_id": "example_fbc1bf2de407091f9db394921586b8f4",
+    "language": "pt",
+    "word": "o",
+    "reason": "O que interrogative is not article + noun or object o.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_375a4edb23bd4c34001233d031099ba0",
+    "language": "pt",
+    "word": "o",
+    "reason": "O que interrogative is outside current two patterns.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_7959719a810f78e5c5ca7c58040a2cca",
+    "language": "pt",
+    "word": "o",
+    "reason": "Article before a personal name fits the grammatical pattern, but sabias and ia lá estar require a European Portuguese label rather than default Brazilian copy.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "regional_review"
+  },
+  {
+    "example_id": "example_0dcdb7b5bbfec62b9b2e3b6f6005853d",
+    "language": "pt",
+    "word": "o",
+    "reason": "Article plus noun phrase teu filho is highlighted correctly; enclitic imperative Diz-me needs regional handling.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "regional_review"
+  },
+  {
+    "example_id": "example_2422e404f33c58a5a40eef2fd38ff9d3",
+    "language": "pt",
+    "word": "que",
+    "reason": "Por que question phrase is outside current que patterns.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_8ece1c806bd0d03ca274f1c55ad41a02",
+    "language": "pt",
+    "word": "que",
+    "reason": "Que tal suggestion phrase is outside current que patterns.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_f6cd80c3c81cdb55ed4b7d9d3b796d7d",
+    "language": "pt",
+    "word": "se",
+    "reason": "Pronominal mover-se fits the second Portuguese se pattern; needs whole verb-complex handling for se possa mover.",
+    "abstention": "missed_match"
+  },
+  {
+    "example_id": "example_d5161219cb80f5c237bafe1fbb2e9494",
+    "language": "pt",
+    "word": "se",
+    "reason": "Passive/impersonal suspeita-se is outside the two Portuguese se patterns.",
+    "abstention": "appropriate"
+  },
+  {
+    "example_id": "example_3796c686d2f2182d74b77f0c99103a9b",
+    "language": "pt",
+    "word": "se",
+    "reason": "Se acordado with wake-up meaning is unsuitable for automatic approval in default Brazilian Portuguese; dictionary/register review required. English gotten up also differs from waking up.",
+    "pattern_fit": "uncertain",
+    "highlight_fit": "uncertain",
+    "teaching_ready": "no"
+  },
+  {
+    "example_id": "example_4b6353c4bae6347a837952f2eaaf1883",
+    "language": "pt",
+    "word": "se",
+    "reason": "Se juntar is a natural pronominal infinitive and the future meaning is retained in translation.",
+    "pattern_fit": "pass",
+    "highlight_fit": "pass",
+    "teaching_ready": "yes"
+  }
+]
