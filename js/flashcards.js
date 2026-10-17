@@ -1,15 +1,15 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=a2cdb2bb';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=a2cdb2bb';
-import { songCreditHTML } from './song-credit.js?v=a2cdb2bb';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=a2cdb2bb';
+import './state.js?v=8d3ed215';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=8d3ed215';
+import { songCreditHTML } from './song-credit.js?v=8d3ed215';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=8d3ed215';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=a2cdb2bb';
-import './speech.js?v=a2cdb2bb';
-import { goToRoute, routeCodeFor } from './routes.js?v=a2cdb2bb';
-import { memoryTipTileHTML } from './memory-tips.js?v=a2cdb2bb';
+import { fitSenseRowText } from './card-row-layout.js?v=8d3ed215';
+import './speech.js?v=8d3ed215';
+import { goToRoute, routeCodeFor } from './routes.js?v=8d3ed215';
+import { memoryTipTileHTML } from './memory-tips.js?v=8d3ed215';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
@@ -17,25 +17,25 @@ import {
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=a2cdb2bb';
-import './side-dock.js?v=a2cdb2bb';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=a2cdb2bb';
+} from './function-word-card.js?v=8d3ed215';
+import './side-dock.js?v=8d3ed215';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=8d3ed215';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=a2cdb2bb';
+} from './example-personalisation.js?v=8d3ed215';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=a2cdb2bb';
+} from './spanishdict-usage.js?v=8d3ed215';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=a2cdb2bb';
+} from './reverse-cues.js?v=8d3ed215';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,7 +69,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=a2cdb2bb';
+} from './card-metadata-pills.js?v=8d3ed215';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2068,24 +2068,14 @@ function initializeApp() {
         deckScrubber.addEventListener('lostpointercapture', finishScrub);
     }
 
-    // Card-position seek bar: smooth, direct track scrubbing with proportional
-    // positioning across the set.
+    // Card-position seek bar: smooth, tactile card navigation without abrupt jumps or skips.
     const cardBackPips = document.getElementById('cardBackPips');
     if (cardBackPips) {
         let pipPointerId = null;
-        const getScrubIndex = event => {
-            const track = cardBackPips.querySelector('.cbs-track-wrap') || cardBackPips;
-            const rect = track.getBoundingClientRect();
-            if (rect.width <= 0) return null;
-            const card = flashcards[currentIndex];
-            const onPhraseCard = card?.isChainChild === true && cardChainReturnIndex >= 0;
-            const scrubCount = onPhraseCard ? flashcards.length - 1 : flashcards.length;
-            const last = Math.max(0, scrubCount - 1);
-            if (last <= 0) return null;
-            const ratio = (event.clientX - rect.left) / rect.width;
-            const clamped = Math.max(0, Math.min(1, ratio));
-            return Math.round(clamped * last);
-        };
+        let scrubStartX = 0;
+        let scrubStartIndex = 0;
+        const STEP_PX = 18; // Consistent, tactile step per card: stable, predictable, never skips numbers
+
         const endPipDrag = event => {
             if (pipPointerId === null || (event && event.pointerId !== pipPointerId)) return;
             const finishedPointerId = pipPointerId;
@@ -2096,25 +2086,62 @@ function initializeApp() {
             _deckScrubberActive = false;
             cardBackPips.classList.remove('is-scrubbing');
         };
+
         cardBackPips.addEventListener('pointerdown', event => {
             if (event.button !== undefined && event.button !== 0) return;
+            const card = flashcards[currentIndex];
+            const onPhraseCard = card?.isChainChild === true && cardChainReturnIndex >= 0;
+            const scrubCount = onPhraseCard ? flashcards.length - 1 : flashcards.length;
+            const last = Math.max(0, scrubCount - 1);
+            if (last <= 0) return;
+
+            const originIndex = (card?.isChainChild && cardChainReturnIndex >= 0)
+                ? cardChainReturnIndex
+                : currentIndex;
+
+            const track = cardBackPips.querySelector('.cbs-track-wrap') || cardBackPips;
+            const rect = track.getBoundingClientRect();
+            if (rect.width <= 0) return;
+
             pipPointerId = event.pointerId;
             _deckScrubberActive = true;
             cardBackPips.classList.add('is-scrubbing');
             cardBackPips.setPointerCapture?.(event.pointerId);
-            const targetIndex = getScrubIndex(event);
-            if (targetIndex !== null) {
-                goToDeckCard(targetIndex, { announceHeadword: false });
+
+            const currentT = last === 0 ? 0.5 : (originIndex / last);
+            const thumbCenterX = rect.left + currentT * rect.width;
+            const distFromThumb = Math.abs(event.clientX - thumbCenterX);
+
+            // If touching on/near the thumb (within 24px), grab it directly without jumping.
+            // If tapping farther away on the rail, jump to that tapped position.
+            if (distFromThumb > 24) {
+                const ratio = (event.clientX - rect.left) / rect.width;
+                const clamped = Math.max(0, Math.min(1, ratio));
+                const tappedIndex = Math.round(clamped * last);
+                scrubStartIndex = tappedIndex;
+                scrubStartX = event.clientX;
+                goToDeckCard(tappedIndex, { announceHeadword: false });
+            } else {
+                scrubStartIndex = originIndex;
+                scrubStartX = event.clientX;
             }
         });
+
         cardBackPips.addEventListener('pointermove', event => {
             if (event.pointerId !== pipPointerId) return;
             event.preventDefault();
-            const targetIndex = getScrubIndex(event);
-            if (targetIndex !== null) {
-                goToDeckCard(targetIndex, { announceHeadword: false });
-            }
+            const card = flashcards[currentIndex];
+            const onPhraseCard = card?.isChainChild === true && cardChainReturnIndex >= 0;
+            const scrubCount = onPhraseCard ? flashcards.length - 1 : flashcards.length;
+            const last = Math.max(0, scrubCount - 1);
+            if (last <= 0) return;
+
+            const delta = event.clientX - scrubStartX;
+            const cardOffset = Math.round(delta / STEP_PX);
+            const targetIndex = Math.max(0, Math.min(last, scrubStartIndex + cardOffset));
+            goToDeckCard(targetIndex, { announceHeadword: false });
         });
+
         cardBackPips.addEventListener('pointerup', endPipDrag);
         cardBackPips.addEventListener('pointercancel', endPipDrag);
         cardBackPips.addEventListener('lostpointercapture', endPipDrag);
@@ -10774,8 +10801,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'a2cdb2bb';
-const MODALS_ASSET_VERSION = 'a2cdb2bb';
+const ASSET_VERSION = '8d3ed215';
+const MODALS_ASSET_VERSION = '8d3ed215';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

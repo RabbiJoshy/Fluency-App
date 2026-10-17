@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T12:29:00+01:00",
+      "date": "2026-10-17 12:29 BST",
+      "agent": "Antigravity",
+      "summary": "Fix card scrubber jumping on touchdown and skipping numbers abruptly",
+      "detail": [
+        "Eliminated touchdown jump when grabbing the scrubber thumb by keeping card position stable on initial touch.",
+        "Implemented steady, tactile 18px per card stepping during drag so numbers advance sequentially without skipping.",
+        "Preserved direct track tapping so tapping anywhere along the rail continues to seek directly to the tapped position."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-16T17:16:00+01:00",
       "date": "2026-10-16 17:16 BST",
       "agent": "Antigravity",
