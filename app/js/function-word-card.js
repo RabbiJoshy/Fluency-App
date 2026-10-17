@@ -18,7 +18,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Verbs with de",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span>",
                 "rule": "Some verbs use de to link to what follows. Learn the verb and de together.",
                 "allowed_lemmas": [
                     "gostar",
@@ -276,7 +276,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Adding a detail",
-                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
                 "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de partir = time to leave.",
                 "allowed_lemmas": [
                     "copo",
@@ -536,7 +536,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Verbs with de",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span>",
                 "rule": "Some verbs use de to link to what follows. Learn the verb and de together.",
                 "allowed_lemmas": [
                     "gostar",
@@ -794,7 +794,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Adding a detail",
-                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
                 "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de partir = time to leave.",
                 "allowed_lemmas": [
                     "copo",
@@ -1060,7 +1060,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Saying what you think",
-                "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Links what someone thinks, says, knows or hopes to a statement.",
                 "allowed_lemmas": [
                     "achar",
@@ -1312,7 +1312,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Adding information",
-                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Adds information about the noun.",
                 "allowed_lemmas": [
                     "livro",
@@ -1544,7 +1544,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Comparing",
-                "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Means “than” when comparing people, things or situations.",
                 "allowed_lemmas": [
                     "mais",
@@ -1713,7 +1713,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Saying what you think",
-                "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Links what someone thinks, says, knows or hopes to a statement.",
                 "allowed_lemmas": [
                     "achar",
@@ -1965,7 +1965,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Adding information",
-                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Adds information about the noun.",
                 "allowed_lemmas": [
                     "livro",
@@ -2197,7 +2197,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Comparing",
-                "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Means “than” when comparing people, things or situations.",
                 "allowed_lemmas": [
                     "mais",
@@ -5850,7 +5850,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Where",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows where something happens or is located.",
                 "allowed_lemmas": [
                     "morar",
@@ -5896,7 +5896,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "When",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a time / period</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a time / period</span>",
                 "rule": "Places an event in a time period, such as a month or year.",
                 "allowed_lemmas": [
                     "viajar",
@@ -5944,7 +5944,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Where",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows where something happens or is located.",
                 "allowed_lemmas": [
                     "morar",
@@ -5990,7 +5990,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "When",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a time / period</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a time / period</span>",
                 "rule": "Places an event in a time period, such as a month or year.",
                 "allowed_lemmas": [
                     "viajar",
@@ -6044,7 +6044,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Where to",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows where someone or something is going.",
                 "allowed_lemmas": [
                     "ir",
@@ -6090,7 +6090,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "What for",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
                 "rule": "Links an action to its purpose: what someone wants to do or achieve.",
                 "allowed_lemmas": [
                     "estudar",
@@ -6136,7 +6136,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Who for",
-                "formulaHTML": "<span class=\"fw-token-v\">noun / noun phrase</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Shows who something is for.",
                 "allowed_lemmas": [
                     "presente",
@@ -6184,7 +6184,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Where to",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows where someone or something is going.",
                 "allowed_lemmas": [
                     "ir",
@@ -6230,7 +6230,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "What for",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
                 "rule": "Links an action to its purpose: what someone wants to do or achieve.",
                 "allowed_lemmas": [
                     "estudar",
@@ -6276,7 +6276,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Who for",
-                "formulaHTML": "<span class=\"fw-token-v\">noun / noun phrase</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Shows who something is for.",
                 "allowed_lemmas": [
                     "presente",
@@ -6330,7 +6330,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Who with",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Shows who shares an action or is together with someone.",
                 "allowed_lemmas": [
                     "falar",
@@ -6376,7 +6376,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "How / with what",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
                 "rule": "Shows the tool used or the way something is done.",
                 "allowed_lemmas": [
                     "escrever",
@@ -6424,7 +6424,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Who with",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Shows who shares an action or is together with someone.",
                 "allowed_lemmas": [
                     "falar",
@@ -6470,7 +6470,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "How / with what",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
                 "rule": "Shows the tool used or the way something is done.",
                 "allowed_lemmas": [
                     "escrever",
@@ -6524,7 +6524,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Why",
-                "formulaHTML": "<span class=\"fw-token-v\">verb / expression</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
                 "rule": "Gives the reason for an action, feeling or result.",
                 "allowed_lemmas": [
                     "obrigado",
@@ -6570,7 +6570,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Through / along",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows the route or place someone or something moves through.",
                 "allowed_lemmas": [
                     "caminhar",
@@ -6618,7 +6618,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Why",
-                "formulaHTML": "<span class=\"fw-token-v\">verb / expression</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
                 "rule": "Gives the reason for an action, feeling or result.",
                 "allowed_lemmas": [
                     "obrigado",
@@ -6664,7 +6664,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Through / along",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows the route or place someone or something moves through.",
                 "allowed_lemmas": [
                     "caminhar",
@@ -7134,7 +7134,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Like / in the same way",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">what you compare with</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span>",
                 "rule": "Compares how something is done with another example.",
                 "allowed_lemmas": [
                     "cantar",
@@ -7226,7 +7226,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Like / in the same way",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">what you compare with</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span>",
                 "rule": "Compares how something is done with another example.",
                 "allowed_lemmas": [
                     "cantar",
@@ -7324,7 +7324,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "But",
-                "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">mas</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">mas</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
                 "rule": "Adds a contrasting idea or an unexpected difference.",
                 "allowed_lemmas": [
                     "tentar",
@@ -7371,7 +7371,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "But",
-                "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">mas</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">mas</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
                 "rule": "Adds a contrasting idea or an unexpected difference.",
                 "allowed_lemmas": [
                     "tentar",
@@ -7424,7 +7424,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Where to",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Points to a destination or recipient.",
                 "allowed_lemmas": [
                     "ir",
@@ -7561,7 +7561,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Where to",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Points to a destination or recipient.",
                 "allowed_lemmas": [
                     "ir",
@@ -9972,7 +9972,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Without",
-                "formulaHTML": "<span class=\"fw-token-v\">noun / verb</span> + <span class=\"fw-token-connector\">sem</span> + <span class=\"fw-token-c\">what is missing</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">sem</span> + <span class=\"fw-token-c\">what is missing</span>",
                 "rule": "Shows what is missing or absent.",
                 "allowed_lemmas": [
                     "açúcar",
@@ -10019,7 +10019,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Without",
-                "formulaHTML": "<span class=\"fw-token-v\">noun / verb</span> + <span class=\"fw-token-connector\">sem</span> + <span class=\"fw-token-c\">what is missing</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">sem</span> + <span class=\"fw-token-c\">what is missing</span>",
                 "rule": "Shows what is missing or absent.",
                 "allowed_lemmas": [
                     "açúcar",
@@ -10072,7 +10072,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "About",
-                "formulaHTML": "<span class=\"fw-token-v\">verb / noun phrase</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a topic</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a topic</span>",
                 "rule": "Introduces the topic someone talks or thinks about.",
                 "allowed_lemmas": [
                     "falar",
@@ -10117,7 +10117,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "On / above",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows that something is on or above a surface.",
                 "allowed_lemmas": [
                     "mesa",
@@ -10164,7 +10164,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "About",
-                "formulaHTML": "<span class=\"fw-token-v\">verb / noun phrase</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a topic</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a topic</span>",
                 "rule": "Introduces the topic someone talks or thinks about.",
                 "allowed_lemmas": [
                     "falar",
@@ -10209,7 +10209,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
             },
             {
                 "tag": "On / above",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows that something is on or above a surface.",
                 "allowed_lemmas": [
                     "mesa",
@@ -10262,7 +10262,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Until / as far as",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">até</span> + <span class=\"fw-token-c\">an endpoint</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">até</span> + <span class=\"fw-token-c\">an endpoint</span>",
                 "rule": "Shows where a movement ends or how long something lasts.",
                 "allowed_lemmas": [
                     "caminhar",
@@ -10353,7 +10353,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Until / as far as",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">até</span> + <span class=\"fw-token-c\">an endpoint</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">até</span> + <span class=\"fw-token-c\">an endpoint</span>",
                 "rule": "Shows where a movement ends or how long something lasts.",
                 "allowed_lemmas": [
                     "caminhar",
@@ -10450,7 +10450,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Because",
-                "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
                 "rule": "Gives the reason why something happens.",
                 "allowed_lemmas": [
                     "chover",
@@ -10497,7 +10497,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Because",
-                "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
                 "rule": "Gives the reason why something happens.",
                 "allowed_lemmas": [
                     "chover",
@@ -10948,7 +10948,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Verbs with de",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span>",
                 "rule": "Some verbs use de to link to what follows. Learn the verb and de together.",
                 "allowed_lemmas": [
                     "acordar",
@@ -11194,7 +11194,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Adding a detail",
-                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
                 "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de comer = time to eat.",
                 "allowed_lemmas": [
                     "vaso",
@@ -11442,7 +11442,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Verbs with de",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span>",
                 "rule": "Some verbs use de to link to what follows. Learn the verb and de together.",
                 "allowed_lemmas": [
                     "acordar",
@@ -11688,7 +11688,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Adding a detail",
-                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
                 "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de comer = time to eat.",
                 "allowed_lemmas": [
                     "vaso",
@@ -11942,7 +11942,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Saying what you think",
-                "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Links what someone thinks, says, knows or hopes to a statement.",
                 "allowed_lemmas": [
                     "creer",
@@ -12187,7 +12187,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Adding information",
-                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Adds information about the noun.",
                 "allowed_lemmas": [
                     "libro",
@@ -12414,7 +12414,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Comparing",
-                "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Means “than” when comparing people, things or situations.",
                 "allowed_lemmas": [
                     "más",
@@ -12655,7 +12655,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Saying what you think",
-                "formulaHTML": "<span class=\"fw-token-v\">think, say, know or hope</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what happens</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Links what someone thinks, says, knows or hopes to a statement.",
                 "allowed_lemmas": [
                     "creer",
@@ -12900,7 +12900,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Adding information",
-                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Adds information about the noun.",
                 "allowed_lemmas": [
                     "libro",
@@ -13127,7 +13127,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Comparing",
-                "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span>",
                 "rule": "Means “than” when comparing people, things or situations.",
                 "allowed_lemmas": [
                     "más",
@@ -13374,7 +13374,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Where to",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows where someone or something is going.",
                 "allowed_lemmas": [
                     "ir",
@@ -13419,7 +13419,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Before a person",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Used before a specific person receiving the action, as in veo a Ana (I see Ana).",
                 "allowed_lemmas": [
                     "ver",
@@ -13466,7 +13466,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Where to",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows where someone or something is going.",
                 "allowed_lemmas": [
                     "ir",
@@ -13511,7 +13511,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Before a person",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Used before a specific person receiving the action, as in veo a Ana (I see Ana).",
                 "allowed_lemmas": [
                     "ver",
@@ -13564,7 +13564,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Where",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows where something happens or is located.",
                 "allowed_lemmas": [
                     "vivir",
@@ -13609,7 +13609,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "When",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a time / period</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a time / period</span>",
                 "rule": "Places an event in a time period, such as a month or year.",
                 "allowed_lemmas": [
                     "viajar",
@@ -13656,7 +13656,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Where",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows where something happens or is located.",
                 "allowed_lemmas": [
                     "vivir",
@@ -13701,7 +13701,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "When",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a time / period</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a time / period</span>",
                 "rule": "Places an event in a time period, such as a month or year.",
                 "allowed_lemmas": [
                     "viajar",
@@ -13754,7 +13754,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Why",
-                "formulaHTML": "<span class=\"fw-token-v\">verb / expression</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
                 "rule": "Gives the reason for an action, feeling or result.",
                 "allowed_lemmas": [
                     "gracias",
@@ -13799,7 +13799,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Through / along",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows the route or place someone or something moves through.",
                 "allowed_lemmas": [
                     "pasear",
@@ -13846,7 +13846,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Why",
-                "formulaHTML": "<span class=\"fw-token-v\">verb / expression</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
                 "rule": "Gives the reason for an action, feeling or result.",
                 "allowed_lemmas": [
                     "gracias",
@@ -13891,7 +13891,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Through / along",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
                 "rule": "Shows the route or place someone or something moves through.",
                 "allowed_lemmas": [
                     "pasear",
@@ -13944,7 +13944,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "What for",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
                 "rule": "Links an action to its purpose: what someone wants to do or achieve.",
                 "allowed_lemmas": [
                     "estudiar",
@@ -13989,7 +13989,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Who for",
-                "formulaHTML": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Shows who something is for.",
                 "allowed_lemmas": [
                     "regalo",
@@ -14036,7 +14036,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "What for",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
                 "rule": "Links an action to its purpose: what someone wants to do or achieve.",
                 "allowed_lemmas": [
                     "estudiar",
@@ -14081,7 +14081,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "Who for",
-                "formulaHTML": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Shows who something is for.",
                 "allowed_lemmas": [
                     "regalo",
@@ -14134,7 +14134,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Who with",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Shows who shares an action or is together with someone.",
                 "allowed_lemmas": [
                     "cenar",
@@ -14179,7 +14179,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "How / with what",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
                 "rule": "Shows the tool used or the way something is done.",
                 "allowed_lemmas": [
                     "escribir",
@@ -14226,7 +14226,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Who with",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a person</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a person</span>",
                 "rule": "Shows who shares an action or is together with someone.",
                 "allowed_lemmas": [
                     "cenar",
@@ -14271,7 +14271,7 @@ export const SPANISH_GRAMMAR_WORDS = {
             },
             {
                 "tag": "How / with what",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
                 "rule": "Shows the tool used or the way something is done.",
                 "allowed_lemmas": [
                     "escribir",
@@ -14324,7 +14324,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Without",
-                "formulaHTML": "<span class=\"fw-token-v\">noun / verb</span> + <span class=\"fw-token-connector\">sin</span> + <span class=\"fw-token-c\">what is missing</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">sin</span> + <span class=\"fw-token-c\">what is missing</span>",
                 "rule": "Shows what is missing or left out.",
                 "allowed_lemmas": [
                     "azúcar",
@@ -14371,7 +14371,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Without",
-                "formulaHTML": "<span class=\"fw-token-v\">noun / verb</span> + <span class=\"fw-token-connector\">sin</span> + <span class=\"fw-token-c\">what is missing</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">sin</span> + <span class=\"fw-token-c\">what is missing</span>",
                 "rule": "Shows what is missing or left out.",
                 "allowed_lemmas": [
                     "azúcar",
@@ -19200,7 +19200,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "But",
-                "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">pero</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">pero</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
                 "rule": "Adds a contrasting idea or an unexpected difference.",
                 "allowed_lemmas": [
                     "salir",
@@ -19247,7 +19247,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "But",
-                "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">pero</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">pero</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
                 "rule": "Adds a contrasting idea or an unexpected difference.",
                 "allowed_lemmas": [
                     "salir",
@@ -19400,7 +19400,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Like / in the same way",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">what you compare with</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span>",
                 "rule": "Compares how something is done with another example.",
                 "allowed_lemmas": [
                     "cantar",
@@ -19491,7 +19491,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Like / in the same way",
-                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">what you compare with</span>",
+                "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span>",
                 "rule": "Compares how something is done with another example.",
                 "allowed_lemmas": [
                     "cantar",
@@ -20470,7 +20470,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "relations": [
             {
                 "tag": "Because",
-                "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
                 "rule": "Gives the reason why something happens.",
                 "allowed_lemmas": [
                     "cansar",
@@ -20517,7 +20517,7 @@ export const SPANISH_GRAMMAR_WORDS = {
         "uses": [
             {
                 "tag": "Because",
-                "formulaHTML": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+                "formulaHTML": "<span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
                 "rule": "Gives the reason why something happens.",
                 "allowed_lemmas": [
                     "cansar",
