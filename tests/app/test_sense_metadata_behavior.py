@@ -49,6 +49,8 @@ const detailed={translation:'bank (a financial institution serving local people 
 const presentation=ui.learnerSensePresentation(detailed,true,{ignoreBudget:true,cardMeanings:[detailed]});
 assert.match(ui.senseNoteHTML(presentation),/financial institution/);
 assert.match(ui.senseNoteHTML(presentation),/sense-note-trigger/);
+assert.match(ui.senseMetadataHTML(detailed,true,{allowInactivePrimary:true,cardMeanings:[detailed]}),/sense-note-trigger/);
+assert(!ui.senseMetadataHTML(detailed,false,{allowInactivePrimary:true,cardMeanings:[detailed]}).includes('sense-note-trigger'));
 const aun=JSON.parse(fs.readFileSync('tests/app/fixtures/spanish_shared_context.json'));
 for(const meaning of aun.meanings.slice(0,2)) {
  const presentation=ui.learnerSensePresentation(meaning,true,{ignoreBudget:true,gloss:meaning.translation,cardMeanings:aun.meanings});

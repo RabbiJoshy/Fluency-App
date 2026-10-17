@@ -673,8 +673,10 @@ async function saveKnowledgeProgress(card, items, isCorrect) {
 function beginKnowledgeCardVisit(card) {
     if (!card) return;
     if (knowledgeSiblingsPendingCard && knowledgeSiblingsPendingCard !== card) {
+        knowledgeSiblingsPendingCard._pinningMode = false;
         commitPendingKnowledgeSiblings(knowledgeSiblingsPendingCard);
     }
+    delete card._pinningMode;
     card._knowledgeVisitStart = Date.now();
 }
 
@@ -819,14 +821,15 @@ function getKnowledgeOverviewFraction(card) {
 function renderKnowledgeOverviewButton(card) {
     if (!getKnowledgeFocusItems(card).length) return '';
     const { flagged } = getKnowledgeOverviewFraction(card);
-    const aria = `Revisit a meaning, ${flagged} to revisit`;
-    // The number is blank until a meaning is saved, then counts them.
-    return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="${aria}" aria-haspopup="dialog" onclick="showKnowledgeOverview(event)">
+    const active = Boolean(card?._pinningMode);
+    const aria = flagged > 0 ? `Pin a meaning, ${flagged} pinned` : 'Pin a meaning';
+    // The number is blank until a meaning is pinned, then counts them.
+    return `<button type="button" class="ref-tile knowledge-overview-trigger${active ? ' is-active' : ''}" aria-label="${aria}" aria-pressed="${active}" onclick="showKnowledgeOverview(event)">
         <div class="ref-tile-icon-wrap">
-            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5v7"></path><path d="m8.8 6.8 3.2 3.2 3.2-3.2"></path><rect x="4.5" y="13" width="15" height="4" rx="1.2"></rect><path d="M7 20.5h10"></path></svg>
+            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg>
             ${flagged > 0 ? `<span class="ref-tile-count-badge" aria-hidden="true">${flagged}</span>` : ''}
         </div>
-        <span class="ref-tile-label">Revisit a meaning</span>
+        <span class="ref-tile-label">Pin a meaning</span>
     </button>`;
 }
 
@@ -961,57 +964,82 @@ function showKnowledgeOverview(event, options = {}) {
     event?.stopPropagation();
     const card = options.card || flashcards[currentIndex];
     if (!card) return;
-    if (knowledgeOverviewCard !== card) knowledgeOverviewTab = '';
     knowledgeOverviewCard = card;
-    const modal = ensureKnowledgeOverviewModal();
-    renderKnowledgeOverview(card);
-    if (modal.hidden || modal.classList.contains('is-closing')) {
-        knowledgeOverviewReturnFocus = event?.currentTarget instanceof HTMLElement
-            ? event.currentTarget : document.activeElement;
+    card._pinningMode = !card._pinningMode;
+    if (card._pinningMode && card._expandedPos instanceof Set) {
+        (card.meanings || []).forEach(pm => {
+            if (!pm || pm.exampleOnly) return;
+            const ppos = pm.pos === 'SENSE_CYCLE' ? (pm.cycle_pos || 'X') : pm.pos;
+            card._expandedPos.add(ppos + '\u0000' + (pm.headword || ''));
+        });
     }
-    modal.classList.remove('is-closing');
-    modal.hidden = false;
-    document.body.classList.add('knowledge-overview-open');
-    window.sideDock?.placeById?.('knowledgeOverviewModal');
-    modal.querySelector('.knowledge-overview-close')?.focus();
+    if (card === flashcards[currentIndex]) updateCard();
 }
 
 function closeKnowledgeOverview(event) {
     event?.stopPropagation();
-    const modal = document.getElementById('knowledgeOverviewModal');
-    document.body.classList.remove('knowledge-overview-open');
-    if (!modal || modal.hidden) return;
-    const sheet = modal.querySelector('.knowledge-overview-sheet');
-    const finish = ({ requireClosing = false } = {}) => {
-        // A reopen during the exit animation clears `is-closing`; the pending
-        // animationend/timeout must not then hide the freshly opened sheet.
-        if (requireClosing && !modal.classList.contains('is-closing')) return;
+    const card = knowledgeOverviewCard || (typeof flashcards !== 'undefined' ? flashcards[currentIndex] : null);
+    if (card?._pinningMode) {
+        card._pinningMode = false;
+        if (typeof flashcards !== 'undefined' && card === flashcards[currentIndex]) updateCard();
+    }
+    const modal = document.getElementById?.('knowledgeOverviewModal');
+    document.body?.classList?.remove('knowledge-overview-open');
+    if (modal && !modal.hidden) {
         modal.hidden = true;
         modal.classList.remove('is-closing');
-        if (knowledgeOverviewReturnFocus?.isConnected) knowledgeOverviewReturnFocus.focus();
-        else document.querySelector('.knowledge-overview-trigger')?.focus();
-        knowledgeOverviewReturnFocus = null;
-    };
-    // Hide after the fade completes, or immediately for reduced motion.
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-    if (!sheet || reducedMotion) {
-        finish();
-        return;
     }
-    modal.classList.add('is-closing');
-    let settled = false;
-    const settle = () => {
-        if (settled) return;
-        settled = true;
-        sheet.removeEventListener('animationend', onAnimationEnd);
-        finish({ requireClosing: true });
-    };
-    const onAnimationEnd = animationEvent => {
-        if (animationEvent.target !== sheet) return;
-        settle();
-    };
-    sheet.addEventListener('animationend', onAnimationEnd);
-    setTimeout(settle, 400);
+}
+
+async function togglePinMeaningIndices(event, indices) {
+    event?.stopPropagation?.();
+    event?.preventDefault?.();
+    const card = (typeof flashcards !== 'undefined' && flashcards[currentIndex]) || knowledgeOverviewCard;
+    if (!card) return;
+    knowledgeOverviewCard = card;
+    const list = (Array.isArray(indices) ? indices : [indices])
+        .map(Number)
+        .filter(i => Number.isInteger(i) && i >= 0);
+    if (!list.length) return;
+    const items = list
+        .flatMap(i => knowledgeItemsForMeaning(card, card.meanings?.[i], i))
+        .filter(item => item && !item.isRare);
+    if (!items.length) return;
+
+    const currentlyPinned = items.some(item => {
+        const state = getKnowledgeItemState(card, item);
+        return state.needsReview && state.reviewReason === 'incorrect';
+    });
+
+    if (!currentlyPinned) {
+        knowledgeSiblingsPendingCard = card;
+        await saveKnowledgeProgress(card, items, false);
+    } else {
+        const targetIds = new Set(items.map(item => item.itemId));
+        const otherItems = getKnowledgeFocusItems(card).filter(item => !targetIds.has(item.itemId));
+        const othersUnseen = otherItems.every(item => !getKnowledgeItemState(card, item).seen);
+        const onlyWrongThisVisit = items.every(item => {
+            const raw = itemProgressData[item.itemId];
+            return raw && !(Number(raw.correct) > 0) && Number(raw.wrong) === 1 && answeredDuringVisit(card, item);
+        });
+        if (othersUnseen && onlyWrongThisVisit) {
+            for (const item of items) {
+                delete itemProgressData[item.itemId];
+            }
+            window.bumpProgressEpoch?.();
+            cacheItemProgress();
+            const anyStillPinned = getKnowledgeFocusItems(card).some(item => {
+                const state = getKnowledgeItemState(card, item);
+                return state.needsReview && state.reviewReason === 'incorrect';
+            });
+            if (!anyStillPinned && knowledgeSiblingsPendingCard === card) {
+                knowledgeSiblingsPendingCard = null;
+            }
+        } else {
+            await saveKnowledgeProgress(card, items, true);
+        }
+    }
+    if (typeof flashcards !== 'undefined' && card === flashcards[currentIndex]) updateCard();
 }
 
 function focusKnowledgeOverviewItem(event, index) {
@@ -1104,6 +1132,7 @@ window.getPracticeMeaningInfo = getPracticeMeaningInfo;
 window.getKnowledgeOverviewRows = getKnowledgeOverviewRows;
 window.markCurrentKnowledge = markCurrentKnowledge;
 window.showKnowledgeOverview = showKnowledgeOverview;
+window.togglePinMeaningIndices = togglePinMeaningIndices;
 window.findRareSenseKnowledgeItem = findRareSenseKnowledgeItem;
 window.closeKnowledgeOverview = closeKnowledgeOverview;
 window.focusKnowledgeOverviewItem = focusKnowledgeOverviewItem;

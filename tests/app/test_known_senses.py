@@ -200,6 +200,21 @@ RUNNER = r"""
         out.dueIsNotSelected = !context.knowledgeOverviewRowsHTML(selectedCard,
             [{ item: selectedItems[0], index: 0 }]).includes(' checked');
 
+        // In-place row pinning: button toggles _pinningMode, tapping a row pin
+        // marks it for practice, and tapping again on an unseen card undoes it.
+        const pinCard = { ...fresh, fullId: 'es00004' };
+        const pinItems = context.getKnowledgeOverviewItems(pinCard);
+        context.beginKnowledgeCardVisit(pinCard);
+        context.flashcards = [pinCard];
+        context.showKnowledgeOverview(null, { card: pinCard });
+        out.pinModeTurnedOn = Boolean(pinCard._pinningMode);
+        out.pinButtonLabel = context.renderKnowledgeOverviewButton(pinCard).includes('Pin a meaning');
+        await new Promise(resolve => setTimeout(resolve, 5));
+        await context.togglePinMeaningIndices(null, [1]);
+        out.pinnedNeedsReview = context.getKnowledgeItemState(pinCard, pinItems[1]).needsReview;
+        await context.togglePinMeaningIndices(null, [1]);
+        out.unpinnedOnFreshRevertsUnseen = !context.getKnowledgeItemState(pinCard, pinItems[1]).seen;
+
         console.log(JSON.stringify(out));
     })().catch(error => { console.error(error); process.exit(1); });
 """
@@ -257,7 +272,8 @@ class KnownSenseTests(unittest.TestCase):
     def test_meaning_review_checkboxes_preserve_choices(self) -> None:
         for key in ["newRowsUnchecked", "duplicateSelectionIgnored", "checkboxReopensChecked",
                     "freshSwipeHandled", "freshSwipePreservesSelection", "deselectionResolves",
-                    "dueIsNotSelected"]:
+                    "dueIsNotSelected", "pinModeTurnedOn", "pinButtonLabel",
+                    "pinnedNeedsReview", "unpinnedOnFreshRevertsUnseen"]:
             with self.subTest(key=key):
                 self.assertTrue(self.out[key])
 

@@ -1893,7 +1893,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     const grammar = options.hideVisibleItems
         ? []
         : keyItems.filter(isGrammarCue);
-    const noteHTML = senseNoteHTML(presentation, options);
+    const noteHTML = active ? senseNoteHTML(presentation, options) : '';
 
     if (!active && options.allowInactivePrimary) {
         if (!displayPrimary.length && !grammar.length && !noteHTML) return '';

@@ -233,8 +233,8 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         demo: 'openReview',
                         anchor: '.knowledge-overview-trigger',
-                        title: 'Revisit a meaning',
-                        text: 'Know the word but not every meaning? Tap to tick the ones to bring back in reviews; they move to the top, and the number shows how many you’ll revisit.',
+                        title: 'Pin a meaning',
+                        text: 'Know the word, but not every meaning? Tap to show pins on each row; pin the ones to practice and future reviews put them at the top.',
                     },
                     {
                         side: 'right',
@@ -1133,6 +1133,17 @@ function later(ms, fn) {
 
 function closeDemoSheet() {
     document.querySelectorAll('#cardTutorialStage .tutorial-demo-sheet').forEach(el => el.remove());
+    const stage = document.getElementById('cardTutorialStage');
+    if (!stage) return;
+    stage.querySelectorAll('.sense-pin-btn[data-demo-pin]').forEach(el => el.remove());
+    stage.querySelectorAll('.meaning-row .sense-prominence-badge').forEach(el => { el.hidden = false; });
+    const trigger = stage.querySelector('.knowledge-overview-trigger');
+    if (trigger) {
+        trigger.classList.remove('is-active');
+        trigger.setAttribute('aria-pressed', 'false');
+        const badge = trigger.querySelector('.ref-tile-count-badge');
+        if (badge) badge.remove();
+    }
 }
 
 function closeLookupDemo() {
@@ -1231,26 +1242,51 @@ function reviewSheetHTML(card) {
     </div>`;
 }
 
+function demoPinBtnHTML(index, pinned = false) {
+    const label = pinned ? 'Unpin this meaning' : 'Pin this meaning for practice';
+    return `<button type="button" class="sense-pin-btn${pinned ? ' is-pinned' : ''}" data-demo-pin="${index}" aria-pressed="${pinned}" aria-label="${label}" title="${label}" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%);"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="15" height="15" fill="${pinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
+}
+
+function setDemoPinState(btn, pinned) {
+    if (!btn) return;
+    btn.classList.toggle('is-pinned', pinned);
+    btn.setAttribute('aria-pressed', String(pinned));
+    const svg = btn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', pinned ? 'currentColor' : 'none');
+}
+
 function openDemoSheet(kind) {
     const replica = document.querySelector('#cardTutorialStage .card-replica');
     const card = currentCard();
     if (!replica || !card) return;
     closeLookupDemo();
     closeDemoSheet();
-    replica.insertAdjacentHTML('beforeend', kind === 'rare' ? rareSheetHTML(card) : reviewSheetHTML(card));
-    if (kind === 'review') updateDemoFlagCount();
-    // The sheet covers the card from its top edge: on a short phone the pane
-    // may be scrolled down to the links row, which would cut the sheet's head.
-    keepInView(replica);
+    if (kind === 'rare') {
+        replica.insertAdjacentHTML('beforeend', rareSheetHTML(card));
+        keepInView(replica);
+        positionRing();
+        return;
+    }
+    const trigger = replica.querySelector('.knowledge-overview-trigger');
+    if (trigger) {
+        trigger.classList.add('is-active');
+        trigger.setAttribute('aria-pressed', 'true');
+    }
+    replica.querySelectorAll('.meaning-row').forEach((row, i) => {
+        const badge = row.querySelector('.sense-prominence-badge');
+        if (badge) badge.hidden = true;
+        row.insertAdjacentHTML('beforeend', demoPinBtnHTML(i, false));
+    });
+    updateDemoFlagCount();
     positionRing();
 }
 
-// Tick the second meaning, the way a learner marks one to revisit.
+// Pin the second meaning, the way a learner marks one to practice.
 function updateDemoFlagCount() {
     const stage = document.getElementById('cardTutorialStage');
-    const rows = stage?.querySelectorAll('.tutorial-demo-sheet [data-demo-row]');
-    if (!rows?.length) return;
-    const flagged = [...rows].filter(row => row.classList.contains('is-selected')).length;
+    const pins = stage?.querySelectorAll('.sense-pin-btn[data-demo-pin]');
+    if (!pins?.length) return;
+    const flagged = [...pins].filter(btn => btn.classList.contains('is-pinned')).length;
     const wrap = stage.querySelector('.knowledge-overview-trigger .ref-tile-icon-wrap');
     if (!wrap) return;
     let badge = wrap.querySelector('.ref-tile-count-badge');
@@ -1263,14 +1299,10 @@ function updateDemoFlagCount() {
 }
 
 function tickReviewRow() {
-    const row = document.querySelector('#cardTutorialStage .tutorial-demo-sheet [data-demo-row="1"]')
-        || document.querySelector('#cardTutorialStage .tutorial-demo-sheet [data-demo-row="0"]');
-    if (!row) return;
-    row.classList.add('is-selected');
-    const box = row.querySelector('input');
-    if (box) box.checked = true;
-    const status = row.querySelector('.knowledge-overview-status');
-    if (status) status.setAttribute('aria-label', 'Practice');
+    const pin = document.querySelector('#cardTutorialStage .sense-pin-btn[data-demo-pin="1"]')
+        || document.querySelector('#cardTutorialStage .sense-pin-btn[data-demo-pin="0"]');
+    if (!pin) return;
+    setDemoPinState(pin, true);
     updateDemoFlagCount();
 }
 
@@ -1382,19 +1414,20 @@ function onStageClick(event) {
         positionRing();
         return;
     }
-    const row = target.closest('.tutorial-demo-sheet [data-demo-row]');
-    if (row) {
-        event.preventDefault();
-        const on = !row.classList.contains('is-selected');
-        row.classList.toggle('is-selected', on);
-        const box = row.querySelector('input');
-        if (box) box.checked = on;
+    const pin = target.closest('.sense-pin-btn[data-demo-pin]');
+    if (pin) {
+        event.stopPropagation();
+        setDemoPinState(pin, !pin.classList.contains('is-pinned'));
         updateDemoFlagCount();
         return;
     }
     if (target.closest('.tutorial-demo-sheet')) return;
     if (target.closest('.ref-rare-uses-btn')) { openDemoSheet('rare'); return; }
-    if (target.closest('.knowledge-overview-trigger')) { openDemoSheet('review'); return; }
+    if (target.closest('.knowledge-overview-trigger')) {
+        if (stage.querySelector('.sense-pin-btn[data-demo-pin]')) closeDemoSheet();
+        else openDemoSheet('review');
+        return;
+    }
     if (target.closest('.ref-lookup-btn')) {
         const sheet = stage.querySelector('.lookup-sheet');
         if (sheet) { closeDemoSheet(); sheet.hidden = !sheet.hidden; positionRing(); }

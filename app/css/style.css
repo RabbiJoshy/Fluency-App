@@ -2816,8 +2816,45 @@
             white-space: nowrap;
             pointer-events: none;
         }
+        .known-sense-tag[onclick] {
+            pointer-events: auto;
+            cursor: pointer;
+        }
         .group-card-varying-cell .known-sense-tag {
             margin-left: 6px;
+        }
+        .sense-pin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            min-height: 24px;
+            padding: 0;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-secondary);
+            opacity: 0.72;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 3;
+            transition: opacity 0.15s ease, color 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .sense-pin-btn:hover,
+        .sense-pin-btn:focus-visible {
+            opacity: 1;
+            color: var(--text-primary);
+        }
+        .sense-pin-btn.is-pinned {
+            opacity: 1;
+            color: rgb(var(--sense-match-rgb, 56, 189, 248));
+        }
+        .ref-tile.knowledge-overview-trigger.is-active {
+            background: rgba(var(--sense-match-rgb, 56, 189, 248), 0.16);
+            border-color: rgba(var(--sense-match-rgb, 56, 189, 248), 0.45);
         }
         @keyframes rareSenseRowFadeIn {
             0% {
@@ -3609,19 +3646,20 @@
             min-width: 22px;
             height: 22px;
             min-height: 22px;
-            border: 1px solid rgba(var(--sense-match-rgb), 0.46);
-            border-radius: 50%;
+            border: none;
+            border-radius: 6px;
             padding: 0;
-            background: rgba(var(--sense-match-rgb), 0.09);
-            color: rgb(var(--sense-match-rgb));
-            font: 700 12px/1 var(--font-data);
-            font-style: normal;
+            background: transparent;
+            color: rgba(var(--sense-match-rgb), 0.85);
+            font: italic 700 14px/1 Georgia, "Times New Roman", serif;
             margin: 0;
             cursor: pointer;
+            transition: color 0.15s ease, background 0.15s ease;
         }
 
         .sense-note-trigger:hover {
-            background: rgba(var(--sense-match-rgb), 0.17);
+            color: rgb(var(--sense-match-rgb));
+            background: rgba(var(--sense-match-rgb), 0.12);
         }
 
         .sense-note-trigger:focus-visible {
@@ -21339,7 +21377,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 .meaning-row .sense-metadata-detail + .sense-metadata-detail::before { content: none; }
 .meaning-row .sense-metadata-tier--grammar,
 .meaning-row .sense-metadata-tier--details { gap: 4px 8px; }
-.meaning-row .sense-note-trigger { font-size: 11px; }
+.meaning-row .sense-note-trigger { font-size: 14px; }
 .meaning-row .group-card-varying-cell > .meaning-context-cell,
 .meaning-row .group-card-varying-cell > .row-adaptive-text,
 .meaning-row-regular:not(.is-current-sense) .meaning-row-translation {
@@ -21405,7 +21443,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     height: 22px;
     min-height: 22px;
     padding: 0;
-    border-radius: 50%;
+    border-radius: 6px;
     flex: 0 0 auto;
 }
 .meaning-row:has(.sense-note-trigger) { padding-left: 32px !important; }
@@ -22699,12 +22737,12 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     left: 6px;
     right: auto !important;
 }
-.meaning-row > :is(.sense-prominence-badge, .sense-percentage-tail, .known-sense-tag) {
+.meaning-row > :is(.sense-prominence-badge, .sense-percentage-tail, .known-sense-tag, .sense-pin-btn) {
     left: 8px;
     right: auto !important;
 }
 .meaning-row.has-row-lead-and-info > .row-lead-marks { left: 8px; }
-.meaning-row:has(> :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag)) > .row-lead-marks { left: 38px; }
+.meaning-row:has(> :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag, .sense-pin-btn)) > .row-lead-marks { left: 38px; }
 .meaning-row.has-shared-and-cell-information > .meaning-row-body { margin-top: 30px; }
 .meaning-row.has-shared-and-cell-information > .sense-note-trigger {
     top: 16px;
@@ -23211,7 +23249,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
    with one sense row does not repeat it on that row. */
 .pos-collapsible.is-open .pos-section-head > .sense-prominence-badge,
 .pos-collapsible.is-open .pos-section-head > .pos-pill-pct { margin-left: auto; }
-.pos-collapsible.is-single-sense > .meaning-pos-rows > .meaning-row > .pct-column,
+.pos-collapsible.is-single-sense > .meaning-pos-rows > .meaning-row > .pct-column:not(:has(.sense-pin-btn, .known-sense-tag)),
 .pos-collapsible.is-single-sense > .meaning-pos-rows > .meaning-row > .sense-prominence-badge { display: none !important; }
 
 /* The section-head badge anchors its own explanation (it sat static, so the
@@ -23907,7 +23945,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #cardTutorialStage .sentence { flex: 0 0 auto; max-height: none; overflow: visible; box-sizing: border-box; }
 #cardTutorialStage .meaning-row { padding-left: 44px !important; }
 #cardTutorialStage .sense-note-trigger { left: 2px; width: 44px; height: 44px; min-width: 44px; border: 0; background: transparent; }
-#cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 1px solid var(--border-light); border-radius: 50%; background: var(--bg-card); }
+#cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 0; border-radius: 6px; background: transparent; }
 #cardTutorialStage .sense-prominence-badge { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 #cardTutorialStage .meaning-row-body { padding-right: 48px !important; }
 #cardTutorialStage .meaning-row .sense-cue-area { max-width: 100%; }
