@@ -821,8 +821,6 @@ loadConfig().then(async () => {
                 onSelect: () => {
                     if (activity === 'verbs' && typeof window.openConjugationsScreen === 'function') {
                         window.openConjugationsScreen();
-                    } else if (activity === 'translation' && typeof window.openLyricsViewScreen === 'function' && document.body?.classList?.contains('desktop-workspace')) {
-                        window.openLyricsViewScreen();
                     } else {
                         window.location.href = href;
                     }

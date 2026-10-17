@@ -193,6 +193,11 @@ named examples he can look at, not a commit or a passing test on its own.
 - **Concurrent sessions are normal.** Check `git status` before committing;
   commit only your own paths. Others' uncommitted work is routinely present.
   Named jobs: **`CHAT_ROADMAP.md`** — do only your codename.
+- **UI simplicity: avoid duplicate titles and double navigation.**
+  - **No duplicate titles / stacked eyebrows:** Do NOT repeat context or place an eyebrow pill right above a page heading (e.g. avoid having "Spanish · Bad Bunny · Extra" directly above "Extra" — just title it "Extra"). One clean title is enough.
+  - **No duplicate navigation controls:** Do NOT clutter screens with multiple redundant navigation controls to the same destination (e.g. avoid stacking close buttons, back-to-menu buttons, and sidebar items). Provide a single, obvious navigation path.
+  - **Open dedicated modes full screen:** Dedicated features like song lyrics translation (`app/lyrics-view/`) must open full screen, never trapped in a small embedded frame or box within the main screen.
+  - **Generic, accurate descriptions:** Keep feature card descriptions generic rather than dynamically tying them to a currently selected artist or item (e.g. "lyrics of any song", not tied to whichever artist happens to be currently selected).
 - **Every single UI change goes to Staging (`https://fluency-staging.pages.dev/`) automatically unless Josh explicitly specifies otherwise.** It is the literal purpose of staging so he can immediately look at, touch, and review proposed changes in the full app on his laptop and actual phone while production remains stable. Do NOT ask whether to put a UI change on staging — just deploy it to staging as part of completing the task.
   **Do NOT push or deploy directly to production `main` without Josh's explicit approval.**
   Production (`https://rabbijoshy.github.io/Fluency-App/`) is updated only via deliberate
