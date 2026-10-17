@@ -268,46 +268,86 @@
 
 /* Counts describe the batch; the heading scopes the level statistics. */
 .study-session-level { white-space: nowrap; font: 500 .8em/1.2 var(--font-reading); color: var(--text-secondary); }
-.study-session-count { font-size: .8em; font-weight: 500; }
+.study-set-start-label { display: inline-flex; align-items: center; font-size: 16px; font-weight: 750; line-height: 1; }
+.study-session-divider { display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; line-height: 1; opacity: .65; user-select: none; }
+.study-session-count { display: inline-flex; align-items: center; font-size: 14px; font-weight: 600; line-height: 1; opacity: .95; }
 .review-deck-upcoming { font: 400 12px/1.4 var(--font-reading); color: var(--text-secondary); }
 .session-action-pill:not(:has(.session-length-chip)) > .study-set-start,
-.session-action-pill:not(:has(.session-length-chip)) > .study-set-review { border-radius: 12px !important; }
+.session-action-pill:not(:has(.session-length-chip)) > .study-set-review,
+.session-action-pill > .study-set-start:only-child,
+.session-action-pill > .study-set-review:only-child { border-radius: 12px !important; }
 .cbs-end-label { flex: none; margin-left: 16px; color: var(--text-secondary); font: 600 12px/1 var(--font-reading); pointer-events: none; }
 .cbs-end-label.is-at-end { visibility: hidden; }
 .cbs-end-label[hidden] { display: none; }
 
-/* One level chooser contains its next batch, with Smart Skip below. */
+/* Level and session actions: Study and Practise buttons size to their content, clock chip on the left */
 #step4 .session-action-pill {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: inline-flex;
     align-items: stretch;
+    width: auto;
+    max-width: 100%;
     position: relative;
     border-radius: 12px;
+    justify-self: start;
 }
 #step4 .session-action-pill > .study-set-start {
-    grid-column: 1;
-    grid-row: 1;
-    width: 100%;
-    border-radius: 12px !important;
-    display: flex;
+    width: auto;
+    border-radius: 0 12px 12px 0 !important;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+    padding: 0 20px;
     text-align: center;
+    min-height: 52px;
     z-index: 1;
 }
+#step4 .session-action-pill:not(:has(.session-length-chip)) > .study-set-start,
+#step4 .session-action-pill > .study-set-start:only-child {
+    border-radius: 12px !important;
+}
 #step4 .session-action-pill > .session-length-chip {
-    grid-column: 1;
-    grid-row: 1;
-    justify-self: start;
-    z-index: 2;
-    order: 0;
+    flex: none;
     border-radius: 12px 0 0 12px;
     border-left: 0;
     border-right: 1px solid rgba(0, 0, 0, .18);
+    min-height: 52px;
     transition: filter 0.15s ease, background-color 0.15s ease;
+    z-index: 2;
 }
 #step4 .session-action-pill > .session-length-chip:hover {
     filter: brightness(1.12);
+}
+
+#reviewDeckBody .session-action-pill {
+    display: inline-flex;
+    align-items: stretch;
+    width: auto;
+    max-width: 100%;
+    border-radius: 12px;
+}
+#reviewDeckBody .session-action-pill > .session-length-chip {
+    flex: none;
+    border-radius: 12px 0 0 12px;
+    border-left: 0;
+    border-right: 1px solid rgba(0, 0, 0, .18);
+    min-height: 48px;
+}
+#reviewDeckBody .session-action-pill > .study-set-review {
+    flex: none;
+    width: auto;
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 22px;
+    border-radius: 0 12px 12px 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: 750 15px/1 var(--font-emphasis);
+}
+#reviewDeckBody .session-action-pill:not(:has(.session-length-chip)) > .study-set-review,
+#reviewDeckBody .session-action-pill > .study-set-review:only-child {
+    border-radius: 12px !important;
 }
 
 #step2 .level-choosing #step4 { margin: 0; }

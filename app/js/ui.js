@@ -1974,9 +1974,13 @@ function _applyFilteredRankCounts(samples) {
 // code can read it back synchronously the way it used to read
 // slider.value. Also re-runs the readout so headline + tick labels
 // follow the new selection.
-function setLevelSegmentSelection(idx) {
+function setLevelSegmentSelection(idx, preserveCenter = false) {
     const segBar = document.getElementById('lswSlider');
     if (!segBar) return;
+    const oldIdx = parseInt(segBar.dataset.value ?? '-1', 10);
+    const newSeg = segBar.querySelector(`.lsw-seg[data-i="${idx}"]`);
+    const oldCenter = (preserveCenter && newSeg) ? (newSeg.offsetLeft + newSeg.offsetWidth / 2) : 0;
+
     segBar.dataset.value = String(idx);
     segBar.querySelectorAll('.lsw-seg').forEach(seg => {
         const i = parseInt(seg.dataset.i, 10);
@@ -1985,6 +1989,15 @@ function setLevelSegmentSelection(idx) {
         seg.style.setProperty('--dist', String(Math.abs(i - idx)));
         seg.setAttribute('aria-checked', i === idx ? 'true' : 'false');
     });
+
+    if (preserveCenter && newSeg && oldIdx !== idx && oldIdx >= 0) {
+        const newCenter = newSeg.offsetLeft + newSeg.offsetWidth / 2;
+        const shift = newCenter - oldCenter;
+        if (shift !== 0) {
+            segBar.scrollLeft += shift;
+        }
+    }
+
     const levelEl = document.getElementById('lswLevelVal');
     if (levelEl) levelEl.textContent = `Level ${idx + 1}`;
     updateLevelSliderReadout(idx);
@@ -2047,6 +2060,7 @@ function wireLevelScrubber(segBar, buttons) {
             } finally {
                 _levelScrubberInitiated = false;
             }
+            _scrollLevelSegToCenter(targetIdx, true);
         }
     };
     // While the learner scrubs, the badge swaps its word range for the level
@@ -2060,7 +2074,7 @@ function wireLevelScrubber(segBar, buttons) {
     segBar.addEventListener('scroll', () => {
         showTotalWhileScrubbing();
         const i = _levelCenteredIdx(segBar);
-        if (+segBar.dataset.value !== i) setLevelSegmentSelection(i); // live magnify + readout
+        if (+segBar.dataset.value !== i) setLevelSegmentSelection(i, true); // live magnify + readout
         if (_levelProgrammaticScroll) return;
         clearTimeout(commitTimer);
         if (!pointerActive) {
@@ -2965,28 +2979,25 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         const upcoming = plan?.summariseUpcoming?.(window.getUpcomingReviewTimes?.(selectedLanguage) || []) || null;
         const upcomingText = plan?.describeUpcoming?.(upcoming) || '';
         let reviewMeta;
-        let reviewLater = '';
         if (globalTotal > 0) {
             reviewMeta = `${globalTotal.toLocaleString()} waiting`;
-            reviewLater = upcoming?.nextCount
-                ? `${upcoming.nextCount.toLocaleString()} more ${upcoming.nextLabel}` : '';
         } else if (!srsOn) {
             reviewMeta = 'Nothing to practise. Review schedule paused: only mistakes come back.';
+        } else if (upcomingText) {
+            reviewMeta = `Nothing to practise yet. ${upcomingText}`;
         } else {
             reviewMeta = 'Nothing to practise yet.';
-            reviewLater = upcomingText;
         }
         reviewHTML = `<div class="review-deck-content">
                 <button class="review-deck-summary" type="button" id="openReviewHomeBtn">
                     <span class="review-deck-summary-copy">
-                        <strong>${reviewMeta}</strong>
-                        ${reviewLater ? `<small class="review-deck-upcoming">${reviewLater}</small>` : ''}
+                        <span class="review-deck-summary-text">${reviewMeta}</span>
                     </span>
                     <span class="review-deck-summary-chevron" aria-hidden="true">›</span>
                 </button>
                 <div class="session-action-pill is-practice${globalTotal > 0 ? '' : ' is-disabled'}">
-                    <button class="study-set-review" type="button" id="quickReviewBtn" ${globalTotal > 0 ? '' : 'disabled'}>Practise</button>
                     ${lengthChip(globalTotal, 'practice')}
+                    <button class="study-set-review" type="button" id="quickReviewBtn" ${globalTotal > 0 ? '' : 'disabled'}>Practise</button>
                 </div>
             </div>`;
     }
@@ -3048,10 +3059,13 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 ${nextCount === 0
                     ? `<button class="range-btn-new study-set-start" id="studySetStartBtn" type="button" disabled>No cards available</button>`
                     : `<div class="session-action-pill">
+                    ${levelNewCount > 0 ? lengthChip(levelNewCount, 'new') : ''}
                     <button class="range-btn-new study-set-start" id="studySetStartBtn" type="button"
                         data-range="${context.range}" data-rank-basis="${rankBasis}" data-level-state="${levelState}"
-                        data-study-mode="${context.studyMode}" data-level-number="${levelNumber}" ${goDisabled ? 'disabled' : ''}>Go${levelNewCount > 0 ? `<span class="study-session-count"> · ${nextCount.toLocaleString()} new</span>` : ''}</button>
-                    ${levelNewCount > 0 ? lengthChip(levelNewCount, 'new') : ''}
+                        data-study-mode="${context.studyMode}" data-level-number="${levelNumber}" ${goDisabled ? 'disabled' : ''}>
+                        <span class="study-set-start-label">Study</span>
+                        ${levelNewCount > 0 ? `<span class="study-session-divider" aria-hidden="true">·</span><span class="study-session-count">${nextCount.toLocaleString()} new</span>` : ''}
+                    </button>
                 </div>`}
             </div>
         </div>`;
