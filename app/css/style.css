@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=bedbaab6");
+@import url("./appearance.css?v=951f0908");
 
 
         * {
@@ -220,12 +220,24 @@
             transition: none;
         }
 
+        .card.swipe-rebound {
+            transition: transform 0.36s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .card.card-deck-enter {
+            animation: cardDeckEnter 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .card.flipped.card-deck-enter {
+            animation: cardDeckEnterFlipped 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
         .card.swipe-correct {
-            animation: swipeRight 0.3s ease-out forwards;
+            animation: swipeRight 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         .card.swipe-incorrect {
-            animation: swipeLeft 0.3s ease-out forwards;
+            animation: swipeLeft 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         .card.swipe-flag {
@@ -234,11 +246,11 @@
         }
 
         .card.flipped.swipe-correct {
-            animation: swipeRightFlipped 0.3s ease-out forwards;
+            animation: swipeRightFlipped 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         .card.flipped.swipe-incorrect {
-            animation: swipeLeftFlipped 0.3s ease-out forwards;
+            animation: swipeLeftFlipped 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         .card.flipped.swipe-flag {
@@ -299,15 +311,23 @@
         }
 
         @keyframes swipeRight {
+            from {
+                transform: translate3d(var(--swipe-from-x, 0px), var(--swipe-from-y, 0px), 0) rotate(var(--swipe-from-rot, 0deg));
+                opacity: 1;
+            }
             to {
-                transform: translateX(150%) rotate(20deg);
+                transform: translate3d(145%, calc(var(--swipe-from-y, 0px) * 1.6), 0) rotate(18deg);
                 opacity: 0;
             }
         }
 
         @keyframes swipeLeft {
+            from {
+                transform: translate3d(var(--swipe-from-x, 0px), var(--swipe-from-y, 0px), 0) rotate(var(--swipe-from-rot, 0deg));
+                opacity: 1;
+            }
             to {
-                transform: translateX(-150%) rotate(-20deg);
+                transform: translate3d(-145%, calc(var(--swipe-from-y, 0px) * 1.6), 0) rotate(-18deg);
                 opacity: 0;
             }
         }
@@ -320,15 +340,23 @@
         }
 
         @keyframes swipeRightFlipped {
+            from {
+                transform: translate3d(var(--swipe-from-x, 0px), var(--swipe-from-y, 0px), 0) rotate(var(--swipe-from-rot, 0deg)) rotateY(180deg);
+                opacity: 1;
+            }
             to {
-                transform: translateX(150%) rotate(20deg) rotateY(180deg);
+                transform: translate3d(145%, calc(var(--swipe-from-y, 0px) * 1.6), 0) rotate(18deg) rotateY(180deg);
                 opacity: 0;
             }
         }
 
         @keyframes swipeLeftFlipped {
+            from {
+                transform: translate3d(var(--swipe-from-x, 0px), var(--swipe-from-y, 0px), 0) rotate(var(--swipe-from-rot, 0deg)) rotateY(180deg);
+                opacity: 1;
+            }
             to {
-                transform: translateX(-150%) rotate(-20deg) rotateY(180deg);
+                transform: translate3d(-145%, calc(var(--swipe-from-y, 0px) * 1.6), 0) rotate(-18deg) rotateY(180deg);
                 opacity: 0;
             }
         }
@@ -337,6 +365,28 @@
             to {
                 transform: translateY(-150%) rotateY(180deg);
                 opacity: 0;
+            }
+        }
+
+        @keyframes cardDeckEnter {
+            from {
+                transform: translate3d(0, 8px, 0) scale(0.965);
+                opacity: 0.45;
+            }
+            to {
+                transform: translate3d(0, 0, 0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes cardDeckEnterFlipped {
+            from {
+                transform: translate3d(0, 8px, 0) scale(0.965) rotateY(180deg);
+                opacity: 0.45;
+            }
+            to {
+                transform: translate3d(0, 0, 0) scale(1) rotateY(180deg);
+                opacity: 1;
             }
         }
 

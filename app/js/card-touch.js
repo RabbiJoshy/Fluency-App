@@ -1,7 +1,10 @@
 // Touch arbitration only: existing click handlers continue to own taps.
 const GRADE_DISTANCE = 50;
+const FLICK_DISTANCE = 22;
+const FLICK_VELOCITY = 0.45;
 const LOCK_DISTANCE = 10;
 const AXIS_LEAD = 1.15;
+const DAMPED_Y = 0.16;
 const CONTROL = 'button, a, input, select, textarea, [role="button"], [onclick]';
 
 export function installCardTouch({ card, correctIndicator, incorrectIndicator,
@@ -41,9 +44,21 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
         }
         return null;
     }
-    function updatePosition(touch) {
+    function updatePosition(touch, event) {
+        const prevX = drag.x;
         drag.x = touch.clientX - drag.startX;
         drag.y = touch.clientY - drag.startY;
+        if (typeof event?.timeStamp === 'number') {
+            const dt = event.timeStamp - drag.lastTime;
+            if (dt >= 4 && dt <= 180) {
+                const instantVx = (drag.x - prevX) / dt;
+                drag.vx = drag.vx ? (drag.vx * 0.35 + instantVx * 0.65) : instantVx;
+                drag.lastTime = event.timeStamp;
+            } else if (dt > 180) {
+                drag.vx = 0;
+                drag.lastTime = event.timeStamp;
+            }
+        }
         drag.maxMovement = Math.max(drag.maxMovement, Math.hypot(drag.x, drag.y));
         const x = Math.abs(drag.x), y = Math.abs(drag.y);
         if (!drag.axis && Math.max(x, y) >= LOCK_DISTANCE) {
@@ -51,9 +66,15 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
             else if (y > x * AXIS_LEAD) drag.axis = 'vertical';
         }
     }
-    function gradeDirection() {
-        if (drag.axis !== 'horizontal' || Math.abs(drag.x) < GRADE_DISTANCE
-            || Math.abs(drag.x) <= Math.abs(drag.y) * AXIS_LEAD) return null;
+    function gradeDirection({ allowFlick = false } = {}) {
+        if (drag.axis !== 'horizontal' || Math.abs(drag.x) <= Math.abs(drag.y) * AXIS_LEAD) {
+            return null;
+        }
+        const absX = Math.abs(drag.x);
+        const isFlick = allowFlick && absX >= FLICK_DISTANCE
+            && Math.abs(drag.vx) >= FLICK_VELOCITY
+            && Math.sign(drag.vx) === Math.sign(drag.x);
+        if (absX < GRADE_DISTANCE && !isFlick) return null;
         return drag.x > 0 ? 'correct' : 'incorrect';
     }
     card.addEventListener('touchstart', event => {
@@ -62,10 +83,15 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
         if (event.target.closest('.card-back-scrubber')) { cancel(); return; }
         suppressClickUntil = 0;
         cancelled = false;
+        card.classList.remove('swipe-rebound');
         const touch = event.touches[0];
+        const rect = card.getBoundingClientRect?.();
+        const relY = rect?.height > 0 ? ((touch.clientY - rect.top) / rect.height) * 2 - 1 : 0;
+        const tiltFactor = Math.max(0.78, Math.min(1.22, 1 - relY * 0.22));
         drag = {
             id: touch.identifier, startX: touch.clientX, startY: touch.clientY,
-            x: 0, y: 0, axis: null, maxMovement: 0, committedDirection: null,
+            x: 0, y: 0, vx: 0, lastTime: typeof event.timeStamp === 'number' ? event.timeStamp : 0,
+            tiltFactor, axis: null, maxMovement: 0, committedDirection: null,
             control: Boolean(event.target.closest(CONTROL)),
             scroll: scrollPort(event.target),
             flipped: card.classList.contains('flipped')
@@ -77,7 +103,7 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
         if (event.touches.length !== 1 || busy()) { cancel(); return; }
         const touch = event.touches[0];
         if (touch.identifier !== drag.id) { cancel(); return; }
-        updatePosition(touch);
+        updatePosition(touch, event);
         if (drag.maxMovement >= LOCK_DISTANCE) cancelPress();
         // Native vertical scrolling owns scrollports. Outside them, keep
         // the existing vertical content cycling rather than scrolling the page.
@@ -86,7 +112,10 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
         }
         if (drag.axis !== 'horizontal') return;
         card.classList.add('swiping');
-        card.style.transform = `translateX(${drag.x}px) rotate(${drag.x / 20}deg)`
+        const dampedY = Math.round(drag.y * DAMPED_Y * 10) / 10;
+        const deg = Math.round((drag.x * drag.tiltFactor / 20) * 100) / 100;
+        const yPart = dampedY ? ` translateY(${dampedY}px)` : '';
+        card.style.transform = `translateX(${drag.x}px)${yPart} rotate(${deg}deg)`
             + (drag.flipped ? ' rotateY(180deg)' : '');
         const horizontalLead = Math.abs(drag.x) > Math.abs(drag.y) * AXIS_LEAD;
         const progress = horizontalLead ? Math.min(1, Math.abs(drag.x) / GRADE_DISTANCE) : 0;
@@ -126,11 +155,22 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
         if (event.touches.length || busy()) { cancel(); return; }
         const touch = Array.from(event.changedTouches).find(item => item.identifier === drag.id);
         if (!touch) { cancel(); return; }
-        updatePosition(touch);
-        const direction = gradeDirection();
+        updatePosition(touch, event);
+        const direction = gradeDirection({ allowFlick: true });
+        if (direction && !drag.committedDirection) haptic(8);
         const finished = drag;
         drag = null;
         clearVisuals();
+        if (direction) {
+            const dampedY = Math.round(finished.y * DAMPED_Y * 10) / 10;
+            const deg = Math.round((finished.x * finished.tiltFactor / 20) * 100) / 100;
+            card.style.setProperty?.('--swipe-from-x', `${finished.x}px`);
+            card.style.setProperty?.('--swipe-from-y', `${dampedY}px`);
+            card.style.setProperty?.('--swipe-from-rot', `${deg}deg`);
+        } else if (finished.axis === 'horizontal') {
+            card.classList.add('swipe-rebound');
+            card.addEventListener?.('transitionend', () => card.classList.remove('swipe-rebound'), { once: true });
+        }
         if (direction || finished.maxMovement >= LOCK_DISTANCE) {
             cancelPress();
             suppressClickUntil = Date.now() + 700;
