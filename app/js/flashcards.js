@@ -2682,6 +2682,12 @@ function handleSwipeAction(result, { gesture = false } = {}) {
     if (gesture) rememberGradingSwipe();
     stopExampleAutoplay(true);
     const card = document.getElementById('flashcard');
+    card.classList.remove('card-deck-enter', 'swipe-rebound');
+    if (!gesture) {
+        card.style.removeProperty?.('--swipe-from-x');
+        card.style.removeProperty?.('--swipe-from-y');
+        card.style.removeProperty?.('--swipe-from-rot');
+    }
     const isFlipped = card.classList.contains('flipped');
 
     // A correct grade on an ordinary deck card (not already inside a nav-
@@ -2712,16 +2718,25 @@ function handleSwipeAction(result, { gesture = false } = {}) {
         card.classList.add('swipe-incorrect');
     }
 
+    function playDeckEntrance() {
+        card.classList.add('card-deck-enter');
+        card.addEventListener?.('animationend', () => card.classList.remove('card-deck-enter'), { once: true });
+    }
+
     // Wait for animation to complete, then move to next card
     setTimeout(async () => {
         try {
             card.classList.remove('swipe-correct', 'swipe-incorrect');
             card.style.transform = '';
+            card.style.removeProperty?.('--swipe-from-x');
+            card.style.removeProperty?.('--swipe-from-y');
+            card.style.removeProperty?.('--swipe-from-rot');
 
             // One swipe on a chain child grades that child (phrases only) and
             // either moves to the next child or returns to the deck.
             if (isChainChild) {
                 finishPhraseChain(result === 'correct');
+                playDeckEntrance();
                 return;
             }
 
@@ -2733,18 +2748,24 @@ function handleSwipeAction(result, { gesture = false } = {}) {
                 const children = await buildCardChildren(swipedCard);
                 if (children.length > 0) {
                     startCardChain(children);
+                    playDeckEntrance();
                     return;
                 }
             }
 
             // If we're on a linked card (nav stack), go back instead of advancing
-            if (stepToSplitSibling()) return;
+            if (stepToSplitSibling()) {
+                playDeckEntrance();
+                return;
+            }
             if (cardNavStack.length > 0) {
                 navigateBack();
+                playDeckEntrance();
                 return;
             }
 
             advanceToNextDeckCard();
+            playDeckEntrance();
         } finally {
             gradingInProgress = false;
         }
@@ -5974,7 +5995,7 @@ function sensePinButtonHTML(indices, isPinned, extraStyle = '') {
     const list = (Array.isArray(indices) ? indices : [indices]).filter(i => Number.isInteger(i) && i >= 0);
     const style = extraStyle ? ` style="${extraStyle}"` : '';
     const label = isPinned ? 'Unpin this meaning' : 'Pin this meaning for practice';
-    return `<button type="button" class="sense-pin-btn${isPinned ? ' is-pinned' : ''}"${style} aria-pressed="${Boolean(isPinned)}" aria-label="${label}" title="${label}" onclick="togglePinMeaningIndices(event, [${list.join(',')}])"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="18" height="18" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
+    return `<button type="button" class="sense-pin-btn${isPinned ? ' is-pinned' : ''}"${style} aria-pressed="${Boolean(isPinned)}" aria-label="${label}" title="${label}" onclick="togglePinMeaningIndices(event, [${list.join(',')}])"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="22" height="22" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
 }
 
 function prominenceBadgeHTML(promInfo, extraStyle = '') {
