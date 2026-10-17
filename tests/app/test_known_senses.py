@@ -208,7 +208,7 @@ RUNNER = r"""
         context.flashcards = [pinCard];
         context.showKnowledgeOverview(null, { card: pinCard });
         out.pinModeTurnedOn = Boolean(pinCard._pinningMode);
-        out.pinButtonLabel = context.renderKnowledgeOverviewButton(pinCard).includes('Pin a meaning');
+        out.pinButtonLabel = context.renderKnowledgeOverviewButton(pinCard).includes('Pin meaning(s)');
         await new Promise(resolve => setTimeout(resolve, 5));
         await context.togglePinMeaningIndices(null, [1]);
         out.pinnedNeedsReview = context.getKnowledgeItemState(pinCard, pinItems[1]).needsReview;

@@ -7008,7 +7008,7 @@ function renderCardWikipediaBadge(card) {
         <div class="back-header">
             <div class="flip-back-area" id="flipBackArea">
                 <div class="back-headword-row">
-                    <span class="back-headword" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: 1.1;">${wordDisplay}</span>${grammarPairCueHTML(card)}${backSplitBadgeHTML}${renderCardWikipediaBadge(card)}
+                    <span class="back-headword" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: 1.1;">${wordDisplay}${memoryTipTileHTML(card, selectedLanguage)}</span>${grammarPairCueHTML(card)}${backSplitBadgeHTML}${renderCardWikipediaBadge(card)}
                     ${backPosLegendHTML}
                 </div>
                 ${notableSurfaceRelation
@@ -8745,8 +8745,6 @@ function renderCardWikipediaBadge(card) {
             <span class="ref-tile-label">Rare uses</span>
         </button>`;
     }
-
-    backHTML += memoryTipTileHTML(card, selectedLanguage);
 
     // Granular sense/expression knowledge belongs in one card-wide overview,
     // not a persistent two-button strip under every meaning. The compact
