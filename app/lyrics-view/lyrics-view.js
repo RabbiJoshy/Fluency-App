@@ -1,7 +1,7 @@
-import { preferredAi } from '../js/ai-preference.js?v=8a844388';
-import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=8a844388';
-import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=8a844388';
-import { TurboEngine } from '../turbo/turbo-engine.js?v=8a844388';
+import { preferredAi } from '../js/ai-preference.js?v=1a7569b6';
+import { linePlaybackTarget, restartLyricLine, songHasPlayback, songTrackId } from './line-playback.js?v=1a7569b6';
+import { playbackPositionMs, activeLineIndex, lineProgress, tokenFills, timingMatches, adjacentLineStart, repeatEndMs } from './line-follow.js?v=1a7569b6';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=1a7569b6';
 
 let currentLanguage = 'es';
 
@@ -324,7 +324,7 @@ async function init() {
     } catch (error) {
       console.warn('Could not initialize Spotify configuration:', error);
     }
-    await import('../js/spotify.js?v=8a844388');
+    await import('../js/spotify.js?v=1a7569b6');
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');
@@ -350,27 +350,6 @@ async function init() {
     if (topbarBackLink && !isEs) {
       topbarBackLink.href = `../#${currentLanguage}`;
     }
-
-    const isEmbedded = urlParams.get('embedded') === '1' || (window.self !== window.top);
-    if (isEmbedded) {
-      document.body.classList.add('is-embedded');
-      const notifyBack = (e) => {
-        e.preventDefault();
-        if (window.parent && window.parent !== window) {
-          window.parent.postMessage({ type: 'fluency-back-to-extra' }, '*');
-        }
-      };
-      backToStudyLink?.addEventListener('click', notifyBack);
-      topbarBackLink?.addEventListener('click', notifyBack);
-    }
-
-    window.addEventListener('message', async (event) => {
-      if (event.data?.type === 'fluency-pause') {
-        if (trackIsLoaded() && !followState.paused && window.spotifyTransport) {
-          try { await window.spotifyTransport.pause(); } catch (_) {}
-        }
-      }
-    });
 
     const assetsFile = isEs ? 'turbo_assets.json' : `${currentLanguage}_turbo_assets.json`;
     const extra50kFile = isEs ? 'es_50k_data.json' : `${currentLanguage}_50k_data.json`;

@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T12:58:00+01:00",
+      "date": "2026-10-17 12:58 BST",
+      "agent": "Antigravity",
+      "summary": "Clean up Extra workspace: full-screen lyrics translation and remove duplicate titles and navigation",
+      "detail": [
+        "Open lyrics translation full-screen rather than embedding it inside a constrained workspace window.",
+        "Remove duplicate titles, eyebrow context pills, and redundant modal close buttons from Extra workspace.",
+        "Make lyrics translation card description generic ('lyrics of any song') rather than specific to the current artist.",
+        "Document UI guideline in CLAUDE.md to avoid duplicate titles and multi-spot navigation."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T12:29:00+01:00",
       "date": "2026-10-17 12:29 BST",
       "agent": "Antigravity",

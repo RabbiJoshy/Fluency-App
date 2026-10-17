@@ -28,18 +28,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-body.is-embedded {
-  background: transparent;
-  min-height: 100%;
-}
-body.is-embedded .topbar {
-  padding-top: 14px;
-  padding-bottom: 14px;
-}
-body.is-embedded .topbar a.header-icon {
-  display: none;
-}
-
 /* A roomy song heading with two independent touch actions. */
 .topbar {
   position: sticky;
