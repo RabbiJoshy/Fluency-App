@@ -2068,24 +2068,14 @@ function initializeApp() {
         deckScrubber.addEventListener('lostpointercapture', finishScrub);
     }
 
-    // Card-position seek bar: smooth, direct track scrubbing with proportional
-    // positioning across the set.
+    // Card-position seek bar: smooth, tactile card navigation without abrupt jumps or skips.
     const cardBackPips = document.getElementById('cardBackPips');
     if (cardBackPips) {
         let pipPointerId = null;
-        const getScrubIndex = event => {
-            const track = cardBackPips.querySelector('.cbs-track-wrap') || cardBackPips;
-            const rect = track.getBoundingClientRect();
-            if (rect.width <= 0) return null;
-            const card = flashcards[currentIndex];
-            const onPhraseCard = card?.isChainChild === true && cardChainReturnIndex >= 0;
-            const scrubCount = onPhraseCard ? flashcards.length - 1 : flashcards.length;
-            const last = Math.max(0, scrubCount - 1);
-            if (last <= 0) return null;
-            const ratio = (event.clientX - rect.left) / rect.width;
-            const clamped = Math.max(0, Math.min(1, ratio));
-            return Math.round(clamped * last);
-        };
+        let scrubStartX = 0;
+        let scrubStartIndex = 0;
+        const STEP_PX = 18; // Consistent, tactile step per card: stable, predictable, never skips numbers
+
         const endPipDrag = event => {
             if (pipPointerId === null || (event && event.pointerId !== pipPointerId)) return;
             const finishedPointerId = pipPointerId;
@@ -2096,25 +2086,62 @@ function initializeApp() {
             _deckScrubberActive = false;
             cardBackPips.classList.remove('is-scrubbing');
         };
+
         cardBackPips.addEventListener('pointerdown', event => {
             if (event.button !== undefined && event.button !== 0) return;
+            const card = flashcards[currentIndex];
+            const onPhraseCard = card?.isChainChild === true && cardChainReturnIndex >= 0;
+            const scrubCount = onPhraseCard ? flashcards.length - 1 : flashcards.length;
+            const last = Math.max(0, scrubCount - 1);
+            if (last <= 0) return;
+
+            const originIndex = (card?.isChainChild && cardChainReturnIndex >= 0)
+                ? cardChainReturnIndex
+                : currentIndex;
+
+            const track = cardBackPips.querySelector('.cbs-track-wrap') || cardBackPips;
+            const rect = track.getBoundingClientRect();
+            if (rect.width <= 0) return;
+
             pipPointerId = event.pointerId;
             _deckScrubberActive = true;
             cardBackPips.classList.add('is-scrubbing');
             cardBackPips.setPointerCapture?.(event.pointerId);
-            const targetIndex = getScrubIndex(event);
-            if (targetIndex !== null) {
-                goToDeckCard(targetIndex, { announceHeadword: false });
+
+            const currentT = last === 0 ? 0.5 : (originIndex / last);
+            const thumbCenterX = rect.left + currentT * rect.width;
+            const distFromThumb = Math.abs(event.clientX - thumbCenterX);
+
+            // If touching on/near the thumb (within 24px), grab it directly without jumping.
+            // If tapping farther away on the rail, jump to that tapped position.
+            if (distFromThumb > 24) {
+                const ratio = (event.clientX - rect.left) / rect.width;
+                const clamped = Math.max(0, Math.min(1, ratio));
+                const tappedIndex = Math.round(clamped * last);
+                scrubStartIndex = tappedIndex;
+                scrubStartX = event.clientX;
+                goToDeckCard(tappedIndex, { announceHeadword: false });
+            } else {
+                scrubStartIndex = originIndex;
+                scrubStartX = event.clientX;
             }
         });
+
         cardBackPips.addEventListener('pointermove', event => {
             if (event.pointerId !== pipPointerId) return;
             event.preventDefault();
-            const targetIndex = getScrubIndex(event);
-            if (targetIndex !== null) {
-                goToDeckCard(targetIndex, { announceHeadword: false });
-            }
+            const card = flashcards[currentIndex];
+            const onPhraseCard = card?.isChainChild === true && cardChainReturnIndex >= 0;
+            const scrubCount = onPhraseCard ? flashcards.length - 1 : flashcards.length;
+            const last = Math.max(0, scrubCount - 1);
+            if (last <= 0) return;
+
+            const delta = event.clientX - scrubStartX;
+            const cardOffset = Math.round(delta / STEP_PX);
+            const targetIndex = Math.max(0, Math.min(last, scrubStartIndex + cardOffset));
+            goToDeckCard(targetIndex, { announceHeadword: false });
         });
+
         cardBackPips.addEventListener('pointerup', endPipDrag);
         cardBackPips.addEventListener('pointercancel', endPipDrag);
         cardBackPips.addEventListener('lostpointercapture', endPipDrag);
