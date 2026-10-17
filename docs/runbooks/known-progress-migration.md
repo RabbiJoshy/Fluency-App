@@ -38,7 +38,11 @@ before/after exports, input hashes, guarded SQL and verification results outside
 git. Verify full/delta loads and that normal new answers remove the migration
 date. A second migration is refused when dates already exist.
 
-Until JoshuaBackup/JP new verified accounts are confirmed, prepare their data
-locally and retain the archives. Never transfer to an unconfirmed login. Backup
-copies progress/history/settings, not login credentials or profile ownership;
-its learning state is identical at copy time and can then evolve independently.
+Completed 17 October: JP's historical progress was merged into the confirmed new
+JP login, and DRG's into Diego, preserving new answers and genuine evidence.
+SafariMS is the confirmed admin/backup identity. Josh explicitly deferred copying
+Joshua into SafariMS to another day; its present learning data stays unchanged.
+When requested, a backup copy transfers learning state, not credentials or role
+ownership, and can then evolve independently. Check D1's current write allowance
+first: copying Joshua's state and complete event history in one day exceeds the
+free daily allowance with the current indexes. Keep all source archives intact.
