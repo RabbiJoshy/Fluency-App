@@ -3023,9 +3023,9 @@
         }
         .pos-collapsible.is-open .meaning-pos-rows {
             display: block;
-            margin: 5px 0 2px 6px;
-            padding-left: 6px;
-            border-left: 1px solid rgba(var(--sense-match-rgb), 0.38);
+            margin: 5px 0 2px 3px;
+            padding-left: 4px;
+            border-left: 2px solid rgb(var(--sense-match-rgb));
         }
 
         /* A fixed grammar bay keeps one to four POS labels stable beside the

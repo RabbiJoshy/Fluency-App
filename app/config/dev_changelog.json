@@ -2,14 +2,14 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
-      "timestamp": "2026-10-17T20:26:00+01:00",
-      "date": "2026-10-17 20:26 BST",
+      "timestamp": "2026-10-17T20:31:00+01:00",
+      "date": "2026-10-17 20:31 BST",
       "agent": "Antigravity",
-      "summary": "Enlarge meaning pin touch targets and keep group sub-rows open in pinning mode",
+      "summary": "Thicker sense-matched POS indent rail with tighter row indent and larger meaning pin targets",
       "detail": [
+        "Changed .pos-collapsible.is-open .meaning-pos-rows vertical rail to 2px solid rgb(var(--sense-match-rgb)) and reduced its indent from 13px to 9px to reclaim horizontal space on meaning rows.",
         "Expanded .sense-pin-btn to a full-height 38x36px left-gutter button with an 18x18 pushpin icon and visible pill surface.",
-        "Widened .pct-column for pinned/pinning group rows so sub-row pins are not clipped to 26px, and made the full sub-row gutter cell clickable to toggle the pin.",
-        "Kept grouped sub-senses expanded while pinning mode is active so every individual sense pin remains visible and tappable."
+        "Widened .pct-column for pinned/pinning group rows and kept grouped sub-senses expanded while pinning mode is active."
       ],
       "commit": "pending"
     },

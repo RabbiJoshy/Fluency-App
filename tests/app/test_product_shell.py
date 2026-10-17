@@ -718,7 +718,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('class="pos-pill-pct sense-percentage"', flashcards)
         self.assertIn('class="sense-percentage sense-percentage-tail"', flashcards)
         self.assertIn(".sense-percentage", css)
-        self.assertIn("border-left: 1px solid rgba(var(--sense-match-rgb), 0.38)", css)
+        self.assertIn("border-left: 2px solid rgb(var(--sense-match-rgb))", css)
         self.assertIn('class="pos-pill-lemma"', flashcards)
         self.assertNotIn("headword-group-label", flashcards)
 
