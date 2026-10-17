@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T20:45:00+01:00",
+      "date": "2026-10-17 20:45 BST",
+      "agent": "Antigravity",
+      "summary": "Flick velocity grading, seamless swipe release trajectory, 2D damped follow, and deck-rise card entrance",
+      "detail": [
+        "Added horizontal flick velocity recognition (>= 0.45 px/ms past 22px) so quick thumb flicks commit and fire the 8ms haptic tick without needing a full 50px drag.",
+        "Preserved exact release coordinates (--swipe-from-x/y/rot) into the exit keyframes so swiped cards fly off smoothly from the finger lift point, while cancelled drags spring back via .swipe-rebound.",
+        "Added 16% damped vertical follow, grab-point tilt scaling, and a 200ms deck-rise entrance animation (.card-deck-enter) for incoming cards on both mobile and desktop."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T20:43:00+01:00",
       "date": "2026-10-17 20:43 BST",
       "agent": "Antigravity",
@@ -353,19 +365,6 @@
       "detail": [
         "The card-back tile shows an arrow dropping onto a stack, meaning “back into the practice pile”; the number beside it is blank until you pick a meaning, then counts how many on this card.",
         "The sheet title, tutorial step and demo card use the new name. What the button does is unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T22:02:45+01:00",
-      "date": "2026-10-14 22:02 BST",
-      "agent": "Claude",
-      "summary": "Portuguese (and other Wiktionary decks): meanings that all read the same, like fazer's five 'to make', now show what each one means",
-      "detail": [
-        "fazer shows 'to do; to execute; to perform', 'to create; to produce' and 'to cause to' instead of three 'to make's; 'to make' moves to the note line.",
-        "Only when two or more meanings on a card share the same English, and only for short sub-glosses: explanations, topic labels (music, firearms) and long definitions stay as notes.",
-        "Portuguese: 159 distinct meanings change, e.g. seu 'his / her / their', bico 'beak', corte 'haircut', parada 'halt'. Spanish (SpanishDict) is untouched.",
-        "Display only: progress keys keep the original wording."
       ],
       "commit": "pending"
     }

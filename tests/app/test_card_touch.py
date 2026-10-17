@@ -48,9 +48,9 @@ function fixture({flipped=true,control=false,scroll=false,scrubber=false}={}) {
   return e;
  }
  return {card,grades,cycles,haptics,correctIndicator,incorrectIndicator,
-  start:()=>emit('touchstart',{touches:[touch()]}),
-  move:(x,y=0)=>emit('touchmove',{touches:[touch(x,y)]}),
-  end:(x,y=0)=>emit('touchend',{changedTouches:[touch(x,y)]}),
+  start:(extra={})=>emit('touchstart',{touches:[touch()],...extra}),
+  move:(x,y=0,extra={})=>emit('touchmove',{touches:[touch(x,y)],...extra}),
+  end:(x,y=0,extra={})=>emit('touchend',{changedTouches:[touch(x,y)],...extra}),
   cancel:()=>emit('touchcancel'),click:extra=>emit('click',extra),
   multi:()=>emit('touchstart',{touches:[touch(),touch(0,0,2)]}),
   setBusy:v=>busy=v,feedback:()=>feedback,pressesCancelled:()=>pressesCancelled,flips:()=>flips};
@@ -76,6 +76,27 @@ for(const sign of [-1,1]) {
  assert.equal(f.card.classList.contains(commitClass),false);
  assert.equal(f.click().prevented,true);
 }
+// Fast flick (<50px distance, high velocity) commits; slow short drag rebounds.
+for(const sign of [-1,1]) {
+ const fast=fixture();
+ fast.start({timeStamp:100});
+ fast.move(sign*14,0,{timeStamp:114});
+ fast.move(sign*28,0,{timeStamp:128});
+ fast.end(sign*30,0,{timeStamp:132});
+ assert.deepEqual(fast.grades,[sign>0?'correct':'incorrect']);
+ assert.deepEqual(fast.haptics,[8]);
+ const slow=fixture();
+ slow.start({timeStamp:100});
+ slow.move(sign*14,0,{timeStamp:220});
+ slow.move(sign*28,0,{timeStamp:340});
+ slow.end(sign*30,0,{timeStamp:460});
+ assert.deepEqual(slow.grades,[]);
+ assert.equal(slow.card.classList.contains('swipe-rebound'),true);
+}
+// Subtle 2D vertical damping during horizontal swipe.
+{const f=fixture();f.start();f.move(40,20);
+ assert.ok(f.card.style.transform.includes('translateY(3.2px)'));
+ f.end(40,20);}
 for(const distance of [0,9,13,49]) {
  const f=fixture();f.start();f.move(distance);const release=f.end(distance);
  assert.deepEqual(f.grades,[]);assert.deepEqual(f.cycles,[]);
