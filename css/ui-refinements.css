@@ -384,9 +384,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    min-height: 40px;
-    padding: 0 16px;
+    gap: 9px;
+    min-height: 52px;
+    padding: 0 22px;
     border-radius: 12px;
     cursor: pointer;
     border: 1px solid var(--border-color);
@@ -403,22 +403,24 @@
     transform: translateY(0);
 }
 .smart-skip-toggle-btn.is-on {
-    background: color-mix(in srgb, var(--accent-primary) 14%, var(--bg-card));
-    border-color: color-mix(in srgb, var(--accent-primary) 55%, transparent);
-    color: var(--text-primary);
-    box-shadow: 0 2px 12px color-mix(in srgb, var(--accent-primary) 18%, transparent);
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary-text, #ffffff);
+    box-shadow: 0 2px 14px color-mix(in srgb, var(--accent-primary) 35%, transparent);
 }
 .smart-skip-toggle-btn.is-on:hover {
+    background: color-mix(in srgb, var(--accent-primary) 88%, white);
     border-color: var(--accent-primary);
-    background: color-mix(in srgb, var(--accent-primary) 20%, var(--bg-card));
+    color: var(--accent-primary-text, #ffffff);
+    filter: brightness(1.05);
 }
 .smart-skip-toggle-btn:focus-visible {
     outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
 }
 .smart-skip-toggle-btn .smart-skip-status-dot {
-    width: 8px;
-    height: 8px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
     border: 1.5px solid var(--text-muted);
     background: transparent;
@@ -427,14 +429,17 @@
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .smart-skip-toggle-btn.is-on .smart-skip-status-dot {
-    border-color: var(--accent-primary);
-    background: var(--accent-primary);
-    box-shadow: 0 0 6px var(--accent-primary);
+    border-color: #ffffff;
+    background: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.95), 0 0 3px #ffffff;
 }
 .smart-skip-toggle-btn .smart-skip-start-label {
     display: inline-flex;
     align-items: center;
-    font: 700 15px/1 var(--font-emphasis);
+    font: 750 16px/1 var(--font-emphasis);
+}
+.smart-skip-toggle-btn.is-on .smart-skip-start-label {
+    color: #ffffff;
 }
 .smart-skip-toggle-btn .study-session-divider {
     display: inline-flex;
@@ -446,31 +451,42 @@
     opacity: .6;
     user-select: none;
 }
+.smart-skip-toggle-btn.is-on .study-session-divider {
+    color: #ffffff;
+    opacity: 0.75;
+}
 .smart-skip-toggle-btn .smart-skip-state-label {
     display: inline-flex;
     align-items: center;
-    font: 700 14px/1 var(--font-emphasis);
+    font: 750 15px/1 var(--font-emphasis);
     color: var(--text-muted);
     min-width: 24px;
 }
 .smart-skip-toggle-btn.is-on .smart-skip-state-label {
-    color: var(--accent-primary);
+    color: #ffffff;
 }
 :root[data-theme="light"] .smart-skip-toggle-btn {
     background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.12);
+    border-color: rgba(0, 0, 0, 0.14);
 }
 :root[data-theme="light"] .smart-skip-toggle-btn .smart-skip-status-dot {
     border-color: #64748b;
 }
 :root[data-theme="light"] .smart-skip-toggle-btn.is-on {
-    background: color-mix(in srgb, var(--accent-primary) 10%, #ffffff);
-    border-color: var(--accent-primary);
-}
-:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-status-dot {
     background: var(--accent-primary);
     border-color: var(--accent-primary);
-    box-shadow: 0 0 6px var(--accent-primary);
+    color: #ffffff;
+    box-shadow: 0 2px 14px color-mix(in srgb, var(--accent-primary) 30%, transparent);
+}
+:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-status-dot {
+    background: #ffffff;
+    border-color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.95), 0 0 3px #ffffff;
+}
+:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-start-label,
+:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-state-label,
+:root[data-theme="light"] .smart-skip-toggle-btn.is-on .study-session-divider {
+    color: #ffffff;
 }
 
 /* Center Practice text and summary above Practise button */

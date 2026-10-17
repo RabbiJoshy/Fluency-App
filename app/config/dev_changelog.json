@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T17:34:00+01:00",
+      "date": "2026-10-17 17:34 BST",
+      "agent": "Antigravity",
+      "summary": "Match Smart Skip size to Study button with glowing white indicator on active state",
+      "detail": [
+        "Scaled the Smart Skip action button to 52px height, 22px padding, and 16px bold typography matching the exact footprint of Study and Practise.",
+        "Applied solid Study accent background fill with crisp white text and a bright glowing white LED indicator dot when toggled ON.",
+        "Preserved the clean neutral outline card state with hollow dot when OFF to maintain immediate clarity of the disabled state."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T17:19:00+01:00",
       "date": "2026-10-17 17:19 BST",
       "agent": "Antigravity",
