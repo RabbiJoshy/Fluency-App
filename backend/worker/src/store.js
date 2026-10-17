@@ -193,15 +193,17 @@ export function deriveEvents(prior, incoming, meta) {
   const gainedCorrect = Math.max(0, incoming.correct - priorCorrect);
   const gainedWrong = Math.max(0, incoming.wrong - priorWrong);
   const events = [];
+  // A timed-out queued operation can be coalesced with more answers before
+  // retry. Counter ordinals keep those new events distinct from its saved prefix.
   for (let i = 0; i < gainedCorrect; i++) {
     events.push({ ...meta, outcome: 'correct',
       answeredAt: incoming.lastCorrect || incoming.lastSeen || new Date().toISOString(),
-      idempotencyKey: meta.idempotencyKey ? `${meta.idempotencyKey}:c${i}` : null });
+      idempotencyKey: meta.idempotencyKey ? `${meta.idempotencyKey}:c${priorCorrect + i}` : null });
   }
   for (let i = 0; i < gainedWrong; i++) {
     events.push({ ...meta, outcome: 'incorrect',
       answeredAt: incoming.lastWrong || incoming.lastSeen || new Date().toISOString(),
-      idempotencyKey: meta.idempotencyKey ? `${meta.idempotencyKey}:w${i}` : null });
+      idempotencyKey: meta.idempotencyKey ? `${meta.idempotencyKey}:w${priorWrong + i}` : null });
   }
   return events;
 }
