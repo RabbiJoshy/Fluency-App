@@ -609,30 +609,35 @@
    Radical Smart Skip Redesign: Unboxed Studio, Full-Bleed Desktop & Mobile Focus
    ========================================================================== */
 
-/* 1. Desktop Full-Bleed Stretch (Never stuck in a 400px or 1040px subbox) */
-#fastModeModal.modal,
-#fastModeModal[data-dock].modal,
-body.desktop-workspace .modal.desktop-workspace-page:is(#fastModeModal):not(.hidden) {
-  left: var(--desktop-nav-width, 0px) !important;
-  right: 0 !important;
-  width: auto !important;
-  height: 100dvh !important;
-  max-width: none !important;
-  margin: 0 !important;
-  padding: 24px 44px 44px !important;
-  box-sizing: border-box !important;
-  display: flex !important;
-  justify-content: stretch !important;
-  align-items: stretch !important;
-  background: var(--bg-primary, var(--bg-card)) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  z-index: 1050 !important;
+/* 1. Modal visibility: Ensure .hidden ALWAYS hides the modal completely */
+#fastModeModal.hidden {
+  display: none !important;
 }
 
-#fastModeModal > .modal-content,
-#fastModeModal[data-dock] > .modal-content,
-body.desktop-workspace .modal.desktop-workspace-page:is(#fastModeModal) > .modal-content {
+/* 2. Desktop Full-Bleed Stretch (Only when NOT hidden on wide screens) */
+@media (min-width: 900px) {
+  body.desktop-workspace #fastModeModal.desktop-workspace-page:not(.hidden),
+  #fastModeModal.modal:not(.hidden) {
+    left: var(--desktop-nav-width, 0px) !important;
+    right: 0 !important;
+    width: auto !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 24px 44px 44px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    justify-content: stretch !important;
+    align-items: stretch !important;
+    background: var(--bg-primary, var(--bg-card)) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    z-index: 1050 !important;
+  }
+}
+
+#fastModeModal:not(.hidden) > .modal-content,
+body.desktop-workspace .modal.desktop-workspace-page:is(#fastModeModal):not(.hidden) > .modal-content {
   width: 100% !important;
   max-width: none !important;
   height: 100% !important;
@@ -646,7 +651,7 @@ body.desktop-workspace .modal.desktop-workspace-page:is(#fastModeModal) > .modal
   animation: none !important;
 }
 
-#fastModeModal:not([data-dock]) .fast-mode-page {
+#fastModeModal:not(.hidden) .fast-mode-page {
   width: 100% !important;
   max-width: none !important;
   min-height: 100% !important;
@@ -659,6 +664,11 @@ body.desktop-workspace .modal.desktop-workspace-page:is(#fastModeModal) > .modal
   max-width: none !important;
   box-sizing: border-box !important;
   margin: 0 !important;
+}
+
+#fastModeModal .fast-mode-close {
+  z-index: 20 !important;
+  cursor: pointer !important;
 }
 
 /* 2. Header & Hero Stat Banner */
