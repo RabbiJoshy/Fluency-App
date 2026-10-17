@@ -5656,6 +5656,7 @@ function isCorpusDisplayExample(example) {
         && !example.reference_example
     );
 }
+window.isCorpusDisplayExample = isCorpusDisplayExample;
 
 function isReliableWsdExample(example) {
     if (!isCorpusDisplayExample(example)) return false;
@@ -9251,6 +9252,28 @@ function getCyclableExamples(card, currentMeaning) {
     }
 
     if (currentMeaning.allMWEs || currentMeaning.allClitics) return examples;
+    if (typeof activeArtist !== 'undefined' && activeArtist) {
+        const isCorpus = ex => ex && !ex.canonical && ex.evidence !== 'dictionary' && !ex.reference_example;
+        const totalUses = (card?.meanings || []).reduce((sum, m) => {
+            const exs = m.allExamples || m.examples || [];
+            return sum + (typeof isCorpusDisplayExample === 'function' ? exs.filter(isCorpusDisplayExample).length : exs.filter(isCorpus).length);
+        }, 0);
+        // Under 5 total uses across the card: supplement single-example senses with the canonical dictionary example
+        if (totalUses < 5) {
+            const corpusExs = examples.filter(typeof isCorpusDisplayExample === 'function' ? isCorpusDisplayExample : isCorpus);
+            if (corpusExs.length <= 1) {
+                const canonical = findCanonicalForCard(card, currentMeaning);
+                if (canonical) {
+                    const norm = s => String(s || '').trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?"'«»¡¿]/g, '');
+                    const isSameText = (a, b) => norm(a?.target || a?.spanish || a?.targetSentence) === norm(b?.target || b?.spanish || b?.targetSentence);
+                    if (!examples.some(ex => isSameText(ex, canonical))) {
+                        return [...examples, canonical];
+                    }
+                }
+            }
+        }
+        return examples;
+    }
     if (examplesAllowCycling(examples)) return examples;
     return displayExamplesForSense(currentMeaning, examples, card);
 }
@@ -10412,12 +10435,28 @@ window.toggleProvenancePanel = toggleProvenancePanel;
 
 function buildSynonymsPanelHTML(synonyms, antonyms, headword) {
     const headwordLower = (headword || '').toLowerCase();
+
+    function sortSynonymItems(items) {
+        if (!Array.isArray(items)) return [];
+        return [...items].sort((a, b) => {
+            const strA = (typeof a === 'object' && a !== null && typeof a.strength === 'number') ? a.strength : 0;
+            const strB = (typeof b === 'object' && b !== null && typeof b.strength === 'number') ? b.strength : 0;
+            if (strB !== strA) return strB - strA;
+            const wordA = (typeof a === 'object' && a?.word ? a.word : String(a || '')).toLowerCase();
+            const wordB = (typeof b === 'object' && b?.word ? b.word : String(b || '')).toLowerCase();
+            return wordA.localeCompare(wordB);
+        });
+    }
+
+    const sortedSynonyms = sortSynonymItems(synonyms);
+    const sortedAntonyms = sortSynonymItems(antonyms);
+
     function renderItem(item) {
-        const word = item && item.word ? item.word : '';
+        const word = item && item.word ? item.word : (typeof item === 'string' ? item : '');
         if (!word) return '';
-        const strength = item.strength === 2 ? 'syn-strong' : 'syn-weak';
+        const strength = (typeof item === 'object' && item?.strength === 2) ? 'syn-strong' : 'syn-weak';
         const escaped = word.replace(/'/g, "\\'");
-        const ctx = item.context ? `<span class="syn-context">${item.context}</span>` : '';
+        const ctx = (typeof item === 'object' && item?.context) ? `<span class="syn-context">${item.context}</span>` : '';
         // Every row navigates, so every row gets the same affordance. The old
         // accent outline on in-deck words read as "this one is special"
         // rather than "this one is tappable", and dimming the rest made the
@@ -10445,13 +10484,13 @@ function buildSynonymsPanelHTML(synonyms, antonyms, headword) {
             <div class="syn-header">
                 <span class="syn-headword">${headwordLower}</span>
                 <div class="syn-tabs" role="tablist">
-                    ${tab('synonyms', 'Synonyms', synonyms)}
-                    ${tab('antonyms', 'Antonyms', antonyms)}
+                    ${tab('synonyms', 'Synonyms', sortedSynonyms)}
+                    ${tab('antonyms', 'Antonyms', sortedAntonyms)}
                 </div>
             </div>
             <div class="syn-body">
-                ${panelFor('synonyms', synonyms, 'No synonyms recorded for this word.')}
-                ${panelFor('antonyms', antonyms, 'No antonyms recorded for this word.')}
+                ${panelFor('synonyms', sortedSynonyms, 'No synonyms recorded for this word.')}
+                ${panelFor('antonyms', sortedAntonyms, 'No antonyms recorded for this word.')}
             </div>
         </div>
     `;

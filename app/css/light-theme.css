@@ -989,6 +989,11 @@
     background: rgba(27, 39, 51, 0.08);
 }
 
+:root[data-theme="light"] .syn-item.syn-strong {
+    border-color: color-mix(in srgb, var(--accent-primary) 35%, var(--border-color));
+    background: color-mix(in srgb, var(--accent-primary) 8%, #f3f6f8);
+}
+
 :root[data-theme="light"] .syn-item:hover,
 :root[data-theme="light"] .syn-item:focus-visible {
     border-color: color-mix(in srgb, var(--accent-primary) 60%, var(--border-color));

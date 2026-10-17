@@ -210,7 +210,7 @@ function applyLoadingMarkImage(src, { clipart = false } = {}) {
     const escaped = String(src).replace(/"/g, '%22');
     art.style.backgroundImage = `url("${escaped}")`;
     art.classList.toggle('is-clipart', clipart);
-    if (clipart && !prefersReducedMotion()) {
+    if (!prefersReducedMotion()) {
         art.classList.remove('is-popping');
         void art.offsetWidth; // restart the pop animation
         art.classList.add('is-popping');
@@ -229,21 +229,47 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
     // 2. Language-specific rotating images
     const langKey = String(language || window.selectedLanguage || 'default').trim().toLowerCase();
     const effectiveArtist = artist || window.activeArtist;
-    // Already cycling this language: carry on rather than jump back to a new start.
+    const artistKey = effectiveArtist ? (effectiveArtist.slug || effectiveArtist.name || 'artist') : '';
+    // Already cycling this language or artist: carry on rather than jump back to a new start.
     if (!effectiveArtist && loadingMarkRotationTimer && loadingMarkRotationKey === langKey) return;
+    if (effectiveArtist && loadingMarkRotationTimer && loadingMarkRotationKey === `artist:${artistKey}`) return;
 
     stopLoadingMarkRotation();
     const generation = ++loadingMarkGeneration;
     setLoadingMarkText('F');
 
-    // 1. Artist mode takes precedence: show the artist image
+    // 1. Artist mode takes precedence: rotate the artist's real album covers
     if (effectiveArtist) {
-        const artistArt = effectiveArtist.pickerImage || effectiveArtist.image || effectiveArtist.defaultAlbumArt || '';
-        if (artistArt) {
-            applyLoadingMarkImage(artistArt);
-        } else {
+        const resolveArt = src => {
+            if (!src) return '';
+            if (src.startsWith('http') || src.startsWith('/') || typeof releaseUrl !== 'function') return src;
+            const relId = effectiveArtist.releaseId || 'lyrics-all-artists-v20';
+            return releaseUrl(`releases/lyrics/${encodeURIComponent(relId)}/app/${src}`);
+        };
+
+        const albumImages = (effectiveArtist.albumImageMap && typeof effectiveArtist.albumImageMap === 'object')
+            ? Object.values(effectiveArtist.albumImageMap).filter(Boolean).map(resolveArt)
+            : [];
+        const fallback = resolveArt(effectiveArtist.pickerImage || effectiveArtist.image || effectiveArtist.defaultAlbumArt || '');
+        const images = albumImages.length > 0 ? albumImages : (fallback ? [fallback] : []);
+
+        if (images.length === 0) {
             applyLoadingMarkImage(null);
             setLoadingMarkText(effectiveArtist.customSongSource ? '♫' : String(effectiveArtist.name || 'Music').split(/\s+/).map(word => word[0]).slice(0, 2).join(''));
+            return;
+        }
+
+        images.forEach(src => { const img = new Image(); img.src = src; });
+        currentLoadingImages = images;
+        currentLoadingImageIndex = Math.floor(Math.random() * images.length);
+        applyLoadingMarkImage(images[currentLoadingImageIndex], { clipart: false });
+
+        if (images.length > 1 && !prefersReducedMotion()) {
+            loadingMarkRotationKey = `artist:${artistKey}`;
+            loadingMarkRotationTimer = setInterval(() => {
+                currentLoadingImageIndex = (currentLoadingImageIndex + 1) % currentLoadingImages.length;
+                applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex], { clipart: false });
+            }, LOADING_MARK_ROTATION_MS);
         }
         return;
     }

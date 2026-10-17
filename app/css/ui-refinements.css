@@ -54,11 +54,11 @@
 .study-level-label {
     flex: none;
     color: var(--text-secondary);
-    font: 600 15px/1.2 var(--font-reading);
+    font: 600 14px/1.2 var(--font-reading);
     white-space: nowrap;
 }
 .study-level-label[hidden] { display: none; }
-.card-back-scrubber { gap: 10px; }
+.card-back-scrubber { gap: 12px; }
 .account-ai {
     display: flex;
     align-items: center;
@@ -276,9 +276,7 @@
 .session-action-pill:not(:has(.session-length-chip)) > .study-set-review,
 .session-action-pill > .study-set-start:only-child,
 .session-action-pill > .study-set-review:only-child { border-radius: 12px !important; }
-.cbs-end-label { flex: none; margin-left: 16px; color: var(--text-secondary); font: 600 12px/1 var(--font-reading); pointer-events: none; }
-.cbs-end-label.is-at-end { visibility: hidden; }
-.cbs-end-label[hidden] { display: none; }
+.cbs-end-label { display: none !important; }
 
 /* Level and session actions: Study and Practise buttons size to their content, clock chip on the left */
 #step4 .session-action-pill {
