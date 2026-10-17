@@ -286,7 +286,8 @@
     max-width: 100%;
     position: relative;
     border-radius: 12px;
-    justify-self: start;
+    justify-self: center;
+    margin: 0 auto;
 }
 #step4 .session-action-pill > .study-set-start {
     width: auto;
@@ -323,6 +324,8 @@
     width: auto;
     max-width: 100%;
     border-radius: 12px;
+    align-self: center;
+    margin: 0 auto;
 }
 #reviewDeckBody .session-action-pill > .session-length-chip {
     flex: none;

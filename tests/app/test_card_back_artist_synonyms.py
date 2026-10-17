@@ -30,6 +30,18 @@ class CardBackArtistSynonymsTests(unittest.TestCase):
         result = subprocess.run(['node', '-'], input=script, text=True, capture_output=True, cwd=ROOT)
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_study_and_practice_buttons_centered(self):
+        script = r"""
+        const fs = require('node:fs'), assert = require('node:assert/strict');
+        const uiRefinements = fs.readFileSync('app/css/ui-refinements.css', 'utf8');
+        const styleCss = fs.readFileSync('app/css/style.css', 'utf8');
+
+        assert.ok(uiRefinements.includes('justify-self: center;'), 'Study button in #step4 must be centered');
+        assert.ok(uiRefinements.includes('align-self: center;'), 'Practice button in review deck must be centered');
+        """
+        result = subprocess.run(['node', '-'], input=script, text=True, capture_output=True, cwd=ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_synonyms_strength_ordering_and_pill_layout(self):
         script = r"""
         const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
