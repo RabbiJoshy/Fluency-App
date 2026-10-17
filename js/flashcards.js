@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=685c3a73';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=685c3a73';
-import { songCreditHTML } from './song-credit.js?v=685c3a73';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=685c3a73';
+import './state.js?v=b7788430';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=b7788430';
+import { songCreditHTML } from './song-credit.js?v=b7788430';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=b7788430';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=685c3a73';
-import './speech.js?v=685c3a73';
-import { goToRoute, routeCodeFor } from './routes.js?v=685c3a73';
-import { memoryTipTileHTML } from './memory-tips.js?v=685c3a73';
+import { fitSenseRowText } from './card-row-layout.js?v=b7788430';
+import './speech.js?v=b7788430';
+import { goToRoute, routeCodeFor } from './routes.js?v=b7788430';
+import { memoryTipTileHTML } from './memory-tips.js?v=b7788430';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=685c3a73';
-import './side-dock.js?v=685c3a73';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=685c3a73';
+} from './function-word-card.js?v=b7788430';
+import './side-dock.js?v=b7788430';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=b7788430';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=685c3a73';
+} from './example-personalisation.js?v=b7788430';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=685c3a73';
+} from './spanishdict-usage.js?v=b7788430';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=685c3a73';
+} from './reverse-cues.js?v=b7788430';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -68,7 +68,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=685c3a73';
+} from './card-metadata-pills.js?v=b7788430';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -5656,6 +5656,7 @@ function isCorpusDisplayExample(example) {
         && !example.reference_example
     );
 }
+window.isCorpusDisplayExample = isCorpusDisplayExample;
 
 function isReliableWsdExample(example) {
     if (!isCorpusDisplayExample(example)) return false;
@@ -9251,6 +9252,28 @@ function getCyclableExamples(card, currentMeaning) {
     }
 
     if (currentMeaning.allMWEs || currentMeaning.allClitics) return examples;
+    if (typeof activeArtist !== 'undefined' && activeArtist) {
+        const isCorpus = ex => ex && !ex.canonical && ex.evidence !== 'dictionary' && !ex.reference_example;
+        const totalUses = (card?.meanings || []).reduce((sum, m) => {
+            const exs = m.allExamples || m.examples || [];
+            return sum + (typeof isCorpusDisplayExample === 'function' ? exs.filter(isCorpusDisplayExample).length : exs.filter(isCorpus).length);
+        }, 0);
+        // Under 5 total uses across the card: supplement single-example senses with the canonical dictionary example
+        if (totalUses < 5) {
+            const corpusExs = examples.filter(typeof isCorpusDisplayExample === 'function' ? isCorpusDisplayExample : isCorpus);
+            if (corpusExs.length <= 1) {
+                const canonical = findCanonicalForCard(card, currentMeaning);
+                if (canonical) {
+                    const norm = s => String(s || '').trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?"'«»¡¿]/g, '');
+                    const isSameText = (a, b) => norm(a?.target || a?.spanish || a?.targetSentence) === norm(b?.target || b?.spanish || b?.targetSentence);
+                    if (!examples.some(ex => isSameText(ex, canonical))) {
+                        return [...examples, canonical];
+                    }
+                }
+            }
+        }
+        return examples;
+    }
     if (examplesAllowCycling(examples)) return examples;
     return displayExamplesForSense(currentMeaning, examples, card);
 }
@@ -10412,12 +10435,28 @@ window.toggleProvenancePanel = toggleProvenancePanel;
 
 function buildSynonymsPanelHTML(synonyms, antonyms, headword) {
     const headwordLower = (headword || '').toLowerCase();
+
+    function sortSynonymItems(items) {
+        if (!Array.isArray(items)) return [];
+        return [...items].sort((a, b) => {
+            const strA = (typeof a === 'object' && a !== null && typeof a.strength === 'number') ? a.strength : 0;
+            const strB = (typeof b === 'object' && b !== null && typeof b.strength === 'number') ? b.strength : 0;
+            if (strB !== strA) return strB - strA;
+            const wordA = (typeof a === 'object' && a?.word ? a.word : String(a || '')).toLowerCase();
+            const wordB = (typeof b === 'object' && b?.word ? b.word : String(b || '')).toLowerCase();
+            return wordA.localeCompare(wordB);
+        });
+    }
+
+    const sortedSynonyms = sortSynonymItems(synonyms);
+    const sortedAntonyms = sortSynonymItems(antonyms);
+
     function renderItem(item) {
-        const word = item && item.word ? item.word : '';
+        const word = item && item.word ? item.word : (typeof item === 'string' ? item : '');
         if (!word) return '';
-        const strength = item.strength === 2 ? 'syn-strong' : 'syn-weak';
+        const strength = (typeof item === 'object' && item?.strength === 2) ? 'syn-strong' : 'syn-weak';
         const escaped = word.replace(/'/g, "\\'");
-        const ctx = item.context ? `<span class="syn-context">${item.context}</span>` : '';
+        const ctx = (typeof item === 'object' && item?.context) ? `<span class="syn-context">${item.context}</span>` : '';
         // Every row navigates, so every row gets the same affordance. The old
         // accent outline on in-deck words read as "this one is special"
         // rather than "this one is tappable", and dimming the rest made the
@@ -10445,13 +10484,13 @@ function buildSynonymsPanelHTML(synonyms, antonyms, headword) {
             <div class="syn-header">
                 <span class="syn-headword">${headwordLower}</span>
                 <div class="syn-tabs" role="tablist">
-                    ${tab('synonyms', 'Synonyms', synonyms)}
-                    ${tab('antonyms', 'Antonyms', antonyms)}
+                    ${tab('synonyms', 'Synonyms', sortedSynonyms)}
+                    ${tab('antonyms', 'Antonyms', sortedAntonyms)}
                 </div>
             </div>
             <div class="syn-body">
-                ${panelFor('synonyms', synonyms, 'No synonyms recorded for this word.')}
-                ${panelFor('antonyms', antonyms, 'No antonyms recorded for this word.')}
+                ${panelFor('synonyms', sortedSynonyms, 'No synonyms recorded for this word.')}
+                ${panelFor('antonyms', sortedAntonyms, 'No antonyms recorded for this word.')}
             </div>
         </div>
     `;
@@ -10798,8 +10837,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '685c3a73';
-const MODALS_ASSET_VERSION = '685c3a73';
+const ASSET_VERSION = 'b7788430';
+const MODALS_ASSET_VERSION = 'b7788430';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

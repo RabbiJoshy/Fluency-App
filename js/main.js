@@ -1,44 +1,44 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=685c3a73';
-import { releaseUrl } from './release-host.js?v=685c3a73';
-import './theme.js?v=685c3a73';
-import './desktop-shell.js?v=685c3a73';
-import './extra-workspace.js?v=685c3a73';
-import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=685c3a73';
-import './ai-preference.js?v=685c3a73';
-import { installFlagRendering } from './flags.js?v=685c3a73';
-import { IS_STAGING } from './env.js?v=685c3a73';
-import './state.js?v=685c3a73';
-import './offline-db.js?v=685c3a73';
-import './sync-queue.js?v=685c3a73';
-import { initOfflineContent } from './offline-content.js?v=685c3a73';
-import './speech.js?v=685c3a73';
-import './artist-ui.js?v=685c3a73';
-import './auth.js?v=685c3a73';
-import './tutorial.js?v=685c3a73';
-import './walkthrough.js?v=685c3a73';
-import './estimation.js?v=685c3a73';
-import './config.js?v=685c3a73';
-import './progress.js?v=685c3a73';
-import './knowledge.js?v=685c3a73';
-import './session-plan.js?v=685c3a73';
-import './ui.js?v=685c3a73';
-import './vocab.js?v=685c3a73';
-import './language-profile.js?v=685c3a73';
-import './smart-skip-pairs.js?v=685c3a73';
-import './bridge.js?v=685c3a73';
-import './cognates.js?v=685c3a73';
-import './coverage.js?v=685c3a73';
-import './fast-mode.js?v=685c3a73';
-import './extras.js?v=685c3a73';
-import './review-home.js?v=685c3a73';
-import './song-sets.js?v=685c3a73';
-import './playlist-live.js?v=685c3a73';
-import './spotify-playlist-import.js?v=685c3a73';
-import './vocabulary-import.js?v=685c3a73';
-import './flashcards.js?v=685c3a73';
-import { validateArtistCatalog } from './data-contracts.js?v=685c3a73';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=b7788430';
+import { releaseUrl } from './release-host.js?v=b7788430';
+import './theme.js?v=b7788430';
+import './desktop-shell.js?v=b7788430';
+import './extra-workspace.js?v=b7788430';
+import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=b7788430';
+import './ai-preference.js?v=b7788430';
+import { installFlagRendering } from './flags.js?v=b7788430';
+import { IS_STAGING } from './env.js?v=b7788430';
+import './state.js?v=b7788430';
+import './offline-db.js?v=b7788430';
+import './sync-queue.js?v=b7788430';
+import { initOfflineContent } from './offline-content.js?v=b7788430';
+import './speech.js?v=b7788430';
+import './artist-ui.js?v=b7788430';
+import './auth.js?v=b7788430';
+import './tutorial.js?v=b7788430';
+import './walkthrough.js?v=b7788430';
+import './estimation.js?v=b7788430';
+import './config.js?v=b7788430';
+import './progress.js?v=b7788430';
+import './knowledge.js?v=b7788430';
+import './session-plan.js?v=b7788430';
+import './ui.js?v=b7788430';
+import './vocab.js?v=b7788430';
+import './language-profile.js?v=b7788430';
+import './smart-skip-pairs.js?v=b7788430';
+import './bridge.js?v=b7788430';
+import './cognates.js?v=b7788430';
+import './coverage.js?v=b7788430';
+import './fast-mode.js?v=b7788430';
+import './extras.js?v=b7788430';
+import './review-home.js?v=b7788430';
+import './song-sets.js?v=b7788430';
+import './playlist-live.js?v=b7788430';
+import './spotify-playlist-import.js?v=b7788430';
+import './vocabulary-import.js?v=b7788430';
+import './flashcards.js?v=b7788430';
+import { validateArtistCatalog } from './data-contracts.js?v=b7788430';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -92,7 +92,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=685c3a73').catch(error => {
+    ? import('./spotify.js?v=b7788430').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -197,9 +197,14 @@ function landLoadingMarkOnFlag(language) {
 // Language images are transparent clipart: contained and padded, with a small pop
 // on each swap. Artist art is a photo and keeps filling the tile edge to edge.
 function applyLoadingMarkImage(src, { clipart = false } = {}) {
+    const screen = document.getElementById('appLoadingScreen');
     const mark = document.getElementById('appLoadingMark');
     const art = document.getElementById('appLoadingMarkArt');
     if (!mark || !art) return;
+    if (screen && screen.classList.contains('is-hidden')) {
+        stopLoadingMarkRotation();
+        return;
+    }
     if (!src) {
         art.hidden = true;
         art.style.backgroundImage = '';
@@ -210,7 +215,7 @@ function applyLoadingMarkImage(src, { clipart = false } = {}) {
     const escaped = String(src).replace(/"/g, '%22');
     art.style.backgroundImage = `url("${escaped}")`;
     art.classList.toggle('is-clipart', clipart);
-    if (clipart && !prefersReducedMotion()) {
+    if (!prefersReducedMotion() && (!screen || !screen.classList.contains('is-hidden'))) {
         art.classList.remove('is-popping');
         void art.offsetWidth; // restart the pop animation
         art.classList.add('is-popping');
@@ -222,34 +227,78 @@ function applyLoadingMarkImage(src, { clipart = false } = {}) {
 }
 
 async function updateLoadingMark({ language = '', artist = null } = {}) {
+    const screen = document.getElementById('appLoadingScreen');
     const mark = document.getElementById('appLoadingMark');
     const art = document.getElementById('appLoadingMarkArt');
     if (!mark || !art) return;
 
+    if (screen && screen.classList.contains('is-hidden')) {
+        stopLoadingMarkRotation();
+        return;
+    }
+
     // 2. Language-specific rotating images
     const langKey = String(language || window.selectedLanguage || 'default').trim().toLowerCase();
     const effectiveArtist = artist || window.activeArtist;
-    // Already cycling this language: carry on rather than jump back to a new start.
+    const artistKey = effectiveArtist ? (effectiveArtist.slug || effectiveArtist.name || 'artist') : '';
+    // Already cycling this language or artist: carry on rather than jump back to a new start.
     if (!effectiveArtist && loadingMarkRotationTimer && loadingMarkRotationKey === langKey) return;
+    if (effectiveArtist && loadingMarkRotationTimer && loadingMarkRotationKey === `artist:${artistKey}`) return;
 
     stopLoadingMarkRotation();
     const generation = ++loadingMarkGeneration;
     setLoadingMarkText('F');
 
-    // 1. Artist mode takes precedence: show the artist image
+    // 1. Artist mode takes precedence: rotate the artist's real album covers
     if (effectiveArtist) {
-        const artistArt = effectiveArtist.pickerImage || effectiveArtist.image || effectiveArtist.defaultAlbumArt || '';
-        if (artistArt) {
-            applyLoadingMarkImage(artistArt);
-        } else {
+        const resolveArt = src => {
+            if (!src) return '';
+            if (src.startsWith('http') || src.startsWith('/') || typeof releaseUrl !== 'function') return src;
+            const relId = effectiveArtist.releaseId || 'lyrics-all-artists-v20';
+            return releaseUrl(`releases/lyrics/${encodeURIComponent(relId)}/app/${src}`);
+        };
+
+        const albumImages = (effectiveArtist.albumImageMap && typeof effectiveArtist.albumImageMap === 'object')
+            ? Object.values(effectiveArtist.albumImageMap).filter(Boolean).map(resolveArt)
+            : [];
+        const fallback = resolveArt(effectiveArtist.pickerImage || effectiveArtist.image || effectiveArtist.defaultAlbumArt || '');
+        const images = albumImages.length > 0 ? albumImages : (fallback ? [fallback] : []);
+
+        if (screen && screen.classList.contains('is-hidden')) {
+            stopLoadingMarkRotation();
+            return;
+        }
+
+        if (images.length === 0) {
             applyLoadingMarkImage(null);
             setLoadingMarkText(effectiveArtist.customSongSource ? '♫' : String(effectiveArtist.name || 'Music').split(/\s+/).map(word => word[0]).slice(0, 2).join(''));
+            return;
+        }
+
+        images.forEach(src => { const img = new Image(); img.src = src; });
+        currentLoadingImages = images;
+        currentLoadingImageIndex = Math.floor(Math.random() * images.length);
+        applyLoadingMarkImage(images[currentLoadingImageIndex], { clipart: false });
+
+        if (images.length > 1 && !prefersReducedMotion() && (!screen || !screen.classList.contains('is-hidden'))) {
+            loadingMarkRotationKey = `artist:${artistKey}`;
+            loadingMarkRotationTimer = setInterval(() => {
+                if (screen && screen.classList.contains('is-hidden')) {
+                    stopLoadingMarkRotation();
+                    return;
+                }
+                currentLoadingImageIndex = (currentLoadingImageIndex + 1) % currentLoadingImages.length;
+                applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex], { clipart: false });
+            }, LOADING_MARK_ROTATION_MS);
         }
         return;
     }
 
     const manifest = await fetchLoadingImagesManifest();
-    if (generation !== loadingMarkGeneration) return;
+    if (generation !== loadingMarkGeneration || (screen && screen.classList.contains('is-hidden'))) {
+        stopLoadingMarkRotation();
+        return;
+    }
     const images = (manifest && manifest[langKey] && manifest[langKey].length > 0)
         ? manifest[langKey]
         : ((manifest && manifest['default'] && manifest['default'].length > 0) ? manifest['default'] : []);
@@ -266,9 +315,13 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
     currentLoadingImageIndex = Math.floor(Math.random() * images.length);
     applyLoadingMarkImage(images[currentLoadingImageIndex], { clipart: true });
 
-    if (images.length > 1 && !prefersReducedMotion()) {
+    if (images.length > 1 && !prefersReducedMotion() && (!screen || !screen.classList.contains('is-hidden'))) {
         loadingMarkRotationKey = langKey;
         loadingMarkRotationTimer = setInterval(() => {
+            if (screen && screen.classList.contains('is-hidden')) {
+                stopLoadingMarkRotation();
+                return;
+            }
             currentLoadingImageIndex = (currentLoadingImageIndex + 1) % currentLoadingImages.length;
             applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex], { clipart: true });
         }, LOADING_MARK_ROTATION_MS);
@@ -315,9 +368,9 @@ function showAppLoading(title = 'Getting things ready', detail = 'Loading your l
     if (!screen) return;
     document.getElementById('appLoadingTitle').textContent = title;
     document.getElementById('appLoadingDetail').textContent = detail;
-    resetDeckLoadingVisual();
     screen.classList.remove('is-hidden');
     screen.setAttribute('aria-busy', 'true');
+    resetDeckLoadingVisual();
     if (persist) {
         try { sessionStorage.setItem(APP_LOADING_MESSAGE_KEY, JSON.stringify({ title, detail })); } catch (_) {}
     }
@@ -436,6 +489,7 @@ document.getElementById('appLoadingScreen')?.addEventListener('click', () => {
 
 function hideAppLoading() {
     stopLoadingMarkRotation();
+    loadingMarkGeneration++;
     const screen = document.getElementById('appLoadingScreen');
     document.documentElement.classList.remove('app-booting');
     screen?.classList.add('is-hidden');
@@ -1735,7 +1789,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=685c3a73')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=b7788430')).catch(() => null);
             window.spotifyLogin?.();
         });
     }

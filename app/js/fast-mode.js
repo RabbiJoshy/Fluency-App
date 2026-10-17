@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=685c3a73';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=685c3a73';
+import './state.js?v=b7788430';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=b7788430';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -297,6 +297,15 @@ function refresh() {
     document.querySelectorAll('[data-ss-master]').forEach(button => {
         button.setAttribute('aria-pressed', String((button.dataset.ssMaster === 'on') === on));
     });
+    const toggleBtn = document.getElementById('smartSkipToggleBtn');
+    const stateLabel = document.getElementById('smartSkipStateLabel');
+    if (toggleBtn) {
+        toggleBtn.setAttribute('aria-checked', String(on));
+        toggleBtn.classList.toggle('is-on', on);
+    }
+    if (stateLabel) {
+        stateLabel.textContent = on ? 'On' : 'Off';
+    }
     const hubRow = document.getElementById('setupOptions')?.querySelector('.fast-track-hub-row');
     if (hubRow) {
         hubRow.classList.toggle('is-unseen', !hasSeenFastTrackPage());
@@ -595,6 +604,9 @@ function init() {
         refresh();
     });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
+    document.getElementById('smartSkipToggleBtn')?.addEventListener('click', () => {
+        applyFastMode(currentState() !== 'on');
+    });
     document.querySelectorAll('[data-ss-master]').forEach(button => {
         button.addEventListener('click', () => {
             const on = button.dataset.ssMaster === 'on';

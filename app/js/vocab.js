@@ -1,13 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=685c3a73';
-import { readJsonWithTimeout } from './read-request.js?v=685c3a73';
-import { validateVocabularyIndex } from './data-contracts.js?v=685c3a73';
-import { formatRoute } from './routes.js?v=685c3a73';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=685c3a73';
-import { releaseUrl } from './release-host.js?v=685c3a73';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=685c3a73';
+import './state.js?v=b7788430';
+import { readJsonWithTimeout } from './read-request.js?v=b7788430';
+import { validateVocabularyIndex } from './data-contracts.js?v=b7788430';
+import { formatRoute } from './routes.js?v=b7788430';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=b7788430';
+import { releaseUrl } from './release-host.js?v=b7788430';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=b7788430';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -4615,7 +4615,26 @@ function stampSplitShownShares(item, meanings, rare) {
 // The last step every card builder shares: shares over the card's assigned
 // sentences, then low-share senses moved beside the unused menu senses.
 function finishCardMeanings(item, meanings) {
-    const shares = stampShownShares(item, normalizeMeaningShares(meanings));
+    let activeMeanings = meanings;
+    if (typeof activeArtist !== 'undefined' && activeArtist) {
+        const isCorpus = ex => ex && !ex.canonical && ex.evidence !== 'dictionary' && !ex.reference_example;
+        const totalCorpusUses = activeMeanings.reduce((sum, m) => {
+            const exs = m.allExamples || m.examples || [];
+            return sum + (typeof isCorpusDisplayExample === 'function' ? exs.filter(isCorpusDisplayExample).length : exs.filter(isCorpus).length);
+        }, 0);
+        // Artist mode: when total occurrences across senses >= 5, prune polysemous senses with only 1 isolated example.
+        if (totalCorpusUses >= 5 && activeMeanings.length > 1) {
+            const multiExample = activeMeanings.filter(m => {
+                const exs = m.allExamples || m.examples || [];
+                const cnt = typeof isCorpusDisplayExample === 'function' ? exs.filter(isCorpusDisplayExample).length : exs.filter(isCorpus).length;
+                return cnt > 1;
+            });
+            if (multiExample.length > 0) {
+                activeMeanings = multiExample;
+            }
+        }
+    }
+    const shares = stampShownShares(item, normalizeMeaningShares(activeMeanings));
     const { meanings: kept, rare } = splitLowShareMeanings(shares);
     return { meanings: kept, unusedMenuSenses: [...rare, ...unusedMenuSensesOf(item)] };
 }
