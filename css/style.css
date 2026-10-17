@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=bfb751b7");
+@import url("./appearance.css?v=bd3485fb");
 
 
         * {
@@ -5655,17 +5655,77 @@
             text-align: center;
             line-height: 1.2;
         }
-        .ref-tile.ref-memory-tip-btn {
+        .ref-tile.ref-memory-tip-btn,
+        .headword-memory-tip-btn {
             color: #f0c878;
         }
         .ref-tile.ref-memory-tip-btn .ref-tile-label {
             color: #f0c878;
         }
-        .ref-tile.ref-memory-tip-btn:hover {
+        .ref-tile.ref-memory-tip-btn:hover,
+        .headword-memory-tip-btn:hover {
             color: #ffd98f;
         }
         .ref-tile.ref-memory-tip-btn:hover .ref-tile-label {
             color: #ffd98f;
+        }
+        /* Unboxed lightbulb anchored at the top-right corner of the surface
+           form so it doesn't shift the headword's horizontal centring or take
+           a slot in the bottom action row. */
+        .headword-memory-tip-btn {
+            position: absolute;
+            left: calc(100% + 1px);
+            top: -8px;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            -webkit-tap-highlight-color: transparent;
+            transition: color 0.15s ease, transform 0.15s ease;
+        }
+        .headword-memory-tip-btn:hover {
+            transform: scale(1.08);
+        }
+        .headword-memory-tip-btn:active {
+            transform: scale(0.95);
+        }
+        .headword-memory-tip-icon {
+            width: 22px;
+            height: 22px;
+            display: block;
+            pointer-events: none;
+            filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
+        }
+        /* Rare 5+ tile fallback (e.g. a verb with Rare uses + Pin meaning(s) +
+           Synonyms + Conjugate + Look up, or when the admin Dictionary tile is
+           shown): tighten gap, padding, icon size, and label font-size so all
+           5 fit cleanly on a single row without wrapping. */
+        .links-section:has(> :nth-child(5)) {
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .links-section:has(> :nth-child(5))::-webkit-scrollbar {
+            display: none;
+        }
+        .links-section:has(> :nth-child(5)) .ref-tile {
+            min-height: 60px;
+            padding: 4px 3px;
+            flex: 0 0 auto;
+        }
+        .links-section:has(> :nth-child(5)) .ref-tile-icon {
+            width: 32px;
+            height: 32px;
+        }
+        .links-section:has(> :nth-child(5)) .ref-tile-label {
+            font-size: 11.5px;
+            white-space: nowrap;
         }
 
         .lookup-sheet[hidden] {
@@ -12083,6 +12143,7 @@
         /* Headword and lemma follow the selected POS. The lemma is mixed with
            white for hierarchy and contrast without losing that POS identity. */
         .back-headword {
+            position: relative;
             color: #fff;
             /* Shrinkable, non-greedy: the POS legend's `margin-left: auto`
                does the pushing, so the word only gives up width when a long

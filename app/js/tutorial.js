@@ -13,7 +13,7 @@
 
 import {
     REPLICA_CARDS, esc, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=bfb751b7';
+} from './card-replica.js?v=bd3485fb';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -233,7 +233,7 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         demo: 'openReview',
                         anchor: '.knowledge-overview-trigger',
-                        title: 'Pin a meaning',
+                        title: 'Pin meaning(s)',
                         text: 'Know the word, but not every meaning? Tap to show pins on each row; pin the ones to practice and future reviews put them at the top.',
                     },
                     {

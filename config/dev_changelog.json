@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T21:46:00+01:00",
+      "date": "2026-10-17 21:46 BST",
+      "agent": "Antigravity",
+      "summary": "Move memory tip lightbulb to headword corner, rename Pin meaning(s), and add 5-tile compact fallback",
+      "detail": [
+        "Moved the memory tip trigger out of the bottom action row to an unboxed golden lightbulb at the top-right corner of the back headword (.headword-memory-tip-btn) so learner cards in ES/PT/CS/NL/FI never exceed 4 bottom buttons.",
+        "Renamed the bottom button label from \"Pin a meaning\" to \"Pin meaning(s)\" across live cards, tutorial steps, and card replicas.",
+        "Added a .links-section:has(> :nth-child(5)) compact layout and horizontal scroll fallback for the rare 5+ tile case (such as when Synonyms or the admin Dictionary button is present alongside Rare uses, Pin meaning(s), Conjugate, and Look up)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T21:25:00+01:00",
       "date": "2026-10-17 21:25 BST",
       "agent": "Antigravity",

@@ -591,14 +591,11 @@ export function memoryTipTileHTML(card, language) {
     const tip = memoryTipFor(card, language);
     _openTip = tip;
     if (!tip) return '';
-    return `<button type="button" class="ref-tile ref-memory-tip-btn" aria-label="Memory tip: ${escapeText(tip.word)} and ${escapeText(tip.english)}" title="Memory tip" onclick="event.stopPropagation(); openMemoryTip(event);">
-        <div class="ref-tile-icon-wrap">
-            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M9 18h6"></path><path d="M10 21h4"></path>
-                <path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"></path>
-            </svg>
-        </div>
-        <span class="ref-tile-label">Memory tip</span>
+    return `<button type="button" class="headword-memory-tip-btn ref-memory-tip-btn" aria-label="Memory tip: ${escapeText(tip.word)} and ${escapeText(tip.english)}" title="Memory tip" onclick="event.stopPropagation(); openMemoryTip(event);">
+        <svg class="headword-memory-tip-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 18h6"></path><path d="M10 21h4"></path>
+            <path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"></path>
+        </svg>
     </button>`;
 }
 
