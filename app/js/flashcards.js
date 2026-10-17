@@ -1,41 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=8d3ed215';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=8d3ed215';
-import { songCreditHTML } from './song-credit.js?v=8d3ed215';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=8d3ed215';
+import './state.js?v=8a844388';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=8a844388';
+import { songCreditHTML } from './song-credit.js?v=8a844388';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=8a844388';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=8d3ed215';
-import './speech.js?v=8d3ed215';
-import { goToRoute, routeCodeFor } from './routes.js?v=8d3ed215';
-import { memoryTipTileHTML } from './memory-tips.js?v=8d3ed215';
+import { fitSenseRowText } from './card-row-layout.js?v=8a844388';
+import './speech.js?v=8a844388';
+import { goToRoute, routeCodeFor } from './routes.js?v=8a844388';
+import { memoryTipTileHTML } from './memory-tips.js?v=8a844388';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
-    functionWordExampleHTML,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=8d3ed215';
-import './side-dock.js?v=8d3ed215';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=8d3ed215';
+} from './function-word-card.js?v=8a844388';
+import './side-dock.js?v=8a844388';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=8a844388';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=8d3ed215';
+} from './example-personalisation.js?v=8a844388';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=8d3ed215';
+} from './spanishdict-usage.js?v=8a844388';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=8d3ed215';
+} from './reverse-cues.js?v=8a844388';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,7 +68,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=8d3ed215';
+} from './card-metadata-pills.js?v=8a844388';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -8200,10 +8199,9 @@ function renderCardWikipediaBadge(card) {
         }
         // Emit the scroll region first, then the pinned tray underneath
         // (MWE/CLITIC rows that stay visible when the user scrolls).
-        if (scrollSections.size > 0 || isFunctionWordCard(card, selectedLanguage)) {
-            backHTML += isFunctionWordCard(card, selectedLanguage)
-                ? functionWordBlockHTML(card, selectedLanguage)
-                : `<div class="meanings-scroll">${renderSections(scrollSections)}</div>`;
+        const functionWordRows = functionWordBlockHTML(card, selectedLanguage);
+        if (scrollSections.size > 0 || functionWordRows) {
+            backHTML += functionWordRows || `<div class="meanings-scroll">${renderSections(scrollSections)}</div>`;
         }
         // Expressions mode off keeps the pinned tray; on, MWE/CLITIC entries
         // leave silently as chain children (no on-card announcement).
@@ -8524,7 +8522,6 @@ function renderCardWikipediaBadge(card) {
                         ${showExampleProductionForm ? `<div class="reverse-example-form"><span>In this example</span><strong>${escapeCardText(exampleProductionForm)}</strong></div>` : ''}
                         <div class="breakdown-trigger" style="margin-bottom: 8px; cursor: pointer;" onclick="showLyricBreakdown(event); event.stopPropagation();" title="Word by word">${displayTargetSentence}</div>
                         <div class="translation">${displayEnglishSentence}</div>
-                        ${card.functionWord ? functionWordExampleHTML(currentExample) : ''}
                         ${songNameDisplay}
                     </div>
                 `;
@@ -10801,8 +10798,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '8d3ed215';
-const MODALS_ASSET_VERSION = '8d3ed215';
+const ASSET_VERSION = '8a844388';
+const MODALS_ASSET_VERSION = '8a844388';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
