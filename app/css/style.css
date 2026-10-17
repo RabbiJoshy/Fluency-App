@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=0bf05cf3");
+@import url("./appearance.css?v=95630b5c");
 
 
         * {
@@ -2892,30 +2892,37 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
-            height: 24px;
-            min-width: 24px;
-            min-height: 24px;
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            min-height: 36px;
             padding: 0;
-            border: 0;
-            border-radius: 6px;
-            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.06);
             color: var(--text-secondary);
-            opacity: 0.72;
+            opacity: 0.9;
             cursor: pointer;
             pointer-events: auto;
             z-index: 3;
-            transition: opacity 0.15s ease, color 0.15s ease;
+            transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
             -webkit-tap-highlight-color: transparent;
         }
         .sense-pin-btn:hover,
         .sense-pin-btn:focus-visible {
             opacity: 1;
             color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+        .sense-pin-btn:active {
+            transform: scale(0.95);
         }
         .sense-pin-btn.is-pinned {
             opacity: 1;
             color: rgb(var(--sense-match-rgb, 56, 189, 248));
+            background: rgba(var(--sense-match-rgb, 56, 189, 248), 0.18);
+            border-color: rgba(var(--sense-match-rgb, 56, 189, 248), 0.55);
         }
         .ref-tile.knowledge-overview-trigger.is-active {
             background: rgba(var(--sense-match-rgb, 56, 189, 248), 0.16);
@@ -22802,12 +22809,32 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     left: 6px;
     right: auto !important;
 }
-.meaning-row > :is(.sense-prominence-badge, .sense-percentage-tail, .known-sense-tag, .sense-pin-btn) {
+.meaning-row > .pct-column:has(.sense-pin-btn) {
+    left: 3px;
+    width: 38px;
+}
+.meaning-row > :is(.sense-prominence-badge, .sense-percentage-tail, .known-sense-tag) {
     left: 8px;
     right: auto !important;
 }
+.meaning-row > .sense-pin-btn {
+    left: 3px !important;
+    right: auto !important;
+    top: 3px !important;
+    bottom: 3px !important;
+    height: auto !important;
+    min-height: 36px;
+    width: 38px;
+    min-width: 38px;
+    transform: none !important;
+}
+.meaning-row.meaning-row-regular:has(.sense-pin-btn),
+.meaning-row.meaning-row-group:has(.sense-pin-btn) {
+    padding-left: 46px !important;
+    padding-right: 46px !important;
+}
 .meaning-row.has-row-lead-and-info > .row-lead-marks { left: 8px; }
-.meaning-row:has(> :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag, .sense-pin-btn)) > .row-lead-marks { left: 38px; }
+.meaning-row:has(> :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag, .sense-pin-btn)) > .row-lead-marks { left: 46px; }
 .meaning-row.has-shared-and-cell-information > .meaning-row-body { margin-top: 30px; }
 .meaning-row.has-shared-and-cell-information > .sense-note-trigger {
     top: 16px;
