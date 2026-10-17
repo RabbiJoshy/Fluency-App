@@ -2595,18 +2595,29 @@
         }
         .pos-collapsible .pos-section-label {
             flex-shrink: 0;
-            color: rgb(var(--sense-match-rgb));
-            font-family: var(--font-emphasis);
-            font-size: 17px;
-            font-weight: 750;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3px 9px;
+            min-height: 24px;
+            border-radius: 999px;
+            background: color-mix(in srgb, rgb(var(--sense-match-rgb, 160, 160, 160)) 52%, #10151a);
+            border: 1px solid transparent;
+            color: #fff;
+            font-family: var(--font-reading);
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1;
             letter-spacing: 0;
+            text-transform: none;
+            white-space: nowrap;
         }
         .pos-collapsible .pos-lemma-from {
             flex-shrink: 0;
-            margin-left: -2px;
+            margin-left: 0;
             color: var(--text-muted);
             font-family: var(--font-reading);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
         }
         .pos-collapsible .pos-lemma-se {
@@ -5472,6 +5483,10 @@
             font: 700 15px/1 var(--font-emphasis, inherit);
             font-variant-numeric: tabular-nums;
             pointer-events: none;
+        }
+        .ref-rare-uses-btn .ref-tile-count-badge {
+            top: 1px;
+            left: 2px;
         }
         .ref-tile-label {
             font-size: 13.5px;

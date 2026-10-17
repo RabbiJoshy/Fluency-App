@@ -239,7 +239,7 @@
   font-size: 13px;
   line-height: 1.4;
 }
-.pos-collapsible .pos-section-head { align-items: baseline; }
+.pos-collapsible .pos-section-head { align-items: center; }
 
 /* Companion usage is context alongside the frequency, never a rank. */
 .split-frequency { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }

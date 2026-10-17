@@ -722,6 +722,17 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('class="pos-pill-lemma"', flashcards)
         self.assertNotIn("headword-group-label", flashcards)
 
+    def test_back_card_pos_pill_and_rare_uses_icon_placement(self) -> None:
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        ui_refinements = (APP_ROOT / "css" / "ui-refinements.css").read_text(encoding="utf-8")
+        self.assertIn(".ref-rare-uses-btn .ref-tile-count-badge", css)
+        self.assertIn("top: 1px;", css)
+        self.assertIn("left: 2px;", css)
+        self.assertIn(".pos-collapsible .pos-section-label", css)
+        self.assertIn("border-radius: 999px;", css)
+        self.assertIn("background: color-mix(in srgb, rgb(var(--sense-match-rgb, 160, 160, 160)) 52%, #10151a);", css)
+        self.assertIn(".pos-collapsible .pos-section-head { align-items: center; }", ui_refinements)
+
     def test_long_radials_scrub_one_readable_ring(self) -> None:
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
