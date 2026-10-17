@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=301b6bcc';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=301b6bcc';
-import { songCreditHTML } from './song-credit.js?v=301b6bcc';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=301b6bcc';
+import './state.js?v=bfb751b7';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=bfb751b7';
+import { songCreditHTML } from './song-credit.js?v=bfb751b7';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=bfb751b7';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=301b6bcc';
-import './speech.js?v=301b6bcc';
-import { goToRoute, routeCodeFor } from './routes.js?v=301b6bcc';
-import { memoryTipTileHTML } from './memory-tips.js?v=301b6bcc';
+import { fitSenseRowText } from './card-row-layout.js?v=bfb751b7';
+import './speech.js?v=bfb751b7';
+import { goToRoute, routeCodeFor } from './routes.js?v=bfb751b7';
+import { memoryTipTileHTML } from './memory-tips.js?v=bfb751b7';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=301b6bcc';
-import './side-dock.js?v=301b6bcc';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=301b6bcc';
+} from './function-word-card.js?v=bfb751b7';
+import './side-dock.js?v=bfb751b7';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=bfb751b7';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=301b6bcc';
+} from './example-personalisation.js?v=bfb751b7';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=301b6bcc';
+} from './spanishdict-usage.js?v=bfb751b7';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=301b6bcc';
+} from './reverse-cues.js?v=bfb751b7';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -68,7 +68,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=301b6bcc';
+} from './card-metadata-pills.js?v=bfb751b7';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -862,8 +862,15 @@ function dropNoteLinesShownIn(copy, ...scopes) {
     };
     copy.querySelectorAll('p').forEach(p => {
         // "At this time; at the present situation" under "at this time"
-        // keeps only "At the present situation".
-        const pieces = p.textContent.split(/;\s*/).filter(piece => piece.trim() && !isShown(piece));
+        // keeps only "At the present situation". Sub-pieces separated by commas
+        // (such as registers or region lists) also drop terms already visible on the row.
+        const pieces = p.textContent.split(/;\s*/).map(piece => {
+            if (piece.includes(', ')) {
+                const sub = piece.split(/,\s*/).filter(item => item.trim() && !isShown(item));
+                return sub.join(', ').trim();
+            }
+            return isShown(piece) ? '' : piece.trim();
+        }).filter(Boolean);
         const text = pieces.join('; ').trim();
         if (!text) p.remove();
         else p.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
@@ -922,8 +929,31 @@ function placeRowInformationButtons(root) {
             seen.add(source.innerHTML);
             copy.dataset.senseNoteTitle ||= source.dataset.senseNoteTitle;
             const ownCopy = source.cloneNode(true);
-            // Filter before combining: each source has its own citation gloss.
-            if (dropNoteLinesShownIn(ownCopy, rowScope)) copy.append(...ownCopy.children);
+            // Filter before combining: merge matching sections so duplicate
+            // headings (e.g. two "Usage" sections) are consolidated together.
+            if (dropNoteLinesShownIn(ownCopy, rowScope)) {
+                for (const child of ownCopy.children) {
+                    if (child.tagName === 'SECTION') {
+                        const childHeading = child.querySelector('h3')?.textContent.trim() || '';
+                        const match = [...copy.querySelectorAll(':scope > section')].find(sec => {
+                            const heading = sec.querySelector('h3')?.textContent.trim() || '';
+                            return heading === childHeading && sec.className === child.className;
+                        });
+                        if (match) {
+                            const seenTexts = new Set([...match.querySelectorAll('p')].map(p => p.textContent.trim().toLowerCase()));
+                            for (const p of child.querySelectorAll('p')) {
+                                const text = p.textContent.trim();
+                                if (text && !seenTexts.has(text.toLowerCase())) {
+                                    seenTexts.add(text.toLowerCase());
+                                    match.append(p.cloneNode(true));
+                                }
+                            }
+                            continue;
+                        }
+                    }
+                    copy.append(child.cloneNode(true));
+                }
+            }
         }
         if (!dropNoteLinesShownIn(copy, rowScope)) {
             rowButtons.forEach(el => el.remove());
@@ -10908,8 +10938,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '301b6bcc';
-const MODALS_ASSET_VERSION = '301b6bcc';
+const ASSET_VERSION = 'bfb751b7';
+const MODALS_ASSET_VERSION = 'bfb751b7';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

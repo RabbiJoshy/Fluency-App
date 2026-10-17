@@ -6,7 +6,7 @@
 // directly. State (flashcards, currentIndex, currentUser, etc.) and helpers
 // like flagWord and getPosColorClass come through the globalThis proxy
 // installed by state.js / auth.js / flashcards.js.
-import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=301b6bcc';
+import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=bfb751b7';
 
 // ---------------------------------------------------------------------------
 // Part-of-speech popup
