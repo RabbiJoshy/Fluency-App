@@ -327,6 +327,10 @@ function refresh() {
     if (tabCount) tabCount.textContent = totalSkipped ? `(${totalSkipped.toLocaleString()})` : '';
     const browseCount = document.getElementById('smartSkipBrowseCount');
     if (browseCount) browseCount.textContent = totalSkipped.toLocaleString();
+    const heroBadge = document.getElementById('smartSkipHeroBadgeText');
+    if (heroBadge) heroBadge.textContent = on ? (totalSkipped ? `${totalSkipped.toLocaleString()} skipped` : 'Active') : 'Off';
+    const heroBadgeContainer = document.getElementById('smartSkipHeroBadge');
+    if (heroBadgeContainer) heroBadgeContainer.classList.toggle('is-off', !on);
     updateMappingStatus();
     updateStreamlineRecCallout();
     updateStreamlineLanguageExamples();

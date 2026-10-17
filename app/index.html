@@ -1528,7 +1528,16 @@
             <button class="modal-close fast-mode-close" id="closeFastModeModal" aria-label="Close">✕</button>
             <div class="fast-mode-page-body smart-skip-body" data-mobile-view="rules">
                 <div class="smart-skip-header-row">
-                    <h2>Smart Skip</h2>
+                    <div class="smart-skip-title-group">
+                        <div class="smart-skip-title-row">
+                            <h2>Smart Skip</h2>
+                            <div class="smart-skip-hero-badge" id="smartSkipHeroBadge">
+                                <span class="smart-skip-stat-dot"></span>
+                                <span id="smartSkipHeroBadgeText">Active</span>
+                            </div>
+                        </div>
+                        <p class="smart-skip-tagline">Study only what’s new by skipping words you already know.</p>
+                    </div>
                     <div class="smart-skip-view-switch" id="smartSkipViewSwitch" role="tablist" aria-label="Smart Skip view">
                         <button type="button" class="smart-skip-tab is-active" data-view="rules" role="tab" aria-selected="true" id="smartSkipTabRules">Rules</button>
                         <button type="button" class="smart-skip-tab" data-view="words" role="tab" aria-selected="false" id="smartSkipTabWords">Skipped words <span class="smart-skip-tab-count" id="smartSkipTabCount"></span></button>
@@ -1587,8 +1596,11 @@
 
                 <div class="smart-skip-browse-banner" id="smartSkipBrowseBanner">
                     <button type="button" class="smart-skip-see-words-btn" id="smartSkipSeeWordsBtn">
-                        <span>Browse skipped words (<span id="smartSkipBrowseCount">0</span>)</span>
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+                        <div class="smart-skip-see-words-copy">
+                            <strong>Browse skipped words (<span id="smartSkipBrowseCount">0</span>)</strong>
+                            <small>Inspect the full list of excluded vocabulary</small>
+                        </div>
+                        <span class="smart-skip-see-words-arrow" aria-hidden="true">›</span>
                     </button>
                 </div>
 

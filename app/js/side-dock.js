@@ -147,7 +147,7 @@ const OCCUPANTS = [
         id, home: 'right', stacks: true, open: isShown, close: closeButtonFor(id) })),
     // Pages reached from settings: they stack over it, and stay centred
     // when opened any other way.
-    ...['fastModeModal', 'vocabularyImportModal'].map(id => ({
+    ...['vocabularyImportModal'].map(id => ({
         id, home: 'left', stacks: true, onlyOverSettings: true, open: isShown, close: closeButtonFor(id) })),
 ];
 const byId = Object.fromEntries(OCCUPANTS.map(o => [o.id, o]));
