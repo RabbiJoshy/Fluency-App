@@ -74,7 +74,7 @@ def main():
         lines += [f'### {r["language"]} / {r["word"]} / {r["example_id"]}', r['sentence'], r['translation'],
                   f'Prediction: {r["status"]}, pattern {r.get("pattern", "—")}.',
                   'Chunks: '+str([(c['slot'], c['text']) for c in r.get('chunks',[])]), j['reason'], '']
-    (OUT/'fresh-check.md').write_text('\n\n'.join(lines)+'\n')
+    (OUT/'fresh-check.md').write_text('\n\n'.join(lines).rstrip()+'\n')
     print(json.dumps({k:v for k,v in result.items() if k!='rows'}, ensure_ascii=False))
 
 if __name__ == '__main__':

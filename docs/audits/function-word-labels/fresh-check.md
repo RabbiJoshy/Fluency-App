@@ -537,5 +537,3 @@ Prediction: candidate, pattern 1.
 Chunks: [('connector', 'se'), ('v', 'juntar')]
 
 Se juntar is a natural pronominal infinitive and the future meaning is retained in translation.
-
-

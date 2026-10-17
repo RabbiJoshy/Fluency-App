@@ -54,7 +54,7 @@ def build():
     for r,j in zip(sample,reviews):
         assert r['example_id']==j['example_id']
         lines += [f'### {r["language"]} / {r["word"]}: {j["decision"]}',r['sentence'],r['translation'],j['reason'],'']
-    (OUT/'v2-staging-report.md').write_text('\n\n'.join(lines)+'\n')
+    (OUT/'v2-staging-report.md').write_text('\n\n'.join(lines).rstrip()+'\n')
     print(f'{len(accepted)} reviewed additions; fresh review: {dict(counts)}')
     return overlay
 

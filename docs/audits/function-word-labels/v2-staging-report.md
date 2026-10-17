@@ -287,5 +287,3 @@ Piensa lo que quieras.
 Think what you want.
 
 Lo que free relative is outside noun-antecedent relative and thought-plus-statement patterns.
-
-

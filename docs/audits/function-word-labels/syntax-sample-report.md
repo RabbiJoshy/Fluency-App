@@ -147,4 +147,3 @@ You did great in there.
 [('connector', 'Lo'), ('v', 'hiciste')]
 
 Lo + verb span is sound but en allí is awkward; reject the sentence as teaching copy.
-

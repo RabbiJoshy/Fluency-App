@@ -26,6 +26,6 @@ def build():
     for review in reviews:
         r=byid[review['example_id']]
         lines += [f"## {r['language']} / {r['word']} — {review['decision']}",r['sentence'],r['translation'],str([(c['slot'],c['text']) for c in r['chunks']]),review['reason'],'']
-    (OUT/'syntax-sample-report.md').write_text('\n\n'.join(lines));print(f'{added} reviewed automatic-span additions.')
+    (OUT/'syntax-sample-report.md').write_text('\n\n'.join(lines).rstrip()+'\n');print(f'{added} reviewed automatic-span additions.')
     return trial
 if __name__=='__main__':build()
