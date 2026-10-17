@@ -20672,6 +20672,653 @@ export const GRAMMAR_WORDS = {
     spanish: SPANISH_GRAMMAR_WORDS,
 };
 
+// Explicitly reviewed additions only; never enabled in production.
+const FW_SYNTAX_TRIAL = {
+  "pt": {
+    "se": {
+      "1": [
+        {
+          "targetHTML": "O meu namorado não <span class=\"fw-token-connector\">se</span> <span class=\"fw-token-v\">importa</span> comigo.",
+          "translation": "My boyfriend doesn't care about me.",
+          "source": "tatoeba",
+          "metadata": {
+            "function_word": {
+              "gloss": "to mind, to care",
+              "kind": "unit",
+              "rule": "pronominal_verb",
+              "value": "importar-se"
+            },
+            "selection_metrics": {
+              "frequency_burden": 3.893172,
+              "harder_tokens": 4,
+              "length_penalty": 0.6,
+              "score": 4.493172,
+              "target_tokens": 7
+            },
+            "selection_policy": "selection-wsd-only-form-and-sense/v3",
+            "sentence_id": "sentence_88deaaaa349b6ecd39dc1d746857ca0b",
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #2485192 by alexmarcelo; English translation #2485128 by Hybrid",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+              "source_record_id": "2485192:2485128",
+              "translated_from_english": true,
+              "url": "https://tatoeba.org/en/sentences/show/2485192"
+            },
+            "target": {
+              "contributor": "alexmarcelo",
+              "created_at": "2013-06-08 04:39:54",
+              "language": "pt",
+              "modified_at": "2013-06-08 04:39:54",
+              "source_sentence_id": "2485192",
+              "text": "O meu namorado não se importa comigo.",
+              "url": "https://tatoeba.org/en/sentences/show/2485192"
+            },
+            "translation": {
+              "contributor": "Hybrid",
+              "created_at": "2013-06-08 03:31:54",
+              "language": "en",
+              "modified_at": "2013-06-08 03:31:54",
+              "source_sentence_id": "2485128",
+              "text": "My boyfriend doesn't care about me.",
+              "url": "https://tatoeba.org/en/sentences/show/2485128"
+            },
+            "wsd": {
+              "confidence_reasons": [
+                "dictionary_does_not_distinguish_sibling_leaves"
+              ],
+              "forced_selection": {
+                "menu_analysis_id": "analysis_90921433aa849750f0c55a93572b8040",
+                "selected_tuple": {
+                  "headword": "se",
+                  "part_of_speech": "pron"
+                },
+                "sense_id": "en-se-pt-pron-pt:impersonal_pronominal_verb"
+              },
+              "gemini_recommendation": {
+                "deepest_shared_level": "tuple",
+                "gemini_called": false,
+                "independent_of_publication_projection": true,
+                "reason": "machine_readable_contradiction",
+                "recommended": true
+              },
+              "publication_projection": "forced_leaf",
+              "selection_projection": "mwe_augmented",
+              "supported_level": "tuple",
+              "supported_status": "recorded"
+            }
+          },
+          "example_id": "example_cebbc53189c1c3db8e86469f7c93fd95",
+          "syntax_trial_review": "Natural pronominal importar-se example; correct contiguous se + importa and faithful translation."
+        }
+      ]
+    }
+  },
+  "es": {
+    "se": {
+      "0": [
+        {
+          "targetHTML": "¿A qué <span class=\"fw-token-connector\">se</span> <span class=\"fw-token-v\">refería</span> con &quot;No hay inocencia&quot;?",
+          "translation": "What did you mean by \"No Innocence\"?",
+          "source": "opensubtitles",
+          "metadata": {
+            "function_word": {
+              "gloss": "to refer to",
+              "kind": "unit",
+              "rule": "pronominal_verb",
+              "value": "referirse"
+            },
+            "selection_metrics": {
+              "frequency_burden": 3.556611,
+              "harder_tokens": 4,
+              "length_penalty": 0.0,
+              "score": 3.556611,
+              "target_tokens": 8
+            },
+            "selection_policy": "selection-wsd-only-form-and-sense/v3",
+            "sentence_id": "sentence_87956c05b052295c147b38f023bb910c",
+            "source": {
+              "adapter": "opensubtitles-aligned/v1",
+              "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+              "document": {
+                "aligned_row": 1562980,
+                "line": "513",
+                "subtitle_id": "6636332",
+                "title_id": "5178702",
+                "year": "2016"
+              },
+              "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+              "name": "opensubtitles",
+              "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+              "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+              "source_record_id": "5178702:6636332:513:1562980",
+              "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+            },
+            "target": {
+              "language": "es",
+              "text": "¿A qué se refería con \"No hay inocencia\"?"
+            },
+            "translation": {
+              "language": "en",
+              "text": "What did you mean by \"No Innocence\"?"
+            },
+            "wsd": {
+              "confidence_reasons": [
+                "dictionary_does_not_distinguish_sibling_leaves"
+              ],
+              "forced_selection": {
+                "menu_analysis_id": "analysis_e1a17ac8728b12a2f5896b48b459178f",
+                "selected_tuple": {
+                  "headword": "se",
+                  "part_of_speech": "PRON"
+                },
+                "sense_id": "d97"
+              },
+              "gemini_recommendation": {
+                "deepest_shared_level": "tuple",
+                "gemini_called": false,
+                "independent_of_publication_projection": true,
+                "reason": "machine_readable_contradiction",
+                "recommended": true
+              },
+              "publication_projection": "forced_leaf",
+              "selection_projection": "mwe_augmented",
+              "supported_level": "tuple",
+              "supported_status": "recorded"
+            }
+          },
+          "example_id": "example_f5d9ebb5fc6606b8f06d147ed1813058",
+          "syntax_trial_review": "Referirse is pronominal; imperfect can refer to usted, matching English you. Correct minimal verbal chunk."
+        },
+        {
+          "targetHTML": "Por fin <span class=\"fw-token-connector\">se</span> <span class=\"fw-token-v\">ha acabado</span> todo.",
+          "translation": "It is finally all over.",
+          "source": "tatoeba",
+          "metadata": {
+            "function_word": {
+              "gloss": "to run out of",
+              "kind": "unit",
+              "rule": "pronominal_verb",
+              "value": "acabarse"
+            },
+            "selection_metrics": {
+              "frequency_burden": 2.609378,
+              "harder_tokens": 4,
+              "length_penalty": 1.2,
+              "score": 3.809378,
+              "target_tokens": 6
+            },
+            "selection_policy": "selection-wsd-only-form-and-sense/v3",
+            "sentence_id": "sentence_f8d737f679e781257ced0320ad2eade1",
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #1703334 by Alba; English translation #30040 by CK",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+              "source_record_id": "1703334:30040",
+              "translated_from_english": true,
+              "url": "https://tatoeba.org/en/sentences/show/1703334"
+            },
+            "target": {
+              "contributor": "Alba",
+              "created_at": "2012-07-17 08:27:23",
+              "language": "es",
+              "modified_at": "2012-07-17 08:27:23",
+              "source_sentence_id": "1703334",
+              "text": "Por fin se ha acabado todo.",
+              "url": "https://tatoeba.org/en/sentences/show/1703334"
+            },
+            "translation": {
+              "contributor": "CK",
+              "created_at": "\\N",
+              "language": "en",
+              "modified_at": "2010-10-20 15:59:07",
+              "source_sentence_id": "30040",
+              "text": "It is finally all over.",
+              "url": "https://tatoeba.org/en/sentences/show/30040"
+            },
+            "wsd": {
+              "confidence_reasons": [
+                "dictionary_does_not_distinguish_sibling_leaves"
+              ],
+              "forced_selection": {
+                "menu_analysis_id": "analysis_e1a17ac8728b12a2f5896b48b459178f",
+                "selected_tuple": {
+                  "headword": "se",
+                  "part_of_speech": "PRON"
+                },
+                "sense_id": "d97"
+              },
+              "gemini_recommendation": {
+                "deepest_shared_level": "tuple",
+                "gemini_called": false,
+                "independent_of_publication_projection": true,
+                "reason": "machine_readable_contradiction",
+                "recommended": true
+              },
+              "publication_projection": "forced_leaf",
+              "selection_projection": "mwe_augmented",
+              "supported_level": "tuple",
+              "supported_status": "recorded"
+            }
+          },
+          "example_id": "example_5ac81bbb7051bd89a71bc2014477d11f",
+          "syntax_trial_review": "Se ha acabado contains auxiliary plus participle in one generated verb chunk."
+        },
+        {
+          "targetHTML": "Las gemelas <span class=\"fw-token-connector\">se</span> <span class=\"fw-token-v\">ven</span> exactamente iguales.",
+          "translation": "The twins look exactly alike.",
+          "source": "tatoeba",
+          "metadata": {
+            "function_word": {
+              "gloss": "to look, to seem",
+              "kind": "unit",
+              "rule": "pronominal_verb",
+              "value": "verse"
+            },
+            "selection_metrics": {
+              "frequency_burden": 5.632383,
+              "harder_tokens": 5,
+              "length_penalty": 1.2,
+              "score": 6.832383,
+              "target_tokens": 6
+            },
+            "selection_policy": "selection-wsd-only-form-and-sense/v3",
+            "sentence_id": "sentence_5c2388c1d280945005df3b9220ee92e2",
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #1676146 by marcelostockle; English translation #45623 by CK",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+              "source_record_id": "1676146:45623",
+              "translated_from_english": true,
+              "url": "https://tatoeba.org/en/sentences/show/1676146"
+            },
+            "target": {
+              "contributor": "marcelostockle",
+              "created_at": "2012-07-08 21:39:09",
+              "language": "es",
+              "modified_at": "2012-07-08 21:39:09",
+              "source_sentence_id": "1676146",
+              "text": "Las gemelas se ven exactamente iguales.",
+              "url": "https://tatoeba.org/en/sentences/show/1676146"
+            },
+            "translation": {
+              "contributor": "CK",
+              "created_at": "\\N",
+              "language": "en",
+              "modified_at": "2010-10-25 15:26:51",
+              "source_sentence_id": "45623",
+              "text": "The twins look exactly alike.",
+              "url": "https://tatoeba.org/en/sentences/show/45623"
+            },
+            "wsd": {
+              "confidence_reasons": [
+                "dictionary_does_not_distinguish_sibling_leaves"
+              ],
+              "forced_selection": {
+                "menu_analysis_id": "analysis_e1a17ac8728b12a2f5896b48b459178f",
+                "selected_tuple": {
+                  "headword": "se",
+                  "part_of_speech": "PRON"
+                },
+                "sense_id": "d97"
+              },
+              "gemini_recommendation": {
+                "deepest_shared_level": "tuple",
+                "gemini_called": false,
+                "independent_of_publication_projection": true,
+                "reason": "machine_readable_contradiction",
+                "recommended": true
+              },
+              "publication_projection": "forced_leaf",
+              "selection_projection": "mwe_augmented",
+              "supported_level": "tuple",
+              "supported_status": "recorded"
+            }
+          },
+          "example_id": "example_c12ccd66c1bb339649318aaaabdb2b6c",
+          "syntax_trial_review": "Verse + adjective describes appearance here; pronominal row and translation fit."
+        },
+        {
+          "targetHTML": "Olvidé el nombre de tu hermano, ¿cómo <span class=\"fw-token-connector\">se</span> <span class=\"fw-token-v\">llama</span>?",
+          "translation": "I forgot the name of your brother; what's his name?",
+          "source": "tatoeba",
+          "metadata": {
+            "function_word": {
+              "gloss": "to be called",
+              "kind": "unit",
+              "rule": "pronominal_verb",
+              "value": "llamarse"
+            },
+            "selection_metrics": {
+              "frequency_burden": 4.824505,
+              "harder_tokens": 6,
+              "length_penalty": 0.0,
+              "score": 4.824505,
+              "target_tokens": 9
+            },
+            "selection_policy": "selection-wsd-only-form-and-sense/v3",
+            "sentence_id": "sentence_333b3df0129934060dbb497e8818a6a4",
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #856128 by opor; English translation #845606 by iampo0kie",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+              "source_record_id": "856128:845606",
+              "translated_from_english": true,
+              "url": "https://tatoeba.org/en/sentences/show/856128"
+            },
+            "target": {
+              "contributor": "opor",
+              "created_at": "2011-04-26 04:46:49",
+              "language": "es",
+              "modified_at": "2011-04-26 04:47:40",
+              "source_sentence_id": "856128",
+              "text": "Olvidé el nombre de tu hermano, ¿cómo se llama?",
+              "url": "https://tatoeba.org/en/sentences/show/856128"
+            },
+            "translation": {
+              "contributor": "iampo0kie",
+              "created_at": "2011-04-20 17:16:00",
+              "language": "en",
+              "modified_at": "2011-04-20 17:16:00",
+              "source_sentence_id": "845606",
+              "text": "I forgot the name of your brother; what's his name?",
+              "url": "https://tatoeba.org/en/sentences/show/845606"
+            },
+            "wsd": {
+              "confidence_reasons": [
+                "dictionary_does_not_distinguish_sibling_leaves"
+              ],
+              "forced_selection": {
+                "menu_analysis_id": "analysis_e1a17ac8728b12a2f5896b48b459178f",
+                "selected_tuple": {
+                  "headword": "se",
+                  "part_of_speech": "PRON"
+                },
+                "sense_id": "00c"
+              },
+              "gemini_recommendation": {
+                "deepest_shared_level": "tuple",
+                "gemini_called": false,
+                "independent_of_publication_projection": true,
+                "reason": "machine_readable_contradiction",
+                "recommended": true
+              },
+              "publication_projection": "forced_leaf",
+              "selection_projection": "mwe_augmented",
+              "supported_level": "tuple",
+              "supported_status": "recorded"
+            }
+          },
+          "example_id": "example_fc33b0b5d9191f4ce6d6c835d2c4dbf3",
+          "syntax_trial_review": "Llamarse is pronominal; natural sentence and faithful translation."
+        },
+        {
+          "targetHTML": "Jamás <span class=\"fw-token-connector\">se</span> <span class=\"fw-token-v\">ha echado para atrás</span> en situaciones difíciles.",
+          "translation": "He's never backed down in difficult situations.",
+          "source": "tatoeba",
+          "metadata": {
+            "function_word": {
+              "gloss": "to throw oneself",
+              "kind": "unit",
+              "rule": "pronominal_verb",
+              "value": "echarse"
+            },
+            "selection_metrics": {
+              "frequency_burden": 8.592947,
+              "harder_tokens": 7,
+              "length_penalty": 0.0,
+              "score": 8.592947,
+              "target_tokens": 9
+            },
+            "selection_policy": "selection-wsd-only-form-and-sense/v3",
+            "sentence_id": "sentence_7cbc1f4ae0e745006424b68762cefe21",
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #9445440 by DJ_Saidez; English translation #11118011 by DJ_Saidez",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+              "source_record_id": "9445440:11118011",
+              "translated_from_english": false,
+              "url": "https://tatoeba.org/en/sentences/show/9445440"
+            },
+            "target": {
+              "contributor": "DJ_Saidez",
+              "created_at": "2020-12-07 16:38:54",
+              "language": "es",
+              "modified_at": "2022-09-15 06:41:00",
+              "source_sentence_id": "9445440",
+              "text": "Jamás se ha echado para atrás en situaciones difíciles.",
+              "url": "https://tatoeba.org/en/sentences/show/9445440"
+            },
+            "translation": {
+              "contributor": "DJ_Saidez",
+              "created_at": "2022-09-15 06:41:14",
+              "language": "en",
+              "modified_at": "2022-09-15 06:41:14",
+              "source_sentence_id": "11118011",
+              "text": "He's never backed down in difficult situations.",
+              "url": "https://tatoeba.org/en/sentences/show/11118011"
+            },
+            "wsd": {
+              "confidence_reasons": [
+                "dictionary_does_not_distinguish_sibling_leaves"
+              ],
+              "forced_selection": {
+                "menu_analysis_id": "analysis_e1a17ac8728b12a2f5896b48b459178f",
+                "selected_tuple": {
+                  "headword": "se",
+                  "part_of_speech": "PRON"
+                },
+                "sense_id": "8cd"
+              },
+              "gemini_recommendation": {
+                "deepest_shared_level": "tuple",
+                "gemini_called": false,
+                "independent_of_publication_projection": true,
+                "reason": "machine_readable_contradiction",
+                "recommended": true
+              },
+              "publication_projection": "forced_leaf",
+              "selection_projection": "mwe_augmented",
+              "supported_level": "tuple",
+              "supported_status": "recorded"
+            }
+          },
+          "example_id": "example_1334fd62d539abfc920dc94f1e21f5b7",
+          "syntax_trial_review": "Reviewed regression: full ha echado para atrás now retained."
+        }
+      ]
+    },
+    "lo": {
+      "1": [
+        {
+          "targetHTML": "Este libro <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-v\">compré</span> ayer.",
+          "translation": "I bought this book yesterday.",
+          "source": "tatoeba",
+          "metadata": {
+            "function_word": {
+              "gloss": "him / it",
+              "kind": "role",
+              "rule": "role",
+              "value": "object_pron"
+            },
+            "selection_metrics": {
+              "frequency_burden": 5.273966,
+              "harder_tokens": 4,
+              "length_penalty": 1.8,
+              "score": 7.073966,
+              "target_tokens": 5
+            },
+            "selection_policy": "selection-wsd-only-form-and-sense/v3",
+            "sentence_id": "sentence_52e8e3548558892d6e4e01bee038dc4d",
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #343756 by tatoerique; English translation #253749 by CK",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+              "source_record_id": "343756:253749",
+              "translated_from_english": true,
+              "url": "https://tatoeba.org/en/sentences/show/343756"
+            },
+            "target": {
+              "contributor": "tatoerique",
+              "created_at": "2009-12-26 20:54:28",
+              "language": "es",
+              "modified_at": "2009-12-26 20:54:28",
+              "source_sentence_id": "343756",
+              "text": "Este libro lo compré ayer.",
+              "url": "https://tatoeba.org/en/sentences/show/343756"
+            },
+            "translation": {
+              "contributor": "CK",
+              "created_at": "\\N",
+              "language": "en",
+              "modified_at": "2010-10-07 06:07:52",
+              "source_sentence_id": "253749",
+              "text": "I bought this book yesterday.",
+              "url": "https://tatoeba.org/en/sentences/show/253749"
+            },
+            "wsd": {
+              "confidence_reasons": [
+                "dictionary_does_not_distinguish_sibling_leaves"
+              ],
+              "forced_selection": {
+                "menu_analysis_id": "analysis_a9b83828263f19459effbaa36cb94444",
+                "selected_tuple": {
+                  "headword": "lo",
+                  "part_of_speech": "PRON"
+                },
+                "sense_id": "dc2"
+              },
+              "gemini_recommendation": {
+                "deepest_shared_level": "tuple",
+                "gemini_called": false,
+                "independent_of_publication_projection": true,
+                "reason": "machine_readable_contradiction",
+                "recommended": true
+              },
+              "publication_projection": "forced_leaf",
+              "selection_projection": "mwe_augmented",
+              "supported_level": "tuple",
+              "supported_status": "recorded"
+            }
+          },
+          "example_id": "example_a2f5f8f06c4b08bfafa04966bdaf3145",
+          "syntax_trial_review": "Object lo resumes the topicalised book; natural Spanish and accurate translation."
+        }
+      ]
+    },
+    "al": {
+      "0": [
+        {
+          "targetHTML": "Se apresuró para subir <span class=\"fw-token-connector\">al</span> <span class=\"fw-token-c\">autobús</span>.",
+          "translation": "He hurried to get on the bus.",
+          "source": "tatoeba",
+          "metadata": {
+            "function_word": {
+              "gloss": "to the",
+              "kind": "role",
+              "rule": "role",
+              "value": "prep"
+            },
+            "selection_metrics": {
+              "frequency_burden": 5.462718,
+              "harder_tokens": 5,
+              "length_penalty": 1.2,
+              "score": 6.662718,
+              "target_tokens": 6
+            },
+            "selection_policy": "selection-wsd-only-form-and-sense/v3",
+            "sentence_id": "sentence_6c40d3d82fd206daee0bae0fe309bd38",
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #342378 by tatoerique; English translation #10287812 by LimeGreenTeknii",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+              "source_record_id": "342378:10287812",
+              "translated_from_english": false,
+              "url": "https://tatoeba.org/en/sentences/show/342378"
+            },
+            "target": {
+              "contributor": "tatoerique",
+              "created_at": "2009-12-24 19:50:16",
+              "language": "es",
+              "modified_at": "2009-12-24 19:50:16",
+              "source_sentence_id": "342378",
+              "text": "Se apresuró para subir al autobús.",
+              "url": "https://tatoeba.org/en/sentences/show/342378"
+            },
+            "translation": {
+              "contributor": "LimeGreenTeknii",
+              "created_at": "2021-09-11 06:49:33",
+              "language": "en",
+              "modified_at": "2021-09-11 06:49:33",
+              "source_sentence_id": "10287812",
+              "text": "He hurried to get on the bus.",
+              "url": "https://tatoeba.org/en/sentences/show/10287812"
+            },
+            "wsd": {
+              "confidence_reasons": [
+                "dictionary_does_not_distinguish_sibling_leaves"
+              ],
+              "forced_selection": {
+                "menu_analysis_id": "analysis_199ecf0479cfebeea413ddc4401fbe57",
+                "selected_tuple": {
+                  "headword": "al",
+                  "part_of_speech": "CONTRACTION"
+                },
+                "sense_id": "150"
+              },
+              "gemini_recommendation": {
+                "deepest_shared_level": "tuple",
+                "gemini_called": false,
+                "independent_of_publication_projection": true,
+                "reason": "machine_readable_contradiction",
+                "recommended": true
+              },
+              "publication_projection": "forced_leaf",
+              "selection_projection": "mwe_augmented",
+              "supported_level": "tuple",
+              "supported_status": "recorded"
+            }
+          },
+          "example_id": "example_2e2657447b9656ac568c0b748a0630ae",
+          "syntax_trial_review": "Reviewed regression: al autobús is a clear destination."
+        }
+      ]
+    }
+  }
+};
+function syntaxTrialEnabled() {
+    return typeof window !== 'undefined' && window.__FLUENCY_ENV__ === 'staging'
+        && new URLSearchParams(window.location?.search || '').get('fwSyntaxTrial') === '1';
+}
+
 // Backward-compatibility: ensure .uses aliases
 for (const dict of [PORTUGUESE_GRAMMAR_WORDS, SPANISH_GRAMMAR_WORDS]) {
     for (const entry of Object.values(dict)) {
@@ -20756,7 +21403,20 @@ export function getGrammarWordDefinition(cardOrWord, lang) {
 
     const langKey = String(lang || 'pt').toLowerCase();
     const suite = GRAMMAR_WORDS[langKey] || PORTUGUESE_GRAMMAR_WORDS;
-    return suite[wordKey] || null;
+    const base = suite[wordKey] || null;
+    if (!base || !syntaxTrialEnabled()) return base;
+    const language = suite === SPANISH_GRAMMAR_WORDS ? 'es' : 'pt';
+    const additions = FW_SYNTAX_TRIAL[language]?.[wordKey];
+    if (!additions) return base;
+    const relations = base.relations.map((relation, index) => {
+        const extra = additions[index];
+        if (!extra?.length) return relation;
+        const existing = relation.examples || [];
+        const ids = new Set(existing.map(example => example.example_id).filter(Boolean));
+        const examples = [...extra.filter(example => !ids.has(example.example_id)), ...existing];
+        return {...relation, examples, targetHTML: examples[0].targetHTML, translation: examples[0].translation};
+    });
+    return {...base, relations, uses: relations, syntaxTrial: true};
 }
 
 // Backward-compatibility alias:
@@ -21097,6 +21757,7 @@ export function functionWordBlockHTML(card, lang) {
                     ${partsBoxHTML}
                     ${dynamicPartsHTML}
                     <div class="fw-section-header">Function Word · Example Patterns</div>
+                    ${fwData.syntaxTrial ? '<div class="fw-section-header">Reviewed example trial</div>' : ''}
                 </div>
                 <div class="fw-relations-list">
                     ${relationsHTML}

@@ -6,7 +6,7 @@
 // directly. State (flashcards, currentIndex, currentUser, etc.) and helpers
 // like flagWord and getPosColorClass come through the globalThis proxy
 // installed by state.js / auth.js / flashcards.js.
-import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=76c7e827';
+import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=65650c91';
 
 // ---------------------------------------------------------------------------
 // Part-of-speech popup
@@ -2445,7 +2445,7 @@ function _simpleFlagExample(meaning, index) {
     if (index === currentMeaningIndex && window._currentDisplayedExample) {
         return window._currentDisplayedExample;
     }
-    return meaning?.allExamples?.[0] || null;
+    return index === currentMeaningIndex ? _flagMenuExample(meaning) : (meaning?.allExamples?.[0] || null);
 }
 
 function _simpleFlagReport(target, { meaningIndex = 0, note = '' } = {}) {
@@ -2563,6 +2563,8 @@ function _simpleFlagFields(target, { meaningIndex = 0, note = '' } = {}) {
             ? (example?.spanish || example?.target || example?.targetSentence || example?.original || '') : '',
         translation: isExample ? (example?.english || example?.englishSentence || '') : '',
         song: isExample ? (example?.song_name || example?.song || '') : '',
+        exampleIndex: isExample && meaningIndex === currentMeaningIndex && typeof currentExampleIndex === 'number' ? currentExampleIndex : null,
+        exampleJson: isExample ? JSON.stringify(example || null) : '',
         exampleAssignment: isExample ? (example?.assignment_method || '') : '',
         translationSource: isExample ? (example?.translation_source || '') : '',
         note: flagNote
@@ -2570,7 +2572,8 @@ function _simpleFlagFields(target, { meaningIndex = 0, note = '' } = {}) {
 }
 
 async function _sendSimpleFlag(target, options = {}) {
-    if (_simpleFlagBusy) return false;
+    if (_simpleFlagBusy || !window.canUserFlag?.()) return false;
+    options = { meaningIndex: typeof currentMeaningIndex === 'number' ? currentMeaningIndex : 0, ...options };
     const card = _flagMenuCard();
     if (!card || typeof flagWord !== 'function') return false;
     const labels = {
@@ -2632,7 +2635,7 @@ function _renderSimpleSenses() {
 function showSimpleFlagMenu() {
     const pop = document.getElementById('flagMenu');
     const card = _flagMenuCard();
-    if (!pop || !card) return;
+    if (!pop || !card || !window.canUserFlag?.()) return;
     document.getElementById('flagMenuTitle').textContent = `Flag: ${card.targetWord || card.word || 'card'}`;
 
     const isJp = Boolean(window.isJpAccount?.());
@@ -2706,6 +2709,7 @@ function showSimpleFlagMenu() {
     document.getElementById('flagJpPolishCognate')?.addEventListener('click', () => {
         _sendSimpleFlag('polish-cognate');
     });
+    document.getElementById('flagJpCard')?.addEventListener('click', () => _sendSimpleFlag('card'));
     document.getElementById('flagJpWsd')?.addEventListener('click', () => {
         _sendSimpleFlag('wsd');
     });
