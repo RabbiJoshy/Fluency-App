@@ -23,7 +23,7 @@ function classes(initial=[]) {
  toggle(k,value){if(value)s.add(k);else s.delete(k);}};
 }
 function fixture({flipped=true,control=false,scroll=false,scrubber=false}={}) {
- const listeners={}, grades=[], cycles=[];let feedback=null, busy=false, pressesCancelled=0, flips=0;
+ const listeners={}, grades=[], cycles=[], haptics=[];let feedback=null, busy=false, pressesCancelled=0, flips=0;
  const card={dataset:{},classList:classes(flipped?['flipped']:[]),style:{},
   addEventListener(k,fn){(listeners[k]||=[]).push(fn);}};
  const port={parentElement:card,scrollHeight:500,clientHeight:100,overflowY:'auto'};
@@ -33,7 +33,7 @@ function fixture({flipped=true,control=false,scroll=false,scrubber=false}={}) {
  }};
  const correctIndicator={classList:classes()},incorrectIndicator={classList:classes()};
  const options={card,correctIndicator,incorrectIndicator,grade:d=>grades.push(d),cycle:s=>cycles.push(s),
-  feedback:d=>feedback=d,busy:()=>busy,cancelPress:()=>pressesCancelled++,getStyle:n=>n};
+  feedback:d=>feedback=d,busy:()=>busy,cancelPress:()=>pressesCancelled++,haptic:ms=>haptics.push(ms),getStyle:n=>n};
  installCardTouch(options);installCardTouch(options); // setup is idempotent
  const flashcardsSource=fs.readFileSync('app/js/flashcards.js','utf8');
  const clickStart=flashcardsSource.indexOf("    flashcard.addEventListener('click'",flashcardsSource.indexOf('// Flip on back side'));
@@ -47,7 +47,7 @@ function fixture({flipped=true,control=false,scroll=false,scrubber=false}={}) {
   for(const fn of listeners[type]||[]){fn(e);if(e.stopped)break;}
   return e;
  }
- return {card,grades,cycles,correctIndicator,incorrectIndicator,
+ return {card,grades,cycles,haptics,correctIndicator,incorrectIndicator,
   start:()=>emit('touchstart',{touches:[touch()]}),
   move:(x,y=0)=>emit('touchmove',{touches:[touch(x,y)]}),
   end:(x,y=0)=>emit('touchend',{changedTouches:[touch(x,y)]}),
@@ -57,11 +57,23 @@ function fixture({flipped=true,control=false,scroll=false,scrubber=false}={}) {
 }
 for(const sign of [-1,1]) {
  const f=fixture();f.start();f.move(sign*49);
+ const activeIndicator=sign>0?f.correctIndicator:f.incorrectIndicator;
+ const commitClass=sign>0?'swipe-commit-correct':'swipe-commit-incorrect';
  assert.equal(f.feedback(),null);assert.equal(f.card.classList.contains('swiping'),true);
+ assert.equal(activeIndicator.classList.contains('dragging'),true);
+ assert.equal(activeIndicator.classList.contains('visible'),false);
+ assert.deepEqual(f.haptics,[]);
  f.move(sign*50);assert.equal(f.feedback(),sign>0?'correct':'incorrect');
+ assert.equal(activeIndicator.classList.contains('visible'),true);
+ assert.equal(f.card.classList.contains(commitClass),true);
+ assert.deepEqual(f.haptics,[8]);
+ // Further movement beyond threshold does not spam haptics.
+ f.move(sign*65);assert.deepEqual(f.haptics,[8]);
  const release=f.end(sign*50);assert.equal(release.stopped,true);
  assert.deepEqual(f.grades,[sign>0?'correct':'incorrect']);
  assert.equal(f.card.style.transform,'');assert.equal(f.feedback(),null);
+ assert.equal(activeIndicator.classList.contains('dragging'),false);
+ assert.equal(f.card.classList.contains(commitClass),false);
  assert.equal(f.click().prevented,true);
 }
 for(const distance of [0,9,13,49]) {

@@ -6,6 +6,7 @@ const CONTROL = 'button, a, input, select, textarea, [role="button"], [onclick]'
 
 export function installCardTouch({ card, correctIndicator, incorrectIndicator,
     grade, cycle, feedback, busy, cancelPress = () => {},
+    haptic = ms => typeof navigator !== 'undefined' && navigator.vibrate?.(ms),
     getStyle = element => getComputedStyle(element) }) {
     if (card.dataset.touchGesturesInstalled) return;
     card.dataset.touchGesturesInstalled = '1';
@@ -14,10 +15,14 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
     let suppressClickUntil = 0;
 
     function clearVisuals() {
-        card.classList.remove('swiping');
+        card.classList.remove('swiping', 'swipe-commit-correct', 'swipe-commit-incorrect');
         card.style.transform = '';
-        correctIndicator.classList.remove('visible');
-        incorrectIndicator.classList.remove('visible');
+        card.style.removeProperty?.('--swipe-right');
+        card.style.removeProperty?.('--swipe-left');
+        correctIndicator.classList.remove('visible', 'dragging');
+        incorrectIndicator.classList.remove('visible', 'dragging');
+        correctIndicator.style?.removeProperty?.('--swipe-progress');
+        incorrectIndicator.style?.removeProperty?.('--swipe-progress');
         feedback(null);
     }
     function cancel() {
@@ -60,7 +65,7 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
         const touch = event.touches[0];
         drag = {
             id: touch.identifier, startX: touch.clientX, startY: touch.clientY,
-            x: 0, y: 0, axis: null, maxMovement: 0,
+            x: 0, y: 0, axis: null, maxMovement: 0, committedDirection: null,
             control: Boolean(event.target.closest(CONTROL)),
             scroll: scrollPort(event.target),
             flipped: card.classList.contains('flipped')
@@ -83,9 +88,25 @@ export function installCardTouch({ card, correctIndicator, incorrectIndicator,
         card.classList.add('swiping');
         card.style.transform = `translateX(${drag.x}px) rotate(${drag.x / 20}deg)`
             + (drag.flipped ? ' rotateY(180deg)' : '');
+        const horizontalLead = Math.abs(drag.x) > Math.abs(drag.y) * AXIS_LEAD;
+        const progress = horizontalLead ? Math.min(1, Math.abs(drag.x) / GRADE_DISTANCE) : 0;
+        const rightProgress = drag.x > 0 ? progress : 0;
+        const leftProgress = drag.x < 0 ? progress : 0;
+        card.style.setProperty?.('--swipe-right', rightProgress.toFixed(3));
+        card.style.setProperty?.('--swipe-left', leftProgress.toFixed(3));
+        correctIndicator.style?.setProperty?.('--swipe-progress', rightProgress.toFixed(3));
+        incorrectIndicator.style?.setProperty?.('--swipe-progress', leftProgress.toFixed(3));
+        correctIndicator.classList.toggle('dragging', rightProgress > 0.08);
+        incorrectIndicator.classList.toggle('dragging', leftProgress > 0.08);
         const direction = gradeDirection();
+        card.classList.toggle('swipe-commit-correct', direction === 'correct');
+        card.classList.toggle('swipe-commit-incorrect', direction === 'incorrect');
         correctIndicator.classList.toggle('visible', direction === 'correct');
         incorrectIndicator.classList.toggle('visible', direction === 'incorrect');
+        if (direction !== drag.committedDirection) {
+            if (direction) haptic(8);
+            drag.committedDirection = direction;
+        }
         feedback(direction);
     }, { passive: false });
 

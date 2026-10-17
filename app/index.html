@@ -638,8 +638,16 @@
             <!-- Flashcard Mode -->
             <div id="flashcardMode">
                 <div class="card-container">
-                    <div class="swipe-indicator incorrect" id="incorrectIndicator">✗</div>
-                    <div class="swipe-indicator correct" id="correctIndicator">✓</div>
+                    <div class="swipe-indicator incorrect" id="incorrectIndicator" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                    <div class="swipe-indicator correct" id="correctIndicator" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M20 6L9 17l-5-5"></path>
+                        </svg>
+                    </div>
                     <div class="card" id="flashcard" data-rank="">
                         <div class="card-face card-front">
                             <!-- Mobile top banner: prev far-left, [back][gear] paired in middle, next far-right -->
