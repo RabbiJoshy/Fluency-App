@@ -1526,8 +1526,14 @@
     <div id="fastModeModal" class="modal hidden">
         <div class="modal-content fullscreen-modal fast-mode-page">
             <button class="modal-close fast-mode-close" id="closeFastModeModal" aria-label="Close">✕</button>
-            <div class="fast-mode-page-body smart-skip-body">
-                <h2>Smart Skip</h2>
+            <div class="fast-mode-page-body smart-skip-body" data-mobile-view="rules">
+                <div class="smart-skip-header-row">
+                    <h2>Smart Skip</h2>
+                    <div class="smart-skip-view-switch" id="smartSkipViewSwitch" role="tablist" aria-label="Smart Skip view">
+                        <button type="button" class="smart-skip-tab is-active" data-view="rules" role="tab" aria-selected="true" id="smartSkipTabRules">Rules</button>
+                        <button type="button" class="smart-skip-tab" data-view="words" role="tab" aria-selected="false" id="smartSkipTabWords">Skipped words <span class="smart-skip-tab-count" id="smartSkipTabCount"></span></button>
+                    </div>
+                </div>
                 <p id="smartSkipLyricsIntro" class="fast-mode-explainer" hidden>Adjust your main song deck, or explore supplementary vocabulary below.</p>
 
                 <div class="fast-mode-controls smart-skip-shortcuts" id="fastModeFineTune">
@@ -1577,6 +1583,13 @@
                     <button type="button" id="smartSkipMoreOptions" class="smart-skip-more-options" aria-haspopup="dialog" hidden><span>Advanced options</span><span class="smart-skip-more-state" id="smartSkipMoreState"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
                         </div>
                     </div>
+                </div>
+
+                <div class="smart-skip-browse-banner" id="smartSkipBrowseBanner">
+                    <button type="button" class="smart-skip-see-words-btn" id="smartSkipSeeWordsBtn">
+                        <span>Browse skipped words (<span id="smartSkipBrowseCount">0</span>)</span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+                    </button>
                 </div>
 
                 <section class="fast-mode-section smart-skip-words" data-section="decks">

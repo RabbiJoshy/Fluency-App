@@ -604,3 +604,225 @@
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
+
+/* ==========================================================================
+   Smart Skip Redesign: Unboxed Toggles & Mobile Basics-First Layout
+   ========================================================================== */
+
+/* 1. Header & Segmented Mobile View Switch */
+.smart-skip-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 2px;
+}
+#fastModeModal .smart-skip-body h2 {
+  margin: 0;
+  padding-right: 0;
+  line-height: 1.2;
+}
+.smart-skip-view-switch {
+  display: inline-flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--text-primary) 7%, transparent);
+  padding: 3px;
+  border-radius: 10px;
+  gap: 2px;
+}
+.smart-skip-tab {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font: 600 13px/1.2 var(--font-reading);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+.smart-skip-tab:hover {
+  color: var(--text-primary);
+}
+.smart-skip-tab.is-active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.smart-skip-tab-count {
+  font-size: 11.5px;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+/* 2. Unboxing the Toggle Menus (Lose the Container Boxes) */
+#fastModeModal .smart-skip-shortcuts {
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  padding: 0 !important;
+}
+#fastModeModal .smart-skip-shortcut {
+  box-shadow: none !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent) !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 4px 0 6px !important;
+  margin: 0 !important;
+}
+#fastModeModal .smart-skip-shortcut:last-child {
+  border-bottom: none !important;
+}
+#fastModeModal .smart-skip-shortcut-row {
+  min-height: 52px;
+  padding: 0 6px 0 8px;
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+#fastModeModal .smart-skip-shortcut-row:hover {
+  background: color-mix(in srgb, var(--text-primary) 3.5%, transparent);
+}
+#fastModeModal .smart-skip-shortcut-name {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+#fastModeModal .smart-skip-shortcut-count:not(:empty) {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-primary) 7%, transparent);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+#fastModeModal .smart-skip-shortcut-detail {
+  padding: 2px 8px 12px;
+}
+
+/* Unboxed Advanced Options Row */
+#fastModeModal .smart-skip-body .smart-skip-more-options {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 14px 8px !important;
+  border-radius: 10px !important;
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+}
+#fastModeModal .smart-skip-body .smart-skip-more-options:hover {
+  background: color-mix(in srgb, var(--text-primary) 3.5%, transparent) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Unboxed Known Languages Selector Context */
+#fastModeModal .known-languages-context {
+  border: none !important;
+  background: transparent !important;
+  padding: 6px 0 0 !important;
+  margin-top: 6px !important;
+  box-shadow: none !important;
+}
+#fastModeModal .known-languages-bar-title {
+  color: var(--text-muted) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* Unboxed shortcuts in the Advanced Options Modal Sheet */
+.smart-skip-more-card .smart-skip-shortcuts {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.smart-skip-more-card .smart-skip-shortcut {
+  box-shadow: none !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent) !important;
+  padding: 4px 0 8px !important;
+}
+
+/* 3. Mobile Progressive Disclosure */
+.smart-skip-browse-banner {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed color-mix(in srgb, var(--border-color) 45%, transparent);
+}
+.smart-skip-see-words-btn {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, var(--border-color));
+  background: color-mix(in srgb, var(--accent-primary) 6%, transparent);
+  color: var(--accent-primary);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font: 600 14px/1.2 var(--font-reading);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.smart-skip-see-words-btn:hover {
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+}
+.smart-skip-see-words-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.2;
+}
+
+@media (max-width: 899px) {
+  .smart-skip-body[data-mobile-view="rules"] .smart-skip-words {
+    display: none !important;
+  }
+  .smart-skip-body[data-mobile-view="words"] .smart-skip-shortcuts,
+  .smart-skip-body[data-mobile-view="words"] .smart-skip-browse-banner,
+  .smart-skip-body[data-mobile-view="words"] #smartSkipLyricsIntro {
+    display: none !important;
+  }
+  .smart-skip-body[data-mobile-view="words"] .smart-skip-words {
+    display: grid !important;
+  }
+}
+
+/* 4. Desktop Wide Canvas Layout */
+@media (min-width: 900px) {
+  .smart-skip-view-switch,
+  .smart-skip-browse-banner {
+    display: none !important;
+  }
+  #fastModeModal .smart-skip-body {
+    max-width: 1200px !important;
+    grid-template-columns: 380px minmax(0, 1fr) !important;
+    column-gap: 40px !important;
+    padding: 24px 28px 48px !important;
+    align-items: start !important;
+  }
+  #fastModeModal .smart-skip-shortcuts {
+    display: flex !important;
+    flex-direction: column !important;
+    position: sticky !important;
+    top: calc(env(safe-area-inset-top, 0px) + 20px) !important;
+  }
+  #fastModeModal .smart-skip-words {
+    display: grid !important;
+    min-width: 0 !important;
+  }
+  #fastModeModal .smart-skip-list {
+    border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+  }
+}
+
