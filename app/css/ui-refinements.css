@@ -643,49 +643,54 @@
   max-height: none !important;
 }
 
-/* 2. Desktop Full-Bleed Stretch (Only when NOT hidden on wide screens) */
+/* 2. Full-Bleed Studio Canvas on ALL screen sizes (Mobile + Desktop) */
+#fastModeModal.modal:not(.hidden) {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--bg-primary, var(--bg-card)) !important;
+  z-index: 1050 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 @media (min-width: 900px) {
   body.desktop-workspace #fastModeModal.desktop-workspace-page:not(.hidden),
   #fastModeModal.modal:not(.hidden) {
     left: var(--desktop-nav-width, 0px) !important;
     right: 0 !important;
     width: auto !important;
-    height: 100dvh !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 24px 44px 44px !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    justify-content: stretch !important;
-    align-items: stretch !important;
-    background: var(--bg-primary, var(--bg-card)) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    z-index: 1050 !important;
   }
 }
 
 #fastModeModal:not(.hidden) > .modal-content,
-body.desktop-workspace .modal.desktop-workspace-page:is(#fastModeModal):not(.hidden) > .modal-content {
-  width: 100% !important;
-  max-width: none !important;
-  height: 100% !important;
-  max-height: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  animation: none !important;
-}
-
 #fastModeModal:not(.hidden) .fast-mode-page {
   width: 100% !important;
   max-width: none !important;
-  min-height: 100% !important;
   height: 100% !important;
-  background: transparent !important;
+  height: 100dvh !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--bg-primary, var(--bg-card)) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
 }
 
 #fastModeModal .smart-skip-body {
@@ -693,11 +698,34 @@ body.desktop-workspace .modal.desktop-workspace-page:is(#fastModeModal):not(.hid
   max-width: none !important;
   box-sizing: border-box !important;
   margin: 0 !important;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 32px) !important;
 }
 
+/* Close Button: Fixed in top right corner with high z-index and tap area */
 #fastModeModal .fast-mode-close {
-  z-index: 20 !important;
+  position: fixed !important;
+  top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+  right: 16px !important;
+  z-index: 1060 !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  background: color-mix(in srgb, var(--bg-card) 90%, var(--text-primary) 10%) !important;
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent) !important;
+  color: var(--text-primary) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
   cursor: pointer !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.15s ease !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+#fastModeModal .fast-mode-close:hover {
+  background: color-mix(in srgb, var(--bg-card) 75%, var(--text-primary) 25%) !important;
+  transform: scale(1.05) !important;
 }
 
 /* 2. Header & Hero Stat Banner */
@@ -1278,6 +1306,86 @@ body.desktop-workspace .modal.desktop-workspace-page:is(#fastModeModal):not(.hid
 
 /* 7. Responsive Rules: Mobile vs Desktop */
 @media (max-width: 899px) {
+  /* Header layout on mobile */
+  .smart-skip-header-row {
+    padding-right: 48px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .smart-skip-title-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+  
+  #fastModeModal .smart-skip-body h2 {
+    font-size: 23px !important;
+  }
+  
+  .smart-skip-tagline {
+    font-size: 13px !important;
+  }
+
+  /* Segmented control tabs - full width on mobile */
+  .smart-skip-view-switch {
+    display: flex !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 4px !important;
+  }
+  .smart-skip-tab {
+    flex: 1 1 50% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 9px 12px !important;
+    font-size: 13.5px !important;
+  }
+
+  /* Rule row on mobile: stack switch & count vertically to give title maximum space */
+  .smart-skip-row-actions {
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    flex: none !important;
+  }
+  #fastModeModal .smart-skip-shortcut-count:not(:empty),
+  .smart-skip-more-card .smart-skip-shortcut-count:not(:empty) {
+    font-size: 11px !important;
+    padding: 2px 7px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Full-width indentation of explainers and language chips on mobile */
+  #fastModeModal .smart-skip-shortcut-detail,
+  .smart-skip-more-card .smart-skip-shortcut-detail {
+    padding: 8px 4px 12px 4px !important;
+  }
+  #fastModeModal .known-languages-context {
+    padding: 6px 4px 12px 4px !important;
+  }
+
+  /* Child modals bottom sheet on mobile */
+  .smart-skip-preview {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+  .smart-skip-more-card,
+  .smart-skip-preview-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 85dvh !important;
+    border-radius: 24px 24px 0 0 !important;
+    border-bottom: 0 !important;
+    padding: 22px 20px max(24px, env(safe-area-inset-bottom)) !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Mobile view switching between rules and words */
   .smart-skip-body[data-mobile-view="rules"] .smart-skip-words {
     display: none !important;
   }
@@ -1302,10 +1410,11 @@ body.desktop-workspace .modal.desktop-workspace-page:is(#fastModeModal):not(.hid
     column-gap: 52px !important;
     row-gap: 24px !important;
     align-items: start !important;
-    padding: 0 0 60px 0 !important;
+    padding: 32px 52px 64px !important;
   }
   #fastModeModal .smart-skip-header-row {
     grid-column: 1 / -1 !important;
+    padding-right: 52px !important;
   }
   #fastModeModal .smart-skip-shortcuts {
     grid-column: 1 !important;
