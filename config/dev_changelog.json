@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-17T20:00:00+01:00",
+      "date": "2026-10-17 20:00 BST",
+      "agent": "Antigravity",
+      "summary": "In-place meaning pins and cleaner active-row usage note trigger",
+      "detail": [
+        "Renamed 'Revisit a meaning' to 'Pin a meaning' with a pushpin icon that toggles pins directly in the left gutter in place of the 3-bar frequency meters.",
+        "Eliminated the duplicate overlay modal when pinning meanings; collapsed part-of-speech sections auto-expand in place and Known tags can be clicked to re-pin.",
+        "Restricted the sense information ('i') trigger to the currently active meaning row and removed its circular border in favour of an editorial italic serif 'i'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-17T18:11:42+01:00",
       "date": "2026-10-17 18:11 BST",
       "agent": "Codex",
@@ -355,18 +367,6 @@
         "The language chip always names the language on desktop and opens the language picker; the artist moved to its own chip.",
         "Learning settings (verbs, song translation) is now the Explore item in the sidebar.",
         "Phone and narrow windows are unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-14T20:46:55+01:00",
-      "date": "2026-10-14 20:46 BST",
-      "agent": "Codex",
-      "summary": "Explain level goals and studying cards from first principles",
-      "detail": [
-        "Level help explains what a level contains and the goal of learning its words, including the music-specific introduction.",
-        "Go describes studying unseen words, flipping a flashcard and marking whether you knew it.",
-        "The deck total starts on its own line after the introductory guidance."
       ],
       "commit": "pending"
     }

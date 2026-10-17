@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=b6f98fbe';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=b6f98fbe';
+import './state.js?v=8c37d3d2';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=8c37d3d2';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -322,6 +322,15 @@ function refresh() {
         const activeCount = Number(lemmaOn()) + advancedOn;
         secondaryState.textContent = activeCount ? `${activeCount} on` : 'Combine forms · Advanced';
     }
+    const totalSkipped = (extras.allSkipped?.length || 0) + (extras.lemmas?.length || 0);
+    const tabCount = document.getElementById('smartSkipTabCount');
+    if (tabCount) tabCount.textContent = totalSkipped ? `(${totalSkipped.toLocaleString()})` : '';
+    const browseCount = document.getElementById('smartSkipBrowseCount');
+    if (browseCount) browseCount.textContent = totalSkipped.toLocaleString();
+    const heroBadge = document.getElementById('smartSkipHeroBadgeText');
+    if (heroBadge) heroBadge.textContent = on ? (totalSkipped ? `${totalSkipped.toLocaleString()} skipped` : 'Active') : 'Off';
+    const heroBadgeContainer = document.getElementById('smartSkipHeroBadge');
+    if (heroBadgeContainer) heroBadgeContainer.classList.toggle('is-off', !on);
     updateMappingStatus();
     updateStreamlineRecCallout();
     updateStreamlineLanguageExamples();
@@ -574,6 +583,17 @@ function updateKnownLanguageCopy() {
     }
 }
 
+function setSmartSkipMobileView(view) {
+    const body = document.querySelector('.smart-skip-body');
+    if (!body) return;
+    body.dataset.mobileView = view;
+    document.querySelectorAll('.smart-skip-tab').forEach(tab => {
+        const isActive = tab.dataset.view === view;
+        tab.classList.toggle('is-active', isActive);
+        tab.setAttribute('aria-selected', String(isActive));
+    });
+}
+
 // `section` is the seam for the unified UI: the setup button, a skipped-count
 // link and a future lyrics "extras" entry can all deep-link into one part of
 // this sheet without each knowing how it is laid out.
@@ -589,6 +609,11 @@ function openFastModePage({ section } = {}) {
     refresh();
     updateStreamlineLanguageExamples();
     globalThis.renderFastTrackSkippedDecks?.();
+    if (section === 'decks') {
+        setSmartSkipMobileView('words');
+    } else {
+        setSmartSkipMobileView('rules');
+    }
     document.getElementById('fastModeModal')?.classList.remove('hidden');
     if (section) {
         document.querySelector(`.fast-mode-section[data-section="${section}"]`)
@@ -608,6 +633,14 @@ function init() {
         const secondary = document.getElementById('smartSkipSecondarySettings');
         if (secondary && 'open' in secondary) secondary.open = !event.matches || !cognateAvailable();
         refresh();
+    });
+    document.querySelectorAll('.smart-skip-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            setSmartSkipMobileView(tab.dataset.view);
+        });
+    });
+    document.getElementById('smartSkipSeeWordsBtn')?.addEventListener('click', () => {
+        setSmartSkipMobileView('words');
     });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
     document.getElementById('smartSkipToggleBtn')?.addEventListener('click', () => {

@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=b6f98fbe';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=8c37d3d2';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -1893,7 +1893,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     const grammar = options.hideVisibleItems
         ? []
         : keyItems.filter(isGrammarCue);
-    const noteHTML = senseNoteHTML(presentation, options);
+    const noteHTML = active ? senseNoteHTML(presentation, options) : '';
 
     if (!active && options.allowInactivePrimary) {
         if (!displayPrimary.length && !grammar.length && !noteHTML) return '';

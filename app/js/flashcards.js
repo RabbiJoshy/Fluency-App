@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=b6f98fbe';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=b6f98fbe';
-import { songCreditHTML } from './song-credit.js?v=b6f98fbe';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=b6f98fbe';
+import './state.js?v=8c37d3d2';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=8c37d3d2';
+import { songCreditHTML } from './song-credit.js?v=8c37d3d2';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=8c37d3d2';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=b6f98fbe';
-import './speech.js?v=b6f98fbe';
-import { goToRoute, routeCodeFor } from './routes.js?v=b6f98fbe';
-import { memoryTipTileHTML } from './memory-tips.js?v=b6f98fbe';
+import { fitSenseRowText } from './card-row-layout.js?v=8c37d3d2';
+import './speech.js?v=8c37d3d2';
+import { goToRoute, routeCodeFor } from './routes.js?v=8c37d3d2';
+import { memoryTipTileHTML } from './memory-tips.js?v=8c37d3d2';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=b6f98fbe';
-import './side-dock.js?v=b6f98fbe';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=b6f98fbe';
+} from './function-word-card.js?v=8c37d3d2';
+import './side-dock.js?v=8c37d3d2';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=8c37d3d2';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=b6f98fbe';
+} from './example-personalisation.js?v=8c37d3d2';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=b6f98fbe';
+} from './spanishdict-usage.js?v=8c37d3d2';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=b6f98fbe';
+} from './reverse-cues.js?v=8c37d3d2';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -68,7 +68,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=b6f98fbe';
+} from './card-metadata-pills.js?v=8c37d3d2';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -811,7 +811,7 @@ function placeRowLeadMarks(root) {
         else row.prepend(lead);
         row.classList.add('has-row-lead');
         if (info) row.classList.add('has-row-lead-and-info');
-        const leftEdge = row.querySelector(':scope > :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag)') ? 38 : 8;
+        const leftEdge = row.querySelector(':scope > :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag, .sense-pin-btn)') ? 38 : 8;
         const measured = lead.getBoundingClientRect().width
             || (lead.textContent.length * 8 + (flag ? 22 : 0) + 12);
         const pad = Math.max(38, Math.ceil(leftEdge + measured + 6));
@@ -834,7 +834,7 @@ function placeRowLeadMarks(root) {
 // stay apart ("leader, boss" and "colloquial", not "leader, bosscolloquial").
 function shownTextPieces(element) {
     const copy = element.cloneNode(true);
-    copy.querySelectorAll('.sense-note-trigger, template, .sense-prominence-badge').forEach(el => el.remove());
+    copy.querySelectorAll('.sense-note-trigger, template, .sense-prominence-badge, .sense-pin-btn, .known-sense-tag').forEach(el => el.remove());
     const pieces = [];
     const walker = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT);
     while (walker.nextNode()) {
@@ -990,7 +990,7 @@ function markSingleSenseSections(root) {
         // Every row already says how common it is: the head's total would be
         // a fourth meter saying less, so it shows only while folded.
         section.classList.toggle('rows-carry-meters', rows.length > 1
-            && [...rows].every(row => row.querySelector('.sense-prominence-badge, .known-sense-tag')));
+            && [...rows].every(row => row.querySelector('.sense-prominence-badge, .known-sense-tag, .sense-pin-btn')));
     });
 }
 
@@ -5956,9 +5956,21 @@ function prominenceMeterHTML(key) {
 
 // A sense the learner already knows stays on the card, greyed, with this tag
 // where its prominence badge would be. The tag reads the same on every row.
-function knownSenseTagHTML(extraStyle = '') {
+function knownSenseTagHTML(extraStyle = '', indices = null) {
     const style = extraStyle ? ` style="${extraStyle}"` : '';
-    return `<span class="known-sense-tag"${style}>Known</span>`;
+    const list = (Array.isArray(indices) ? indices : (Number.isInteger(indices) ? [indices] : []))
+        .filter(i => Number.isInteger(i) && i >= 0);
+    const click = list.length
+        ? ` role="button" tabindex="0" title="Pin this meaning for practice" onclick="togglePinMeaningIndices(event, [${list.join(',')}])" onkeydown="if (event.key === 'Enter' || event.key === ' ') togglePinMeaningIndices(event, [${list.join(',')}])"`
+        : '';
+    return `<span class="known-sense-tag"${style}${click}>Known</span>`;
+}
+
+function sensePinButtonHTML(indices, isPinned, extraStyle = '') {
+    const list = (Array.isArray(indices) ? indices : [indices]).filter(i => Number.isInteger(i) && i >= 0);
+    const style = extraStyle ? ` style="${extraStyle}"` : '';
+    const label = isPinned ? 'Unpin this meaning' : 'Pin this meaning for practice';
+    return `<button type="button" class="sense-pin-btn${isPinned ? ' is-pinned' : ''}"${style} aria-pressed="${Boolean(isPinned)}" aria-label="${label}" title="${label}" onclick="togglePinMeaningIndices(event, [${list.join(',')}])"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="15" height="15" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
 }
 
 function prominenceBadgeHTML(promInfo, extraStyle = '') {
@@ -7034,6 +7046,7 @@ function renderCardWikipediaBadge(card) {
         // set of marked meanings, so the learner can still fold them).
         const practiceIndices = typeof window.getPracticeMeaningIndices === 'function'
             ? window.getPracticeMeaningIndices(card) : new Set();
+        const isPinningMode = Boolean(card._pinningMode);
         const practiceSignature = [...practiceIndices].sort((a, b) => a - b).join(',');
         // With meanings brought back for review, rows read in three tiers:
         // practice (full colour, top), neither (normal), already known (greyed,
@@ -7634,7 +7647,7 @@ function renderCardWikipediaBadge(card) {
                 const joinedDisplay = visibleTranslations.join(joinSep);
                 const cycleWasShortened = cyclePresentations.some(presentation => presentation.note.gloss);
                 const cycleNoteText = rawTranslations.join(' | ');
-                const informationButton = overflowTranslations.length || cycleWasShortened
+                const informationButton = isSelected && (overflowTranslations.length || cycleWasShortened)
                     ? `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about possible meanings" title="Information about possible meanings"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="Possible meanings"><section class="sense-note-section sense-note-section--meaning"><h3>All possibilities</h3><p>${escapeCardText(cycleNoteText)}</p></section></div></template>`
                     : '';
                 const cycleItems = window.knowledgeItemsForMeaning?.(card, m, idx) || [];
@@ -7647,11 +7660,16 @@ function renderCardWikipediaBadge(card) {
                 recordSenseDisplay(idx, { family: '', label: '', detail: '', hidden: false });
                 const cycleTextClass = adaptiveRowTextClass(joinedFull);
                 recordSectionMeanings(target, m.allSenses || [m]);
+                const cyclePinned = practiceIndices.has(idx);
+                const cycleEdge = 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);';
+                const cycleTail = (cyclePinned || isPinningMode)
+                    ? sensePinButtonHTML([idx], cyclePinned, cycleEdge)
+                    : (m.isKnownSense ? knownSenseTagHTML(cycleEdge, [idx]) : '');
                 target.push(`
                 <div class="meaning-row meaning-row-cycle ${cycleTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${m.isKnownSense ? ' meaning-row-known' : ''}" style="position: relative; display: flex; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px; opacity: 0.75;" onclick="selectMeaning(${idx})">
                     ${renderRowCheckSlot(isSelected)}
                     <span class="row-adaptive-text sense-cycle-notes" aria-label="Possible meanings" style="flex: 1; font-weight: 600; color: white; min-width: 0; text-align: center; line-height: 1.4; padding: 4px 8px;"><span class="sense-cycle-label" style="display: block; font-size: 11px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary);">Possible meanings</span>${hasCycleProgress ? `<span class="sense-cycle-choices">${cycleChoices}</span>` : `<span class="sense-cycle-short">${escapeCardText(joinedDisplay)}</span>`}${informationButton}</span>
-                    ${m.isKnownSense ? knownSenseTagHTML('position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''}
+                    ${cycleTail}
                 </div>
                 `);
             } else {
@@ -8010,7 +8028,9 @@ function renderCardWikipediaBadge(card) {
                         }
                         const varyingCol = isTransAxis ? 2 : 1;
                         const memberKnown = entry.memberIndices.every(index => card.meanings[index]?.isKnownSense);
-                        const knownTag = memberKnown && !groupKnown ? ` ${knownSenseTagHTML()}` : '';
+                        const groupPinned = orderedMembers.some(index => practiceIndices.has(index));
+                        const knownTag = memberKnown && !groupKnown && !isPinningMode && !groupPinned
+                            ? ` ${knownSenseTagHTML('', entry.memberIndices)}` : '';
                         const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}${memberKnown ? ' is-known-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}${knownTag}</div>`;
                         return varyingCell;
                     }).join('');
@@ -8022,8 +8042,24 @@ function renderCardWikipediaBadge(card) {
                     const splitLeaves = withinGlossLeafSeparationIsReliable(groupMeanings);
                     const groupPromInfo = prominenceInfoFromShare(groupMeanings);
                     const groupPctVal = Math.min(100, Math.round(groupMeanings.reduce((acc, mm) => acc + shownShare(mm), 0) * 100));
+                    const groupPinned = orderedMembers.some(index => practiceIndices.has(index));
                     let pctColumnHtml;
-                    if (useProminenceLabels && splitLeaves) {
+                    if (isPinningMode || groupPinned) {
+                        const pctStackHtml = displayMemberEntries.map((entry) => {
+                            const memberIdx = entry.representative;
+                            const memberPinned = entry.memberIndices.some(index => practiceIndices.has(index));
+                            const memberKnown = entry.memberIndices.every(index => card.meanings[index]?.isKnownSense);
+                            const clusteredMeanings = entry.memberIndices.map(index => card.meanings[index]);
+                            const pInfo = entry.memberIndices.length > 1
+                                ? prominenceInfoFromShare(clusteredMeanings)
+                                : (glossProminence.infoByIndex.get(memberIdx) || getSenseProminenceInfo(card.meanings[memberIdx]));
+                            const badge = (memberPinned || isPinningMode)
+                                ? sensePinButtonHTML(entry.memberIndices, memberPinned)
+                                : (memberKnown ? knownSenseTagHTML('', entry.memberIndices) : prominenceBadgeHTML(pInfo));
+                            return `<div class="sense-prominence-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;">${badge}</div>`;
+                        }).join('');
+                        pctColumnHtml = `<div class="pct-column" style="display: flex; flex-direction: column; gap: 3px; padding-left: 4px;">${pctStackHtml}</div>`;
+                    } else if (useProminenceLabels && splitLeaves) {
                         const pctStackHtml = displayMemberEntries.map((entry) => {
                             const memberIdx = entry.representative;
                             const clusteredMeanings = entry.memberIndices.map(index => card.meanings[index]);
@@ -8052,14 +8088,14 @@ function renderCardWikipediaBadge(card) {
                             : `<div class="pct-column"></div>`);
                     }
 
-                    if (groupKnown) {
-                        pctColumnHtml = `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;">${knownSenseTagHTML()}</div>`;
+                    if (groupKnown && !isPinningMode && !groupPinned) {
+                        pctColumnHtml = `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;">${knownSenseTagHTML('', orderedMembers)}</div>`;
                     }
 
                     // Sub-rows with their own meters keep a group total too,
                     // shown in their place while the sub-rows are folded, so
                     // a folded sense always reads as one total.
-                    if (!groupKnown && splitLeaves && useProminenceLabels) {
+                    if (!groupKnown && !isPinningMode && !groupPinned && splitLeaves && useProminenceLabels) {
                         pctColumnHtml = pctColumnHtml.replace(/<\/div>$/,
                             `<div class="pct-group-total">${prominenceBadgeHTML(groupPromInfo)}</div></div>`);
                     }
@@ -8154,19 +8190,22 @@ function renderCardWikipediaBadge(card) {
                     const rareRowClass = isFoldedLeader
                         ? (foldInfo.hasOnlyRare ? ' meaning-row-rare' : '')
                         : ((m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '');
-                    const rowKnown = isFoldedLeader
-                        ? foldInfo.allIndices.every(index => card.meanings[index]?.isKnownSense)
-                        : Boolean(m.isKnownSense);
+                    const rowIndices = isFoldedLeader ? foldInfo.allIndices : [idx];
+                    const rowPinned = rowIndices.some(index => practiceIndices.has(index));
+                    const rowKnown = rowIndices.every(index => card.meanings[index]?.isKnownSense);
                     const knownRowClass = rowKnown ? ' meaning-row-known' : '';
-                    const practiceRowClass = meaningTierClass(isFoldedLeader ? foldInfo.allIndices : [idx]);
-                    const pctTail = rowKnown
-                        ? knownSenseTagHTML('position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
+                    const practiceRowClass = meaningTierClass(rowIndices);
+                    const edgeStyle = 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);';
+                    const pctTail = (rowPinned || isPinningMode)
+                        ? sensePinButtonHTML(rowIndices, rowPinned, edgeStyle)
+                        : rowKnown
+                        ? knownSenseTagHTML(edgeStyle, rowIndices)
                         : useProminenceLabels
-                        ? prominenceBadgeHTML(promInfo, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
+                        ? prominenceBadgeHTML(promInfo, edgeStyle)
                         : (!m.unassigned && displayPctVal < 100
-                            ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${displayPctVal}%</span>`
-                            : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''));
-                    const sidePad = rowKnown ? '52px' : (useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px'));
+                            ? `<span class="sense-percentage sense-percentage-tail" style="${edgeStyle} pointer-events: none;">${displayPctVal}%</span>`
+                            : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, edgeStyle) : ''));
+                    const sidePad = (rowKnown && !rowPinned && !isPinningMode) ? '52px' : ((rowPinned || isPinningMode || useProminenceLabels) ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px'));
                     target.push(`
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}${knownRowClass}${practiceRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
@@ -10837,8 +10876,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'b6f98fbe';
-const MODALS_ASSET_VERSION = 'b6f98fbe';
+const ASSET_VERSION = '8c37d3d2';
+const MODALS_ASSET_VERSION = '8c37d3d2';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
