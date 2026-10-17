@@ -1548,9 +1548,17 @@
                 <div class="fast-mode-controls smart-skip-shortcuts" id="fastModeFineTune">
                     <div id="cognateToggleContainer" class="smart-skip-shortcut" data-ss-kind="cognate" style="display: none;">
                         <div class="smart-skip-shortcut-row">
-                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Skip look-alikes</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
-                            <span class="smart-skip-shortcut-count" data-ss-count="cognate"></span>
-                            <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Skip look-alikes" data-ss-toggle="cognate"></button>
+                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false">
+                                <span class="smart-skip-rule-icon is-cognate" aria-hidden="true">🪞</span>
+                                <span class="smart-skip-rule-info">
+                                    <span class="smart-skip-rule-title">Skip look-alikes</span>
+                                    <span class="smart-skip-rule-sub">Similar words in English (idea, familia, hospital)</span>
+                                </span>
+                            </button>
+                            <div class="smart-skip-row-actions">
+                                <span class="smart-skip-shortcut-count" data-ss-count="cognate"></span>
+                                <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Skip look-alikes" data-ss-toggle="cognate"></button>
+                            </div>
                         </div>
                         <div class="smart-skip-shortcut-detail" hidden>
                             <p class="fast-mode-explainer">Words that look similar <em>and</em> mean the same in English, like <em>idea</em> or <em>familia</em>.</p>
@@ -1574,9 +1582,17 @@
                         <div class="smart-skip-secondary-controls">
                     <div id="lemmaToggleContainer" class="smart-skip-shortcut" data-ss-kind="lemma" style="display: none;">
                         <div class="smart-skip-shortcut-row">
-                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Combine word forms</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
-                            <span class="smart-skip-shortcut-count" data-ss-count="lemma"></span>
-                            <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Combine word forms" data-ss-toggle="lemma"></button>
+                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false">
+                                <span class="smart-skip-rule-icon is-lemma" aria-hidden="true">⑂</span>
+                                <span class="smart-skip-rule-info">
+                                    <span class="smart-skip-rule-title">Combine word forms</span>
+                                    <span class="smart-skip-rule-sub">Inflected forms share one card (hablo, habló → hablar)</span>
+                                </span>
+                            </button>
+                            <div class="smart-skip-row-actions">
+                                <span class="smart-skip-shortcut-count" data-ss-count="lemma"></span>
+                                <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Combine word forms" data-ss-toggle="lemma"></button>
+                            </div>
                         </div>
                         <div class="smart-skip-shortcut-detail" hidden>
                             <p class="fast-mode-explainer">Related forms, such as <em>hablo</em>, <em>habló</em> and <em>hablar</em>, share one flashcard.</p>
@@ -1589,7 +1605,19 @@
                             <button class="lemma-toggle-btn" data-lemma="on">On</button>
                         </div>
                     </div>
-                    <button type="button" id="smartSkipMoreOptions" class="smart-skip-more-options" aria-haspopup="dialog" hidden><span>Advanced options</span><span class="smart-skip-more-state" id="smartSkipMoreState"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
+                    <button type="button" id="smartSkipMoreOptions" class="smart-skip-more-options" aria-haspopup="dialog" hidden>
+                        <div class="smart-skip-more-left">
+                            <span class="smart-skip-rule-icon is-advanced" aria-hidden="true">✦</span>
+                            <div class="smart-skip-more-info">
+                                <span class="smart-skip-more-title">Advanced skip rules</span>
+                                <span class="smart-skip-more-sub">Pronouns, slang, casual fillers &amp; proper nouns</span>
+                            </div>
+                        </div>
+                        <div class="smart-skip-more-right">
+                            <span class="smart-skip-more-state" id="smartSkipMoreState"></span>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+                        </div>
+                    </button>
                         </div>
                     </div>
                 </div>
@@ -1652,9 +1680,17 @@
             <div class="fast-mode-controls smart-skip-shortcuts">
                     <div id="grammarToggleContainer" class="smart-skip-shortcut" data-ss-kind="grammar" style="display: none;">
                         <div class="smart-skip-shortcut-row">
-                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Skip pronouns &amp; particles</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
-                            <span class="smart-skip-shortcut-count" data-ss-count="grammar"></span>
-                            <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Skip pronouns &amp; particles" data-ss-toggle="grammar"></button>
+                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false">
+                                <span class="smart-skip-rule-icon is-grammar" aria-hidden="true">🏷</span>
+                                <span class="smart-skip-rule-info">
+                                    <span class="smart-skip-rule-title">Skip pronouns &amp; particles</span>
+                                    <span class="smart-skip-rule-sub">Short function words like <em>me</em>, <em>te</em>, <em>se</em></span>
+                                </span>
+                            </button>
+                            <div class="smart-skip-row-actions">
+                                <span class="smart-skip-shortcut-count" data-ss-count="grammar"></span>
+                                <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Skip pronouns &amp; particles" data-ss-toggle="grammar"></button>
+                            </div>
                         </div>
                         <div class="smart-skip-shortcut-detail" hidden>
                             <p class="fast-mode-explainer">Short function words, like <em>me</em>, <em>te</em>, <em>se</em> or <em>dímelo</em>.</p>
@@ -1669,9 +1705,17 @@
                     </div>
                     <div id="slangToggleContainer" class="smart-skip-shortcut" data-ss-kind="slang" style="display: none;">
                         <div class="smart-skip-shortcut-row">
-                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Skip slang &amp; fillers</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
-                            <span class="smart-skip-shortcut-count" data-ss-count="slang"></span>
-                            <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Skip slang &amp; fillers" data-ss-toggle="slang"></button>
+                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false">
+                                <span class="smart-skip-rule-icon is-slang" aria-hidden="true">💬</span>
+                                <span class="smart-skip-rule-info">
+                                    <span class="smart-skip-rule-title">Skip slang &amp; fillers</span>
+                                    <span class="smart-skip-rule-sub">Casual words and fillers like <em>pa</em>, <em>o sea</em></span>
+                                </span>
+                            </button>
+                            <div class="smart-skip-row-actions">
+                                <span class="smart-skip-shortcut-count" data-ss-count="slang"></span>
+                                <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Skip slang &amp; fillers" data-ss-toggle="slang"></button>
+                            </div>
                         </div>
                         <div class="smart-skip-shortcut-detail" hidden>
                             <p class="fast-mode-explainer">Casual words and fillers, like <em>pa</em>, <em>o sea</em> or <em>tipo</em>.</p>
@@ -1686,9 +1730,17 @@
                     </div>
                     <div id="entityToggleContainer" class="smart-skip-shortcut" data-ss-kind="entity" style="display: none;">
                         <div class="smart-skip-shortcut-row">
-                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Skip names &amp; places</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
-                            <span class="smart-skip-shortcut-count" data-ss-count="entity"></span>
-                            <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Skip names &amp; places" data-ss-toggle="entity"></button>
+                            <button type="button" class="smart-skip-shortcut-name" aria-expanded="false">
+                                <span class="smart-skip-rule-icon is-entity" aria-hidden="true">📍</span>
+                                <span class="smart-skip-rule-info">
+                                    <span class="smart-skip-rule-title">Skip names &amp; places</span>
+                                    <span class="smart-skip-rule-sub">Proper nouns, cities &amp; brands</span>
+                                </span>
+                            </button>
+                            <div class="smart-skip-row-actions">
+                                <span class="smart-skip-shortcut-count" data-ss-count="entity"></span>
+                                <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Skip names &amp; places" data-ss-toggle="entity"></button>
+                            </div>
                         </div>
                         <div class="smart-skip-shortcut-detail" hidden>
                             <p class="fast-mode-explainer">People, places and brands, like <em>Bad Bunny</em> or <em>Puerto Rico</em>.</p>
