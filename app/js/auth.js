@@ -1,6 +1,7 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
 import './state.js?v=20260825ak';
+import { accountPermissions } from './account-permissions.js?v=1';
 import { readJsonWithTimeout } from './read-request.js?v=1';
 import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=1';
 import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=20260929sense6';
@@ -19,35 +20,14 @@ import {
 import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=20261010airlock';
 import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=20261016auth';
 
-const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
-
-function isAuditAccount(user = currentUser) {
-    return Boolean(user && !user.isGuest && AUDIT_ACCOUNT_INITIALS.has(
-        String(user.initials || '').trim().toUpperCase()
-    ));
+// Shared with the server; names and retired initials do not grant access.
+function userPermissions(user = currentUser) {
+    return accountPermissions(user && !user.isGuest ? user.initials : '');
 }
-
-function isJpAccount(user = currentUser) {
-    return Boolean(user && !user.isGuest && String(user.initials || '').trim().toUpperCase() === 'JP');
-}
-
-// Reviewer profiles: flag cards and open the data/model panel with the Cmd/Ctrl+I
-// shortcut, but see every other surface exactly as an ordinary user does (no
-// Admin settings, changelog modal, provenance pills or scrape inspector). New
-// profiles are keyed by their profile ID, never by display name, because
-// anyone can register a display name. Keep this list to explicit IDs.
-const REVIEWER_PROFILE_IDS = new Set([
-    'profile_028abec8-a887-469a-9772-424e78ff9397', // Archived JOSHUA identity
-    'clerk_user_3KdfOQ19QCngxtBsj0NsX3qlMjl' // Verified replacement Joshua account
-]);
-
-function isReviewerAccount(user = currentUser) {
-    return Boolean(user && !user.isGuest && REVIEWER_PROFILE_IDS.has(String(user.initials || '')));
-}
-
-function canUserFlag(user = currentUser) {
-    return isAuditAccount(user) || isJpAccount(user) || isReviewerAccount(user);
-}
+function isAuditAccount(user = currentUser) { return userPermissions(user).isAdmin; }
+function isJpAccount(user = currentUser) { return userPermissions(user).isJp; }
+function isReviewerAccount(user = currentUser) { return userPermissions(user).isReviewer; }
+function canUserFlag(user = currentUser) { return userPermissions(user).canFlag; }
 
 window.isAuditAccount = isAuditAccount;
 window.isJpAccount = isJpAccount;
@@ -1286,8 +1266,8 @@ async function flagWord(card, fieldPath, fieldValue, fields = null) {
         console.warn('flagWord skipped: no user logged in');
         return false;
     }
-    if (currentUser.isGuest) {
-        console.warn('flagWord skipped: guest sessions are not persisted');
+    if (!canUserFlag(currentUser)) {
+        console.warn('flagWord skipped: flagging is unavailable for this account');
         return false;
     }
     const baseId = card.fullId;

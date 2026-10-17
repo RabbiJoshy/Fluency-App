@@ -1,10 +1,10 @@
+import { accountPermissions } from '../../../app/js/account-permissions.js';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 const keysets = new Map();
 const prohibitedActions = new Set(['dump', 'lookupProfiles', 'createProfile', 'claimLegacyProfile']);
 
-// Only the separate Clerk staging deployment opts in. Existing production
-// clients and their database remain on the original worker configuration.
+// Production and staging both verify the immutable Clerk session identity.
 export async function authorizeProgress(request, params, env, verificationKeys) {
   if (!env.CLERK_ISSUER) return;
   const bearer = /^Bearer (\S+)$/.exec(request.headers.get('Authorization') || '');
@@ -28,16 +28,22 @@ export async function authorizeProgress(request, params, env, verificationKeys) 
   } catch (_) {
     throw Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 });
   }
-  if (prohibitedActions.has(params.action)) {
-    throw Object.assign(new Error('This action is unavailable for passwordless accounts.'), { status: 403 });
-  }
   const prefix = env.CLERK_ENVIRONMENT === 'production' ? '' : 'stg_';
   const expectedUser = `${prefix}clerk_${payload.sub}`;
+  if (prohibitedActions.has(params.action)
+    && !(params.action === 'dump' && accountPermissions(expectedUser).isAdmin)) {
+    throw Object.assign(new Error('This action is unavailable for passwordless accounts.'), { status: 403 });
+  }
   // Validate all supplied identities, including nested bulk rows. Never allow
   // a signed-in person to address another account by changing a request body.
   if ((params.user && params.user !== expectedUser)
     || (Array.isArray(params.rows) && params.rows.some(row => row.user && row.user !== expectedUser))) {
     throw Object.assign(new Error('This progress belongs to another account.'), { status: 403 });
+  }
+  const flagRequest = params.sheet === 'FlaggedWords'
+    || (Array.isArray(params.rows) && params.rows.some(row => row.sheet === 'FlaggedWords'));
+  if (flagRequest && !accountPermissions(expectedUser).canFlag) {
+    throw Object.assign(new Error('Flagging is unavailable for this account.'), { status: 403 });
   }
   params.user = expectedUser;
   if (Array.isArray(params.rows)) params.rows = params.rows.map(row => ({ ...row, user: expectedUser }));

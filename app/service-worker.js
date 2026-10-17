@@ -79,6 +79,7 @@ const urlsToCache = [
   '/js/config.js?v=20260921rh',
   '/js/progress.js?v=20260927pa',
   '/js/srs-policy.js?v=1',
+  '/js/account-permissions.js?v=1',
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20261014clarity',
   `/js/progress-overview.js?v=${ASSET_VERSION}`,
