@@ -6,6 +6,7 @@ from pilot import build
 from expand import expand
 from check import plain
 from slot_review import REVIEW
+from formula_copy import DROP_CONTEXT
 
 class ExpansionTests(unittest.TestCase):
     def test_coverage_types_and_unchanged_nonpilot_examples(self):
@@ -36,7 +37,10 @@ class ExpansionTests(unittest.TestCase):
         for (lang,word,i),(label,kind,chunks) in REVIEW.items():
             relation=expanded[lang][word]['relations'][i]
             self.assertEqual(relation['slotTypes']['v'],kind)
-            self.assertIn('>'+label+'</span>',relation['formulaHTML'])
+            if (word,i) not in DROP_CONTEXT[lang]:
+                self.assertIn('>'+label+'</span>',relation['formulaHTML'])
+            else:
+                self.assertNotIn('fw-token-v',relation['formulaHTML'])
             for ex,chunk in zip(relation['examples'],chunks):
                 if chunk is not None:
                     self.assertEqual(re.findall(r'<span class="fw-token-v">(.*?)</span>',ex['targetHTML']),[chunk])
@@ -46,3 +50,17 @@ class ExpansionTests(unittest.TestCase):
             for entry in words.values():
                 for r in entry['relations']:
                     self.assertNotIn('an action / situation',r['formulaHTML'])
+
+    def test_short_formula_keeps_distinctions_and_sentence_types(self):
+        originals,pilot,_=build()
+        expanded,_=expand(originals,pilot)
+        for lang in ('pt','es'):
+            self.assertEqual(plain(expanded[lang]['que']['relations'][0]['formulaHTML']),'think / say / know / hope + que')
+            self.assertEqual(plain(expanded[lang]['de']['relations'][0]['formulaHTML']),'verb + de')
+            self.assertEqual(plain(expanded[lang]['de']['relations'][1]['formulaHTML']),'noun + de')
+            place='em' if lang=='pt' else 'en'
+            self.assertIn('a place',plain(expanded[lang][place]['relations'][0]['formulaHTML']))
+            self.assertIn('a time / period',plain(expanded[lang][place]['relations'][1]['formulaHTML']))
+        self.assertIn('what happens then',plain(expanded['pt']['se']['relations'][0]['formulaHTML']))
+        self.assertEqual(plain(expanded['es']['y']['relations'][0]['formulaHTML']).count(' + '),2)
+        self.assertIn('em + o',plain(expanded['pt']['no']['relations'][0]['formulaHTML']))

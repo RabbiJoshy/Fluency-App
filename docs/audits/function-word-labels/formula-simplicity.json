@@ -1,0 +1,1037 @@
+[
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
+    "after": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "pt",
+    "word": "de",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
+    "after": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
+    "after": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
+    "changed": false,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+    "after": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "pt",
+    "word": "que",
+    "pattern": 2,
+    "before": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+    "after": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "pt",
+    "word": "naquele",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">naquele</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+    "after": "<span class=\"fw-token-connector\">naquele</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "nos",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-c\">masculine plural noun</span>",
+    "after": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-c\">masculine plural noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a possible situation</span> + <span class=\"fw-token-c\">what happens then</span>",
+    "after": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a possible situation</span> + <span class=\"fw-token-c\">what happens then</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "se",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+    "after": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "o",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "em",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a place</span>",
+    "after": "<span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a place</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "em",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a time / period</span>",
+    "after": "<span class=\"fw-token-connector\">em</span> + <span class=\"fw-token-c\">a time / period</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "para",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a place</span>",
+    "after": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a place</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "para",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+    "after": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "para",
+    "pattern": 2,
+    "before": "<span class=\"fw-token-v\">noun / noun phrase</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+    "after": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "com",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a person</span>",
+    "after": "<span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a person</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "com",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+    "after": "<span class=\"fw-token-connector\">com</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "por",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb / expression</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+    "after": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "por",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+    "after": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "no",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">em + o</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "after": "<span class=\"fw-token-connector\">em + o</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "na",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">em + a</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "after": "<span class=\"fw-token-connector\">em + a</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "do",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">de + o</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "after": "<span class=\"fw-token-connector\">de + o</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "da",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">de + a</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "after": "<span class=\"fw-token-connector\">de + a</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "como",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">what you compare with</span>",
+    "after": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "pt",
+    "word": "como",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">a role / job</span>",
+    "after": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">a role / job</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "mas",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">mas</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+    "after": "<span class=\"fw-token-connector\">mas</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "a",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+    "after": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "a",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "after": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "a",
+    "pattern": 2,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span>",
+    "after": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "e",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">e</span> + <span class=\"fw-token-c\">an item / idea</span>",
+    "after": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">e</span> + <span class=\"fw-token-c\">an item / idea</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "eu",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">Eu</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">Eu</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "ele",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">Ele</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">Ele</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "ele",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">preposition</span> + <span class=\"fw-token-connector\">ele</span>",
+    "after": "<span class=\"fw-token-v\">preposition</span> + <span class=\"fw-token-connector\">ele</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "ela",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">Ela</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">Ela</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "um",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">um</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "after": "<span class=\"fw-token-connector\">um</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "uma",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">uma</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "after": "<span class=\"fw-token-connector\">uma</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "os",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">os</span> + <span class=\"fw-token-c\">plural masculine noun</span>",
+    "after": "<span class=\"fw-token-connector\">os</span> + <span class=\"fw-token-c\">plural masculine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "os",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">os</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">os</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "as",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">as</span> + <span class=\"fw-token-c\">plural feminine noun</span>",
+    "after": "<span class=\"fw-token-connector\">as</span> + <span class=\"fw-token-c\">plural feminine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "me",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "me",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">-me</span>",
+    "after": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">-me</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "te",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "lhe",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">lhe</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">lhe</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "ao",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">a + o</span> + <span class=\"fw-token-c\">a place / time</span>",
+    "after": "<span class=\"fw-token-connector\">a + o</span> + <span class=\"fw-token-c\">a place / time</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "ao",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">ao</span> + <span class=\"fw-token-v\">infinitive (dictionary form)</span>",
+    "after": "<span class=\"fw-token-connector\">ao</span> + <span class=\"fw-token-v\">infinitive (dictionary form)</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "à",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">a + a</span> + <span class=\"fw-token-c\">a place / time</span>",
+    "after": "<span class=\"fw-token-connector\">a + a</span> + <span class=\"fw-token-c\">a place / time</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "pelo",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">por + o</span> + <span class=\"fw-token-c\">a route / reason</span>",
+    "after": "<span class=\"fw-token-connector\">por + o</span> + <span class=\"fw-token-c\">a route / reason</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "pela",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">por + a</span> + <span class=\"fw-token-c\">a route / reason</span>",
+    "after": "<span class=\"fw-token-connector\">por + a</span> + <span class=\"fw-token-c\">a route / reason</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "num",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">em + um</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "after": "<span class=\"fw-token-connector\">em + um</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "numa",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">em + uma</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "after": "<span class=\"fw-token-connector\">em + uma</span> + <span class=\"fw-token-c\">feminine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "dele",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">dele</span>",
+    "after": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">dele</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "dela",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">dela</span>",
+    "after": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">dela</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "sem",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">noun / verb</span> + <span class=\"fw-token-connector\">sem</span> + <span class=\"fw-token-c\">what is missing</span>",
+    "after": "<span class=\"fw-token-connector\">sem</span> + <span class=\"fw-token-c\">what is missing</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "sobre",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb / noun phrase</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a topic</span>",
+    "after": "<span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a topic</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "sobre",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a place</span>",
+    "after": "<span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a place</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "até",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">até</span> + <span class=\"fw-token-c\">an endpoint</span>",
+    "after": "<span class=\"fw-token-connector\">até</span> + <span class=\"fw-token-c\">an endpoint</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "até",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">Até</span> + <span class=\"fw-token-c\">an unexpected example</span>",
+    "after": "<span class=\"fw-token-connector\">Até</span> + <span class=\"fw-token-c\">an unexpected example</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "porque",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+    "after": "<span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "pt",
+    "word": "quando",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">Quando</span> + <span class=\"fw-token-v\">a situation</span> , <span class=\"fw-token-c\">what happens</span>",
+    "after": "<span class=\"fw-token-connector\">Quando</span> + <span class=\"fw-token-v\">a situation</span> , <span class=\"fw-token-c\">what happens</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "isso",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">isso</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">isso</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "isto",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">isto</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">isto</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "pt",
+    "word": "tudo",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">tudo</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">tudo</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">noun / verb / pronoun</span>",
+    "after": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "es",
+    "word": "de",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span> + <span class=\"fw-token-c\">detail / action</span>",
+    "after": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
+    "after": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
+    "changed": false,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">description</span>",
+    "after": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "es",
+    "word": "que",
+    "pattern": 2,
+    "before": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span> + <span class=\"fw-token-c\">what you compare with</span>",
+    "after": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "es",
+    "word": "a",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+    "after": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a place</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "a",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a person</span>",
+    "after": "<span class=\"fw-token-connector\">a</span> + <span class=\"fw-token-c\">a person</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "en",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a place</span>",
+    "after": "<span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a place</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "en",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a time / period</span>",
+    "after": "<span class=\"fw-token-connector\">en</span> + <span class=\"fw-token-c\">a time / period</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "por",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb / expression</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+    "after": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "por",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+    "after": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "para",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+    "after": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">infinitive (dictionary form)</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "para",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+    "after": "<span class=\"fw-token-connector\">para</span> + <span class=\"fw-token-c\">a person</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "con",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a person</span>",
+    "after": "<span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a person</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "con",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+    "after": "<span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "sin",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">noun / verb</span> + <span class=\"fw-token-connector\">sin</span> + <span class=\"fw-token-c\">what is missing</span>",
+    "after": "<span class=\"fw-token-connector\">sin</span> + <span class=\"fw-token-c\">what is missing</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "se",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "me",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "te",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "nos",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "le",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">le</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">le</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-c\">destination</span>",
+    "after": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-c\">destination</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "al",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">infinitive (dictionary form)</span>",
+    "after": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">infinitive (dictionary form)</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "del",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">de + el</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "after": "<span class=\"fw-token-connector\">de + el</span> + <span class=\"fw-token-c\">masculine noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "el",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">el</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+    "after": "<span class=\"fw-token-connector\">el</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "la",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-c\">feminine singular noun</span>",
+    "after": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-c\">feminine singular noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "la",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "los",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-c\">masculine plural noun</span>",
+    "after": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-c\">masculine plural noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "los",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "las",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">las</span> + <span class=\"fw-token-c\">feminine plural noun</span>",
+    "after": "<span class=\"fw-token-connector\">las</span> + <span class=\"fw-token-c\">feminine plural noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">adjective</span>",
+    "after": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">adjective</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "lo",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "un",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">un</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+    "after": "<span class=\"fw-token-connector\">un</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "una",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">una</span> + <span class=\"fw-token-c\">feminine singular noun</span>",
+    "after": "<span class=\"fw-token-connector\">una</span> + <span class=\"fw-token-c\">feminine singular noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "y",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">y</span> + <span class=\"fw-token-c\">an item / idea</span>",
+    "after": "<span class=\"fw-token-v\">an item / idea</span> + <span class=\"fw-token-connector\">y</span> + <span class=\"fw-token-c\">an item / idea</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "pero",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">pero</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+    "after": "<span class=\"fw-token-connector\">pero</span> + <span class=\"fw-token-c\">a contrasting idea</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "si",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">Si</span> + <span class=\"fw-token-v\">a situation</span> , <span class=\"fw-token-c\">what happens</span>",
+    "after": "<span class=\"fw-token-connector\">Si</span> + <span class=\"fw-token-v\">a situation</span> , <span class=\"fw-token-c\">what happens</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "como",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">what you compare with</span>",
+    "after": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span>",
+    "changed": true,
+    "reason": "Keep the distinctive frame; show its completion in the example."
+  },
+  {
+    "language": "es",
+    "word": "como",
+    "pattern": 1,
+    "before": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">a role / job</span>",
+    "after": "<span class=\"fw-token-connector\">como</span> + <span class=\"fw-token-c\">a role / job</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "mi",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">mi</span> + <span class=\"fw-token-c\">singular noun</span>",
+    "after": "<span class=\"fw-token-connector\">mi</span> + <span class=\"fw-token-c\">singular noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "su",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">su</span> + <span class=\"fw-token-c\">singular noun</span>",
+    "after": "<span class=\"fw-token-connector\">su</span> + <span class=\"fw-token-c\">singular noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "tu",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">tu</span> + <span class=\"fw-token-c\">singular noun</span>",
+    "after": "<span class=\"fw-token-connector\">tu</span> + <span class=\"fw-token-c\">singular noun</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "yo",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">Yo</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">Yo</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "tú",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">Tú</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">Tú</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "eso",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">eso</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">eso</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "esto",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">esto</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">esto</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "todo",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">todo</span> + <span class=\"fw-token-v\">verb</span>",
+    "after": "<span class=\"fw-token-connector\">todo</span> + <span class=\"fw-token-v\">verb</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "algo",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">algo</span>",
+    "after": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">algo</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  },
+  {
+    "language": "es",
+    "word": "porque",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-v\">what happens</span> + <span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+    "after": "<span class=\"fw-token-connector\">porque</span> + <span class=\"fw-token-c\">a reason</span>",
+    "changed": true,
+    "reason": "Keep the complement that distinguishes the use; omit generic preceding context."
+  },
+  {
+    "language": "es",
+    "word": "cuando",
+    "pattern": 0,
+    "before": "<span class=\"fw-token-connector\">Cuando</span> + <span class=\"fw-token-v\">a situation</span> , <span class=\"fw-token-c\">what happens</span>",
+    "after": "<span class=\"fw-token-connector\">Cuando</span> + <span class=\"fw-token-v\">a situation</span> , <span class=\"fw-token-c\">what happens</span>",
+    "changed": false,
+    "reason": "Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit."
+  }
+]

@@ -1,0 +1,121 @@
+# Formula simplicity pass
+
+115 patterns checked; 39 further reductions after the two thought/speech que formulas.
+
+Display only. Rules, slot types, source sentences, translations and recognition requirements remain unchanged. Keep both sides of e/y and the condition/result of Portuguese se. Keep explicit contraction decompositions. Omit generic leading context for prepositions when the final slot distinguishes place, time, person, tool or purpose.
+
+- pt / de / 0: verb + de + noun / verb / pronoun → verb + de. Keep the distinctive frame; show its completion in the example.
+- pt / de / 1: noun + de + detail / action → noun + de. Keep the distinctive frame; show its completion in the example.
+- pt / que / 0: think / say / know / hope + que → think / say / know / hope + que. Keep the distinctive frame; show its completion in the example.
+- pt / que / 1: noun + que + description → noun + que. Keep the distinctive frame; show its completion in the example.
+- pt / que / 2: more, less or better + que + what you compare with → more, less or better + que. Keep the distinctive frame; show its completion in the example.
+- pt / naquele / 0: naquele + masculine singular noun → naquele + masculine singular noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / nos / 0: nos + verb → nos + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / nos / 1: nos + masculine plural noun → nos + masculine plural noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / se / 0: se + a possible situation + what happens then → se + a possible situation + what happens then. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / se / 1: se + verb → se + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / o / 0: o + masculine singular noun → o + masculine singular noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / o / 1: o + verb → o + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / em / 0: verb + em + a place → em + a place. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / em / 1: verb + em + a time / period → em + a time / period. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / para / 0: verb + para + a place → para + a place. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / para / 1: verb + para + infinitive (dictionary form) → para + infinitive (dictionary form). Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / para / 2: noun / noun phrase + para + a person → para + a person. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / com / 0: verb + com + a person → com + a person. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / com / 1: verb + com + a tool / way of doing it → com + a tool / way of doing it. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / por / 0: verb / expression + por + a reason → por + a reason. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / por / 1: verb + por + a place → por + a place. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / no / 0: em + o + masculine noun → em + o + masculine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / na / 0: em + a + feminine noun → em + a + feminine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / do / 0: de + o + masculine noun → de + o + masculine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / da / 0: de + a + feminine noun → de + a + feminine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / como / 0: verb + como + what you compare with → verb + como. Keep the distinctive frame; show its completion in the example.
+- pt / como / 1: como + a role / job → como + a role / job. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / mas / 0: what happens + mas + a contrasting idea → mas + a contrasting idea. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / a / 0: verb + a + a place → a + a place. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / a / 1: a + feminine noun → a + feminine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / a / 2: verb + a → verb + a. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / e / 0: an item / idea + e + an item / idea → an item / idea + e + an item / idea. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / eu / 0: Eu + verb → Eu + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / ele / 0: Ele + verb → Ele + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / ele / 1: preposition + ele → preposition + ele. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / ela / 0: Ela + verb → Ela + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / um / 0: um + masculine noun → um + masculine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / uma / 0: uma + feminine noun → uma + feminine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / os / 0: os + plural masculine noun → os + plural masculine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / os / 1: os + verb → os + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / as / 0: as + plural feminine noun → as + plural feminine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / me / 0: me + verb → me + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / me / 1: verb + -me → verb + -me. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / te / 0: te + verb → te + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / lhe / 0: lhe + verb → lhe + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / ao / 0: a + o + a place / time → a + o + a place / time. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / ao / 1: ao + infinitive (dictionary form) → ao + infinitive (dictionary form). Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / à / 0: a + a + a place / time → a + a + a place / time. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / pelo / 0: por + o + a route / reason → por + o + a route / reason. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / pela / 0: por + a + a route / reason → por + a + a route / reason. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / num / 0: em + um + masculine noun → em + um + masculine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / numa / 0: em + uma + feminine noun → em + uma + feminine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / dele / 0: noun + dele → noun + dele. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / dela / 0: noun + dela → noun + dela. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / sem / 0: noun / verb + sem + what is missing → sem + what is missing. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / sobre / 0: verb / noun phrase + sobre + a topic → sobre + a topic. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / sobre / 1: verb + sobre + a place → sobre + a place. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / até / 0: verb + até + an endpoint → até + an endpoint. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / até / 1: Até + an unexpected example → Até + an unexpected example. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / porque / 0: what happens + porque + a reason → porque + a reason. Keep the complement that distinguishes the use; omit generic preceding context.
+- pt / quando / 0: Quando + a situation , what happens → Quando + a situation , what happens. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / isso / 0: isso + verb → isso + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / isto / 0: isto + verb → isto + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- pt / tudo / 0: tudo + verb → tudo + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / de / 0: verb + de + noun / verb / pronoun → verb + de. Keep the distinctive frame; show its completion in the example.
+- es / de / 1: noun + de + detail / action → noun + de. Keep the distinctive frame; show its completion in the example.
+- es / que / 0: think / say / know / hope + que → think / say / know / hope + que. Keep the distinctive frame; show its completion in the example.
+- es / que / 1: noun + que + description → noun + que. Keep the distinctive frame; show its completion in the example.
+- es / que / 2: more, less or better + que + what you compare with → more, less or better + que. Keep the distinctive frame; show its completion in the example.
+- es / a / 0: verb + a + a place → a + a place. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / a / 1: verb + a + a person → a + a person. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / en / 0: verb + en + a place → en + a place. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / en / 1: verb + en + a time / period → en + a time / period. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / por / 0: verb / expression + por + a reason → por + a reason. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / por / 1: verb + por + a place → por + a place. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / para / 0: verb + para + infinitive (dictionary form) → para + infinitive (dictionary form). Keep the complement that distinguishes the use; omit generic preceding context.
+- es / para / 1: an item / idea + para + a person → para + a person. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / con / 0: verb + con + a person → con + a person. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / con / 1: verb + con + a tool / way of doing it → con + a tool / way of doing it. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / sin / 0: noun / verb + sin + what is missing → sin + what is missing. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / se / 0: se + verb → se + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / se / 1: se + verb → se + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / me / 0: me + verb → me + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / te / 0: te + verb → te + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / nos / 0: nos + verb → nos + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / le / 0: le + verb → le + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / al / 0: al + destination → al + destination. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / al / 1: al + infinitive (dictionary form) → al + infinitive (dictionary form). Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / del / 0: de + el + masculine noun → de + el + masculine noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / el / 0: el + masculine singular noun → el + masculine singular noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / la / 0: la + feminine singular noun → la + feminine singular noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / la / 1: la + verb → la + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / los / 0: los + masculine plural noun → los + masculine plural noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / los / 1: los + verb → los + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / las / 0: las + feminine plural noun → las + feminine plural noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / lo / 0: lo + adjective → lo + adjective. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / lo / 1: lo + verb → lo + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / un / 0: un + masculine singular noun → un + masculine singular noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / una / 0: una + feminine singular noun → una + feminine singular noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / y / 0: an item / idea + y + an item / idea → an item / idea + y + an item / idea. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / pero / 0: what happens + pero + a contrasting idea → pero + a contrasting idea. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / si / 0: Si + a situation , what happens → Si + a situation , what happens. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / como / 0: verb + como + what you compare with → verb + como. Keep the distinctive frame; show its completion in the example.
+- es / como / 1: como + a role / job → como + a role / job. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / mi / 0: mi + singular noun → mi + singular noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / su / 0: su + singular noun → su + singular noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / tu / 0: tu + singular noun → tu + singular noun. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / yo / 0: Yo + verb → Yo + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / tú / 0: Tú + verb → Tú + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / eso / 0: eso + verb → eso + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / esto / 0: esto + verb → esto + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / todo / 0: todo + verb → todo + verb. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / algo / 0: verb + algo → verb + algo. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.
+- es / porque / 0: what happens + porque + a reason → porque + a reason. Keep the complement that distinguishes the use; omit generic preceding context.
+- es / cuando / 0: Cuando + a situation , what happens → Cuando + a situation , what happens. Retain: the displayed elements teach the relationship or required form. Contraction decompositions remain explicit.

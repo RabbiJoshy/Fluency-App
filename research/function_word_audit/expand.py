@@ -1,3 +1,4 @@
+from formula_copy import simplify
 """Explicit editorial slot types and simpler copy for the full preview, never live data.
 
 Types describe the whole highlighted slot, not every token inside it. Allowed
@@ -146,6 +147,7 @@ def expand(originals, pilot):
                     types['c']='clause'  # Implicit in formula, still typed in example highlights.
                 r['slotTypes']=types
                 slot_notes=apply_slot_review(lang,word,i,r)
+                simplify(lang,word,i,r)
                 ledger.append(dict(language=lang,word=word,pattern=i,before={k:before[k] for k in ('tag','formulaHTML','rule')},after={k:r[k] for k in ('tag','formulaHTML','rule','slotTypes')},example_review=entry['previewReviewStatus'],slot_notes=slot_notes))
     return result,ledger
 
