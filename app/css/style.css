@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=c1a20268");
+@import url("./appearance.css?v=934cd764");
 
 
         * {
@@ -1982,7 +1982,7 @@
             position: relative;
             flex: 1;
             height: 100%;
-            /* Left and right insets are half the 32px thumb, so it never clips at 0% or 100%. */
+            /* Left and right insets are half the thumb, so it never clips at 0% or 100%. */
             margin: 0 16px;
         }
         .cbs-track,
@@ -2008,12 +2008,12 @@
             left: calc(var(--cbs-t, 0) * 100%);
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: #ffffff;
             color: #1a1f26;
-            font: 750 13px/1 var(--font-reading);
+            font: 800 16px/1 var(--font-reading);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2713,14 +2713,14 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 3px 9px;
-            min-height: 24px;
+            padding: 5px 12px;
+            min-height: 28px;
             border-radius: 999px;
             background: color-mix(in srgb, rgb(var(--sense-match-rgb, 160, 160, 160)) 52%, #10151a);
             border: 1px solid transparent;
             color: #fff;
             font-family: var(--font-reading);
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 700;
             line-height: 1;
             letter-spacing: 0;
@@ -2959,8 +2959,8 @@
             -webkit-tap-highlight-color: transparent;
         }
         .sense-pin-btn .sense-pin-icon {
-            width: 22px;
-            height: 22px;
+            width: 26px;
+            height: 26px;
         }
         .sense-pin-btn:hover,
         .sense-pin-btn:focus-visible {
@@ -3764,16 +3764,16 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 22px;
-            min-width: 22px;
-            height: 22px;
-            min-height: 22px;
+            width: 28px;
+            min-width: 28px;
+            height: 28px;
+            min-height: 28px;
             border: none;
             border-radius: 6px;
             padding: 0;
             background: transparent;
             color: rgba(var(--sense-match-rgb), 0.85);
-            font: italic 700 14px/1 Georgia, "Times New Roman", serif;
+            font: italic 700 18px/1 Georgia, "Times New Roman", serif;
             margin: 0;
             cursor: pointer;
             transition: color 0.15s ease, background 0.15s ease;
@@ -21566,7 +21566,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 .meaning-row .sense-metadata-detail + .sense-metadata-detail::before { content: none; }
 .meaning-row .sense-metadata-tier--grammar,
 .meaning-row .sense-metadata-tier--details { gap: 4px 8px; }
-.meaning-row .sense-note-trigger { font-size: 14px; }
+.meaning-row .sense-note-trigger { font-size: 18px; }
 .meaning-row .group-card-varying-cell > .meaning-context-cell,
 .meaning-row .group-card-varying-cell > .row-adaptive-text,
 .meaning-row-regular:not(.is-current-sense) .meaning-row-translation {
@@ -21627,10 +21627,10 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     z-index: 2;
     display: inline-flex;
     margin: 0;
-    width: 22px;
-    min-width: 22px;
-    height: 22px;
-    min-height: 22px;
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    min-height: 28px;
     padding: 0;
     border-radius: 6px;
     flex: 0 0 auto;
@@ -24173,7 +24173,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #cardTutorialStage .sentence { flex: 0 0 auto; max-height: none; overflow: visible; box-sizing: border-box; }
 #cardTutorialStage .meaning-row { padding-left: 44px !important; }
 #cardTutorialStage .sense-note-trigger { left: 2px; width: 44px; height: 44px; min-width: 44px; border: 0; background: transparent; }
-#cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 0; border-radius: 6px; background: transparent; }
+#cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; font-size: 18px; border: 0; border-radius: 6px; background: transparent; }
 #cardTutorialStage .sense-prominence-badge { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 #cardTutorialStage .meaning-row-body { padding-right: 48px !important; }
 #cardTutorialStage .meaning-row .sense-cue-area { max-width: 100%; }
@@ -24383,7 +24383,7 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-label { color: var(--warning); }
 
 /* Seek-bar thumb: a circle for "25", a pill for "25A" so the letter fits. */
-.cbs-thumb { width: auto; min-width: 32px; padding: 0 6px; border-radius: 999px; box-sizing: border-box; }
+.cbs-thumb { width: auto; min-width: 36px; padding: 0 7px; border-radius: 999px; box-sizing: border-box; }
 
 /* Split words: "Card 1 of 2" sits on its own pill instead of a "Flashcard 1 of 2"
    line floating between the two, so the count can only mean that card. The
