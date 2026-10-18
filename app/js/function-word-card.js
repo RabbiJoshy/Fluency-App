@@ -78376,6 +78376,30 @@ export function selectFunctionWordUse(useIdx) {
     selectFunctionWordRelation(useIdx);
 }
 
+function isArtistExample(item) {
+    if (!item) return false;
+    if (item.channel === 'artist') return true;
+    if (item?.metadata?.source?.artist || item.artist) return true;
+    const src = String(item.source || '').trim();
+    if (src.includes(' · ') || /^(Polyglot|Portuguese Playlist|Rosalía|Artist)/i.test(src)) {
+        return true;
+    }
+    return false;
+}
+
+function matchesArtist(item, artistName) {
+    if (!item || !artistName) return false;
+    const art = artistName.toLowerCase();
+    const a = String(item?.metadata?.source?.artist || item?.source || item?.artist || '').toLowerCase();
+    return a.includes(art) || art.includes(a);
+}
+
+function isExplicitlySafeCurriculumExample(item) {
+    if (!item) return false;
+    if (isArtistExample(item)) return false;
+    return !!(item.targetHTML || item.target);
+}
+
 function getRelationExamples(relation, cardOrContext) {
     if (!relation) return [];
     if (syntaxTrialEnabled() || relation.syntaxTrial || cardOrContext?.syntaxTrial) {
@@ -78410,10 +78434,7 @@ function getRelationExamples(relation, cardOrContext) {
                 }
             }
             if (relation.artist_examples && relation.artist_examples.length > 0) {
-                const matched = relation.artist_examples.filter(ex => {
-                    const a = String(ex?.metadata?.source?.artist || ex?.source || '').toLowerCase();
-                    return a.includes(artistName) || artistName.includes(a);
-                });
+                const matched = relation.artist_examples.filter(ex => matchesArtist(ex, artistName));
                 if (matched.length > 0) return matched;
             }
             // When the selected artist has no matches, do NOT return another artist's lyrics!
@@ -78421,14 +78442,15 @@ function getRelationExamples(relation, cardOrContext) {
             if (relation.speech_examples && relation.speech_examples.length > 0) {
                 return relation.speech_examples;
             }
-            // Final fallback: explicitly exclude any other artist's lyrics from relation.examples
+            // Fallback: exclude any other artist's lyrics from relation.examples, preserving clean dialogue/curriculum
             const safeExamples = (relation.examples || []).filter(ex => {
-                const isArtist = ex.channel === 'artist' || !!ex?.metadata?.source?.artist;
-                if (!isArtist) return true; // clean dialogue / curriculum baseline
-                const a = String(ex?.metadata?.source?.artist || ex?.source || '').toLowerCase();
-                return a.includes(artistName) || artistName.includes(a);
+                if (!isArtistExample(ex)) return true; // clean dialogue / curriculum baseline
+                return matchesArtist(ex, artistName);
             });
             if (safeExamples.length > 0) return safeExamples;
+            if (isExplicitlySafeCurriculumExample(relation)) {
+                return [relation];
+            }
             return [];
         } else if (relation.artist_examples && relation.artist_examples.length > 0) {
             return relation.artist_examples;
@@ -78439,7 +78461,10 @@ function getRelationExamples(relation, cardOrContext) {
         }
     }
 
-    return relation.examples || (relation.targetHTML ? [relation] : []);
+    const baseline = (relation.examples && relation.examples.length > 0)
+        ? relation.examples
+        : (isExplicitlySafeCurriculumExample(relation) ? [relation] : []);
+    return baseline;
 }
 
 export function cycleFunctionWordExample() {
@@ -78458,8 +78483,12 @@ export function cycleFunctionWordExample() {
         artist: container.dataset.artist || ''
     };
     const examples = getRelationExamples(currentRel, deckContext);
-    if (examples.length <= 1) {
-        const plain = (currentRel?.targetHTML || currentRel?.target || '').replace(/<[^>]+>/g, '');
+    if (examples.length === 0) {
+        return;
+    }
+    if (examples.length === 1) {
+        const curEx = examples[0];
+        const plain = (curEx?.targetHTML || curEx?.target || '').replace(/<[^>]+>/g, '');
         window.speakTargetSentence?.() || window.speakText?.(plain);
         return;
     }
@@ -78526,22 +78555,27 @@ function refreshFunctionWordCardBack() {
     };
     const examples = getRelationExamples(currentRel, deckContext);
     if (_activeExampleIndex >= examples.length) _activeExampleIndex = 0;
-    const currentEx = examples[_activeExampleIndex] || currentRel;
+    const currentEx = examples.length > 0 ? (examples[_activeExampleIndex] || examples[0]) : null;
 
     // Update sentence target and translation
     const sentenceEl = container.querySelector('.fw-sentence-target');
-    if (sentenceEl && currentEx) {
-        sentenceEl.innerHTML = fwSlotHTML(currentEx.targetHTML || currentEx.target || '', currentRel);
+    if (sentenceEl) {
+        if (currentEx) {
+            sentenceEl.innerHTML = fwSlotHTML(currentEx.targetHTML || currentEx.target || '', currentRel);
+        } else {
+            const artName = deckContext.artist ? ` for ${deckContext.artist}` : '';
+            sentenceEl.innerHTML = `<span class="fw-shortage-msg">No matching examples found${esc(artName)}</span>`;
+        }
     }
 
     const transEl = container.querySelector('.fw-sentence-translation');
-    if (transEl && currentEx) {
-        transEl.textContent = currentEx.translation || '';
+    if (transEl) {
+        transEl.textContent = currentEx ? (currentEx.translation || '') : 'Example shortage for this deck pattern';
     }
 
     const creditStartEl = container.querySelector('.fw-credit-start');
     if (creditStartEl) {
-        creditStartEl.innerHTML = fwCreditHTML(currentEx);
+        creditStartEl.innerHTML = currentEx ? fwCreditHTML(currentEx) : '<span class="fw-shortage-badge">Shortage</span>';
     }
 
     const ticksContainer = container.querySelector('.fw-sentence-ticks-container');
@@ -78624,11 +78658,21 @@ export function functionWordBlockHTML(card, lang) {
         };
         const examples = getRelationExamples(currentRel, deckContext);
         if (_activeExampleIndex >= examples.length) _activeExampleIndex = 0;
-        const currentEx = examples[_activeExampleIndex] || currentRel;
+        const currentEx = examples.length > 0 ? (examples[_activeExampleIndex] || examples[0]) : null;
 
-        const targetHTML = currentEx?.targetHTML || currentRel?.targetHTML || esc(currentRel?.target || '');
-        const plainTargetText = targetHTML.replace(/<[^>]+>/g, '');
-        const sourceText = currentEx?.source || '';
+        let targetHTML = '';
+        let translationText = '';
+        let creditHTML = '';
+        if (currentEx) {
+            targetHTML = fwSlotHTML(currentEx.targetHTML || esc(currentEx.target || ''), currentRel);
+            translationText = esc(currentEx.translation || '');
+            creditHTML = fwCreditHTML(currentEx);
+        } else {
+            const artName = deckContext.artist ? ` for ${deckContext.artist}` : '';
+            targetHTML = `<span class="fw-shortage-msg">No matching examples found${esc(artName)}</span>`;
+            translationText = 'Example shortage for this deck pattern';
+            creditHTML = '<span class="fw-shortage-badge">Shortage</span>';
+        }
         const ticksHTML = renderFwTicks(examples.length, _activeExampleIndex);
 
         return `
@@ -78644,10 +78688,10 @@ export function functionWordBlockHTML(card, lang) {
                     ${relationsHTML}
                 </div>
                 <div class="fw-sentence-panel" onclick="event.stopPropagation(); window.cycleFunctionWordExample();">
-                    <div class="fw-sentence-target">${fwSlotHTML(targetHTML, currentRel)}</div>
-                    <div class="fw-sentence-translation">${esc(currentEx?.translation || currentRel?.translation || '')}</div>
+                    <div class="fw-sentence-target">${targetHTML}</div>
+                    <div class="fw-sentence-translation">${translationText}</div>
                     <div class="fw-example-credit-row">
-                        <span class="fw-credit-start">${fwCreditHTML(currentEx)}</span>
+                        <span class="fw-credit-start">${creditHTML}</span>
                         <div class="fw-sentence-ticks-container">${ticksHTML}</div>
                     </div>
                 </div>
@@ -78657,6 +78701,7 @@ export function functionWordBlockHTML(card, lang) {
     // Uncovered words keep the normal meaning rows; legacy summary chips are retired.
     return '';
 }
+
 
 /** The label under one example's translation; empty when the rules gave none. */
 export function functionWordExampleHTML(example) {

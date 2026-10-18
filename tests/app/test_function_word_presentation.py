@@ -47,6 +47,68 @@ const fixtureNoSpeech = {
 };
 const resNoSpeech = vm.runInContext("getRelationExamples(" + JSON.stringify(fixtureNoSpeech) + ", {channel:'artist', artist:'Artist A'})", ctx);
 assert.equal(resNoSpeech.length, 0, 'Must exclude Artist B lyrics when speech_examples is empty');
+
+// Regression test: Rendered card and DOM refresh when relation only has Artist B lyrics (no safe speech/curriculum examples)
+vm.runInContext(`
+PORTUGUESE_GRAMMAR_WORDS['test_shortage'] = {
+    word: 'test_shortage',
+    relations: [{
+        tag: 'Like / in the same way',
+        targetHTML: 'Song by Artist B',
+        translation: 'Artist B lyric translation',
+        source: 'Artist B · Song',
+        speech_examples: [],
+        artist_examples: [{sentence:'s', targetHTML:'Song by Artist B', source:'Artist B · Song', channel:'artist', metadata:{source:{artist:'Artist B'}}}],
+        examples: [{sentence:'s', targetHTML:'Song by Artist B', source:'Artist B · Song', channel:'artist', metadata:{source:{artist:'Artist B'}}}]
+    }]
+};
+PORTUGUESE_GRAMMAR_WORDS['test_shortage'].uses = PORTUGUESE_GRAMMAR_WORDS['test_shortage'].relations;
+
+PORTUGUESE_GRAMMAR_WORDS['test_curriculum_fallback'] = {
+    word: 'test_curriculum_fallback',
+    relations: [{
+        tag: 'Like / in the same way',
+        targetHTML: 'Ela precisa de dinheiro.',
+        translation: 'She needs money.',
+        source: 'Everyday speech',
+        speech_examples: [],
+        artist_examples: [{sentence:'s', targetHTML:'Song by Artist B', source:'Artist B · Song', channel:'artist', metadata:{source:{artist:'Artist B'}}}],
+        examples: [{targetHTML: 'Ela precisa de dinheiro.', translation: 'She needs money.', source: 'Everyday speech'}]
+    }]
+};
+PORTUGUESE_GRAMMAR_WORDS['test_curriculum_fallback'].uses = PORTUGUESE_GRAMMAR_WORDS['test_curriculum_fallback'].relations;
+`, ctx);
+
+const renderedShortageCard = vm.runInContext("functionWordBlockHTML({word:'test_shortage', channel:'artist', artist:'Artist A'}, 'pt')", ctx);
+assert.ok(!renderedShortageCard.includes('Song by Artist B'), 'Rendered card must NOT show Artist B lyrics when Artist A is selected');
+assert.ok(!renderedShortageCard.includes('Artist B lyric translation'), 'Rendered card must NOT show Artist B translation');
+assert.ok(renderedShortageCard.includes('No matching examples found'), 'Rendered card must show shortage message');
+assert.ok(renderedShortageCard.includes('Shortage'), 'Rendered card must show shortage badge');
+
+const shortageNodes = {'.fw-sentence-target':{}, '.fw-sentence-translation':{}, '.fw-credit-start':{}, '.fw-sentence-ticks-container':{}};
+ctx.document.querySelector = (sel) => {
+    if (sel === '.fw-deterministic-card') {
+        return {
+            dataset: {word: 'test_shortage', lang: 'pt', deck: 'artist', artist: 'Artist A'},
+            querySelectorAll: () => [],
+            querySelector: s => shortageNodes[s]
+        };
+    }
+    return null;
+};
+vm.runInContext('_activeExampleIndex = 0; refreshFunctionWordCardBack()', ctx);
+assert.ok(!shortageNodes['.fw-sentence-target'].innerHTML.includes('Song by Artist B'), 'Refresh must NOT display Artist B default sentence');
+assert.ok(shortageNodes['.fw-sentence-target'].innerHTML.includes('No matching examples found'), 'Refresh must display shortage message');
+assert.ok(shortageNodes['.fw-sentence-translation'].textContent.includes('shortage'), 'Refresh must display shortage translation text');
+assert.ok(shortageNodes['.fw-credit-start'].innerHTML.includes('Shortage'), 'Refresh must display shortage credit');
+
+vm.runInContext('cycleFunctionWordExample()', ctx);
+assert.ok(!shortageNodes['.fw-sentence-target'].innerHTML.includes('Song by Artist B'), 'Cycle must NOT cycle to Artist B sentence');
+
+const renderedCurriculumCard = vm.runInContext("functionWordBlockHTML({word:'test_curriculum_fallback', channel:'artist', artist:'Artist A'}, 'pt')", ctx);
+assert.ok(!renderedCurriculumCard.includes('Song by Artist B'), 'Rendered card must NOT show Artist B lyrics');
+assert.ok(renderedCurriculumCard.includes('Ela precisa de dinheiro.'), 'Rendered card must show safe curriculum example');
+
 '''
         run=subprocess.run(['node','-e',script],cwd=ROOT,text=True,capture_output=True)
         self.assertEqual(run.returncode,0,run.stderr)
