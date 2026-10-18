@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=58b21ad6';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=58b21ad6';
-import { readFastTrack } from './fast-track-preferences.js?v=58b21ad6';
-import './session-plan.js?v=58b21ad6';
+import './state.js?v=856f738a';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=856f738a';
+import { readFastTrack } from './fast-track-preferences.js?v=856f738a';
+import './session-plan.js?v=856f738a';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -755,7 +755,7 @@ function learningModeCopy(language = selectedLanguage) {
     return {
         title: 'Choose your vocabulary',
         intro: [
-            'Common words first. What’s common depends on where the words come from.'
+            'This app teaches the most common words first. What’s common depends on where the words come from.'
         ],
         speech: {
             label: 'Speech',
@@ -3531,7 +3531,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=58b21ad6')
+        import('./spotify.js?v=856f738a')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

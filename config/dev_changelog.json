@@ -2,6 +2,29 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T22:15:00+01:00",
+      "date": "2026-10-18 22:15 BST",
+      "agent": "Claude",
+      "summary": "Choose your vocabulary: new opening line; Speech and Music headings line up",
+      "detail": [
+        "Opening line: 'This app teaches the most common words first. What’s common depends on where the words come from.'",
+        "On desktop the Speech and Music icons and titles sit at the same height: both cards start their content at the top and use the same padding (Music's button had 18px against Speech's 26px). Spotify stays as the Music card's footer."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T22:00:00+01:00",
+      "date": "2026-10-18 22:00 BST",
+      "agent": "Claude",
+      "summary": "Desktop home: Learn and Practise both open and only as tall as their content",
+      "detail": [
+        "With the sidebar showing, Learn and Practise are both open, Learn above Practise; the fold rows are hidden.",
+        "Cards no longer stretch to the window's height; vertical padding is fixed and smaller, and the big numbers top out at 60px. In a 1440x900 window Learn is ~290px and Practise ~320px, so both fit with room to spare.",
+        "Width is unchanged. Phones still show one card at a time."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T21:40:00+01:00",
       "date": "2026-10-18 21:40 BST",
       "agent": "Claude",
@@ -348,30 +371,6 @@
         "Replaced the 72px raw Unicode ✗ and ✓ characters with frosted circular SVG badges that scale progressively with finger drag and snap solid with a spring bounce at the 50px commit threshold.",
         "Added continuous emerald (right) and warm coral (left) edge wash and specular rim lighting on the card surface during horizontal swipes.",
         "Added an 8ms micro-haptic tick at the exact frame the swipe crosses the 50px grade threshold, with no competing sound effects."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T18:11:42+01:00",
-      "date": "2026-10-17 18:11 BST",
-      "agent": "Codex",
-      "summary": "Keep newer answers safe while earlier saves are queued or retried",
-      "detail": [
-        "Coalesced offline saves now update both memory and durable storage.",
-        "Answers made during a save keep their own pending operation.",
-        "Coalesced retries append newly gained review history without reusing event identifiers."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T17:56:29+01:00",
-      "date": "2026-10-17 17:56 BST",
-      "agent": "Codex",
-      "summary": "Restore SafariMS admin and Joshua/JP reviewer access after sign-in migration",
-      "detail": [
-        "Bind admin and reviewer access to verified login identities in the app and server, including staging.",
-        "Quick reports capture the meaning and exact example currently displayed, with release/deck context.",
-        "Keep whole-card reporting available to JP; protect flags from cross-account overwrites."
       ],
       "commit": "pending"
     }
