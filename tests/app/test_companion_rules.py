@@ -124,6 +124,8 @@ class CompanionRuleTests(unittest.TestCase):
         self.assertEqual([c['targetSentence'] for c in cards], ['Example a', 'Example b'])
         self.assertEqual([[m['senseId'] for m in c['unusedMenuSenses']] for c in cards], [['c'], ['d']])
         self.assertEqual(cards[1]['splitInfo']['headword'], 'irse')
+        # Each half carries its own pronominal flag, not the parent's.
+        self.assertEqual([c['isPronominal'] for c in cards], [False, True])
 
     @unittest.skipUnless(shutil.which('node'), 'Node.js needed for companion navigation')
     def test_three_companions_search_focus_and_finite_navigation(self):

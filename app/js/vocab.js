@@ -1232,6 +1232,9 @@ function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
             id: `${item.id}::split::${t.headword}_${t.pos}`,
             fullId: `${baseFullId}::split::${t.headword}_${t.pos}`,
             citationForm: t.headword, partOfSpeech: t.pos,
+            // The parent's flag describes its own citation form; each half
+            // is pronominal exactly when its headword is (irse, not ir).
+            isPronominal: /(?:ar|er|ir|ír)se$/iu.test(t.headword || ''),
             meanings: bucket.main, unusedMenuSenses: bucket.unused,
             translation: bucket.main[0]?.meaning || '',
             targetSentence: bucket.main[0]?.targetSentence || '',

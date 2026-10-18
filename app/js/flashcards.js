@@ -3168,6 +3168,13 @@ function inferOccurrenceFromSentence(surface, sentence) {
     return best;
 }
 
+function activeConjugationData(card) {
+    return card?.conjugationData
+        || (typeof _conjugationData !== 'undefined' ? _conjugationData : null)
+        || (typeof window !== 'undefined' ? window._conjugationData : null)
+        || (typeof globalThis !== 'undefined' ? globalThis._conjugationData : null);
+}
+
 function getConjugationEntry(conjData, lemma) {
     if (!conjData || !lemma) return null;
     if (conjData[lemma]) return conjData[lemma];
@@ -3284,10 +3291,7 @@ function resolveExampleOccurrence(card, example, sentence) {
         if (hit) return { surface: hit, kind: 'declared' };
     }
 
-    const conjData = card?.conjugationData
-        || (typeof _conjugationData !== 'undefined' ? _conjugationData : null)
-        || (typeof window !== 'undefined' ? window._conjugationData : null)
-        || (typeof globalThis !== 'undefined' ? globalThis._conjugationData : null);
+    const conjData = activeConjugationData(card);
     const cardPosList = [
         card?.partOfSpeech,
         ...(Array.isArray(card?.meanings) ? card.meanings.map(m => m?.pos) : [])
@@ -3846,45 +3850,96 @@ function adaptiveRowTextClass(...parts) {
     return 'row-text-sm';
 }
 
-/**
- * Within an already-highlighted word span, split the attached clitic pronoun
- * into its own sub-span so it renders with the clitic accent colour.
- * E.g. <span class="example-word-highlight">decirse</span>
- *   → <span class="example-word-highlight">decir<span class="example-clitic-highlight">se</span></span>
- */
-function highlightAttachedCliticInSentence(html, highlightedForm) {
-    if (!highlightedForm) return html;
-    const form = String(highlightedForm).trim();
-    if (!form) return html;
+// A pronominal card (irse, quedarse) exists because of its pronoun: the `se`
+// in "se fue" is the whole difference from the `ir` card beside it. True for
+// a standalone -se card and for the -se half of a reflexive split; false for
+// the base half, and for nouns that merely end in -se (clase, base).
+function isPronominalVerbCard(card) {
+    if (!card) return false;
+    if (card.isPronominal) return true;
+    const headword = card.splitInfo?.headword || card.citationForm || card.lemma || '';
+    return /(?:ar|er|ir|ír)se$/iu.test(String(headword).trim());
+}
 
-    // Check if the form ends with a known clitic
-    const CLITIC_SUFFIXES = [
-        'melo', 'mela', 'melos', 'melas', 'telo', 'tela', 'telos', 'telas',
-        'selo', 'sela', 'selos', 'selas', 'noslo', 'nosla', 'noslos', 'noslas',
-        'oslo', 'osla', 'oslos', 'oslas',
-        'me', 'te', 'se', 'nos', 'os', 'le', 'les', 'lo', 'la', 'los', 'las',
-    ];
-    const folded = foldSurfaceForm(form);
-    let clitic = '';
-    for (const suffix of CLITIC_SUFFIXES) {
-        if (folded.endsWith(suffix) && folded.length > suffix.length + 2) {
-            clitic = suffix;
-            break;
+const REFLEXIVE_CLITIC_PATTERN = '(?:me|te|se|nos|os)';
+const OBJECT_CLITIC_PATTERN = '(?:me|te|se|nos|os|le|les|lo|la|los|las)';
+// `nos` before `os` so vámonos peels `nos`, not `os`.
+const REFLEXIVE_CLITICS = ['nos', 'os', 'me', 'te', 'se'];
+const _attachedFormsCache = new WeakMap();
+
+// One-word forms in the pronominal verb's own table — vete, vámonos, idos,
+// yéndose — which carry their pronoun attached.
+function pronominalAttachedForms(card) {
+    const headword = card?.splitInfo?.headword || card?.citationForm || card?.lemma;
+    const entry = getConjugationEntry(activeConjugationData(card), headword);
+    if (!entry) return new Set();
+    if (_attachedFormsCache.has(entry)) return _attachedFormsCache.get(entry);
+    const forms = new Set();
+    const add = (value) => {
+        for (const part of String(value || '').split(/[\/,]/)) {
+            const form = part.trim();
+            if (form && !/\s/.test(form)) forms.add(foldSurfaceForm(form));
         }
+    };
+    [entry.gerund].flat().forEach(add);
+    for (const list of Object.values(entry.tenses || {})) {
+        if (Array.isArray(list)) list.forEach(add);
     }
-    if (!clitic) return html;
+    _attachedFormsCache.set(entry, forms);
+    return forms;
+}
 
-    // Find the highlight span containing this form and split the clitic portion
-    const stemLen = form.length - clitic.length;
-    const escaped = form.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pattern = new RegExp(
-        `(<span class="example-word-highlight[^"]*"[^>]*>)(${escaped})(</span>)`,
-        'iu'
+// The reflexive pronoun attached to the end of `form`, or '' when there is
+// none. Only splits shapes that really are verb + pronoun: the infinitive
+// (irse, quedarme), a gerund (yéndose) or a form from the verb's own table
+// (vete, vámonos). `vamos` and `parte` end in clitic letters but are not.
+function pronominalEncliticSuffix(form, card) {
+    const folded = foldSurfaceForm(form);
+    const headword = card?.splitInfo?.headword || card?.citationForm || card?.lemma || '';
+    const base = foldSurfaceForm(headword).replace(/se$/u, '');
+    for (const clitic of REFLEXIVE_CLITICS) {
+        if (!folded.endsWith(clitic)) continue;
+        const stem = folded.slice(0, folded.length - clitic.length);
+        if (stem.length < 2) continue;
+        if (stem === base || stem.endsWith('ndo')
+            || pronominalAttachedForms(card).has(folded)) return clitic;
+    }
+    return '';
+}
+
+/**
+ * On a pronominal card, colour the reflexive pronoun of every highlighted
+ * occurrence with the clitic accent, whether it stands before the verb or is
+ * attached to it:
+ *   se <span class="example-word-highlight">fue</span>
+ *     → <span class="example-word-highlight"><span class="example-clitic-highlight">se</span> fue</span>
+ *   <span class="example-word-highlight">vete</span>
+ *     → <span class="example-word-highlight">ve<span class="example-clitic-highlight">te</span></span>
+ * A preceding cluster (se me fue, me lo voy) joins the highlight; only its
+ * reflexive pronouns take the accent.
+ */
+function highlightPronominalCliticsInSentence(html, card) {
+    if (!html || !isPronominalVerbCard(card)) return html;
+    const cluster = `${REFLEXIVE_CLITIC_PATTERN}(?:\\s+${OBJECT_CLITIC_PATTERN})?`;
+    const span = '(<span class="example-word-highlight[^"]*"[^>]*>)([^<]*)(</span>)';
+    const accent = text => text.replace(
+        _cachedRegex(`(?<![\\p{L}\\p{N}])(${REFLEXIVE_CLITIC_PATTERN})(?![\\p{L}\\p{N}])`, 'giu'),
+        '<span class="example-clitic-highlight">$1</span>'
     );
-    return html.replace(pattern, (match, open, word, close) => {
-        const stem = word.slice(0, stemLen);
-        const cliticPart = word.slice(stemLen);
-        return `${open}${stem}<span class="example-clitic-highlight">${cliticPart}</span>${close}`;
+    // Pull a pronoun cluster standing right before the verb into its highlight.
+    const joined = String(html).replace(
+        _cachedRegex(`(?<![\\p{L}\\p{N}])(${cluster})(\\s+)${span}`, 'giu'),
+        (match, pronouns, gap, open, word, close) => `${open}${pronouns}${gap}${word}${close}`
+    );
+    const leading = _cachedRegex(`^(${cluster})(\\s+)(.+)$`, 'iu');
+    return joined.replace(_cachedRegex(span, 'giu'), (match, open, word, close) => {
+        const fronted = word.match(leading);
+        if (fronted) return `${open}${accent(fronted[1])}${fronted[2]}${fronted[3]}${close}`;
+        const clitic = pronominalEncliticSuffix(word, card);
+        if (!clitic) return match;
+        const stem = word.slice(0, word.length - clitic.length);
+        const attached = word.slice(word.length - clitic.length);
+        return `${open}${stem}<span class="example-clitic-highlight">${attached}</span>${close}`;
     });
 }
 
@@ -3912,7 +3967,7 @@ function getExampleProductionForm(card, meaning, example, targetSentence) {
     ).trim();
     if (!surface) return '';
     const escaped = surface.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    if (card.isPronominal) {
+    if (isPronominalVerbCard(card)) {
         const withPronoun = _cachedRegex(
             `(?<![\\p{L}\\p{N}])((?:me|te|se|nos|os)\\s+${escaped})(?![\\p{L}\\p{N}])`,
             'iu'
@@ -3962,7 +4017,7 @@ function buildFrontProductionHint(card, meaning, activeAnswer) {
     );
     if (!sentence) return '';
 
-    const answerInSentence = (meaning.allMWEs || meaning.allClitics || card.isPronominal)
+    const answerInSentence = (meaning.allMWEs || meaning.allClitics || isPronominalVerbCard(card))
         ? getExampleProductionForm(card, meaning, example, sentence)
         : (getExampleOccurrenceSurface(card, example, sentence)
             || getExampleProductionForm(card, meaning, example, sentence));
@@ -8447,9 +8502,9 @@ function renderCardWikipediaBadge(card) {
                     const matcher = _cachedRegex(`(?<![\\p{L}\\p{N}])(${escaped})(?![\\p{L}\\p{N}])`, 'giu');
                     for (const hit of canonicalText.matchAll(matcher)) canonicalOffsets.push([hit.index, hit.index + hit[0].length]);
                 }
-                displayTargetSentence = highlightWithDeclaredOffsets(
-                    canonicalText,
-                    canonicalOffsets
+                displayTargetSentence = highlightPronominalCliticsInSentence(
+                    highlightWithDeclaredOffsets(canonicalText, canonicalOffsets),
+                    card
                 );
                 displayEnglishSentence = highlightWithDeclaredOffsets(
                     currentExample.english || displayEnglishSentence,
@@ -8519,17 +8574,10 @@ function renderCardWikipediaBadge(card) {
                 }
             }
 
-            // Split any attached clitic pronoun within the highlighted word
-            // into its own sub-span with the clitic accent colour, so that
-            // e.g. "decirse" shows "decir" + orange "se" in the sentence.
-            if (card.isPronominal || /se$/iu.test(card.citationForm || card.lemma || '')) {
-                const occurrenceForm = resolveExampleOccurrence(
-                    card, currentExample, displayTargetSentence
-                ).surface;
-                displayTargetSentence = highlightAttachedCliticInSentence(
-                    displayTargetSentence, occurrenceForm
-                );
-            }
+            // On a pronominal card the pronoun is the point: "se fue" and
+            // "vete" show their se/te in the clitic accent colour.
+            displayTargetSentence = highlightPronominalCliticsInSentence(
+                displayTargetSentence, card);
 
             // Highlight the companion collocation together with the studied target word
             // using unified active phrase styling (e.g. "Tengo que", "gosto de", "sueña con").
