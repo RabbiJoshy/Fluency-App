@@ -49,6 +49,7 @@
   var revealed = false;
   var soloVerb = null;   // set by ?verb=, cleared when the selection changes
   var expandedMoods = {};  // mood label -> the rarer tenses are showing
+  var openMoods = {};      // mood label -> boolean indicating whether grouping is expanded
 
   var CODE_ORDER = ['0', '1', '2', '3', '4'];
   var OPAQUE = '*';
@@ -441,21 +442,53 @@
         ? group
         : group.filter(function (t) { return rare.indexOf(t) === -1; });
 
-      var block = el('div', 'mood');
-      var head = el('div', 'mood-head');
-      head.appendChild(el('span', null, mood));
+      var selectedCount = group.filter(function (t) { return state.tenses[t.id]; }).length;
+      var isOpen = openMoods[mood] !== undefined ? openMoods[mood] : (selectedCount > 0);
+
+      var block = document.createElement('details');
+      block.className = 'mood mood-group';
+      block.open = !!isOpen;
+      block.ontoggle = function () {
+        openMoods[mood] = block.open;
+      };
+
+      var head = document.createElement('summary');
+      head.className = 'mood-head';
+
+      var headLeft = el('div', 'mood-head-left');
+      var chevron = el('span', 'mood-chevron', '›');
+      chevron.setAttribute('aria-hidden', 'true');
+      headLeft.appendChild(chevron);
+      headLeft.appendChild(el('span', 'mood-title', mood));
+
+      var badge = el('span', 'mood-badge');
+      badge.textContent = selectedCount === group.length
+        ? 'all ' + group.length
+        : selectedCount === 0
+          ? 'none'
+          : selectedCount + ' of ' + group.length;
+      headLeft.appendChild(badge);
+      head.appendChild(headLeft);
 
       var allOn = group.every(function (t) { return state.tenses[t.id]; });
-      var toggle = el('button', null, allOn ? 'none' : 'all');
-      toggle.onclick = function () {
+      var toggle = el('button', 'mood-toggle-pill', allOn ? 'none' : 'all');
+      toggle.type = 'button';
+      toggle.setAttribute('aria-label', (allOn ? 'Deselect all ' : 'Select all ') + mood + ' tenses');
+      toggle.onclick = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         group.forEach(function (t) { state.tenses[t.id] = !allOn; });
-        if (!allOn) expandedMoods[mood] = true;
+        if (!allOn) {
+          expandedMoods[mood] = true;
+          openMoods[mood] = true;
+        }
         renderTenses();
         refreshSummary();
       };
       head.appendChild(toggle);
       block.appendChild(head);
 
+      var body = el('div', 'mood-body');
       var checks = el('div', 'checks');
       shown.forEach(function (tense) {
         var label = el('label', 'check');
@@ -473,18 +506,23 @@
         label.appendChild(el('span', 'check-count', tense.persons.length + ' forms'));
         checks.appendChild(label);
       });
-      block.appendChild(checks);
+      body.appendChild(checks);
 
       if (rare.length && !expandedMoods[mood]) {
         var more = el('button', 'linkish mood-more',
           '+ ' + rare.length + ' rarer ' + (rare.length === 1 ? 'tense' : 'tenses'));
-        more.onclick = function () {
+        more.type = 'button';
+        more.onclick = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
           expandedMoods[mood] = true;
+          openMoods[mood] = true;
           renderTenses();
         };
-        block.appendChild(more);
+        body.appendChild(more);
       }
 
+      block.appendChild(body);
       host.appendChild(block);
     });
   }
@@ -1462,6 +1500,7 @@
     queue = [];
     tableVerb = null;
     expandedMoods = {};
+    openMoods = {};
     computeFamilies();
     renderDeckPicker();
     renderProvenance();

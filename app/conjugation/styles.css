@@ -161,15 +161,47 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 .swatch { width: 9px; height: 9px; border-radius: 50%; flex: none; }
 
-.mood { margin-top: 14px; }
+.mood-group {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+.mood-group[open] {
+  border-color: var(--line);
+}
 .mood-head {
   display: flex; justify-content: space-between; align-items: center;
-  font-size: 13px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px;
+  padding: 10px 14px; cursor: pointer; user-select: none; list-style: none;
+  font-size: 13px; font-weight: 600; color: var(--ink);
+  transition: background-color 0.15s ease;
 }
-.mood-head button {
-  border: 0; background: none; font: inherit; font-size: 12px;
-  color: var(--accent); cursor: pointer; padding: 2px 4px;
+.mood-head::-webkit-details-marker { display: none; }
+.mood-head:hover { background: rgba(0, 0, 0, 0.03); }
+.mood-head-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.mood-chevron {
+  display: inline-block; font-size: 14px; line-height: 1; color: var(--ink-3);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
 }
+.mood-group[open] .mood-chevron { transform: rotate(90deg); color: var(--ink); }
+.mood-title { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.mood-badge {
+  font-size: 11px; font-weight: 500; color: var(--ink-3);
+  background: rgba(0, 0, 0, 0.05); padding: 1px 7px; border-radius: 9999px;
+  letter-spacing: 0.01em;
+}
+.mood-toggle-pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 3px 12px; border-radius: 9999px; font-family: inherit;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: lowercase;
+  border: 1px solid rgba(0, 0, 0, 0.14); background: rgba(0, 0, 0, 0.04);
+  color: var(--ink-2); cursor: pointer; transition: all 0.15s ease; line-height: 1.4;
+}
+.mood-toggle-pill:hover { background: rgba(0, 0, 0, 0.08); border-color: rgba(0, 0, 0, 0.25); color: var(--ink); }
+.mood-toggle-pill:active { transform: scale(0.95); }
+.mood-body { padding: 0 14px 12px 14px; }
 .compound-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-3); flex: none; }
 
 /* ── summary ───────────────────────────────────────────── */
@@ -198,7 +230,12 @@ button.primary, button.secondary, button.ghost {
   border: 1px solid transparent;
 }
 button.primary { background: var(--accent); color: var(--accent-ink); }
-#start { background: var(--start-accent, var(--accent)); color: #fff; }
+#start {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.25);
+}
 button.primary[disabled] { opacity: .45; cursor: default; }
 button.secondary { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
 button.ghost { background: none; color: var(--ink-2); }

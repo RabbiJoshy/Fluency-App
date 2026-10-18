@@ -390,12 +390,12 @@
 }
 
 .extra-conjugations-view .check:has(input:checked) {
-  border-color: var(--accent-primary);
-  background: var(--bg-card);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .extra-conjugations-view .check input {
-  accent-color: var(--accent-primary);
+  accent-color: var(--accent-blue, #3b82f6);
   margin: 0;
 }
 
@@ -420,28 +420,110 @@
   flex: none;
 }
 
-.extra-conjugations-view .mood {
-  margin-top: 14px;
+.extra-conjugations-view .mood-group {
+  margin-top: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.extra-conjugations-view .mood-group[open] {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .extra-conjugations-view .mood-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
+  color: var(--text-primary, #ffffff);
+  transition: background-color 0.15s ease;
 }
 
-.extra-conjugations-view .mood-head button {
-  border: 0;
-  background: none;
-  font: inherit;
-  font-size: 12px;
-  color: var(--accent-primary);
+.extra-conjugations-view .mood-head::-webkit-details-marker {
+  display: none;
+}
+
+.extra-conjugations-view .mood-head:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.extra-conjugations-view .mood-head-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.extra-conjugations-view .mood-chevron {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text-muted, #71717a);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
+}
+
+.extra-conjugations-view .mood-group[open] .mood-chevron {
+  transform: rotate(90deg);
+  color: var(--text-primary, #ffffff);
+}
+
+.extra-conjugations-view .mood-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+}
+
+.extra-conjugations-view .mood-badge {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted, #a1a1aa);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1px 7px;
+  border-radius: 9999px;
+  letter-spacing: 0.01em;
+}
+
+.extra-conjugations-view .mood-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: #d4d4d8;
   cursor: pointer;
-  padding: 2px 4px;
+  transition: all 0.15s ease;
+  line-height: 1.4;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.extra-conjugations-view .mood-toggle-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: #ffffff;
+}
+
+.extra-conjugations-view .mood-toggle-pill:active {
+  transform: scale(0.95);
+}
+
+.extra-conjugations-view .mood-body {
+  padding: 0 14px 12px 14px;
 }
 
 .extra-conjugations-view .compound-dot {
@@ -555,14 +637,31 @@
   transition: opacity .15s ease, background-color .15s ease;
 }
 
-.extra-conjugations-view button.primary {
-  background: var(--start-accent, var(--accent-primary));
+.extra-conjugations-view button.primary,
+.extra-conjugations-view #start {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
   color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 10px rgba(225, 29, 72, 0.3);
+  transition: all 0.15s ease;
 }
 
-.extra-conjugations-view button.primary[disabled] {
-  opacity: .45;
+.extra-conjugations-view button.primary:hover:not([disabled]),
+.extra-conjugations-view #start:hover:not([disabled]) {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.45);
+  transform: translateY(-1px);
+}
+
+.extra-conjugations-view button.primary[disabled],
+.extra-conjugations-view #start[disabled] {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted, #71717a);
+  border-color: transparent;
+  box-shadow: none;
+  opacity: 0.45;
   cursor: default;
+  transform: none;
 }
 
 .extra-conjugations-view button.secondary {
