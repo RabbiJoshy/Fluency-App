@@ -54,6 +54,12 @@ function wireModal(modal) {
     wiredModal = modal;
     byId('closeTotalStatsModal')?.addEventListener('click', closeProgressOverview);
     byId('progressRefreshBtn')?.addEventListener('click', () => openProgressOverview(latestOptions));
+    // Import replaces this page (its own screen); export downloads in place.
+    byId('progressImportKnownBtn')?.addEventListener('click', () => {
+        closeProgressOverview();
+        globalThis.openVocabularyImportModal?.();
+    });
+    byId('progressExportMistakesBtn')?.addEventListener('click', () => globalThis.exportMistakes?.('progressDataStatus'));
     modal.addEventListener('click', event => {
         if (event.target === modal) closeProgressOverview();
     });
@@ -81,6 +87,10 @@ export async function openProgressOverview(options) {
     if (!modal || !options) return;
     wireModal(modal);
     globalThis.renderSavedWords?.();
+    const signedIn = typeof currentUser !== 'undefined' && currentUser && !currentUser.isGuest;
+    const importBtn = byId('progressImportKnownBtn');
+    if (importBtn) importBtn.hidden = !signedIn;
+    setText('progressDataStatus', '');
     const opening = modal.classList.contains('hidden');
     if (opening) returnFocus = document.activeElement;
     latestOptions = options;

@@ -68739,34 +68739,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         }
                     },
                     {
-                        "sentence": "No actúes como si no supieras lo que está pasando.",
-                        "targetHTML": "No <span class=\"fw-token-v\">actúes</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">si no supieras lo que está pasando</span>.",
-                        "translation": "Don't act like you don't know what's happening.",
-                        "source": "tatoeba",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "tatoeba-weekly/v1",
-                                "attribution": "Tatoeba sentence #3669306 by hayastan; English translation #3663735 by CK",
-                                "license": "CC BY 2.0 FR",
-                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
-                                "name": "tatoeba",
-                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
-                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
-                                "source_record_id": "3669306:3663735",
-                                "translated_from_english": true,
-                                "url": "https://tatoeba.org/en/sentences/show/3669306"
-                            },
-                            "sentence_id": "sentence_00391d903ca376b4a20cd8a3b529d76c",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "es:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
                         "sentence": "Pensar como un guerrero.",
                         "targetHTML": "<span class=\"fw-token-v\">Pensar</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">un guerrero</span>.",
                         "translation": "Thinking like a warrior.",
@@ -68792,6 +68764,28 @@ export const SPANISH_GRAMMAR_WORDS = {
                             },
                             "sentence_id": "sentence_003b019bf8cebbf1f261aec46cdd9ea8",
                             "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Brilla el sol como que va a explotar",
+                        "targetHTML": "<span class=\"fw-token-v\">Brilla</span> el sol <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">que va a explotar</span>",
+                        "translation": "The sun shines like it's going to explode",
+                        "source": "Rosalía · Choices",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Choices",
+                                "source_record_id": "Rosalía:Choices:0",
+                                "artist": "Rosalía",
+                                "song": "Choices"
+                            },
+                            "sentence_id": "artist_3c0367807892",
+                            "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:como:0",
                                 "matcherVersion": "syntax-assignment/v1.1",
@@ -68832,34 +68826,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
                             },
                             "sentence_id": "sentence_00016c194c72d1ec9206a648b97e2127",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "es:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "No actúes como si no supieras lo que está pasando.",
-                        "targetHTML": "No <span class=\"fw-token-v\">actúes</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">si no supieras lo que está pasando</span>.",
-                        "translation": "Don't act like you don't know what's happening.",
-                        "source": "tatoeba",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "tatoeba-weekly/v1",
-                                "attribution": "Tatoeba sentence #3669306 by hayastan; English translation #3663735 by CK",
-                                "license": "CC BY 2.0 FR",
-                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
-                                "name": "tatoeba",
-                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
-                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
-                                "source_record_id": "3669306:3663735",
-                                "translated_from_english": true,
-                                "url": "https://tatoeba.org/en/sentences/show/3669306"
-                            },
-                            "sentence_id": "sentence_00391d903ca376b4a20cd8a3b529d76c",
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:como:0",
@@ -69052,34 +69018,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         }
                     },
                     {
-                        "sentence": "No actúes como si no supieras lo que está pasando.",
-                        "targetHTML": "No <span class=\"fw-token-v\">actúes</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">si no supieras lo que está pasando</span>.",
-                        "translation": "Don't act like you don't know what's happening.",
-                        "source": "tatoeba",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "tatoeba-weekly/v1",
-                                "attribution": "Tatoeba sentence #3669306 by hayastan; English translation #3663735 by CK",
-                                "license": "CC BY 2.0 FR",
-                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
-                                "name": "tatoeba",
-                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
-                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
-                                "source_record_id": "3669306:3663735",
-                                "translated_from_english": true,
-                                "url": "https://tatoeba.org/en/sentences/show/3669306"
-                            },
-                            "sentence_id": "sentence_00391d903ca376b4a20cd8a3b529d76c",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "es:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
                         "sentence": "Pensar como un guerrero.",
                         "targetHTML": "<span class=\"fw-token-v\">Pensar</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">un guerrero</span>.",
                         "translation": "Thinking like a warrior.",
@@ -69105,6 +69043,28 @@ export const SPANISH_GRAMMAR_WORDS = {
                             },
                             "sentence_id": "sentence_003b019bf8cebbf1f261aec46cdd9ea8",
                             "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Brilla el sol como que va a explotar",
+                        "targetHTML": "<span class=\"fw-token-v\">Brilla</span> el sol <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">que va a explotar</span>",
+                        "translation": "The sun shines like it's going to explode",
+                        "source": "Rosalía · Choices",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Choices",
+                                "source_record_id": "Rosalía:Choices:0",
+                                "artist": "Rosalía",
+                                "song": "Choices"
+                            },
+                            "sentence_id": "artist_3c0367807892",
+                            "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:como:0",
                                 "matcherVersion": "syntax-assignment/v1.1",
@@ -69145,34 +69105,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
                             },
                             "sentence_id": "sentence_00016c194c72d1ec9206a648b97e2127",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "es:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "No actúes como si no supieras lo que está pasando.",
-                        "targetHTML": "No <span class=\"fw-token-v\">actúes</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">si no supieras lo que está pasando</span>.",
-                        "translation": "Don't act like you don't know what's happening.",
-                        "source": "tatoeba",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "tatoeba-weekly/v1",
-                                "attribution": "Tatoeba sentence #3669306 by hayastan; English translation #3663735 by CK",
-                                "license": "CC BY 2.0 FR",
-                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
-                                "name": "tatoeba",
-                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
-                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
-                                "source_record_id": "3669306:3663735",
-                                "translated_from_english": true,
-                                "url": "https://tatoeba.org/en/sentences/show/3669306"
-                            },
-                            "sentence_id": "sentence_00391d903ca376b4a20cd8a3b529d76c",
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:como:0",
@@ -78485,11 +78417,19 @@ function getRelationExamples(relation, cardOrContext) {
                 if (matched.length > 0) return matched;
             }
             // When the selected artist has no matches, do NOT return another artist's lyrics!
-            // Fall back to verified speech or standard curriculum examples.
+            // Prefer verified speech examples first
             if (relation.speech_examples && relation.speech_examples.length > 0) {
                 return relation.speech_examples;
             }
-            return relation.examples || (relation.targetHTML ? [relation] : []);
+            // Final fallback: explicitly exclude any other artist's lyrics from relation.examples
+            const safeExamples = (relation.examples || []).filter(ex => {
+                const isArtist = ex.channel === 'artist' || !!ex?.metadata?.source?.artist;
+                if (!isArtist) return true; // clean dialogue / curriculum baseline
+                const a = String(ex?.metadata?.source?.artist || ex?.source || '').toLowerCase();
+                return a.includes(artistName) || artistName.includes(a);
+            });
+            if (safeExamples.length > 0) return safeExamples;
+            return [];
         } else if (relation.artist_examples && relation.artist_examples.length > 0) {
             return relation.artist_examples;
         }
