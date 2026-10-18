@@ -1,0 +1,692 @@
+/* Home (choose a set): Learn and Practise as two folding cards, one open at a
+   time. Loaded last; everything is scoped to #setupPanel and the home-* hooks
+   rendered by ui.js (renderRangeSelector, the level stepper). */
+
+/* Dark-theme surfaces for this screen come from css/black-palette.css. One
+   text size (16px phones, 18px from 1024px). */
+#setupPanel, #topBar { --home-text: 16px; }
+@media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 18px; } }
+
+/* One centred column everywhere: no sidebar column for Practise. */
+@media (min-width: 1024px) {
+    #setupPanel.file-upload,
+    body.desktop-workspace #setupPanel.file-upload {
+        display: block;
+        max-width: none;
+        margin-inline: auto;
+    }
+}
+#setupPanel #personalCoverageWrapper { display: none !important; }
+
+/* --- Section cards ------------------------------------------------------- */
+#setupPanel .home-section {
+    margin: 0 0 10px;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: none;
+    text-align: left;
+}
+#setupPanel .home-section > .step-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    margin: 0;
+    padding: 14px 16px 2px;
+}
+#setupPanel .home-section > .step-header > .step-number { display: none; }
+#setupPanel .home-section > .step-header > .step-title-trigger {
+    margin: 0;
+    font-size: 20px;
+    justify-self: start;
+}
+
+/* The closed section is one row. */
+#setupPanel .home-section-toggle {
+    display: none;
+    width: 100%;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 16px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--home-text);
+    text-align: left;
+    cursor: pointer;
+}
+#setupPanel .home-section-toggle:hover { background: var(--bg-card-hover); }
+#setupPanel .home-section-toggle strong { font-weight: 600; }
+#setupPanel .home-section-toggle-meta { color: var(--text-muted); font-size: var(--home-text); }
+#setupPanel .home-section-toggle-caret { margin-left: auto; color: var(--text-muted); }
+
+#setupPanel[data-home-open="practise"] #step2 > .home-section-toggle,
+#setupPanel[data-home-open="learn"] #reviewDeckSection > .home-section-toggle { display: flex; }
+#setupPanel[data-home-open="practise"] #step2 > .step-header,
+#setupPanel[data-home-open="practise"] #step2 > .level-choosing,
+#setupPanel[data-home-open="learn"] #reviewDeckSection > .step-header,
+#setupPanel[data-home-open="learn"] #reviewDeckBody { display: none !important; }
+/* Learn stays on top; Practise sits beneath it. */
+#setupPanel[data-home-open] #reviewDeckSection { order: 0; }
+
+/* --- Learn: level stepper ------------------------------------------------ */
+#setupPanel #step2 .level-choosing {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+#setupPanel #step2 .level-selector { margin: 0; padding: 0; }
+#setupPanel #lswSlider,
+#setupPanel .lsw-ticks { display: none !important; }
+#setupPanel .level-slider-wrap { padding: 4px 16px 0; margin: 0; }
+.home-level-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: 320px;
+    margin: 0 auto;
+    touch-action: pan-y;
+}
+.home-level-step {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+}
+.home-level-step:hover:not(:disabled) { background: var(--bg-card-hover); color: var(--text-primary); }
+.home-level-step:disabled { opacity: .25; cursor: default; }
+.home-level-readout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.15;
+}
+.home-level-eyebrow { color: var(--text-muted); font-size: var(--home-text); }
+.home-level-readout strong { font-size: 38px; font-weight: 700; color: var(--text-primary); }
+.home-level-words { color: var(--text-muted); font-size: var(--home-text); }
+#setupPanel #lswExamples {
+    margin: 8px 0 0;
+    padding: 0;
+    min-height: 0;
+    color: var(--text-muted);
+    font-size: var(--home-text);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#setupPanel #lswExamples .lsw-egs,
+#setupPanel #lswExamples .lsw-egs * {
+    max-width: none;
+    margin: 0;
+    display: inline;
+    color: var(--text-muted);
+    font-size: var(--home-text);
+    font-weight: 400;
+}
+#setupPanel #lswExamples .lsw-eg-extra { display: none; }
+
+/* --- Learn: this level's progress ---------------------------------------- */
+#setupPanel #step4 { margin: 0; padding: 0; border: 0; background: transparent; }
+#setupPanel #rangeSelector { margin: 0; padding: 0; }
+.home-level-progress { display: block; width: 100%; padding: 14px 16px 12px; box-sizing: border-box; }
+#setupPanel .home-level-bar {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    gap: 2px;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--bg-tertiary);
+    cursor: pointer;
+}
+#setupPanel .home-level-bar span { display: block; min-width: 3px; height: 100%; align-self: stretch; }
+.home-level-stats {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-top: 8px;
+    color: var(--text-secondary);
+    font-size: var(--home-text);
+}
+.home-level-stat { display: inline-flex; align-items: center; gap: 5px; }
+.home-level-stat i { width: 8px; height: 8px; border-radius: 50%; }
+.home-level-bar .is-new, .home-level-stat.is-new i { background: var(--set-new, #fff); }
+.home-level-bar .is-seen, .home-level-stat.is-seen i { background: var(--set-review, #896318); }
+.home-level-bar .is-known, .home-level-stat.is-known i { background: var(--set-known, #16734b); }
+.home-level-bar .is-estimated, .home-level-stat.is-estimated i { background: var(--set-estimated, #77669e); }
+.home-level-bar .is-skipped, .home-level-stat.is-skipped i { background: var(--set-skipped, #566477); }
+
+/* --- Footer: Smart Skip + the one button --------------------------------- */
+#setupPanel .home-section-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 16px 14px;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0;
+    background: transparent;
+}
+#setupPanel #setupOptions.setup-options,
+#setupPanel #step2 #setupOptions {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+.home-smart-skip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 10px;
+    border-radius: 10px;
+    background: var(--bg-tertiary);
+    transition: background .15s ease;
+}
+.home-smart-skip.is-on { background: color-mix(in srgb, var(--accent-primary) 18%, var(--bg-tertiary)); }
+.home-smart-skip-icon {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.home-smart-skip.is-on .home-smart-skip-icon { stroke: var(--accent-primary); }
+.home-smart-skip-copy {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: var(--home-text);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+.home-smart-skip-copy { display: flex; align-items: center; }
+.home-smart-skip-copy strong { flex: none; color: var(--text-primary); font-weight: 600; }
+.home-smart-skip-copy .home-smart-skip-dot, .home-smart-skip-copy .home-smart-skip-details { flex: none; }
+.home-smart-skip-copy #fastTrackHubSummary { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.home-smart-skip-dot { margin: 0 5px; }
+.home-smart-skip-details { margin-left: 6px; color: var(--text-secondary); font-size: 1.15em; line-height: 1; }
+.home-switch {
+    position: relative;
+    flex: none;
+    width: 40px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: var(--border-light);
+    cursor: pointer;
+    transition: background .15s ease;
+}
+.home-switch-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .15s ease;
+}
+.home-switch[aria-checked="true"] { background: var(--accent-primary); }
+.home-switch[aria-checked="true"] .home-switch-knob { transform: translateX(16px); }
+
+.home-cta {
+    display: flex;
+    min-height: 50px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--accent-primary);
+    color: var(--accent-primary-text, #fff);
+}
+.home-cta.is-disabled { opacity: .45; }
+.home-cta-length,
+.home-cta-main {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.home-cta-length {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 14px;
+    border-right: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    font-size: var(--home-text);
+}
+.home-cta-main { flex: 1; padding: 0 16px; font-size: var(--home-text); }
+.home-cta-length::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    border: 1.7px solid currentColor;
+    border-radius: 50%;
+    background: linear-gradient(currentColor, currentColor) 50% 30% / 1.7px 40% no-repeat;
+    opacity: .85;
+}
+.home-cta-main:disabled { cursor: default; }
+.home-cta-length:hover, .home-cta-main:hover:not(:disabled) { background: color-mix(in srgb, #000 12%, transparent); }
+.home-footer-hint { margin: 0; color: var(--text-muted); font-size: var(--home-text); }
+
+/* --- Practise body -------------------------------------------------------- */
+#setupPanel #reviewDeckBody { margin: 0; padding: 0; border: 0; background: transparent; }
+.home-practise { padding: 6px 16px 12px; }
+.home-practise-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0 12px;
+    line-height: 1.2;
+}
+.home-practise-total strong { font-size: 38px; font-weight: 700; color: var(--text-primary); }
+.home-practise-total span { color: var(--text-muted); font-size: var(--home-text); text-align: center; }
+.home-practise-total.is-empty strong { font-size: 20px; margin-bottom: 4px; }
+.home-practise-rows { border-top: 1px solid var(--border-color); }
+.home-practise-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: var(--home-text);
+    color: var(--text-primary);
+}
+.home-practise-row i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.home-practise-row span { flex: 1; }
+.home-practise-row b { font-weight: 600; color: var(--text-secondary); }
+.home-practise-row.is-mistake i { background: #e5484d; }
+.home-practise-row.is-due i { background: var(--accent-blue); }
+.home-practise-row.is-upcoming { color: var(--text-muted); }
+.home-practise-row.is-upcoming i { background: var(--border-light); }
+.home-practise-browse {
+    margin-top: 8px;
+    padding: 6px 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: var(--home-text);
+    cursor: pointer;
+}
+.home-practise-browse:hover { color: var(--text-primary); }
+
+/* --- Phones: the start button is a bar across the bottom of the screen ---
+   Only the open card's footer is ever displayed (the closed card's body is
+   hidden), so whichever card is open owns the bar. */
+@media (max-width: 767px) {
+    #setupPanel .home-section-footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 20;
+        padding: 12px 16px max(10px, env(safe-area-inset-bottom));
+        border-top: 1px solid var(--border-color);
+        border-radius: 0;
+        background: var(--bg-primary);
+        box-shadow: none;
+    }
+    .home-cta { position: relative; }
+    .home-cta-length { position: relative; z-index: 1; }
+    .home-cta-main { position: absolute; inset: 0; padding: 0 16px; }
+    /* Room so the last card never sits under the bar. */
+    #setupPanel[data-home-open] { padding-bottom: calc(130px + env(safe-area-inset-bottom)); }
+}
+
+/* --- Wider screens: Smart Skip beside the button ------------------------- */
+@media (min-width: 768px) {
+    #setupPanel .home-section-footer { flex-direction: row; align-items: center; flex-wrap: wrap; }
+    #setupPanel .home-section-footer > #setupOptions { flex: 1; min-width: 0; }
+    #setupPanel .home-section-footer > .home-action-slot { flex: none; }
+    #setupPanel #reviewDeckSection .home-section-footer { justify-content: space-between; }
+    .home-cta { min-height: 44px; }
+    .home-cta-main { flex: none; font-size: var(--home-text); }
+}
+
+/* --- Top bar on phones and narrow windows --------------------------------
+   No filled, ringed rectangle: a plain bar with the language's colours as a
+   thin line beneath it. The desktop sidebar (body.desktop-workspace) keeps
+   its own styling. */
+body:not(.desktop-workspace) #topBar {
+    margin-bottom: 12px;
+    padding: 8px 4px 10px;
+    border: 0;
+    border-radius: 0;
+    background: color-mix(in srgb, var(--bg-primary) 90%, transparent);
+    box-shadow: none;
+}
+body:not(.desktop-workspace) #topBar::before {
+    inset: auto 0 0 0;
+    height: 2px;
+    padding: 0;
+    border-radius: 1px;
+    opacity: .6;
+    -webkit-mask: none;
+    mask: none;
+}
+body:not(.desktop-workspace) #topBar .learning-context-chip {
+    min-height: 40px;
+    padding: 4px 8px 4px 2px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+}
+body:not(.desktop-workspace) #topBar .learning-context-flag { font-size: 20px; }
+body:not(.desktop-workspace) #topBar .learning-context-chip-copy strong { font-size: 15px; }
+body:not(.desktop-workspace) #topBar .top-bar-icon-btn,
+body:not(.desktop-workspace) #topBar .gear-btn {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    background: transparent;
+}
+body:not(.desktop-workspace) #topBar .top-bar-icon-btn svg,
+body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; }
+
+/* --- Wide screens: fill the window -------------------------------------
+   Nothing here scrolls, so nothing is capped in pixels: the column takes the
+   width beside the sidebar, the open card takes the height left over, and
+   the headline numbers scale with the window. */
+@media (min-width: 1024px) {
+    /* JS sets display:block inline on these; override it unless hidden. */
+    #setupPanel.file-upload:not([style*="none"]),
+    body.desktop-workspace #setupPanel.file-upload:not([style*="none"]) {
+        display: flex !important;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+        min-height: calc(100dvh - 56px);
+        box-sizing: border-box;
+        padding-inline: 2vw;
+    }
+    #setupPanel.file-upload { align-items: stretch; }
+    #setupPanel .home-section { margin: 0; width: 100%; max-width: none; align-self: stretch; box-sizing: border-box; }
+    #setupPanel #step2:not([style*="none"]),
+    #setupPanel #reviewDeckSection:not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
+    #setupPanel[data-home-open="learn"] #step2,
+    #setupPanel[data-home-open="practise"] #reviewDeckSection { flex: 1 1 auto; }
+    #setupPanel .home-section > .step-header { padding: 2.4vh 2vw 0; }
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(17px, 1.5vw, 24px); }
+    #setupPanel .home-section-footer { margin-top: auto; padding: 2vh 2vw; }
+    #setupPanel .home-section-toggle { padding: 1.6vh 2vw; font-size: var(--home-text); }
+    #setupPanel .home-section-toggle-meta { font-size: var(--home-text); }
+
+    /* Learn: picker on the left, this level's progress on the right, the
+       footer across both. #step4 joins the grid unless JS has hidden it. */
+    #setupPanel #step2 .level-choosing {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        grid-template-rows: 1fr auto;
+        align-items: center;
+    }
+    #setupPanel #step2 #levelSelector { grid-column: 1; grid-row: 1; padding: 2vh 0; }
+    #setupPanel #step4:not([style*="none"]) { display: contents !important; }
+    #setupPanel #step2 #rangeSelector { grid-column: 2; grid-row: 1; }
+    #setupPanel #step2 .home-section-footer { grid-column: 1 / -1; grid-row: 2; }
+    #setupPanel #step2 .home-level-progress { padding: 0 3vw 0 1vw; }
+    #setupPanel #step2 .home-level-bar { height: clamp(8px, 1.2vh, 14px); border-radius: 7px; }
+    #setupPanel #step2 .home-level-stats { margin-top: 1.6vh; font-size: var(--home-text); gap: 6px 1.4vw; }
+    .home-level-stepper { max-width: none; gap: 2vw; }
+    .home-level-step { width: clamp(44px, 4vw, 64px); height: clamp(44px, 4vw, 64px); font-size: clamp(28px, 2.6vw, 42px); }
+    .home-level-eyebrow { font-size: clamp(12px, 1vw, 16px); }
+    .home-level-readout strong { font-size: clamp(40px, 6vw, 96px); }
+    .home-level-words { font-size: var(--home-text); }
+    #setupPanel #lswExamples,
+    #setupPanel #lswExamples .lsw-egs,
+    #setupPanel #lswExamples .lsw-egs * { font-size: var(--home-text); }
+    #setupPanel #lswExamples { padding: 0 1vw; }
+
+    /* Practise: the total on the left, the breakdown on the right. */
+    #setupPanel #reviewDeckBody:not([style*="none"]) { flex: 1 1 auto; display: flex; flex-direction: column; }
+    .home-practise {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        column-gap: 3vw;
+        align-content: center;
+        align-items: center;
+        padding: 2vh 2vw;
+    }
+    .home-practise-total { grid-column: 1; grid-row: 1 / span 2; padding: 0; }
+    .home-practise-total strong { font-size: clamp(40px, 6vw, 96px); }
+    .home-practise-total span { font-size: var(--home-text); }
+    .home-practise-row { padding: 1.4vh 0; font-size: var(--home-text); }
+    .home-practise-rows { grid-column: 2; grid-row: 1; }
+    .home-practise-browse { grid-column: 2; grid-row: 2; justify-self: start; font-size: var(--home-text); }
+    .home-practise-total.is-empty { grid-column: 1 / -1; grid-row: 1; }
+    .home-practise-total.is-empty + .home-practise-browse { grid-column: 1 / -1; grid-row: 2; justify-self: center; }
+
+    .home-cta { min-height: clamp(44px, 5.5vh, 60px); }
+    .home-cta-main { font-size: var(--home-text); padding: 0 2vw; }
+    .home-smart-skip-copy { font-size: var(--home-text); }
+    .home-footer-hint { font-size: var(--home-text); }
+}
+
+/* --- Choose your vocabulary (Speech or Music) ----------------------------
+   Two equal cards, each one button: icon square, name, one sentence, Best
+   for. Spotify is the Music card's footer. No "or" divider and no second
+   language button (the top bar / sidebar already switches language). */
+:is(#step1.language-summary-active, #step1) #standardSourceCard {
+    --home-text: 16px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    text-align: left;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceLanguageBtn,
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-or { display: none !important; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice { margin: 0; padding: 0; border: 0; background: transparent; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro { margin: 0 0 16px; padding: 0; text-align: left; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-heading { margin: 0 0 6px; justify-content: flex-start; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { font-size: 24px; text-align: left; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--text-muted);
+    font-size: var(--home-text);
+    line-height: 1.45;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets li { margin: 0; padding: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets li::before { display: none; content: none; }
+
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-buttons {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+/* The card surface: Speech's button itself, and Music's wrapper. */
+:is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceSpeechBtn,
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music {
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: none;
+    overflow: hidden;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music { display: flex; flex-direction: column; padding: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music #standardSourcePickerBtn {
+    flex: 1;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "icon . tail" "copy copy copy";
+    align-items: center;
+    row-gap: 10px;
+    width: 100%;
+    min-height: 0;
+    padding: 16px;
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceSpeechBtn:hover:not(:disabled),
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music:hover { border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color)); }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon {
+    grid-area: icon;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin: 0;
+    border-radius: 12px;
+    background: var(--bg-tertiary);
+    color: var(--accent-primary);
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon svg { width: 22px; height: 22px; stroke: currentColor; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-tail { display: block !important; grid-area: tail; color: var(--text-muted); font-size: 22px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy { grid-area: copy; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { font-size: 19px; font-weight: 700; color: var(--text-primary); }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy small {
+    display: block;
+    color: var(--text-secondary);
+    font-size: var(--home-text);
+    line-height: 1.45;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 8px 0 0;
+    padding: 0;
+    border: 0;
+    color: var(--text-secondary);
+    font-size: var(--home-text);
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor em {
+    margin-bottom: 2px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-style: normal;
+    letter-spacing: 0;
+    text-transform: none;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor > span { display: flex; align-items: center; gap: 8px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor > span::before {
+    content: "";
+    flex: none;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify { margin: 0; padding: 0; border-top: 1px solid var(--border-color); }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify .spotify-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 0;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #1db954;
+    font: inherit;
+    font-size: var(--home-text);
+    font-weight: 600;
+    text-align: left;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify .spotify-status svg { width: 20px; height: 20px; flex: none; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify button.spotify-status::after { content: "›"; margin-left: auto; font-size: 20px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-reassurance {
+    margin: 16px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item { padding: 20px; align-content: start; }
+}
+@media (min-width: 1024px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard { --home-text: 18px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { font-size: 30px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { font-size: 22px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon { width: 52px; height: 52px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon svg { width: 26px; height: 26px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item { padding: 26px; row-gap: 18px; }
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard { padding: 4px 12px 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro {
+    border: 0 !important;
+    padding-bottom: 0 !important;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-heading { width: 100%; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { display: block; width: 100%; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music:not(:hover) { border-color: var(--border-color); }
+/* Phones: icon, name and › share the first row. */
+@media (max-width: 767px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas: "icon name tail";
+        column-gap: 12px;
+        row-gap: 8px;
+    }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy { display: contents; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { grid-area: name; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy small { grid-column: 1 / -1; grid-row: 2; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor { grid-column: 1 / -1; grid-row: 3; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor { margin-top: 2px; }
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-choice, .standard-source-choice-intro) { max-width: none; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.vocabulary-choice-bullets, .vocabulary-choice-bullets li, .choice-sheet-bestfor, .choice-sheet-bestfor em) { text-align: left; }
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-buttons { align-items: stretch; }
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets { max-width: none !important; margin: 0 !important; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify {
+    margin: 0 !important;
+    border: 0 !important;
+    border-top: 1px solid var(--border-color) !important;
+    border-radius: 0 !important;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, .standard-source-music) { align-self: stretch !important; height: auto; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro { justify-items: start !important; }

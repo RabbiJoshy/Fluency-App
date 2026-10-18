@@ -2,6 +2,109 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T21:40:00+01:00",
+      "date": "2026-10-18 21:40 BST",
+      "agent": "Claude",
+      "summary": "Choose your vocabulary: two equal cards, one intro line, no 'or'",
+      "detail": [
+        "Speech and Music are two equal cards: icon, name, one sentence, Best for. Stacked on phones (icon, name and › on one row); side by side filling the width on desktop.",
+        "The three intro bullets are one line: 'Common words first. What’s common depends on where the words come from.'",
+        "Removed the 'or' divider and the 'Choose another language' button (the top bar and sidebar already switch language).",
+        "Shorter copy, also used by the pop-up picker and tutorial: 'Words and examples from films and TV.', Best for 'Everyday conversations', 'Your favourite artists', 'Learning by listening'.",
+        "Spotify is a flat footer on the Music card."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T21:10:00+01:00",
+      "date": "2026-10-18 21:10 BST",
+      "agent": "Claude",
+      "summary": "Top bar: language chip has no outline",
+      "detail": [
+        "On phones and narrow windows the flag and language name sit in the bar with no pill outline; it is still the same button."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T21:00:00+01:00",
+      "date": "2026-10-18 21:00 BST",
+      "agent": "Claude",
+      "summary": "Black palette on flashcards (dark theme)",
+      "detail": [
+        "The study screen uses the same black page and near-black card as Smart Skip and the home screen.",
+        "Panels that had blue-grey typed in now follow it: example sentences, phrase examples, and the function-word sentence panel and parts box. Pop-ups from the card (card info, word forms, frequency, sense detail, direction, lookup) use one lighter step.",
+        "Part-of-speech tints (e.g. the blue on noun meanings) are unchanged.",
+        "The palette now lives in css/black-palette.css, which lists the screens using it: home and flashcards so far (Smart Skip keeps its own trial copy). Light theme is untouched."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T20:40:00+01:00",
+      "date": "2026-10-18 20:40 BST",
+      "agent": "Claude",
+      "summary": "Home: bigger text, white New dot, clock back on the time button, centred Learn label",
+      "detail": [
+        "Shared text size up one step: 16px on phones, 18px from 1024px; section titles 20px.",
+        "New is white in the level bar and its legend again.",
+        "The clock icon is back on the 5 min button.",
+        "On phones, 'Learn · 20 new' / 'Practise · N' is centred on the whole bar rather than on the part right of the time."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T20:20:00+01:00",
+      "date": "2026-10-18 20:20 BST",
+      "agent": "Claude",
+      "summary": "Home: black page with near-black cards, one text size, flat bottom bar",
+      "detail": [
+        "Dark theme on the home screen uses the Smart Skip page's palette: a black page (#000), cards just lifted off it (#0d0e10), #24272b borders.",
+        "One text size for everything that isn't a heading or a headline number: 15px on phones, 17px from 1024px wide (as on Smart Skip). The tiny 12-14px labels are gone.",
+        "Phone bottom bar is flat: same black as the page with a line above it, no rounded box or shadow, and less padding underneath. On wider screens the card footer is no longer a separately shaded box either.",
+        "Smart Skip line ends in › instead of the word Details so it fits on one line at the larger size; the whole line still opens Smart Skip's page."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T20:02:00+01:00",
+      "date": "2026-10-18 20:02 BST",
+      "agent": "Claude",
+      "summary": "Phones: the start button is a bar across the bottom of the screen",
+      "detail": [
+        "Under 768px wide, the open card's footer (Smart Skip + 'Learn · N new', or 'Practise · N') is a full-width bar fixed to the bottom of the screen, whichever card is open.",
+        "The page leaves room underneath so the last card never sits behind the bar. Desktop is unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T19:48:00+01:00",
+      "date": "2026-10-18 19:48 BST",
+      "agent": "Claude",
+      "summary": "Home on desktop fills the window instead of a narrow 560px column",
+      "detail": [
+        "From 1024px wide: the column takes the full width beside the sidebar and the open card stretches to the bottom of the window, with its button at the bottom of the card.",
+        "Learn: level picker and example words on the left, the level's progress bar and counts on the right. Practise: the total on the left, Mistakes / Due / Coming back on the right.",
+        "Headline numbers, labels and the button scale with the window size rather than using fixed pixel sizes. Phones are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T19:26:00+01:00",
+      "date": "2026-10-18 19:26 BST",
+      "agent": "Claude",
+      "summary": "Home screen: Learn and Practise fold into each other; one button each, plainer top bar",
+      "detail": [
+        "'Choose a level' is now 'Learn'. Learn and Practise are two cards and only one is open; the closed one is a single row (e.g. 'Practise · 12 waiting · 7 mistakes'). Tap it to swap.",
+        "Practise opens first when 5 or more mistakes are waiting, until you pick a card yourself this visit. Practise is language-wide: it lists Mistakes, Due for review and what comes back next, with 'Practise · N' at the bottom.",
+        "Level picker is ‹ Level N › with its word range (swipe on phones). The segmented scrubber and the 'Your progress' coverage bar are gone from this screen.",
+        "One bar for the chosen level: New, Seen, Known, Estimated, Skipped. 'Practice' in the level counts is now 'Seen', since Practise is no longer per level.",
+        "Smart Skip is one line above the button: 'Smart Skip · fewer cards · Details' with a switch; when on it shows how many fewer cards. The button reads 'Learn · 20 new'.",
+        "Desktop: one centred column, no empty right-hand column at 1280px and wider. Phones: the open card's footer stays at the bottom of the screen.",
+        "Top bar on phones and narrow windows: no filled, ringed rectangle; an outlined language chip and a thin line in the language's colours underneath.",
+        "Fix: after turning Smart Skip on, its invisible animation backdrop stayed over the page and blocked every tap."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T18:50:00+01:00",
       "date": "2026-10-18 18:50 BST",
       "agent": "Claude",
@@ -269,105 +372,6 @@
         "Bind admin and reviewer access to verified login identities in the app and server, including staging.",
         "Quick reports capture the meaning and exact example currently displayed, with release/deck context.",
         "Keep whole-card reporting available to JP; protect flags from cross-account overwrites."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T17:45:00+01:00",
-      "date": "2026-10-17 17:45 BST",
-      "agent": "Antigravity",
-      "summary": "Full-screen blurred backdrop overlay for Smart Skip word-filtering animation",
-      "detail": [
-        "Added a fixed full-screen blurred backdrop overlay (backdrop-filter: blur(10px)) that activates when Smart Skip is pressed.",
-        "Centered the skipping animation card with frosted glass styling and smooth entrance/exit scaling in the viewport.",
-        "Fades the blur overlay and HUD out gracefully once word skipping completes, revealing the updated level stats."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T17:34:00+01:00",
-      "date": "2026-10-17 17:34 BST",
-      "agent": "Antigravity",
-      "summary": "Match Smart Skip size to Study button with glowing white indicator on active state",
-      "detail": [
-        "Scaled the Smart Skip action button to 52px height, 22px padding, and 16px bold typography matching the exact footprint of Study and Practise.",
-        "Applied solid Study accent background fill with crisp white text and a bright glowing white LED indicator dot when toggled ON.",
-        "Preserved the clean neutral outline card state with hollow dot when OFF to maintain immediate clarity of the disabled state."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T17:19:00+01:00",
-      "date": "2026-10-17 17:19 BST",
-      "agent": "Antigravity",
-      "summary": "Refine Smart Skip into unified status-dot action pill and center Practice summary text",
-      "detail": [
-        "Replaced the internal sliding switch with a sleek illuminated status dot indicator (○ Off / ● On) inside the unified Smart Skip action pill.",
-        "Tightened vertical spacing and removed dead-space padding around the Smart Skip footer so it sits cleanly and compactly beneath Study without large gaps.",
-        "Centered the Practice section summary text ('X waiting' / 'Nothing to practise yet') and chevron above the Practise button, matching the centered symmetry of Study."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T15:47:00+01:00",
-      "date": "2026-10-17 15:47 BST",
-      "agent": "Antigravity",
-      "summary": "Balance setup headers spacing and add sliding switch affordance to Smart Skip toggle",
-      "detail": [
-        "Embedded a sliding iOS-style pill track and thumb inside the unified Smart Skip button with smooth CSS transforms and theme-adaptive coloring.",
-        "Trimmed excessive top padding above 'Choose your vocabulary' and 'Choose a level' so step content starts higher on screen.",
-        "Added healthy breathing margins and gaps directly below headers so title and content don't feel squashed together."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T15:25:00+01:00",
-      "date": "2026-10-17 15:25 BST",
-      "agent": "Antigravity",
-      "summary": "Style sense row part of speech as front-card pills and tighten rare uses icon badge placement",
-      "detail": [
-        "Positioned the rare uses count badge snug in the top-left quadrant of the icon (top: 1px, left: 2px) close to the wifi signal bars, creating a tight square icon unit.",
-        "Replaced plain colored text for parts of speech in back-of-card sense sections with rounded pill styling (background tint, border-radius: 999px, white text) matching the front of the card.",
-        "Aligned sense section headers with align-items: center so the POS pill, lemma, gloss summary, and chevron stay vertically centered."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T15:12:00+01:00",
-      "date": "2026-10-17 15:12 BST",
-      "agent": "Antigravity",
-      "summary": "Omit zero counts from level picker progress legend and unify Smart Skip into action toggle button",
-      "detail": [
-        "Updated the level picker progress stats line to render only categories with counts > 0, eliminating '0 Practice' and '0 Known' when empty.",
-        "Unified Smart Skip label and segmented switch into a single centered action button ('Smart Skip · On' / 'Smart Skip · Off').",
-        "Styled the unified Smart Skip button to match the visual language, radius, and weight of the Study and Practise buttons.",
-        "Maintained centered secondary summary ('Fewer cards, less repetition · Details ›') directly below the toggle button."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T14:58:00+01:00",
-      "date": "2026-10-17 14:58 BST",
-      "agent": "Antigravity",
-      "summary": "Eliminate runaway loading mark reflow loop and detach hidden loading screen to stop CPU overheating",
-      "detail": [
-        "Enforced strict is-hidden checks in applyLoadingMarkImage and updateLoadingMark so background image rotation intervals never run when the loading screen is hidden.",
-        "Incremented loading mark generation on hideAppLoading so delayed async image manifest fetches immediately discard their results and never spawn background intervals.",
-        "Guarded synchronous offsetWidth layout reads and pop animations so hidden loading elements never trigger forced browser DOM reflows.",
-        "Added display: none !important and paused all child CSS keyframe animations on .app-loading-screen.is-hidden so the GPU and layout engine completely detach the overlay."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T13:15:00+01:00",
-      "date": "2026-10-17 13:15 BST",
-      "agent": "Antigravity",
-      "summary": "Integrate desktop song picker into Extra workspace and position Spotify banner below search bar",
-      "detail": [
-        "Integrated the song picking section into the desktop Extra workspace with sidebar and background intact.",
-        "Transition seamlessly to full-screen lyrics translation once a song is selected or loaded via Spotify URL.",
-        "Reordered the search bar to sit above the Spotify paste link banner across both desktop Extra and modal views.",
-        "Added search filtering and language-aware catalogue browsing directly inside desktop Extra."
       ],
       "commit": "pending"
     }

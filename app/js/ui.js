@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=f0285572';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=f0285572';
-import { readFastTrack } from './fast-track-preferences.js?v=f0285572';
-import './session-plan.js?v=f0285572';
+import './state.js?v=58b21ad6';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=58b21ad6';
+import { readFastTrack } from './fast-track-preferences.js?v=58b21ad6';
+import './session-plan.js?v=58b21ad6';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -293,7 +293,7 @@ function setupTooltipHandlers() {
 
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' || e.key === ' ') {
-            const bar = e.target.closest?.('.study-level-bar.step-help-btn');
+            const bar = e.target.closest?.('.study-level-bar.step-help-btn, .home-level-bar.step-help-btn');
             if (bar) {
                 e.preventDefault();
                 bar.click();
@@ -755,22 +755,20 @@ function learningModeCopy(language = selectedLanguage) {
     return {
         title: 'Choose your vocabulary',
         intro: [
-            'Learn the most common words first.',
-            'What’s common varies by region and between Speech and Music.',
-            'Your choice shapes your flashcards and example sentences.'
+            'Common words first. What’s common depends on where the words come from.'
         ],
         speech: {
             label: 'Speech',
-            description: 'Words and examples come from films and TV shows.',
-            bestFor: ['Starting a new language', 'Understanding everyday conversations'],
+            description: 'Words and examples from films and TV.',
+            bestFor: ['Starting a new language', 'Everyday conversations'],
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
             label: 'Music',
             description: lyricsCatalog
-                ? 'Words and examples come from songs, artists, and your Spotify playlists.'
-                : 'Words and examples come from your Spotify playlists.',
-            bestFor: ['Understanding your favourite artists', 'Learning by listening to music'],
+                ? 'Words and examples from songs, artists and your playlists.'
+                : 'Words and examples from your Spotify playlists.',
+            bestFor: ['Your favourite artists', 'Learning by listening'],
             iconHTML: MODE_ICON_MUSIC
         }
     };
@@ -1390,6 +1388,15 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         container.classList.add('level-selector--slider');
         container.innerHTML = `
             <div class="level-slider-wrap">
+                <div class="home-level-stepper" id="homeLevelStepper">
+                    <button type="button" class="home-level-step" data-level-step="-1" aria-label="Previous level">‹</button>
+                    <div class="home-level-readout" aria-live="polite">
+                        <span class="home-level-eyebrow">Level</span>
+                        <strong id="homeLevelNumber">${initialIdx + 1}</strong>
+                        <span id="homeLevelWords" class="home-level-words"></span>
+                    </div>
+                    <button type="button" class="home-level-step" data-level-step="1" aria-label="Next level">›</button>
+                </div>
                 <div id="lswSlider" class="lsw-segments lsw-scrubber" role="radiogroup" aria-label="Level scrubber" data-value="${initialIdx}">
                     ${percentageRanges.map((lv, i) => {
                         const segLabel = `${i + 1}`;
@@ -1472,6 +1479,8 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
     if (segBar) {
         const buttons = Array.from(document.querySelectorAll('.level-selector-buttons .level-btn'));
         wireLevelScrubber(segBar, buttons);
+        wireHomeLevelStepper(buttons);
+        syncHomeLevelStepper(parseInt(segBar.dataset.value || '0', 10));
         // Prime the readout (examples need vocab to be loaded async).
         updateLevelSliderReadout(parseInt(segBar.dataset.value || '0', 10));
         // Center the scrubber on the initial selection once layout has settled.
@@ -2000,8 +2009,52 @@ function setLevelSegmentSelection(idx, preserveCenter = false) {
 
     const levelEl = document.getElementById('lswLevelVal');
     if (levelEl) levelEl.textContent = `Level ${idx + 1}`;
+    syncHomeLevelStepper(idx);
     updateLevelSliderReadout(idx);
     globalThis.refreshFastMode?.();
+}
+
+// --- Home level stepper ----------------------------------------------------
+// ‹ Level N › replaces the scrubber on screen. The scrubber stays in the DOM,
+// hidden, because selection still runs through it and the hidden .level-btn.
+function syncHomeLevelStepper(idx) {
+    const stepper = document.getElementById('homeLevelStepper');
+    if (!stepper) return;
+    const ranges = getActiveLevelRanges();
+    const lv = ranges[idx];
+    const numberEl = document.getElementById('homeLevelNumber');
+    if (numberEl) numberEl.textContent = String(idx + 1);
+    const wordsEl = document.getElementById('homeLevelWords');
+    if (wordsEl && lv) {
+        const metrics = _levelBandMetrics(lv);
+        wordsEl.textContent = `Words ${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}`;
+    }
+    stepper.querySelector('[data-level-step="-1"]').disabled = idx <= 0;
+    stepper.querySelector('[data-level-step="1"]').disabled = idx >= ranges.length - 1;
+}
+
+function wireHomeLevelStepper(buttons) {
+    const stepper = document.getElementById('homeLevelStepper');
+    if (!stepper) return;
+    const step = delta => {
+        const current = parseInt(document.getElementById('lswSlider')?.dataset.value || '0', 10);
+        const btn = buttons[current + delta];
+        if (!btn) return;
+        _setupLevelSelectionWasManual = true;
+        btn.click();
+    };
+    stepper.querySelectorAll('[data-level-step]').forEach(button => {
+        button.addEventListener('click', () => step(Number(button.dataset.levelStep)));
+    });
+    // A horizontal swipe across the number steps one level.
+    let startX = null;
+    stepper.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    stepper.addEventListener('touchend', e => {
+        if (startX == null) return;
+        const dx = e.changedTouches[0].clientX - startX;
+        startX = null;
+        if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+    }, { passive: true });
 }
 
 // --- Horizontal level scrubber ---------------------------------------------
@@ -2971,34 +3024,52 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         return `<button type="button" class="session-length-chip" data-session-length-toggle
             aria-label="Session length: ${lengthInfo.spoken}. Tap to change.">${lengthInfo.label}</button>`;
     };
+    // The home button: optional length segment, then the action. One per section.
+    const homeCta = (chip, buttonAttrs, label, disabled) => `<div class="home-cta${disabled ? ' is-disabled' : ''}">
+            ${chip.replace('class="session-length-chip"', 'class="home-cta-length"')}
+            <button type="button" class="home-cta-main" ${buttonAttrs} ${disabled ? 'disabled' : ''}>${label}</button>
+        </div>`;
     let reviewHTML = '';
+    let practiseMistakes = 0;
+    let practiseTotal = 0;
     if (currentUser && !currentUser.isGuest) {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
         const globalTotal = Number(summary?.total) || 0;
+        const mistakes = (summary?.neverRight?.length || 0) + (summary?.critical?.length || 0);
+        const dueCount = summary?.due?.length || 0;
+        practiseMistakes = mistakes;
+        practiseTotal = globalTotal;
         const srsOn = typeof spacedRepetitionEnabled === 'undefined' || spacedRepetitionEnabled !== false;
         const upcoming = plan?.summariseUpcoming?.(window.getUpcomingReviewTimes?.(selectedLanguage) || []) || null;
         const upcomingText = plan?.describeUpcoming?.(upcoming) || '';
-        let reviewMeta;
+        const practiseCap = plan?.sessionCardLimit?.('practice') || QUICK_REVIEW_LIMIT;
+        const practiseCount = Math.min(globalTotal, practiseCap);
+        const row = (tone, label, count) => `<div class="home-practise-row is-${tone}">
+                <i aria-hidden="true"></i><span>${label}</span><b>${count.toLocaleString()}</b>
+            </div>`;
+        let body;
         if (globalTotal > 0) {
-            reviewMeta = `${globalTotal.toLocaleString()} waiting`;
-        } else if (!srsOn) {
-            reviewMeta = 'Nothing to practise. Review schedule paused: only mistakes come back.';
-        } else if (upcomingText) {
-            reviewMeta = `Nothing to practise yet. ${upcomingText}`;
+            body = `<div class="home-practise-total"><strong>${globalTotal.toLocaleString()}</strong>
+                    <span>${globalTotal === 1 ? 'word' : 'words'} waiting, from all levels</span></div>
+                <div class="home-practise-rows">
+                    ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
+                    ${dueCount > 0 ? row('due', 'Due for review', dueCount) : ''}
+                    ${upcoming?.nextCount ? row('upcoming', `Coming back ${upcoming.nextLabel}`, upcoming.nextCount) : ''}
+                </div>`;
         } else {
-            reviewMeta = 'Nothing to practise yet.';
+            const empty = !srsOn
+                ? 'Review schedule paused: only mistakes come back.'
+                : (upcomingText || 'Words you miss will collect here.');
+            body = `<div class="home-practise-total is-empty"><strong>All caught up</strong><span>${empty}</span></div>`;
         }
-        reviewHTML = `<div class="review-deck-content">
-                <button class="review-deck-summary" type="button" id="openReviewHomeBtn">
-                    <span class="review-deck-summary-copy">
-                        <span class="review-deck-summary-text">${reviewMeta}</span>
-                    </span>
-                    <span class="review-deck-summary-chevron" aria-hidden="true">›</span>
-                </button>
-                <div class="session-action-pill is-practice${globalTotal > 0 ? '' : ' is-disabled'}">
-                    ${lengthChip(globalTotal, 'practice')}
-                    <button class="study-set-review" type="button" id="quickReviewBtn" ${globalTotal > 0 ? '' : 'disabled'}>Practise</button>
-                </div>
+        reviewHTML = `<div class="home-practise">
+                ${body}
+                <button class="home-practise-browse" type="button" id="openReviewHomeBtn">Browse all <span aria-hidden="true">›</span></button>
+            </div>
+            <div class="home-section-footer">
+                ${globalTotal > 0 ? '<p class="home-footer-hint">Mistakes first, then due words</p>' : ''}
+                ${homeCta(lengthChip(globalTotal, 'practice'), 'id="quickReviewBtn"',
+                    globalTotal > 0 ? `Practise · ${practiseCount.toLocaleString()}` : 'Practise', globalTotal === 0)}
             </div>`;
     }
 
@@ -3041,42 +3112,50 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         const baseConfig = config.languages[selectedLanguage] || {};
         window.prefetchStudySetPayload?.(activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig, context.range);
     }
-    const description = `${levelNewCount} new, ${levelReviewCount} practice, ${levelKnownCount} known, ${levelEstimatedCount} estimated, ${levelSkippedCount} skipped`;
+    // Practise is language-wide, so this level's words that are waiting there
+    // are shown as "Seen" here rather than as a per-level Practice count.
+    const description = `${levelNewCount} new, ${levelReviewCount} seen, ${levelKnownCount} known, ${levelEstimatedCount} estimated, ${levelSkippedCount} skipped`;
     const goDisabled = nextCount === 0 || _studySessionStarting;
-    const stats = [];
-    if (levelNewCount > 0) stats.push(`<b class="study-set-stat"><i class="is-unseen"></i>${levelNewCount} New</b>`);
-    if (levelReviewCount > 0) stats.push(`<b class="study-set-stat"><i class="is-review"></i>${levelReviewCount} Practice</b>`);
-    if (levelKnownCount > 0) stats.push(`<b class="study-set-stat"><i class="is-known"></i>${levelKnownCount} Known</b>`);
-    if (levelEstimatedCount > 0) stats.push(`<b class="study-set-stat"><i class="is-estimated"></i>${levelEstimatedCount} Estimated</b>`);
-    if (levelSkippedCount > 0) stats.push(`<b class="study-set-stat"><i class="is-skipped"></i>${levelSkippedCount} Skipped</b>`);
-    if (stats.length === 0) stats.push(`<b class="study-set-stat"><i class="is-unseen"></i>0 New</b>`);
+    const segments = [
+        ['new', 'New', levelNewCount],
+        ['seen', 'Seen', levelReviewCount],
+        ['known', 'Known', levelKnownCount],
+        ['estimated', 'Estimated', levelEstimatedCount],
+        ['skipped', 'Skipped', levelSkippedCount]
+    ];
+    const barHTML = segments.filter(([, , n]) => n > 0)
+        .map(([kind, , n]) => `<span class="is-${kind}" style="flex-grow:${n}"></span>`).join('');
+    const statsHTML = segments.filter(([kind, , n]) => n > 0 || kind === 'new')
+        .map(([kind, label, n]) => `<span class="home-level-stat is-${kind}"><i aria-hidden="true"></i>${n.toLocaleString()} ${label}</span>`).join('');
     container.innerHTML = `
-        <div class="study-set-panel">
-            <div class="study-set-choice">
-                <div class="study-level-bar step-help-btn" role="button" tabindex="0" data-tooltip="levelColoursTooltip" aria-label="Level progress: ${description}. Click for details" aria-haspopup="dialog" title="Click for level progress details" style="${progressStyle}"></div>
-                <div class="study-set-current-copy">
-                    <span>
-                        ${stats.join('')}
-                    </span>
-                </div>
-                ${nextCount === 0
-                    ? `<button class="range-btn-new study-set-start" id="studySetStartBtn" type="button" disabled>No cards available</button>`
-                    : `<div class="session-action-pill">
-                    ${levelNewCount > 0 ? lengthChip(levelNewCount, 'new') : ''}
-                    <button class="range-btn-new study-set-start" id="studySetStartBtn" type="button"
-                        data-range="${context.range}" data-rank-basis="${rankBasis}" data-level-state="${levelState}"
-                        data-study-mode="${context.studyMode}" data-level-number="${levelNumber}" ${goDisabled ? 'disabled' : ''}>
-                        <span class="study-set-start-label">Study</span>
-                        ${levelNewCount > 0 ? `<span class="study-session-divider" aria-hidden="true">·</span><span class="study-session-count">${nextCount.toLocaleString()} new</span>` : ''}
-                    </button>
-                </div>`}
-            </div>
+        <div class="home-level-progress">
+            <div class="home-level-bar step-help-btn" role="button" tabindex="0" data-tooltip="levelColoursTooltip" aria-label="Level progress: ${description}. Click for details" aria-haspopup="dialog" title="Level progress details">${barHTML}</div>
+            <div class="home-level-stats">${statsHTML}</div>
         </div>`;
+    const learnLabel = nextCount === 0
+        ? 'No cards available'
+        : `Learn${levelNewCount > 0 ? ` · ${nextCount.toLocaleString()} new` : ''}`;
+    const learnSlot = document.getElementById('learnActionSlot');
+    if (learnSlot) {
+        learnSlot.innerHTML = homeCta(levelNewCount > 0 && nextCount > 0 ? lengthChip(levelNewCount, 'new') : '',
+            `id="studySetStartBtn" data-range="${context.range}" data-rank-basis="${rankBasis}" data-level-state="${levelState}"
+             data-study-mode="${context.studyMode}" data-level-number="${levelNumber}"`,
+            learnLabel, goDisabled);
+    }
     if (reviewSection) {
         const reviewBody = document.getElementById('reviewDeckBody');
         if (reviewBody) reviewBody.innerHTML = reviewHTML;
         reviewSection.hidden = !reviewHTML;
     }
+    const learnMeta = document.getElementById('learnSectionMeta');
+    if (learnMeta) learnMeta.textContent = `${levelNumber > 0 ? `Level ${levelNumber}` : 'This level'} · ${levelNewCount.toLocaleString()} new`;
+    const practiseMeta = document.getElementById('practiseSectionMeta');
+    if (practiseMeta) {
+        practiseMeta.textContent = practiseTotal > 0
+            ? `${practiseTotal.toLocaleString()} waiting${practiseMistakes > 0 ? ` · ${practiseMistakes.toLocaleString()} ${practiseMistakes === 1 ? 'mistake' : 'mistakes'}` : ''}`
+            : 'All caught up';
+    }
+    applyHomeSection(reviewHTML ? practiseMistakes : -1);
     document.getElementById('step4').style.display = 'block';
     setActiveSetupStep('step4');
     document.getElementById('studySetStartBtn').addEventListener('click', async function() {
@@ -3177,6 +3256,35 @@ function wireLevelChoice() {
             }
         }
     });
+}
+
+// Learn and Practise share the home screen and one is open at a time. Until
+// the learner opens one themselves this visit, Practise opens first once
+// enough mistakes are waiting. `mistakes` is -1 when there is no Practise.
+const HOME_PRACTISE_FIRST_MISTAKES = 5;
+let _homeSectionChosen = null;
+let _homeSectionWired = false;
+function applyHomeSection(mistakes) {
+    const panel = document.getElementById('setupPanel');
+    if (!panel?.querySelectorAll) return;
+    if (!_homeSectionWired) {
+        _homeSectionWired = true;
+        panel.addEventListener('click', event => {
+            const toggle = event.target.closest('.home-section-toggle');
+            if (!toggle) return;
+            _homeSectionChosen = toggle.dataset.homeSection;
+            setHomeSectionOpen(panel, _homeSectionChosen);
+        });
+    }
+    const open = mistakes < 0 ? 'learn'
+        : (_homeSectionChosen || (mistakes >= HOME_PRACTISE_FIRST_MISTAKES ? 'practise' : 'learn'));
+    setHomeSectionOpen(panel, open);
+}
+
+function setHomeSectionOpen(panel, open) {
+    panel.dataset.homeOpen = open;
+    panel.querySelectorAll('.home-section-toggle').forEach(toggle =>
+        toggle.setAttribute('aria-expanded', String(toggle.dataset.homeSection === open)));
 }
 
 // The screen Go opens when a level has little or nothing new to give.
@@ -3423,7 +3531,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=f0285572')
+        import('./spotify.js?v=58b21ad6')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
