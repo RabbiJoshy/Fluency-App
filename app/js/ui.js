@@ -753,14 +753,15 @@ const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" s
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
-        title: 'Choose your vocabulary',
+        title: 'Choose what to learn from',
         intro: [
-            'This app teaches the most common words first. What’s common depends on where the words come from.'
+            'We count how often each word appears in films and TV, or in songs, and give you flashcards in that order, most common first.',
+            'Your progress is shared between the two.'
         ],
         speech: {
             label: 'Speech',
             description: 'Words and examples from films and TV.',
-            bestFor: ['Starting a new language', 'Everyday conversations'],
+            bestFor: ['Starting from scratch', 'Everyday conversation', 'Following films and TV'],
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
@@ -768,7 +769,9 @@ function learningModeCopy(language = selectedLanguage) {
             description: lyricsCatalog
                 ? 'Words and examples from songs, artists and your playlists.'
                 : 'Words and examples from your Spotify playlists.',
-            bestFor: ['Your favourite artists', 'Learning by listening'],
+            bestFor: lyricsCatalog
+                ? ['Songs by artists you love', 'Your own playlists', 'Learning by listening']
+                : ['Your own playlists', 'Learning by listening'],
             iconHTML: MODE_ICON_MUSIC
         }
     };

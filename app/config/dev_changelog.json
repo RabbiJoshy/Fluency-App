@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T01:40:00+01:00",
+      "date": "2026-10-19 01:40 BST",
+      "agent": "Claude",
+      "summary": "Choose what to learn from: clearer intro, icons beside titles, fuller Best for, balanced cards",
+      "detail": [
+        "Title is now \"Choose what to learn from\". The intro says what happens: words are counted in films and TV or in songs and taught as flashcards, most common first; progress is shared between the two.",
+        "Each card has its icon beside its name and three Best for points; the one-line description inside the cards is gone (the intro covers it), as is the footnote under them.",
+        "Side by side (tablet and desktop), Speech has a footer, \"From real film and TV subtitles\" with a yellow film icon, to match Music's Spotify footer. Phones do not show it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T01:00:00+01:00",
       "date": "2026-10-19 01:00 BST",
       "agent": "Claude",
@@ -351,19 +363,6 @@
         "Replaced text toggles with clean, neutral pill buttons for 'all' / 'none' and '+ X' rarer tenses, removing garish red styling.",
         "Moved the Start summary box to the top of setup with ordered settings below, and simplified header to title + close button.",
         "Unified conjugation mode into a zero-latency embedded view with /conjugation URL and shared deck promise caching."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T14:05:00+01:00",
-      "date": "2026-10-18 14:05 BST",
-      "agent": "Claude",
-      "summary": "Scrubber number now moves one card at a time on grammar-word cards; POS pill fills the sense row; 'from' aligned; scrubber circle back to its original size",
-      "detail": [
-        "Fixed the seek-bar number freezing on grammar-word cards (en, lo, un, por…) and then jumping several numbers: updateCard returned early after drawing their back, before the scrubber update.",
-        "Sense-row POS pill text 17→19px; the row's own padding cut (7px → 3px) so the pill nearly fills it.",
-        "'from' in the sense-row head now sits on the pill's centre line instead of floating above it.",
-        "Scrubber circle back to 32px (it had grown to 40px); its number is 19px so it fills the circle instead."
       ],
       "commit": "pending"
     }

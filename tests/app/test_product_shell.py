@@ -257,7 +257,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("function learningModeCopy(", ui)
         self.assertIn("window.learningModeCopy(language)", main)
         self.assertNotIn("What do you want to understand?", main)
-        self.assertEqual(html.count("Choose your vocabulary"), 1)
+        self.assertEqual(html.count("Choose what to learn from"), 1)
         self.assertIn("Words and examples from films and TV.", ui)
         self.assertIn("Words and examples from songs, artists and your playlists.", ui)
         self.assertNotIn('id="learningContextMode"', html)
