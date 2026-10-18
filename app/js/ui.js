@@ -3036,7 +3036,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     let practiseMistakes = 0;
     let practiseTotal = 0;
     let practiseDue = 0;
-    let practiseUpcoming = null;
     if (currentUser && !currentUser.isGuest) {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
         const globalTotal = Number(summary?.total) || 0;
@@ -3047,10 +3046,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         practiseDue = dueCount;
         const srsOn = typeof spacedRepetitionEnabled === 'undefined' || spacedRepetitionEnabled !== false;
         const upcoming = plan?.summariseUpcoming?.(window.getUpcomingReviewTimes?.(selectedLanguage) || []) || null;
+        // What comes back later only matters once nothing is waiting.
         const upcomingText = plan?.describeUpcoming?.(upcoming) || '';
-        practiseUpcoming = upcoming;
-        // Everything scheduled beyond the next batch and the rest of this week.
-        const upcomingAfter = Math.max(0, (upcoming?.total || 0) - (upcoming?.nextCount || 0) - (upcoming?.laterThisWeek || 0));
+
         const practiseCap = plan?.sessionCardLimit?.('practice') || QUICK_REVIEW_LIMIT;
         const practiseCount = Math.min(globalTotal, practiseCap);
         const row = (tone, label, count) => `<div class="home-practise-row is-${tone}">
@@ -3063,9 +3061,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 <div class="home-practise-rows">
                     ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
                     ${dueCount > 0 ? row('due', 'Due for review', dueCount) : ''}
-                    ${upcoming?.nextCount ? row('upcoming', `Coming back ${upcoming.nextLabel}`, upcoming.nextCount) : ''}
-                    ${upcoming?.laterThisWeek ? row('upcoming', 'Later this week', upcoming.laterThisWeek) : ''}
-                    ${upcomingAfter > 0 ? row('upcoming', 'After this week', upcomingAfter) : ''}
                 </div>`;
         } else {
             const empty = !srsOn
@@ -3180,7 +3175,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         practisePeek.innerHTML = [
             practiseMistakes > 0 ? peekItem('mistake', `${practiseMistakes.toLocaleString()} ${practiseMistakes === 1 ? 'mistake' : 'mistakes'}`) : '',
             practiseDue > 0 ? peekItem('due', `${practiseDue.toLocaleString()} due`) : '',
-            practiseUpcoming?.nextCount ? peekItem('upcoming', `${practiseUpcoming.nextCount.toLocaleString()} back ${practiseUpcoming.nextLabel}`) : ''
         ].join('');
         practisePeek.hidden = !practisePeek.innerHTML;
     }
