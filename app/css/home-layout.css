@@ -2,6 +2,23 @@
    time. Loaded last; everything is scoped to #setupPanel and the home-* hooks
    rendered by ui.js (renderRangeSelector, the level stepper). */
 
+/* Dark theme on the home screen: the Smart Skip page's trial palette — a
+   black page and cards only just lifted off it — and its single text size
+   (15px phones, 17px from 1024px). */
+:root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden):not([style*="none"])) {
+    --bg-primary: #000;
+    --bg-card: #0d0e10;
+    --bg-card-hover: #17191c;
+    --bg-tertiary: #17191c;
+    --bg-secondary: #0d0e10;
+    --border-color: #24272b;
+    --border-light: #2e3238;
+    background: #000;
+}
+:root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden):not([style*="none"])) .container { background: transparent; }
+#setupPanel, #topBar { --home-text: 15px; }
+@media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 17px; } }
+
 /* One centred column everywhere: no sidebar column for Practise. */
 @media (min-width: 1024px) {
     #setupPanel.file-upload,
@@ -50,13 +67,13 @@
     background: transparent;
     color: var(--text-primary);
     font: inherit;
-    font-size: 15px;
+    font-size: var(--home-text);
     text-align: left;
     cursor: pointer;
 }
 #setupPanel .home-section-toggle:hover { background: var(--bg-card-hover); }
 #setupPanel .home-section-toggle strong { font-weight: 600; }
-#setupPanel .home-section-toggle-meta { color: var(--text-muted); font-size: 14px; }
+#setupPanel .home-section-toggle-meta { color: var(--text-muted); font-size: var(--home-text); }
 #setupPanel .home-section-toggle-caret { margin-left: auto; color: var(--text-muted); }
 
 #setupPanel[data-home-open="practise"] #step2 > .home-section-toggle,
@@ -108,15 +125,15 @@
     align-items: center;
     line-height: 1.15;
 }
-.home-level-eyebrow { color: var(--text-muted); font-size: 12px; }
+.home-level-eyebrow { color: var(--text-muted); font-size: var(--home-text); }
 .home-level-readout strong { font-size: 38px; font-weight: 700; color: var(--text-primary); }
-.home-level-words { color: var(--text-muted); font-size: 13px; }
+.home-level-words { color: var(--text-muted); font-size: var(--home-text); }
 #setupPanel #lswExamples {
     margin: 8px 0 0;
     padding: 0;
     min-height: 0;
     color: var(--text-muted);
-    font-size: 13px;
+    font-size: var(--home-text);
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
@@ -128,7 +145,7 @@
     margin: 0;
     display: inline;
     color: var(--text-muted);
-    font-size: 13px;
+    font-size: var(--home-text);
     font-weight: 400;
 }
 #setupPanel #lswExamples .lsw-eg-extra { display: none; }
@@ -158,7 +175,7 @@
     gap: 4px 12px;
     margin-top: 8px;
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: var(--home-text);
 }
 .home-level-stat { display: inline-flex; align-items: center; gap: 5px; }
 .home-level-stat i { width: 8px; height: 8px; border-radius: 50%; }
@@ -176,8 +193,8 @@
     gap: 10px;
     padding: 12px 16px 14px;
     border-top: 1px solid var(--border-color);
-    border-radius: 0 0 14px 14px;
-    background: var(--bg-secondary);
+    border-radius: 0;
+    background: transparent;
 }
 #setupPanel #setupOptions.setup-options,
 #setupPanel #step2 #setupOptions {
@@ -217,16 +234,19 @@
     background: transparent;
     color: var(--text-muted);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--home-text);
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
 }
-.home-smart-skip-copy strong { color: var(--text-primary); font-weight: 600; }
+.home-smart-skip-copy { display: flex; align-items: center; }
+.home-smart-skip-copy strong { flex: none; color: var(--text-primary); font-weight: 600; }
+.home-smart-skip-copy .home-smart-skip-dot, .home-smart-skip-copy .home-smart-skip-details { flex: none; }
+.home-smart-skip-copy #fastTrackHubSummary { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .home-smart-skip-dot { margin: 0 5px; }
-.home-smart-skip-details { text-decoration: underline; text-underline-offset: 2px; }
+.home-smart-skip-details { margin-left: 6px; color: var(--text-secondary); font-size: 1.15em; line-height: 1; }
 .home-switch {
     position: relative;
     flex: none;
@@ -273,12 +293,12 @@
 .home-cta-length {
     padding: 0 14px;
     border-right: 1px solid color-mix(in srgb, currentColor 30%, transparent);
-    font-size: 14px;
+    font-size: var(--home-text);
 }
-.home-cta-main { flex: 1; padding: 0 16px; font-size: 16px; }
+.home-cta-main { flex: 1; padding: 0 16px; font-size: var(--home-text); }
 .home-cta-main:disabled { cursor: default; }
 .home-cta-length:hover, .home-cta-main:hover:not(:disabled) { background: color-mix(in srgb, #000 12%, transparent); }
-.home-footer-hint { margin: 0; color: var(--text-muted); font-size: 13px; }
+.home-footer-hint { margin: 0; color: var(--text-muted); font-size: var(--home-text); }
 
 /* --- Practise body -------------------------------------------------------- */
 #setupPanel #reviewDeckBody { margin: 0; padding: 0; border: 0; background: transparent; }
@@ -291,7 +311,7 @@
     line-height: 1.2;
 }
 .home-practise-total strong { font-size: 38px; font-weight: 700; color: var(--text-primary); }
-.home-practise-total span { color: var(--text-muted); font-size: 13px; text-align: center; }
+.home-practise-total span { color: var(--text-muted); font-size: var(--home-text); text-align: center; }
 .home-practise-total.is-empty strong { font-size: 20px; margin-bottom: 4px; }
 .home-practise-rows { border-top: 1px solid var(--border-color); }
 .home-practise-row {
@@ -300,7 +320,7 @@
     gap: 10px;
     padding: 10px 0;
     border-bottom: 1px solid var(--border-color);
-    font-size: 14px;
+    font-size: var(--home-text);
     color: var(--text-primary);
 }
 .home-practise-row i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
@@ -317,7 +337,7 @@
     background: transparent;
     color: var(--text-secondary);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--home-text);
     cursor: pointer;
 }
 .home-practise-browse:hover { color: var(--text-primary); }
@@ -332,14 +352,14 @@
         right: 0;
         bottom: 0;
         z-index: 20;
-        padding: 12px 16px calc(14px + env(safe-area-inset-bottom));
+        padding: 12px 16px max(10px, env(safe-area-inset-bottom));
         border-top: 1px solid var(--border-color);
-        border-radius: 16px 16px 0 0;
-        background: var(--bg-card);
-        box-shadow: 0 -8px 24px rgba(0, 0, 0, .25);
+        border-radius: 0;
+        background: var(--bg-primary);
+        box-shadow: none;
     }
     /* Room so the last card never sits under the bar. */
-    #setupPanel[data-home-open] { padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+    #setupPanel[data-home-open] { padding-bottom: calc(130px + env(safe-area-inset-bottom)); }
 }
 
 /* --- Wider screens: Smart Skip beside the button ------------------------- */
@@ -349,7 +369,7 @@
     #setupPanel .home-section-footer > .home-action-slot { flex: none; }
     #setupPanel #reviewDeckSection .home-section-footer { justify-content: space-between; }
     .home-cta { min-height: 44px; }
-    .home-cta-main { flex: none; font-size: 15px; }
+    .home-cta-main { flex: none; font-size: var(--home-text); }
 }
 
 /* --- Top bar on phones and narrow windows --------------------------------
@@ -417,8 +437,8 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel .home-section > .step-header { padding: 2.4vh 2vw 0; }
     #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(17px, 1.5vw, 24px); }
     #setupPanel .home-section-footer { margin-top: auto; padding: 2vh 2vw; }
-    #setupPanel .home-section-toggle { padding: 1.6vh 2vw; font-size: clamp(15px, 1.2vw, 19px); }
-    #setupPanel .home-section-toggle-meta { font-size: clamp(14px, 1.05vw, 17px); }
+    #setupPanel .home-section-toggle { padding: 1.6vh 2vw; font-size: var(--home-text); }
+    #setupPanel .home-section-toggle-meta { font-size: var(--home-text); }
 
     /* Learn: picker on the left, this level's progress on the right, the
        footer across both. #step4 joins the grid unless JS has hidden it. */
@@ -435,15 +455,15 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel #step2 .home-section-footer { grid-column: 1 / -1; grid-row: 2; }
     #setupPanel #step2 .home-level-progress { padding: 0 3vw 0 1vw; }
     #setupPanel #step2 .home-level-bar { height: clamp(8px, 1.2vh, 14px); border-radius: 7px; }
-    #setupPanel #step2 .home-level-stats { margin-top: 1.6vh; font-size: clamp(13px, 1.05vw, 17px); gap: 6px 1.4vw; }
+    #setupPanel #step2 .home-level-stats { margin-top: 1.6vh; font-size: var(--home-text); gap: 6px 1.4vw; }
     .home-level-stepper { max-width: none; gap: 2vw; }
     .home-level-step { width: clamp(44px, 4vw, 64px); height: clamp(44px, 4vw, 64px); font-size: clamp(28px, 2.6vw, 42px); }
     .home-level-eyebrow { font-size: clamp(12px, 1vw, 16px); }
     .home-level-readout strong { font-size: clamp(40px, 6vw, 96px); }
-    .home-level-words { font-size: clamp(13px, 1.1vw, 18px); }
+    .home-level-words { font-size: var(--home-text); }
     #setupPanel #lswExamples,
     #setupPanel #lswExamples .lsw-egs,
-    #setupPanel #lswExamples .lsw-egs * { font-size: clamp(13px, 1.05vw, 17px); }
+    #setupPanel #lswExamples .lsw-egs * { font-size: var(--home-text); }
     #setupPanel #lswExamples { padding: 0 1vw; }
 
     /* Practise: the total on the left, the breakdown on the right. */
@@ -459,15 +479,15 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     }
     .home-practise-total { grid-column: 1; grid-row: 1 / span 2; padding: 0; }
     .home-practise-total strong { font-size: clamp(40px, 6vw, 96px); }
-    .home-practise-total span { font-size: clamp(13px, 1.05vw, 17px); }
-    .home-practise-row { padding: 1.4vh 0; font-size: clamp(14px, 1.15vw, 19px); }
+    .home-practise-total span { font-size: var(--home-text); }
+    .home-practise-row { padding: 1.4vh 0; font-size: var(--home-text); }
     .home-practise-rows { grid-column: 2; grid-row: 1; }
-    .home-practise-browse { grid-column: 2; grid-row: 2; justify-self: start; font-size: clamp(13px, 1vw, 16px); }
+    .home-practise-browse { grid-column: 2; grid-row: 2; justify-self: start; font-size: var(--home-text); }
     .home-practise-total.is-empty { grid-column: 1 / -1; grid-row: 1; }
     .home-practise-total.is-empty + .home-practise-browse { grid-column: 1 / -1; grid-row: 2; justify-self: center; }
 
     .home-cta { min-height: clamp(44px, 5.5vh, 60px); }
-    .home-cta-main { font-size: clamp(15px, 1.2vw, 19px); padding: 0 2vw; }
-    .home-smart-skip-copy { font-size: clamp(13px, 1vw, 16px); }
-    .home-footer-hint { font-size: clamp(13px, 1vw, 16px); }
+    .home-cta-main { font-size: var(--home-text); padding: 0 2vw; }
+    .home-smart-skip-copy { font-size: var(--home-text); }
+    .home-footer-hint { font-size: var(--home-text); }
 }
