@@ -509,9 +509,9 @@
       body.appendChild(checks);
 
       if (rare.length && !expandedMoods[mood]) {
-        var more = el('button', 'linkish mood-more',
-          '+ ' + rare.length + ' rarer ' + (rare.length === 1 ? 'tense' : 'tenses'));
+        var more = el('button', 'linkish mood-more', '+ ' + rare.length);
         more.type = 'button';
+        more.setAttribute('aria-label', 'Show ' + rare.length + ' more tenses');
         more.onclick = function (e) {
           e.preventDefault();
           e.stopPropagation();
