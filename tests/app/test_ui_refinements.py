@@ -164,10 +164,10 @@ class UiRefinementTests(unittest.TestCase):
 
     def test_level_progress_legend_omits_zero_counts(self):
         ui_js = (ROOT / 'app/js/ui.js').read_text(encoding='utf-8')
-        # Stats are only included if > 0
-        self.assertIn('if (levelNewCount > 0) stats.push', ui_js)
-        self.assertIn('if (levelReviewCount > 0) stats.push', ui_js)
-        self.assertIn('if (levelKnownCount > 0) stats.push', ui_js)
+        # Stats are only included if > 0 (New always shows, even at 0)
+        self.assertIn("segments.filter(([kind, , n]) => n > 0 || kind === 'new')", ui_js)
+        self.assertIn("['seen', 'Seen', levelReviewCount]", ui_js)
+        self.assertIn("['known', 'Known', levelKnownCount]", ui_js)
 
     def test_smart_skip_unified_toggle_button(self):
         index_html = (ROOT / 'app/index.html').read_text(encoding='utf-8')
@@ -176,7 +176,7 @@ class UiRefinementTests(unittest.TestCase):
 
         # Button exists with role switch and state label
         self.assertIn('id="smartSkipToggleBtn"', index_html)
-        self.assertIn('class="smart-skip-toggle-btn"', index_html)
+        self.assertIn('class="home-switch" role="switch"', index_html)
         self.assertIn('id="smartSkipStateLabel"', index_html)
 
         # JS wires click handler and updates label on refresh
@@ -184,15 +184,12 @@ class UiRefinementTests(unittest.TestCase):
         self.assertIn("toggleBtn.classList.toggle('is-on', on)", fast_mode_js)
         self.assertIn("stateLabel.textContent = on ? 'On' : 'Off'", fast_mode_js)
 
-        # CSS styles button with action pill styling and status dot indicator
-        self.assertIn('.smart-skip-toggle-btn', css)
-        self.assertIn('min-height: 52px;', css)
-        self.assertIn('padding: 0 22px;', css)
-        self.assertIn('.smart-skip-toggle-btn.is-on', css)
-        self.assertIn('.smart-skip-status-dot', css)
-        self.assertIn('.smart-skip-toggle-btn.is-on .smart-skip-status-dot', css)
-        self.assertIn('box-shadow: 0 0 10px rgba(255, 255, 255, 0.95)', css)
-        self.assertIn('class="smart-skip-status-dot"', index_html)
+        # The home strip is one line: a compact switch, not a second 52px pill
+        # competing with the Learn button.
+        home_css = (ROOT / 'app/css/home-layout.css').read_text(encoding='utf-8')
+        self.assertIn('.home-switch[aria-checked="true"]', home_css)
+        self.assertIn('.home-smart-skip.is-on', home_css)
+        self.assertNotIn('class="smart-skip-toggle-btn"', index_html)
 
     def test_setup_headings_and_level_spacing(self):
         style_css = (ROOT / 'app/css/style.css').read_text(encoding='utf-8')

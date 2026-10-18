@@ -181,6 +181,7 @@
     <link rel="stylesheet" href="css/music-workspace.css?v=20261013music">
     <link rel="stylesheet" href="css/saved-items.css?v=20261013saved">
     <link rel="stylesheet" href="css/passwordless-auth.css?v=20261016auth">
+    <link rel="stylesheet" href="css/home-layout.css?v=1">
 </head>
 <body>
     <div id="appLoadingScreen" class="app-loading-screen" role="status" aria-live="polite" aria-busy="true">
@@ -532,10 +533,14 @@
             </div>
 
             <!-- Step 2: Level Selection -->
-            <div id="step2" class="setup-step" style="display: none;">
+            <div id="step2" class="setup-step home-section" style="display: none;">
+                <!-- Learn and Practise fold into each other: the closed one is this one row. -->
+                <button type="button" class="home-section-toggle" data-home-section="learn" aria-expanded="true">
+                    <strong>Learn</strong><span class="home-section-toggle-meta" id="learnSectionMeta"></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span>
+                </button>
                 <div class="step-header step-header-with-help">
                     <span class="step-number">2</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels and sessions">Choose a level <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels and sessions">Learn <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div class="step-header-actions">
                         <span id="levelInfoLine" class="level-info-line" style="display: none;"></span>
                         <button type="button" id="levelModeToggle" class="level-mode-btn" style="display: none;" aria-hidden="true" tabindex="-1">CEFR</button>
@@ -567,7 +572,7 @@
                     <p class="info-sheet-lead">These counts describe the selected level.</p>
                     <div class="info-sheet-points level-help-legend">
                         <div><span class="info-point-badge is-new">New</span><p>Not studied yet.</p></div>
-                        <div><span class="info-point-badge is-practice">Practice</span><p>Missed or due for review.</p></div>
+                        <div><span class="info-point-badge is-practice">Seen</span><p>Studied, not known yet. These words come back in Practise.</p></div>
                         <div><span class="info-point-badge is-done">Known</span><p>Answered correctly and up to date.</p></div>
                         <div id="levelEstimatedLegend" hidden><span class="info-point-badge is-estimated">Estimated</span><p>Words you likely know, based on your level estimate.</p></div>
                         <div><span class="info-point-badge is-skip">Skipped</span><p>Set aside or combined by Smart Skip.</p></div>
@@ -578,25 +583,23 @@
                     <div id="step4" class="study-session-section" style="display: none;">
                         <span id="rangeStepNumber" hidden>3</span>
                         <div id="rangeSelector" class="range-selector"></div>
-                    </div>
-                    <!-- Smart Skip applies to the chosen level and next batch. -->
-                    <div id="setupOptions" class="setup-options" style="display: none;">
-                        <div class="fast-track-hub-row">
-                            <button type="button" id="smartSkipToggleBtn" class="smart-skip-toggle-btn" role="switch" aria-checked="false" aria-label="Toggle Smart Skip">
-                                <span class="smart-skip-status-dot" aria-hidden="true"></span>
-                                <span class="smart-skip-start-label">Smart Skip</span>
-                                <span class="study-session-divider" aria-hidden="true">·</span>
-                                <span class="smart-skip-state-label" id="smartSkipStateLabel">Off</span>
-                            </button>
-                            <div class="smart-skip-summary-row">
-                                <small id="fastTrackHubSummary" class="smart-skip-hub-summary">Fewer cards, less repetition</small>
-                                <span class="smart-skip-dot" aria-hidden="true">·</span>
-                                <button type="button" id="fastTrackHubBtn" class="smart-skip-details-btn" aria-label="Smart Skip details">Details <span aria-hidden="true">›</span></button>
+                        <!-- Learn's footer: Smart Skip on one line, then the Learn button.
+                             Pinned to the bottom of the screen on phones. -->
+                        <div class="home-section-footer">
+                            <!-- Smart Skip applies to the chosen level and next batch. -->
+                            <div id="setupOptions" class="setup-options" style="display: none;">
+                                <div class="home-smart-skip">
+                                    <svg class="home-smart-skip-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 6 6 6-6 6"></path><path d="m13 6 6 6-6 6"></path></svg>
+                                    <button type="button" id="fastTrackHubBtn" class="home-smart-skip-copy" aria-label="Smart Skip details">
+                                        <strong>Smart Skip</strong><span class="home-smart-skip-dot" aria-hidden="true">·</span><span id="fastTrackHubSummary">fewer cards</span><span class="home-smart-skip-dot" aria-hidden="true">·</span><span class="home-smart-skip-details">Details</span>
+                                    </button>
+                                    <button type="button" id="smartSkipToggleBtn" class="home-switch" role="switch" aria-checked="false" aria-label="Smart Skip">
+                                        <span class="home-switch-knob" aria-hidden="true"></span>
+                                        <span class="visually-hidden" id="smartSkipStateLabel">Off</span>
+                                    </button>
+                                </div>
                             </div>
-                            <div id="fastTrackHubSwitch" class="smart-skip-choice" role="group" aria-labelledby="smartSkipToggleBtn" style="display: none;" aria-hidden="true">
-                                <button type="button" data-ss-master="off" aria-pressed="true" tabindex="-1">Off</button>
-                                <button type="button" data-ss-master="on" aria-pressed="false" tabindex="-1">On</button>
-                            </div>
+                            <div id="learnActionSlot" class="home-action-slot"></div>
                         </div>
                     </div>
                 </div>
@@ -607,7 +610,10 @@
             <!-- Practice errors: same header format as Choose a Level / Your next session.
                  The header and its info sheet are static so setupTooltipHandlers
                  binds them; ui.js fills #reviewDeckBody. -->
-            <div id="reviewDeckSection" class="setup-step review-deck-step" hidden>
+            <div id="reviewDeckSection" class="setup-step review-deck-step home-section" hidden>
+                <button type="button" class="home-section-toggle" data-home-section="practise" aria-expanded="false">
+                    <strong>Practise</strong><span class="home-section-toggle-meta" id="practiseSectionMeta"></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span>
+                </button>
                 <div class="step-header step-header-with-help">
                     <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice">Practise <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div id="practiceTooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="practiceHelpTitle"><div class="step-info-tooltip-inner">

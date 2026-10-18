@@ -568,7 +568,7 @@ class ProductShellTests(unittest.TestCase):
         # learner already is, and the rest of the row opens the page that says
         # what that means. A first-time user needs the second half.
         self.assertIn('id="fastTrackHubBtn"', choosing)
-        self.assertIn('id="fastTrackHubSwitch"', choosing)
+        self.assertIn('id="smartSkipToggleBtn"', choosing)
         self.assertIn('id="fastTrackHubSummary"', choosing)
         self.assertNotIn('id="fastModeToggleBtn"', html)
         self.assertNotIn('id="fastModeDetailBtn"', html)
@@ -601,9 +601,9 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("extras.cognates", fast_mode_js)
         self.assertIn("lookAlikeCandidates()", fast_mode_js)
         self.assertNotIn('id="fastTrackHubExamples"', choosing)
-        self.assertIn('Fewer cards, less repetition', choosing)
-        self.assertIn('data-ss-master="off" aria-pressed="true"', choosing)
-        self.assertIn('data-ss-master="on" aria-pressed="false"', choosing)
+        # One line on the home screen: name, effect, Details, then the switch.
+        self.assertIn('<span id="fastTrackHubSummary">fewer cards</span>', choosing)
+        self.assertIn('id="smartSkipToggleBtn" class="home-switch" role="switch" aria-checked="false"', choosing)
         self.assertNotIn('Recommended', choosing)
 
     def test_settings_are_organised_around_learner_tasks(self) -> None:

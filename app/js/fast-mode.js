@@ -323,7 +323,7 @@ function refresh() {
     if (stateLabel) {
         stateLabel.textContent = on ? 'On' : 'Off';
     }
-    const hubRow = document.getElementById('setupOptions')?.querySelector('.fast-track-hub-row');
+    const hubRow = document.getElementById('setupOptions')?.querySelector('.home-smart-skip, .fast-track-hub-row');
     if (hubRow) {
         hubRow.classList.toggle('is-unseen', !hasSeenFastTrackPage());
         hubRow.classList.toggle('is-on', on);
@@ -331,6 +331,9 @@ function refresh() {
     // The page header: the master switch, and how many words the rules skip
     // (combined forms included, as the setup row has always counted them).
     const totalSkipped = (extras.allSkipped?.length || 0) + (extras.lemmas?.length || 0);
+    // Home strip: one line, so the count replaces the description when on.
+    const homeSummary = document.getElementById('fastTrackHubSummary');
+    if (homeSummary) homeSummary.textContent = on && totalSkipped ? `${totalSkipped.toLocaleString()} fewer cards` : 'fewer cards';
     const heroBadge = document.getElementById('smartSkipHeroBadgeText');
     if (heroBadge) heroBadge.textContent = on && totalSkipped ? `${totalSkipped.toLocaleString()} skipped` : '';
     const pageSwitch = document.getElementById('smartSkipPageSwitch');
