@@ -707,6 +707,12 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
 :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy small { display: none; }
 :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor { grid-column: 1 / -1; grid-row: 2; margin-top: 4px; }
 :is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-reassurance { display: none; }
+/* Phones keep two points per card: the intro already names films and TV,
+   and the Spotify footer stands for playlists. */
+@media (max-width: 767px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceSpeechBtn .choice-sheet-bestfor > span:nth-of-type(3),
+    :is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourcePickerBtn .choice-sheet-bestfor > span:nth-of-type(2):nth-last-of-type(2) { display: none; }
+}
 /* Speech's source line balances Music's Spotify footer side by side only. */
 :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-subtitles { display: none; }
 @media (min-width: 768px) {

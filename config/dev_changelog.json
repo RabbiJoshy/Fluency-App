@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T02:05:00+01:00",
+      "date": "2026-10-19 02:05 BST",
+      "agent": "Claude",
+      "summary": "Choose what to learn from: two Best for points per card on phones",
+      "detail": [
+        "Phones drop \"Following films and TV\" (the intro names films and TV) and \"Studying your own playlists\" (the Spotify footer covers it). Tablet and desktop keep all three."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T01:50:00+01:00",
       "date": "2026-10-19 01:50 BST",
       "agent": "Claude",
@@ -350,16 +360,6 @@
         "Setup: removed the verbs/tenses/persons line; the bar now shows progress (known / learning / missed) and the line under it is just 'N of M known · N due'.",
         "Card: fixed the answer showing before you tap (a display rule was overriding the hidden attribute).",
         "Card: person and tense now sit on one row (yo → Indicative · Present) with the verb underneath; removed the 'Subject' label; reflexive/participle moved next to the translation; type and pattern merged into one chip."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T15:10:00+01:00",
-      "date": "2026-10-18 15:10 BST",
-      "agent": "Claude",
-      "summary": "Front POS pill moved up to sit just under the card's top edge on phones",
-      "detail": [
-        "Card front, phones: the centred POS/lemma pill(s) now sit 18px below the card's top edge (was 76px), so they read as the card's heading; the Card N of M pill follows underneath."
       ],
       "commit": "pending"
     }
