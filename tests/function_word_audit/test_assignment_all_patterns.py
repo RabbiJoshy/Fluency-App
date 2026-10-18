@@ -181,5 +181,65 @@ class AllPatternsAssignmentTests(unittest.TestCase):
         self.assertEqual(res['pattern'], 0)
         self.assertEqual(res['pattern_id'], 'pt:do:0')
 
+    def test_es_personal_a(self):
+        sentence = "Conoce usted a ese hombre."
+        words = [
+            mock_token(1, "Conoce", "VERB", 0, "root", 0, 6, lemma="conocer"),
+            mock_token(2, "usted", "PRON", 1, "nsubj", 7, 12, lemma="usted"),
+            mock_token(3, "a", "ADP", 5, "case", 13, 14, lemma="a"),
+            mock_token(4, "ese", "DET", 5, "det", 15, 18, lemma="ese"),
+            mock_token(5, "hombre", "NOUN", 1, "obj", 19, 25, lemma="hombre"),
+            mock_token(6, ".", "PUNCT", 1, "punct", 25, 26, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[13, 14]]}
+        row = {'language': 'es', 'word': 'a', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'candidate')
+        self.assertEqual(res['pattern'], 1)
+        self.assertEqual(res['pattern_id'], 'es:a:1')
+
+    def test_pt_a_proposito_abstains(self):
+        sentence = "A propósito, não sei."
+        words = [
+            mock_token(1, "A", "ADP", 2, "case", 0, 1, lemma="a"),
+            mock_token(2, "propósito", "NOUN", 5, "obl", 2, 11, lemma="propósito"),
+            mock_token(3, ",", "PUNCT", 5, "punct", 11, 12, lemma=","),
+            mock_token(4, "não", "ADV", 5, "advmod", 13, 16, lemma="não"),
+            mock_token(5, "sei", "VERB", 0, "root", 17, 20, lemma="saber"),
+            mock_token(6, ".", "PUNCT", 5, "punct", 20, 21, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[0, 1]]}
+        row = {'language': 'pt', 'word': 'a', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')
+
+    def test_con_cuidado_abstains(self):
+        sentence = "Fale com cuidado."
+        words = [
+            mock_token(1, "Fale", "VERB", 0, "root", 0, 4, lemma="falar"),
+            mock_token(2, "com", "ADP", 3, "case", 5, 8, lemma="com"),
+            mock_token(3, "cuidado", "NOUN", 1, "obl", 9, 16, lemma="cuidado"),
+            mock_token(4, ".", "PUNCT", 1, "punct", 16, 17, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[5, 8]]}
+        row = {'language': 'pt', 'word': 'com', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')
+
+    def test_por_favor_abstains(self):
+        sentence = "Por favor, venha."
+        words = [
+            mock_token(1, "Por", "ADP", 2, "case", 0, 3, lemma="por"),
+            mock_token(2, "favor", "NOUN", 4, "obl", 4, 9, lemma="favor"),
+            mock_token(3, ",", "PUNCT", 4, "punct", 9, 10, lemma=","),
+            mock_token(4, "venha", "VERB", 0, "root", 11, 16, lemma="vir"),
+            mock_token(5, ".", "PUNCT", 4, "punct", 16, 17, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[0, 3]]}
+        row = {'language': 'pt', 'word': 'por', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')
+
 if __name__ == '__main__':
     unittest.main()
+

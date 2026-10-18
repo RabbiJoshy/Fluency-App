@@ -64,6 +64,54 @@ MODAL_VERBS = {
     'es': {'poder', 'deber', 'querer', 'tener', 'ir', 'soler', 'necesitar'}
 }
 
+HUMAN_HEADS = {
+    'pt': {'alguém', 'amigo', 'amiga', 'homem', 'mulher', 'rapaz', 'moça', 'garoto', 'menino', 'menina',
+           'pessoa', 'gente', 'pai', 'mãe', 'filho', 'filha', 'irmão', 'irmã', 'família', 'pais',
+           'namorado', 'namorada', 'marido', 'esposa', 'senhor', 'senhora', 'doutor', 'médico',
+           'professor', 'polícia', 'chefe', 'colega'},
+    'es': {'alguien', 'amigo', 'amiga', 'hombre', 'mujer', 'chico', 'chica', 'muchacho', 'muchacha',
+           'niño', 'niña', 'persona', 'gente', 'padre', 'madre', 'hijo', 'hija', 'hermano', 'hermana',
+           'familia', 'padres', 'novio', 'novia', 'marido', 'esposa', 'señor', 'señora', 'doctor',
+           'médico', 'profesor', 'policía', 'jefe', 'colega'}
+}
+
+PERSONAL_A_VERBS = {
+    'conocer', 'ver', 'mirar', 'escuchar', 'oír', 'amar', 'querer', 'odiar', 'respetar',
+    'buscar', 'encontrar', 'esperar', 'llamar', 'invitar', 'saludar', 'ayudar', 'acompañar',
+    'entender', 'comprender', 'visitar', 'proteger', 'cuidar'
+}
+
+A_IDIOM_HEADS = {
+    'pt': {'propósito', 'favor', 'pé', 'tempo', 'vezes', 'sério', 'solas', 'fundo', 'bordo', 'toa', 'vontade'},
+    'es': {'propósito', 'favor', 'pie', 'tiempo', 'veces', 'menudo', 'serio', 'solas', 'fondo', 'bordo', 'cabo', 'pesar'}
+}
+
+POR_IDIOM_HEADS = {
+    'pt': {'favor', 'exemplo', 'fim', 'acaso', 'sorte', 'suposto', 'vezes'},
+    'es': {'favor', 'ejemplo', 'fin', 'acaso', 'suerte', 'supuesto', 'veces'}
+}
+
+CON_IDIOM_HEADS = {
+    'pt': {'cuidado', 'calma', 'certeza', 'frequência', 'facilidade', 'medo', 'pressa'},
+    'es': {'cuidado', 'calma', 'certeza', 'frecuencia', 'facilidad', 'miedo', 'prisa'}
+}
+
+PATH_HEADS = {
+    'pt': {'rua', 'estrada', 'caminho', 'cidade', 'porta', 'janela', 'mar', 'ar', 'terra', 'floresta', 'bosque', 'ponte', 'corredor'},
+    'es': {'calle', 'carretera', 'camino', 'ciudad', 'puerta', 'ventana', 'mar', 'aire', 'tierra', 'bosque', 'puente', 'pasillo'}
+}
+
+CAUSE_HEADS = {
+    'pt': {'culpa', 'motivo', 'razão', 'causa', 'medo', 'acidente', 'erro', 'isso', 'aquilo'},
+    'es': {'culpa', 'motivo', 'razón', 'causa', 'miedo', 'accidente', 'error', 'eso', 'aquello'}
+}
+
+INSTRUMENT_HEADS = {
+    'pt': {'caneta', 'faca', 'colher', 'garfo', 'chave', 'carro', 'martelo', 'arma', 'telefone', 'computador', 'livro', 'dinheiro', 'água', 'mão'},
+    'es': {'bolígrafo', 'pluma', 'cuchillo', 'cuchara', 'tenedor', 'llave', 'coche', 'martillo', 'arma', 'pistola', 'teléfono', 'ordenador', 'computadora', 'libro', 'dinero', 'agua', 'mano'}
+}
+
+
 
 def _features(node: dict[str, Any]) -> dict[str, str]:
     feats = node.get('feats') or ''
@@ -298,11 +346,28 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
         gov = byid.get(head['head'])
         hl = head['lemma'].lower()
         gl = gov['lemma'].lower() if gov else ''
-        pat = 0  # Where to default
-        if lang == 'es' and (focus['deprel'] == 'case' and _features(head).get('Animacy') == 'Anim' or head['upos'] == 'PRON'):
-            pat = 1  # Personal a
-        elif gl in MOTION_VERBS.get(lang, set()) or hl in DESTINATION_HEADS.get(lang, set()):
-            pat = 0
+        if hl in A_IDIOM_HEADS.get(lang, set()):
+            return None
+
+        pat = None
+        # Spanish personal a (a:1): requires human nominal, personal pronoun, or animacy feature governed by transitive verb / obj deprel
+        if lang == 'es':
+            is_person = (head['upos'] == 'PRON' or _features(head).get('Animacy') == 'Anim' or hl in HUMAN_HEADS['es'])
+            is_transitive_contact = (head['deprel'] in {'obj', 'iobj'} or gl in PERSONAL_A_VERBS)
+            if is_person and (is_transitive_contact or gl not in MOTION_VERBS['es']):
+                pat = 1
+
+        # Where to: destination (a:0 in both ES and PT): requires motion verb governor OR destination noun head
+        if pat is None:
+            is_motion = gl in MOTION_VERBS.get(lang, set())
+            is_dest_head = hl in DESTINATION_HEADS.get(lang, set())
+            if is_dest_head or (is_motion and head['upos'] in {'NOUN', 'PROPN'} and hl not in HUMAN_HEADS.get(lang, set())):
+                pat = 0
+
+        # Strict abstention if neither pattern is positively licensed
+        if pat is None:
+            return None
+
         v_span = _verb_complex(sent, gov, focus_bounds, lang, text) if (gov and gov['upos'] in {'VERB', 'AUX'}) else None
         c_span = _noun_phrase(sent, head, focus_bounds, text) or _constituent_interval(sent, _subtree(sent, head), focus_bounds, text)
         parts = [('c', c_span)]
@@ -313,8 +378,23 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
 
     # con/com:0 (who with: person) vs con/com:1 (how/with what: instrument/tool)
     if (lang, word) in {('es', 'con'), ('pt', 'com')} and focus['deprel'] == 'case' and head:
-        pat = 0 if head['upos'] == 'PRON' or head['lemma'].lower() in {'alguien', 'alguém', 'amigo', 'madre', 'mãe', 'padre', 'pai', 'familia', 'família'} else 1
         gov = byid.get(head['head'])
+        hl = head['lemma'].lower()
+        if hl in CON_IDIOM_HEADS.get(lang, set()):
+            return None
+
+        pat = None
+        # Person / Accompaniment (pat = 0)
+        if head['upos'] == 'PRON' or _features(head).get('Animacy') == 'Anim' or hl in HUMAN_HEADS.get(lang, set()):
+            pat = 0
+        # Instrument / Tool (pat = 1)
+        elif hl in INSTRUMENT_HEADS.get(lang, set()) or (head['upos'] == 'NOUN' and hl not in {'amor', 'cuidado', 'calma', 'paz', 'alegria', 'certeza'} and gov and gov['upos'] == 'VERB' and hl in {'faca', 'cuchillo', 'mano', 'mão', 'arma', 'carro', 'coche', 'caneta', 'lápiz'}):
+            pat = 1
+
+        # Strict abstention if neither accompaniment nor instrument is positively licensed
+        if pat is None:
+            return None
+
         v_span = _verb_complex(sent, gov, focus_bounds, lang, text) if (gov and gov['upos'] in {'VERB', 'AUX'}) else None
         c_span = _noun_phrase(sent, head, focus_bounds, text) or _constituent_interval(sent, _subtree(sent, head), focus_bounds, text)
         parts = [('c', c_span)]
@@ -327,7 +407,22 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
     if (lang, word) in {('es', 'por'), ('pt', 'por')} and focus['deprel'] == 'case' and head:
         gov = byid.get(head['head'])
         gl = gov['lemma'].lower() if gov else ''
-        pat = 1 if gl in MOTION_VERBS.get(lang, set()) or head['lemma'].lower() in DESTINATION_HEADS.get(lang, set()) else 0
+        hl = head['lemma'].lower()
+        if hl in POR_IDIOM_HEADS.get(lang, set()):
+            return None
+
+        pat = None
+        # Motion / Path (pat = 1)
+        if gl in MOTION_VERBS.get(lang, set()) or hl in PATH_HEADS.get(lang, set()):
+            pat = 1
+        # Cause / Reason (pat = 0)
+        elif hl in CAUSE_HEADS.get(lang, set()) or (gov and gl in {'preocupar', 'disculpar', 'pedir', 'agradecer', 'llorar', 'chorar', 'odiar', 'culpar', 'brigar', 'pelear'}):
+            pat = 0
+
+        # Strict abstention if neither path nor cause is positively licensed
+        if pat is None:
+            return None
+
         v_span = _verb_complex(sent, gov, focus_bounds, lang, text) if (gov and gov['upos'] in {'VERB', 'AUX'}) else None
         c_span = _noun_phrase(sent, head, focus_bounds, text) or _constituent_interval(sent, _subtree(sent, head), focus_bounds, text)
         parts = [('c', c_span)]
@@ -349,8 +444,18 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
 
     # sobre:0 (about: topic) vs sobre:1 (on/above: place)
     if lang == 'pt' and word == 'sobre' and head and focus['deprel'] == 'case':
-        pat = 1 if head['lemma'].lower() in DESTINATION_HEADS.get(lang, set()) or head['lemma'].lower() in {'mesa', 'chão', 'cama'} else 0
+        hl = head['lemma'].lower()
         gov = byid.get(head['head'])
+        gl = gov['lemma'].lower() if gov else ''
+        pat = None
+        if hl in DESTINATION_HEADS.get(lang, set()) or hl in {'mesa', 'chão', 'cama', 'balcão', 'terra'} or gl in MOTION_VERBS.get(lang, set()):
+            pat = 1
+        elif hl in {'assunto', 'tema', 'história', 'vida', 'livro', 'filme', 'trabalho', 'futuro', 'passado', 'amor', 'isso', 'aquilo'} or gl in {'falar', 'conversar', 'discutir', 'escrever', 'pensar', 'saber', 'ler', 'perguntar'}:
+            pat = 0
+
+        if pat is None:
+            return None
+
         v_span = _verb_complex(sent, gov, focus_bounds, lang, text) if (gov and gov['upos'] in {'VERB', 'AUX'}) else None
         c_span = _noun_phrase(sent, head, focus_bounds, text) or _constituent_interval(sent, _subtree(sent, head), focus_bounds, text)
         parts = [('c', c_span)]
@@ -361,7 +466,15 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
 
     # até:0 (until/endpoint) vs até:1 (even: focus particle)
     if lang == 'pt' and word == 'até' and head:
-        pat = 1 if focus['deprel'] in {'advmod', 'discourse'} and head['upos'] in {'NOUN', 'PRON', 'PROPN'} else 0
+        pat = None
+        if focus['deprel'] in {'advmod', 'discourse'} and head['upos'] in {'NOUN', 'PRON', 'PROPN'}:
+            pat = 1
+        elif focus['deprel'] == 'case' and (head['lemma'].lower() in DESTINATION_HEADS.get(lang, set()) or head['lemma'].lower() in TIME_HEADS.get(lang, set())):
+            pat = 0
+
+        if pat is None:
+            return None
+
         gov = byid.get(head['head'])
         v_span = _verb_complex(sent, gov, focus_bounds, lang, text) if (gov and gov['upos'] in {'VERB', 'AUX'}) else None
         c_span = _constituent_interval(sent, _subtree(sent, head), focus_bounds, text)
