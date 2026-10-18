@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=997147f5';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=997147f5';
+import './state.js?v=f0285572';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=f0285572';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -227,9 +227,29 @@ function applyFastMode(on) {
     setTimeout(refresh, 0);
 }
 
-function closeAdvancedSkip() {
-    const sheet = document.getElementById('smartSkipMore');
-    if (sheet) sheet.hidden = true;
+// Phone sheets: a rule's description (behind its ⓘ) and the More rules
+// group. Both are blocks already on the page; on a phone CSS lifts the open one
+// into a sheet over the list. A wide screen shows them in place, so there is
+// nothing to open there.
+function openSmartSkipSheet(sheet, opener) {
+    closeSmartSkipSheets();
+    if (!sheet) return;
+    sheet.classList.add('is-sheet-open');
+    opener?.setAttribute('aria-expanded', 'true');
+    const backdrop = document.getElementById('smartSkipSheetBackdrop');
+    if (backdrop) backdrop.hidden = false;
+    sheet.focus?.({ preventScroll: true });
+}
+
+function closeSmartSkipSheets() {
+    document.querySelectorAll('#fastModeModal .is-sheet-open').forEach(sheet => sheet.classList.remove('is-sheet-open'));
+    document.querySelectorAll('#fastModeModal .smart-skip-info').forEach(info => info.setAttribute('aria-expanded', 'false'));
+    const backdrop = document.getElementById('smartSkipSheetBackdrop');
+    if (backdrop) backdrop.hidden = true;
+}
+
+function isSmartSkipSheetOpen() {
+    return Boolean(document.querySelector('#fastModeModal .is-sheet-open'));
 }
 
 function refresh() {
@@ -250,8 +270,8 @@ function refresh() {
     // A shortcut is listed only where it can do something: look-alikes and
     // combined forms need the release's mapping, the other three need at least
     // one word of their kind in this deck.
-    // The two main shortcuts sit on the page. The other three live in the
-    // Advanced options sheet, which is listed only where one can do something.
+    // The two main shortcuts lead. The other three sit under More rules, which
+    // is listed only where one of them can do something.
     let advancedAvailable = 0;
     let advancedOn = 0;
     for (const kind of ['grammar', 'slang', 'entity']) {
@@ -266,6 +286,8 @@ function refresh() {
     }
     const moreButton = document.getElementById('smartSkipMoreOptions');
     if (moreButton) moreButton.hidden = advancedAvailable === 0;
+    const moreGroup = document.getElementById('smartSkipMore');
+    if (moreGroup) moreGroup.hidden = advancedAvailable === 0;
     const moreState = document.getElementById('smartSkipMoreState');
     if (moreState) moreState.textContent = advancedOn ? `${advancedOn} on` : '';
 
@@ -280,22 +302,11 @@ function refresh() {
         const active = shortcutOn(kind);
         const toggle = document.querySelector(`[data-ss-toggle="${kind}"]`);
         if (toggle) toggle.setAttribute('aria-checked', String(active));
-        // The look-alike explanation opens first, independently of its switch.
-        // Learners can expand or collapse any explanation themselves.
-        const shortcut = toggle?.closest('.smart-skip-shortcut');
-        const detail = shortcut?.querySelector('.smart-skip-shortcut-detail');
-        if (detail && !shortcut.dataset.userExpanded) {
-            const expanded = kind === (cognateAvailable() ? 'cognate' : 'lemma')
-                || (kind === 'lemma' && window.matchMedia('(min-width: 900px)').matches);
-            detail.hidden = !expanded;
-            shortcut.querySelector('.smart-skip-shortcut-name')?.setAttribute('aria-expanded', String(expanded));
-        }
+        // A rule that is on shows how many words it takes out of the deck.
         const count = document.querySelector(`[data-ss-count="${kind}"]`);
         if (count) {
             const n = counts[kind];
-            count.textContent = active && n
-                ? `${n.toLocaleString()} ${kind === 'lemma' ? 'combined' : 'skipped'}`
-                : '';
+            count.textContent = active && n ? n.toLocaleString() : '';
         }
     }
 
@@ -317,20 +328,15 @@ function refresh() {
         hubRow.classList.toggle('is-unseen', !hasSeenFastTrackPage());
         hubRow.classList.toggle('is-on', on);
     }
-    const secondaryState = document.getElementById('smartSkipSecondaryState');
-    if (secondaryState) {
-        const activeCount = Number(lemmaOn()) + advancedOn;
-        secondaryState.textContent = activeCount ? `${activeCount} on` : 'Combine forms · Advanced';
-    }
+    // The page header: the master switch, and how many words the rules skip
+    // (combined forms included, as the setup row has always counted them).
     const totalSkipped = (extras.allSkipped?.length || 0) + (extras.lemmas?.length || 0);
-    const tabCount = document.getElementById('smartSkipTabCount');
-    if (tabCount) tabCount.textContent = totalSkipped ? `(${totalSkipped.toLocaleString()})` : '';
-    const browseCount = document.getElementById('smartSkipBrowseCount');
-    if (browseCount) browseCount.textContent = totalSkipped.toLocaleString();
     const heroBadge = document.getElementById('smartSkipHeroBadgeText');
-    if (heroBadge) heroBadge.textContent = on ? (totalSkipped ? `${totalSkipped.toLocaleString()} skipped` : 'Active') : 'Off';
-    const heroBadgeContainer = document.getElementById('smartSkipHeroBadge');
-    if (heroBadgeContainer) heroBadgeContainer.classList.toggle('is-off', !on);
+    if (heroBadge) heroBadge.textContent = on && totalSkipped ? `${totalSkipped.toLocaleString()} skipped` : '';
+    const pageSwitch = document.getElementById('smartSkipPageSwitch');
+    if (pageSwitch) pageSwitch.setAttribute('aria-checked', String(on));
+    const pageState = document.getElementById('smartSkipPageState');
+    if (pageState) pageState.textContent = on ? 'On' : 'Off';
     updateMappingStatus();
     updateStreamlineRecCallout();
     updateStreamlineLanguageExamples();
@@ -583,17 +589,6 @@ function updateKnownLanguageCopy() {
     }
 }
 
-function setSmartSkipMobileView(view) {
-    const body = document.querySelector('.smart-skip-body');
-    if (!body) return;
-    body.dataset.mobileView = view;
-    document.querySelectorAll('.smart-skip-tab').forEach(tab => {
-        const isActive = tab.dataset.view === view;
-        tab.classList.toggle('is-active', isActive);
-        tab.setAttribute('aria-selected', String(isActive));
-    });
-}
-
 // `section` is the seam for the unified UI: the setup button, a skipped-count
 // link and a future lyrics "extras" entry can all deep-link into one part of
 // this sheet without each knowing how it is laid out.
@@ -601,19 +596,12 @@ function openFastModePage({ section } = {}) {
     returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
     markFastTrackPageSeen();
     if (!section) globalThis.resetSkippedCategory?.();
-    // Cognates explain the benefit immediately; other explanations stay folded.
-    const secondary = document.getElementById('smartSkipSecondarySettings');
-    if (secondary && 'open' in secondary) secondary.open = !window.matchMedia('(max-width: 899px)').matches || !cognateAvailable();
-    closeAdvancedSkip();
-    document.querySelectorAll('.smart-skip-shortcut').forEach(el => { delete el.dataset.userExpanded; });
+    closeSmartSkipSheets();
+    document.getElementById('smartSkipMore')?.classList.remove('is-expanded');
+    document.getElementById('smartSkipMoreOptions')?.setAttribute('aria-expanded', 'false');
     refresh();
     updateStreamlineLanguageExamples();
     globalThis.renderFastTrackSkippedDecks?.();
-    if (section === 'decks') {
-        setSmartSkipMobileView('words');
-    } else {
-        setSmartSkipMobileView('rules');
-    }
     document.getElementById('fastModeModal')?.classList.remove('hidden');
     if (section) {
         document.querySelector(`.fast-mode-section[data-section="${section}"]`)
@@ -623,24 +611,24 @@ function openFastModePage({ section } = {}) {
 
 function closeFastModePage({ reopenSettings = true } = {}) {
     globalThis.closeSmartSkipPreview?.();
+    closeSmartSkipSheets();
     document.getElementById('fastModeModal')?.classList.add('hidden');
     if (reopenSettings && returnToSettings) window.showSettingsModalWithTab?.('study');
     returnToSettings = false;
 }
 
 function init() {
-    window.matchMedia('(max-width: 899px)').addEventListener('change', event => {
-        const secondary = document.getElementById('smartSkipSecondarySettings');
-        if (secondary && 'open' in secondary) secondary.open = !event.matches || !cognateAvailable();
+    // A sheet is a phone arrangement; widening the window puts its content
+    // back in place.
+    // The list also changes scroller (its own column on a wide screen, the page
+    // on a phone), so it is rebuilt to watch the right one.
+    window.matchMedia('(max-width: 899px)').addEventListener('change', () => {
+        closeSmartSkipSheets();
         refresh();
+        globalThis.renderSkippedWords?.(undefined, { force: true });
     });
-    document.querySelectorAll('.smart-skip-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            setSmartSkipMobileView(tab.dataset.view);
-        });
-    });
-    document.getElementById('smartSkipSeeWordsBtn')?.addEventListener('click', () => {
-        setSmartSkipMobileView('words');
+    document.getElementById('smartSkipPageSwitch')?.addEventListener('click', () => {
+        applyFastMode(currentState() !== 'on');
     });
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
     document.getElementById('smartSkipToggleBtn')?.addEventListener('click', () => {
@@ -665,6 +653,10 @@ function init() {
         if (event.key !== 'Escape') return;
         if (globalThis.isSmartSkipPreviewOpen?.()) {
             globalThis.closeSmartSkipPreview?.();
+            return;
+        }
+        if (isSmartSkipSheetOpen()) {
+            closeSmartSkipSheets();
             return;
         }
         if (document.getElementById('fastModeModal')?.classList.contains('hidden')) return;
@@ -706,29 +698,31 @@ function init() {
             document.querySelector(`.${kind}-toggle-btn[data-${kind}="${value}"]`)?.click();
         });
     });
-    document.querySelectorAll('.smart-skip-shortcut-name').forEach(name => {
-        name.addEventListener('click', () => {
-            const shortcut = name.closest('.smart-skip-shortcut');
-            const detail = shortcut?.querySelector('.smart-skip-shortcut-detail');
-            if (!detail) return;
-            detail.hidden = !detail.hidden;
-            shortcut.dataset.userExpanded = '1';
-            name.setAttribute('aria-expanded', String(!detail.hidden));
+    // ⓘ opens a rule's description as a sheet on a phone. A wide screen
+    // always shows the description and hides the ⓘ.
+    document.querySelectorAll('#fastModeModal .smart-skip-info').forEach(info => {
+        info.addEventListener('click', () => {
+            const detail = info.closest('.smart-skip-shortcut')?.querySelector('.smart-skip-shortcut-detail');
+            openSmartSkipSheet(detail, info);
         });
     });
-    document.getElementById('smartSkipMoreOptions')?.addEventListener('click', () => {
-        const sheet = document.getElementById('smartSkipMore');
-        if (!sheet) return;
-        sheet.hidden = false;
-        sheet.querySelector('.smart-skip-more-card')?.focus();
+    // More rules: on a wide screen it unfolds in place (folded each time the
+    // page opens, since they are optional); on a phone it opens as a sheet.
+    document.getElementById('smartSkipMoreOptions')?.addEventListener('click', event => {
+        const group = document.getElementById('smartSkipMore');
+        if (!group) return;
+        if (window.matchMedia('(min-width: 900px)').matches) {
+            const open = !group.classList.contains('is-expanded');
+            group.classList.toggle('is-expanded', open);
+            event.currentTarget.setAttribute('aria-expanded', String(open));
+            return;
+        }
+        openSmartSkipSheet(group);
     });
-    document.getElementById('smartSkipMoreDone')?.addEventListener('click', closeAdvancedSkip);
-    document.getElementById('smartSkipMore')?.addEventListener('click', event => {
-        if (event.target.id === 'smartSkipMore') closeAdvancedSkip();
+    document.querySelectorAll('#fastModeModal .smart-skip-sheet-done').forEach(done => {
+        done.addEventListener('click', closeSmartSkipSheets);
     });
-    document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && !document.getElementById('smartSkipMore')?.hidden) closeAdvancedSkip();
-    });
+    document.getElementById('smartSkipSheetBackdrop')?.addEventListener('click', closeSmartSkipSheets);
 
     document.querySelectorAll('.grammar-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => {

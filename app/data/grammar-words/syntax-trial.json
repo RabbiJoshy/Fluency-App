@@ -81,6 +81,249 @@
           "syntax_trial_review": "Natural pronominal importar-se example; correct contiguous se + importa and faithful translation."
         }
       ]
+    },
+    "o": {
+      "0": [
+        {
+          "example_id": "fresh_sentence_003593a372e3060551e808a32de98415",
+          "targetHTML": "Que inclusive ainda estão presos. Esse é <span class=\"fw-token-connector\">o</span> <span class=\"fw-token-c\">meu ponto de vista</span>.",
+          "translation": "Both of whom are still in jail-- my point.",
+          "source": "opensubtitles",
+          "metadata": {
+            "source": {
+              "adapter": "opensubtitles-aligned/v1",
+              "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+              "document": {
+                "aligned_row": 5020332,
+                "line": "400 401",
+                "subtitle_id": "7036800",
+                "title_id": "6271736",
+                "year": "2017"
+              },
+              "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+              "name": "opensubtitles",
+              "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+              "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+              "source_record_id": "6271736:7036800:400 401:5020332",
+              "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+            },
+            "sentence_id": "sentence_003593a372e3060551e808a32de98415",
+            "target": {
+              "language": "pt",
+              "text": "Que inclusive ainda estão presos. Esse é o meu ponto de vista."
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "pt:o:0",
+            "matcherVersion": "syntax-assignment/v1.1",
+            "focusSpan": [
+              41,
+              42
+            ],
+            "reason": "Registered determiner surface and noun attachment agree."
+          }
+        }
+      ]
+    },
+    "naquele": {
+      "0": [
+        {
+          "example_id": "fresh_sentence_f1a484db062917c96363851ed995b85e",
+          "targetHTML": "Eu era casado <span class=\"fw-token-connector\">naquele</span> <span class=\"fw-token-c\">tempo</span>.",
+          "translation": "I was married at that time.",
+          "source": "tatoeba",
+          "metadata": {
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #3979665 by alexmarcelo; English translation #3971623 by CK",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+              "source_record_id": "3979665:3971623",
+              "translated_from_english": true,
+              "url": "https://tatoeba.org/en/sentences/show/3979665"
+            },
+            "sentence_id": "sentence_f1a484db062917c96363851ed995b85e",
+            "target": {
+              "language": "pt",
+              "text": "Eu era casado naquele tempo."
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "pt:naquele:0",
+            "matcherVersion": "syntax-assignment/v1.1",
+            "focusSpan": [
+              14,
+              21
+            ],
+            "reason": "Contraction components, nominal attachment and agreement agree."
+          }
+        }
+      ]
+    },
+    "um": {
+      "0": [
+        {
+          "example_id": "fresh_sentence_902e30abedd47de0485cdeb7d042ffc6",
+          "targetHTML": "Estou tão cansado. Posso dormir <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">bocado</span>?",
+          "translation": "Can I just sleep for a minute?",
+          "source": "opensubtitles",
+          "metadata": {
+            "source": {
+              "adapter": "opensubtitles-aligned/v1",
+              "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+              "document": {
+                "aligned_row": 3650415,
+                "line": "128 129",
+                "subtitle_id": "6530024",
+                "title_id": "5426066",
+                "year": "2016"
+              },
+              "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+              "name": "opensubtitles",
+              "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+              "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+              "source_record_id": "5426066:6530024:128 129:3650415",
+              "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+            },
+            "sentence_id": "sentence_902e30abedd47de0485cdeb7d042ffc6",
+            "target": {
+              "language": "pt",
+              "text": "Estou tão cansado. Posso dormir um bocado?"
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "pt:um:0",
+            "matcherVersion": "syntax-assignment/v1.1",
+            "focusSpan": [
+              32,
+              34
+            ],
+            "reason": "Registered determiner surface and noun attachment agree."
+          }
+        }
+      ]
+    },
+    "uma": {
+      "0": [
+        {
+          "example_id": "fresh_sentence_ddb6770779cf7352f2b82bdcaede9742",
+          "targetHTML": "Não foi <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">pergunta</span>, porra!",
+          "translation": "It wasn't a fuckin' question.",
+          "source": "opensubtitles",
+          "metadata": {
+            "source": {
+              "adapter": "opensubtitles-aligned/v1",
+              "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+              "document": {
+                "aligned_row": 1022364,
+                "line": "35",
+                "subtitle_id": "6647999",
+                "title_id": "4172990",
+                "year": "2015"
+              },
+              "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+              "name": "opensubtitles",
+              "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+              "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+              "source_record_id": "4172990:6647999:35:1022364",
+              "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+            },
+            "sentence_id": "sentence_ddb6770779cf7352f2b82bdcaede9742",
+            "target": {
+              "language": "pt",
+              "text": "Não foi uma pergunta, porra!"
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "pt:uma:0",
+            "matcherVersion": "syntax-assignment/v1.1",
+            "focusSpan": [
+              8,
+              11
+            ],
+            "reason": "Registered determiner surface and noun attachment agree."
+          }
+        }
+      ]
+    },
+    "eu": {
+      "0": [
+        {
+          "example_id": "fresh_sentence_987806375b6565d7719f3dee3cbf9499",
+          "targetHTML": "<span class=\"fw-token-connector\">Eu</span> <span class=\"fw-token-v\">acho</span> que ele é um cara legal.",
+          "translation": "I believe he is a nice guy.",
+          "source": "tatoeba",
+          "metadata": {
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #6568755 by heo598; English translation #288944 by CK",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+              "source_record_id": "6568755:288944",
+              "translated_from_english": true,
+              "url": "https://tatoeba.org/en/sentences/show/6568755"
+            },
+            "sentence_id": "sentence_987806375b6565d7719f3dee3cbf9499",
+            "target": {
+              "language": "pt",
+              "text": "Eu acho que ele é um cara legal."
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "pt:eu:0",
+            "matcherVersion": "syntax-assignment/v1.1",
+            "focusSpan": [
+              0,
+              2
+            ],
+            "reason": "Registered personal pronoun is the subject of an agreeing verb."
+          }
+        }
+      ]
+    },
+    "ela": {
+      "0": [
+        {
+          "example_id": "fresh_sentence_24be877c695156d87d6955c7fe3474bc",
+          "targetHTML": "Faz dois anos que <span class=\"fw-token-connector\">ela</span> <span class=\"fw-token-v\">me deixou</span>.",
+          "translation": "It's been two years since she left me.",
+          "source": "tatoeba",
+          "metadata": {
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #1782114 by alexmarcelo; English translation #4652251 by mervert1",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+              "source_record_id": "1782114:4652251",
+              "translated_from_english": false,
+              "url": "https://tatoeba.org/en/sentences/show/1782114"
+            },
+            "sentence_id": "sentence_24be877c695156d87d6955c7fe3474bc",
+            "target": {
+              "language": "pt",
+              "text": "Faz dois anos que ela me deixou."
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "pt:ela:0",
+            "matcherVersion": "syntax-assignment/v1.1",
+            "focusSpan": [
+              18,
+              21
+            ],
+            "reason": "Registered personal pronoun is the subject of an agreeing verb."
+          }
+        }
+      ]
     }
   },
   "es": {
@@ -634,6 +877,87 @@
           },
           "example_id": "example_2e2657447b9656ac568c0b748a0630ae",
           "syntax_trial_review": "Reviewed regression: al autobús is a clear destination."
+        }
+      ]
+    },
+    "nos": {
+      "0": [
+        {
+          "example_id": "fresh_sentence_86d679fb5a3483c0ea62381941e28de8",
+          "targetHTML": "La conquista de la famosa Placa del Diablo <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">dio</span> a ambos fama.",
+          "translation": "The conquest of the well-known Ghost Rock gave us both fame.",
+          "source": "opensubtitles",
+          "metadata": {
+            "source": {
+              "adapter": "opensubtitles-aligned/v1",
+              "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+              "document": {
+                "aligned_row": 625072,
+                "line": "160",
+                "subtitle_id": "6837943",
+                "title_id": "4368038",
+                "year": "2016"
+              },
+              "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+              "name": "opensubtitles",
+              "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+              "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+              "source_record_id": "4368038:6837943:160:625072",
+              "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+            },
+            "sentence_id": "sentence_86d679fb5a3483c0ea62381941e28de8",
+            "target": {
+              "language": "es",
+              "text": "La conquista de la famosa Placa del Diablo nos dio a ambos fama."
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "es:nos:0",
+            "matcherVersion": "syntax-assignment/v1.1",
+            "focusSpan": [
+              43,
+              46
+            ],
+            "reason": "Object nos plus complete non-first-plural verb complex."
+          }
+        }
+      ]
+    },
+    "el": {
+      "0": [
+        {
+          "example_id": "fresh_sentence_1033896fe42c6a7158c0e92eab0accb7",
+          "targetHTML": "Él vive en <span class=\"fw-token-connector\">el</span> <span class=\"fw-token-c\">bosque solo</span>.",
+          "translation": "He lives by himself in the woods.",
+          "source": "tatoeba",
+          "metadata": {
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #1547834 by massama; English translation #288206 by CK",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+              "source_record_id": "1547834:288206",
+              "translated_from_english": true,
+              "url": "https://tatoeba.org/en/sentences/show/1547834"
+            },
+            "sentence_id": "sentence_1033896fe42c6a7158c0e92eab0accb7",
+            "target": {
+              "language": "es",
+              "text": "Él vive en el bosque solo."
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "es:el:0",
+            "matcherVersion": "syntax-assignment/v1.1",
+            "focusSpan": [
+              11,
+              13
+            ],
+            "reason": "Registered determiner surface and noun attachment agree."
+          }
         }
       ]
     }

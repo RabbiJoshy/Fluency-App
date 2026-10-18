@@ -3,8 +3,8 @@
 // vocabulary in the same browser, with no coverage gate or separate setup.
 // The filtered vocabulary snapshot supplies the active songs and original IDs.
 // Each supplementary word has one home even when it also resembles a cognate.
-import './state.js?v=997147f5';
-import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=997147f5';
+import './state.js?v=f0285572';
+import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=f0285572';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -765,12 +765,16 @@ function skipEntriesFor(extras, category) {
     return entries;
 }
 
+function menuOption(id, name, count) {
+    return { id, name, count, label: `${name} · ${count.toLocaleString()}` };
+}
+
 function smartSkipMenu(extras) {
     if (_ssSource === 'songs' && g().activeArtist) {
         const entries = Object.entries(extras.supplementaryByCategory || {});
-        const options = entries.length ? [{ id: 'song:all', label: `All categories · ${extras.supplementary.length.toLocaleString()}` }] : [];
+        const options = entries.length ? [menuOption('song:all', 'All categories', extras.supplementary.length)] : [];
         entries.sort((a, b) => songCategoryLabel(a[0]).localeCompare(songCategoryLabel(b[0])))
-            .forEach(([id, words]) => options.push({ id, label: `${songCategoryLabel(id)} · ${words.length.toLocaleString()}` }));
+            .forEach(([id, words]) => options.push(menuOption(id, songCategoryLabel(id), words.length)));
         return { options, combined: [] };
     }
     const skips = SKIP_KINDS
@@ -779,12 +783,12 @@ function smartSkipMenu(extras) {
     const options = [];
     // "All" only earns its place when there is more than one thing to mix.
     if (skips.length > 1) {
-        options.push({ id: 'all', label: `All skipped · ${(extras.allSkipped || []).length.toLocaleString()}` });
+        options.push(menuOption('all', 'All skipped', (extras.allSkipped || []).length));
     }
-    skips.forEach(kind => options.push({ id: kind.id, label: `${kind.menu} · ${kind.count.toLocaleString()}` }));
+    skips.forEach(kind => options.push(menuOption(kind.id, kind.menu, kind.count)));
     const combined = groupMergedLemmas(extras.lemmas || []);
     if (combined.length) {
-        options.push({ id: 'lemma', label: `Combined forms · ${combined.length.toLocaleString()}` });
+        options.push(menuOption('lemma', 'Combined forms', combined.length));
     }
     return { options, combined };
 }
@@ -848,12 +852,15 @@ function smartSkipRankHtml(row) {
     return `<span class="smart-skip-rank">${Number.isFinite(rank) ? rank : ''}</span>`;
 }
 
-// Column headers. The flags say which language each column is in; Rank and the
-// category tag are desktop-only, so a phone keeps just the words.
-function smartSkipLanguageHTML(code, flag = g().knownLanguageFlag?.(code)) {
-    // Unknown languages keep their code; a globe does not identify a language.
-    const countryFlag = /^[\u{1F1E6}-\u{1F1FF}]{2}$/u.test(flag || '') ? flag : '';
-    return `<span class="smart-skip-language">${countryFlag ? `<span>${escapeHtml(countryFlag)}</span>` : ''}<span class="smart-skip-language-name">${escapeHtml(g().knownLanguageLabel?.(code) || String(code || '').toUpperCase())}</span><span class="smart-skip-language-code">${escapeHtml(String(code || '').toUpperCase())}</span></span>`;
+// Column headers name each column's language in words. No flags: a flag is a
+// country, not a language, and Windows draws flag emoji as two letters. Rank
+// and the category tag are desktop-only, so a phone keeps just the words.
+function smartSkipLanguageName(code) {
+    return g().knownLanguageLabel?.(code) || String(code || '').toUpperCase();
+}
+
+function smartSkipLanguageHTML(code, name = smartSkipLanguageName(code)) {
+    return `<span class="smart-skip-language">${escapeHtml(name)}</span>`;
 }
 
 function smartSkipKnownLanguageCodes() {
@@ -867,22 +874,15 @@ function smartSkipHeadHtml(category) {
     const lemma = category === 'lemma';
     let knownHtml;
     if (category === 'cognate') {
-        if (_activeCognateFilterLang !== 'all') {
-            knownHtml = smartSkipLanguageHTML(_activeCognateFilterLang);
-        } else {
-            const active = g().activeKnownLanguages?.() || [];
-            if (active.length === 1) {
-                knownHtml = smartSkipLanguageHTML(active[0]);
-            } else {
-                const flags = active.map(code => g().knownLanguageFlag?.(code) || '').filter(Boolean).join('');
-                knownHtml = `<span class="smart-skip-language">${flags ? `<span>${escapeHtml(flags)}</span>` : ''}<span>KNOWN</span></span>`;
-            }
-        }
+        const active = g().activeKnownLanguages?.() || [];
+        knownHtml = _activeCognateFilterLang !== 'all' || active.length === 1
+            ? smartSkipLanguageHTML(_activeCognateFilterLang !== 'all' ? _activeCognateFilterLang : active[0])
+            : smartSkipLanguageHTML('', 'Known');
     } else {
         knownHtml = smartSkipLanguageHTML('en');
     }
     return `<div class="smart-skip-head" aria-hidden="true">
-        <span class="smart-skip-languages">${smartSkipLanguageHTML(targetCode, language.flag)}</span>
+        <span class="smart-skip-languages">${smartSkipLanguageHTML(targetCode)}</span>
         <span class="smart-skip-languages">${knownHtml}</span>
         ${lemma ? '<span class="ss-h-forms">Combined forms</span><span class="ss-h-nforms">Forms</span>' : '<span class="ss-h-tag">Type</span>'}
         <span class="ss-h-rank">Rank</span>
@@ -940,7 +940,10 @@ function smartSkipLevelHtml(level, index) {
     </li>`;
 }
 
+// What scrolls the list: its own column on a wide screen, the page on a phone.
 function smartSkipScroller() {
+    const words = document.querySelector('#fastModeModal .smart-skip-words');
+    if (words && getComputedStyle(words).overflowY === 'auto') return words;
     return document.querySelector('#fastModeModal > .modal-content');
 }
 
@@ -993,7 +996,7 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     const studyButton = document.getElementById('smartSkipStudySongsBtn');
     if (studyButton) studyButton.hidden = _ssSource !== 'songs';
     const body = document.getElementById('skippedWordsBody');
-    const select = document.getElementById('skippedCategorySelect');
+    const chips = document.getElementById('skippedCategoryChips');
     if (!body) return extras.cognates;
 
     const { options, combined } = smartSkipMenu(extras);
@@ -1012,21 +1015,15 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     if (langBtn) {
         langBtn.hidden = !showLangBtn;
         if (showLangBtn) {
-            const optionsHtml = [];
             const check = g().isCognateKnownForLanguage;
-            for (const code of activeKnown) {
-                const flag = g().knownLanguageFlag?.(code) || '';
-                const shownFlag = /^[\u{1F1E6}-\u{1F1FF}]{2}$/u.test(flag) ? flag + ' ' : '';
-                const label = g().knownLanguageLabel?.(code) || code.toUpperCase();
+            langBtn.innerHTML = activeKnown.map(code => {
                 const langCount = (extras.byCategory?.cognate || []).filter(({ item }) => {
                     if (check && check(item, code)) return true;
                     return g().bridgeVerdict?.(item, {useProfile: true})?.evidence?.some(e => e.code === code);
                 }).length;
-                optionsHtml.push(`<option value="${escapeHtml(code)}">${escapeHtml(shownFlag + label)} · ${langCount.toLocaleString()}</option>`);
-            }
-            langBtn.innerHTML = optionsHtml.join('');
-            langBtn.value = _activeCognateFilterLang;
-            langBtn.title = 'Filter look-alikes by language';
+                const selected = code === _activeCognateFilterLang;
+                return `<button type="button" data-ss-lang="${escapeHtml(code)}" aria-pressed="${selected}">${escapeHtml(smartSkipLanguageName(code))} <span>${langCount.toLocaleString()}</span></button>`;
+            }).join('');
         }
     }
 
@@ -1041,11 +1038,13 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     _activeSkippedCategory = category;
     const resultsCount = document.getElementById('smartSkipResultsCount');
 
-    if (select) {
-        select.innerHTML = options.map(option =>
-            `<option value="${escapeHtml(option.id)}"${option.id === category ? ' selected' : ''}>${escapeHtml(option.label)}</option>`
-        ).join('');
-        select.closest('.smart-skip-toolbar')?.toggleAttribute('hidden', options.length === 0);
+    if (chips) {
+        chips.innerHTML = options.map(option => {
+            const selected = option.id === category;
+            return `<button type="button" role="tab" class="smart-skip-cat" data-ss-cat="${escapeHtml(option.id)}" aria-selected="${selected}" tabindex="${selected ? 0 : -1}">${escapeHtml(option.name)} <span>${option.count.toLocaleString()}</span></button>`;
+        }).join('');
+        chips.closest('.smart-skip-toolbar')?.toggleAttribute('hidden', options.length === 0);
+        chips.querySelector('[aria-selected="true"]')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
     }
     _ssObserver?.disconnect();
     _ssObserver = null;
@@ -1460,14 +1459,18 @@ function initExtras() {
         renderSkippedWords(_ssSource === 'songs' ? 'song:all' : 'cognate', {force: true});
     });
     document.getElementById('smartSkipStudySongsBtn')?.addEventListener('click', studySupplementarySongWords);
-    document.getElementById('smartSkipCognateLangFilter')?.addEventListener('change', event => {
-        _activeCognateFilterLang = event.currentTarget.value;
+    document.getElementById('smartSkipCognateLangFilter')?.addEventListener('click', event => {
+        const button = event.target.closest('[data-ss-lang]');
+        if (!button || button.dataset.ssLang === _activeCognateFilterLang) return;
+        _activeCognateFilterLang = button.dataset.ssLang;
         closeSmartSkipPreview();
         renderSkippedWords('cognate', { force: true });
     });
-    document.getElementById('skippedCategorySelect')?.addEventListener('change', event => {
+    document.getElementById('skippedCategoryChips')?.addEventListener('click', event => {
+        const chip = event.target.closest('[data-ss-cat]');
+        if (!chip || chip.getAttribute('aria-selected') === 'true') return;
         closeSmartSkipPreview();
-        renderSkippedWords(event.target.value);
+        renderSkippedWords(chip.dataset.ssCat);
     });
     document.getElementById('skippedWordsBody')?.addEventListener('click', event => {
         const study = event.target.closest('.smart-skip-study');

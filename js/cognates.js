@@ -19,7 +19,7 @@
 //
 // The old scalar still works. Where a release predates this, `cognate_score`
 // is read as the English entry, so Spanish is untouched.
-import './state.js?v=997147f5';
+import './state.js?v=f0285572';
 
 const SELECTED_KEY = 'fluency_known_languages_v1';
 
@@ -506,17 +506,20 @@ function renderKnownLanguagePicker() {
     const selectedCodes = readSelected();
     const target = globalThis.config?.languages?.[globalThis.selectedLanguage];
     const targetCode = target?.routeCode || target?.speechLang?.split('-')[0] || globalThis.selectedLanguage?.slice(0, 2);
+    // Only languages that can do something here: ones you know that this deck
+    // has look-alike data for. A known language without data would be a chip
+    // that switches nothing.
+    const available = new Set(availableKnownLanguages());
     const codesToShow = [...new Set([...(selectedCodes.length ? selectedCodes : ['en']), ...activeKnownLanguages()])]
-        .filter(code => code !== targetCode);
+        .filter(code => code !== targetCode && available.has(code));
     const active = new Set(activeKnownLanguages());
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
     const chipsHtml = codesToShow.map(code => {
-        const flag = knownLanguageFlag(code);
-        const shownFlag = flag ? `${flag} ` : '';
+        // Names only, no flags: a flag is a country, not a language.
         const isActive = active.has(code);
         return `<button type="button" class="known-language-chip ${isActive ? 'is-active' : 'is-inactive'}" data-known-language="${code}" aria-pressed="${isActive}" title="${isActive ? 'Look-alikes active for ' + escape(languageLabel(code)) + '. Click to turn off.' : 'Look-alikes off for ' + escape(languageLabel(code)) + '. Click to turn on.'}">
-            <span class="known-language-chip-status" aria-hidden="true">${isActive ? '✓ ' : '+ '}</span>${shownFlag}${escape(languageLabel(code))}
+            <span class="known-language-chip-status" aria-hidden="true">${isActive ? '✓ ' : '+ '}</span>${escape(languageLabel(code))}
         </button>`;
     }).join('');
 
