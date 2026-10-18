@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T01:50:00+01:00",
+      "date": "2026-10-19 01:50 BST",
+      "agent": "Claude",
+      "summary": "Music's Best for reads as activities, like Speech's",
+      "detail": [
+        "\"Songs by artists you love\" and \"Your own playlists\" become \"Understanding your favourite songs\" and \"Studying your own playlists\", matching \"Starting from scratch\" and \"Following films and TV\"."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T01:40:00+01:00",
       "date": "2026-10-19 01:40 BST",
       "agent": "Claude",
@@ -350,19 +360,6 @@
       "summary": "Front POS pill moved up to sit just under the card's top edge on phones",
       "detail": [
         "Card front, phones: the centred POS/lemma pill(s) now sit 18px below the card's top edge (was 76px), so they read as the card's heading; the Card N of M pill follows underneath."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T14:45:00+01:00",
-      "date": "2026-10-18 14:45 BST",
-      "agent": "Antigravity",
-      "summary": "Verb drills: collapsible tense groupings with pill buttons, Start box at top, simplified header, and robust embedded loading",
-      "detail": [
-        "Grouped tenses by mood (Indicative, Subjunctive, Imperative) into collapsible sections so they stay compact, with active moods open by default.",
-        "Replaced text toggles with clean, neutral pill buttons for 'all' / 'none' and '+ X' rarer tenses, removing garish red styling.",
-        "Moved the Start summary box to the top of setup with ordered settings below, and simplified header to title + close button.",
-        "Unified conjugation mode into a zero-latency embedded view with /conjugation URL and shared deck promise caching."
       ],
       "commit": "pending"
     }

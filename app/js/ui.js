@@ -770,8 +770,8 @@ function learningModeCopy(language = selectedLanguage) {
                 ? 'Words and examples from songs, artists and your playlists.'
                 : 'Words and examples from your Spotify playlists.',
             bestFor: lyricsCatalog
-                ? ['Songs by artists you love', 'Your own playlists', 'Learning by listening']
-                : ['Your own playlists', 'Learning by listening'],
+                ? ['Understanding your favourite songs', 'Studying your own playlists', 'Learning by listening']
+                : ['Studying your own playlists', 'Learning by listening'],
             iconHTML: MODE_ICON_MUSIC
         }
     };
