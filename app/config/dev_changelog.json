@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T23:30:00+01:00",
+      "date": "2026-10-18 23:30 BST",
+      "agent": "Claude",
+      "summary": "Function-word cards: active pattern marked by a part-of-speech bar on its left edge",
+      "detail": [
+        "Replaces the full coloured outline and tint: the active pattern now has a neutral lift and a 3px bar in its part-of-speech colour on the left.",
+        "The function word itself stays white in the patterns and the example, over its part-of-speech underline, even where the pattern writes its colour inline."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T23:10:00+01:00",
       "date": "2026-10-18 23:10 BST",
       "agent": "Claude",
@@ -358,18 +369,6 @@
         "Filtered redundant raw context and gloss clauses under \"Original dictionary text\" that merely echoed previously rendered meaning and usage notes.",
         "Consolidated matching sections across grouped card rows so duplicate \"Usage\" and \"Grammar\" headers are merged instead of stacked consecutively.",
         "Enhanced modal overlay with animated scale/fade entrance, fallback border coloring, and dynamic inherit of the card's accent color."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T20:45:00+01:00",
-      "date": "2026-10-17 20:45 BST",
-      "agent": "Antigravity",
-      "summary": "Flick velocity grading, seamless swipe release trajectory, 2D damped follow, and deck-rise card entrance",
-      "detail": [
-        "Added horizontal flick velocity recognition (>= 0.45 px/ms past 22px) so quick thumb flicks commit and fire the 8ms haptic tick without needing a full 50px drag.",
-        "Preserved exact release coordinates (--swipe-from-x/y/rot) into the exit keyframes so swiped cards fly off smoothly from the finger lift point, while cancelled drags spring back via .swipe-rebound.",
-        "Added 16% damped vertical follow, grab-point tilt scaling, and a 200ms deck-rise entrance animation (.card-deck-enter) for incoming cards on both mobile and desktop."
       ],
       "commit": "pending"
     }

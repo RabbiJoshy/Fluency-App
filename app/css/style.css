@@ -26014,17 +26014,18 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-credit-start .example-source-chip { max-width:100%; }
 .fw-example-credit-row { min-height:42px; }
 
-/* Function-word cards match ordinary cards: the active pattern carries the
-   word's part-of-speech outline, and the word itself keeps white text over a
+/* Function-word cards: the active pattern is marked by a part-of-speech bar
+   on its left edge, and the word itself keeps white text over a
    part-of-speech underline in the patterns and the example. */
 .fw-relation-box.is-selected,
 .fw-relation-box[aria-pressed="true"] {
-  border: 2px solid rgb(var(--sense-match-rgb));
-  background: rgba(var(--sense-match-rgb), 0.10);
-  padding: 8px 13px;
+  border-color: transparent;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 3px 0 0 rgb(var(--sense-match-rgb));
 }
 .fw-token-connector, .fw-sentence-target .fw-token-connector {
-  color: #fff;
+  /* White even where the pattern's part of speech is written inline. */
+  color: #fff !important;
   font-weight: 800;
   text-decoration: none;
   border-radius: 3px;
