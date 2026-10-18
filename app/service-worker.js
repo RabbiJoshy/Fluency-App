@@ -30,6 +30,7 @@ const urlsToCache = [
   '/css/appearance.css?v=20261011',
   '/css/ui-refinements.css?v=20261014clarity',
   '/css/desktop-shell.css?v=1',
+  '/css/black-palette.css?v=1',
   '/css/home-layout.css?v=1',
   '/css/music-workspace.css?v=20261013music',
   '/js/music-workspace.js?v=20261013music',

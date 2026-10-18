@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T21:00:00+01:00",
+      "date": "2026-10-18 21:00 BST",
+      "agent": "Claude",
+      "summary": "Black palette on flashcards (dark theme)",
+      "detail": [
+        "The study screen uses the same black page and near-black card as Smart Skip and the home screen.",
+        "Panels that had blue-grey typed in now follow it: example sentences, phrase examples, and the function-word sentence panel and parts box. Pop-ups from the card (card info, word forms, frequency, sense detail, direction, lookup) use one lighter step.",
+        "Part-of-speech tints (e.g. the blue on noun meanings) are unchanged.",
+        "The palette now lives in css/black-palette.css, which lists the screens using it: home and flashcards so far (Smart Skip keeps its own trial copy). Light theme is untouched."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T20:40:00+01:00",
       "date": "2026-10-18 20:40 BST",
       "agent": "Claude",
@@ -359,18 +372,6 @@
         "Scaled the Smart Skip action button to 52px height, 22px padding, and 16px bold typography matching the exact footprint of Study and Practise.",
         "Applied solid Study accent background fill with crisp white text and a bright glowing white LED indicator dot when toggled ON.",
         "Preserved the clean neutral outline card state with hollow dot when OFF to maintain immediate clarity of the disabled state."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T17:19:00+01:00",
-      "date": "2026-10-17 17:19 BST",
-      "agent": "Antigravity",
-      "summary": "Refine Smart Skip into unified status-dot action pill and center Practice summary text",
-      "detail": [
-        "Replaced the internal sliding switch with a sleek illuminated status dot indicator (○ Off / ● On) inside the unified Smart Skip action pill.",
-        "Tightened vertical spacing and removed dead-space padding around the Smart Skip footer so it sits cleanly and compactly beneath Study without large gaps.",
-        "Centered the Practice section summary text ('X waiting' / 'Nothing to practise yet') and chevron above the Practise button, matching the centered symmetry of Study."
       ],
       "commit": "pending"
     }

@@ -2,20 +2,8 @@
    time. Loaded last; everything is scoped to #setupPanel and the home-* hooks
    rendered by ui.js (renderRangeSelector, the level stepper). */
 
-/* Dark theme on the home screen: the Smart Skip page's trial palette — a
-   black page and cards only just lifted off it — and its single text size
-   (15px phones, 17px from 1024px). */
-:root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden):not([style*="none"])) {
-    --bg-primary: #000;
-    --bg-card: #0d0e10;
-    --bg-card-hover: #17191c;
-    --bg-tertiary: #17191c;
-    --bg-secondary: #0d0e10;
-    --border-color: #24272b;
-    --border-light: #2e3238;
-    background: #000;
-}
-:root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden):not([style*="none"])) .container { background: transparent; }
+/* Dark-theme surfaces for this screen come from css/black-palette.css. One
+   text size (16px phones, 18px from 1024px). */
 #setupPanel, #topBar { --home-text: 16px; }
 @media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 18px; } }
 
