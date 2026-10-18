@@ -103,8 +103,8 @@ def harvest_speech_candidates(lang: str, words: set[str], max_per_word: int = 15
     return out
 
 
-def harvest_artist_candidates(lang: str, words: set[str], max_per_word: int = 10) -> list[dict]:
-    candidates = defaultdict(list)
+def harvest_artist_candidates(lang: str, words: set[str], max_per_artist: int = 8) -> list[dict]:
+    artist_candidates = defaultdict(lambda: defaultdict(list))
     patterns = {w: re.compile(r"(?<![\w'’])" + re.escape(w) + r"(?![\w'’])", re.I) for w in words}
 
     if lang == "es":
@@ -134,9 +134,9 @@ def harvest_artist_candidates(lang: str, words: set[str], max_per_word: int = 10
                             if not sp or len(sp) > 120 or len(sp) < 10 or any(c in sp for c in "[]{}()_~#"):
                                 continue
                             for w, pat in patterns.items():
-                                if len(candidates[w]) < max_per_word and pat.search(sp):
+                                if len(artist_candidates[w][artist_name]) < max_per_artist and pat.search(sp):
                                     eid = hashlib.md5((sp + w + artist_name).encode()).hexdigest()[:12]
-                                    candidates[w].append({
+                                    artist_candidates[w][artist_name].append({
                                         "language": lang,
                                         "word": w,
                                         "example_id": f"artist_es_{eid}",
@@ -179,9 +179,9 @@ def harvest_artist_candidates(lang: str, words: set[str], max_per_word: int = 10
                             if not pt_text or len(pt_text) > 120 or len(pt_text) < 10 or any(c in pt_text for c in "[]{}()_~#"):
                                 continue
                             for w, pat in patterns.items():
-                                if len(candidates[w]) < max_per_word and pat.search(pt_text):
+                                if len(artist_candidates[w][artist]) < max_per_artist and pat.search(pt_text):
                                     eid = hashlib.md5((pt_text + w + artist).encode()).hexdigest()[:12]
-                                    candidates[w].append({
+                                    artist_candidates[w][artist].append({
                                         "language": lang,
                                         "word": w,
                                         "example_id": f"artist_pt_{eid}",
@@ -197,7 +197,11 @@ def harvest_artist_candidates(lang: str, words: set[str], max_per_word: int = 10
                                         "channel": "artist"
                                     })
 
-    return [item for w in words for item in candidates[w]]
+    out = []
+    for w in words:
+        for art_list in artist_candidates[w].values():
+            out.extend(art_list)
+    return out
 
 
 def get_pattern_pos(lang: str, word: str, idx: int, tag: str = "", formula: str = "") -> str:
@@ -265,11 +269,23 @@ def main():
     args = parser.parse_args()
 
     es_suite, pt_suite = load_suites()
+    baseline_dir = ROOT / "research/function_word_audit/baseline"
+    baseline_suites = {}
+    if (baseline_dir / "es.json").exists() and (baseline_dir / "pt.json").exists():
+        baseline_suites["es"] = json.loads((baseline_dir / "es.json").read_text(encoding="utf-8"))
+        baseline_suites["pt"] = json.loads((baseline_dir / "pt.json").read_text(encoding="utf-8"))
+
     all_patterns = {}
     for lang, suite in [("es", es_suite), ("pt", pt_suite)]:
         for w, card in suite.items():
             for i, rel in enumerate(card.get("relations", [])):
                 pid = f"{lang}:{w}:{i}"
+                base_card = baseline_suites.get(lang, {}).get(w)
+                base_rel = base_card.get("relations", [])[i] if base_card and i < len(base_card.get("relations", [])) else None
+                base_examples = base_rel.get("examples", []) if base_rel else []
+                if not base_examples:
+                    base_examples = [ex for ex in rel.get("examples", []) if not ex.get("metadata", {}).get("automaticSyntax")]
+
                 all_patterns[pid] = {
                     "lang": lang,
                     "word": w,
@@ -277,7 +293,7 @@ def main():
                     "tag": rel.get("tag"),
                     "formulaHTML": rel.get("formulaHTML"),
                     "slotTypes": rel.get("slotTypes", {}),
-                    "existing_examples": rel.get("examples", [])
+                    "existing_examples": base_examples
                 }
 
     print(f"Loaded {len(all_patterns)} total patterns (ES: 51, PT: 64).", flush=True)
@@ -291,7 +307,7 @@ def main():
     print(f"Harvested {len(es_speech)} Spanish speech candidates.", flush=True)
 
     print("Harvesting artist sentences for Spanish...", flush=True)
-    es_artist = harvest_artist_candidates("es", es_words, max_per_word=8)
+    es_artist = harvest_artist_candidates("es", es_words, max_per_artist=8)
     print(f"Harvested {len(es_artist)} Spanish artist candidates.", flush=True)
 
     print("Harvesting speech sentences for Portuguese...", flush=True)
@@ -299,7 +315,7 @@ def main():
     print(f"Harvested {len(pt_speech)} Portuguese speech candidates.", flush=True)
 
     print("Harvesting artist sentences for Portuguese...", flush=True)
-    pt_artist = harvest_artist_candidates("pt", pt_words, max_per_word=8)
+    pt_artist = harvest_artist_candidates("pt", pt_words, max_per_artist=8)
     print(f"Harvested {len(pt_artist)} Portuguese artist candidates.", flush=True)
 
     all_rows = es_speech + es_artist + pt_speech + pt_artist
@@ -370,13 +386,22 @@ def main():
         # 1. Speech Deck Generation (target: 3 distinct speech examples)
         speech_deck_examples = []
         speech_ids = set()
+        if w in PILOT_WORDS:
+            for ex in existing:
+                s_text = ex.get("sentence") or ex.get("targetHTML", "")
+                ident = example_identity(s_text)
+                if ident not in speech_ids:
+                    speech_ids.add(ident)
+                    speech_deck_examples.append(ex)
+                    if len(speech_deck_examples) >= 3:
+                        break
         for ex in speech_matches:
+            if len(speech_deck_examples) >= 3:
+                break
             ident = example_identity(ex["sentence"])
             if ident not in speech_ids:
                 speech_ids.add(ident)
                 speech_deck_examples.append(ex)
-                if len(speech_deck_examples) >= 3:
-                    break
 
         has_speech_deck_full = len(speech_deck_examples) >= 3
         if has_speech_deck_full:
@@ -395,14 +420,23 @@ def main():
 
         # 2. Artist Deck Generation (target: 3 distinct artist examples)
         artist_deck_examples = []
+        artist_deck_by_artist = defaultdict(list)
         artist_ids = set()
         for ex in artist_matches:
             ident = example_identity(ex["sentence"])
             if ident not in artist_ids:
                 artist_ids.add(ident)
                 artist_deck_examples.append(ex)
-                if len(artist_deck_examples) >= 3:
-                    break
+                ex_source = ex.get("metadata", {}).get("source") or {}
+                if isinstance(ex_source, dict):
+                    art = ex_source.get("artist")
+                else:
+                    art = None
+                if not art:
+                    source_str = ex.get("source", "")
+                    art = source_str.split(" · ")[0].strip() if " · " in source_str else (source_str or "Unknown")
+                if len(artist_deck_by_artist[art]) < 3:
+                    artist_deck_by_artist[art].append(ex)
 
         has_artist_deck_full = len(artist_deck_examples) >= 3
         if has_artist_deck_full:
@@ -497,6 +531,7 @@ def main():
             "artist_matches_count": len(artist_matches),
             "speech_deck_examples": speech_deck_examples,
             "artist_deck_examples": artist_deck_examples,
+            "artist_deck_by_artist": dict(artist_deck_by_artist),
             "speech_shortage": speech_shortage,
             "artist_shortage": artist_shortage,
             "is_shortage": is_shortage,
@@ -614,6 +649,7 @@ def main():
             rel["pos"] = get_pattern_pos(lang, w, idx, rel.get("tag", ""), rel.get("formulaHTML", ""))
             rel["speech_examples"] = stat["speech_deck_examples"]
             rel["artist_examples"] = stat["artist_deck_examples"]
+            rel["artist_examples_by_artist"] = stat["artist_deck_by_artist"]
             rel["examples"] = stat["examples"]
             if stat["examples"] and w not in PILOT_WORDS:
                 rel["targetHTML"] = stat["examples"][0]["targetHTML"]

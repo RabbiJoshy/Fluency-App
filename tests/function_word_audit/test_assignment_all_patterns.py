@@ -341,8 +341,59 @@ class AllPatternsAssignmentTests(unittest.TestCase):
         self.assertEqual(res['pattern'], 0)
         self.assertEqual(res['pattern_id'], 'pt:como:0')
 
+    def test_entra_en_parada_cardiaca_abstains_from_locative(self):
+        sentence = "El corazón entra en parada cardíaca."
+        words = [
+            mock_token(1, "El", "DET", 2, "det", 0, 2, lemma="el"),
+            mock_token(2, "corazón", "NOUN", 3, "nsubj", 3, 10, lemma="corazón"),
+            mock_token(3, "entra", "VERB", 0, "root", 11, 16, lemma="entrar"),
+            mock_token(4, "en", "ADP", 5, "case", 17, 19, lemma="en"),
+            mock_token(5, "parada", "NOUN", 3, "obl", 20, 26, lemma="parada"),
+            mock_token(6, "cardíaca", "ADJ", 5, "amod", 27, 35, lemma="cardíaco"),
+            mock_token(7, ".", "PUNCT", 3, "punct", 35, 36, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[17, 19]]}
+        row = {'language': 'es', 'word': 'en', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')  # medical state "parada cardíaca" abstains from locative place
+
+    def test_vivemos_como_os_nossos_pais_is_comparison(self):
+        sentence = "Ainda somos os mesmos e vivemos como os nossos pais."
+        words = [
+            mock_token(1, "Ainda", "ADV", 2, "advmod", 0, 5, lemma="ainda"),
+            mock_token(2, "somos", "AUX", 0, "root", 6, 11, lemma="ser"),
+            mock_token(3, "os", "DET", 4, "det", 12, 14, lemma="o"),
+            mock_token(4, "mesmos", "PRON", 2, "obj", 15, 21, lemma="mesmo"),
+            mock_token(5, "e", "CCONJ", 6, "cc", 22, 23, lemma="e"),
+            mock_token(6, "vivemos", "VERB", 2, "conj", 24, 31, lemma="viver"),
+            mock_token(7, "como", "ADP", 10, "case", 32, 36, lemma="como"),
+            mock_token(8, "os", "DET", 10, "det", 37, 39, lemma="o"),
+            mock_token(9, "nossos", "DET", 10, "det", 40, 46, lemma="nosso"),
+            mock_token(10, "pais", "NOUN", 6, "obl", 47, 51, lemma="pai"),
+            mock_token(11, ".", "PUNCT", 2, "punct", 51, 52, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[32, 36]]}
+        row = {'language': 'pt', 'word': 'como', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'candidate')
+        self.assertEqual(res['pattern'], 0)  # comparison (manner), NOT 1 (role/job)
+        self.assertEqual(res['pattern_id'], 'pt:como:0')
+
+    def test_es_en_does_not_contain_parada_cardiaca(self):
+        es = json.loads((ROOT / "app/data/grammar-words/es.json").read_text(encoding="utf-8"))
+        en_rel0 = es["en"]["relations"][0]
+        self.assertNotIn("parada", json.dumps(en_rel0))
+
+    def test_pt_como_does_not_contain_pais_in_role(self):
+        pt = json.loads((ROOT / "app/data/grammar-words/pt.json").read_text(encoding="utf-8"))
+        como_rel1 = pt["como"]["relations"][1]
+        self.assertNotIn("pais", json.dumps(como_rel1))
+        como_rel0 = pt["como"]["relations"][0]
+        self.assertIn("pais", json.dumps(como_rel0))
+
 if __name__ == '__main__':
     unittest.main()
+
 
 
 

@@ -142,11 +142,11 @@ ABSTRACT_STATE_HEADS = {
     'pt': {'necesidade', 'necessidade', 'dúvida', 'perigo', 'paz', 'calma', 'segredo', 'realidade',
            'geral', 'efeito', 'teoria', 'vão', 'prática', 'silêncio', 'choque', 'pânico',
            'tentativa', 'vida', 'caso', 'ordem', 'modo', 'forma', 'jeito', 'mudança', 'situação',
-           'amor', 'risco', 'verdade', 'conta', 'graça'},
+           'amor', 'risco', 'verdade', 'conta', 'graça', 'parada', 'coma', 'crise', 'transe', 'vigor', 'chamas'},
     'es': {'necesidad', 'duda', 'peligro', 'paz', 'calma', 'secreto', 'realidad',
            'general', 'efecto', 'teoría', 'vano', 'práctica', 'silencio', 'shock', 'pánico',
            'intento', 'vida', 'caso', 'orden', 'modo', 'forma', 'cambio', 'situación',
-           'amor', 'riesgo', 'verdad', 'cuenta', 'gracia'}
+           'amor', 'riesgo', 'verdad', 'cuenta', 'gracia', 'parada', 'paro', 'coma', 'crisis', 'trance', 'vigor', 'llamas', 'juego'}
 }
 
 
@@ -374,9 +374,9 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
         else:
             gov = byid.get(head['head'])
             gl = gov['lemma'].lower() if gov else ''
-            is_place = hl in LOCATIVE_HEADS.get(lang, set()) or hl in DESTINATION_HEADS.get(lang, set())
-            is_loc_verb = gov and gl in LOCATIVE_VERBS.get(lang, set())
-            if (is_place or is_loc_verb) and hl not in ABSTRACT_STATE_HEADS.get(lang, set()) and head['upos'] in {'NOUN', 'PROPN'}:
+            is_propn_place = head['upos'] == 'PROPN' and (gov and gl in LOCATIVE_VERBS.get(lang, set()))
+            is_noun_place = head['upos'] == 'NOUN' and (hl in LOCATIVE_HEADS.get(lang, set()) or hl in DESTINATION_HEADS.get(lang, set()))
+            if (is_propn_place or is_noun_place) and hl not in ABSTRACT_STATE_HEADS.get(lang, set()):
                 pat = 0
 
         # Strict abstention if neither time nor place is positively licensed
@@ -624,16 +624,32 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
         v_span = _verb_complex(sent, gov, focus_bounds, lang, text) if (gov and gov['upos'] in {'VERB', 'AUX'}) else None
 
         pat = None
-        # Pattern 1: Role / Job / Capacity (como + role/job)
-        if focus['deprel'] == 'case' and head['upos'] in {'NOUN', 'PROPN'}:
-            if hl in HUMAN_HEADS.get(lang, set()) or hl in {'ejemplo', 'exemplo', 'modelo', 'base', 'guía', 'guia', 'prueba', 'prova'}:
-                pat = 1
+        ROLE_HEADS = {
+            'pt': {'médico', 'doutor', 'professor', 'advogado', 'diretor', 'presidente', 'guia',
+                   'testemunha', 'voluntário', 'secretário', 'gerente', 'juiz', 'garçom', 'motorista',
+                   'estudante', 'soldado', 'enfermeiro', 'modelo', 'exemplo', 'base', 'refém', 'escudo'},
+            'es': {'médico', 'doctor', 'profesor', 'abogado', 'director', 'presidente', 'guía',
+                   'testigo', 'voluntario', 'secretario', 'gerente', 'juez', 'camarero', 'conductor',
+                   'estudiante', 'soldado', 'enfermero', 'modelo', 'ejemplo', 'base', 'rehén', 'escudo'}
+        }
+        ROLE_VERBS = {
+            'pt': {'trabalhar', 'servir', 'funcionar', 'atuar', 'operar', 'exercer', 'usar', 'empregar', 'contratar'},
+            'es': {'trabajar', 'servir', 'funcionar', 'actuar', 'operar', 'ejercer', 'usar', 'emplear', 'contratar'}
+        }
+        COMPARISON_VERBS = {
+            'pt': {'viver', 'agir', 'cantar', 'falar', 'correr', 'brilhar', 'comportar', 'ser', 'ficar', 'sentir', 'pensar', 'morrer', 'parecer', 'andar', 'dançar', 'dormir', 'sonhar', 'tropeçar', 'beber', 'soluçar'},
+            'es': {'vivir', 'actuar', 'cantar', 'hablar', 'correr', 'brillar', 'comportar', 'ser', 'estar', 'quedar', 'sentir', 'pensar', 'morir', 'parecer', 'andar', 'bailar', 'dormir', 'soñar', 'tropezar', 'beber'}
+        }
 
         # Pattern 0: Comparison (verb + como: "Like / in the same way")
-        # Formula strictly requires preceding verb: verb + como
-        if pat is None:
-            if v_span and v_span[1] <= start:
-                pat = 0
+        # When governed by activity/state/manner verbs, it is always a comparison (e.g. "vivemos como os nossos pais", "canta como um pássaro")
+        if v_span and v_span[1] <= start and (gl in COMPARISON_VERBS.get(lang, set()) or hl not in ROLE_HEADS.get(lang, set())):
+            pat = 0
+        # Pattern 1: Role / Job / Capacity (como + role/job)
+        # Governed by role verbs ("trabalhar como...") or head is explicitly a profession/capacity
+        elif focus['deprel'] == 'case' and head['upos'] in {'NOUN', 'PROPN'}:
+            if gl in ROLE_VERBS.get(lang, set()) or hl in ROLE_HEADS.get(lang, set()):
+                pat = 1
 
         # Strict abstention if neither pattern applies
         if pat is None:

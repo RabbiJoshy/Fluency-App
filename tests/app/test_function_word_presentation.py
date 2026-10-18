@@ -31,7 +31,12 @@ assert.ok(nodes['.fw-sentence-target'].innerHTML.includes('rgb(0, 212, 170)'));
 assert.equal(vm.runInContext("fwCreditHTML({source:'Conversation'})",ctx),'Source not verified');
 assert.equal(vm.runInContext("functionWordBlockHTML({word:'qué',functionWord:{roles:[{value:'interrogative',gloss:'what'}],patterns:[]}},'es')",ctx),'');
 assert.ok(vm.runInContext("functionWordBlockHTML({word:'que'},'es')",ctx).includes('fw-deterministic-card'));
-
+const artistHtml = vm.runInContext("functionWordBlockHTML({word:'como', channel:'artist', artist:'Portuguese Playlist'},'pt')", ctx);
+assert.ok(artistHtml.includes('data-deck="artist"'));
+assert.ok(artistHtml.includes('data-artist="Portuguese Playlist"'));
+assert.ok(artistHtml.includes('Portuguese Playlist'));
+const speechHtml = vm.runInContext("functionWordBlockHTML({word:'como', channel:'speech'},'pt')", ctx);
+assert.ok(speechHtml.includes('data-deck="speech"'));
 '''
         run=subprocess.run(['node','-e',script],cwd=ROOT,text=True,capture_output=True)
         self.assertEqual(run.returncode,0,run.stderr)

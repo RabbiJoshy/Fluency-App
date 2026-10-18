@@ -328,6 +328,57 @@ export function selectFunctionWordUse(useIdx) {{
     selectFunctionWordRelation(useIdx);
 }}
 
+function getRelationExamples(relation, cardOrContext) {{
+    if (!relation) return [];
+    if (syntaxTrialEnabled() || relation.syntaxTrial || cardOrContext?.syntaxTrial) {{
+        return relation.examples || [];
+    }}
+
+    let channel = 'speech';
+    let artistName = '';
+
+    if (typeof window !== 'undefined') {{
+        const active = window.activeArtist || (typeof activeArtist !== 'undefined' ? activeArtist : null);
+        if (active) {{
+            channel = 'artist';
+            artistName = String(active.name || active.slug || '').trim().toLowerCase();
+        }}
+    }}
+    if (cardOrContext) {{
+        if (cardOrContext.channel) channel = cardOrContext.channel;
+        else if (cardOrContext.artist || cardOrContext.song || cardOrContext.is_artist) channel = 'artist';
+        if (cardOrContext.artist) artistName = String(cardOrContext.artist).trim().toLowerCase();
+    }}
+
+    if (channel === 'artist') {{
+        // If an artist is selected, match to the selected artist
+        if (artistName && relation.artist_examples_by_artist) {{
+            for (const [art, exs] of Object.entries(relation.artist_examples_by_artist)) {{
+                const a = art.toLowerCase();
+                if (a.includes(artistName) || artistName.includes(a)) {{
+                    if (exs && exs.length > 0) return exs;
+                }}
+            }}
+        }}
+        if (relation.artist_examples && relation.artist_examples.length > 0) {{
+            if (artistName) {{
+                const matched = relation.artist_examples.filter(ex => {{
+                    const a = String(ex?.metadata?.source?.artist || ex?.source || '').toLowerCase();
+                    return a.includes(artistName) || artistName.includes(a);
+                }});
+                if (matched.length > 0) return matched;
+            }}
+            return relation.artist_examples;
+        }}
+    }} else {{
+        if (relation.speech_examples && relation.speech_examples.length > 0) {{
+            return relation.speech_examples;
+        }}
+    }}
+
+    return relation.examples || (relation.targetHTML ? [relation] : []);
+}}
+
 export function cycleFunctionWordExample() {{
     const container = document.querySelector('.fw-deterministic-card');
     if (!container) return;
@@ -339,7 +390,11 @@ export function cycleFunctionWordExample() {{
     const relations = data.relations || data.uses || [];
     if (_activeRelIndex >= relations.length) _activeRelIndex = 0;
     const currentRel = relations[_activeRelIndex];
-    const examples = currentRel?.examples || (currentRel?.targetHTML ? [currentRel] : []);
+    const deckContext = {{
+        channel: container.dataset.deck || 'speech',
+        artist: container.dataset.artist || ''
+    }};
+    const examples = getRelationExamples(currentRel, deckContext);
     if (examples.length <= 1) {{
         const plain = (currentRel?.targetHTML || currentRel?.target || '').replace(/<[^>]+>/g, '');
         window.speakTargetSentence?.() || window.speakText?.(plain);
@@ -401,8 +456,12 @@ function refreshFunctionWordCardBack() {{
         }}
     }}
 
-    // Get current example from examples array
-    const examples = currentRel?.examples || (currentRel?.targetHTML ? [currentRel] : []);
+    // Get current example from deck-specific examples array
+    const deckContext = {{
+        channel: container.dataset.deck || 'speech',
+        artist: container.dataset.artist || ''
+    }};
+    const examples = getRelationExamples(currentRel, deckContext);
     if (_activeExampleIndex >= examples.length) _activeExampleIndex = 0;
     const currentEx = examples[_activeExampleIndex] || currentRel;
 
@@ -496,7 +555,11 @@ export function functionWordBlockHTML(card, lang) {{
                 </button>`;
         }}).join('');
 
-        const examples = currentRel?.examples || (currentRel?.targetHTML ? [currentRel] : []);
+        const deckContext = {{
+            channel: (card?.artist || card?.channel === 'artist' || (typeof window !== 'undefined' && window.activeArtist)) ? 'artist' : 'speech',
+            artist: card?.artist || (typeof window !== 'undefined' && window.activeArtist?.name) || ''
+        }};
+        const examples = getRelationExamples(currentRel, deckContext);
         if (_activeExampleIndex >= examples.length) _activeExampleIndex = 0;
         const currentEx = examples[_activeExampleIndex] || currentRel;
 
@@ -506,7 +569,7 @@ export function functionWordBlockHTML(card, lang) {{
         const ticksHTML = renderFwTicks(examples.length, _activeExampleIndex);
 
         return `
-            <div class="fw-deterministic-card" data-word="${{esc(wordKey)}}" data-lang="${{esc(lang || 'pt')}}" data-pos="${{esc(currentRel?.pos || '')}}" style="--sense-match-rgb: ${{fwPresentation.posRgb?.(currentRel?.pos || card?.pos || card?.meanings?.[0]?.pos) || 'var(--accent-primary-rgb)'}};">
+            <div class="fw-deterministic-card" data-word="${{esc(wordKey)}}" data-lang="${{esc(lang || 'pt')}}" data-pos="${{esc(currentRel?.pos || '')}}" data-deck="${{esc(deckContext.channel)}}" data-artist="${{esc(deckContext.artist)}}" style="--sense-match-rgb: ${{fwPresentation.posRgb?.(currentRel?.pos || card?.pos || card?.meanings?.[0]?.pos) || 'var(--accent-primary-rgb)'}};">
                 <div class="fw-header">
                     <h2 class="fw-heading">${{esc(wordKey)}}</h2>
                     ${{partsBoxHTML}}
