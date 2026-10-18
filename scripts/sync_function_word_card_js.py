@@ -341,15 +341,55 @@ function isArtistExample(item) {{
 
 function matchesArtist(item, artistName) {{
     if (!item || !artistName) return false;
-    const art = artistName.toLowerCase();
-    const a = String(item?.metadata?.source?.artist || item?.source || item?.artist || '').toLowerCase();
+    const a = String(item?.metadata?.source?.artist || item?.source || item?.artist || '').trim().toLowerCase();
+    if (!a) return false;
+    const art = String(artistName).trim().toLowerCase();
+    if (!art) return false;
     return a.includes(art) || art.includes(a);
 }}
+
+const KNOWN_SAFE_PROVENANCE_SOURCES = new Set([
+    'conversation',
+    'dialogue',
+    'everyday dialogue',
+    'everyday speech',
+    'literature',
+    'opensubtitles',
+    'subtitles',
+    'tatoeba',
+    'teaching example',
+    'original teaching example',
+]);
 
 function isExplicitlySafeCurriculumExample(item) {{
     if (!item) return false;
     if (isArtistExample(item)) return false;
-    return !!(item.targetHTML || item.target);
+    if (!item.targetHTML && !item.target) return false;
+
+    // Positive curriculum or speech provenance is strictly required
+    if (item.channel === 'speech' || item.channel === 'curriculum') {{
+        return true;
+    }}
+    const metaSource = item.metadata?.source;
+    if (metaSource) {{
+        if (metaSource.channel === 'speech' || metaSource.channel === 'curriculum') {{
+            return true;
+        }}
+        const adapter = String(metaSource.adapter || '').trim().toLowerCase();
+        if (adapter.startsWith('tatoeba') || adapter.startsWith('opensubtitles') || adapter.startsWith('speech')) {{
+            return true;
+        }}
+        const metaName = String(metaSource.name || '').trim().toLowerCase();
+        if (KNOWN_SAFE_PROVENANCE_SOURCES.has(metaName) || metaName.startsWith('tatoeba') || metaName.startsWith('opensubtitles')) {{
+            return true;
+        }}
+    }}
+    const src = String(item.source || '').trim().toLowerCase();
+    if (!src) return false; // Missing/empty source is never positive proof of curriculum provenance
+    if (KNOWN_SAFE_PROVENANCE_SOURCES.has(src) || src.startsWith('tatoeba') || src.startsWith('opensubtitles') || src.startsWith('original teaching example')) {{
+        return true;
+    }}
+    return false;
 }}
 
 function getRelationExamples(relation, cardOrContext) {{
@@ -379,8 +419,8 @@ function getRelationExamples(relation, cardOrContext) {{
         if (artistName) {{
             if (relation.artist_examples_by_artist) {{
                 for (const [art, exs] of Object.entries(relation.artist_examples_by_artist)) {{
-                    const a = art.toLowerCase();
-                    if (a.includes(artistName) || artistName.includes(a)) {{
+                    const a = String(art || '').trim().toLowerCase();
+                    if (a && (a.includes(artistName) || artistName.includes(a))) {{
                         if (exs && exs.length > 0) return exs;
                     }}
                 }}
@@ -394,10 +434,10 @@ function getRelationExamples(relation, cardOrContext) {{
             if (relation.speech_examples && relation.speech_examples.length > 0) {{
                 return relation.speech_examples;
             }}
-            // Fallback: exclude any other artist's lyrics from relation.examples, preserving clean dialogue/curriculum
+            // Fallback: only include matches for the selected artist OR examples with positive curriculum/speech provenance
             const safeExamples = (relation.examples || []).filter(ex => {{
-                if (!isArtistExample(ex)) return true; // clean dialogue / curriculum baseline
-                return matchesArtist(ex, artistName);
+                if (matchesArtist(ex, artistName)) return true;
+                return isExplicitlySafeCurriculumExample(ex);
             }});
             if (safeExamples.length > 0) return safeExamples;
             if (isExplicitlySafeCurriculumExample(relation)) {{

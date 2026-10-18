@@ -109,6 +109,29 @@ const renderedCurriculumCard = vm.runInContext("functionWordBlockHTML({word:'tes
 assert.ok(!renderedCurriculumCard.includes('Song by Artist B'), 'Rendered card must NOT show Artist B lyrics');
 assert.ok(renderedCurriculumCard.includes('Ela precisa de dinheiro.'), 'Rendered card must show safe curriculum example');
 
+// Regression test: Missing/empty source metadata must NOT be accepted as curriculum fallback
+vm.runInContext(`
+PORTUGUESE_GRAMMAR_WORDS['test_missing_metadata'] = {
+    word: 'test_missing_metadata',
+    relations: [{
+        tag: 'Like / in the same way',
+        targetHTML: 'Unlabelled song lyric by Artist B',
+        translation: 'Artist B lyric translation',
+        // NO source, NO channel, NO metadata
+        speech_examples: [],
+        artist_examples: [],
+        examples: [{targetHTML: 'Unlabelled song lyric by Artist B', translation: 'Artist B lyric translation'}]
+    }]
+};
+PORTUGUESE_GRAMMAR_WORDS['test_missing_metadata'].uses = PORTUGUESE_GRAMMAR_WORDS['test_missing_metadata'].relations;
+`, ctx);
+
+const renderedMissingMetaCard = vm.runInContext("functionWordBlockHTML({word:'test_missing_metadata', channel:'artist', artist:'Artist A'}, 'pt')", ctx);
+assert.ok(!renderedMissingMetaCard.includes('Unlabelled song lyric by Artist B'), 'Missing source metadata must NOT be accepted as curriculum fallback');
+assert.ok(renderedMissingMetaCard.includes('No matching examples found'), 'Must preserve shortage when source metadata is missing');
+assert.ok(renderedMissingMetaCard.includes('Shortage'), 'Must display shortage badge when source metadata is missing');
+
+
 '''
         run=subprocess.run(['node','-e',script],cwd=ROOT,text=True,capture_output=True)
         self.assertEqual(run.returncode,0,run.stderr)
