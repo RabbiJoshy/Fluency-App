@@ -21724,11 +21724,8 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
-.sense-note-dialog h2 {
-    margin: 0 36px 12px 0;
-    font-size: 18px;
-    font-weight: 650;
-    line-height: 1.25;
+.sense-note-section:first-child {
+    padding-right: 28px;
 }
 .sense-note-section + .sense-note-section {
     margin-top: 14px;

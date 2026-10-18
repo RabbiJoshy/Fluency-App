@@ -2011,8 +2011,10 @@ export function openSenseNote(event, control) {
     const title = source.dataset.senseNoteTitle || 'This meaning';
     const overlay = document.createElement('div');
     overlay.className = 'sense-note-overlay';
-    const scopeLabel = source.dataset.senseNoteScope === 'all-contexts' ? 'Sense details · All contexts' : 'Sense details';
-    overlay.innerHTML = `<div class="sense-note-dialog" role="dialog" aria-modal="true" aria-labelledby="senseNoteEyebrow" tabindex="-1"><button type="button" class="sense-note-close" aria-label="Close sense details">×</button><div id="senseNoteEyebrow" class="sense-note-eyebrow">${scopeLabel}</div><div class="sense-note-body"></div></div>`;
+    const isAllContexts = source.dataset.senseNoteScope === 'all-contexts';
+    const eyebrowHTML = isAllContexts ? '<div id="senseNoteEyebrow" class="sense-note-eyebrow">All contexts</div>' : '';
+    const ariaLabel = isAllContexts ? 'Sense details (all contexts)' : 'Sense details';
+    overlay.innerHTML = `<div class="sense-note-dialog" role="dialog" aria-modal="true" aria-label="${ariaLabel}" tabindex="-1"><button type="button" class="sense-note-close" aria-label="Close sense details">×</button>${eyebrowHTML}<div class="sense-note-body"></div></div>`;
     overlay.querySelector('.sense-note-body').append(...source.cloneNode(true).children);
     document.body.appendChild(overlay);
 
