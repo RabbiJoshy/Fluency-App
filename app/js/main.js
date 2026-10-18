@@ -747,18 +747,35 @@ loadConfig().then(async () => {
         if (appDataTabBtn) appDataTabBtn.hidden = false;
         if (settingsAdminLabel) settingsAdminLabel.hidden = false;
     }
-    // #/es/conjugate[/verb] names the drill page, which is its own document.
+    // #/es/conjugate[/verb] names the embedded conjugation drill screen.
     // A language with no drill deck opens that language instead.
     if (window.fluencyRoute?.kind === 'conjugate') {
         const route = window.fluencyRoute;
         const key = languageKeyFor(route.language, config.languages);
-        const drillHref = conjugationDrillHref(key, route.verb, config.languages);
-        if (drillHref) {
-            window.location.replace(drillHref);
-            return;
+        const drillCode = config.languages?.[key]?.conjugationDrill;
+        if (drillCode) {
+            setTimeout(() => {
+                if (typeof window.openConjugationsScreen === 'function') {
+                    window.openConjugationsScreen(route.verb);
+                }
+            }, 50);
+        } else {
+            window.fluencyRoute = { kind: 'language', language: route.language };
+            replaceRoute(window.fluencyRoute);
         }
-        window.fluencyRoute = { kind: 'language', language: route.language };
-        replaceRoute(window.fluencyRoute);
+    }
+    const initialParams = new URLSearchParams(window.location.search);
+    const isConjugationReq = initialParams.get('screen') === 'conjugation' ||
+                             initialParams.get('activity') === 'verbs' ||
+                             window.location.pathname.endsWith('/conjugation') ||
+                             window.location.pathname.endsWith('/conjugation/');
+    if (isConjugationReq) {
+        const verb = initialParams.get('verb');
+        setTimeout(() => {
+            if (typeof window.openConjugationsScreen === 'function') {
+                window.openConjugationsScreen(verb);
+            }
+        }, 60);
     }
     renderLanguageTabs();
     // A language is a durable learning context, not a choice learners should

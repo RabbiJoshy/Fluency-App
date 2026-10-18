@@ -74,7 +74,7 @@ export function updateExtraUI() {
     }
 }
 
-export async function openConjugationsScreen() {
+export async function openConjugationsScreen(targetVerb = null, targetView = null) {
     const drillCode = conjugationDrillCode() || 'es';
     const menuView = document.getElementById('extraMenuView');
     const conjView = document.getElementById('extraConjugationsView');
@@ -85,6 +85,14 @@ export async function openConjugationsScreen() {
     window._embeddedConjugation = true;
     window._conjugationBasePath = 'conjugation/data/';
     window.onLeaveConjugationMode = backToExtraMenu;
+
+    try {
+        const url = new URL(window.location.href);
+        const base = url.pathname.replace(/\/conjugation\/?$/, '') || '';
+        const drillPath = (base + '/conjugation').replace(/^\/\//, '/');
+        const search = targetVerb ? `?verb=${encodeURIComponent(targetVerb)}` : '';
+        history.replaceState({ screen: 'conjugation' }, '', drillPath + search);
+    } catch (_) {}
 
     try {
         if (!window.ConjugationProgress) {
@@ -104,7 +112,7 @@ export async function openConjugationsScreen() {
         }
 
         if (typeof window.conjugationBoot === 'function') {
-            window.conjugationBoot(drillCode);
+            window.conjugationBoot(drillCode, targetVerb, targetView);
         }
     } catch (err) {
         console.error('Failed to boot conjugations screen:', err);
@@ -274,6 +282,12 @@ export function backToExtraMenu() {
     if (conjView) conjView.hidden = true;
     if (songPickerView) songPickerView.hidden = true;
     if (menuView) menuView.hidden = false;
+    try {
+        if (window.location.pathname.includes('/conjugation')) {
+            const basePath = window.location.pathname.replace(/\/conjugation\/?$/, '') || '/';
+            history.replaceState({ screen: 'extra' }, '', basePath);
+        }
+    } catch (_) {}
 }
 
 export function openExtraModal() {
@@ -290,6 +304,12 @@ export function closeExtraModal() {
     if (modal) {
         modal.classList.add('hidden');
     }
+    try {
+        if (window.location.pathname.includes('/conjugation')) {
+            const basePath = window.location.pathname.replace(/\/conjugation\/?$/, '') || '/';
+            history.replaceState({ screen: 'home' }, '', basePath);
+        }
+    } catch (_) {}
 }
 
 export function initExtraWorkspace() {
@@ -379,10 +399,20 @@ export function initExtraWorkspace() {
     }
 
     window.openExtraModal = openExtraModal;
-    window.openConjugationsScreen = () => {
+    window.openConjugationsScreen = (targetVerb = null, targetView = null) => {
         openExtraModal();
-        openConjugationsScreen();
+        openConjugationsScreen(targetVerb, targetView);
     };
+    window.addEventListener('popstate', () => {
+        const isConj = window.location.pathname.includes('/conjugation');
+        const conjView = document.getElementById('extraConjugationsView');
+        if (!isConj && conjView && !conjView.hidden) {
+            backToExtraMenu();
+        } else if (isConj && (!conjView || conjView.hidden)) {
+            const urlParams = new URLSearchParams(window.location.search);
+            window.openConjugationsScreen(urlParams.get('verb'));
+        }
+    });
     window.openSongPickerScreen = () => {
         openExtraModal();
         openSongPickerScreen();

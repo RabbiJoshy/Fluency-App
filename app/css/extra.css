@@ -566,73 +566,166 @@
 .extra-conjugations-view .card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 18px;
-  padding: 36px 28px;
+  border-radius: 20px;
+  padding: 34px 24px;
   text-align: center;
-  min-height: 320px;
+  min-height: 360px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  gap: 16px;
   cursor: pointer;
   user-select: none;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
-  transition: transform .15s ease, box-shadow .15s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
 
+.extra-conjugations-view .card:hover {
+  border-color: var(--border-light, var(--text-muted));
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.18);
+}
+
+.extra-conjugations-view .card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Tense badge: prominent, structured, high-legibility ── */
 .extra-conjugations-view .card-tense {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.extra-conjugations-view .card-tense-mood {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.extra-conjugations-view .card-tense-sep {
+  color: var(--text-muted);
+  opacity: 0.5;
+  font-size: 14px;
+}
+
+.extra-conjugations-view .card-tense-name {
+  font-family: var(--font-emphasis);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* Mood-specific accents */
+.extra-conjugations-view .card-tense[data-mood*="subj"] {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: linear-gradient(180deg, var(--bg-secondary), rgba(167, 139, 250, 0.12));
+}
+.extra-conjugations-view .card-tense[data-mood*="subj"] .card-tense-mood { color: #c084fc; }
+
+.extra-conjugations-view .card-tense[data-mood*="imp"] {
+  border-color: rgba(245, 166, 35, 0.45);
+  background: linear-gradient(180deg, var(--bg-secondary), rgba(245, 166, 35, 0.12));
+}
+.extra-conjugations-view .card-tense[data-mood*="imp"] .card-tense-mood { color: var(--accent-amber); }
+
+/* The clue line. Sits with the tense as card metadata */
+.extra-conjugations-view .card-clue {
+  font-family: var(--font-reading);
   font-size: 12.5px;
-  letter-spacing: .06em;
+  letter-spacing: .03em;
+  color: var(--clue-colour, var(--text-muted));
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  display: inline-block;
+  margin: 0 auto;
+}
+
+/* ── Prompt section: Subject & Verb ── */
+.extra-conjugations-view .card-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 0;
+}
+
+.extra-conjugations-view .card-subject-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.extra-conjugations-view .card-subject-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--text-muted);
 }
 
+.extra-conjugations-view .card-person {
+  font-family: var(--font-emphasis);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
 .extra-conjugations-view .card-verb {
   font-family: var(--font-emphasis);
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 34px;
+  font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.15;
   color: var(--text-primary);
-}
-
-.extra-conjugations-view .card-translation {
-  display: block;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-.extra-conjugations-view .card-clue {
-  font-family: var(--font-reading);
-  font-size: 12px;
-  letter-spacing: .04em;
-  color: var(--clue-colour, var(--text-muted));
 }
 
 .extra-conjugations-view .card-verb.is-clued #card-headword {
   color: var(--clue-colour, inherit);
 }
 
-.extra-conjugations-view .card-person {
-  font-size: 16px;
-  font-weight: 600;
+.extra-conjugations-view .card-translation {
+  display: block;
+  font-family: var(--font-reading);
+  font-size: 15px;
+  font-weight: 400;
   color: var(--text-secondary);
-  letter-spacing: .01em;
+  margin-top: 4px;
 }
 
+/* ── Answer section ── */
 .extra-conjugations-view .card-answer {
   border-top: 1px solid var(--border-color);
-  margin-top: 14px;
-  padding-top: 18px;
+  margin-top: 10px;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .extra-conjugations-view .card-form {
   font-family: var(--font-emphasis);
-  font-size: 36px;
-  font-weight: 650;
+  font-size: 40px;
+  font-weight: 700;
   letter-spacing: -0.02em;
+  line-height: 1.15;
   color: var(--text-primary);
 }
 
@@ -641,7 +734,7 @@
 }
 
 .extra-conjugations-view .card-form .form-stem {
-  opacity: .62;
+  opacity: .88;
   font-weight: 600;
 }
 
@@ -984,6 +1077,22 @@
   .extra-conjugations-view .summary-actions button {
     flex: 1;
   }
+}
+
+@media (min-width: 900px) {
+  .extra-conjugations-view .card {
+    min-height: 440px;
+    padding: 46px 36px;
+    gap: 22px;
+  }
+  .extra-conjugations-view .card-tense { padding: 10px 24px; gap: 12px; }
+  .extra-conjugations-view .card-tense-mood { font-size: 14px; }
+  .extra-conjugations-view .card-tense-name { font-size: 20px; }
+  .extra-conjugations-view .card-subject-label { font-size: 12px; }
+  .extra-conjugations-view .card-person { font-size: 34px; }
+  .extra-conjugations-view .card-verb { font-size: 44px; }
+  .extra-conjugations-view .card-translation { font-size: 17px; }
+  .extra-conjugations-view .card-form { font-size: 52px; }
 }
 
 /* ── Embedded Song Picker View ────────────────────────────── */

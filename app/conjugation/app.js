@@ -1416,7 +1416,18 @@
     } else if (!tables && soloVerb) {
       params.set('verb', soloVerb.h);
     }
-    if (window._embeddedConjugation) return;
+    if (window._embeddedConjugation) {
+      try {
+        var base = window.location.pathname.replace(/\/conjugation\/?$/, '') || '';
+        var nextPath = (base + '/conjugation').replace(/^\/\//, '/');
+        var query = params.toString() ? '?' + params.toString() : '';
+        var nextUrl = nextPath + query;
+        if (window.location.pathname + window.location.search !== nextUrl) {
+          history.replaceState({ screen: 'conjugation' }, '', nextUrl);
+        }
+      } catch (_) {}
+      return;
+    }
     var next = window.location.pathname + '?' + params.toString();
     if (next !== window.location.pathname + window.location.search) {
       history.replaceState(null, '', next);
@@ -1549,13 +1560,9 @@
     }).catch(function () { /* keep the page accent */ });
   }
 
-  /* One entry point from the app: conjugation/?lang=pt&verb=ter drills that
-   * verb across every tense it has. ?view=table opens the paradigm instead. */
-  function applyDeepLink() {
-    var params = new URLSearchParams(window.location.search);
-    var wanted = (params.get('verb') || '').trim().toLowerCase();
+  function applyTargetVerb(wanted, view, tense) {
     if (!wanted) return false;
-
+    wanted = wanted.trim().toLowerCase();
     var verb = deck.verbs.filter(function (v) {
       return v.h.toLowerCase() === wanted;
     })[0];
@@ -1568,8 +1575,7 @@
 
     tableVerb = verb;
     $('table-search').value = verb.h;
-    if (params.get('view') === 'table') {
-      var tense = params.get('tense');
+    if (view === 'table') {
       tableTense = tense && tenseById(tense) ? tense : 'all';
       $('table-tense').value = tableTense;
       showScreen('tables');
@@ -1592,7 +1598,16 @@
     return true;
   }
 
-  window.conjugationBoot = function (targetLang) {
+  /* One entry point from the app: conjugation/?lang=pt&verb=ter drills that
+   * verb across every tense it has. ?view=table opens the paradigm instead. */
+  function applyDeepLink() {
+    var params = new URLSearchParams(window.location.search);
+    var wanted = (params.get('verb') || '').trim().toLowerCase();
+    if (!wanted) return false;
+    return applyTargetVerb(wanted, params.get('view'), params.get('tense'));
+  }
+
+  window.conjugationBoot = function (targetLang, targetVerb, targetView) {
     if (targetLang && decks[targetLang]) {
       window._requestedConjugationLang = targetLang;
     }
@@ -1678,6 +1693,10 @@
       });
     }
 
-    if (!applyDeepLink()) showScreen('setup');
+    if (targetVerb) {
+      applyTargetVerb(targetVerb, targetView);
+    } else if (!applyDeepLink()) {
+      showScreen('setup');
+    }
   };
 })();

@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+  // Direct cold loads to /conjugation/ immediately hand off to the main app's real embedded view
+  var search = window.location.search || '';
+  var target = '../' + (search ? search + '&screen=conjugation' : '?screen=conjugation');
+  window.location.replace(target);
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Verb drills</title>
