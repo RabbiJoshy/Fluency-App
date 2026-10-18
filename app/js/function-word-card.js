@@ -272,7 +272,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             },
             {
                 "tag": "Adding a detail",
@@ -530,9 +531,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Verbs with de",
@@ -790,7 +793,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             },
             {
                 "tag": "Adding a detail",
@@ -1048,7 +1052,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             }
         ]
     },
@@ -1308,7 +1313,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb",
                     "c": "clause"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Adding information",
@@ -1540,7 +1546,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun",
                     "c": "clause"
-                }
+                },
+                "pos": "pron"
             },
             {
                 "tag": "Comparing",
@@ -1735,9 +1742,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "phrase",
                     "c": "phrase"
-                }
+                },
+                "pos": "conj"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "Saying what you think",
@@ -1989,7 +1998,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb",
                     "c": "clause"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Adding information",
@@ -2221,7 +2231,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun",
                     "c": "clause"
-                }
+                },
+                "pos": "pron"
             },
             {
                 "tag": "Comparing",
@@ -2416,7 +2427,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "phrase",
                     "c": "phrase"
-                }
+                },
+                "pos": "conj"
             }
         ]
     },
@@ -2677,9 +2689,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "prep"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "In / on / at that",
@@ -2928,7 +2942,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "prep"
             }
         ]
     },
@@ -3185,7 +3200,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             },
             {
                 "tag": "In / on / at the",
@@ -3418,9 +3434,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "prep"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "Us / to us",
@@ -3669,7 +3687,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             },
             {
                 "tag": "In / on / at the",
@@ -3902,7 +3921,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "prep"
             }
         ]
     },
@@ -4153,7 +4173,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Oneself / part of a verb",
@@ -4405,9 +4426,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "If",
@@ -4650,7 +4673,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Oneself / part of a verb",
@@ -4902,7 +4926,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ]
     },
@@ -5155,7 +5180,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Him / it",
@@ -5401,9 +5427,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "The",
@@ -5648,7 +5676,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Him / it",
@@ -5894,7 +5923,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ]
     },
@@ -6023,6 +6053,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -6069,9 +6100,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Where",
@@ -6192,6 +6225,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -6238,6 +6272,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
         ]
@@ -6292,6 +6327,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Everyday speech"
             },
             {
@@ -6413,6 +6449,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "verb"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -6459,9 +6496,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "noun",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Where to",
@@ -6507,6 +6546,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Everyday speech"
             },
             {
@@ -6628,6 +6668,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "verb"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -6674,6 +6715,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "noun",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
         ]
@@ -6803,6 +6845,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -6888,9 +6931,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Who with",
@@ -7011,6 +7056,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -7096,6 +7142,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -7155,77 +7202,6 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
-                        "translation": "Thank you for helping.",
-                        "source": "Everyday speech",
-                        "metadata": {
-                            "is_legacy_fallback": true
-                        }
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Espero</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>notícias suas</span>.",
-                        "translation": "I wait for news from you.",
-                        "source": "Dialogue",
-                        "metadata": {
-                            "is_legacy_fallback": true
-                        }
-                    }
-                ],
-                "slotTypes": {
-                    "v": "mixed",
-                    "c": "phrase"
-                },
-                "source": "opensubtitles"
-            },
-            {
-                "tag": "Through / along",
-                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
-                "rule": "Shows the route or place someone or something moves through.",
-                "allowed_lemmas": [
-                    "caminhar",
-                    "passar",
-                    "andar",
-                    "viajar",
-                    "olhar",
-                    "entrar"
-                ],
-                "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
-                "translation": "I couldn't understand why God had taken such a dedicated disciple.",
-                "examples": [
-                    {
-                        "sentence": "Não conseguia entender por que Deus havia levado um discípulo tão dedicado.",
-                        "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
-                        "translation": "I couldn't understand why God had taken such a dedicated disciple.",
-                        "source": "opensubtitles",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "opensubtitles-aligned/v1",
-                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
-                                "document": {
-                                    "aligned_row": 1335696,
-                                    "line": "1322",
-                                    "subtitle_id": "6546637",
-                                    "title_id": "4337690",
-                                    "year": "2015"
-                                },
-                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
-                                "name": "opensubtitles",
-                                "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
-                                "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
-                                "source_record_id": "4337690:6546637:1322:1335696",
-                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
-                            },
-                            "sentence_id": "sentence_000b65bc81d1d5da27b29cafe4aa7a19",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "pt:por:1",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition por pattern 1."
-                            }
-                        }
-                    },
-                    {
                         "sentence": "Corram por suas vidas!",
                         "targetHTML": "<span class=\"fw-token-v\">Corram</span> <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">suas vidas</span>!",
                         "translation": "Run for your lives!",
@@ -7252,16 +7228,63 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                             "sentence_id": "sentence_00187c037299d824eab48e19b120b422",
                             "channel": "speech",
                             "automaticSyntax": {
-                                "patternId": "pt:por:1",
+                                "patternId": "pt:por:0",
                                 "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition por pattern 1."
+                                "reason": "Preposition por pattern 0."
                             }
                         }
                     },
                     {
+                        "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
+                        "translation": "Thank you for helping.",
+                        "source": "Everyday speech",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    }
+                ],
+                "slotTypes": {
+                    "v": "mixed",
+                    "c": "phrase"
+                },
+                "pos": "prep",
+                "source": "opensubtitles"
+            },
+            {
+                "tag": "Through / along",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+                "rule": "Shows the route or place someone or something moves through.",
+                "allowed_lemmas": [
+                    "caminhar",
+                    "passar",
+                    "andar",
+                    "viajar",
+                    "olhar",
+                    "entrar"
+                ],
+                "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
+                "translation": "I walk around here.",
+                "examples": [
+                    {
                         "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
                         "translation": "I walk around here.",
                         "source": "Dialogue",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "<span class=\"fw-token-v\">Passamos</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>uma ponte antiga</span>.",
+                        "translation": "We passed through an old bridge.",
+                        "source": "Conversation",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "<span class=\"fw-token-v\">Olhou</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>entre as grades</span>.",
+                        "translation": "Looked through between the railings.",
+                        "source": "Literature",
                         "metadata": {
                             "is_legacy_fallback": true
                         }
@@ -7271,9 +7294,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
-                "source": "opensubtitles"
+                "pos": "prep",
+                "source": "Dialogue"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Why",
@@ -7324,77 +7349,6 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
-                        "translation": "Thank you for helping.",
-                        "source": "Everyday speech",
-                        "metadata": {
-                            "is_legacy_fallback": true
-                        }
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Espero</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>notícias suas</span>.",
-                        "translation": "I wait for news from you.",
-                        "source": "Dialogue",
-                        "metadata": {
-                            "is_legacy_fallback": true
-                        }
-                    }
-                ],
-                "slotTypes": {
-                    "v": "mixed",
-                    "c": "phrase"
-                },
-                "source": "opensubtitles"
-            },
-            {
-                "tag": "Through / along",
-                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
-                "rule": "Shows the route or place someone or something moves through.",
-                "allowed_lemmas": [
-                    "caminhar",
-                    "passar",
-                    "andar",
-                    "viajar",
-                    "olhar",
-                    "entrar"
-                ],
-                "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
-                "translation": "I couldn't understand why God had taken such a dedicated disciple.",
-                "examples": [
-                    {
-                        "sentence": "Não conseguia entender por que Deus havia levado um discípulo tão dedicado.",
-                        "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
-                        "translation": "I couldn't understand why God had taken such a dedicated disciple.",
-                        "source": "opensubtitles",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "opensubtitles-aligned/v1",
-                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
-                                "document": {
-                                    "aligned_row": 1335696,
-                                    "line": "1322",
-                                    "subtitle_id": "6546637",
-                                    "title_id": "4337690",
-                                    "year": "2015"
-                                },
-                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
-                                "name": "opensubtitles",
-                                "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
-                                "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
-                                "source_record_id": "4337690:6546637:1322:1335696",
-                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
-                            },
-                            "sentence_id": "sentence_000b65bc81d1d5da27b29cafe4aa7a19",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "pt:por:1",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition por pattern 1."
-                            }
-                        }
-                    },
-                    {
                         "sentence": "Corram por suas vidas!",
                         "targetHTML": "<span class=\"fw-token-v\">Corram</span> <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">suas vidas</span>!",
                         "translation": "Run for your lives!",
@@ -7421,16 +7375,63 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                             "sentence_id": "sentence_00187c037299d824eab48e19b120b422",
                             "channel": "speech",
                             "automaticSyntax": {
-                                "patternId": "pt:por:1",
+                                "patternId": "pt:por:0",
                                 "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition por pattern 1."
+                                "reason": "Preposition por pattern 0."
                             }
                         }
                     },
                     {
+                        "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
+                        "translation": "Thank you for helping.",
+                        "source": "Everyday speech",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    }
+                ],
+                "slotTypes": {
+                    "v": "mixed",
+                    "c": "phrase"
+                },
+                "pos": "prep",
+                "source": "opensubtitles"
+            },
+            {
+                "tag": "Through / along",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+                "rule": "Shows the route or place someone or something moves through.",
+                "allowed_lemmas": [
+                    "caminhar",
+                    "passar",
+                    "andar",
+                    "viajar",
+                    "olhar",
+                    "entrar"
+                ],
+                "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
+                "translation": "I walk around here.",
+                "examples": [
+                    {
                         "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
                         "translation": "I walk around here.",
                         "source": "Dialogue",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "<span class=\"fw-token-v\">Passamos</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>uma ponte antiga</span>.",
+                        "translation": "We passed through an old bridge.",
+                        "source": "Conversation",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "<span class=\"fw-token-v\">Olhou</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>entre as grades</span>.",
+                        "translation": "Looked through between the railings.",
+                        "source": "Literature",
                         "metadata": {
                             "is_legacy_fallback": true
                         }
@@ -7440,7 +7441,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
-                "source": "opensubtitles"
+                "pos": "prep",
+                "source": "Dialogue"
             }
         ]
     },
@@ -7572,9 +7574,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "In / on / at the",
@@ -7694,6 +7698,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -7826,9 +7831,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "In / on / at the",
@@ -7948,6 +7955,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -8080,9 +8088,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Of / from the",
@@ -8202,6 +8212,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -8334,9 +8345,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Of / from the",
@@ -8456,6 +8469,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -8585,6 +8599,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -8699,9 +8714,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Like / in the same way",
@@ -8822,6 +8839,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -8936,6 +8954,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -9064,9 +9083,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "But",
@@ -9186,6 +9207,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ]
@@ -9240,6 +9262,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             },
             {
@@ -9355,6 +9378,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             },
             {
@@ -9399,9 +9423,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "Conversation"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Where to",
@@ -9447,6 +9473,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             },
             {
@@ -9562,6 +9589,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             },
             {
@@ -9606,6 +9634,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "Conversation"
             }
         ]
@@ -9730,9 +9759,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "mixed"
                 },
+                "pos": "conj",
                 "source": "tatoeba"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "And",
@@ -9848,6 +9879,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "mixed"
                 },
+                "pos": "conj",
                 "source": "tatoeba"
             }
         ]
@@ -9966,9 +9998,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "I",
@@ -10078,6 +10112,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -10205,6 +10240,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             },
             {
@@ -10250,9 +10286,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "prep"
                 },
+                "pos": "pron",
                 "source": "Conversation"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "he / it",
@@ -10371,6 +10409,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             },
             {
@@ -10416,6 +10455,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "prep"
                 },
+                "pos": "pron",
                 "source": "Conversation"
             }
         ]
@@ -10543,9 +10583,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "she / it",
@@ -10664,6 +10706,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -10787,9 +10830,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "A / an",
@@ -10904,6 +10949,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             }
         ]
@@ -11027,9 +11073,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "A / an",
@@ -11144,6 +11192,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ]
@@ -11272,6 +11321,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             },
             {
@@ -11341,9 +11391,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "The",
@@ -11463,6 +11515,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             },
             {
@@ -11532,6 +11585,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -11660,9 +11714,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "The",
@@ -11782,6 +11838,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ]
@@ -11905,6 +11962,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             },
             {
@@ -11949,9 +12007,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "Dialogue"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "Me / to me",
@@ -12066,6 +12126,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             },
             {
@@ -12110,6 +12171,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "Dialogue"
             }
         ]
@@ -12238,9 +12300,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "You / to you",
@@ -12360,6 +12424,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -12478,9 +12543,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "To him / her / you",
@@ -12590,6 +12657,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
         ]
@@ -12721,6 +12789,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -12765,9 +12834,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "prep",
                 "source": "Everyday speech"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "To / at the",
@@ -12886,6 +12957,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -12930,6 +13002,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "prep",
                 "source": "Everyday speech"
             }
         ]
@@ -13061,9 +13134,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "To / at the",
@@ -13182,6 +13257,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -13313,9 +13389,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Through / by / for the",
@@ -13434,6 +13512,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -13560,9 +13639,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Through / by / for the",
@@ -13676,6 +13757,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -13807,9 +13889,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "In / on / at a",
@@ -13928,6 +14012,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -14059,9 +14144,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "In / on / at a",
@@ -14180,6 +14267,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -14236,9 +14324,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun"
                 },
+                "pos": "pron",
                 "source": "Everyday dialogue"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "His / of him",
@@ -14282,6 +14372,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun"
                 },
+                "pos": "pron",
                 "source": "Everyday dialogue"
             }
         ]
@@ -14338,9 +14429,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun"
                 },
+                "pos": "pron",
                 "source": "Everyday speech"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "Hers / of her",
@@ -14384,6 +14477,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun"
                 },
+                "pos": "pron",
                 "source": "Everyday speech"
             }
         ]
@@ -14512,9 +14606,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Without",
@@ -14634,6 +14730,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -14757,6 +14854,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             },
             {
@@ -14770,79 +14868,29 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "rio",
                     "bancada"
                 ],
-                "targetHTML": "Eu <span class=\"fw-token-v\">passei</span> muito tempo em oração <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isso</span>.",
-                "translation": "I spent a great deal of time in prayer about it.",
+                "targetHTML": "O papel <span class=\"fw-token-v\">está</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a mesa</span>.",
+                "translation": "The paper is on the table.",
                 "examples": [
-                    {
-                        "sentence": "Eu passei muito tempo em oração sobre isso.",
-                        "targetHTML": "Eu <span class=\"fw-token-v\">passei</span> muito tempo em oração <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isso</span>.",
-                        "translation": "I spent a great deal of time in prayer about it.",
-                        "source": "opensubtitles",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "opensubtitles-aligned/v1",
-                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
-                                "document": {
-                                    "aligned_row": 2595451,
-                                    "line": "802",
-                                    "subtitle_id": "6892497",
-                                    "title_id": "4168586",
-                                    "year": "2016"
-                                },
-                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
-                                "name": "opensubtitles",
-                                "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
-                                "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
-                                "source_record_id": "4168586:6892497:802:2595451",
-                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
-                            },
-                            "sentence_id": "sentence_0091702342d407c554648f622a90f506",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "pt:sobre:1",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition sobre pattern 1."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Uma revista estranha sobre a nossa cidade que são apenas anúncios.",
-                        "targetHTML": "Uma revista estranha <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">a nossa cidade</span> que são apenas anúncios.",
-                        "translation": "Weird magazine about our town that's just ads.",
-                        "source": "opensubtitles",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "opensubtitles-aligned/v1",
-                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
-                                "document": {
-                                    "aligned_row": 3041482,
-                                    "line": "180",
-                                    "subtitle_id": "6467159",
-                                    "title_id": "4863430",
-                                    "year": "2016"
-                                },
-                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
-                                "name": "opensubtitles",
-                                "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
-                                "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
-                                "source_record_id": "4863430:6467159:180:3041482",
-                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
-                            },
-                            "sentence_id": "sentence_00d2bf9845af49834b2ea4c45b28fd8e",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "pt:sobre:1",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition sobre pattern 1."
-                            }
-                        }
-                    },
                     {
                         "targetHTML": "O papel <span class=\"fw-token-v\">está</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a mesa</span>.",
                         "translation": "The paper is on the table.",
                         "source": "Dialogue",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "A ponte <span class=\"fw-token-v\">ergue-se</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o grande rio</span>.",
+                        "translation": "The bridge rises over the great river.",
+                        "source": "Literature",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "<span class=\"fw-token-v\">Deixou</span> o casaco <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a cama</span>.",
+                        "translation": "Left the coat upon the bed.",
+                        "source": "Conversation",
                         "metadata": {
                             "is_legacy_fallback": true
                         }
@@ -14852,9 +14900,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
-                "source": "opensubtitles"
+                "pos": "prep",
+                "source": "Dialogue"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "About",
@@ -14969,6 +15019,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             },
             {
@@ -14982,79 +15033,29 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "rio",
                     "bancada"
                 ],
-                "targetHTML": "Eu <span class=\"fw-token-v\">passei</span> muito tempo em oração <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isso</span>.",
-                "translation": "I spent a great deal of time in prayer about it.",
+                "targetHTML": "O papel <span class=\"fw-token-v\">está</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a mesa</span>.",
+                "translation": "The paper is on the table.",
                 "examples": [
-                    {
-                        "sentence": "Eu passei muito tempo em oração sobre isso.",
-                        "targetHTML": "Eu <span class=\"fw-token-v\">passei</span> muito tempo em oração <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isso</span>.",
-                        "translation": "I spent a great deal of time in prayer about it.",
-                        "source": "opensubtitles",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "opensubtitles-aligned/v1",
-                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
-                                "document": {
-                                    "aligned_row": 2595451,
-                                    "line": "802",
-                                    "subtitle_id": "6892497",
-                                    "title_id": "4168586",
-                                    "year": "2016"
-                                },
-                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
-                                "name": "opensubtitles",
-                                "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
-                                "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
-                                "source_record_id": "4168586:6892497:802:2595451",
-                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
-                            },
-                            "sentence_id": "sentence_0091702342d407c554648f622a90f506",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "pt:sobre:1",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition sobre pattern 1."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Uma revista estranha sobre a nossa cidade que são apenas anúncios.",
-                        "targetHTML": "Uma revista estranha <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">a nossa cidade</span> que são apenas anúncios.",
-                        "translation": "Weird magazine about our town that's just ads.",
-                        "source": "opensubtitles",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "opensubtitles-aligned/v1",
-                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
-                                "document": {
-                                    "aligned_row": 3041482,
-                                    "line": "180",
-                                    "subtitle_id": "6467159",
-                                    "title_id": "4863430",
-                                    "year": "2016"
-                                },
-                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
-                                "name": "opensubtitles",
-                                "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
-                                "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
-                                "source_record_id": "4863430:6467159:180:3041482",
-                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
-                            },
-                            "sentence_id": "sentence_00d2bf9845af49834b2ea4c45b28fd8e",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "pt:sobre:1",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition sobre pattern 1."
-                            }
-                        }
-                    },
                     {
                         "targetHTML": "O papel <span class=\"fw-token-v\">está</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a mesa</span>.",
                         "translation": "The paper is on the table.",
                         "source": "Dialogue",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "A ponte <span class=\"fw-token-v\">ergue-se</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o grande rio</span>.",
+                        "translation": "The bridge rises over the great river.",
+                        "source": "Literature",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "<span class=\"fw-token-v\">Deixou</span> o casaco <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a cama</span>.",
+                        "translation": "Left the coat upon the bed.",
+                        "source": "Conversation",
                         "metadata": {
                             "is_legacy_fallback": true
                         }
@@ -15064,7 +15065,8 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
-                "source": "opensubtitles"
+                "pos": "prep",
+                "source": "Dialogue"
             }
         ]
     },
@@ -15142,6 +15144,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -15186,9 +15189,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "part",
                 "source": "Conversation"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Until / as far as",
@@ -15258,6 +15263,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -15302,6 +15308,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "part",
                 "source": "Conversation"
             }
         ]
@@ -15430,9 +15437,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "phrase"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "Because",
@@ -15552,6 +15561,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "phrase"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ]
@@ -15675,9 +15685,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "When",
@@ -15792,6 +15804,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ]
@@ -15844,9 +15857,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "Dialogue"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "That",
@@ -15890,6 +15905,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "Dialogue"
             }
         ]
@@ -16017,9 +16033,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "This",
@@ -16138,6 +16156,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -16265,9 +16284,11 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "Everything",
@@ -16386,6 +16407,7 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -16644,7 +16666,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             },
             {
                 "tag": "Adding a detail",
@@ -16890,9 +16913,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Verbs with de",
@@ -17138,7 +17163,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             },
             {
                 "tag": "Adding a detail",
@@ -17384,7 +17410,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             }
         ]
     },
@@ -17637,7 +17664,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb",
                     "c": "clause"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Adding information",
@@ -17864,7 +17892,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun",
                     "c": "clause"
-                }
+                },
+                "pos": "pron"
             },
             {
                 "tag": "Comparing",
@@ -18103,9 +18132,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "phrase",
                     "c": "phrase"
-                }
+                },
+                "pos": "conj"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "Saying what you think",
@@ -18350,7 +18381,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb",
                     "c": "clause"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Adding information",
@@ -18577,7 +18609,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "noun",
                     "c": "clause"
-                }
+                },
+                "pos": "pron"
             },
             {
                 "tag": "Comparing",
@@ -18816,7 +18849,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "phrase",
                     "c": "phrase"
-                }
+                },
+                "pos": "conj"
             }
         ]
     },
@@ -18933,6 +18967,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -19043,9 +19078,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Where to",
@@ -19154,6 +19191,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -19264,6 +19302,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             }
         ]
@@ -19387,6 +19426,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -19432,9 +19472,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Where",
@@ -19549,6 +19591,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -19594,6 +19637,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
         ]
@@ -19647,6 +19691,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Everyday dialogue"
             },
             {
@@ -19692,9 +19737,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Dialogue"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Why",
@@ -19739,6 +19786,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Everyday dialogue"
             },
             {
@@ -19784,6 +19832,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Dialogue"
             }
         ]
@@ -19912,6 +19961,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "verb"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -19957,9 +20007,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Everyday dialogue"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "What for",
@@ -20079,6 +20131,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "verb"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -20124,6 +20177,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Everyday dialogue"
             }
         ]
@@ -20222,6 +20276,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             },
             {
@@ -20292,9 +20347,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Who with",
@@ -20384,6 +20441,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             },
             {
@@ -20454,6 +20512,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -20572,9 +20631,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Without",
@@ -20684,6 +20745,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
         ]
@@ -20945,7 +21007,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Without saying who",
@@ -21173,9 +21236,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "Oneself / part of a verb",
@@ -21428,7 +21493,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Without saying who",
@@ -21656,7 +21722,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ]
     },
@@ -21778,9 +21845,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "Me / to me",
@@ -21894,6 +21963,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
         ]
@@ -22021,9 +22091,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "You / to you",
@@ -22142,6 +22214,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -22403,9 +22476,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "Us / to us",
@@ -22658,7 +22733,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ]
     },
@@ -22775,9 +22851,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "To him / her / you",
@@ -22886,6 +22964,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
         ]
@@ -23151,7 +23230,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "pos": "prep"
             },
             {
                 "tag": "When doing something",
@@ -23404,9 +23484,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "prep"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "To / at the",
@@ -23659,7 +23741,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "pos": "prep"
             },
             {
                 "tag": "When doing something",
@@ -23912,7 +23995,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "prep"
             }
         ]
     },
@@ -24033,9 +24117,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Of / from the",
@@ -24144,6 +24230,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             }
         ]
@@ -24186,9 +24273,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "The",
@@ -24222,7 +24311,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             }
         ]
     },
@@ -24264,7 +24354,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Her / it",
@@ -24298,9 +24389,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "The",
@@ -24334,7 +24427,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Her / it",
@@ -24368,7 +24462,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ]
     },
@@ -24410,7 +24505,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Them",
@@ -24444,9 +24540,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "The",
@@ -24480,7 +24578,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Them",
@@ -24514,7 +24613,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ]
     },
@@ -24636,9 +24736,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "The",
@@ -24752,6 +24854,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ]
@@ -25002,7 +25105,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "adj"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Him / it / that",
@@ -25255,9 +25359,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "The … thing / part",
@@ -25499,7 +25605,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "adj"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Him / it / that",
@@ -25752,7 +25859,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
         ]
     },
@@ -25794,9 +25902,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "A / an",
@@ -25830,7 +25940,8 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             }
         ]
     },
@@ -25957,9 +26068,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "A / an",
@@ -26078,6 +26191,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ]
@@ -26202,9 +26316,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "mixed"
                 },
+                "pos": "conj",
                 "source": "tatoeba"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "And",
@@ -26320,6 +26436,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "mixed",
                     "c": "mixed"
                 },
+                "pos": "conj",
                 "source": "tatoeba"
             }
         ]
@@ -26448,9 +26565,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "But",
@@ -26570,6 +26689,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ]
@@ -26661,9 +26781,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                         }
                     },
                     {
-                        "sentence": "Me empiezo a preguntar si debería tener más miedo de tenerlos de vuelta.",
-                        "targetHTML": "Me empiezo a <span class=\"fw-token-v\">preguntar</span> <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">debería tener más miedo de tenerlos de vuelta</span>.",
-                        "translation": "I'm starting to wonder if I should be more afraid of getting them back.",
+                        "sentence": "Bueno, si prefieres volver a la mina, eso... eso también vale.",
+                        "targetHTML": "Bueno, <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">prefieres volver a la mina</span>, eso... eso también <span class=\"fw-token-v\">vale</span>.",
+                        "translation": "Well, if you'd prefer to go back to the mine, that, uh, that works too.",
                         "source": "opensubtitles",
                         "channel": "speech",
                         "metadata": {
@@ -26671,20 +26791,20 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "adapter": "opensubtitles-aligned/v1",
                                 "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
                                 "document": {
-                                    "aligned_row": 784261,
-                                    "line": "11",
-                                    "subtitle_id": "6631672",
-                                    "title_id": "4549128",
-                                    "year": "2016"
+                                    "aligned_row": 3256117,
+                                    "line": "358",
+                                    "subtitle_id": "6964869",
+                                    "title_id": "5543760",
+                                    "year": "2017"
                                 },
                                 "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
                                 "name": "opensubtitles",
                                 "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
                                 "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
-                                "source_record_id": "4549128:6631672:11:784261",
+                                "source_record_id": "5543760:6964869:358:3256117",
                                 "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
                             },
-                            "sentence_id": "sentence_000472ef6fb1534060568af455c145f9",
+                            "sentence_id": "sentence_000588124915bde43eb70fb2de371f8f",
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:si:0",
@@ -26698,9 +26818,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "If",
@@ -26783,9 +26905,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                         }
                     },
                     {
-                        "sentence": "Me empiezo a preguntar si debería tener más miedo de tenerlos de vuelta.",
-                        "targetHTML": "Me empiezo a <span class=\"fw-token-v\">preguntar</span> <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">debería tener más miedo de tenerlos de vuelta</span>.",
-                        "translation": "I'm starting to wonder if I should be more afraid of getting them back.",
+                        "sentence": "Bueno, si prefieres volver a la mina, eso... eso también vale.",
+                        "targetHTML": "Bueno, <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">prefieres volver a la mina</span>, eso... eso también <span class=\"fw-token-v\">vale</span>.",
+                        "translation": "Well, if you'd prefer to go back to the mine, that, uh, that works too.",
                         "source": "opensubtitles",
                         "channel": "speech",
                         "metadata": {
@@ -26793,20 +26915,20 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "adapter": "opensubtitles-aligned/v1",
                                 "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
                                 "document": {
-                                    "aligned_row": 784261,
-                                    "line": "11",
-                                    "subtitle_id": "6631672",
-                                    "title_id": "4549128",
-                                    "year": "2016"
+                                    "aligned_row": 3256117,
+                                    "line": "358",
+                                    "subtitle_id": "6964869",
+                                    "title_id": "5543760",
+                                    "year": "2017"
                                 },
                                 "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
                                 "name": "opensubtitles",
                                 "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
                                 "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
-                                "source_record_id": "4549128:6631672:11:784261",
+                                "source_record_id": "5543760:6964869:358:3256117",
                                 "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
                             },
-                            "sentence_id": "sentence_000472ef6fb1534060568af455c145f9",
+                            "sentence_id": "sentence_000588124915bde43eb70fb2de371f8f",
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:si:0",
@@ -26820,6 +26942,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ]
@@ -26938,6 +27061,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -26982,9 +27106,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
         ],
+        "pos": "prep",
         "uses": [
             {
                 "tag": "Like / in the same way",
@@ -27094,6 +27220,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -27138,6 +27265,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
         ]
@@ -27250,9 +27378,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "My",
@@ -27356,6 +27486,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             }
         ]
@@ -27478,9 +27609,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "His / her / their / your (formal)",
@@ -27594,6 +27727,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             }
         ]
@@ -27721,9 +27855,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "det",
         "uses": [
             {
                 "tag": "Your (informal)",
@@ -27842,6 +27978,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
         ]
@@ -27969,9 +28106,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "I",
@@ -28090,6 +28229,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -28217,9 +28357,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "you",
@@ -28338,6 +28480,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -28465,9 +28608,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "That",
@@ -28586,6 +28731,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -28702,9 +28848,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "This",
@@ -28812,6 +28960,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -28934,9 +29083,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "Everything",
@@ -29050,6 +29201,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
         ]
@@ -29172,9 +29324,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "pron",
         "uses": [
             {
                 "tag": "Something",
@@ -29288,6 +29442,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
         ]
@@ -29416,9 +29571,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "phrase"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "Because",
@@ -29538,6 +29695,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "phrase"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ]
@@ -29661,9 +29819,11 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ],
+        "pos": "conj",
         "uses": [
             {
                 "tag": "When",
@@ -29778,6 +29938,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
         ]
@@ -30801,13 +30962,20 @@ export function configureFunctionWordPresentation(options) {
     fwPresentation = options || {};
 }
 function fwSlotHTML(html, relation) {
-    return String(html || '').replace(/<span class=['"]fw-token-([vc])['"]>/g, (tag, side) => {
+    let out = String(html || '').replace(/<span class=['"]fw-token-([vc])['"]>/g, (tag, side) => {
         const type = relation?.slotTypes?.[side];
-        const isPOS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det'].includes(type);
+        const isPOS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det', 'conj', 'clitic', 'part'].includes(type);
         const rgb = isPOS ? fwPresentation.posRgb?.(type) : null;
         const colour = rgb ? `rgb(${rgb})` : (side === 'v' ? '#8fb8d8' : '#c3a6df');
-        return `<span class="fw-token-${side}" style="color:${colour}">`;
+        return `<span class="fw-token-${side}" data-pos="${type || ''}" style="color:${colour}">`;
     });
+    if (relation?.pos) {
+        const pos = relation.pos;
+        const rgb = fwPresentation.posRgb?.(pos);
+        const connectorStyle = rgb ? ` style="--sense-match-rgb: ${rgb}; --fw-pos-rgb: ${rgb}; color: rgb(${rgb});"` : '';
+        out = out.replace(/<span class=['"]fw-token-connector['"]>/g, `<span class="fw-token-connector" data-pos="${esc(pos)}"${connectorStyle}>`);
+    }
+    return out;
 }
 function fwCreditHTML(example) {
     if (example?.metadata?.source?.source_record_id) {
@@ -31072,6 +31240,13 @@ function refreshFunctionWordCardBack() {
     if (_activeRelIndex >= relations.length) _activeRelIndex = 0;
     const currentRel = relations[_activeRelIndex];
 
+    // Update container POS and ambient glow
+    if (currentRel?.pos) {
+        if (container.dataset) container.dataset.pos = currentRel.pos;
+        const rgb = fwPresentation.posRgb?.(currentRel.pos);
+        if (rgb && container.style?.setProperty) container.style.setProperty('--sense-match-rgb', rgb);
+    }
+
     // Update relations selection
     container.querySelectorAll('.fw-relation-box').forEach((btn, i) => {
         const isSelected = i === _activeRelIndex;
@@ -31179,7 +31354,7 @@ export function functionWordBlockHTML(card, lang) {
         const relationsHTML = relations.map((rel, i) => {
             const isSelected = i === _activeRelIndex;
             return `
-                <button type="button" class="fw-relation-box${isSelected ? ' is-selected' : ''}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordRelation(${i})">
+                <button type="button" class="fw-relation-box${isSelected ? ' is-selected' : ''}" data-pos="${esc(rel.pos || '')}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordRelation(${i})">
                     <div class="fw-relation-formula">${fwSlotHTML(rel.formulaHTML || esc(rel.formula || ''), rel)}</div>
                     <p class="fw-relation-rule">${esc(rel.rule || rel.description || '')}</p>
                 </button>`;
@@ -31195,7 +31370,7 @@ export function functionWordBlockHTML(card, lang) {
         const ticksHTML = renderFwTicks(examples.length, _activeExampleIndex);
 
         return `
-            <div class="fw-deterministic-card" data-word="${esc(wordKey)}" data-lang="${esc(lang || 'pt')}" style="--sense-match-rgb: ${fwPresentation.posRgb?.(card?.pos || card?.meanings?.[0]?.pos) || 'var(--accent-primary-rgb)'};">
+            <div class="fw-deterministic-card" data-word="${esc(wordKey)}" data-lang="${esc(lang || 'pt')}" data-pos="${esc(currentRel?.pos || '')}" style="--sense-match-rgb: ${fwPresentation.posRgb?.(currentRel?.pos || card?.pos || card?.meanings?.[0]?.pos) || 'var(--accent-primary-rgb)'};">
                 <div class="fw-header">
                     <h2 class="fw-heading">${esc(wordKey)}</h2>
                     ${partsBoxHTML}

@@ -200,6 +200,65 @@ def harvest_artist_candidates(lang: str, words: set[str], max_per_word: int = 10
     return [item for w in words for item in candidates[w]]
 
 
+def get_pattern_pos(lang: str, word: str, idx: int, tag: str = "", formula: str = "") -> str:
+    """Canonical POS for function word within a specific pattern relation."""
+    # Prepositional contractions
+    if word in {'del', 'al', 'ao', 'à', 'do', 'da', 'no', 'na', 'pelo', 'pela', 'num', 'numa', 'naquele'}:
+        return 'prep'
+    if word == 'nos' and idx == 1:
+        return 'prep'
+
+    # Prepositions
+    if word in {'de', 'en', 'em', 'por', 'para', 'con', 'com', 'sin', 'sem', 'sobre'}:
+        return 'prep'
+    if word == 'a' and idx in {0, 1} and (lang == 'es' or idx == 0):
+        return 'prep'
+    if word == 'até' and idx == 0:
+        return 'prep'
+    if word == 'como':
+        return 'prep'
+
+    # Conjunctions
+    if word in {'pero', 'mas', 'porque', 'cuando', 'quando', 'y', 'e', 'si'}:
+        return 'conj'
+    if word == 'se' and idx == 0:
+        return 'conj'
+    if word == 'que' and idx in {0, 2}:
+        return 'conj'
+    if word == 'ao' and idx == 1:
+        return 'conj'
+
+    # Articles & Determiners
+    if word in {'el', 'la', 'los', 'las', 'o', 'os', 'as', 'un', 'una', 'um', 'uma', 'mi', 'su', 'tu'}:
+        if word in {'la', 'los', 'las', 'o', 'os', 'as'} and idx == 1:
+            return 'pron'  # object clitic
+        return 'det'
+    if word == 'a' and lang == 'pt' and idx == 1:
+        return 'det'
+    if word == 'lo' and idx == 0:
+        return 'det'  # neuter article lo + adj
+
+    # Pronouns & Clitics
+    if word in {'yo', 'tú', 'eu', 'ele', 'ela', 'eso', 'esto', 'todo', 'algo', 'isso', 'isto', 'tudo', 'dele', 'dela'}:
+        return 'pron'
+    if word in {'me', 'te', 'le', 'lhe'}:
+        return 'pron'
+    if word == 'nos' and idx == 0:
+        return 'pron'
+    if word == 'se' and idx == 1:
+        return 'pron'
+    if word == 'que' and idx == 1:
+        return 'pron'  # relative pronoun
+    if word == 'lo' and idx == 1:
+        return 'pron'
+    if word == 'a' and lang == 'pt' and idx == 2:
+        return 'pron'  # object clitic
+    if word == 'até' and idx == 1:
+        return 'part'
+
+    return 'prep'
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apply", action="store_true", help="Apply verified examples to app/data/grammar-words/")
@@ -304,6 +363,30 @@ def main():
         speech_matches = [ex for ex in fresh if ex.get("channel") == "speech"]
         artist_matches = [ex for ex in fresh if ex.get("channel") == "artist"]
 
+        has_ge_3_fresh = len(fresh) >= 3
+        if has_ge_3_fresh:
+            patterns_with_ge_3_fresh += 1
+            is_shortage = False
+            shortage_count = 0
+        else:
+            is_shortage = True
+            shortage_count = 3 - len(fresh)
+            shortages.append({
+                "pattern_id": pid,
+                "tag": pinfo["tag"],
+                "formula": pinfo["formulaHTML"],
+                "fresh_matches_found": len(fresh),
+                "shortage_count": shortage_count,
+                "speech_matches": len(speech_matches),
+                "artist_matches": len(artist_matches),
+                "is_pilot": w in PILOT_WORDS,
+                "reason": (
+                    f"Pilot pattern with vetted traceable baseline examples; {len(fresh)} additional fresh matches harvested."
+                    if w in PILOT_WORDS else
+                    "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
+                )
+            })
+
         combined = []
         comb_identities = set()
 
@@ -326,9 +409,6 @@ def main():
                         combined.append(ex)
                         if len(combined) >= 3:
                             break
-            is_shortage = False
-            shortage_count = 0
-            patterns_with_ge_3_fresh += 1
         else:
             # Fresh verified matches from source material
             for ex in fresh:
@@ -339,24 +419,8 @@ def main():
                     if len(combined) >= 3:
                         break
 
-            if len(fresh) >= 3:
-                is_shortage = False
-                shortage_count = 0
-                patterns_with_ge_3_fresh += 1
-            else:
-                is_shortage = True
-                shortage_count = 3 - len(fresh)
-                shortages.append({
-                    "pattern_id": pid,
-                    "tag": pinfo["tag"],
-                    "formula": pinfo["formulaHTML"],
-                    "fresh_matches_found": len(fresh),
-                    "shortage_count": shortage_count,
-                    "speech_matches": len(speech_matches),
-                    "artist_matches": len(artist_matches),
-                    "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
-                })
-                # For learner card usability in the app, pad with existing fallback rows if needed
+            # For learner card usability in the app, pad with existing fallback rows if needed
+            if len(combined) < 3:
                 for ex in existing:
                     if len(combined) >= 3:
                         break
@@ -447,11 +511,18 @@ def main():
             idx = int(idx_str)
             suite = es_suite if lang == "es" else pt_suite
             rel = suite[w]["relations"][idx]
+            rel["pos"] = get_pattern_pos(lang, w, idx, rel.get("tag", ""), rel.get("formulaHTML", ""))
             rel["examples"] = stat["examples"]
             if stat["examples"] and w not in PILOT_WORDS:
                 rel["targetHTML"] = stat["examples"][0]["targetHTML"]
                 rel["translation"] = stat["examples"][0].get("translation", "")
                 rel["source"] = stat["examples"][0].get("source", "Contemporary dialogue")
+
+        # Ensure top-level card pos is set
+        for suite in (es_suite, pt_suite):
+            for w, card in suite.items():
+                if card.get("relations") and "pos" in card["relations"][0]:
+                    card["pos"] = card["relations"][0]["pos"]
 
         (ROOT / "app/data/grammar-words/es.json").write_text(json.dumps(es_suite, ensure_ascii=False, indent=4) + "\n", encoding="utf-8")
         (ROOT / "app/data/grammar-words/pt.json").write_text(json.dumps(pt_suite, ensure_ascii=False, indent=4) + "\n", encoding="utf-8")

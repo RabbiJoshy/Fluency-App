@@ -7,8 +7,15 @@ from provenance_preview import script as provenance_script
 
 
 def render(originals, proposals, ledger):
-    data = json.dumps({'before': {l: {w: originals[l][w] for w in words} for l, words in proposals.items()},
-                       'after': proposals}, ensure_ascii=False).replace('<', '\\u003c')
+    data_sets = {'before': {l: {w: originals[l][w] for w in words} for l, words in proposals.items()},
+                       'after': proposals}
+    trial_path=ROOT/'docs/audits/function-word-labels/trial.json'
+    if trial_path.exists(): data_sets['automatic']=json.loads(trial_path.read_text())
+    syntax_path=ROOT/'docs/audits/function-word-labels/syntax-trial.json'
+    if syntax_path.exists(): data_sets['syntax']=json.loads(syntax_path.read_text())
+    syntax_option='<option value="syntax">Syntax trial</option>' if syntax_path.exists() else ''
+    trial_option='<option value="automatic">Label trial</option>' if trial_path.exists() else ''
+    data = json.dumps(data_sets, ensure_ascii=False).replace('<', '\\u003c')
     # Inline the actual renderer to support file:// without module/CORS restrictions.
     # No renderer logic or examples are maintained separately in the preview.
     renderer = (ROOT / 'app/js/function-word-card.js').read_text()
@@ -56,12 +63,18 @@ body{height:auto;min-height:100vh;overflow:auto;padding:20px 14px;user-select:te
 .preview-flat .fw-relations-list{gap:4px;}
 .preview-flat .fw-relation-box:hover{background:rgba(255,255,255,.035);border-color:transparent;}
 .preview-flat .fw-relation-box.is-selected,.preview-flat .fw-relation-box[aria-pressed="true"]{background:rgba(212,218,245,.07);border-color:rgba(212,218,245,.18);box-shadow:none;}
-.preview-flat .fw-relation-rule{color:var(--text-secondary);font-size:max(13px,calc(var(--card-fs,18px)*.74));line-height:1.45;}
+.preview-flat .fw-relation-rule{color:var(--text-secondary);font-size:max(15px,calc(var(--card-fs,18px)*.83));line-height:1.45;}
+/* Match the normal example's translation divider and reading colour. */
+.preview-card .fw-sentence-translation{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.13);color:#e6eaf0;font-size:16px;font-weight:500;font-style:normal;line-height:1.4;}
+.preview-card .fw-example-credit-row{border-top:0;padding-top:0;}
+.preview-card .fw-relation-formula{font-size:17px;line-height:1.3;}
+.preview-card .fw-relation-rule{font-size:15px;line-height:1.45;}
+@media(max-width:389px){.preview-card .fw-sentence-translation{font-size:15px;}}
 </style></head><body><main class="preview-shell">
 <nav class="preview-toolbar" aria-label="Preview controls">
 <label for="language">Language <select id="language"><option value="pt">Portuguese</option><option value="es">Spanish</option></select></label>
 <label for="word">Word <select id="word"></select></label>
-<label for="version">Copy <select id="version"><option value="after">Revised</option><option value="before">Current</option></select></label>
+<label for="version">Copy <select id="version"><option value="after">Revised</option><option value="before">Current</option>''' + trial_option + syntax_option + '''</select></label>
 <label for="colours">Colours <select id="colours"><option value="pos">Clear chunks</option><option value="pattern">Original</option></select></label>
 <label for="rows">Rows <select id="rows"><option value="flat">Flatter</option><option value="boxed">Current</option></select></label>
 </nav>
@@ -76,7 +89,7 @@ function previewWords(){const select=previewElement('word');select.replaceChildr
 function previewDraw(){document.querySelector('.preview-card').classList.toggle('preview-flat',previewElement('rows').value==='flat');const lang=previewElement('language').value,word=previewElement('word').value,version=previewElement('version').value;
 const suite=lang==='pt'?PORTUGUESE_GRAMMAR_WORDS:SPANISH_GRAMMAR_WORDS;
 const entry=structuredClone(PREVIEW_DATA[version][lang][word]);
-previewElement('review-status').textContent=version==='before'?'Original suite copy · source labels not verified.':entry.previewReviewStatus==='source-reviewed'?'Reviewed source examples · simplified copy.':'Simplified copy · existing examples await source review.';
+previewElement('review-status').textContent=version==='syntax'?'Syntax trial · 6 reviewed additions with automatically generated highlights.':version==='automatic'?'Automatic-label trial · 13 reviewed additions; existing examples retained.':version==='before'?'Original suite copy · source labels not verified.':entry.previewReviewStatus==='source-reviewed'?'Reviewed source examples · simplified copy.':'Simplified copy · existing examples await source review.';
 entry.uses=entry.relations;suite[word]=entry;
 _activeWordKey=null;_activeRelIndex=0;_activeExampleIndex=0;
 previewElement('backContent').innerHTML=functionWordBlockHTML({word},lang);

@@ -94,13 +94,20 @@ export function configureFunctionWordPresentation(options) {{
     fwPresentation = options || {{}};
 }}
 function fwSlotHTML(html, relation) {{
-    return String(html || '').replace(/<span class=['"]fw-token-([vc])['"]>/g, (tag, side) => {{
+    let out = String(html || '').replace(/<span class=['"]fw-token-([vc])['"]>/g, (tag, side) => {{
         const type = relation?.slotTypes?.[side];
-        const isPOS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det'].includes(type);
+        const isPOS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det', 'conj', 'clitic', 'part'].includes(type);
         const rgb = isPOS ? fwPresentation.posRgb?.(type) : null;
         const colour = rgb ? `rgb(${{rgb}})` : (side === 'v' ? '#8fb8d8' : '#c3a6df');
-        return `<span class="fw-token-${{side}}" style="color:${{colour}}">`;
+        return `<span class="fw-token-${{side}}" data-pos="${{type || ''}}" style="color:${{colour}}">`;
     }});
+    if (relation?.pos) {{
+        const pos = relation.pos;
+        const rgb = fwPresentation.posRgb?.(pos);
+        const connectorStyle = rgb ? ` style="--sense-match-rgb: ${{rgb}}; --fw-pos-rgb: ${{rgb}}; color: rgb(${{rgb}});"` : '';
+        out = out.replace(/<span class=['"]fw-token-connector['"]>/g, `<span class="fw-token-connector" data-pos="${{esc(pos)}}"${{connectorStyle}}>`);
+    }}
+    return out;
 }}
 function fwCreditHTML(example) {{
     if (example?.metadata?.source?.source_record_id) {{
@@ -365,6 +372,13 @@ function refreshFunctionWordCardBack() {{
     if (_activeRelIndex >= relations.length) _activeRelIndex = 0;
     const currentRel = relations[_activeRelIndex];
 
+    // Update container POS and ambient glow
+    if (currentRel?.pos) {{
+        if (container.dataset) container.dataset.pos = currentRel.pos;
+        const rgb = fwPresentation.posRgb?.(currentRel.pos);
+        if (rgb && container.style?.setProperty) container.style.setProperty('--sense-match-rgb', rgb);
+    }}
+
     // Update relations selection
     container.querySelectorAll('.fw-relation-box').forEach((btn, i) => {{
         const isSelected = i === _activeRelIndex;
@@ -472,7 +486,7 @@ export function functionWordBlockHTML(card, lang) {{
         const relationsHTML = relations.map((rel, i) => {{
             const isSelected = i === _activeRelIndex;
             return `
-                <button type="button" class="fw-relation-box${{isSelected ? ' is-selected' : ''}}" aria-pressed="${{isSelected}}" onclick="event.stopPropagation(); window.selectFunctionWordRelation(${{i}})">
+                <button type="button" class="fw-relation-box${{isSelected ? ' is-selected' : ''}}" data-pos="${{esc(rel.pos || '')}}" aria-pressed="${{isSelected}}" onclick="event.stopPropagation(); window.selectFunctionWordRelation(${{i}})">
                     <div class="fw-relation-formula">${{fwSlotHTML(rel.formulaHTML || esc(rel.formula || ''), rel)}}</div>
                     <p class="fw-relation-rule">${{esc(rel.rule || rel.description || '')}}</p>
                 </button>`;
@@ -488,7 +502,7 @@ export function functionWordBlockHTML(card, lang) {{
         const ticksHTML = renderFwTicks(examples.length, _activeExampleIndex);
 
         return `
-            <div class="fw-deterministic-card" data-word="${{esc(wordKey)}}" data-lang="${{esc(lang || 'pt')}}">
+            <div class="fw-deterministic-card" data-word="${{esc(wordKey)}}" data-lang="${{esc(lang || 'pt')}}" data-pos="${{esc(currentRel?.pos || '')}}" style="--sense-match-rgb: ${{fwPresentation.posRgb?.(currentRel?.pos || card?.pos || card?.meanings?.[0]?.pos) || 'var(--accent-primary-rgb)'}};">
                 <div class="fw-header">
                     <h2 class="fw-heading">${{esc(wordKey)}}</h2>
                     ${{partsBoxHTML}}

@@ -412,11 +412,13 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
             return None
 
         pat = None
-        # Motion / Path (pat = 1)
-        if gl in MOTION_VERBS.get(lang, set()) or hl in PATH_HEADS.get(lang, set()):
+        # Motion / Path (pat = 1): nominal head MUST be a path or physical passage
+        if hl in PATH_HEADS.get(lang, set()) and hl not in {'vida', 'amor', 'dinheiro', 'deus', 'medo', 'culpa'}:
             pat = 1
-        # Cause / Reason (pat = 0)
-        elif hl in CAUSE_HEADS.get(lang, set()) or (gov and gl in {'preocupar', 'disculpar', 'pedir', 'agradecer', 'llorar', 'chorar', 'odiar', 'culpar', 'brigar', 'pelear'}):
+        elif gl in MOTION_VERBS.get(lang, set()) and hl in {'porta', 'janela', 'rua', 'estrada', 'ponte', 'caminho', 'corredor', 'túnel'}:
+            pat = 1
+        # Cause / Reason / Motive (pat = 0): reason, purpose, reaction, emotional motive (e.g. por suas vidas)
+        elif hl in CAUSE_HEADS.get(lang, set()) or hl in {'vida', 'vidas', 'razão', 'motivo', 'culpa', 'causa', 'medo', 'dinheiro', 'amor', 'segurança', 'sobrevivência'} or (gov and gl in {'preocupar', 'disculpar', 'pedir', 'agradecer', 'llorar', 'chorar', 'odiar', 'culpar', 'brigar', 'pelear', 'lutar', 'luchar'}):
             pat = 0
 
         # Strict abstention if neither path nor cause is positively licensed
@@ -448,10 +450,17 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
         gov = byid.get(head['head'])
         gl = gov['lemma'].lower() if gov else ''
         pat = None
-        if hl in DESTINATION_HEADS.get(lang, set()) or hl in {'mesa', 'chão', 'cama', 'balcão', 'terra'} or gl in MOTION_VERBS.get(lang, set()):
-            pat = 1
-        elif hl in {'assunto', 'tema', 'história', 'vida', 'livro', 'filme', 'trabalho', 'futuro', 'passado', 'amor', 'isso', 'aquilo'} or gl in {'falar', 'conversar', 'discutir', 'escrever', 'pensar', 'saber', 'ler', 'perguntar'}:
+
+        # Topic (pat = 0): governed by media/information noun or communication/thought verb
+        topic_governors = {'revista', 'livro', 'artigo', 'filme', 'notícia', 'história', 'documentário',
+                           'falar', 'conversar', 'discutir', 'escrever', 'pensar', 'saber', 'ler', 'perguntar',
+                           'dizer', 'contar', 'ensinar', 'aprender', 'debater', 'estudar'}
+        if gl in topic_governors or hl in {'assunto', 'tema', 'história', 'vida', 'cidade', 'país', 'futuro',
+                                           'passado', 'amor', 'mundo', 'política', 'música', 'trabalho', 'isso', 'aquilo'}:
             pat = 0
+        # On/Above (pat = 1): physical surface (mesa, chão, cama, balcão, telhado)
+        elif hl in {'mesa', 'chão', 'cama', 'balcão', 'terra', 'superfície', 'telhado', 'prato', 'estrada', 'muro', 'teto', 'parede'}:
+            pat = 1
 
         if pat is None:
             return None
@@ -500,10 +509,15 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
         if c_span:
             return _emit(0, parts, f'Adversative conjunction {word}.', focus_bounds, text, evidence)
 
-    # si:0 (es) / se:0 (pt) - Conditional clause
+    # si:0 (es) / se:0 (pt) - Conditional clause (if situation, then result; NOT indirect question whether)
     if ((lang == 'es' and word == 'si') or (lang == 'pt' and word == 'se' and focus['deprel'] == 'mark')) and head:
-        c_span = _constituent_interval(sent, [n for n in _subtree(sent, head) if _bounds(n)[0] >= end], focus_bounds, text)
         gov = byid.get(head['head'])
+        gl = gov['lemma'].lower() if gov else ''
+        # Block indirect questions ("whether") governed by verbs of asking/wondering/doubting or functioning as ccomp/obj
+        if head.get('deprel') in {'ccomp', 'obj'} or gl in {'preguntar', 'dudar', 'averiguar', 'perguntar', 'duvidar'}:
+            return None
+
+        c_span = _constituent_interval(sent, [n for n in _subtree(sent, head) if _bounds(n)[0] >= end], focus_bounds, text)
         v_span = _verb_complex(sent, gov, focus_bounds, lang, text) if (gov and gov['upos'] in {'VERB', 'AUX'}) else None
         parts = [('c', c_span)]
         if v_span:

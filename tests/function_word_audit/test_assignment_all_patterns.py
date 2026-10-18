@@ -240,6 +240,57 @@ class AllPatternsAssignmentTests(unittest.TestCase):
         res = assign(row, obs)
         self.assertEqual(res['status'], 'abstain')
 
+    def test_por_suas_vidas_is_motive_not_path(self):
+        sentence = "Corram por suas vidas!"
+        words = [
+            mock_token(1, "Corram", "VERB", 0, "root", 0, 6, lemma="correr"),
+            mock_token(2, "por", "ADP", 4, "case", 7, 10, lemma="por"),
+            mock_token(3, "suas", "DET", 4, "det", 11, 15, lemma="seu"),
+            mock_token(4, "vidas", "NOUN", 1, "obl", 16, 21, lemma="vida"),
+            mock_token(5, "!", "PUNCT", 1, "punct", 21, 22, lemma="!")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[7, 10]]}
+        row = {'language': 'pt', 'word': 'por', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'candidate')
+        self.assertEqual(res['pattern'], 0)  # motive/cause, NOT 1 (path)
+        self.assertEqual(res['pattern_id'], 'pt:por:0')
+
+    def test_revista_sobre_cidade_is_topic_not_on_above(self):
+        sentence = "Uma revista sobre a cidade."
+        words = [
+            mock_token(1, "Uma", "DET", 2, "det", 0, 3, lemma="um"),
+            mock_token(2, "revista", "NOUN", 0, "root", 4, 11, lemma="revista"),
+            mock_token(3, "sobre", "ADP", 5, "case", 12, 17, lemma="sobre"),
+            mock_token(4, "a", "DET", 5, "det", 18, 19, lemma="o"),
+            mock_token(5, "cidade", "NOUN", 2, "nmod", 20, 26, lemma="cidade"),
+            mock_token(6, ".", "PUNCT", 2, "punct", 26, 27, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[12, 17]]}
+        row = {'language': 'pt', 'word': 'sobre', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'candidate')
+        self.assertEqual(res['pattern'], 0)  # topic (about), NOT 1 (on/above)
+        self.assertEqual(res['pattern_id'], 'pt:sobre:0')
+
+    def test_preguntar_si_indirect_question_abstains(self):
+        sentence = "Me empiezo a preguntar si debería ir."
+        words = [
+            mock_token(1, "Me", "PRON", 2, "obj", 0, 2, lemma="yo"),
+            mock_token(2, "empiezo", "VERB", 0, "root", 3, 10, lemma="empezar"),
+            mock_token(3, "a", "ADP", 4, "mark", 11, 12, lemma="a"),
+            mock_token(4, "preguntar", "VERB", 2, "xcomp", 13, 22, lemma="preguntar"),
+            mock_token(5, "si", "SCONJ", 6, "mark", 23, 25, lemma="si"),
+            mock_token(6, "debería", "VERB", 4, "ccomp", 26, 33, lemma="deber"),
+            mock_token(7, "ir", "VERB", 6, "xcomp", 34, 36, lemma="ir"),
+            mock_token(8, ".", "PUNCT", 2, "punct", 36, 37, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[23, 25]]}
+        row = {'language': 'es', 'word': 'si', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')  # indirect question ("whether") abstains from conditional "if"
+
 if __name__ == '__main__':
     unittest.main()
+
 

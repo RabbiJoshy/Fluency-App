@@ -1,9 +1,42 @@
 {
   "matcher_version": "syntax-assignment/v1.1",
   "total_patterns": 115,
-  "patterns_ge_3_fresh": 90,
-  "shortage_count": 25,
+  "patterns_ge_3_fresh": 75,
+  "shortage_count": 40,
   "shortages": [
+    {
+      "pattern_id": "es:de:0",
+      "tag": "Verbs with de",
+      "formula": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span>",
+      "fresh_matches_found": 1,
+      "shortage_count": 2,
+      "speech_matches": 1,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 1 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "es:de:1",
+      "tag": "Adding a detail",
+      "formula": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
+      "fresh_matches_found": 0,
+      "shortage_count": 3,
+      "speech_matches": 0,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 0 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "es:que:2",
+      "tag": "Comparing",
+      "formula": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span>",
+      "fresh_matches_found": 2,
+      "shortage_count": 1,
+      "speech_matches": 2,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 2 additional fresh matches harvested."
+    },
     {
       "pattern_id": "es:en:1",
       "tag": "When",
@@ -12,6 +45,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -22,6 +56,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -32,6 +67,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -42,6 +78,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -52,6 +89,7 @@
       "shortage_count": 1,
       "speech_matches": 2,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -62,7 +100,85 @@
       "shortage_count": 2,
       "speech_matches": 1,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
+    },
+    {
+      "pattern_id": "es:se:0",
+      "tag": "Oneself / part of a verb",
+      "formula": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+      "fresh_matches_found": 1,
+      "shortage_count": 2,
+      "speech_matches": 1,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 1 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "es:se:1",
+      "tag": "Without saying who",
+      "formula": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+      "fresh_matches_found": 0,
+      "shortage_count": 3,
+      "speech_matches": 0,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 0 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "es:al:0",
+      "tag": "To / at the",
+      "formula": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-c\">destination</span>",
+      "fresh_matches_found": 0,
+      "shortage_count": 3,
+      "speech_matches": 0,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 0 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "es:al:1",
+      "tag": "When doing something",
+      "formula": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">infinitive (dictionary form)</span>",
+      "fresh_matches_found": 0,
+      "shortage_count": 3,
+      "speech_matches": 0,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 0 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "es:la:1",
+      "tag": "Her / it",
+      "formula": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-v\">verb</span>",
+      "fresh_matches_found": 1,
+      "shortage_count": 2,
+      "speech_matches": 0,
+      "artist_matches": 1,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 1 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "es:los:1",
+      "tag": "Them",
+      "formula": "<span class=\"fw-token-connector\">los</span> + <span class=\"fw-token-v\">verb</span>",
+      "fresh_matches_found": 2,
+      "shortage_count": 1,
+      "speech_matches": 2,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 2 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "es:lo:0",
+      "tag": "The … thing / part",
+      "formula": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">adjective</span>",
+      "fresh_matches_found": 2,
+      "shortage_count": 1,
+      "speech_matches": 2,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 2 additional fresh matches harvested."
     },
     {
       "pattern_id": "es:como:1",
@@ -72,7 +188,63 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
+    },
+    {
+      "pattern_id": "pt:de:1",
+      "tag": "Adding a detail",
+      "formula": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
+      "fresh_matches_found": 0,
+      "shortage_count": 3,
+      "speech_matches": 0,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 0 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "pt:que:1",
+      "tag": "Adding information",
+      "formula": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span>",
+      "fresh_matches_found": 2,
+      "shortage_count": 1,
+      "speech_matches": 2,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 2 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "pt:nos:0",
+      "tag": "Us / to us",
+      "formula": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+      "fresh_matches_found": 1,
+      "shortage_count": 2,
+      "speech_matches": 1,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 1 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "pt:se:0",
+      "tag": "If",
+      "formula": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a possible situation</span> + <span class=\"fw-token-c\">what happens then</span>",
+      "fresh_matches_found": 1,
+      "shortage_count": 2,
+      "speech_matches": 1,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 1 additional fresh matches harvested."
+    },
+    {
+      "pattern_id": "pt:se:1",
+      "tag": "Oneself / part of a verb",
+      "formula": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+      "fresh_matches_found": 0,
+      "shortage_count": 3,
+      "speech_matches": 0,
+      "artist_matches": 0,
+      "is_pilot": true,
+      "reason": "Pilot pattern with vetted traceable baseline examples; 0 additional fresh matches harvested."
     },
     {
       "pattern_id": "pt:em:1",
@@ -82,6 +254,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -92,6 +265,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -102,6 +276,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -112,26 +287,29 @@
       "shortage_count": 1,
       "speech_matches": 1,
       "artist_matches": 1,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
       "pattern_id": "pt:por:0",
       "tag": "Why",
       "formula": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a reason</span>",
-      "fresh_matches_found": 1,
-      "shortage_count": 2,
-      "speech_matches": 1,
+      "fresh_matches_found": 2,
+      "shortage_count": 1,
+      "speech_matches": 2,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
       "pattern_id": "pt:por:1",
       "tag": "Through / along",
       "formula": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
-      "fresh_matches_found": 2,
-      "shortage_count": 1,
-      "speech_matches": 2,
+      "fresh_matches_found": 0,
+      "shortage_count": 3,
+      "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -142,6 +320,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -152,6 +331,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -162,6 +342,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -172,6 +353,7 @@
       "shortage_count": 2,
       "speech_matches": 1,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -182,6 +364,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -192,6 +375,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -202,6 +386,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -212,16 +397,18 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
       "pattern_id": "pt:sobre:1",
       "tag": "On / above",
       "formula": "<span class=\"fw-token-connector\">sobre</span> + <span class=\"fw-token-c\">a place</span>",
-      "fresh_matches_found": 2,
-      "shortage_count": 1,
-      "speech_matches": 2,
+      "fresh_matches_found": 0,
+      "shortage_count": 3,
+      "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -232,6 +419,7 @@
       "shortage_count": 2,
       "speech_matches": 1,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -242,6 +430,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     },
     {
@@ -252,6 +441,7 @@
       "shortage_count": 3,
       "speech_matches": 0,
       "artist_matches": 0,
+      "is_pilot": false,
       "reason": "Corpus scarcity or strict grammatical licensing criteria under UD dependency parsing."
     }
   ],
@@ -262,8 +452,8 @@
       "fresh_matches_count": 1,
       "speech_matches_count": 1,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 2
     },
     "es:de:1": {
       "tag": "Adding a detail",
@@ -271,8 +461,8 @@
       "fresh_matches_count": 0,
       "speech_matches_count": 0,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 3
     },
     "es:que:0": {
       "tag": "Saying what you think",
@@ -298,8 +488,8 @@
       "fresh_matches_count": 2,
       "speech_matches_count": 2,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 1
     },
     "es:a:0": {
       "tag": "Where to",
@@ -406,8 +596,8 @@
       "fresh_matches_count": 1,
       "speech_matches_count": 1,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 2
     },
     "es:se:1": {
       "tag": "Without saying who",
@@ -415,8 +605,8 @@
       "fresh_matches_count": 0,
       "speech_matches_count": 0,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 3
     },
     "es:me:0": {
       "tag": "Me / to me",
@@ -460,8 +650,8 @@
       "fresh_matches_count": 0,
       "speech_matches_count": 0,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 3
     },
     "es:al:1": {
       "tag": "When doing something",
@@ -469,8 +659,8 @@
       "fresh_matches_count": 0,
       "speech_matches_count": 0,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 3
     },
     "es:del:0": {
       "tag": "Of / from the",
@@ -505,8 +695,8 @@
       "fresh_matches_count": 1,
       "speech_matches_count": 0,
       "artist_matches_count": 1,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 2
     },
     "es:los:0": {
       "tag": "The",
@@ -523,8 +713,8 @@
       "fresh_matches_count": 2,
       "speech_matches_count": 2,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 1
     },
     "es:las:0": {
       "tag": "The",
@@ -541,8 +731,8 @@
       "fresh_matches_count": 2,
       "speech_matches_count": 2,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 1
     },
     "es:lo:1": {
       "tag": "Him / it / that",
@@ -592,9 +782,9 @@
     "es:si:0": {
       "tag": "If",
       "total_examples_assigned": 3,
-      "fresh_matches_count": 22,
-      "speech_matches_count": 15,
-      "artist_matches_count": 7,
+      "fresh_matches_count": 18,
+      "speech_matches_count": 13,
+      "artist_matches_count": 5,
       "is_shortage": false,
       "shortage_count": 0
     },
@@ -730,8 +920,8 @@
       "fresh_matches_count": 0,
       "speech_matches_count": 0,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 3
     },
     "pt:que:0": {
       "tag": "Saying what you think",
@@ -748,8 +938,8 @@
       "fresh_matches_count": 2,
       "speech_matches_count": 2,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 1
     },
     "pt:que:2": {
       "tag": "Comparing",
@@ -775,8 +965,8 @@
       "fresh_matches_count": 1,
       "speech_matches_count": 1,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 2
     },
     "pt:nos:1": {
       "tag": "In / on / at the",
@@ -793,8 +983,8 @@
       "fresh_matches_count": 1,
       "speech_matches_count": 1,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 2
     },
     "pt:se:1": {
       "tag": "Oneself / part of a verb",
@@ -802,8 +992,8 @@
       "fresh_matches_count": 0,
       "speech_matches_count": 0,
       "artist_matches_count": 0,
-      "is_shortage": false,
-      "shortage_count": 0
+      "is_shortage": true,
+      "shortage_count": 3
     },
     "pt:o:0": {
       "tag": "The",
@@ -889,20 +1079,20 @@
     "pt:por:0": {
       "tag": "Why",
       "total_examples_assigned": 3,
-      "fresh_matches_count": 1,
-      "speech_matches_count": 1,
-      "artist_matches_count": 0,
-      "is_shortage": true,
-      "shortage_count": 2
-    },
-    "pt:por:1": {
-      "tag": "Through / along",
-      "total_examples_assigned": 3,
       "fresh_matches_count": 2,
       "speech_matches_count": 2,
       "artist_matches_count": 0,
       "is_shortage": true,
       "shortage_count": 1
+    },
+    "pt:por:1": {
+      "tag": "Through / along",
+      "total_examples_assigned": 3,
+      "fresh_matches_count": 0,
+      "speech_matches_count": 0,
+      "artist_matches_count": 0,
+      "is_shortage": true,
+      "shortage_count": 3
     },
     "pt:no:0": {
       "tag": "In / on / at the",
@@ -1213,8 +1403,8 @@
     "pt:sobre:0": {
       "tag": "About",
       "total_examples_assigned": 3,
-      "fresh_matches_count": 7,
-      "speech_matches_count": 6,
+      "fresh_matches_count": 9,
+      "speech_matches_count": 8,
       "artist_matches_count": 1,
       "is_shortage": false,
       "shortage_count": 0
@@ -1222,11 +1412,11 @@
     "pt:sobre:1": {
       "tag": "On / above",
       "total_examples_assigned": 3,
-      "fresh_matches_count": 2,
-      "speech_matches_count": 2,
+      "fresh_matches_count": 0,
+      "speech_matches_count": 0,
       "artist_matches_count": 0,
       "is_shortage": true,
-      "shortage_count": 1
+      "shortage_count": 3
     },
     "pt:até:0": {
       "tag": "Until / as far as",

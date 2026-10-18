@@ -249,7 +249,8 @@
                 "slotTypes": {
                     "v": "verb",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             },
             {
                 "tag": "Adding a detail",
@@ -495,9 +496,11 @@
                 "slotTypes": {
                     "v": "noun",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "que": {
         "word": "que",
@@ -748,7 +751,8 @@
                 "slotTypes": {
                     "v": "verb",
                     "c": "clause"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Adding information",
@@ -975,7 +979,8 @@
                 "slotTypes": {
                     "v": "noun",
                     "c": "clause"
-                }
+                },
+                "pos": "pron"
             },
             {
                 "tag": "Comparing",
@@ -1214,9 +1219,11 @@
                 "slotTypes": {
                     "v": "phrase",
                     "c": "phrase"
-                }
+                },
+                "pos": "conj"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "a": {
         "word": "a",
@@ -1331,6 +1338,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -1441,9 +1449,11 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "en": {
         "word": "en",
@@ -1564,6 +1574,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -1609,9 +1620,11 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "por": {
         "word": "por",
@@ -1662,6 +1675,7 @@
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Everyday dialogue"
             },
             {
@@ -1707,9 +1721,11 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Dialogue"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "para": {
         "word": "para",
@@ -1835,6 +1851,7 @@
                     "v": "verb",
                     "c": "verb"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -1880,9 +1897,11 @@
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Everyday dialogue"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "con": {
         "word": "con",
@@ -1978,6 +1997,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             },
             {
@@ -2048,9 +2068,11 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "sin": {
         "word": "sin",
@@ -2166,9 +2188,11 @@
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "se": {
         "word": "se",
@@ -2427,7 +2451,8 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Without saying who",
@@ -2655,9 +2680,11 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "me": {
         "word": "me",
@@ -2777,9 +2804,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "te": {
         "word": "te",
@@ -2904,9 +2933,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "nos": {
         "word": "nos",
@@ -3165,9 +3196,11 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "le": {
         "word": "le",
@@ -3282,9 +3315,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "al": {
         "word": "al",
@@ -3547,7 +3582,8 @@
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "pos": "prep"
             },
             {
                 "tag": "When doing something",
@@ -3800,9 +3836,11 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "prep"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "del": {
         "word": "del",
@@ -3921,9 +3959,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "el": {
         "word": "el",
@@ -3963,9 +4003,11 @@
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "la": {
         "word": "la",
@@ -4005,7 +4047,8 @@
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Her / it",
@@ -4039,9 +4082,11 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "los": {
         "word": "los",
@@ -4081,7 +4126,8 @@
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Them",
@@ -4115,9 +4161,11 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "las": {
         "word": "las",
@@ -4237,9 +4285,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "lo": {
         "word": "lo",
@@ -4487,7 +4537,8 @@
                 ],
                 "slotTypes": {
                     "c": "adj"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Him / it / that",
@@ -4740,9 +4791,11 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "un": {
         "word": "un",
@@ -4782,9 +4835,11 @@
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "una": {
         "word": "una",
@@ -4909,9 +4964,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "y": {
         "word": "y",
@@ -5033,9 +5090,11 @@
                     "v": "mixed",
                     "c": "mixed"
                 },
+                "pos": "conj",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "pero": {
         "word": "pero",
@@ -5161,9 +5220,11 @@
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "si": {
         "word": "si",
@@ -5252,9 +5313,9 @@
                         }
                     },
                     {
-                        "sentence": "Me empiezo a preguntar si debería tener más miedo de tenerlos de vuelta.",
-                        "targetHTML": "Me empiezo a <span class=\"fw-token-v\">preguntar</span> <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">debería tener más miedo de tenerlos de vuelta</span>.",
-                        "translation": "I'm starting to wonder if I should be more afraid of getting them back.",
+                        "sentence": "Bueno, si prefieres volver a la mina, eso... eso también vale.",
+                        "targetHTML": "Bueno, <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">prefieres volver a la mina</span>, eso... eso también <span class=\"fw-token-v\">vale</span>.",
+                        "translation": "Well, if you'd prefer to go back to the mine, that, uh, that works too.",
                         "source": "opensubtitles",
                         "channel": "speech",
                         "metadata": {
@@ -5262,20 +5323,20 @@
                                 "adapter": "opensubtitles-aligned/v1",
                                 "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
                                 "document": {
-                                    "aligned_row": 784261,
-                                    "line": "11",
-                                    "subtitle_id": "6631672",
-                                    "title_id": "4549128",
-                                    "year": "2016"
+                                    "aligned_row": 3256117,
+                                    "line": "358",
+                                    "subtitle_id": "6964869",
+                                    "title_id": "5543760",
+                                    "year": "2017"
                                 },
                                 "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
                                 "name": "opensubtitles",
                                 "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
                                 "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
-                                "source_record_id": "4549128:6631672:11:784261",
+                                "source_record_id": "5543760:6964869:358:3256117",
                                 "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
                             },
-                            "sentence_id": "sentence_000472ef6fb1534060568af455c145f9",
+                            "sentence_id": "sentence_000588124915bde43eb70fb2de371f8f",
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:si:0",
@@ -5289,9 +5350,11 @@
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "como": {
         "word": "como",
@@ -5407,6 +5470,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -5451,9 +5515,11 @@
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "mi": {
         "word": "mi",
@@ -5563,9 +5629,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "su": {
         "word": "su",
@@ -5685,9 +5753,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "tu": {
         "word": "tu",
@@ -5812,9 +5882,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "yo": {
         "word": "yo",
@@ -5939,9 +6011,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "tú": {
         "word": "tú",
@@ -6066,9 +6140,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "eso": {
         "word": "eso",
@@ -6193,9 +6269,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "esto": {
         "word": "esto",
@@ -6309,9 +6387,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "todo": {
         "word": "todo",
@@ -6431,9 +6511,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "algo": {
         "word": "algo",
@@ -6553,9 +6635,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "porque": {
         "word": "porque",
@@ -6681,9 +6765,11 @@
                     "v": "clause",
                     "c": "phrase"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "cuando": {
         "word": "cuando",
@@ -6804,8 +6890,10 @@
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "conj"
     }
 }

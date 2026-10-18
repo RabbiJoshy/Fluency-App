@@ -261,7 +261,8 @@
                 "slotTypes": {
                     "v": "verb",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             },
             {
                 "tag": "Adding a detail",
@@ -519,9 +520,11 @@
                 "slotTypes": {
                     "v": "noun",
                     "c": "mixed"
-                }
+                },
+                "pos": "prep"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "que": {
         "word": "que",
@@ -779,7 +782,8 @@
                 "slotTypes": {
                     "v": "verb",
                     "c": "clause"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Adding information",
@@ -1011,7 +1015,8 @@
                 "slotTypes": {
                     "v": "noun",
                     "c": "clause"
-                }
+                },
+                "pos": "pron"
             },
             {
                 "tag": "Comparing",
@@ -1206,9 +1211,11 @@
                 "slotTypes": {
                     "v": "phrase",
                     "c": "phrase"
-                }
+                },
+                "pos": "conj"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "naquele": {
         "word": "naquele",
@@ -1467,9 +1474,11 @@
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "prep"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "nos": {
         "word": "nos",
@@ -1724,7 +1733,8 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             },
             {
                 "tag": "In / on / at the",
@@ -1957,9 +1967,11 @@
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "prep"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "se": {
         "word": "se",
@@ -2208,7 +2220,8 @@
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "pos": "conj"
             },
             {
                 "tag": "Oneself / part of a verb",
@@ -2460,9 +2473,11 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "o": {
         "word": "o",
@@ -2713,7 +2728,8 @@
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "pos": "det"
             },
             {
                 "tag": "Him / it",
@@ -2959,9 +2975,11 @@
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "pos": "pron"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "em": {
         "word": "em",
@@ -3088,6 +3106,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -3134,9 +3153,11 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "para": {
         "word": "para",
@@ -3188,6 +3209,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Everyday speech"
             },
             {
@@ -3309,6 +3331,7 @@
                     "v": "verb",
                     "c": "verb"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -3355,9 +3378,11 @@
                     "v": "noun",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "com": {
         "word": "com",
@@ -3484,6 +3509,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -3569,9 +3595,11 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "por": {
         "word": "por",
@@ -3628,77 +3656,6 @@
                         }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
-                        "translation": "Thank you for helping.",
-                        "source": "Everyday speech",
-                        "metadata": {
-                            "is_legacy_fallback": true
-                        }
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Espero</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>notícias suas</span>.",
-                        "translation": "I wait for news from you.",
-                        "source": "Dialogue",
-                        "metadata": {
-                            "is_legacy_fallback": true
-                        }
-                    }
-                ],
-                "slotTypes": {
-                    "v": "mixed",
-                    "c": "phrase"
-                },
-                "source": "opensubtitles"
-            },
-            {
-                "tag": "Through / along",
-                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
-                "rule": "Shows the route or place someone or something moves through.",
-                "allowed_lemmas": [
-                    "caminhar",
-                    "passar",
-                    "andar",
-                    "viajar",
-                    "olhar",
-                    "entrar"
-                ],
-                "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
-                "translation": "I couldn't understand why God had taken such a dedicated disciple.",
-                "examples": [
-                    {
-                        "sentence": "Não conseguia entender por que Deus havia levado um discípulo tão dedicado.",
-                        "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
-                        "translation": "I couldn't understand why God had taken such a dedicated disciple.",
-                        "source": "opensubtitles",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "opensubtitles-aligned/v1",
-                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
-                                "document": {
-                                    "aligned_row": 1335696,
-                                    "line": "1322",
-                                    "subtitle_id": "6546637",
-                                    "title_id": "4337690",
-                                    "year": "2015"
-                                },
-                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
-                                "name": "opensubtitles",
-                                "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
-                                "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
-                                "source_record_id": "4337690:6546637:1322:1335696",
-                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
-                            },
-                            "sentence_id": "sentence_000b65bc81d1d5da27b29cafe4aa7a19",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "pt:por:1",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition por pattern 1."
-                            }
-                        }
-                    },
-                    {
                         "sentence": "Corram por suas vidas!",
                         "targetHTML": "<span class=\"fw-token-v\">Corram</span> <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">suas vidas</span>!",
                         "translation": "Run for your lives!",
@@ -3725,16 +3682,63 @@
                             "sentence_id": "sentence_00187c037299d824eab48e19b120b422",
                             "channel": "speech",
                             "automaticSyntax": {
-                                "patternId": "pt:por:1",
+                                "patternId": "pt:por:0",
                                 "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition por pattern 1."
+                                "reason": "Preposition por pattern 0."
                             }
                         }
                     },
                     {
+                        "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
+                        "translation": "Thank you for helping.",
+                        "source": "Everyday speech",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    }
+                ],
+                "slotTypes": {
+                    "v": "mixed",
+                    "c": "phrase"
+                },
+                "pos": "prep",
+                "source": "opensubtitles"
+            },
+            {
+                "tag": "Through / along",
+                "formulaHTML": "<span class=\"fw-token-connector\">por</span> + <span class=\"fw-token-c\">a place</span>",
+                "rule": "Shows the route or place someone or something moves through.",
+                "allowed_lemmas": [
+                    "caminhar",
+                    "passar",
+                    "andar",
+                    "viajar",
+                    "olhar",
+                    "entrar"
+                ],
+                "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
+                "translation": "I walk around here.",
+                "examples": [
+                    {
                         "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
                         "translation": "I walk around here.",
                         "source": "Dialogue",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "<span class=\"fw-token-v\">Passamos</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>uma ponte antiga</span>.",
+                        "translation": "We passed through an old bridge.",
+                        "source": "Conversation",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "<span class=\"fw-token-v\">Olhou</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>entre as grades</span>.",
+                        "translation": "Looked through between the railings.",
+                        "source": "Literature",
                         "metadata": {
                             "is_legacy_fallback": true
                         }
@@ -3744,9 +3748,11 @@
                     "v": "verb",
                     "c": "phrase"
                 },
-                "source": "opensubtitles"
+                "pos": "prep",
+                "source": "Dialogue"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "no": {
         "word": "no",
@@ -3876,9 +3882,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "na": {
         "word": "na",
@@ -4008,9 +4016,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "do": {
         "word": "do",
@@ -4140,9 +4150,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "da": {
         "word": "da",
@@ -4272,9 +4284,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "como": {
         "word": "como",
@@ -4401,6 +4415,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -4515,9 +4530,11 @@
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "mas": {
         "word": "mas",
@@ -4643,9 +4660,11 @@
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "a": {
         "word": "a",
@@ -4697,6 +4716,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "Conversation"
             },
             {
@@ -4812,6 +4832,7 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             },
             {
@@ -4856,9 +4877,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "Conversation"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "e": {
         "word": "e",
@@ -4980,9 +5003,11 @@
                     "v": "mixed",
                     "c": "mixed"
                 },
+                "pos": "conj",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "eu": {
         "word": "eu",
@@ -5098,9 +5123,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "ele": {
         "word": "ele",
@@ -5225,6 +5252,7 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             },
             {
@@ -5270,9 +5298,11 @@
                 "slotTypes": {
                     "v": "prep"
                 },
+                "pos": "pron",
                 "source": "Conversation"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "ela": {
         "word": "ela",
@@ -5397,9 +5427,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "um": {
         "word": "um",
@@ -5520,9 +5552,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "uma": {
         "word": "uma",
@@ -5643,9 +5677,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "os": {
         "word": "os",
@@ -5771,6 +5807,7 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             },
             {
@@ -5840,9 +5877,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "as": {
         "word": "as",
@@ -5968,9 +6007,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "det",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "det"
     },
     "me": {
         "word": "me",
@@ -6091,6 +6132,7 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             },
             {
@@ -6135,9 +6177,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "Dialogue"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "te": {
         "word": "te",
@@ -6263,9 +6307,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "lhe": {
         "word": "lhe",
@@ -6381,9 +6427,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "tatoeba"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "ao": {
         "word": "ao",
@@ -6512,6 +6560,7 @@
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -6556,9 +6605,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "prep",
                 "source": "Everyday speech"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "à": {
         "word": "à",
@@ -6687,9 +6738,11 @@
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "pelo": {
         "word": "pelo",
@@ -6818,9 +6871,11 @@
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "pela": {
         "word": "pela",
@@ -6944,9 +6999,11 @@
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "num": {
         "word": "num",
@@ -7075,9 +7132,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "numa": {
         "word": "numa",
@@ -7206,9 +7265,11 @@
                 "slotTypes": {
                     "c": "noun"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "dele": {
         "word": "dele",
@@ -7262,9 +7323,11 @@
                 "slotTypes": {
                     "v": "noun"
                 },
+                "pos": "pron",
                 "source": "Everyday dialogue"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "dela": {
         "word": "dela",
@@ -7318,9 +7381,11 @@
                 "slotTypes": {
                     "v": "noun"
                 },
+                "pos": "pron",
                 "source": "Everyday speech"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "sem": {
         "word": "sem",
@@ -7446,9 +7511,11 @@
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "sobre": {
         "word": "sobre",
@@ -7569,6 +7636,7 @@
                     "v": "mixed",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "tatoeba"
             },
             {
@@ -7582,79 +7650,29 @@
                     "rio",
                     "bancada"
                 ],
-                "targetHTML": "Eu <span class=\"fw-token-v\">passei</span> muito tempo em oração <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isso</span>.",
-                "translation": "I spent a great deal of time in prayer about it.",
+                "targetHTML": "O papel <span class=\"fw-token-v\">está</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a mesa</span>.",
+                "translation": "The paper is on the table.",
                 "examples": [
-                    {
-                        "sentence": "Eu passei muito tempo em oração sobre isso.",
-                        "targetHTML": "Eu <span class=\"fw-token-v\">passei</span> muito tempo em oração <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isso</span>.",
-                        "translation": "I spent a great deal of time in prayer about it.",
-                        "source": "opensubtitles",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "opensubtitles-aligned/v1",
-                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
-                                "document": {
-                                    "aligned_row": 2595451,
-                                    "line": "802",
-                                    "subtitle_id": "6892497",
-                                    "title_id": "4168586",
-                                    "year": "2016"
-                                },
-                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
-                                "name": "opensubtitles",
-                                "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
-                                "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
-                                "source_record_id": "4168586:6892497:802:2595451",
-                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
-                            },
-                            "sentence_id": "sentence_0091702342d407c554648f622a90f506",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "pt:sobre:1",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition sobre pattern 1."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Uma revista estranha sobre a nossa cidade que são apenas anúncios.",
-                        "targetHTML": "Uma revista estranha <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">a nossa cidade</span> que são apenas anúncios.",
-                        "translation": "Weird magazine about our town that's just ads.",
-                        "source": "opensubtitles",
-                        "channel": "speech",
-                        "metadata": {
-                            "source": {
-                                "adapter": "opensubtitles-aligned/v1",
-                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
-                                "document": {
-                                    "aligned_row": 3041482,
-                                    "line": "180",
-                                    "subtitle_id": "6467159",
-                                    "title_id": "4863430",
-                                    "year": "2016"
-                                },
-                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
-                                "name": "opensubtitles",
-                                "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
-                                "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
-                                "source_record_id": "4863430:6467159:180:3041482",
-                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
-                            },
-                            "sentence_id": "sentence_00d2bf9845af49834b2ea4c45b28fd8e",
-                            "channel": "speech",
-                            "automaticSyntax": {
-                                "patternId": "pt:sobre:1",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Preposition sobre pattern 1."
-                            }
-                        }
-                    },
                     {
                         "targetHTML": "O papel <span class=\"fw-token-v\">está</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a mesa</span>.",
                         "translation": "The paper is on the table.",
                         "source": "Dialogue",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "A ponte <span class=\"fw-token-v\">ergue-se</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o grande rio</span>.",
+                        "translation": "The bridge rises over the great river.",
+                        "source": "Literature",
+                        "metadata": {
+                            "is_legacy_fallback": true
+                        }
+                    },
+                    {
+                        "targetHTML": "<span class=\"fw-token-v\">Deixou</span> o casaco <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a cama</span>.",
+                        "translation": "Left the coat upon the bed.",
+                        "source": "Conversation",
                         "metadata": {
                             "is_legacy_fallback": true
                         }
@@ -7664,9 +7682,11 @@
                     "v": "verb",
                     "c": "phrase"
                 },
-                "source": "opensubtitles"
+                "pos": "prep",
+                "source": "Dialogue"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "até": {
         "word": "até",
@@ -7742,6 +7762,7 @@
                     "v": "verb",
                     "c": "phrase"
                 },
+                "pos": "prep",
                 "source": "opensubtitles"
             },
             {
@@ -7786,9 +7807,11 @@
                 "slotTypes": {
                     "c": "phrase"
                 },
+                "pos": "part",
                 "source": "Conversation"
             }
-        ]
+        ],
+        "pos": "prep"
     },
     "porque": {
         "word": "porque",
@@ -7914,9 +7937,11 @@
                     "v": "clause",
                     "c": "phrase"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "quando": {
         "word": "quando",
@@ -8037,9 +8062,11 @@
                     "v": "clause",
                     "c": "clause"
                 },
+                "pos": "conj",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "conj"
     },
     "isso": {
         "word": "isso",
@@ -8089,9 +8116,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "Dialogue"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "isto": {
         "word": "isto",
@@ -8216,9 +8245,11 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     },
     "tudo": {
         "word": "tudo",
@@ -8343,8 +8374,10 @@
                 "slotTypes": {
                     "v": "verb"
                 },
+                "pos": "pron",
                 "source": "opensubtitles"
             }
-        ]
+        ],
+        "pos": "pron"
     }
 }
