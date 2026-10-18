@@ -304,6 +304,15 @@ export function closeExtraModal() {
     if (modal) {
         modal.classList.add('hidden');
     }
+    const conjView = document.getElementById('extraConjugationsView');
+    const songPickerView = document.getElementById('extraSongPickerView');
+    const menuView = document.getElementById('extraMenuView');
+    if (conjView) conjView.hidden = true;
+    if (songPickerView) songPickerView.hidden = true;
+    if (menuView) menuView.hidden = false;
+    if (typeof window.showConjugationScreen === 'function') {
+        try { window.showConjugationScreen('setup'); } catch (_) {}
+    }
     try {
         if (window.location.pathname.includes('/conjugation')) {
             const basePath = window.location.pathname.replace(/\/conjugation\/?$/, '') || '/';
@@ -334,6 +343,9 @@ export function initExtraWorkspace() {
 
     const conjBackBtn = document.getElementById('extraConjugationsBackBtn');
     conjBackBtn?.addEventListener('click', backToExtraMenu);
+
+    const conjCloseBtn = document.getElementById('extraConjugationsCloseBtn');
+    conjCloseBtn?.addEventListener('click', closeExtraModal);
 
     const songPickerBackBtn = document.getElementById('extraSongPickerBackBtn');
     songPickerBackBtn?.addEventListener('click', backToExtraMenu);

@@ -1385,6 +1385,8 @@
     // different exits.
     if ($('back-to-study')) $('back-to-study').hidden = name === 'tables';
     if ($('extraConjugationsBackBtn')) $('extraConjugationsBackBtn').hidden = name === 'tables';
+    if ($('extraConjugationsCloseBtn')) $('extraConjugationsCloseBtn').hidden = name === 'tables';
+    if ($('topbar-close')) $('topbar-close').hidden = name === 'tables';
     if (name === 'tables') {
       if ($('tables-back')) $('tables-back').lastChild.textContent = queue.length ? ' Back to drill' : ' Back';
     }
@@ -1699,4 +1701,5 @@
       showScreen('setup');
     }
   };
+  window.showConjugationScreen = showScreen;
 })();

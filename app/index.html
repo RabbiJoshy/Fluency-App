@@ -951,47 +951,28 @@
             <!-- Embedded Conjugations Screen -->
             <div id="extraConjugationsView" class="extra-conjugations-view" hidden>
                 <div class="extra-conjugations-topbar">
-                    <button type="button" class="extra-back-btn" id="extraConjugationsBackBtn">
-                        <span aria-hidden="true">‹</span> Extra
-                    </button>
-                    <nav class="tabs" id="tabs">
-                        <button type="button" class="tab is-active" data-screen="setup">Set up</button>
-                        <button type="button" class="tab" data-screen="drill">Practise</button>
-                    </nav>
+                    <h1 class="extra-conjugations-title">Verb drills</h1>
+                    <button type="button" class="extra-close-btn" id="extraConjugationsCloseBtn" aria-label="Close">✕</button>
                 </div>
 
                 <div id="extraConjugationsContainer" class="extra-conjugations-container">
                     <!-- SETUP SCREEN -->
                     <section class="screen is-active" id="screen-setup">
-                        <div class="stack">
-                            <div class="setup-intro">
-                                <h1>Verb drills</h1>
-                                <p>Pick the verbs and tenses to practise, then press Start.</p>
+                        <div class="summary" id="summary">
+                            <div class="summary-main">
+                                <span class="summary-count" id="sum-cards">0</span>
+                                <span class="summary-unit">cards</span>
                             </div>
+                            <div class="summary-detail" id="sum-detail"></div>
+                            <div class="summary-actions">
+                                <button class="secondary" id="resume" type="button" hidden>Resume</button>
+                                <button class="primary" id="start" disabled type="button">Start</button>
+                            </div>
+                            <div class="summary-bar" id="sum-bar"></div>
+                            <div class="summary-progress" id="sum-progress"></div>
+                        </div>
 
-                            <details class="section">
-                                <summary>
-                                    <span class="section-name">Verb type</span>
-                                    <span class="section-state" id="state-types"></span>
-                                </summary>
-                                <div class="section-body">
-                                    <p class="hint">Worked out from the tenses you picked — a verb that is
-                                      irregular in the preterite can still be regular in the imperfect.</p>
-                                    <div class="checks" id="types"></div>
-                                </div>
-                            </details>
-
-                            <details class="section">
-                                <summary>
-                                    <span class="section-name">How common</span>
-                                    <span class="section-state" id="state-scope"></span>
-                                </summary>
-                                <div class="section-body">
-                                    <input type="range" id="scope" min="10" max="100" step="5" value="50">
-                                    <p class="hint" id="scope-hint"></p>
-                                </div>
-                            </details>
-
+                        <div class="stack">
                             <details class="section">
                                 <summary>
                                     <span class="section-name">Tenses</span>
@@ -1016,30 +997,24 @@
 
                             <details class="section">
                                 <summary>
-                                    <span class="section-name">Stem hints</span>
-                                    <span class="section-state" id="state-clue"></span>
+                                    <span class="section-name">How common</span>
+                                    <span class="section-state" id="state-scope"></span>
                                 </summary>
                                 <div class="section-body">
-                                    <p class="hint">Before you answer, the verb is coloured to warn you
-                                      when its form is unusual: green means it follows the normal rule,
-                                      orange or red means it doesn’t. For example, <em>tener</em> is
-                                      orange for <em>yo</em> (<em>tengo</em>) but green for
-                                      <em>nosotros</em> (<em>tenemos</em>).</p>
-                                    <div class="checks" id="clue"></div>
+                                    <input type="range" id="scope" min="10" max="100" step="5" value="50">
+                                    <p class="hint" id="scope-hint"></p>
                                 </div>
                             </details>
 
                             <details class="section">
                                 <summary>
-                                    <span class="section-name">Progress</span>
-                                    <span class="section-state" id="state-focus"></span>
+                                    <span class="section-name">Verb type</span>
+                                    <span class="section-state" id="state-types"></span>
                                 </summary>
                                 <div class="section-body">
-                                    <p class="hint" id="progress-hint"></p>
-                                    <div class="checks" id="focus"></div>
-                                    <div class="pattern-actions">
-                                        <button class="linkish" id="progress-reset" type="button">reset progress for this language</button>
-                                    </div>
+                                    <p class="hint">Worked out from the tenses you picked — a verb that is
+                                      irregular in the preterite can still be regular in the imperfect.</p>
+                                    <div class="checks" id="types"></div>
                                 </div>
                             </details>
 
@@ -1049,6 +1024,35 @@
                                     <span class="section-state" id="state-advanced"></span>
                                 </summary>
                                 <div class="section-body section-body-nested">
+                                    <details class="section">
+                                        <summary>
+                                            <span class="section-name">Stem hints</span>
+                                            <span class="section-state" id="state-clue"></span>
+                                        </summary>
+                                        <div class="section-body">
+                                            <p class="hint">Before you answer, the verb is coloured to warn you
+                                              when its form is unusual: green means it follows the normal rule,
+                                              orange or red means it doesn’t. For example, <em>tener</em> is
+                                              orange for <em>yo</em> (<em>tengo</em>) but green for
+                                              <em>nosotros</em> (<em>tenemos</em>).</p>
+                                            <div class="checks" id="clue"></div>
+                                        </div>
+                                    </details>
+
+                                    <details class="section">
+                                        <summary>
+                                            <span class="section-name">Progress</span>
+                                            <span class="section-state" id="state-focus"></span>
+                                        </summary>
+                                        <div class="section-body">
+                                            <p class="hint" id="progress-hint"></p>
+                                            <div class="checks" id="focus"></div>
+                                            <div class="pattern-actions">
+                                                <button class="linkish" id="progress-reset" type="button">reset progress for this language</button>
+                                            </div>
+                                        </div>
+                                    </details>
+
                                     <details class="section" hidden>
                                         <summary>
                                             <span class="section-name">Patterns</span>
@@ -1098,20 +1102,6 @@
                                     </details>
                                 </div>
                             </details>
-                        </div>
-
-                        <div class="summary" id="summary">
-                            <div class="summary-main">
-                                <span class="summary-count" id="sum-cards">0</span>
-                                <span class="summary-unit">cards</span>
-                            </div>
-                            <div class="summary-detail" id="sum-detail"></div>
-                            <div class="summary-actions">
-                                <button class="secondary" id="resume" type="button" hidden>Resume</button>
-                                <button class="primary" id="start" disabled type="button">Start</button>
-                            </div>
-                            <div class="summary-bar" id="sum-bar"></div>
-                            <div class="summary-progress" id="sum-progress"></div>
                         </div>
                     </section>
 
