@@ -765,10 +765,12 @@ loadConfig().then(async () => {
         }
     }
     const initialParams = new URLSearchParams(window.location.search);
-    const isConjugationReq = initialParams.get('screen') === 'conjugation' ||
-                             initialParams.get('activity') === 'verbs' ||
-                             window.location.pathname.endsWith('/conjugation') ||
-                             window.location.pathname.endsWith('/conjugation/');
+    const isConjugationReq = window.fluencyRoute?.kind !== 'conjugate' && (
+        initialParams.get('screen') === 'conjugation' ||
+        initialParams.get('activity') === 'verbs' ||
+        window.location.pathname.endsWith('/conjugation') ||
+        window.location.pathname.endsWith('/conjugation/')
+    );
     if (isConjugationReq) {
         const verb = initialParams.get('verb');
         setTimeout(() => {

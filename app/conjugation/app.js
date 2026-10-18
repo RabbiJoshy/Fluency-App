@@ -11,7 +11,8 @@
 (function () {
   'use strict';
 
-  var decks = {};
+  window._conjugationDecks = window._conjugationDecks || {};
+  var decks = window._conjugationDecks;
   var deck = null;
 
   var state = {
@@ -59,7 +60,8 @@
   // Drill forms the vocabulary treats as something else (casa, para), built by
   // scripts/build_conjugation_not_verbs.py; a missed card for one of these
   // does not pull its look-alike verb forward.
-  var notVerbs = {};
+  window._conjugationNotVerbs = window._conjugationNotVerbs || {};
+  var notVerbs = window._conjugationNotVerbs;
   window.registerConjugationNotVerbs = function (payload) {
     var words = {};
     (payload.words || []).forEach(function (word) { words[word] = true; });
@@ -1615,11 +1617,13 @@
     }
     var codes = Object.keys(decks);
     if (!codes.length) {
-      var container = $('extraConjugationsContainer') || document.querySelector('main');
-      if (container) {
-        container.innerHTML =
-          '<p class="empty">No deck loaded. Run ' +
-          '<code>scripts/build_conjugation_drill.py</code> first.</p>';
+      if (!window._embeddedConjugation) {
+        var container = $('extraConjugationsContainer') || document.querySelector('main');
+        if (container) {
+          container.innerHTML =
+            '<p class="empty">No deck loaded. Run ' +
+            '<code>scripts/build_conjugation_drill.py</code> first.</p>';
+        }
       }
       return;
     }
