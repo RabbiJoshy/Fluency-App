@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T18:50:00+01:00",
+      "date": "2026-10-18 18:50 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip: app nav reaches the bottom with Bigger text on; More rules lines up with the rule cards",
+      "detail": [
+        "With Bigger text on, Smart Skip turns the page zoom off on desktop, but the left nav still divided its height by 1.15 and stopped 117px short of the bottom (783px of 900). The zoom variable is now reset with it.",
+        "The More rules row and its unfolded rules line up with the text and switches inside the rule cards above."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T18:30:00+01:00",
       "date": "2026-10-18 18:30 BST",
       "agent": "Claude",
@@ -357,19 +368,6 @@
         "Transition seamlessly to full-screen lyrics translation once a song is selected or loaded via Spotify URL.",
         "Reordered the search bar to sit above the Spotify paste link banner across both desktop Extra and modal views.",
         "Added search filtering and language-aware catalogue browsing directly inside desktop Extra."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T12:58:00+01:00",
-      "date": "2026-10-17 12:58 BST",
-      "agent": "Antigravity",
-      "summary": "Clean up Extra workspace: full-screen lyrics translation and remove duplicate titles and navigation",
-      "detail": [
-        "Open lyrics translation full-screen rather than embedding it inside a constrained workspace window.",
-        "Remove duplicate titles, eyebrow context pills, and redundant modal close buttons from Extra workspace.",
-        "Make lyrics translation card description generic ('lyrics of any song') rather than specific to the current artist.",
-        "Document UI guideline in CLAUDE.md to avoid duplicate titles and multi-spot navigation."
       ],
       "commit": "pending"
     }

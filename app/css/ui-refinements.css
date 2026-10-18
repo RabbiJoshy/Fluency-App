@@ -1169,10 +1169,11 @@
   #fastModeModal .smart-skip-switch[aria-checked="true"]::after { transform: translateX(18px); }
 
   /* More rules: a quiet disclosure row; the rules open in place under it. */
+  /* Its text lines up with the text inside the rule cards above it. */
   #fastModeModal .smart-skip-shortcuts > .smart-skip-more-options {
     margin-top: 14px;
     min-height: 44px;
-    padding: 0 4px;
+    padding: 0 19px;
     border: 0;
     border-radius: 8px;
   }
@@ -1180,7 +1181,7 @@
   #fastModeModal .smart-skip-more-options svg { transition: transform 0.15s ease; }
   #fastModeModal .smart-skip-more-options[aria-expanded="true"] svg { transform: rotate(90deg); }
   #fastModeModal .smart-skip-more-rules:not([hidden]) { display: none; }
-  #fastModeModal .smart-skip-more-rules.is-expanded:not([hidden]) { display: block; padding: 0 4px; }
+  #fastModeModal .smart-skip-more-rules.is-expanded:not([hidden]) { display: block; padding: 0 19px; }
   #fastModeModal .smart-skip-more-rules > .smart-skip-shortcut + .smart-skip-shortcut { border-top: 0; }
   #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row { min-height: 42px; }
   #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-name { font-weight: 500; }
@@ -1241,4 +1242,12 @@
   #fastModeModal { --ss-side-w: 300px; --ss-text: 17px; --ss-title: 24px; }
   #fastModeModal .smart-skip-panel .smart-skip-table.has-tag { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 100px 60px; }
   #fastModeModal .smart-skip-panel .smart-skip-table { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 60px; }
+}
+
+/* "Bigger text" zooms the whole page by --ui-zoom, and style.css switches
+   that zoom off while Smart Skip is open on a desktop. The app's left nav
+   still divided its height by --ui-zoom, so on this page it stopped 13% short
+   of the bottom. Resetting the variable too keeps the two in step. */
+@media (min-width: 900px) {
+  html[data-text-size="large"]:has(#fastModeModal:not(.hidden)) { --ui-zoom: 1; }
 }
