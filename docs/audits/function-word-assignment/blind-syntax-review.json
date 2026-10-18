@@ -1,0 +1,254 @@
+[
+  {
+    "example_id": "fresh_sentence_b82fb3864585adf3ddd8bf26f7fde8d4",
+    "patterns": [
+      1
+    ],
+    "reason": "Purpose/type noun detail."
+  },
+  {
+    "example_id": "fresh_sentence_bcbcf924841c4e07003a1d2b7f31be84",
+    "patterns": [
+      1
+    ],
+    "reason": "Skin cells: material/type noun detail."
+  },
+  {
+    "example_id": "fresh_sentence_c9b31346274b84d25ff9d42d9b24c8c8",
+    "patterns": [],
+    "reason": "O que free relative is not noun-antecedent que."
+  },
+  {
+    "example_id": "fresh_sentence_5db9af1f47663caad94ded0238828bb4",
+    "patterns": [],
+    "reason": "Alguém is an indefinite pronoun, outside the strict noun-antecedent formula."
+  },
+  {
+    "example_id": "fresh_sentence_c3954534c91b657f980482ca4c1d22e6",
+    "patterns": [],
+    "reason": "Como se counterfactual comparison, not condition/result."
+  },
+  {
+    "example_id": "fresh_sentence_6a5f0f713085f9ff519ae1744faf5e4d",
+    "patterns": [],
+    "reason": "Impersonal construction, outside the two Portuguese se rows."
+  },
+  {
+    "example_id": "fresh_sentence_b56a43ea9d1df322b70d33af45cc7c66",
+    "patterns": [],
+    "reason": "O que free relative, not article or object o."
+  },
+  {
+    "example_id": "fresh_sentence_df087770d619bb5a5bdce91f51e1f1a2",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_e444b947361d6c7d4bdd142e9804cf58",
+    "patterns": [],
+    "reason": "Nos metemos is first-person-plural pronominal use, not ordinary us object."
+  },
+  {
+    "example_id": "fresh_sentence_de1d4bfc55cba5ebc5321affe2366c9a",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_26b3561a40490e5a9026688bec75a4d3",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_d71d432e543263e47058d2fdc398189c",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_bc028e818538cda8f6681ee9d901403c",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_4af8d94a617593daca6fedfb1918143c",
+    "patterns": [],
+    "reason": "Um pouco is a quantity expression, not ordinary article + noun."
+  },
+  {
+    "example_id": "fresh_sentence_bc35ebd79efe9ae11e0ccb851fc899c6",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_44148065b77194f05295151601ad596e",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_51caa9ed86fbc5903d3b7367e6a130ac",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_4ae0092abdb503c4fdb9c3c21762504f",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_f03565e794f3c382f519ea07fa3c2121",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_b05a5fa322e20ddd0738d8c90ccc54a8",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_5647625c1290146ccf16e245ee571bd9",
+    "patterns": [],
+    "reason": "De hecho fixed expression."
+  },
+  {
+    "example_id": "fresh_sentence_35122bc98333c31d0954814c732baaa4",
+    "patterns": [],
+    "reason": "Time-of-day de is outside listed noun detail meanings."
+  },
+  {
+    "example_id": "fresh_sentence_79eab1f052b7bf124b938d3fc119c310",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_4fdeecc09d6c5aa44dad8f4e06ee2b7a",
+    "patterns": [],
+    "reason": "Dejar que permission clause is outside thought/speech scope."
+  },
+  {
+    "example_id": "fresh_sentence_15068b3203bbec2b2239d24e1a6a3211",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_958ca3f8e4e76b104c6e097eb0d3919c",
+    "patterns": [],
+    "reason": "Context does not resolve reflexive versus passive/impersonal; abstain."
+  },
+  {
+    "example_id": "fresh_sentence_3903aebcbe3c72807d70fed43e0a3420",
+    "patterns": [
+      1
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_6090c7e251458d3f3b6394e440aa2317",
+    "patterns": [],
+    "reason": "A lo grande is an idiom, not adjective nominalisation or object lo."
+  },
+  {
+    "example_id": "fresh_sentence_697e6b114279461b5a64868cb60b59ea",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_d47b419d50e254658016f3af0e69186b",
+    "patterns": [],
+    "reason": "Enfrentarse is pronominal, not ordinary us."
+  },
+  {
+    "example_id": "fresh_sentence_df14afd00594c9586e25c35ffcb6f88c",
+    "patterns": [],
+    "reason": "Personal a before an animate direct object, not destination."
+  },
+  {
+    "example_id": "fresh_sentence_953dd662376a861f861a9e7c5e0b0db6",
+    "patterns": [
+      0
+    ],
+    "reason": "Passive sending to a destination."
+  },
+  {
+    "example_id": "fresh_sentence_568621e939f6d06908f6ecf1b75496b6",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_fe5a7b9d786f6f0e512d07351f6cd845",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_7e94ef991eabe549c4e5053baa86dba3",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_7ea8f1c0f44b183b461c8ecde3357f7d",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_f4afa7198065b93d38a11829de952836",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_600614089b397768a2e6d5a09a9c0124",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_1eeced79d411e39356f24241de2901c6",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_bc55e66a34938874c9563c433a844577",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear displayed syntactic pattern."
+  }
+]

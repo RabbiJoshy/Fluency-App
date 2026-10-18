@@ -1,0 +1,27 @@
+{
+  "sentences": 20,
+  "supported": 11,
+  "assigned": 8,
+  "correct_patterns": 8,
+  "clean_highlights_before_fix": 7,
+  "missed": [
+    {
+      "language": "pt",
+      "word": "de",
+      "sentence": "Ela tem cabelo preto. Ele usa um chapéu de basebol."
+    },
+    {
+      "language": "pt",
+      "word": "se",
+      "sentence": "E pare de se armar em galo, assim que entrar no galinheiro."
+    },
+    {
+      "language": "es",
+      "word": "de",
+      "sentence": "Queremos asegurarnos de que estás bien."
+    }
+  ],
+  "validation_version": "syntax-assignment/v1",
+  "current_version": "syntax-assignment/v1.1",
+  "note": "Small syntax-only sample; v1.1 corrects the trailing-aside highlight, verified by regression rather than an additional unseen sample."
+}

@@ -1,0 +1,3084 @@
+{
+  "versions": {
+    "pt": {
+      "parser": "stanza-pt-default@1.14.0",
+      "dictionary_path": "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/wiktionary/enwiktionary-2026-08-20/kaikki.org-dictionary-Portuguese.jsonl",
+      "dictionary_sha256": "29c17be277879653aa60fc24413ba071e81845b6bb1b1bb7e7828d239796209d",
+      "reflexive_decisions": "Not supplied; labeller default only. This differs from cached historical label provenance."
+    },
+    "es": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "dictionary_path": "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/wiktionary/enwiktionary-2026-09-13/kaikki.org-dictionary-Spanish.jsonl",
+      "dictionary_sha256": "e280eff38a5645ffea018b82e4d94871abdfc2f9f1b528d4c35790308f4b5b39",
+      "reflexive_decisions": "Not supplied; labeller default only. This differs from cached historical label provenance."
+    }
+  },
+  "rows": {
+    "fresh_sentence_896f92a91138f029d3f243825b34f7fc": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          40,
+          42
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Ela",
+            "lemma": "ela",
+            "upos": "PRON",
+            "feats": "Case=Nom|Gender=Fem|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 1,
+            "head": 2,
+            "token": {
+              "text": "Ela",
+              "start_char": 0,
+              "end_char": 3
+            }
+          },
+          {
+            "text": "tem",
+            "lemma": "ter",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 2,
+            "head": 0,
+            "token": {
+              "text": "tem",
+              "start_char": 4,
+              "end_char": 7
+            }
+          },
+          {
+            "text": "cabelo",
+            "lemma": "cabelo",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obj",
+            "id": 3,
+            "head": 2,
+            "token": {
+              "text": "cabelo",
+              "start_char": 8,
+              "end_char": 14
+            }
+          },
+          {
+            "text": "preto",
+            "lemma": "preto",
+            "upos": "ADJ",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "amod",
+            "id": 4,
+            "head": 3,
+            "token": {
+              "text": "preto",
+              "start_char": 15,
+              "end_char": 20
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 5,
+            "head": 2,
+            "token": {
+              "text": ".",
+              "start_char": 20,
+              "end_char": 21
+            }
+          }
+        ],
+        [
+          {
+            "text": "Ele",
+            "lemma": "ele",
+            "upos": "PRON",
+            "feats": "Case=Nom|Gender=Masc|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 1,
+            "head": 2,
+            "token": {
+              "text": "Ele",
+              "start_char": 22,
+              "end_char": 25
+            }
+          },
+          {
+            "text": "usa",
+            "lemma": "usar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 2,
+            "head": 0,
+            "token": {
+              "text": "usa",
+              "start_char": 26,
+              "end_char": 29
+            }
+          },
+          {
+            "text": "um",
+            "lemma": "um",
+            "upos": "DET",
+            "feats": "Definite=Ind|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 3,
+            "head": 4,
+            "token": {
+              "text": "um",
+              "start_char": 30,
+              "end_char": 32
+            }
+          },
+          {
+            "text": "chapéu",
+            "lemma": "chapéu",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obj",
+            "id": 4,
+            "head": 2,
+            "token": {
+              "text": "chapéu",
+              "start_char": 33,
+              "end_char": 39
+            }
+          },
+          {
+            "text": "de",
+            "lemma": "de",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "de",
+              "start_char": 40,
+              "end_char": 42
+            }
+          },
+          {
+            "text": "basebol",
+            "lemma": "basebol",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "nmod",
+            "id": 6,
+            "head": 4,
+            "token": {
+              "text": "basebol",
+              "start_char": 43,
+              "end_char": 50
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 7,
+            "head": 2,
+            "token": {
+              "text": ".",
+              "start_char": 50,
+              "end_char": 51
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_808504b0f757e6b59fa2e8782e69d119": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          17,
+          20
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Preciso",
+            "lemma": "precisar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 1,
+            "head": 0,
+            "token": {
+              "text": "Preciso",
+              "start_char": 0,
+              "end_char": 7
+            }
+          },
+          {
+            "text": "saber",
+            "lemma": "saber",
+            "upos": "VERB",
+            "feats": "VerbForm=Inf",
+            "deprel": "xcomp",
+            "id": 2,
+            "head": 1,
+            "token": {
+              "text": "saber",
+              "start_char": 8,
+              "end_char": 13
+            }
+          },
+          {
+            "text": "em",
+            "lemma": "em",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 3,
+            "head": 5,
+            "token": {
+              "text": "em",
+              "start_char": 14,
+              "end_char": 16
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "DET",
+            "feats": "Gender=Fem|Number=Sing|PronType=Int",
+            "deprel": "det",
+            "id": 4,
+            "head": 5,
+            "token": {
+              "text": "que",
+              "start_char": 17,
+              "end_char": 20
+            }
+          },
+          {
+            "text": "direcção",
+            "lemma": "direcção",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "obl",
+            "id": 5,
+            "head": 7,
+            "token": {
+              "text": "direcção",
+              "start_char": 21,
+              "end_char": 29
+            }
+          },
+          {
+            "text": "se",
+            "lemma": "se",
+            "upos": "PRON",
+            "feats": "Case=Acc|Gender=Fem|Number=Plur|Person=3|PronType=Prs",
+            "deprel": "expl",
+            "id": 6,
+            "head": 7,
+            "token": {
+              "text": "se",
+              "start_char": 30,
+              "end_char": 32
+            }
+          },
+          {
+            "text": "dirigem",
+            "lemma": "dirigir",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Plur|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "ccomp",
+            "id": 7,
+            "head": 2,
+            "token": {
+              "text": "dirigem",
+              "start_char": 33,
+              "end_char": 40
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 8,
+            "head": 1,
+            "token": {
+              "text": ".",
+              "start_char": 40,
+              "end_char": 41
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_74a9eaec5051d0ce773081e43d984474": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          10,
+          12
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "E",
+            "lemma": "e",
+            "upos": "CCONJ",
+            "feats": null,
+            "deprel": "cc",
+            "id": 1,
+            "head": 2,
+            "token": {
+              "text": "E",
+              "start_char": 0,
+              "end_char": 1
+            }
+          },
+          {
+            "text": "pare",
+            "lemma": "parer",
+            "upos": "VERB",
+            "feats": "Mood=Sub|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 2,
+            "head": 0,
+            "token": {
+              "text": "pare",
+              "start_char": 2,
+              "end_char": 6
+            }
+          },
+          {
+            "text": "de",
+            "lemma": "de",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 3,
+            "head": 5,
+            "token": {
+              "text": "de",
+              "start_char": 7,
+              "end_char": 9
+            }
+          },
+          {
+            "text": "se",
+            "lemma": "se",
+            "upos": "PRON",
+            "feats": "Case=Acc|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "expl",
+            "id": 4,
+            "head": 5,
+            "token": {
+              "text": "se",
+              "start_char": 10,
+              "end_char": 12
+            }
+          },
+          {
+            "text": "armar",
+            "lemma": "armar",
+            "upos": "VERB",
+            "feats": "VerbForm=Inf",
+            "deprel": "xcomp",
+            "id": 5,
+            "head": 2,
+            "token": {
+              "text": "armar",
+              "start_char": 13,
+              "end_char": 18
+            }
+          },
+          {
+            "text": "em",
+            "lemma": "em",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 6,
+            "head": 7,
+            "token": {
+              "text": "em",
+              "start_char": 19,
+              "end_char": 21
+            }
+          },
+          {
+            "text": "galo",
+            "lemma": "galo",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obl",
+            "id": 7,
+            "head": 5,
+            "token": {
+              "text": "galo",
+              "start_char": 22,
+              "end_char": 26
+            }
+          },
+          {
+            "text": ",",
+            "lemma": ",",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 8,
+            "head": 5,
+            "token": {
+              "text": ",",
+              "start_char": 26,
+              "end_char": 27
+            }
+          },
+          {
+            "text": "assim",
+            "lemma": "assim",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 9,
+            "head": 11,
+            "token": {
+              "text": "assim",
+              "start_char": 28,
+              "end_char": 33
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "fixed",
+            "id": 10,
+            "head": 9,
+            "token": {
+              "text": "que",
+              "start_char": 34,
+              "end_char": 37
+            }
+          },
+          {
+            "text": "entrar",
+            "lemma": "entrar",
+            "upos": "VERB",
+            "feats": "Number=Sing|Person=3|VerbForm=Inf",
+            "deprel": "advcl",
+            "id": 11,
+            "head": 5,
+            "token": {
+              "text": "entrar",
+              "start_char": 38,
+              "end_char": 44
+            }
+          },
+          {
+            "text": "em",
+            "lemma": "em",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 12,
+            "head": 14,
+            "token": {
+              "text": "no",
+              "start_char": 45,
+              "end_char": 47
+            }
+          },
+          {
+            "text": "o",
+            "lemma": "o",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 13,
+            "head": 14,
+            "token": {
+              "text": "no",
+              "start_char": 45,
+              "end_char": 47
+            }
+          },
+          {
+            "text": "galinheiro",
+            "lemma": "galinheiro",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obl",
+            "id": 14,
+            "head": 11,
+            "token": {
+              "text": "galinheiro",
+              "start_char": 48,
+              "end_char": 58
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 15,
+            "head": 2,
+            "token": {
+              "text": ".",
+              "start_char": 58,
+              "end_char": 59
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_003593a372e3060551e808a32de98415": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          41,
+          42
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Que",
+            "lemma": "que",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 1,
+            "head": 5,
+            "token": {
+              "text": "Que",
+              "start_char": 0,
+              "end_char": 3
+            }
+          },
+          {
+            "text": "inclusive",
+            "lemma": "inclusive",
+            "upos": "ADV",
+            "feats": null,
+            "deprel": "advmod",
+            "id": 2,
+            "head": 5,
+            "token": {
+              "text": "inclusive",
+              "start_char": 4,
+              "end_char": 13
+            }
+          },
+          {
+            "text": "ainda",
+            "lemma": "ainda",
+            "upos": "ADV",
+            "feats": null,
+            "deprel": "advmod",
+            "id": 3,
+            "head": 5,
+            "token": {
+              "text": "ainda",
+              "start_char": 14,
+              "end_char": 19
+            }
+          },
+          {
+            "text": "estão",
+            "lemma": "estar",
+            "upos": "AUX",
+            "feats": "Mood=Ind|Number=Plur|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 4,
+            "head": 5,
+            "token": {
+              "text": "estão",
+              "start_char": 20,
+              "end_char": 25
+            }
+          },
+          {
+            "text": "presos",
+            "lemma": "preso",
+            "upos": "ADJ",
+            "feats": "Gender=Masc|Number=Plur",
+            "deprel": "root",
+            "id": 5,
+            "head": 0,
+            "token": {
+              "text": "presos",
+              "start_char": 26,
+              "end_char": 32
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 6,
+            "head": 5,
+            "token": {
+              "text": ".",
+              "start_char": 32,
+              "end_char": 33
+            }
+          }
+        ],
+        [
+          {
+            "text": "Esse",
+            "lemma": "esse",
+            "upos": "PRON",
+            "feats": "Gender=Masc|Number=Sing|PronType=Dem",
+            "deprel": "nsubj",
+            "id": 1,
+            "head": 5,
+            "token": {
+              "text": "Esse",
+              "start_char": 34,
+              "end_char": 38
+            }
+          },
+          {
+            "text": "é",
+            "lemma": "ser",
+            "upos": "AUX",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 2,
+            "head": 5,
+            "token": {
+              "text": "é",
+              "start_char": 39,
+              "end_char": 40
+            }
+          },
+          {
+            "text": "o",
+            "lemma": "o",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 3,
+            "head": 5,
+            "token": {
+              "text": "o",
+              "start_char": 41,
+              "end_char": 42
+            }
+          },
+          {
+            "text": "meu",
+            "lemma": "meu",
+            "upos": "DET",
+            "feats": "Gender=Masc|Number=Sing|PronType=Prs",
+            "deprel": "det",
+            "id": 4,
+            "head": 5,
+            "token": {
+              "text": "meu",
+              "start_char": 43,
+              "end_char": 46
+            }
+          },
+          {
+            "text": "ponto",
+            "lemma": "ponto",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "root",
+            "id": 5,
+            "head": 0,
+            "token": {
+              "text": "ponto",
+              "start_char": 47,
+              "end_char": 52
+            }
+          },
+          {
+            "text": "de",
+            "lemma": "de",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "compound",
+            "id": 6,
+            "head": 5,
+            "token": {
+              "text": "de",
+              "start_char": 53,
+              "end_char": 55
+            }
+          },
+          {
+            "text": "vista",
+            "lemma": "vista",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "compound",
+            "id": 7,
+            "head": 5,
+            "token": {
+              "text": "vista",
+              "start_char": 56,
+              "end_char": 61
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 8,
+            "head": 5,
+            "token": {
+              "text": ".",
+              "start_char": 61,
+              "end_char": 62
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_bd56ce08906b9373bbd4f5e46262c734": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          14,
+          17
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Está",
+            "lemma": "estar",
+            "upos": "VERB",
+            "feats": "ExtPos=AUX|Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 1,
+            "head": 0,
+            "token": {
+              "text": "Está",
+              "start_char": 0,
+              "end_char": 4
+            }
+          },
+          {
+            "text": "a",
+            "lemma": "a",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 2,
+            "head": 3,
+            "token": {
+              "text": "a",
+              "start_char": 5,
+              "end_char": 6
+            }
+          },
+          {
+            "text": "enviar",
+            "lemma": "enviar",
+            "upos": "VERB",
+            "feats": "VerbForm=Inf",
+            "deprel": "xcomp",
+            "id": 3,
+            "head": 1,
+            "token": {
+              "text": "enviar-nos",
+              "start_char": 7,
+              "end_char": 17
+            }
+          },
+          {
+            "text": "nos",
+            "lemma": "nós",
+            "upos": "PRON",
+            "feats": "Case=Acc|Number=Plur|Person=1|PronType=Prs",
+            "deprel": "iobj",
+            "id": 4,
+            "head": 3,
+            "token": {
+              "text": "enviar-nos",
+              "start_char": 7,
+              "end_char": 17
+            }
+          },
+          {
+            "text": "as",
+            "lemma": "o",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Fem|Number=Plur|PronType=Art",
+            "deprel": "det",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "as",
+              "start_char": 18,
+              "end_char": 20
+            }
+          },
+          {
+            "text": "coordenadas",
+            "lemma": "coordenada",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Plur",
+            "deprel": "obj",
+            "id": 6,
+            "head": 3,
+            "token": {
+              "text": "coordenadas",
+              "start_char": 21,
+              "end_char": 32
+            }
+          },
+          {
+            "text": "agora",
+            "lemma": "agora",
+            "upos": "ADV",
+            "feats": null,
+            "deprel": "advmod",
+            "id": 7,
+            "head": 3,
+            "token": {
+              "text": "agora",
+              "start_char": 33,
+              "end_char": 38
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 8,
+            "head": 3,
+            "token": {
+              "text": ".",
+              "start_char": 38,
+              "end_char": 39
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_f1a484db062917c96363851ed995b85e": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          14,
+          21
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Eu",
+            "lemma": "eu",
+            "upos": "PRON",
+            "feats": "Case=Nom|Gender=Masc|Number=Sing|Person=1|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 1,
+            "head": 3,
+            "token": {
+              "text": "Eu",
+              "start_char": 0,
+              "end_char": 2
+            }
+          },
+          {
+            "text": "era",
+            "lemma": "ser",
+            "upos": "AUX",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Imp|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 2,
+            "head": 3,
+            "token": {
+              "text": "era",
+              "start_char": 3,
+              "end_char": 6
+            }
+          },
+          {
+            "text": "casado",
+            "lemma": "casado",
+            "upos": "ADJ",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "root",
+            "id": 3,
+            "head": 0,
+            "token": {
+              "text": "casado",
+              "start_char": 7,
+              "end_char": 13
+            }
+          },
+          {
+            "text": "em",
+            "lemma": "em",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 4,
+            "head": 6,
+            "token": {
+              "text": "naquele",
+              "start_char": 14,
+              "end_char": 21
+            }
+          },
+          {
+            "text": "aquele",
+            "lemma": "aquele",
+            "upos": "DET",
+            "feats": "Gender=Masc|Number=Sing|PronType=Dem",
+            "deprel": "det",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "naquele",
+              "start_char": 14,
+              "end_char": 21
+            }
+          },
+          {
+            "text": "tempo",
+            "lemma": "tempo",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obl",
+            "id": 6,
+            "head": 3,
+            "token": {
+              "text": "tempo",
+              "start_char": 22,
+              "end_char": 27
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 7,
+            "head": 3,
+            "token": {
+              "text": ".",
+              "start_char": 27,
+              "end_char": 28
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_902e30abedd47de0485cdeb7d042ffc6": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          32,
+          34
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Estou",
+            "lemma": "estar",
+            "upos": "AUX",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 1,
+            "head": 3,
+            "token": {
+              "text": "Estou",
+              "start_char": 0,
+              "end_char": 5
+            }
+          },
+          {
+            "text": "tão",
+            "lemma": "tão",
+            "upos": "ADV",
+            "feats": null,
+            "deprel": "advmod",
+            "id": 2,
+            "head": 3,
+            "token": {
+              "text": "tão",
+              "start_char": 6,
+              "end_char": 9
+            }
+          },
+          {
+            "text": "cansado",
+            "lemma": "cansado",
+            "upos": "ADJ",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "root",
+            "id": 3,
+            "head": 0,
+            "token": {
+              "text": "cansado",
+              "start_char": 10,
+              "end_char": 17
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 4,
+            "head": 3,
+            "token": {
+              "text": ".",
+              "start_char": 17,
+              "end_char": 18
+            }
+          }
+        ],
+        [
+          {
+            "text": "Posso",
+            "lemma": "poder",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 1,
+            "head": 0,
+            "token": {
+              "text": "Posso",
+              "start_char": 19,
+              "end_char": 24
+            }
+          },
+          {
+            "text": "dormir",
+            "lemma": "dormir",
+            "upos": "VERB",
+            "feats": "VerbForm=Inf",
+            "deprel": "xcomp",
+            "id": 2,
+            "head": 1,
+            "token": {
+              "text": "dormir",
+              "start_char": 25,
+              "end_char": 31
+            }
+          },
+          {
+            "text": "um",
+            "lemma": "um",
+            "upos": "DET",
+            "feats": "Definite=Ind|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 3,
+            "head": 4,
+            "token": {
+              "text": "um",
+              "start_char": 32,
+              "end_char": 34
+            }
+          },
+          {
+            "text": "bocado",
+            "lemma": "bocado",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obj",
+            "id": 4,
+            "head": 2,
+            "token": {
+              "text": "bocado",
+              "start_char": 35,
+              "end_char": 41
+            }
+          },
+          {
+            "text": "?",
+            "lemma": "?",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 5,
+            "head": 2,
+            "token": {
+              "text": "?",
+              "start_char": 41,
+              "end_char": 42
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_ddb6770779cf7352f2b82bdcaede9742": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          8,
+          11
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Não",
+            "lemma": "não",
+            "upos": "ADV",
+            "feats": "Polarity=Neg",
+            "deprel": "advmod",
+            "id": 1,
+            "head": 4,
+            "token": {
+              "text": "Não",
+              "start_char": 0,
+              "end_char": 3
+            }
+          },
+          {
+            "text": "foi",
+            "lemma": "ser",
+            "upos": "AUX",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 2,
+            "head": 4,
+            "token": {
+              "text": "foi",
+              "start_char": 4,
+              "end_char": 7
+            }
+          },
+          {
+            "text": "uma",
+            "lemma": "um",
+            "upos": "DET",
+            "feats": "Definite=Ind|Gender=Fem|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 3,
+            "head": 4,
+            "token": {
+              "text": "uma",
+              "start_char": 8,
+              "end_char": 11
+            }
+          },
+          {
+            "text": "pergunta",
+            "lemma": "pergunta",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "root",
+            "id": 4,
+            "head": 0,
+            "token": {
+              "text": "pergunta",
+              "start_char": 12,
+              "end_char": 20
+            }
+          },
+          {
+            "text": ",",
+            "lemma": ",",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": ",",
+              "start_char": 20,
+              "end_char": 21
+            }
+          },
+          {
+            "text": "porra",
+            "lemma": "porra",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "appos",
+            "id": 6,
+            "head": 4,
+            "token": {
+              "text": "porra",
+              "start_char": 22,
+              "end_char": 27
+            }
+          },
+          {
+            "text": "!",
+            "lemma": "!",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 7,
+            "head": 4,
+            "token": {
+              "text": "!",
+              "start_char": 27,
+              "end_char": 28
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_987806375b6565d7719f3dee3cbf9499": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          0,
+          2
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Eu",
+            "lemma": "eu",
+            "upos": "PRON",
+            "feats": "Case=Nom|Gender=Masc|Number=Sing|Person=1|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 1,
+            "head": 2,
+            "token": {
+              "text": "Eu",
+              "start_char": 0,
+              "end_char": 2
+            }
+          },
+          {
+            "text": "acho",
+            "lemma": "achar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 2,
+            "head": 0,
+            "token": {
+              "text": "acho",
+              "start_char": 3,
+              "end_char": 7
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 3,
+            "head": 7,
+            "token": {
+              "text": "que",
+              "start_char": 8,
+              "end_char": 11
+            }
+          },
+          {
+            "text": "ele",
+            "lemma": "ele",
+            "upos": "PRON",
+            "feats": "Case=Nom|Gender=Masc|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 4,
+            "head": 7,
+            "token": {
+              "text": "ele",
+              "start_char": 12,
+              "end_char": 15
+            }
+          },
+          {
+            "text": "é",
+            "lemma": "ser",
+            "upos": "AUX",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 5,
+            "head": 7,
+            "token": {
+              "text": "é",
+              "start_char": 16,
+              "end_char": 17
+            }
+          },
+          {
+            "text": "um",
+            "lemma": "um",
+            "upos": "DET",
+            "feats": "Definite=Ind|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 6,
+            "head": 7,
+            "token": {
+              "text": "um",
+              "start_char": 18,
+              "end_char": 20
+            }
+          },
+          {
+            "text": "cara",
+            "lemma": "cara",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "ccomp",
+            "id": 7,
+            "head": 2,
+            "token": {
+              "text": "cara",
+              "start_char": 21,
+              "end_char": 25
+            }
+          },
+          {
+            "text": "legal",
+            "lemma": "legal",
+            "upos": "ADJ",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "amod",
+            "id": 8,
+            "head": 7,
+            "token": {
+              "text": "legal",
+              "start_char": 26,
+              "end_char": 31
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 9,
+            "head": 2,
+            "token": {
+              "text": ".",
+              "start_char": 31,
+              "end_char": 32
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_24be877c695156d87d6955c7fe3474bc": {
+      "parser": "stanza-pt-default@1.14.0",
+      "spans": [
+        [
+          18,
+          21
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Faz",
+            "lemma": "fazer",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 1,
+            "head": 0,
+            "token": {
+              "text": "Faz",
+              "start_char": 0,
+              "end_char": 3
+            }
+          },
+          {
+            "text": "dois",
+            "lemma": "dois",
+            "upos": "NUM",
+            "feats": "NumType=Card",
+            "deprel": "nummod",
+            "id": 2,
+            "head": 3,
+            "token": {
+              "text": "dois",
+              "start_char": 4,
+              "end_char": 8
+            }
+          },
+          {
+            "text": "anos",
+            "lemma": "ano",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Plur",
+            "deprel": "obj",
+            "id": 3,
+            "head": 1,
+            "token": {
+              "text": "anos",
+              "start_char": 9,
+              "end_char": 13
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 4,
+            "head": 7,
+            "token": {
+              "text": "que",
+              "start_char": 14,
+              "end_char": 17
+            }
+          },
+          {
+            "text": "ela",
+            "lemma": "ela",
+            "upos": "PRON",
+            "feats": "Case=Nom|Gender=Fem|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 5,
+            "head": 7,
+            "token": {
+              "text": "ela",
+              "start_char": 18,
+              "end_char": 21
+            }
+          },
+          {
+            "text": "me",
+            "lemma": "eu",
+            "upos": "PRON",
+            "feats": "Case=Acc|Number=Sing|Person=1|PronType=Prs",
+            "deprel": "obj",
+            "id": 6,
+            "head": 7,
+            "token": {
+              "text": "me",
+              "start_char": 22,
+              "end_char": 24
+            }
+          },
+          {
+            "text": "deixou",
+            "lemma": "deixar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+            "deprel": "ccomp",
+            "id": 7,
+            "head": 1,
+            "token": {
+              "text": "deixou",
+              "start_char": 25,
+              "end_char": 31
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": null,
+            "deprel": "punct",
+            "id": 8,
+            "head": 1,
+            "token": {
+              "text": ".",
+              "start_char": 31,
+              "end_char": 32
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_116b3e374a52493b768c816a7ea38ac2": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          21,
+          23
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Queremos",
+            "lemma": "querer",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Plur|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 1,
+            "head": 0,
+            "token": {
+              "text": "Queremos",
+              "start_char": 0,
+              "end_char": 8
+            }
+          },
+          {
+            "text": "asegurarnos",
+            "lemma": "asegurar yo",
+            "upos": "VERB",
+            "feats": "Case=Acc|Number=Plur|Person=1|PrepCase=Npr|PronType=Prs|Reflex=Yes|VerbForm=Inf",
+            "deprel": "xcomp",
+            "id": 2,
+            "head": 1,
+            "token": {
+              "text": "asegurarnos",
+              "start_char": 9,
+              "end_char": 20
+            }
+          },
+          {
+            "text": "de",
+            "lemma": "de",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "mark",
+            "id": 3,
+            "head": 6,
+            "token": {
+              "text": "de",
+              "start_char": 21,
+              "end_char": 23
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 4,
+            "head": 6,
+            "token": {
+              "text": "que",
+              "start_char": 24,
+              "end_char": 27
+            }
+          },
+          {
+            "text": "estás",
+            "lemma": "estar",
+            "upos": "AUX",
+            "feats": "Mood=Ind|Number=Sing|Person=2|Tense=Pres|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "estás",
+              "start_char": 28,
+              "end_char": 33
+            }
+          },
+          {
+            "text": "bien",
+            "lemma": "bien",
+            "upos": "ADV",
+            "feats": null,
+            "deprel": "ccomp",
+            "id": 6,
+            "head": 2,
+            "token": {
+              "text": "bien",
+              "start_char": 34,
+              "end_char": 38
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": "PunctType=Peri",
+            "deprel": "punct",
+            "id": 7,
+            "head": 1,
+            "token": {
+              "text": ".",
+              "start_char": 38,
+              "end_char": 39
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_834ac1727d1d4b3bbd1edb1662209f5f": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          21,
+          24
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Por",
+            "lemma": "por",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "advmod",
+            "id": 1,
+            "head": 6,
+            "token": {
+              "text": "Por",
+              "start_char": 0,
+              "end_char": 3
+            }
+          },
+          {
+            "text": "desgracia",
+            "lemma": "desgracia",
+            "upos": "NOUN",
+            "feats": null,
+            "deprel": "fixed",
+            "id": 2,
+            "head": 1,
+            "token": {
+              "text": "desgracia",
+              "start_char": 4,
+              "end_char": 13
+            }
+          },
+          {
+            "text": ",",
+            "lemma": ",",
+            "upos": "PUNCT",
+            "feats": "PunctType=Comm",
+            "deprel": "punct",
+            "id": 3,
+            "head": 1,
+            "token": {
+              "text": ",",
+              "start_char": 13,
+              "end_char": 14
+            }
+          },
+          {
+            "text": "tengo",
+            "lemma": "tener",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 4,
+            "head": 0,
+            "token": {
+              "text": "tengo",
+              "start_char": 15,
+              "end_char": 20
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "cc",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "que",
+              "start_char": 21,
+              "end_char": 24
+            }
+          },
+          {
+            "text": "madrugar",
+            "lemma": "madrugar",
+            "upos": "VERB",
+            "feats": "VerbForm=Inf",
+            "deprel": "conj",
+            "id": 6,
+            "head": 4,
+            "token": {
+              "text": "madrugar",
+              "start_char": 25,
+              "end_char": 33
+            }
+          },
+          {
+            "text": "todos",
+            "lemma": "todo",
+            "upos": "DET",
+            "feats": "Gender=Masc|Number=Plur|PronType=Tot",
+            "deprel": "det",
+            "id": 7,
+            "head": 8,
+            "token": {
+              "text": "todos",
+              "start_char": 34,
+              "end_char": 39
+            }
+          },
+          {
+            "text": "los",
+            "lemma": "el",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Masc|Number=Plur|PronType=Art",
+            "deprel": "det",
+            "id": 8,
+            "head": 9,
+            "token": {
+              "text": "los",
+              "start_char": 40,
+              "end_char": 43
+            }
+          },
+          {
+            "text": "días",
+            "lemma": "día",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Plur",
+            "deprel": "obl",
+            "id": 9,
+            "head": 6,
+            "token": {
+              "text": "días",
+              "start_char": 44,
+              "end_char": 48
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": "PunctType=Peri",
+            "deprel": "punct",
+            "id": 10,
+            "head": 4,
+            "token": {
+              "text": ".",
+              "start_char": 48,
+              "end_char": 49
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_26a9129cf1c3b71468f607d1d9b4488e": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          15,
+          17
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "La",
+            "lemma": "el",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Fem|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 1,
+            "head": 2,
+            "token": {
+              "text": "La",
+              "start_char": 0,
+              "end_char": 2
+            }
+          },
+          {
+            "text": "computadora",
+            "lemma": "computadora",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "nsubj",
+            "id": 2,
+            "head": 4,
+            "token": {
+              "text": "computadora",
+              "start_char": 3,
+              "end_char": 14
+            }
+          },
+          {
+            "text": "se",
+            "lemma": "él",
+            "upos": "PRON",
+            "feats": "Case=Acc|Person=3|PrepCase=Npr|PronType=Prs|Reflex=Yes",
+            "deprel": "expl:pv",
+            "id": 3,
+            "head": 4,
+            "token": {
+              "text": "se",
+              "start_char": 15,
+              "end_char": 17
+            }
+          },
+          {
+            "text": "apagará",
+            "lemma": "apagar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Fut|VerbForm=Fin",
+            "deprel": "root",
+            "id": 4,
+            "head": 0,
+            "token": {
+              "text": "apagará",
+              "start_char": 18,
+              "end_char": 25
+            }
+          },
+          {
+            "text": "en",
+            "lemma": "en",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 5,
+            "head": 7,
+            "token": {
+              "text": "en",
+              "start_char": 26,
+              "end_char": 28
+            }
+          },
+          {
+            "text": "unos",
+            "lemma": "uno",
+            "upos": "DET",
+            "feats": "Definite=Ind|Gender=Masc|Number=Plur|PronType=Art",
+            "deprel": "det",
+            "id": 6,
+            "head": 7,
+            "token": {
+              "text": "unos",
+              "start_char": 29,
+              "end_char": 33
+            }
+          },
+          {
+            "text": "segundos",
+            "lemma": "segundo",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Plur",
+            "deprel": "obl",
+            "id": 7,
+            "head": 4,
+            "token": {
+              "text": "segundos",
+              "start_char": 34,
+              "end_char": 42
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": "PunctType=Peri",
+            "deprel": "punct",
+            "id": 8,
+            "head": 4,
+            "token": {
+              "text": ".",
+              "start_char": 42,
+              "end_char": 43
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_b68fa2d4a12b5d1bf6bf9b22b001cc95": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          18,
+          20
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Es",
+            "lemma": "ser",
+            "upos": "AUX",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 1,
+            "head": 3,
+            "token": {
+              "text": "Es",
+              "start_char": 0,
+              "end_char": 2
+            }
+          },
+          {
+            "text": "más",
+            "lemma": "más",
+            "upos": "ADV",
+            "feats": "Degree=Cmp",
+            "deprel": "advmod",
+            "id": 2,
+            "head": 3,
+            "token": {
+              "text": "más",
+              "start_char": 3,
+              "end_char": 6
+            }
+          },
+          {
+            "text": "difícil",
+            "lemma": "difícil",
+            "upos": "ADJ",
+            "feats": "Number=Sing",
+            "deprel": "root",
+            "id": 3,
+            "head": 0,
+            "token": {
+              "text": "difícil",
+              "start_char": 7,
+              "end_char": 14
+            }
+          },
+          {
+            "text": "de",
+            "lemma": "de",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "mark",
+            "id": 4,
+            "head": 7,
+            "token": {
+              "text": "de",
+              "start_char": 15,
+              "end_char": 17
+            }
+          },
+          {
+            "text": "lo",
+            "lemma": "él",
+            "upos": "PRON",
+            "feats": "Case=Acc|Definite=Def|Gender=Masc|Number=Sing|Person=3|PrepCase=Npr|PronType=Prs",
+            "deprel": "det",
+            "id": 5,
+            "head": 7,
+            "token": {
+              "text": "lo",
+              "start_char": 18,
+              "end_char": 20
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "PRON",
+            "feats": "PronType=Int,Rel",
+            "deprel": "obj",
+            "id": 6,
+            "head": 7,
+            "token": {
+              "text": "que",
+              "start_char": 21,
+              "end_char": 24
+            }
+          },
+          {
+            "text": "pensaba",
+            "lemma": "pensar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Imp|VerbForm=Fin",
+            "deprel": "advcl",
+            "id": 7,
+            "head": 3,
+            "token": {
+              "text": "pensaba",
+              "start_char": 25,
+              "end_char": 32
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": "PunctType=Peri",
+            "deprel": "punct",
+            "id": 8,
+            "head": 3,
+            "token": {
+              "text": ".",
+              "start_char": 32,
+              "end_char": 33
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_86d679fb5a3483c0ea62381941e28de8": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          43,
+          46
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "La",
+            "lemma": "el",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Fem|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 1,
+            "head": 2,
+            "token": {
+              "text": "La",
+              "start_char": 0,
+              "end_char": 2
+            }
+          },
+          {
+            "text": "conquista",
+            "lemma": "conquista",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "nsubj",
+            "id": 2,
+            "head": 10,
+            "token": {
+              "text": "conquista",
+              "start_char": 3,
+              "end_char": 12
+            }
+          },
+          {
+            "text": "de",
+            "lemma": "de",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 3,
+            "head": 6,
+            "token": {
+              "text": "de",
+              "start_char": 13,
+              "end_char": 15
+            }
+          },
+          {
+            "text": "la",
+            "lemma": "el",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Fem|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 4,
+            "head": 6,
+            "token": {
+              "text": "la",
+              "start_char": 16,
+              "end_char": 18
+            }
+          },
+          {
+            "text": "famosa",
+            "lemma": "famoso",
+            "upos": "ADJ",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "amod",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "famosa",
+              "start_char": 19,
+              "end_char": 25
+            }
+          },
+          {
+            "text": "Placa",
+            "lemma": "Placa",
+            "upos": "PROPN",
+            "feats": null,
+            "deprel": "nmod",
+            "id": 6,
+            "head": 2,
+            "token": {
+              "text": "Placa",
+              "start_char": 26,
+              "end_char": 31
+            }
+          },
+          {
+            "text": "del",
+            "lemma": "del",
+            "upos": "ADP",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "case",
+            "id": 7,
+            "head": 8,
+            "token": {
+              "text": "del",
+              "start_char": 32,
+              "end_char": 35
+            }
+          },
+          {
+            "text": "Diablo",
+            "lemma": "Diablo",
+            "upos": "PROPN",
+            "feats": null,
+            "deprel": "flat",
+            "id": 8,
+            "head": 6,
+            "token": {
+              "text": "Diablo",
+              "start_char": 36,
+              "end_char": 42
+            }
+          },
+          {
+            "text": "nos",
+            "lemma": "yo",
+            "upos": "PRON",
+            "feats": "Case=Dat|Number=Plur|Person=1|PrepCase=Npr|PronType=Prs",
+            "deprel": "iobj",
+            "id": 9,
+            "head": 10,
+            "token": {
+              "text": "nos",
+              "start_char": 43,
+              "end_char": 46
+            }
+          },
+          {
+            "text": "dio",
+            "lemma": "dar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+            "deprel": "root",
+            "id": 10,
+            "head": 0,
+            "token": {
+              "text": "dio",
+              "start_char": 47,
+              "end_char": 50
+            }
+          },
+          {
+            "text": "a",
+            "lemma": "a",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 11,
+            "head": 12,
+            "token": {
+              "text": "a",
+              "start_char": 51,
+              "end_char": 52
+            }
+          },
+          {
+            "text": "ambos",
+            "lemma": "ambos",
+            "upos": "NUM",
+            "feats": "Gender=Masc|NumType=Card|Number=Plur",
+            "deprel": "obj",
+            "id": 12,
+            "head": 10,
+            "token": {
+              "text": "ambos",
+              "start_char": 53,
+              "end_char": 58
+            }
+          },
+          {
+            "text": "fama",
+            "lemma": "fama",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "obj",
+            "id": 13,
+            "head": 10,
+            "token": {
+              "text": "fama",
+              "start_char": 59,
+              "end_char": 63
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": "PunctType=Peri",
+            "deprel": "punct",
+            "id": 14,
+            "head": 10,
+            "token": {
+              "text": ".",
+              "start_char": 63,
+              "end_char": 64
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_6c3b59531d59c8b8829202ec27dcb1c0": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          45,
+          47
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Si",
+            "lemma": "si",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 1,
+            "head": 2,
+            "token": {
+              "text": "Si",
+              "start_char": 0,
+              "end_char": 2
+            }
+          },
+          {
+            "text": "encuentro",
+            "lemma": "encontrar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "advcl",
+            "id": 2,
+            "head": 8,
+            "token": {
+              "text": "encuentro",
+              "start_char": 3,
+              "end_char": 12
+            }
+          },
+          {
+            "text": "quien",
+            "lemma": "quien",
+            "upos": "PRON",
+            "feats": "Number=Sing|PronType=Int,Rel",
+            "deprel": "nsubj",
+            "id": 3,
+            "head": 4,
+            "token": {
+              "text": "quien",
+              "start_char": 13,
+              "end_char": 18
+            }
+          },
+          {
+            "text": "mató",
+            "lemma": "matar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+            "deprel": "ccomp",
+            "id": 4,
+            "head": 2,
+            "token": {
+              "text": "mató",
+              "start_char": 19,
+              "end_char": 23
+            }
+          },
+          {
+            "text": "a",
+            "lemma": "a",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "a",
+              "start_char": 24,
+              "end_char": 25
+            }
+          },
+          {
+            "text": "Babish",
+            "lemma": "Babish",
+            "upos": "PROPN",
+            "feats": null,
+            "deprel": "obj",
+            "id": 6,
+            "head": 4,
+            "token": {
+              "text": "Babish",
+              "start_char": 26,
+              "end_char": 32
+            }
+          },
+          {
+            "text": ",",
+            "lemma": ",",
+            "upos": "PUNCT",
+            "feats": "PunctType=Comm",
+            "deprel": "punct",
+            "id": 7,
+            "head": 2,
+            "token": {
+              "text": ",",
+              "start_char": 32,
+              "end_char": 33
+            }
+          },
+          {
+            "text": "encontraré",
+            "lemma": "encontrar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Fut|VerbForm=Fin",
+            "deprel": "root",
+            "id": 8,
+            "head": 0,
+            "token": {
+              "text": "encontraré",
+              "start_char": 34,
+              "end_char": 44
+            }
+          },
+          {
+            "text": "al",
+            "lemma": "al",
+            "upos": "ADP",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "case",
+            "id": 9,
+            "head": 12,
+            "token": {
+              "text": "al",
+              "start_char": 45,
+              "end_char": 47
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "PRON",
+            "feats": "PronType=Int,Rel",
+            "deprel": "nsubj",
+            "id": 10,
+            "head": 12,
+            "token": {
+              "text": "que",
+              "start_char": 48,
+              "end_char": 51
+            }
+          },
+          {
+            "text": "me",
+            "lemma": "yo",
+            "upos": "PRON",
+            "feats": "Case=Dat|Number=Sing|Person=1|PrepCase=Npr|PronType=Prs",
+            "deprel": "iobj",
+            "id": 11,
+            "head": 12,
+            "token": {
+              "text": "me",
+              "start_char": 52,
+              "end_char": 54
+            }
+          },
+          {
+            "text": "hizo",
+            "lemma": "hacer",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+            "deprel": "ccomp",
+            "id": 12,
+            "head": 8,
+            "token": {
+              "text": "hizo",
+              "start_char": 55,
+              "end_char": 59
+            }
+          },
+          {
+            "text": "esto",
+            "lemma": "este",
+            "upos": "PRON",
+            "feats": "Number=Sing|PronType=Dem",
+            "deprel": "obj",
+            "id": 13,
+            "head": 12,
+            "token": {
+              "text": "esto",
+              "start_char": 60,
+              "end_char": 64
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": "PunctType=Peri",
+            "deprel": "punct",
+            "id": 14,
+            "head": 8,
+            "token": {
+              "text": ".",
+              "start_char": 64,
+              "end_char": 65
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_1033896fe42c6a7158c0e92eab0accb7": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          11,
+          13
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Él",
+            "lemma": "él",
+            "upos": "PRON",
+            "feats": "Case=Acc,Nom|Gender=Masc|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 1,
+            "head": 2,
+            "token": {
+              "text": "Él",
+              "start_char": 0,
+              "end_char": 2
+            }
+          },
+          {
+            "text": "vive",
+            "lemma": "vivir",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 2,
+            "head": 0,
+            "token": {
+              "text": "vive",
+              "start_char": 3,
+              "end_char": 7
+            }
+          },
+          {
+            "text": "en",
+            "lemma": "en",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 3,
+            "head": 5,
+            "token": {
+              "text": "en",
+              "start_char": 8,
+              "end_char": 10
+            }
+          },
+          {
+            "text": "el",
+            "lemma": "el",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 4,
+            "head": 5,
+            "token": {
+              "text": "el",
+              "start_char": 11,
+              "end_char": 13
+            }
+          },
+          {
+            "text": "bosque",
+            "lemma": "bosque",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obl",
+            "id": 5,
+            "head": 2,
+            "token": {
+              "text": "bosque",
+              "start_char": 14,
+              "end_char": 20
+            }
+          },
+          {
+            "text": "solo",
+            "lemma": "solo",
+            "upos": "ADJ",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "amod",
+            "id": 6,
+            "head": 5,
+            "token": {
+              "text": "solo",
+              "start_char": 21,
+              "end_char": 25
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": "PunctType=Peri",
+            "deprel": "punct",
+            "id": 7,
+            "head": 2,
+            "token": {
+              "text": ".",
+              "start_char": 25,
+              "end_char": 26
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_2ba233d8a4e024c21a0bbde9237e9614": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          31,
+          33
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Dylan",
+            "lemma": "Dylan",
+            "upos": "PROPN",
+            "feats": null,
+            "deprel": "dep",
+            "id": 1,
+            "head": 5,
+            "token": {
+              "text": "Dylan",
+              "start_char": 0,
+              "end_char": 5
+            }
+          },
+          {
+            "text": ",",
+            "lemma": ",",
+            "upos": "PUNCT",
+            "feats": "PunctType=Comm",
+            "deprel": "punct",
+            "id": 2,
+            "head": 1,
+            "token": {
+              "text": ",",
+              "start_char": 5,
+              "end_char": 6
+            }
+          },
+          {
+            "text": "este",
+            "lemma": "este",
+            "upos": "DET",
+            "feats": "Gender=Masc|Number=Sing|PronType=Dem",
+            "deprel": "det",
+            "id": 3,
+            "head": 4,
+            "token": {
+              "text": "este",
+              "start_char": 7,
+              "end_char": 11
+            }
+          },
+          {
+            "text": "cargamento",
+            "lemma": "cargamento",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "nsubj",
+            "id": 4,
+            "head": 5,
+            "token": {
+              "text": "cargamento",
+              "start_char": 12,
+              "end_char": 22
+            }
+          },
+          {
+            "text": "va",
+            "lemma": "ir",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 5,
+            "head": 0,
+            "token": {
+              "text": "va",
+              "start_char": 23,
+              "end_char": 25
+            }
+          },
+          {
+            "text": "para",
+            "lemma": "para",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 6,
+            "head": 8,
+            "token": {
+              "text": "para",
+              "start_char": 26,
+              "end_char": 30
+            }
+          },
+          {
+            "text": "la",
+            "lemma": "el",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Fem|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 7,
+            "head": 8,
+            "token": {
+              "text": "la",
+              "start_char": 31,
+              "end_char": 33
+            }
+          },
+          {
+            "text": "63",
+            "lemma": "63",
+            "upos": "NUM",
+            "feats": "NumForm=Digit|NumType=Card",
+            "deprel": "obl",
+            "id": 8,
+            "head": 5,
+            "token": {
+              "text": "63",
+              "start_char": 34,
+              "end_char": 36
+            }
+          },
+          {
+            "text": "y",
+            "lemma": "y",
+            "upos": "CCONJ",
+            "feats": null,
+            "deprel": "cc",
+            "id": 9,
+            "head": 10,
+            "token": {
+              "text": "y",
+              "start_char": 37,
+              "end_char": 38
+            }
+          },
+          {
+            "text": "6",
+            "lemma": "6",
+            "upos": "NUM",
+            "feats": "NumForm=Digit|NumType=Card",
+            "deprel": "conj",
+            "id": 10,
+            "head": 8,
+            "token": {
+              "text": "6",
+              "start_char": 39,
+              "end_char": 40
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_3614e7b9584e1b743966135cc9897a19": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          13,
+          15
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Deje",
+            "lemma": "deje",
+            "upos": "VERB",
+            "feats": "Mood=Imp|Number=Sing|Person=3|VerbForm=Fin",
+            "deprel": "root",
+            "id": 1,
+            "head": 0,
+            "token": {
+              "text": "Deje",
+              "start_char": 0,
+              "end_char": 4
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 2,
+            "head": 6,
+            "token": {
+              "text": "que",
+              "start_char": 5,
+              "end_char": 8
+            }
+          },
+          {
+            "text": "sea",
+            "lemma": "ser",
+            "upos": "AUX",
+            "feats": "Mood=Sub|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 3,
+            "head": 6,
+            "token": {
+              "text": "sea",
+              "start_char": 9,
+              "end_char": 12
+            }
+          },
+          {
+            "text": "yo",
+            "lemma": "yo",
+            "upos": "PRON",
+            "feats": "Case=Nom|Number=Sing|Person=1|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 4,
+            "head": 6,
+            "token": {
+              "text": "yo",
+              "start_char": 13,
+              "end_char": 15
+            }
+          },
+          {
+            "text": "el",
+            "lemma": "el",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "el",
+              "start_char": 16,
+              "end_char": 18
+            }
+          },
+          {
+            "text": "hombre",
+            "lemma": "hombre",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "ccomp",
+            "id": 6,
+            "head": 1,
+            "token": {
+              "text": "hombre",
+              "start_char": 19,
+              "end_char": 25
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "PRON",
+            "feats": "PronType=Int,Rel",
+            "deprel": "nsubj",
+            "id": 7,
+            "head": 9,
+            "token": {
+              "text": "que",
+              "start_char": 26,
+              "end_char": 29
+            }
+          },
+          {
+            "text": "le",
+            "lemma": "él",
+            "upos": "PRON",
+            "feats": "Case=Dat|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "obj",
+            "id": 8,
+            "head": 9,
+            "token": {
+              "text": "le",
+              "start_char": 30,
+              "end_char": 32
+            }
+          },
+          {
+            "text": "saque",
+            "lemma": "sacar",
+            "upos": "VERB",
+            "feats": "Mood=Sub|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "acl",
+            "id": 9,
+            "head": 6,
+            "token": {
+              "text": "saque",
+              "start_char": 33,
+              "end_char": 38
+            }
+          },
+          {
+            "text": "del",
+            "lemma": "del",
+            "upos": "ADP",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "case",
+            "id": 10,
+            "head": 11,
+            "token": {
+              "text": "del",
+              "start_char": 39,
+              "end_char": 42
+            }
+          },
+          {
+            "text": "pozo",
+            "lemma": "pozo",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obl",
+            "id": 11,
+            "head": 9,
+            "token": {
+              "text": "pozo",
+              "start_char": 43,
+              "end_char": 47
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": "PunctType=Peri",
+            "deprel": "punct",
+            "id": 12,
+            "head": 1,
+            "token": {
+              "text": ".",
+              "start_char": 47,
+              "end_char": 48
+            }
+          }
+        ]
+      ]
+    },
+    "fresh_sentence_53cb2d0adfff9b9de60e1feccab22459": {
+      "parser": "es_dep_news_trf@3.8.0",
+      "spans": [
+        [
+          21,
+          23
+        ]
+      ],
+      "sentences": [
+        [
+          {
+            "text": "Quiero",
+            "lemma": "querer",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "obl",
+            "id": 1,
+            "head": 4,
+            "token": {
+              "text": "Quiero",
+              "start_char": 0,
+              "end_char": 6
+            }
+          },
+          {
+            "text": "decir",
+            "lemma": "decir",
+            "upos": "VERB",
+            "feats": "VerbForm=Inf",
+            "deprel": "xcomp",
+            "id": 2,
+            "head": 1,
+            "token": {
+              "text": "decir",
+              "start_char": 7,
+              "end_char": 12
+            }
+          },
+          {
+            "text": ",",
+            "lemma": ",",
+            "upos": "PUNCT",
+            "feats": "PunctType=Comm",
+            "deprel": "punct",
+            "id": 3,
+            "head": 1,
+            "token": {
+              "text": ",",
+              "start_char": 12,
+              "end_char": 13
+            }
+          },
+          {
+            "text": "fuiste",
+            "lemma": "ir",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=2|Tense=Past|VerbForm=Fin",
+            "deprel": "root",
+            "id": 4,
+            "head": 0,
+            "token": {
+              "text": "fuiste",
+              "start_char": 14,
+              "end_char": 20
+            }
+          },
+          {
+            "text": "tú",
+            "lemma": "tú",
+            "upos": "PRON",
+            "feats": "Case=Nom|Number=Sing|Person=2|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 5,
+            "head": 4,
+            "token": {
+              "text": "tú",
+              "start_char": 21,
+              "end_char": 23
+            }
+          },
+          {
+            "text": "quien",
+            "lemma": "quien",
+            "upos": "PRON",
+            "feats": "Number=Sing|PronType=Int,Rel",
+            "deprel": "nsubj",
+            "id": 6,
+            "head": 7,
+            "token": {
+              "text": "quien",
+              "start_char": 24,
+              "end_char": 29
+            }
+          },
+          {
+            "text": "sugirió",
+            "lemma": "sugerir",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+            "deprel": "ccomp",
+            "id": 7,
+            "head": 4,
+            "token": {
+              "text": "sugirió",
+              "start_char": 30,
+              "end_char": 37
+            }
+          },
+          {
+            "text": "que",
+            "lemma": "que",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "mark",
+            "id": 8,
+            "head": 10,
+            "token": {
+              "text": "que",
+              "start_char": 38,
+              "end_char": 41
+            }
+          },
+          {
+            "text": "fuera",
+            "lemma": "ser",
+            "upos": "AUX",
+            "feats": "Mood=Sub|Number=Sing|Person=3|Tense=Imp|VerbForm=Fin",
+            "deprel": "cop",
+            "id": 9,
+            "head": 10,
+            "token": {
+              "text": "fuera",
+              "start_char": 42,
+              "end_char": 47
+            }
+          },
+          {
+            "text": "sincero",
+            "lemma": "sincero",
+            "upos": "ADJ",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "ccomp",
+            "id": 10,
+            "head": 7,
+            "token": {
+              "text": "sincero",
+              "start_char": 48,
+              "end_char": 55
+            }
+          },
+          {
+            "text": "con",
+            "lemma": "con",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 11,
+            "head": 12,
+            "token": {
+              "text": "con",
+              "start_char": 56,
+              "end_char": 59
+            }
+          },
+          {
+            "text": "ella",
+            "lemma": "él",
+            "upos": "PRON",
+            "feats": "Case=Acc,Nom|Gender=Fem|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "nmod",
+            "id": 12,
+            "head": 10,
+            "token": {
+              "text": "ella",
+              "start_char": 60,
+              "end_char": 64
+            }
+          },
+          {
+            "text": ".",
+            "lemma": ".",
+            "upos": "PUNCT",
+            "feats": "PunctType=Peri",
+            "deprel": "punct",
+            "id": 13,
+            "head": 4,
+            "token": {
+              "text": ".",
+              "start_char": 64,
+              "end_char": 65
+            }
+          }
+        ]
+      ]
+    }
+  }
+}

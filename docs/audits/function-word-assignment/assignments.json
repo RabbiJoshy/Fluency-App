@@ -1,0 +1,1172 @@
+{
+  "schema": "function-word-assignments/v1",
+  "matcher_version": "syntax-assignment/v1.1",
+  "input_hashes": {
+    "docs/audits/function-word-assignment/final-check/predictions.json": "9871a354faedc3cff11822ec126b76242fe0b81b34a1792e40e3fa5e92792fb9",
+    "docs/audits/function-word-assignment/final-check/parses.json": "9e22ba993d8060144bb2a3303c20f4bf73fcb953c915ef505ffbbe8907f1def5"
+  },
+  "rows": [
+    {
+      "language": "pt",
+      "word": "de",
+      "example_id": "fresh_sentence_896f92a91138f029d3f243825b34f7fc",
+      "sentence": "Ela tem cabelo preto. Ele usa um chapéu de basebol.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "Noun attachment alone cannot establish the ownership/contents/material/purpose scope of this card.",
+        "evidence": {
+          "focus": {
+            "text": "de",
+            "lemma": "de",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "case",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "de",
+              "start_char": 40,
+              "end_char": 42
+            }
+          },
+          "head": {
+            "text": "basebol",
+            "lemma": "basebol",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "nmod",
+            "id": 6,
+            "head": 4,
+            "token": {
+              "text": "basebol",
+              "start_char": 43,
+              "end_char": 50
+            }
+          },
+          "governor": {
+            "text": "chapéu",
+            "lemma": "chapéu",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obj",
+            "id": 4,
+            "head": 2,
+            "token": {
+              "text": "chapéu",
+              "start_char": 33,
+              "end_char": 39
+            }
+          },
+          "parser": "stanza-pt-default@1.14.0"
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          40,
+          42
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "word": "que",
+      "example_id": "fresh_sentence_808504b0f757e6b59fa2e8782e69d119",
+      "sentence": "Preciso saber em que direcção se dirigem.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "Conjunction label lacks a matching complement-clause attachment.",
+        "evidence": {
+          "focus": {
+            "text": "que",
+            "lemma": "que",
+            "upos": "DET",
+            "feats": "Gender=Fem|Number=Sing|PronType=Int",
+            "deprel": "det",
+            "id": 4,
+            "head": 5,
+            "token": {
+              "text": "que",
+              "start_char": 17,
+              "end_char": 20
+            }
+          },
+          "head": {
+            "text": "direcção",
+            "lemma": "direcção",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "obl",
+            "id": 5,
+            "head": 7,
+            "token": {
+              "text": "direcção",
+              "start_char": 21,
+              "end_char": 29
+            }
+          },
+          "governor": {
+            "text": "dirigem",
+            "lemma": "dirigir",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Plur|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "ccomp",
+            "id": 7,
+            "head": 2,
+            "token": {
+              "text": "dirigem",
+              "start_char": 33,
+              "end_char": 40
+            }
+          },
+          "parser": "stanza-pt-default@1.14.0"
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          17,
+          20
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "word": "se",
+      "example_id": "fresh_sentence_74a9eaec5051d0ce773081e43d984474",
+      "sentence": "E pare de se armar em galo, assim que entrar no galinheiro.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "Se needs agreement, valency and reflexive/passive checks; parser-label conflict is unresolved.",
+        "evidence": {
+          "focus": {
+            "text": "se",
+            "lemma": "se",
+            "upos": "PRON",
+            "feats": "Case=Acc|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "expl",
+            "id": 4,
+            "head": 5,
+            "token": {
+              "text": "se",
+              "start_char": 10,
+              "end_char": 12
+            }
+          },
+          "head": {
+            "text": "armar",
+            "lemma": "armar",
+            "upos": "VERB",
+            "feats": "VerbForm=Inf",
+            "deprel": "xcomp",
+            "id": 5,
+            "head": 2,
+            "token": {
+              "text": "armar",
+              "start_char": 13,
+              "end_char": 18
+            }
+          },
+          "governor": {
+            "text": "pare",
+            "lemma": "parer",
+            "upos": "VERB",
+            "feats": "Mood=Sub|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 2,
+            "head": 0,
+            "token": {
+              "text": "pare",
+              "start_char": 2,
+              "end_char": 6
+            }
+          },
+          "parser": "stanza-pt-default@1.14.0"
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          10,
+          12
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "word": "o",
+      "example_id": "fresh_sentence_003593a372e3060551e808a32de98415",
+      "sentence": "Que inclusive ainda estão presos. Esse é o meu ponto de vista.",
+      "assignment": {
+        "status": "candidate",
+        "pattern": 0,
+        "chunks": [
+          {
+            "slot": "connector",
+            "start": 41,
+            "end": 42,
+            "text": "o"
+          },
+          {
+            "slot": "c",
+            "start": 43,
+            "end": 61,
+            "text": "meu ponto de vista"
+          }
+        ],
+        "reason": "Registered determiner surface and noun attachment agree.",
+        "evidence": {
+          "parser": "stanza-pt-default@1.14.0",
+          "focus": {
+            "text": "o",
+            "lemma": "o",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 3,
+            "head": 5,
+            "token": {
+              "text": "o",
+              "start_char": 41,
+              "end_char": 42
+            }
+          },
+          "head": {
+            "text": "ponto",
+            "lemma": "ponto",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "root",
+            "id": 5,
+            "head": 0,
+            "token": {
+              "text": "ponto",
+              "start_char": 47,
+              "end_char": 52
+            }
+          }
+        },
+        "pattern_id": "pt:o:0",
+        "targetHTML": "Que inclusive ainda estão presos. Esse é <span class=\"fw-token-connector\">o</span> <span class=\"fw-token-c\">meu ponto de vista</span>.",
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          41,
+          42
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "word": "nos",
+      "example_id": "fresh_sentence_bd56ce08906b9373bbd4f5e46262c734",
+      "sentence": "Está a enviar-nos as coordenadas agora.",
+      "assignment": {
+        "status": "abstain",
+        "pattern": null,
+        "chunks": [],
+        "reason": "Merged verb/clitic token does not establish the displayed before-verb order.",
+        "evidence": {
+          "parser": "stanza-pt-default@1.14.0",
+          "recovery": "pt-dependency-v1",
+          "focus_nodes": [
+            {
+              "text": "enviar",
+              "lemma": "enviar",
+              "upos": "VERB",
+              "feats": "VerbForm=Inf",
+              "deprel": "xcomp",
+              "id": 3,
+              "head": 1,
+              "token": {
+                "text": "enviar-nos",
+                "start_char": 7,
+                "end_char": 17
+              }
+            },
+            {
+              "text": "nos",
+              "lemma": "nós",
+              "upos": "PRON",
+              "feats": "Case=Acc|Number=Plur|Person=1|PronType=Prs",
+              "deprel": "iobj",
+              "id": 4,
+              "head": 3,
+              "token": {
+                "text": "enviar-nos",
+                "start_char": 7,
+                "end_char": 17
+              }
+            }
+          ]
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          14,
+          17
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "word": "naquele",
+      "example_id": "fresh_sentence_f1a484db062917c96363851ed995b85e",
+      "sentence": "Eu era casado naquele tempo.",
+      "assignment": {
+        "status": "candidate",
+        "pattern": 0,
+        "chunks": [
+          {
+            "slot": "connector",
+            "start": 14,
+            "end": 21,
+            "text": "naquele"
+          },
+          {
+            "slot": "c",
+            "start": 22,
+            "end": 27,
+            "text": "tempo"
+          }
+        ],
+        "reason": "Contraction components, nominal attachment and agreement agree.",
+        "evidence": {
+          "parser": "stanza-pt-default@1.14.0",
+          "recovery": "pt-dependency-v1",
+          "focus_nodes": [
+            {
+              "text": "em",
+              "lemma": "em",
+              "upos": "ADP",
+              "feats": null,
+              "deprel": "case",
+              "id": 4,
+              "head": 6,
+              "token": {
+                "text": "naquele",
+                "start_char": 14,
+                "end_char": 21
+              }
+            },
+            {
+              "text": "aquele",
+              "lemma": "aquele",
+              "upos": "DET",
+              "feats": "Gender=Masc|Number=Sing|PronType=Dem",
+              "deprel": "det",
+              "id": 5,
+              "head": 6,
+              "token": {
+                "text": "naquele",
+                "start_char": 14,
+                "end_char": 21
+              }
+            }
+          ],
+          "head": {
+            "text": "tempo",
+            "lemma": "tempo",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obl",
+            "id": 6,
+            "head": 3,
+            "token": {
+              "text": "tempo",
+              "start_char": 22,
+              "end_char": 27
+            }
+          }
+        },
+        "pattern_id": "pt:naquele:0",
+        "targetHTML": "Eu era casado <span class=\"fw-token-connector\">naquele</span> <span class=\"fw-token-c\">tempo</span>.",
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          14,
+          21
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "word": "um",
+      "example_id": "fresh_sentence_902e30abedd47de0485cdeb7d042ffc6",
+      "sentence": "Estou tão cansado. Posso dormir um bocado?",
+      "assignment": {
+        "status": "candidate",
+        "pattern": 0,
+        "chunks": [
+          {
+            "slot": "connector",
+            "start": 32,
+            "end": 34,
+            "text": "um"
+          },
+          {
+            "slot": "c",
+            "start": 35,
+            "end": 41,
+            "text": "bocado"
+          }
+        ],
+        "reason": "Registered determiner surface and noun attachment agree.",
+        "evidence": {
+          "parser": "stanza-pt-default@1.14.0",
+          "focus": {
+            "text": "um",
+            "lemma": "um",
+            "upos": "DET",
+            "feats": "Definite=Ind|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 3,
+            "head": 4,
+            "token": {
+              "text": "um",
+              "start_char": 32,
+              "end_char": 34
+            }
+          },
+          "head": {
+            "text": "bocado",
+            "lemma": "bocado",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obj",
+            "id": 4,
+            "head": 2,
+            "token": {
+              "text": "bocado",
+              "start_char": 35,
+              "end_char": 41
+            }
+          }
+        },
+        "pattern_id": "pt:um:0",
+        "targetHTML": "Estou tão cansado. Posso dormir <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">bocado</span>?",
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          32,
+          34
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "word": "uma",
+      "example_id": "fresh_sentence_ddb6770779cf7352f2b82bdcaede9742",
+      "sentence": "Não foi uma pergunta, porra!",
+      "assignment": {
+        "status": "candidate",
+        "pattern": 0,
+        "chunks": [
+          {
+            "slot": "connector",
+            "start": 8,
+            "end": 11,
+            "text": "uma"
+          },
+          {
+            "slot": "c",
+            "start": 12,
+            "end": 20,
+            "text": "pergunta"
+          }
+        ],
+        "reason": "Registered determiner surface and noun attachment agree.",
+        "evidence": {
+          "parser": "stanza-pt-default@1.14.0",
+          "focus": {
+            "text": "uma",
+            "lemma": "um",
+            "upos": "DET",
+            "feats": "Definite=Ind|Gender=Fem|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 3,
+            "head": 4,
+            "token": {
+              "text": "uma",
+              "start_char": 8,
+              "end_char": 11
+            }
+          },
+          "head": {
+            "text": "pergunta",
+            "lemma": "pergunta",
+            "upos": "NOUN",
+            "feats": "Gender=Fem|Number=Sing",
+            "deprel": "root",
+            "id": 4,
+            "head": 0,
+            "token": {
+              "text": "pergunta",
+              "start_char": 12,
+              "end_char": 20
+            }
+          }
+        },
+        "pattern_id": "pt:uma:0",
+        "targetHTML": "Não foi <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">pergunta</span>, porra!",
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          8,
+          11
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "word": "eu",
+      "example_id": "fresh_sentence_987806375b6565d7719f3dee3cbf9499",
+      "sentence": "Eu acho que ele é um cara legal.",
+      "assignment": {
+        "status": "candidate",
+        "pattern": 0,
+        "chunks": [
+          {
+            "slot": "connector",
+            "start": 0,
+            "end": 2,
+            "text": "Eu"
+          },
+          {
+            "slot": "v",
+            "start": 3,
+            "end": 7,
+            "text": "acho"
+          }
+        ],
+        "reason": "Registered personal pronoun is the subject of an agreeing verb.",
+        "evidence": {
+          "parser": "stanza-pt-default@1.14.0",
+          "focus": {
+            "text": "Eu",
+            "lemma": "eu",
+            "upos": "PRON",
+            "feats": "Case=Nom|Gender=Masc|Number=Sing|Person=1|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 1,
+            "head": 2,
+            "token": {
+              "text": "Eu",
+              "start_char": 0,
+              "end_char": 2
+            }
+          },
+          "head": {
+            "text": "acho",
+            "lemma": "achar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 2,
+            "head": 0,
+            "token": {
+              "text": "acho",
+              "start_char": 3,
+              "end_char": 7
+            }
+          }
+        },
+        "pattern_id": "pt:eu:0",
+        "targetHTML": "<span class=\"fw-token-connector\">Eu</span> <span class=\"fw-token-v\">acho</span> que ele é um cara legal.",
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          0,
+          2
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "word": "ela",
+      "example_id": "fresh_sentence_24be877c695156d87d6955c7fe3474bc",
+      "sentence": "Faz dois anos que ela me deixou.",
+      "assignment": {
+        "status": "candidate",
+        "pattern": 0,
+        "chunks": [
+          {
+            "slot": "connector",
+            "start": 18,
+            "end": 21,
+            "text": "ela"
+          },
+          {
+            "slot": "v",
+            "start": 22,
+            "end": 31,
+            "text": "me deixou"
+          }
+        ],
+        "reason": "Registered personal pronoun is the subject of an agreeing verb.",
+        "evidence": {
+          "parser": "stanza-pt-default@1.14.0",
+          "focus": {
+            "text": "ela",
+            "lemma": "ela",
+            "upos": "PRON",
+            "feats": "Case=Nom|Gender=Fem|Number=Sing|Person=3|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 5,
+            "head": 7,
+            "token": {
+              "text": "ela",
+              "start_char": 18,
+              "end_char": 21
+            }
+          },
+          "head": {
+            "text": "deixou",
+            "lemma": "deixar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+            "deprel": "ccomp",
+            "id": 7,
+            "head": 1,
+            "token": {
+              "text": "deixou",
+              "start_char": 25,
+              "end_char": 31
+            }
+          }
+        },
+        "pattern_id": "pt:ela:0",
+        "targetHTML": "Faz dois anos que <span class=\"fw-token-connector\">ela</span> <span class=\"fw-token-v\">me deixou</span>.",
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          18,
+          21
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "de",
+      "example_id": "fresh_sentence_116b3e374a52493b768c816a7ea38ac2",
+      "sentence": "Queremos asegurarnos de que estás bien.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "Generic de label does not establish either displayed attachment.",
+        "evidence": {
+          "focus": {
+            "text": "de",
+            "lemma": "de",
+            "upos": "ADP",
+            "feats": null,
+            "deprel": "mark",
+            "id": 3,
+            "head": 6,
+            "token": {
+              "text": "de",
+              "start_char": 21,
+              "end_char": 23
+            }
+          },
+          "head": {
+            "text": "bien",
+            "lemma": "bien",
+            "upos": "ADV",
+            "feats": null,
+            "deprel": "ccomp",
+            "id": 6,
+            "head": 2,
+            "token": {
+              "text": "bien",
+              "start_char": 34,
+              "end_char": 38
+            }
+          },
+          "governor": {
+            "text": "asegurarnos",
+            "lemma": "asegurar yo",
+            "upos": "VERB",
+            "feats": "Case=Acc|Number=Plur|Person=1|PrepCase=Npr|PronType=Prs|Reflex=Yes|VerbForm=Inf",
+            "deprel": "xcomp",
+            "id": 2,
+            "head": 1,
+            "token": {
+              "text": "asegurarnos",
+              "start_char": 9,
+              "end_char": 20
+            }
+          },
+          "parser": "es_dep_news_trf@3.8.0"
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          21,
+          23
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "que",
+      "example_id": "fresh_sentence_834ac1727d1d4b3bbd1edb1662209f5f",
+      "sentence": "Por desgracia, tengo que madrugar todos los días.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "No supported structural rule in this first pass.",
+        "evidence": {
+          "focus": {
+            "text": "que",
+            "lemma": "que",
+            "upos": "SCONJ",
+            "feats": null,
+            "deprel": "cc",
+            "id": 5,
+            "head": 6,
+            "token": {
+              "text": "que",
+              "start_char": 21,
+              "end_char": 24
+            }
+          },
+          "head": {
+            "text": "madrugar",
+            "lemma": "madrugar",
+            "upos": "VERB",
+            "feats": "VerbForm=Inf",
+            "deprel": "conj",
+            "id": 6,
+            "head": 4,
+            "token": {
+              "text": "madrugar",
+              "start_char": 25,
+              "end_char": 33
+            }
+          },
+          "governor": {
+            "text": "tengo",
+            "lemma": "tener",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin",
+            "deprel": "root",
+            "id": 4,
+            "head": 0,
+            "token": {
+              "text": "tengo",
+              "start_char": 15,
+              "end_char": 20
+            }
+          },
+          "parser": "es_dep_news_trf@3.8.0"
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          21,
+          24
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "se",
+      "example_id": "fresh_sentence_26a9129cf1c3b71468f607d1d9b4488e",
+      "sentence": "La computadora se apagará en unos segundos.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "Pronominal parser tag alone cannot resolve reflexive, middle or passive semantics.",
+        "evidence": {
+          "parser": "es_dep_news_trf@3.8.0",
+          "focus": {
+            "text": "se",
+            "lemma": "él",
+            "upos": "PRON",
+            "feats": "Case=Acc|Person=3|PrepCase=Npr|PronType=Prs|Reflex=Yes",
+            "deprel": "expl:pv",
+            "id": 3,
+            "head": 4,
+            "token": {
+              "text": "se",
+              "start_char": 15,
+              "end_char": 17
+            }
+          },
+          "head": {
+            "text": "apagará",
+            "lemma": "apagar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Fut|VerbForm=Fin",
+            "deprel": "root",
+            "id": 4,
+            "head": 0,
+            "token": {
+              "text": "apagará",
+              "start_char": 18,
+              "end_char": 25
+            }
+          }
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          15,
+          17
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "lo",
+      "example_id": "fresh_sentence_b68fa2d4a12b5d1bf6bf9b22b001cc95",
+      "sentence": "Es más difícil de lo que pensaba.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "Lo lacks object or anaphoric copular evidence; nominal lo que is unsupported.",
+        "evidence": {
+          "parser": "es_dep_news_trf@3.8.0",
+          "focus": {
+            "text": "lo",
+            "lemma": "él",
+            "upos": "PRON",
+            "feats": "Case=Acc|Definite=Def|Gender=Masc|Number=Sing|Person=3|PrepCase=Npr|PronType=Prs",
+            "deprel": "det",
+            "id": 5,
+            "head": 7,
+            "token": {
+              "text": "lo",
+              "start_char": 18,
+              "end_char": 20
+            }
+          },
+          "head": {
+            "text": "pensaba",
+            "lemma": "pensar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Imp|VerbForm=Fin",
+            "deprel": "advcl",
+            "id": 7,
+            "head": 3,
+            "token": {
+              "text": "pensaba",
+              "start_char": 25,
+              "end_char": 32
+            }
+          }
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          18,
+          20
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "nos",
+      "example_id": "fresh_sentence_86d679fb5a3483c0ea62381941e28de8",
+      "sentence": "La conquista de la famosa Placa del Diablo nos dio a ambos fama.",
+      "assignment": {
+        "status": "candidate",
+        "pattern": 0,
+        "chunks": [
+          {
+            "slot": "connector",
+            "start": 43,
+            "end": 46,
+            "text": "nos"
+          },
+          {
+            "slot": "v",
+            "start": 47,
+            "end": 50,
+            "text": "dio"
+          }
+        ],
+        "reason": "Object nos plus complete non-first-plural verb complex.",
+        "evidence": {
+          "focus": {
+            "text": "nos",
+            "lemma": "yo",
+            "upos": "PRON",
+            "feats": "Case=Dat|Number=Plur|Person=1|PrepCase=Npr|PronType=Prs",
+            "deprel": "iobj",
+            "id": 9,
+            "head": 10,
+            "token": {
+              "text": "nos",
+              "start_char": 43,
+              "end_char": 46
+            }
+          },
+          "head": {
+            "text": "dio",
+            "lemma": "dar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+            "deprel": "root",
+            "id": 10,
+            "head": 0,
+            "token": {
+              "text": "dio",
+              "start_char": 47,
+              "end_char": 50
+            }
+          },
+          "parser": "es_dep_news_trf@3.8.0"
+        },
+        "pattern_id": "es:nos:0",
+        "targetHTML": "La conquista de la famosa Placa del Diablo <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">dio</span> a ambos fama.",
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          43,
+          46
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "al",
+      "example_id": "fresh_sentence_6c3b59531d59c8b8829202ec27dcb1c0",
+      "sentence": "Si encuentro quien mató a Babish, encontraré al que me hizo esto.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "Personal-a, recipient and rate uses do not establish the displayed destination slot.",
+        "evidence": {
+          "parser": "es_dep_news_trf@3.8.0",
+          "focus": {
+            "text": "al",
+            "lemma": "al",
+            "upos": "ADP",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "case",
+            "id": 9,
+            "head": 12,
+            "token": {
+              "text": "al",
+              "start_char": 45,
+              "end_char": 47
+            }
+          },
+          "head": {
+            "text": "hizo",
+            "lemma": "hacer",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+            "deprel": "ccomp",
+            "id": 12,
+            "head": 8,
+            "token": {
+              "text": "hizo",
+              "start_char": 55,
+              "end_char": 59
+            }
+          },
+          "governor": {
+            "text": "encontraré",
+            "lemma": "encontrar",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=1|Tense=Fut|VerbForm=Fin",
+            "deprel": "root",
+            "id": 8,
+            "head": 0,
+            "token": {
+              "text": "encontraré",
+              "start_char": 34,
+              "end_char": 44
+            }
+          }
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          45,
+          47
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "el",
+      "example_id": "fresh_sentence_1033896fe42c6a7158c0e92eab0accb7",
+      "sentence": "Él vive en el bosque solo.",
+      "assignment": {
+        "status": "candidate",
+        "pattern": 0,
+        "chunks": [
+          {
+            "slot": "connector",
+            "start": 11,
+            "end": 13,
+            "text": "el"
+          },
+          {
+            "slot": "c",
+            "start": 14,
+            "end": 25,
+            "text": "bosque solo"
+          }
+        ],
+        "reason": "Registered determiner surface and noun attachment agree.",
+        "evidence": {
+          "parser": "es_dep_news_trf@3.8.0",
+          "focus": {
+            "text": "el",
+            "lemma": "el",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 4,
+            "head": 5,
+            "token": {
+              "text": "el",
+              "start_char": 11,
+              "end_char": 13
+            }
+          },
+          "head": {
+            "text": "bosque",
+            "lemma": "bosque",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "obl",
+            "id": 5,
+            "head": 2,
+            "token": {
+              "text": "bosque",
+              "start_char": 14,
+              "end_char": 20
+            }
+          }
+        },
+        "pattern_id": "es:el:0",
+        "targetHTML": "Él vive en <span class=\"fw-token-connector\">el</span> <span class=\"fw-token-c\">bosque solo</span>.",
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          11,
+          13
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "la",
+      "example_id": "fresh_sentence_2ba233d8a4e024c21a0bbde9237e9614",
+      "sentence": "Dylan, este cargamento va para la 63 y 6",
+      "assignment": {
+        "status": "abstain",
+        "reason": "Determiner must attach directly to a lexical noun; objects and nominalised adjectives are excluded.",
+        "evidence": {
+          "parser": "es_dep_news_trf@3.8.0",
+          "focus": {
+            "text": "la",
+            "lemma": "el",
+            "upos": "DET",
+            "feats": "Definite=Def|Gender=Fem|Number=Sing|PronType=Art",
+            "deprel": "det",
+            "id": 7,
+            "head": 8,
+            "token": {
+              "text": "la",
+              "start_char": 31,
+              "end_char": 33
+            }
+          },
+          "head": {
+            "text": "63",
+            "lemma": "63",
+            "upos": "NUM",
+            "feats": "NumForm=Digit|NumType=Card",
+            "deprel": "obl",
+            "id": 8,
+            "head": 5,
+            "token": {
+              "text": "63",
+              "start_char": 34,
+              "end_char": 36
+            }
+          }
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          31,
+          33
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "yo",
+      "example_id": "fresh_sentence_3614e7b9584e1b743966135cc9897a19",
+      "sentence": "Deje que sea yo el hombre que le saque del pozo.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "Personal subject and verbal head are not confirmed.",
+        "evidence": {
+          "parser": "es_dep_news_trf@3.8.0",
+          "focus": {
+            "text": "yo",
+            "lemma": "yo",
+            "upos": "PRON",
+            "feats": "Case=Nom|Number=Sing|Person=1|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 4,
+            "head": 6,
+            "token": {
+              "text": "yo",
+              "start_char": 13,
+              "end_char": 15
+            }
+          },
+          "head": {
+            "text": "hombre",
+            "lemma": "hombre",
+            "upos": "NOUN",
+            "feats": "Gender=Masc|Number=Sing",
+            "deprel": "ccomp",
+            "id": 6,
+            "head": 1,
+            "token": {
+              "text": "hombre",
+              "start_char": 19,
+              "end_char": 25
+            }
+          }
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          13,
+          15
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "word": "tú",
+      "example_id": "fresh_sentence_53cb2d0adfff9b9de60e1feccab22459",
+      "sentence": "Quiero decir, fuiste tú quien sugirió que fuera sincero con ella.",
+      "assignment": {
+        "status": "abstain",
+        "reason": "No safe adjacent constituent matching the displayed formula.",
+        "evidence": {
+          "parser": "es_dep_news_trf@3.8.0",
+          "focus": {
+            "text": "tú",
+            "lemma": "tú",
+            "upos": "PRON",
+            "feats": "Case=Nom|Number=Sing|Person=2|PronType=Prs",
+            "deprel": "nsubj",
+            "id": 5,
+            "head": 4,
+            "token": {
+              "text": "tú",
+              "start_char": 21,
+              "end_char": 23
+            }
+          },
+          "head": {
+            "text": "fuiste",
+            "lemma": "ir",
+            "upos": "VERB",
+            "feats": "Mood=Ind|Number=Sing|Person=2|Tense=Past|VerbForm=Fin",
+            "deprel": "root",
+            "id": 4,
+            "head": 0,
+            "token": {
+              "text": "fuiste",
+              "start_char": 14,
+              "end_char": 20
+            }
+          }
+        },
+        "matcher_version": "syntax-assignment/v1.1",
+        "focus_span": [
+          21,
+          23
+        ]
+      }
+    }
+  ]
+}

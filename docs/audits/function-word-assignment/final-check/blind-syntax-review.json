@@ -1,0 +1,124 @@
+[
+  {
+    "example_id": "fresh_sentence_896f92a91138f029d3f243825b34f7fc",
+    "patterns": [
+      1
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_808504b0f757e6b59fa2e8782e69d119",
+    "patterns": [],
+    "reason": "Preposition-bearing interrogative, not noun-relative or statement que."
+  },
+  {
+    "example_id": "fresh_sentence_74a9eaec5051d0ce773081e43d984474",
+    "patterns": [
+      1
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_003593a372e3060551e808a32de98415",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_bd56ce08906b9373bbd4f5e46262c734",
+    "patterns": [],
+    "reason": "After-verb clitic does not match the displayed before-verb nos formula."
+  },
+  {
+    "example_id": "fresh_sentence_f1a484db062917c96363851ed995b85e",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_902e30abedd47de0485cdeb7d042ffc6",
+    "patterns": [
+      0
+    ],
+    "reason": "Bocado is a nominal measure; article pattern permitted, unlike adverbial um pouco."
+  },
+  {
+    "example_id": "fresh_sentence_ddb6770779cf7352f2b82bdcaede9742",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_987806375b6565d7719f3dee3cbf9499",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_24be877c695156d87d6955c7fe3474bc",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_116b3e374a52493b768c816a7ea38ac2",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_834ac1727d1d4b3bbd1edb1662209f5f",
+    "patterns": [],
+    "reason": "Tener que modal construction, not thought/speech or relative que."
+  },
+  {
+    "example_id": "fresh_sentence_26a9129cf1c3b71468f607d1d9b4488e",
+    "patterns": [],
+    "reason": "Passive versus spontaneous change of state is not resolved syntactically; abstention preferred."
+  },
+  {
+    "example_id": "fresh_sentence_b68fa2d4a12b5d1bf6bf9b22b001cc95",
+    "patterns": [],
+    "reason": "Comparative de lo que construction outside the two lo rows."
+  },
+  {
+    "example_id": "fresh_sentence_86d679fb5a3483c0ea62381941e28de8",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_6c3b59531d59c8b8829202ec27dcb1c0",
+    "patterns": [],
+    "reason": "Personal-a plus free relative, not destination."
+  },
+  {
+    "example_id": "fresh_sentence_1033896fe42c6a7158c0e92eab0accb7",
+    "patterns": [
+      0
+    ],
+    "reason": "Clear supported syntactic pattern."
+  },
+  {
+    "example_id": "fresh_sentence_2ba233d8a4e024c21a0bbde9237e9614",
+    "patterns": [],
+    "reason": "Elliptical street name lacks a lexical noun for this formula."
+  },
+  {
+    "example_id": "fresh_sentence_3614e7b9584e1b743966135cc9897a19",
+    "patterns": [],
+    "reason": "Postverbal/copular structure does not fit displayed subject + verb order."
+  },
+  {
+    "example_id": "fresh_sentence_53cb2d0adfff9b9de60e1feccab22459",
+    "patterns": [],
+    "reason": "Postverbal subject; displayed order is reversed."
+  }
+]

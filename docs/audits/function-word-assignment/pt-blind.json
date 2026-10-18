@@ -1,0 +1,780 @@
+{
+  "patterns": {
+    "de": [
+      {
+        "tag": "Verbs with de",
+        "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span>",
+        "rule": "Some verbs use de to link to what follows. Learn the verb and de together.",
+        "slotTypes": {
+          "v": "verb",
+          "c": "mixed"
+        }
+      },
+      {
+        "tag": "Adding a detail",
+        "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
+        "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de partir = time to leave.",
+        "slotTypes": {
+          "v": "noun",
+          "c": "mixed"
+        }
+      }
+    ],
+    "que": [
+      {
+        "tag": "Saying what you think",
+        "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
+        "rule": "Links what someone thinks, says, knows or hopes to a statement.",
+        "slotTypes": {
+          "v": "verb",
+          "c": "clause"
+        }
+      },
+      {
+        "tag": "Adding information",
+        "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span>",
+        "rule": "Adds information about the noun.",
+        "slotTypes": {
+          "v": "noun",
+          "c": "clause"
+        }
+      },
+      {
+        "tag": "Comparing",
+        "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span>",
+        "rule": "Means “than” when comparing people, things or situations.",
+        "slotTypes": {
+          "v": "phrase",
+          "c": "phrase"
+        }
+      }
+    ],
+    "se": [
+      {
+        "tag": "If",
+        "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">a possible situation</span> + <span class=\"fw-token-c\">what happens then</span>",
+        "rule": "Means “if”: gives a possible situation and what happens then.",
+        "slotTypes": {
+          "v": "clause",
+          "c": "clause"
+        }
+      },
+      {
+        "tag": "Oneself / part of a verb",
+        "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Can mean “oneself”, or belong with a verb such as sentir-se (feel). It does not always mean “oneself”.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ],
+    "o": [
+      {
+        "tag": "The",
+        "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+        "rule": "Means “the” before a masculine singular noun, such as livro (book).",
+        "slotTypes": {
+          "c": "noun"
+        }
+      },
+      {
+        "tag": "Him / it",
+        "formulaHTML": "<span class=\"fw-token-connector\">o</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Refers to “him” or a masculine “it”. These examples place o before the verb; other positions also occur.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ],
+    "nos": [
+      {
+        "tag": "Us / to us",
+        "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Refers to us: someone sees or helps us, or tells us something.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      },
+      {
+        "tag": "In / on / at the",
+        "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-c\">masculine plural noun</span>",
+        "rule": "Combines em + os: “in”, “on” or “at the”, before a masculine plural noun.",
+        "slotTypes": {
+          "c": "noun"
+        }
+      }
+    ],
+    "naquele": [
+      {
+        "tag": "In / on / at that",
+        "formulaHTML": "<span class=\"fw-token-connector\">naquele</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+        "rule": "Combines em + aquele: “in”, “on” or “at that”. It can refer to places, things or times.",
+        "slotTypes": {
+          "c": "noun"
+        }
+      }
+    ],
+    "um": [
+      {
+        "tag": "A / an",
+        "formulaHTML": "<span class=\"fw-token-connector\">um</span> + <span class=\"fw-token-c\">masculine noun</span>",
+        "rule": "Means “a / an”. Use the form that matches the noun’s gender and number.",
+        "slotTypes": {
+          "c": "noun"
+        }
+      }
+    ],
+    "uma": [
+      {
+        "tag": "A / an",
+        "formulaHTML": "<span class=\"fw-token-connector\">uma</span> + <span class=\"fw-token-c\">feminine noun</span>",
+        "rule": "Means “a / an”. Use the form that matches the noun’s gender and number.",
+        "slotTypes": {
+          "c": "noun"
+        }
+      }
+    ],
+    "eu": [
+      {
+        "tag": "I",
+        "formulaHTML": "<span class=\"fw-token-connector\">Eu</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Means “I”. Names who does the action; the pronoun can often be left out.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ],
+    "ela": [
+      {
+        "tag": "she / it",
+        "formulaHTML": "<span class=\"fw-token-connector\">Ela</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Means “she / it”. Names who does the action; the pronoun can often be left out.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ]
+  },
+  "rows": [
+    {
+      "language": "pt",
+      "word": "de",
+      "example_id": "fresh_sentence_b82fb3864585adf3ddd8bf26f7fde8d4",
+      "sentence_id": "sentence_b82fb3864585adf3ddd8bf26f7fde8d4",
+      "sentence": "Ela vai ao salão de beleza pelo menos uma vez por semana.",
+      "translation": "She goes to the beauty salon at least once a week.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #4122489 by carlosalberto; English translation #315038 by CK",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+        "source_record_id": "4122489:315038",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/4122489"
+      },
+      "spans": [
+        [
+          17,
+          19
+        ]
+      ],
+      "sampling_rank": "000d181ec9dd8378c4c29435af72a78e7af41ee8172bb7b6c016de28fbbf78bf"
+    },
+    {
+      "language": "pt",
+      "word": "de",
+      "example_id": "fresh_sentence_bcbcf924841c4e07003a1d2b7f31be84",
+      "sentence_id": "sentence_bcbcf924841c4e07003a1d2b7f31be84",
+      "sentence": "- Pensa em como ficarás feliz quando eu alterar as nossas células de pele para células cerebrais.",
+      "translation": "Just think how happy you'll be in a few weeks when I've converted our skin cells into functional brain cells.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 4250681,
+          "line": "13",
+          "subtitle_id": "6794947",
+          "title_id": "6189462",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "6189462:6794947:13:4250681",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          66,
+          68
+        ]
+      ],
+      "sampling_rank": "000e3bba395fa6b40204b9e4ccc91996b1ef6ecab2b97ee99c9af70b63a9af88"
+    },
+    {
+      "language": "pt",
+      "word": "que",
+      "example_id": "fresh_sentence_c9b31346274b84d25ff9d42d9b24c8c8",
+      "sentence_id": "sentence_c9b31346274b84d25ff9d42d9b24c8c8",
+      "sentence": "Conforme moderadores detalhistas, tudo o que não é uma frase constitui uma ameaça mortal ao Tatoeba.",
+      "translation": "According to pernickety moderators, non-sentences constitute a mortal danger to Tatoeba.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #5404565 by ToinhoAlam; English translation #527837 by sacredceltic",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+        "source_record_id": "5404565:527837",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/5404565"
+      },
+      "spans": [
+        [
+          41,
+          44
+        ]
+      ],
+      "sampling_rank": "000ef3e77562375ba230d129ecb9595ad7ad037b68c74ecc391351e89dfce7af"
+    },
+    {
+      "language": "pt",
+      "word": "que",
+      "example_id": "fresh_sentence_5db9af1f47663caad94ded0238828bb4",
+      "sentence_id": "sentence_5db9af1f47663caad94ded0238828bb4",
+      "sentence": "Alguém que o entregou.",
+      "translation": "Someone gave you up.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 4663277,
+          "line": "618",
+          "subtitle_id": "6911200",
+          "title_id": "5741482",
+          "year": "2017"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "5741482:6911200:618:4663277",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          7,
+          10
+        ]
+      ],
+      "sampling_rank": "000fd5e83a517e47313aa0fc85170f51978be51eae32ea17a14d55b1c2fd2279"
+    },
+    {
+      "language": "pt",
+      "word": "se",
+      "example_id": "fresh_sentence_c3954534c91b657f980482ca4c1d22e6",
+      "sentence_id": "sentence_c3954534c91b657f980482ca4c1d22e6",
+      "sentence": "Tens olhado para mim como se eu fosse uma psicopata.",
+      "translation": "You've been looking at me like I'm some sort of psycho!",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 1974762,
+          "line": "500",
+          "subtitle_id": "6698874",
+          "title_id": "4887842",
+          "year": "2015"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "4887842:6698874:500:1974762",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          26,
+          28
+        ]
+      ],
+      "sampling_rank": "001dbc37e0af0e7b23e8372df342683097a0788857952e951f91d82b470607b6"
+    },
+    {
+      "language": "pt",
+      "word": "se",
+      "example_id": "fresh_sentence_6a5f0f713085f9ff519ae1744faf5e4d",
+      "sentence_id": "sentence_6a5f0f713085f9ff519ae1744faf5e4d",
+      "sentence": "Não se quer ser despedido desta forma.",
+      "translation": "And you don't want to get fired like that.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 4980861,
+          "line": "73",
+          "subtitle_id": "7031592",
+          "title_id": "6218048",
+          "year": "2017"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "6218048:7031592:73:4980861",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          4,
+          6
+        ]
+      ],
+      "sampling_rank": "0026a15867e11b201032befad44f89b74a8231d8e531c41cccd7e07204bb118e"
+    },
+    {
+      "language": "pt",
+      "word": "o",
+      "example_id": "fresh_sentence_b56a43ea9d1df322b70d33af45cc7c66",
+      "sentence_id": "sentence_b56a43ea9d1df322b70d33af45cc7c66",
+      "sentence": "Não, tu tens que ficar para contares tudo o que os peritos disserem.",
+      "translation": "No, you should stay here and tell me everything the technicians discover.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 1595211,
+          "line": "79",
+          "subtitle_id": "6417442",
+          "title_id": "4493556",
+          "year": "2015"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "4493556:6417442:79:1595211",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          42,
+          43
+        ]
+      ],
+      "sampling_rank": "0013b00a7615749c4a737b6787ebc4f0d4b6b8823e78d96505899a5bcece6fe5"
+    },
+    {
+      "language": "pt",
+      "word": "o",
+      "example_id": "fresh_sentence_df087770d619bb5a5bdce91f51e1f1a2",
+      "sentence_id": "sentence_df087770d619bb5a5bdce91f51e1f1a2",
+      "sentence": "Até pode partir-me o coração.",
+      "translation": "He may even break my heart.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 971482,
+          "line": "800",
+          "subtitle_id": "6129158",
+          "title_id": "4142142",
+          "year": "2015"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "4142142:6129158:800:971482",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          19,
+          20
+        ]
+      ],
+      "sampling_rank": "001415facc1115026ebd8442bdf3a102b619c6b79cfe395b6873c8b4d025ce8c"
+    },
+    {
+      "language": "pt",
+      "word": "nos",
+      "example_id": "fresh_sentence_e444b947361d6c7d4bdd142e9804cf58",
+      "sentence_id": "sentence_e444b947361d6c7d4bdd142e9804cf58",
+      "sentence": "Não seria bom saberem que nos metemos com eles.",
+      "translation": "You don't want them finding out you messed with them.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 3854873,
+          "line": "385",
+          "subtitle_id": "6860077",
+          "title_id": "5580732",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "5580732:6860077:385:3854873",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          26,
+          29
+        ]
+      ],
+      "sampling_rank": "004d50ff4ca6870a8b4a36b30eef340882f6aeee1d6d942142aeac6d3ef28a3e"
+    },
+    {
+      "language": "pt",
+      "word": "nos",
+      "example_id": "fresh_sentence_de1d4bfc55cba5ebc5321affe2366c9a",
+      "sentence_id": "sentence_de1d4bfc55cba5ebc5321affe2366c9a",
+      "sentence": "Ele avisou-te que os colaboradores nos iam atacar, e atacaram.",
+      "translation": "Polls don't mean anything.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 5214211,
+          "line": "276",
+          "subtitle_id": "6994792",
+          "title_id": "6659230",
+          "year": "2017"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "6659230:6994792:276:5214211",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          35,
+          38
+        ]
+      ],
+      "sampling_rank": "005c9652e2fe9eae49de76a3ff515d9038866fb5d5cd50988fc39f3ddc3cb03e"
+    },
+    {
+      "language": "pt",
+      "word": "naquele",
+      "example_id": "fresh_sentence_26b3561a40490e5a9026688bec75a4d3",
+      "sentence_id": "sentence_26b3561a40490e5a9026688bec75a4d3",
+      "sentence": "O canto está naquele celeiro antigo.",
+      "translation": "Corner's over where that old barn is.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 3262441,
+          "line": "115",
+          "subtitle_id": "6875977",
+          "title_id": "5115916",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "5115916:6875977:115:3262441",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          13,
+          20
+        ]
+      ],
+      "sampling_rank": "0c021a9adbbc865f768e1a86005d512d08fa67077715c7d9434fb321a6d8eac8"
+    },
+    {
+      "language": "pt",
+      "word": "naquele",
+      "example_id": "fresh_sentence_d71d432e543263e47058d2fdc398189c",
+      "sentence_id": "sentence_d71d432e543263e47058d2fdc398189c",
+      "sentence": "Quem mais teria a astúcia de colocar um corpo naquele lugar?",
+      "translation": "Who else would have the cunning to ditch a body in that place?",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 3478217,
+          "line": "392",
+          "subtitle_id": "6513461",
+          "title_id": "5242334",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "5242334:6513461:392:3478217",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          46,
+          53
+        ]
+      ],
+      "sampling_rank": "0c16bbef48d1c84e7512f97d983f46e3de183b2603bd95f8df2bbcb0374b8169"
+    },
+    {
+      "language": "pt",
+      "word": "um",
+      "example_id": "fresh_sentence_bc028e818538cda8f6681ee9d901403c",
+      "sentence_id": "sentence_bc028e818538cda8f6681ee9d901403c",
+      "sentence": "Mas tenho de apanhar um cavalo.",
+      "translation": "But I'm after a horse.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 3290428,
+          "line": "528",
+          "subtitle_id": "6621080",
+          "title_id": "5128652",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "5128652:6621080:528:3290428",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          21,
+          23
+        ]
+      ],
+      "sampling_rank": "0000d406185ccb0c9992654626dda4f488cdbbfcf46bcd6c8d9dac55b812f13c"
+    },
+    {
+      "language": "pt",
+      "word": "um",
+      "example_id": "fresh_sentence_4af8d94a617593daca6fedfb1918143c",
+      "sentence_id": "sentence_4af8d94a617593daca6fedfb1918143c",
+      "sentence": "- 9 meses. Tens receio que esteja um pouco atrasada?",
+      "translation": "You worried she might be, uh, behind the curve?",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 980175,
+          "line": "258 259",
+          "subtitle_id": "6936207",
+          "title_id": "4155322",
+          "year": "2015"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "4155322:6936207:258 259:980175",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          34,
+          36
+        ]
+      ],
+      "sampling_rank": "00029f3be529fd944459726865119afa74bb49cc3a12285b2799e72bccc45ea9"
+    },
+    {
+      "language": "pt",
+      "word": "uma",
+      "example_id": "fresh_sentence_bc35ebd79efe9ae11e0ccb851fc899c6",
+      "sentence_id": "sentence_bc35ebd79efe9ae11e0ccb851fc899c6",
+      "sentence": "Louca, é fruto de uma família louca.",
+      "translation": "Mad, and the offspring of a mad family.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 2318906,
+          "line": "285",
+          "subtitle_id": "6924482",
+          "title_id": "2364897",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "2364897:6924482:285:2318906",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          18,
+          21
+        ]
+      ],
+      "sampling_rank": "00016d43b1f3da1864688f4065d27a433a3f3c15bb0453fef1913af1ee6ec866"
+    },
+    {
+      "language": "pt",
+      "word": "uma",
+      "example_id": "fresh_sentence_44148065b77194f05295151601ad596e",
+      "sentence_id": "sentence_44148065b77194f05295151601ad596e",
+      "sentence": "Não se ela for uma cúmplice.",
+      "translation": "Not if she's an accessory.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 3690587,
+          "line": "176",
+          "subtitle_id": "6649674",
+          "title_id": "5465506",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "5465506:6649674:176:3690587",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          15,
+          18
+        ]
+      ],
+      "sampling_rank": "000da452660391aef9a4eb23e0a38080a2a8853dec9751a1ceeb315ac1c7ccd0"
+    },
+    {
+      "language": "pt",
+      "word": "eu",
+      "example_id": "fresh_sentence_51caa9ed86fbc5903d3b7367e6a130ac",
+      "sentence_id": "sentence_51caa9ed86fbc5903d3b7367e6a130ac",
+      "sentence": "Eu quero esperar e ver o que eles propõem.",
+      "translation": "I want to wait and see what they propose.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #8493907 by Ricardo14; English translation #5193423 by CK",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+        "source_record_id": "8493907:5193423",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/8493907"
+      },
+      "spans": [
+        [
+          0,
+          2
+        ]
+      ],
+      "sampling_rank": "0004fd50ea25fcbbfaa7c1325a17b4de6f2bb3577fb7214fc334d4e95a802e03"
+    },
+    {
+      "language": "pt",
+      "word": "eu",
+      "example_id": "fresh_sentence_4ae0092abdb503c4fdb9c3c21762504f",
+      "sentence_id": "sentence_4ae0092abdb503c4fdb9c3c21762504f",
+      "sentence": "Eu só tenho uma hora",
+      "translation": "I only have an hour.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #8405049 by JGEN; English translation #8400334 by CK",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:61e710d00956bb20a6dead4142a989754bbc1fc64e409dd3e291df6993bf7387",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+        "source_record_id": "8405049:8400334",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/8405049"
+      },
+      "spans": [
+        [
+          0,
+          2
+        ]
+      ],
+      "sampling_rank": "00190233974decdc051da6cf1ca8638a4d055b5e01f81d13a6809d45822d63d8"
+    },
+    {
+      "language": "pt",
+      "word": "ela",
+      "example_id": "fresh_sentence_f03565e794f3c382f519ea07fa3c2121",
+      "sentence_id": "sentence_f03565e794f3c382f519ea07fa3c2121",
+      "sentence": "O meu pai fez com que ela fosse para o hospital psiquiátrico de Bedlam.",
+      "translation": "My father had her sent to Bedlam insane asylum.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 4412879,
+          "line": "21",
+          "subtitle_id": "6888305",
+          "title_id": "4700682",
+          "year": "2017"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "4700682:6888305:21:4412879",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          22,
+          25
+        ]
+      ],
+      "sampling_rank": "001669d7f4fa9708def9d9163259373ef1155ecf87494abea325f4923b36ec97"
+    },
+    {
+      "language": "pt",
+      "word": "ela",
+      "example_id": "fresh_sentence_b05a5fa322e20ddd0738d8c90ccc54a8",
+      "sentence_id": "sentence_b05a5fa322e20ddd0738d8c90ccc54a8",
+      "sentence": "Ela estava quase indo embora.",
+      "translation": "She was this close to going home.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 3213896,
+          "line": "443",
+          "subtitle_id": "6872207",
+          "title_id": "5058584",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:2b083901bcfa9ddd4459b1789467938a6509b7fca18f3e122058f129c7f7452e",
+        "snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+        "source_record_id": "5058584:6872207:443:3213896",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          0,
+          3
+        ]
+      ],
+      "sampling_rank": "00539f1bbc519fdc99e21e22356b97796a59d4938ed33b0d72c233ee2a4e8125"
+    }
+  ]
+}

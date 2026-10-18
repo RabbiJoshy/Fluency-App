@@ -9,11 +9,12 @@ from occurrence import locate
 def serialize(doc):
     return [[dict(text=w.text,lemma=w.lemma,upos=w.upos,feats=w.feats,deprel=w.deprel,id=w.id,head=w.head,token=dict(text=w.parent.text,start_char=w.parent.start_char,end_char=w.parent.end_char)) for w in s.words] for s in doc.sentences]
 
-def main():
+def main(output=OUT, decider=decide):
+    OUT=output
     sample=json.loads((OUT/'sample.json').read_text());results=[];parses={};versions={}
     for name,expected in sample['input_hashes'].items():
         p=Path(name)
-        if 'trouble-words' in name or 'syntax_bridge' in name:assert digest(p)==expected,'Rules changed after sampling: '+name
+        if 'trouble-words' in name or 'syntax_bridge' in name or 'syntax_assignment' in name:assert digest(p)==expected,'Rules changed after sampling: '+name
     for lang in ('pt','es'):
         if lang=='pt':
             import stanza
@@ -30,7 +31,7 @@ def main():
             doc=parse(row['sentence']);hit=locate(doc,row['sentence'],row['word'],row['spans'][0])
             label=labeller.label(hit[0],hit[1],surface=hit[2]) if hit else None
             obs=dict(parser=version,spans=row['spans'],sentences=serialize(doc));parses[row['example_id']]=obs
-            result=decide(dict(**row,automatic_label=label or {}),obs)
+            result=decider(dict(**row,automatic_label=label or {}),obs)
             if result['status']=='candidate':result['targetHTML']=render(row['sentence'],result['chunks'])
             results.append(dict(**row,automatic_label=label,result=result));print(lang,len(results),result['status'],flush=True)
     (OUT/'parses.json').write_text(json.dumps(dict(versions=versions,rows=parses),ensure_ascii=False,indent=2)+'\n')

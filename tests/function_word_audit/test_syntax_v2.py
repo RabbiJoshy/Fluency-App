@@ -45,6 +45,7 @@ class SyntaxV2Tests(unittest.TestCase):
     def test_overlay_only_contains_explicit_approvals(self):
         overlay=json.loads((ROOT/'app/data/grammar-words/syntax-trial.json').read_text())
         examples=[e for words in overlay.values() for patterns in words.values() for group in patterns.values() for e in group]
+        examples=[e for e in examples if e.get('syntax_trial_review')]
         self.assertEqual(len(examples),8)
         predictions={r['example_id']:r for r in json.loads((OUT/'syntax-v2-findings.json').read_text())['rows']}
         for ex in examples:

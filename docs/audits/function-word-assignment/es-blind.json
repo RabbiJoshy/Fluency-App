@@ -1,0 +1,772 @@
+{
+  "patterns": {
+    "de": [
+      {
+        "tag": "Verbs with de",
+        "formulaHTML": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">de</span>",
+        "rule": "Some verbs use de to link to what follows. Learn the verb and de together.",
+        "slotTypes": {
+          "v": "verb",
+          "c": "mixed"
+        }
+      },
+      {
+        "tag": "Adding a detail",
+        "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">de</span>",
+        "rule": "Adds a detail about ownership, contents, material or purpose, including an action: hora de comer = time to eat.",
+        "slotTypes": {
+          "v": "noun",
+          "c": "mixed"
+        }
+      }
+    ],
+    "que": [
+      {
+        "tag": "Saying what you think",
+        "formulaHTML": "<span class=\"fw-token-v\">think / say / know / hope</span> + <span class=\"fw-token-connector\">que</span>",
+        "rule": "Links what someone thinks, says, knows or hopes to a statement.",
+        "slotTypes": {
+          "v": "verb",
+          "c": "clause"
+        }
+      },
+      {
+        "tag": "Adding information",
+        "formulaHTML": "<span class=\"fw-token-v\">noun</span> + <span class=\"fw-token-connector\">que</span>",
+        "rule": "Adds information about the noun.",
+        "slotTypes": {
+          "v": "noun",
+          "c": "clause"
+        }
+      },
+      {
+        "tag": "Comparing",
+        "formulaHTML": "<span class=\"fw-token-v\">more, less or better</span> + <span class=\"fw-token-connector\">que</span>",
+        "rule": "Means “than” when comparing people, things or situations.",
+        "slotTypes": {
+          "v": "phrase",
+          "c": "phrase"
+        }
+      }
+    ],
+    "se": [
+      {
+        "tag": "Oneself / part of a verb",
+        "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Can mean “oneself”, or belong with a verb such as sentirse (feel). It does not always mean “oneself”.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      },
+      {
+        "tag": "Without saying who",
+        "formulaHTML": "<span class=\"fw-token-connector\">se</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Describes what happens without naming who does it. Compare se habla (people speak) and se venden libros (books are sold).",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ],
+    "lo": [
+      {
+        "tag": "The … thing / part",
+        "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-c\">adjective</span>",
+        "rule": "With an adjective, means “the … thing” or “the … part”: lo importante = the important thing.",
+        "slotTypes": {
+          "c": "adj"
+        }
+      },
+      {
+        "tag": "Him / it / that",
+        "formulaHTML": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Refers to “him”, a masculine “it”, or an idea: lo sé = I know that.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ],
+    "nos": [
+      {
+        "tag": "Us / to us",
+        "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Refers to us: someone sees or helps us, or tells us something.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ],
+    "al": [
+      {
+        "tag": "To / at the",
+        "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-c\">destination</span>",
+        "rule": "Here, a + el becomes al: “to the” or “at the”.",
+        "slotTypes": {
+          "c": "phrase"
+        }
+      },
+      {
+        "tag": "When doing something",
+        "formulaHTML": "<span class=\"fw-token-connector\">al</span> + <span class=\"fw-token-v\">infinitive (dictionary form)</span>",
+        "rule": "Means “when” doing something: al llegar = when someone arrives.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ],
+    "el": [
+      {
+        "tag": "The",
+        "formulaHTML": "<span class=\"fw-token-connector\">el</span> + <span class=\"fw-token-c\">masculine singular noun</span>",
+        "rule": "Means “the”. Use the form that matches the noun’s gender and number.",
+        "slotTypes": {
+          "c": "noun"
+        }
+      }
+    ],
+    "la": [
+      {
+        "tag": "The",
+        "formulaHTML": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-c\">feminine singular noun</span>",
+        "rule": "Means “the”. Use the form that matches the noun’s gender and number.",
+        "slotTypes": {
+          "c": "noun"
+        }
+      },
+      {
+        "tag": "Her / it",
+        "formulaHTML": "<span class=\"fw-token-connector\">la</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Refers to “her / it”. The surrounding verb and sentence show who or what is meant.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ],
+    "yo": [
+      {
+        "tag": "I",
+        "formulaHTML": "<span class=\"fw-token-connector\">Yo</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Means “I”. Names who does the action; the pronoun can often be left out.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ],
+    "tú": [
+      {
+        "tag": "you",
+        "formulaHTML": "<span class=\"fw-token-connector\">Tú</span> + <span class=\"fw-token-v\">verb</span>",
+        "rule": "Means “you”. Names who does the action; the pronoun can often be left out.",
+        "slotTypes": {
+          "v": "verb"
+        }
+      }
+    ]
+  },
+  "rows": [
+    {
+      "language": "es",
+      "word": "de",
+      "example_id": "fresh_sentence_5647625c1290146ccf16e245ee571bd9",
+      "sentence_id": "sentence_5647625c1290146ccf16e245ee571bd9",
+      "sentence": "De hecho, algunos dicen que es necesario, pero eso no es lo importante.",
+      "translation": "As a matter of fact, some people say it's necessary. But that's not the point.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 4138629,
+          "line": "347",
+          "subtitle_id": "6926683",
+          "title_id": "6649108",
+          "year": "2017"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "6649108:6926683:347:4138629",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          0,
+          2
+        ]
+      ],
+      "sampling_rank": "0007740f696f4fde45e45e51eed059a50d2af5d31bf02f630a3eddbb272762ec"
+    },
+    {
+      "language": "es",
+      "word": "de",
+      "example_id": "fresh_sentence_35122bc98333c31d0954814c732baaa4",
+      "sentence_id": "sentence_35122bc98333c31d0954814c732baaa4",
+      "sentence": "Lamento haber pasado. Son las tres de la tarde.",
+      "translation": "It's three o'clock in the afternoon.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 258383,
+          "line": "938 939",
+          "subtitle_id": "6979333",
+          "title_id": "3215826",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "3215826:6979333:938 939:258383",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          35,
+          37
+        ]
+      ],
+      "sampling_rank": "0008d31a985eed2bed6bba306137d5fb398368bdc91c616bf5cb1e34bde6a94b"
+    },
+    {
+      "language": "es",
+      "word": "que",
+      "example_id": "fresh_sentence_79eab1f052b7bf124b938d3fc119c310",
+      "sentence_id": "sentence_79eab1f052b7bf124b938d3fc119c310",
+      "sentence": "Antiguamente se pensaba que la Tierra era plana.",
+      "translation": "Previously people believed the earth was flat.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #1719544 by termito2nd; English translation #1456810 by iggy",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+        "source_record_id": "1719544:1456810",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/1719544"
+      },
+      "spans": [
+        [
+          24,
+          27
+        ]
+      ],
+      "sampling_rank": "0005ef8bbf8b87abd0b5ad32c36cc21ee4e472d75cfd4daa86854c0cb83cc9c3"
+    },
+    {
+      "language": "es",
+      "word": "que",
+      "example_id": "fresh_sentence_4fdeecc09d6c5aa44dad8f4e06ee2b7a",
+      "sentence_id": "sentence_4fdeecc09d6c5aa44dad8f4e06ee2b7a",
+      "sentence": "Por favor, continúa, no dejes que te moleste en tu oración.",
+      "translation": "Please continue, do not let me disturb your peace.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 3731687,
+          "line": "276",
+          "subtitle_id": "6956729",
+          "title_id": "6110832",
+          "year": "2017"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "6110832:6956729:276:3731687",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          30,
+          33
+        ]
+      ],
+      "sampling_rank": "00081775bba5c2a4e3b73bed160b42b8c533b3b388455778e325c30fcf711e94"
+    },
+    {
+      "language": "es",
+      "word": "se",
+      "example_id": "fresh_sentence_15068b3203bbec2b2239d24e1a6a3211",
+      "sentence_id": "sentence_15068b3203bbec2b2239d24e1a6a3211",
+      "sentence": "Ella se fue, yo siento que quiero llorar.",
+      "translation": "She has gone. I feel like crying.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #1459991 by marcelostockle; English translation #313608 by \\N",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+        "source_record_id": "1459991:313608",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/1459991"
+      },
+      "spans": [
+        [
+          5,
+          7
+        ]
+      ],
+      "sampling_rank": "003622ec073d6dbac5dd9bb94ac39c119d4261f953dc9b0450349a1d60e28c83"
+    },
+    {
+      "language": "es",
+      "word": "se",
+      "example_id": "fresh_sentence_958ca3f8e4e76b104c6e097eb0d3919c",
+      "sentence_id": "sentence_958ca3f8e4e76b104c6e097eb0d3919c",
+      "sentence": "Se sacó la noche antes de la gran carrera de Don Juan.",
+      "translation": "It was taken the night before Don Juan's big race.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 941281,
+          "line": "547",
+          "subtitle_id": "7002071",
+          "title_id": "4679188",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "4679188:7002071:547:941281",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          0,
+          2
+        ]
+      ],
+      "sampling_rank": "0037ed5b0ca06db3007ffa976c4e846d8ad8ea76b16233deed908a19d73072f7"
+    },
+    {
+      "language": "es",
+      "word": "lo",
+      "example_id": "fresh_sentence_3903aebcbe3c72807d70fed43e0a3420",
+      "sentence_id": "sentence_3903aebcbe3c72807d70fed43e0a3420",
+      "sentence": "- Lo hiciste porque así podrías ser reina.",
+      "translation": "- You did it so you could be Queen.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 1266955,
+          "line": "312",
+          "subtitle_id": "6449629",
+          "title_id": "4948870",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "4948870:6449629:312:1266955",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          2,
+          4
+        ]
+      ],
+      "sampling_rank": "002b05ccc376a84e1d8e01a587652c00ed766d5fb0e8bc12488fab4d6934bc4a"
+    },
+    {
+      "language": "es",
+      "word": "lo",
+      "example_id": "fresh_sentence_6090c7e251458d3f3b6394e440aa2317",
+      "sentence_id": "sentence_6090c7e251458d3f3b6394e440aa2317",
+      "sentence": "Ellos están comiendo a lo grande.",
+      "translation": "They're eating high on the hog.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #4926231 by albrusgher; English translation #307703 by CM",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+        "source_record_id": "4926231:307703",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/4926231"
+      },
+      "spans": [
+        [
+          23,
+          25
+        ]
+      ],
+      "sampling_rank": "003292955a3a3dbe207be79ed62728565da8ad3ebe3a771f6c6fb01e368db7bb"
+    },
+    {
+      "language": "es",
+      "word": "nos",
+      "example_id": "fresh_sentence_697e6b114279461b5a64868cb60b59ea",
+      "sentence_id": "sentence_697e6b114279461b5a64868cb60b59ea",
+      "sentence": "Nos va a hacer esto, sólo déjame saber cuándo.",
+      "translation": "We's going to do this, just let me know when.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 1595729,
+          "line": "822",
+          "subtitle_id": "7046979",
+          "title_id": "5193784",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "5193784:7046979:822:1595729",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          0,
+          3
+        ]
+      ],
+      "sampling_rank": "00c5bede8eef7aaedb7275251a6c45e7b9fca9a532de2c5ce764416ef45d36b0"
+    },
+    {
+      "language": "es",
+      "word": "nos",
+      "example_id": "fresh_sentence_d47b419d50e254658016f3af0e69186b",
+      "sentence_id": "sentence_d47b419d50e254658016f3af0e69186b",
+      "sentence": "No hace falta que hagamos esas tonterías, nos enfrentaremos a él.",
+      "translation": "Forget all that trouble! Let's just rampage and take him back!",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 1769944,
+          "line": "793",
+          "subtitle_id": "6908924",
+          "title_id": "5251328",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "5251328:6908924:793:1769944",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          42,
+          45
+        ]
+      ],
+      "sampling_rank": "0134c44848074db10161da42978974ebf9dbff968053f245fe17a096125658c0"
+    },
+    {
+      "language": "es",
+      "word": "al",
+      "example_id": "fresh_sentence_df14afd00594c9586e25c35ffcb6f88c",
+      "sentence_id": "sentence_df14afd00594c9586e25c35ffcb6f88c",
+      "sentence": "Me encantaría cuidar al bebé.",
+      "translation": "I'd love to take care of the baby.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 871431,
+          "line": "567",
+          "subtitle_id": "6526929",
+          "title_id": "4625398",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "4625398:6526929:567:871431",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          21,
+          23
+        ]
+      ],
+      "sampling_rank": "004186e1a9891a096f04d63b4dc924242a6175240fefcc1a432b97aff0282acf"
+    },
+    {
+      "language": "es",
+      "word": "al",
+      "example_id": "fresh_sentence_953dd662376a861f861a9e7c5e0b0db6",
+      "sentence_id": "sentence_953dd662376a861f861a9e7c5e0b0db6",
+      "sentence": "Había trescientas cajas de cartón llenas de ropa vieja preparadas para ser enviadas al área afectada.",
+      "translation": "There were three hundred cardboard boxes filled with old clothes ready to be sent to the disaster area.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #2049278 by Shishir; English translation #2047765 by CK",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+        "source_record_id": "2049278:2047765",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/2049278"
+      },
+      "spans": [
+        [
+          84,
+          86
+        ]
+      ],
+      "sampling_rank": "004a235dd27e8c83beb4d26b1af1ee92272298d5c2d030485cedf8b74ce1dcaf"
+    },
+    {
+      "language": "es",
+      "word": "el",
+      "example_id": "fresh_sentence_568621e939f6d06908f6ecf1b75496b6",
+      "sentence_id": "sentence_568621e939f6d06908f6ecf1b75496b6",
+      "sentence": "¿Cuándo el mundo llegará a su fin?",
+      "translation": "When will the world come to an end?",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #1070375 by hayastan; English translation #271149 by Eldad",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+        "source_record_id": "1070375:271149",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/1070375"
+      },
+      "spans": [
+        [
+          8,
+          10
+        ]
+      ],
+      "sampling_rank": "00093c583df7a6c9aa1c9049c14d2551cc5bd72748c0e09dcfdb0df9d331a9fe"
+    },
+    {
+      "language": "es",
+      "word": "el",
+      "example_id": "fresh_sentence_fe5a7b9d786f6f0e512d07351f6cd845",
+      "sentence_id": "sentence_fe5a7b9d786f6f0e512d07351f6cd845",
+      "sentence": "No quiero interrumpir más el cumpleaños de su mujer.",
+      "translation": "I've disturbed your wife's birthday long enough.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 1255140,
+          "line": "741",
+          "subtitle_id": "7026626",
+          "title_id": "4936450",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "4936450:7026626:741:1255140",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          26,
+          28
+        ]
+      ],
+      "sampling_rank": "000e1f98785dc3d00f9b1388dac1d4a4f36f72a1717d217d019132c6f2d3f92e"
+    },
+    {
+      "language": "es",
+      "word": "la",
+      "example_id": "fresh_sentence_7e94ef991eabe549c4e5053baa86dba3",
+      "sentence_id": "sentence_7e94ef991eabe549c4e5053baa86dba3",
+      "sentence": "Todas las chicas empezaron a tomar la píldora por mí.",
+      "translation": "All the girls ended up on the pill because of me.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 1715661,
+          "line": "145",
+          "subtitle_id": "6491981",
+          "title_id": "5232516",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "5232516:6491981:145:1715661",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          35,
+          37
+        ]
+      ],
+      "sampling_rank": "00034437f963b0ea227d17ee529f04a2c5c081b3fd6ce194a320e02960a162c1"
+    },
+    {
+      "language": "es",
+      "word": "la",
+      "example_id": "fresh_sentence_7ea8f1c0f44b183b461c8ecde3357f7d",
+      "sentence_id": "sentence_7ea8f1c0f44b183b461c8ecde3357f7d",
+      "sentence": "Las mujeres de la clase maduran antes que los hombres.",
+      "translation": "The women of the class mature before the men.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #7866353 by krobbyzw; English translation #7866354 by krobbyzw",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+        "source_record_id": "7866353:7866354",
+        "translated_from_english": false,
+        "url": "https://tatoeba.org/en/sentences/show/7866353"
+      },
+      "spans": [
+        [
+          15,
+          17
+        ]
+      ],
+      "sampling_rank": "00069d5998f04c57a8da957c6b3971411ef30417cbdc8c4bef512cdc2054bb59"
+    },
+    {
+      "language": "es",
+      "word": "yo",
+      "example_id": "fresh_sentence_f4afa7198065b93d38a11829de952836",
+      "sentence_id": "sentence_f4afa7198065b93d38a11829de952836",
+      "sentence": "Son solo 16 años. Bueno, si yo tuviera 30 y él 46, no serían tan extraño.",
+      "translation": "I mean, if I was 30 and he was 46, it wouldn't be weird.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 1959098,
+          "line": "379 380",
+          "subtitle_id": "6681538",
+          "title_id": "5346996",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "5346996:6681538:379 380:1959098",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          28,
+          30
+        ]
+      ],
+      "sampling_rank": "000140ce716b1d9b9f5876993e2b20767571388beeb4474ba82b7a8becd7c274"
+    },
+    {
+      "language": "es",
+      "word": "yo",
+      "example_id": "fresh_sentence_600614089b397768a2e6d5a09a9c0124",
+      "sentence_id": "sentence_600614089b397768a2e6d5a09a9c0124",
+      "sentence": "Si algo como esto pasa... tú me ayudas a mí y yo te ayudo a ti.",
+      "translation": "Something like this happens... you're there to help me, I'm there to help you.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 717401,
+          "line": "510",
+          "subtitle_id": "6585880",
+          "title_id": "4462686",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "4462686:6585880:510:717401",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          46,
+          48
+        ]
+      ],
+      "sampling_rank": "00068a0c5c5022be89ff163cd7b1932624c63c70ccdc426beb2c5254454cc718"
+    },
+    {
+      "language": "es",
+      "word": "tú",
+      "example_id": "fresh_sentence_1eeced79d411e39356f24241de2901c6",
+      "sentence_id": "sentence_1eeced79d411e39356f24241de2901c6",
+      "sentence": "Tarde o temprano tú estarás en problemas.",
+      "translation": "Sooner or later, you will be in trouble.",
+      "source": {
+        "adapter": "tatoeba-weekly/v1",
+        "attribution": "Tatoeba sentence #1156034 by marcelostockle; English translation #277320 by CK",
+        "license": "CC BY 2.0 FR",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+        "name": "tatoeba",
+        "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+        "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+        "source_record_id": "1156034:277320",
+        "translated_from_english": true,
+        "url": "https://tatoeba.org/en/sentences/show/1156034"
+      },
+      "spans": [
+        [
+          17,
+          19
+        ]
+      ],
+      "sampling_rank": "00c039a9cf7860bac4373790575c0e4eef18d4c6803be1b9e827fea7e62bfaa6"
+    },
+    {
+      "language": "es",
+      "word": "tú",
+      "example_id": "fresh_sentence_bc55e66a34938874c9563c433a844577",
+      "sentence_id": "sentence_bc55e66a34938874c9563c433a844577",
+      "sentence": "Por eso, tú te vas a dormir, y yo me ocupo.",
+      "translation": "No, so that's why you go to bed, and I'll take care of her.",
+      "source": {
+        "adapter": "opensubtitles-aligned/v1",
+        "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+        "document": {
+          "aligned_row": 867446,
+          "line": "1179",
+          "subtitle_id": "6816877",
+          "title_id": "4624424",
+          "year": "2016"
+        },
+        "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+        "name": "opensubtitles",
+        "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+        "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+        "source_record_id": "4624424:6816877:1179:867446",
+        "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+      },
+      "spans": [
+        [
+          9,
+          11
+        ]
+      ],
+      "sampling_rank": "015e6ed0a7817cf786bde75edfebc18558a18ecdb7d6ce470cd588bc79be248d"
+    }
+  ]
+}
