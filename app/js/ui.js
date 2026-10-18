@@ -755,22 +755,20 @@ function learningModeCopy(language = selectedLanguage) {
     return {
         title: 'Choose your vocabulary',
         intro: [
-            'Learn the most common words first.',
-            'What’s common varies by region and between Speech and Music.',
-            'Your choice shapes your flashcards and example sentences.'
+            'Common words first. What’s common depends on where the words come from.'
         ],
         speech: {
             label: 'Speech',
-            description: 'Words and examples come from films and TV shows.',
-            bestFor: ['Starting a new language', 'Understanding everyday conversations'],
+            description: 'Words and examples from films and TV.',
+            bestFor: ['Starting a new language', 'Everyday conversations'],
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
             label: 'Music',
             description: lyricsCatalog
-                ? 'Words and examples come from songs, artists, and your Spotify playlists.'
-                : 'Words and examples come from your Spotify playlists.',
-            bestFor: ['Understanding your favourite artists', 'Learning by listening to music'],
+                ? 'Words and examples from songs, artists and your playlists.'
+                : 'Words and examples from your Spotify playlists.',
+            bestFor: ['Your favourite artists', 'Learning by listening'],
             iconHTML: MODE_ICON_MUSIC
         }
     };

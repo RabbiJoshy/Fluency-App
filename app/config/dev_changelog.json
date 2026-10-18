@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T21:40:00+01:00",
+      "date": "2026-10-18 21:40 BST",
+      "agent": "Claude",
+      "summary": "Choose your vocabulary: two equal cards, one intro line, no 'or'",
+      "detail": [
+        "Speech and Music are two equal cards: icon, name, one sentence, Best for. Stacked on phones (icon, name and › on one row); side by side filling the width on desktop.",
+        "The three intro bullets are one line: 'Common words first. What’s common depends on where the words come from.'",
+        "Removed the 'or' divider and the 'Choose another language' button (the top bar and sidebar already switch language).",
+        "Shorter copy, also used by the pop-up picker and tutorial: 'Words and examples from films and TV.', Best for 'Everyday conversations', 'Your favourite artists', 'Learning by listening'.",
+        "Spotify is a flat footer on the Music card."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T21:10:00+01:00",
       "date": "2026-10-18 21:10 BST",
       "agent": "Claude",
@@ -358,18 +372,6 @@
         "Bind admin and reviewer access to verified login identities in the app and server, including staging.",
         "Quick reports capture the meaning and exact example currently displayed, with release/deck context.",
         "Keep whole-card reporting available to JP; protect flags from cross-account overwrites."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T17:45:00+01:00",
-      "date": "2026-10-17 17:45 BST",
-      "agent": "Antigravity",
-      "summary": "Full-screen blurred backdrop overlay for Smart Skip word-filtering animation",
-      "detail": [
-        "Added a fixed full-screen blurred backdrop overlay (backdrop-filter: blur(10px)) that activates when Smart Skip is pressed.",
-        "Centered the skipping animation card with frosted glass styling and smooth entrance/exit scaling in the viewport.",
-        "Fades the blur overlay and HUD out gracefully once word skipping completes, revealing the updated level stats."
       ],
       "commit": "pending"
     }

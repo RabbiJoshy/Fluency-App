@@ -493,3 +493,200 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     .home-smart-skip-copy { font-size: var(--home-text); }
     .home-footer-hint { font-size: var(--home-text); }
 }
+
+/* --- Choose your vocabulary (Speech or Music) ----------------------------
+   Two equal cards, each one button: icon square, name, one sentence, Best
+   for. Spotify is the Music card's footer. No "or" divider and no second
+   language button (the top bar / sidebar already switches language). */
+:is(#step1.language-summary-active, #step1) #standardSourceCard {
+    --home-text: 16px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    text-align: left;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceLanguageBtn,
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-or { display: none !important; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice { margin: 0; padding: 0; border: 0; background: transparent; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro { margin: 0 0 16px; padding: 0; text-align: left; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-heading { margin: 0 0 6px; justify-content: flex-start; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { font-size: 24px; text-align: left; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--text-muted);
+    font-size: var(--home-text);
+    line-height: 1.45;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets li { margin: 0; padding: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets li::before { display: none; content: none; }
+
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-buttons {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+/* The card surface: Speech's button itself, and Music's wrapper. */
+:is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceSpeechBtn,
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music {
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: none;
+    overflow: hidden;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music { display: flex; flex-direction: column; padding: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music #standardSourcePickerBtn {
+    flex: 1;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "icon . tail" "copy copy copy";
+    align-items: center;
+    row-gap: 10px;
+    width: 100%;
+    min-height: 0;
+    padding: 16px;
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceSpeechBtn:hover:not(:disabled),
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music:hover { border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color)); }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon {
+    grid-area: icon;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin: 0;
+    border-radius: 12px;
+    background: var(--bg-tertiary);
+    color: var(--accent-primary);
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon svg { width: 22px; height: 22px; stroke: currentColor; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-tail { display: block !important; grid-area: tail; color: var(--text-muted); font-size: 22px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy { grid-area: copy; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { font-size: 19px; font-weight: 700; color: var(--text-primary); }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy small {
+    display: block;
+    color: var(--text-secondary);
+    font-size: var(--home-text);
+    line-height: 1.45;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 8px 0 0;
+    padding: 0;
+    border: 0;
+    color: var(--text-secondary);
+    font-size: var(--home-text);
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor em {
+    margin-bottom: 2px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-style: normal;
+    letter-spacing: 0;
+    text-transform: none;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor > span { display: flex; align-items: center; gap: 8px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor > span::before {
+    content: "";
+    flex: none;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify { margin: 0; padding: 0; border-top: 1px solid var(--border-color); }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify .spotify-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 0;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #1db954;
+    font: inherit;
+    font-size: var(--home-text);
+    font-weight: 600;
+    text-align: left;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify .spotify-status svg { width: 20px; height: 20px; flex: none; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify button.spotify-status::after { content: "›"; margin-left: auto; font-size: 20px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-reassurance {
+    margin: 16px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item { padding: 20px; align-content: start; }
+}
+@media (min-width: 1024px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard { --home-text: 18px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { font-size: 30px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { font-size: 22px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon { width: 52px; height: 52px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon svg { width: 26px; height: 26px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item { padding: 26px; row-gap: 18px; }
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard { padding: 4px 12px 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro {
+    border: 0 !important;
+    padding-bottom: 0 !important;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-heading { width: 100%; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { display: block; width: 100%; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music:not(:hover) { border-color: var(--border-color); }
+/* Phones: icon, name and › share the first row. */
+@media (max-width: 767px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas: "icon name tail";
+        column-gap: 12px;
+        row-gap: 8px;
+    }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy { display: contents; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { grid-area: name; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy small { grid-column: 1 / -1; grid-row: 2; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor { grid-column: 1 / -1; grid-row: 3; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor { margin-top: 2px; }
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-choice, .standard-source-choice-intro) { max-width: none; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.vocabulary-choice-bullets, .vocabulary-choice-bullets li, .choice-sheet-bestfor, .choice-sheet-bestfor em) { text-align: left; }
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-buttons { align-items: stretch; }
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets { max-width: none !important; margin: 0 !important; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify {
+    margin: 0 !important;
+    border: 0 !important;
+    border-top: 1px solid var(--border-color) !important;
+    border-radius: 0 !important;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, .standard-source-music) { align-self: stretch !important; height: auto; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro { justify-items: start !important; }
