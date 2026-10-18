@@ -94,7 +94,11 @@ export function configureFunctionWordPresentation(options) {{
     fwPresentation = options || {{}};
 }}
 function fwSlotHTML(html, relation) {{
+    // A slot the pattern no longer names (e.g. the clause after "think + que")
+    // stays plain text in the example rather than taking a colour.
+    const formula = relation?.formulaHTML;
     let out = String(html || '').replace(/<span class=['"]fw-token-([vc])['"]>/g, (tag, side) => {{
+        if (formula && !new RegExp(`fw-token-${{side}}['"]`).test(formula)) return '<span>';
         const type = relation?.slotTypes?.[side];
         const isPOS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det', 'conj', 'clitic', 'part'].includes(type);
         const rgb = isPOS ? fwPresentation.posRgb?.(type) : null;

@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T23:50:00+01:00",
+      "date": "2026-10-18 23:50 BST",
+      "agent": "Claude",
+      "summary": "Function-word examples: only the parts the pattern names are coloured",
+      "detail": [
+        "Where a pattern was shortened (e.g. \"think + que\" no longer names the clause after it), that part of the example sentence is now plain text instead of keeping its colour.",
+        "Applies to 109 slots across the 115 Spanish and Portuguese patterns; the fix is in the generator template too, so re-syncing keeps it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T23:30:00+01:00",
       "date": "2026-10-18 23:30 BST",
       "agent": "Claude",
@@ -358,19 +369,6 @@
         "Added a .links-section:has(> :nth-child(5)) compact layout and horizontal scroll fallback for the rare 5+ tile case (such as when Synonyms or the admin Dictionary button is present alongside Rare uses, Pin meaning(s), Conjugate, and Look up)."
       ],
       "commit": "c1a20268"
-    },
-    {
-      "timestamp": "2026-10-17T21:25:00+01:00",
-      "date": "2026-10-17 21:25 BST",
-      "agent": "Antigravity",
-      "summary": "Deduplicated sense note modals with consolidated sections, filtered row tags, and polished dialog styling",
-      "detail": [
-        "Changed modal eyebrow from \"Usage notes\" to \"Sense details\" to eliminate label repetition above \"Usage\" sections.",
-        "Filtered redundant raw context and gloss clauses under \"Original dictionary text\" that merely echoed previously rendered meaning and usage notes.",
-        "Consolidated matching sections across grouped card rows so duplicate \"Usage\" and \"Grammar\" headers are merged instead of stacked consecutively.",
-        "Enhanced modal overlay with animated scale/fade entrance, fallback border coloring, and dynamic inherit of the card's accent color."
-      ],
-      "commit": "pending"
     }
   ]
 }
