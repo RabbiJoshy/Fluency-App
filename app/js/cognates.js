@@ -512,11 +512,10 @@ function renderKnownLanguagePicker() {
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
     const chipsHtml = codesToShow.map(code => {
-        const flag = knownLanguageFlag(code);
-        const shownFlag = flag ? `${flag} ` : '';
+        // Names only, no flags: a flag is a country, not a language.
         const isActive = active.has(code);
         return `<button type="button" class="known-language-chip ${isActive ? 'is-active' : 'is-inactive'}" data-known-language="${code}" aria-pressed="${isActive}" title="${isActive ? 'Look-alikes active for ' + escape(languageLabel(code)) + '. Click to turn off.' : 'Look-alikes off for ' + escape(languageLabel(code)) + '. Click to turn on.'}">
-            <span class="known-language-chip-status" aria-hidden="true">${isActive ? '✓ ' : '+ '}</span>${shownFlag}${escape(languageLabel(code))}
+            <span class="known-language-chip-status" aria-hidden="true">${isActive ? '✓ ' : '+ '}</span>${escape(languageLabel(code))}
         </button>`;
     }).join('');
 

@@ -579,11 +579,6 @@
 #levelColoursTooltip .info-point-badge.is-skip { background: var(--set-skipped); color: #fff; }
 #levelEstimatedLegend[hidden] { display: none; }
 
-.smart-skip-language-name { display: none; }
-@media (min-width: 900px) {
-  .smart-skip-language-name { display: inline; }
-  .smart-skip-language-code { display: none; }
-}
 .smart-skip-browser-actions:has(> #smartSkipResultsCount:empty):has(> button[hidden]) { display: none; }
 
 /* Parts of speech of one lemma form one joined pill: a hairline gap between
@@ -607,7 +602,8 @@
 }
 
 /* ==========================================================================
-   Radical Smart Skip Redesign: Unboxed Studio, Full-Bleed Desktop & Mobile Focus
+   Smart Skip page shell: a full-screen page above the app (and beside the
+   desktop nav), with its own scroll. Its content is styled further down.
    ========================================================================== */
 
 /* 1. Modal visibility: Ensure .hidden ALWAYS hides the modal completely */
@@ -625,8 +621,7 @@
 .smart-skip-preview[hidden] {
   display: none !important;
 }
-.smart-skip-preview-card,
-.smart-skip-more-card {
+.smart-skip-preview-card {
   z-index: 2101 !important;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px color-mix(in srgb, var(--border-color) 45%, transparent) !important;
 }
@@ -694,741 +689,488 @@
   overscroll-behavior-y: contain !important;
 }
 
+/* ---- Smart Skip page, 2026-10-18 ------------------------------------------
+   One header line (title, what the rules add up to, the master switch, ✕),
+   the rules, then the word list. A phone keeps the two main switches in one
+   card above the list; each rule's description sits behind its ⓘ and the
+   optional rules behind "More rules", both as bottom sheets. A wide screen puts
+   the rules in a column beside the list, with every description shown.
+   Language columns and switches name languages in words, never flags.
+   Selectors start at #fastModeModal so they outrank the older Smart Skip rules
+   in style.css without !important. */
+
+/* Dark theme: the page is black, so the rule cards and the list read as
+   surfaces on it. */
+:root:not([data-theme="light"]) #fastModeModal { --bg-primary: #000; }
+
 #fastModeModal .smart-skip-body {
-  width: 100% !important;
-  max-width: none !important;
-  box-sizing: border-box !important;
-  margin: 0 !important;
-  padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 32px) !important;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px calc(env(safe-area-inset-bottom, 0px) + 32px);
+  display: block;
 }
 
-/* Close Button: Fixed in top right corner with high z-index and tap area */
-#fastModeModal .fast-mode-close {
-  position: fixed !important;
-  top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
-  right: 16px !important;
-  z-index: 1060 !important;
-  width: 38px !important;
-  height: 38px !important;
-  border-radius: 50% !important;
-  background: color-mix(in srgb, var(--bg-card) 90%, var(--text-primary) 10%) !important;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent) !important;
-  color: var(--text-primary) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
-  transition: all 0.15s ease !important;
-  -webkit-tap-highlight-color: transparent !important;
+/* Header: sticky, so the switch and ✕ stay in reach while the list scrolls. */
+#fastModeModal .smart-skip-body .smart-skip-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 -16px 12px;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
+  background: var(--bg-primary, var(--bg-card));
+  border-bottom: 1px solid var(--border-color);
 }
-#fastModeModal .fast-mode-close:hover {
-  background: color-mix(in srgb, var(--bg-card) 75%, var(--text-primary) 25%) !important;
-  transform: scale(1.05) !important;
+#fastModeModal .smart-skip-body .smart-skip-header-row > h2 {
+  position: static;
+  margin: 0;
+  padding: 0;
+  background: none;
+  text-align: left;
+  font: 700 20px/1.2 var(--font-emphasis);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+#fastModeModal .smart-skip-summary {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-muted);
+  font: 500 13px/1.2 var(--font-reading);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#fastModeModal .smart-skip-master { display: inline-flex; align-items: center; gap: 8px; flex: none; }
+#fastModeModal .smart-skip-master-state { color: var(--text-secondary); font: 600 13px/1 var(--font-reading); }
+#fastModeModal .smart-skip-header-row .fast-mode-close {
+  position: static;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin: 0 0 0 4px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: var(--bg-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+#fastModeModal .smart-skip-header-row .fast-mode-close:hover { color: var(--text-primary); background: var(--bg-card-hover); }
+
+/* Rules: one card. Rows are title, ⓘ, count, switch. */
+#fastModeModal .smart-skip-shortcuts {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: none;
+  overflow: visible;
+}
+#fastModeModal .smart-skip-shortcut {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+#fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut + .smart-skip-shortcut,
+#fastModeModal .smart-skip-shortcuts > .smart-skip-more-options,
+#fastModeModal .smart-skip-more-rules > .smart-skip-shortcut + .smart-skip-shortcut {
+  border-top: 1px solid var(--border-color);
+}
+#fastModeModal .smart-skip-shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 0 12px 0 14px;
+}
+#fastModeModal .smart-skip-shortcut-name {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  color: var(--text-primary);
+  font: 600 14.5px/1.25 var(--font-reading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#fastModeModal .smart-skip-info {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: 0 -2px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+#fastModeModal .smart-skip-info:hover,
+#fastModeModal .smart-skip-info[aria-expanded="true"] { color: var(--text-primary); background: var(--bg-card-hover); }
+#fastModeModal .smart-skip-info svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+#fastModeModal .smart-skip-shortcut-count,
+#fastModeModal .smart-skip-shortcut-count:not(:empty) {
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--text-muted);
+  font: 500 12.5px/1 var(--font-reading);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+#fastModeModal .smart-skip-shortcut > .fast-mode-none { margin: 0; padding: 0 14px 12px; }
+
+/* Descriptions. On a phone they are sheets (below); the title and Done exist
+   only for the sheet. */
+#fastModeModal .smart-skip-shortcut-detail {
+  display: none;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+}
+#fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer {
+  margin: 0;
+  color: var(--text-secondary);
+  font: 400 13.5px/1.5 var(--font-reading);
+  opacity: 1;
+}
+#fastModeModal .smart-skip-shortcut-detail em { color: var(--text-primary); font-style: normal; font-weight: 600; }
+#fastModeModal .smart-skip-sheet-title { margin: 0; color: var(--text-primary); font: 700 17px/1.25 var(--font-emphasis); }
+#fastModeModal .smart-skip-sheet-done {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  font: 600 14.5px/1 var(--font-reading);
+  cursor: pointer;
 }
 
-/* 2. Header & Hero Stat Banner */
-.smart-skip-header-row {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 16px !important;
-  flex-wrap: wrap !important;
-  padding-bottom: 12px !important;
-  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent) !important;
-  margin-bottom: 20px !important;
-}
-.smart-skip-title-group {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 4px !important;
-}
-.smart-skip-title-row {
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-}
-#fastModeModal .smart-skip-body h2 {
-  margin: 0 !important;
-  padding-right: 0 !important;
-  font-size: 26px !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.025em !important;
-  line-height: 1.15 !important;
-}
-.smart-skip-tagline {
-  margin: 0 !important;
-  font-size: 13.5px !important;
-  color: var(--text-muted) !important;
-  line-height: 1.3 !important;
-}
-.smart-skip-hero-badge {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 4px 11px !important;
-  border-radius: 999px !important;
-  background: color-mix(in srgb, var(--accent-primary) 12%, transparent) !important;
-  border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, transparent) !important;
-  color: var(--accent-primary) !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-}
-.smart-skip-hero-badge.is-off {
-  background: color-mix(in srgb, var(--text-muted) 15%, transparent) !important;
-  border-color: color-mix(in srgb, var(--border-color) 60%, transparent) !important;
-  color: var(--text-muted) !important;
-}
-.smart-skip-stat-dot {
-  width: 7px !important;
-  height: 7px !important;
-  border-radius: 50% !important;
-  background: var(--accent-primary) !important;
-}
-.smart-skip-hero-badge.is-off .smart-skip-stat-dot {
-  background: var(--text-muted) !important;
-}
-
-/* 3. Mobile Segmented Tab Switch */
-.smart-skip-view-switch {
-  display: inline-flex !important;
-  align-items: center !important;
-  background: color-mix(in srgb, var(--text-primary) 8%, transparent) !important;
-  padding: 4px !important;
-  border-radius: 999px !important;
-  gap: 3px !important;
-}
-.smart-skip-tab {
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  border: 0 !important;
-  background: transparent !important;
-  padding: 7px 16px !important;
-  border-radius: 999px !important;
-  font: 700 13px/1.2 var(--font-reading) !important;
-  color: var(--text-muted) !important;
-  cursor: pointer !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  transition: all 0.16s ease !important;
-}
-.smart-skip-tab:hover {
-  color: var(--text-primary) !important;
-}
-.smart-skip-tab.is-active {
-  background: var(--bg-card) !important;
-  color: var(--text-primary) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
-}
-.smart-skip-tab-count {
-  font-size: 11.5px !important;
-  opacity: 0.8 !important;
-  font-weight: 600 !important;
-}
-
-/* 4. Radical Unboxing of Toggles (No Heavy Box Holding Them) */
-#fastModeModal .smart-skip-shortcuts,
-.smart-skip-more-card .smart-skip-shortcuts {
-  border: none !important;
-  background: transparent !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  overflow: visible !important;
-  padding: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 4px !important;
-}
-
-#fastModeModal .smart-skip-shortcut,
-.smart-skip-more-card .smart-skip-shortcut {
-  box-shadow: none !important;
-  border: none !important;
-  background: transparent !important;
-  border-radius: 16px !important;
-  padding: 8px 10px !important;
-  margin: 0 !important;
-  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent) !important;
-  transition: background 0.16s ease !important;
-}
-
-#fastModeModal .smart-skip-shortcut:last-child,
-.smart-skip-more-card .smart-skip-shortcut:last-child {
-  border-bottom: none !important;
-}
-
-#fastModeModal .smart-skip-shortcut:hover,
-.smart-skip-more-card .smart-skip-shortcut:hover {
-  background: color-mix(in srgb, var(--text-primary) 3.5%, transparent) !important;
-}
-
-#fastModeModal .smart-skip-shortcut-row,
-.smart-skip-more-card .smart-skip-shortcut-row {
-  min-height: 52px !important;
-  padding: 4px 6px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 14px !important;
-}
-
-#fastModeModal .smart-skip-shortcut-name,
-.smart-skip-more-card .smart-skip-shortcut-name {
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  font-size: 15.5px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.015em !important;
-  color: var(--text-primary) !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 14px !important;
-  border: 0 !important;
-  background: none !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-  text-align: left !important;
-}
-#fastModeModal .smart-skip-shortcut-name svg,
-.smart-skip-more-card .smart-skip-shortcut-name svg {
-  display: none !important;
-}
-
-/* Beautiful Icon Squircle Badges */
-.smart-skip-rule-icon {
-  width: 42px !important;
-  height: 42px !important;
-  flex: none !important;
-  border-radius: 12px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 20px !important;
-  line-height: 1 !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 18%, transparent) !important;
-  transition: transform 0.15s ease !important;
-}
-.smart-skip-shortcut-name:hover .smart-skip-rule-icon,
-.smart-skip-more-options:hover .smart-skip-rule-icon {
-  transform: scale(1.05) !important;
-}
-
-.smart-skip-rule-icon.is-cognate {
-  background: color-mix(in srgb, #6366f1 14%, transparent) !important;
-  color: #6366f1 !important;
-}
-.smart-skip-rule-icon.is-lemma {
-  background: color-mix(in srgb, #10b981 14%, transparent) !important;
-  color: #10b981 !important;
-}
-.smart-skip-rule-icon.is-grammar {
-  background: color-mix(in srgb, #0ea5e9 14%, transparent) !important;
-  color: #0ea5e9 !important;
-}
-.smart-skip-rule-icon.is-slang {
-  background: color-mix(in srgb, #f59e0b 14%, transparent) !important;
-  color: #f59e0b !important;
-}
-.smart-skip-rule-icon.is-entity {
-  background: color-mix(in srgb, #ec4899 14%, transparent) !important;
-  color: #ec4899 !important;
-}
-.smart-skip-rule-icon.is-advanced {
-  background: color-mix(in srgb, var(--accent-primary) 14%, transparent) !important;
-  color: var(--accent-primary) !important;
-}
-
-/* Rule title & subtitle text stack */
-.smart-skip-rule-info {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 2px !important;
-  min-width: 0 !important;
-}
-.smart-skip-rule-title {
-  font-size: 15.5px !important;
-  font-weight: 700 !important;
-  color: var(--text-primary) !important;
-  letter-spacing: -0.015em !important;
-  line-height: 1.25 !important;
-}
-.smart-skip-rule-sub {
-  font-size: 12.5px !important;
-  font-weight: 400 !important;
-  color: var(--text-secondary) !important;
-  line-height: 1.35 !important;
-}
-.smart-skip-rule-sub em {
-  font-style: normal !important;
-  color: var(--text-muted) !important;
-}
-
-/* Row right actions (count badge + switch) */
-.smart-skip-row-actions {
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-  flex: none !important;
-}
-
-#fastModeModal .smart-skip-shortcut-count:not(:empty),
-.smart-skip-more-card .smart-skip-shortcut-count:not(:empty) {
-  padding: 4px 10px !important;
-  border-radius: 999px !important;
-  background: color-mix(in srgb, var(--accent-primary) 10%, transparent) !important;
-  color: var(--accent-primary) !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  border: 1px solid color-mix(in srgb, var(--accent-primary) 22%, transparent) !important;
-  white-space: nowrap !important;
-  font-variant-numeric: tabular-nums !important;
-}
-
-/* Modern iOS-Style Toggle Switch */
-#fastModeModal .smart-skip-switch,
-.smart-skip-more-card .smart-skip-switch {
-  width: 48px !important;
-  height: 28px !important;
-  border-radius: 999px !important;
-  background: color-mix(in srgb, var(--text-muted) 32%, transparent) !important;
-  position: relative !important;
-  cursor: pointer !important;
-  border: none !important;
-  flex: none !important;
-  transition: background 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
-}
-#fastModeModal .smart-skip-switch::after,
-.smart-skip-more-card .smart-skip-switch::after {
-  content: '' !important;
-  position: absolute !important;
-  top: 3px !important;
-  left: 3px !important;
-  width: 22px !important;
-  height: 22px !important;
-  border-radius: 50% !important;
-  background: #ffffff !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28) !important;
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-}
-#fastModeModal .smart-skip-switch[aria-checked="true"],
-.smart-skip-more-card .smart-skip-switch[aria-checked="true"] {
-  background: var(--accent-primary) !important;
-  box-shadow: 0 2px 10px color-mix(in srgb, var(--accent-primary) 35%, transparent) !important;
-}
-#fastModeModal .smart-skip-switch[aria-checked="true"]::after,
-.smart-skip-more-card .smart-skip-switch[aria-checked="true"]::after {
-  transform: translateX(20px) !important;
-}
-
-/* Detail text & Known Languages */
-#fastModeModal .smart-skip-shortcut-detail,
-.smart-skip-more-card .smart-skip-shortcut-detail {
-  padding: 6px 12px 10px 62px !important;
-  border-top: none !important;
-  margin-top: 0 !important;
-}
-#fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer,
-.smart-skip-more-card .smart-skip-shortcut-detail .fast-mode-explainer {
-  font-size: 13px !important;
-  line-height: 1.45 !important;
-  color: var(--text-secondary) !important;
-  margin: 0 !important;
-}
-
-#fastModeModal .known-languages-context {
-  border: none !important;
-  background: transparent !important;
-  padding: 6px 12px 12px 62px !important;
-  margin-top: 0 !important;
-  box-shadow: none !important;
-}
+/* "Compare with": the languages look-alikes are matched against. */
+#fastModeModal .known-languages-context { margin: 2px 0 0; padding: 0; border: 0; background: none; box-shadow: none; }
+#fastModeModal .known-languages-bar-header { margin: 0 0 6px; }
 #fastModeModal .known-languages-bar-title {
-  color: var(--text-muted) !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.06em !important;
-  text-transform: uppercase !important;
-  margin-bottom: 8px !important;
+  color: var(--text-muted);
+  font: 600 12px/1 var(--font-reading);
+  letter-spacing: 0;
+  text-transform: none;
 }
-#fastModeModal .known-languages-selector {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 8px !important;
-}
-#fastModeModal .known-language-chip {
-  padding: 6px 14px !important;
-  border-radius: 999px !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent) !important;
-  background: color-mix(in srgb, var(--bg-card) 75%, transparent) !important;
-  color: var(--text-secondary) !important;
-  transition: all 0.16s ease !important;
-  cursor: pointer !important;
-}
-#fastModeModal .known-language-chip:hover {
-  background: var(--bg-card) !important;
-  color: var(--text-primary) !important;
-  border-color: var(--accent-primary) !important;
+#fastModeModal .known-languages-folded-row { display: flex; flex-wrap: wrap; gap: 6px; }
+#fastModeModal .known-language-chip,
+#fastModeModal .known-language-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: none;
+  color: var(--text-secondary);
+  font: 500 13px/1 var(--font-reading);
+  cursor: pointer;
 }
 #fastModeModal .known-language-chip.is-active {
-  border-color: var(--accent-primary) !important;
-  background: color-mix(in srgb, var(--accent-primary) 12%, transparent) !important;
-  color: var(--accent-primary) !important;
-  font-weight: 700 !important;
+  border-color: color-mix(in srgb, var(--accent-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+  color: var(--text-primary);
 }
+#fastModeModal .known-language-chip-status { color: var(--text-muted); font-weight: 700; }
+#fastModeModal .known-language-chip.is-active .known-language-chip-status { color: var(--accent-primary); }
+#fastModeModal .known-language-add-btn { border-style: dashed; color: var(--text-muted); }
+#fastModeModal .known-language-add-plus { font-weight: 700; }
 
-/* Advanced Options Button (Radically Unboxed Row) */
-#fastModeModal .smart-skip-secondary-settings {
-  margin: 0 !important;
-}
-#fastModeModal .smart-skip-secondary-controls {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0 !important;
-}
+/* "More rules": a row on a phone, a short titled list on a wide screen. */
 #fastModeModal .smart-skip-more-options {
-  width: 100% !important;
-  box-sizing: border-box !important;
-  min-height: 56px !important;
-  padding: 10px 10px !important;
-  border-radius: 14px !important;
-  background: transparent !important;
-  border: none !important;
-  border-top: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent) !important;
-  color: var(--text-primary) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 14px !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
-  margin-top: 6px !important;
-  transition: all 0.16s ease !important;
-  text-align: left !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 12px 0 14px;
+  border: 0;
+  border-radius: 0 0 12px 12px;
+  background: none;
+  box-shadow: none;
+  color: var(--text-secondary);
+  font: 500 13.5px/1 var(--font-reading);
+  text-align: left;
+  cursor: pointer;
 }
-#fastModeModal .smart-skip-more-options:hover {
-  background: color-mix(in srgb, var(--text-primary) 3.5%, transparent) !important;
-}
-.smart-skip-more-left {
-  display: flex !important;
-  align-items: center !important;
-  gap: 14px !important;
-  min-width: 0 !important;
-}
-.smart-skip-more-info {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 2px !important;
-}
-.smart-skip-more-title {
-  font-size: 15.5px !important;
-  font-weight: 700 !important;
-  color: var(--text-primary) !important;
-  letter-spacing: -0.015em !important;
-  line-height: 1.25 !important;
-}
-.smart-skip-more-sub {
-  font-size: 12.5px !important;
-  font-weight: 400 !important;
-  color: var(--text-secondary) !important;
-  line-height: 1.35 !important;
-}
-.smart-skip-more-right {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  flex: none !important;
-}
-.smart-skip-more-state:not(:empty) {
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  color: var(--accent-primary) !important;
-  padding: 3px 9px !important;
-  border-radius: 999px !important;
-  background: color-mix(in srgb, var(--accent-primary) 12%, transparent) !important;
-  font-variant-numeric: tabular-nums !important;
-}
-.smart-skip-more-right svg {
-  width: 18px !important;
-  height: 18px !important;
-  fill: none !important;
-  stroke: var(--text-muted) !important;
-  stroke-width: 2 !important;
-  stroke-linecap: round !important;
-  stroke-linejoin: round !important;
-  transition: transform 0.15s ease, stroke 0.15s ease !important;
-}
-#fastModeModal .smart-skip-more-options:hover .smart-skip-more-right svg {
-  transform: translateX(2px) !important;
-  stroke: var(--accent-primary) !important;
-}
+#fastModeModal .smart-skip-more-options[hidden],
+#fastModeModal .smart-skip-more-rules[hidden] { display: none; }
+#fastModeModal .smart-skip-more-options > span:first-child { flex: 1; }
+#fastModeModal .smart-skip-more-state:not(:empty) { padding: 0; background: none; color: var(--text-muted); font-size: 12.5px; }
+#fastModeModal .smart-skip-more-options svg { flex: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.7; }
+#fastModeModal .smart-skip-more-rules { display: none; }
+#fastModeModal .smart-skip-more-title { margin: 0; color: var(--text-primary); font: 700 17px/1.25 var(--font-emphasis); }
+#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row { padding: 0; min-height: 44px; }
+#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail { display: block; padding: 0 0 12px; margin-top: -4px; }
+#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail .fast-mode-explainer { font-size: 13px; color: var(--text-muted); }
 
-/* Advanced Options Modal Sheet Card */
-.smart-skip-more-card {
-  width: min(540px, 94vw) !important;
-  border-radius: 22px !important;
-  padding: 24px 24px 20px !important;
-  background: var(--bg-card) !important;
-  border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent) !important;
+/* Phone sheets: the open description or More rules rises from the bottom. */
+#fastModeModal .smart-skip-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1070;
+  background: rgba(6, 9, 14, 0.55);
 }
-.smart-skip-more-head {
-  margin-bottom: 16px !important;
+#fastModeModal .smart-skip-sheet-backdrop[hidden] { display: none; }
+#fastModeModal .smart-skip-shortcut-detail.is-sheet-open,
+#fastModeModal .smart-skip-more-rules.is-sheet-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1071;
+  display: grid;
+  gap: 12px;
+  max-height: 85dvh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 22px 18px calc(env(safe-area-inset-bottom, 0px) + 16px);
+  border: 1px solid var(--border-color);
+  border-bottom: 0;
+  border-radius: 20px 20px 0 0;
+  background: var(--bg-card);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+  animation: smart-skip-preview-up 0.18s ease-out;
 }
-.smart-skip-more-head h3 {
-  font-size: 20px !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.02em !important;
-  margin: 0 0 4px 0 !important;
-  color: var(--text-primary) !important;
-}
-.smart-skip-more-head p {
-  font-size: 13.5px !important;
-  color: var(--text-secondary) !important;
-  margin: 0 !important;
-  line-height: 1.4 !important;
-}
-.smart-skip-more-card .smart-skip-preview-actions {
-  margin-top: 20px !important;
-}
-.smart-skip-more-card .smart-skip-preview-close {
-  width: 100% !important;
-  min-height: 48px !important;
-  border-radius: 14px !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  background: var(--accent-primary) !important;
-  color: #ffffff !important;
-  border: none !important;
-  cursor: pointer !important;
-  transition: filter 0.15s ease, transform 0.15s ease !important;
-}
-.smart-skip-more-card .smart-skip-preview-close:hover {
-  filter: brightness(1.08) !important;
-  transform: translateY(-1px) !important;
-}
+#fastModeModal .smart-skip-more-rules.is-sheet-open { gap: 4px; }
+#fastModeModal .smart-skip-more-rules.is-sheet-open > .smart-skip-more-title { margin-bottom: 6px; }
+#fastModeModal .smart-skip-more-rules.is-sheet-open > .smart-skip-sheet-done { margin-top: 10px; }
+#fastModeModal .is-sheet-open:focus { outline: none; }
 
-/* 5. Mobile Browse Skipped Words Card Button */
-.smart-skip-browse-banner {
-  margin-top: 16px !important;
-  padding: 0 !important;
-}
-.smart-skip-see-words-btn {
-  width: 100% !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  border: 1.5px solid color-mix(in srgb, var(--accent-primary) 35%, var(--border-color)) !important;
-  background: color-mix(in srgb, var(--accent-primary) 8%, transparent) !important;
-  color: var(--text-primary) !important;
-  padding: 16px 20px !important;
-  border-radius: 16px !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  text-align: left !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-primary) 8%, transparent) !important;
-}
-.smart-skip-see-words-btn:hover {
-  background: color-mix(in srgb, var(--accent-primary) 15%, transparent) !important;
-  border-color: var(--accent-primary) !important;
-  transform: translateY(-1px) !important;
-}
-.smart-skip-see-words-copy {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 3px !important;
-}
-.smart-skip-see-words-copy strong {
-  font-size: 15.5px !important;
-  font-weight: 700 !important;
-  color: var(--accent-primary) !important;
-}
-.smart-skip-see-words-copy small {
-  font-size: 12.5px !important;
-  color: var(--text-secondary) !important;
-}
-.smart-skip-see-words-arrow {
-  font-size: 22px !important;
-  font-weight: 600 !important;
-  color: var(--accent-primary) !important;
-}
-
-/* 6. Vocabulary Table & Browser */
-#fastModeModal .smart-skip-words {
-  gap: 16px !important;
+/* The word list: one panel, its category chips and language switch on top. */
+#fastModeModal .smart-skip-words { display: grid; gap: 8px; margin: 14px 0 0; }
+#fastModeModal .smart-skip-words > .fast-mode-explainer { margin: 0; color: var(--text-muted); font-size: 13px; }
+#fastModeModal .smart-skip-panel {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  overflow: clip;
 }
 #fastModeModal .smart-skip-browser-controls {
-  background: transparent !important;
-  padding: 0 0 6px 0 !important;
-  border: none !important;
-  gap: 12px !important;
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 0;
+  background: none;
 }
-#fastModeModal .smart-skip-toolbar {
-  gap: 12px !important;
+#fastModeModal .smart-skip-toolbar { display: block; min-width: 0; }
+#fastModeModal .smart-skip-toolbar[hidden] { display: none; }
+#fastModeModal .smart-skip-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 -12px;
+  padding: 0 12px;
 }
-#fastModeModal .smart-skip-select-wrap select {
-  min-height: 46px !important;
-  border-radius: 14px !important;
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border-color) !important;
-  padding: 10px 38px 10px 16px !important;
-  font-size: 14.5px !important;
-  font-weight: 600 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+#fastModeModal .smart-skip-chips::-webkit-scrollbar { display: none; }
+#fastModeModal .smart-skip-cat {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: none;
+  color: var(--text-secondary);
+  font: 600 13px/1 var(--font-reading);
+  white-space: nowrap;
+  cursor: pointer;
 }
-#fastModeModal .smart-skip-list {
-  border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent) !important;
-  border-radius: 18px !important;
-  background: var(--bg-card) !important;
-  overflow: clip !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+#fastModeModal .smart-skip-cat span { color: var(--text-muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+#fastModeModal .smart-skip-cat:hover { color: var(--text-primary); }
+#fastModeModal .smart-skip-cat[aria-selected="true"] {
+  border-color: color-mix(in srgb, var(--accent-primary) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+  color: var(--text-primary);
 }
-#fastModeModal .smart-skip-level {
-  height: 44px !important;
-  padding: 0 16px !important;
-  background: color-mix(in srgb, var(--bg-card) 88%, var(--text-primary) 12%) !important;
-  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent) !important;
+#fastModeModal .smart-skip-cat[aria-selected="true"] span { color: var(--text-secondary); }
+
+/* Look-alikes compared with: one segment per known language. */
+#fastModeModal .smart-skip-lang-btn {
+  display: flex;
+  gap: 2px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 2px;
+  border: 0;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--text-primary) 7%, transparent);
+  box-shadow: none;
 }
-#fastModeModal .smart-skip-row {
-  min-height: 52px !important;
-  height: auto !important;
-  padding: 10px 16px 10px 16px !important;
-  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent) !important;
-  transition: background 0.15s ease !important;
+#fastModeModal .smart-skip-lang-btn[hidden] { display: none; }
+#fastModeModal .smart-skip-lang-btn button {
+  flex: 1;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-secondary);
+  font: 600 13px/1 var(--font-reading);
+  white-space: nowrap;
+  cursor: pointer;
 }
-#fastModeModal .smart-skip-row:hover {
-  background: color-mix(in srgb, var(--text-primary) 3.5%, transparent) !important;
+#fastModeModal .smart-skip-lang-btn button span { color: var(--text-muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+#fastModeModal .smart-skip-lang-btn button[aria-pressed="true"] {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 1px var(--border-color), 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* 7. Responsive Rules: Mobile vs Desktop */
-@media (max-width: 899px) {
-  /* Header layout on mobile */
-  .smart-skip-header-row {
-    padding-right: 48px !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 12px !important;
-    margin-bottom: 16px !important;
-  }
-  
-  .smart-skip-title-row {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-  }
-  
-  #fastModeModal .smart-skip-body h2 {
-    font-size: 23px !important;
-  }
-  
-  .smart-skip-tagline {
-    font-size: 13px !important;
-  }
-
-  /* Segmented control tabs - full width on mobile */
-  .smart-skip-view-switch {
-    display: flex !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    margin-top: 4px !important;
-  }
-  .smart-skip-tab {
-    flex: 1 1 50% !important;
-    justify-content: center !important;
-    text-align: center !important;
-    padding: 9px 12px !important;
-    font-size: 13.5px !important;
-  }
-
-  /* Rule row on mobile: stack switch & count vertically to give title maximum space */
-  .smart-skip-row-actions {
-    flex-direction: column !important;
-    align-items: flex-end !important;
-    justify-content: center !important;
-    gap: 4px !important;
-    flex: none !important;
-  }
-  #fastModeModal .smart-skip-shortcut-count:not(:empty),
-  .smart-skip-more-card .smart-skip-shortcut-count:not(:empty) {
-    font-size: 11px !important;
-    padding: 2px 7px !important;
-    border-radius: 6px !important;
-  }
-
-  /* Full-width indentation of explainers and language chips on mobile */
-  #fastModeModal .smart-skip-shortcut-detail,
-  .smart-skip-more-card .smart-skip-shortcut-detail {
-    padding: 8px 4px 12px 4px !important;
-  }
-  #fastModeModal .known-languages-context {
-    padding: 6px 4px 12px 4px !important;
-  }
-
-  /* Child modals bottom sheet on mobile */
-  .smart-skip-preview {
-    align-items: flex-end !important;
-    padding: 0 !important;
-  }
-  .smart-skip-more-card,
-  .smart-skip-preview-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: 85dvh !important;
-    border-radius: 24px 24px 0 0 !important;
-    border-bottom: 0 !important;
-    padding: 22px 20px max(24px, env(safe-area-inset-bottom)) !important;
-    overflow-y: auto !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Mobile view switching between rules and words */
-  .smart-skip-body[data-mobile-view="rules"] .smart-skip-words {
-    display: none !important;
-  }
-  .smart-skip-body[data-mobile-view="words"] .smart-skip-shortcuts,
-  .smart-skip-body[data-mobile-view="words"] .smart-skip-browse-banner,
-  .smart-skip-body[data-mobile-view="words"] #smartSkipLyricsIntro {
-    display: none !important;
-  }
-  .smart-skip-body[data-mobile-view="words"] .smart-skip-words {
-    display: grid !important;
-  }
+/* The table sits flush inside the panel. */
+#fastModeModal #fastTrackDeckCard { margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+#fastModeModal .smart-skip-panel .smart-skip-table { border: 0; border-radius: 0; background: none; box-shadow: none; }
+#fastModeModal .smart-skip-panel .smart-skip-list { border: 0; border-radius: 0; background: none; box-shadow: none; }
+#fastModeModal .smart-skip-panel .smart-skip-head {
+  height: 32px;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  background: color-mix(in srgb, var(--text-primary) 4%, transparent);
+  color: var(--text-muted);
+  font: 600 12px/1 var(--font-reading);
 }
+#fastModeModal .smart-skip-panel .smart-skip-row {
+  height: auto;
+  min-height: 44px;
+  border-bottom: 0;
+}
+#fastModeModal .smart-skip-panel .smart-skip-row:hover { background: var(--bg-card-hover); }
+#fastModeModal .smart-skip-panel .smart-skip-w { font: 600 15px/1.2 var(--font-reading); }
+#fastModeModal .smart-skip-panel .smart-skip-g { font-size: 14.5px; }
+#fastModeModal .smart-skip-panel .smart-skip-empty { padding: 22px 14px; border-top: 1px solid var(--border-color); }
 
+/* Wide screens: the page fills the window. The rules are a sidebar running
+   from under the header to the bottom edge; the list takes every column to its
+   right and at least the full height. The title is centred in the header. */
 @media (min-width: 900px) {
-  .smart-skip-view-switch,
-  .smart-skip-browse-banner {
-    display: none !important;
-  }
+  #fastModeModal { --ss-head-h: 64px; --ss-side-w: clamp(280px, 25vw, 340px); }
   #fastModeModal .smart-skip-body {
-    display: grid !important;
-    grid-template-columns: 420px minmax(0, 1fr) !important;
-    column-gap: 52px !important;
-    row-gap: 24px !important;
-    align-items: start !important;
-    padding: 32px 52px 64px !important;
+    display: grid;
+    grid-template-columns: var(--ss-side-w) minmax(0, 1fr);
+    gap: 0;
+    align-items: start;
+    max-width: none;
+    min-height: 100%;
+    padding: 0;
   }
-  #fastModeModal .smart-skip-header-row {
-    grid-column: 1 / -1 !important;
-    padding-right: 52px !important;
+  #fastModeModal .smart-skip-body .smart-skip-header-row {
+    grid-column: 1 / -1;
+    box-sizing: border-box;
+    height: var(--ss-head-h);
+    margin: 0;
+    padding: 0 24px;
   }
-  #fastModeModal .smart-skip-shortcuts {
-    grid-column: 1 !important;
-    grid-row: 2 !important;
-    position: sticky !important;
-    top: 20px !important;
+  #fastModeModal .smart-skip-body .smart-skip-header-row > h2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    white-space: nowrap;
   }
-  #fastModeModal .smart-skip-words {
-    grid-column: 2 !important;
-    grid-row: 2 !important;
-    display: grid !important;
-    min-width: 0 !important;
+  #fastModeModal .smart-skip-summary { flex: 1; text-align: right; font-size: 14px; }
+  #fastModeModal .smart-skip-body > .smart-skip-shortcuts {
+    grid-column: 1;
+    grid-row: 2 / span 2;
+    position: sticky;
+    top: var(--ss-head-h);
+    box-sizing: border-box;
+    height: calc(100dvh - var(--ss-head-h));
+    max-height: none;
+    overflow-y: auto;
+    padding: 20px 18px 32px;
+    border: 0;
+    border-right: 1px solid var(--border-color);
+    border-radius: 0;
+    background: none;
   }
+  #fastModeModal .smart-skip-body > .smart-skip-words {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-sizing: border-box;
+    min-height: calc(100dvh - var(--ss-head-h));
+    margin: 0;
+    padding: 20px 24px 24px;
+    min-width: 0;
+  }
+  #fastModeModal .smart-skip-body > .smart-skip-words > .smart-skip-panel { flex: 1; }
+  #fastModeModal .smart-skip-body > .fast-mode-admin-details { grid-column: 2; grid-row: 3; margin: 0 24px 24px; }
+
+  /* Each main rule is its own card with its description under the title. */
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-card);
+    padding: 12px 14px 14px;
+  }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut + .smart-skip-shortcut { margin-top: 10px; border-top: 1px solid var(--border-color); }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-row { min-height: 0; padding: 0; }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-detail { display: grid; gap: 10px; padding: 6px 0 0; }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .fast-mode-none { padding: 6px 0 0; }
+  #fastModeModal .smart-skip-info,
+  #fastModeModal .smart-skip-sheet-title,
+  #fastModeModal .smart-skip-sheet-done,
+  #fastModeModal .smart-skip-sheet-backdrop,
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-more-options { display: none; }
+  #fastModeModal .smart-skip-shortcut-name { font-size: 15px; }
+
+  /* More rules: listed in place under a small heading, no card. */
+  #fastModeModal .smart-skip-more-rules:not([hidden]) { display: block; margin-top: 18px; padding: 0 14px; }
+  #fastModeModal .smart-skip-more-title { margin: 0 0 4px; color: var(--text-muted); font: 600 12.5px/1 var(--font-reading); }
+  #fastModeModal .smart-skip-more-rules > .smart-skip-shortcut + .smart-skip-shortcut { border-top: 0; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row { min-height: 38px; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-name { font-size: 14px; font-weight: 500; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail { padding: 0 0 6px; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail .fast-mode-explainer { font-size: 12.5px; }
+
+  /* Narrower desktops (nav open, or a small laptop): a slimmer rules column
+     and tighter Type and Rank columns, so words are not cut short. */
+  #fastModeModal .smart-skip-panel .smart-skip-table { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 56px; }
+  #fastModeModal .smart-skip-panel .smart-skip-table.has-tag { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 88px 52px; }
+  #fastModeModal .smart-skip-panel .smart-skip-table[data-cat="lemma"] { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr) 52px; }
+
+  /* Larger list type on a wide screen. */
+  #fastModeModal .smart-skip-lang-btn { display: inline-flex; justify-self: start; }
+  #fastModeModal .smart-skip-lang-btn button { flex: none; }
+  #fastModeModal .smart-skip-browser-controls { padding: 12px 14px; }
+  #fastModeModal .smart-skip-panel .smart-skip-head { height: 34px; font-size: 12.5px; }
+  #fastModeModal .smart-skip-panel .smart-skip-row { min-height: 46px; }
+  #fastModeModal .smart-skip-panel .smart-skip-w { font-size: 16px; }
+  #fastModeModal .smart-skip-panel .smart-skip-g { font-size: 15px; }
+  #fastModeModal .smart-skip-panel .smart-skip-rank { font-size: 13px; }
 }
-
-

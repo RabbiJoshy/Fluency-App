@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T17:04:00+01:00",
+      "date": "2026-10-18 17:04 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip page redesign: one-line header, rules sidebar on desktop, compact switches and sheets on phones, chips above the word list",
+      "detail": [
+        "Header: centred 'Smart Skip' title on desktop, words-skipped count, a page on/off switch and close button; the page background is black in the dark theme.",
+        "Desktop: full-width page; the rules sit in a sidebar running to the bottom edge with every description shown, including 'Compare with' language chips and the optional rules listed in place.",
+        "Phone: the two main switches and a 'More rules' row sit in one card above the list; each rule's description (and the look-alike languages) opens from its ⓘ as a bottom sheet, as does More rules. The Rules/Skipped words tabs, the browse banner, tagline and emoji icons are gone.",
+        "Word list: the category dropdown is now a row of chips; look-alikes with more than one known language get an English | French style switch, and the column header names the language shown, so rows need no language label.",
+        "Flags removed from Smart Skip column headers, the language switch and the look-alike language chips; languages are named in words.",
+        "Replaced the 700-line !important Smart Skip block in ui-refinements.css with one scoped set of styles."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T15:58:00+01:00",
       "date": "2026-10-18 15:58 BST",
       "agent": "Antigravity",
@@ -34,7 +49,7 @@
       "detail": [
         "Card: tense is styled matching person without a pill container; mood is omitted for indicative and only appears as a tag when drilling multiple moods.",
         "Card: fixed empty stub oval caused by clue pill CSS overriding the hidden attribute.",
-        "Setup: removed Resume button; total count displays breakdown (verbs \u00b7 tenses \u00b7 persons); progress bar is tappable to reveal/hide its mastery key.",
+        "Setup: removed Resume button; total count displays breakdown (verbs · tenses · persons); progress bar is tappable to reveal/hide its mastery key.",
         "Setup: safe default selection guaranteed (present tense and all persons) so the drill never loads empty."
       ],
       "commit": "pending"
@@ -54,11 +69,11 @@
       "timestamp": "2026-10-18T15:15:00+01:00",
       "date": "2026-10-18 15:15 BST",
       "agent": "Antigravity",
-      "summary": "Verb drills: simpler Start box, answer hidden until you tap, and person \u2192 tense linked on the card",
+      "summary": "Verb drills: simpler Start box, answer hidden until you tap, and person → tense linked on the card",
       "detail": [
-        "Setup: removed the verbs/tenses/persons line; the bar now shows progress (known / learning / missed) and the line under it is just 'N of M known \u00b7 N due'.",
+        "Setup: removed the verbs/tenses/persons line; the bar now shows progress (known / learning / missed) and the line under it is just 'N of M known · N due'.",
         "Card: fixed the answer showing before you tap (a display rule was overriding the hidden attribute).",
-        "Card: person and tense now sit on one row (yo \u2192 Indicative \u00b7 Present) with the verb underneath; removed the 'Subject' label; reflexive/participle moved next to the translation; type and pattern merged into one chip."
+        "Card: person and tense now sit on one row (yo → Indicative · Present) with the verb underneath; removed the 'Subject' label; reflexive/participle moved next to the translation; type and pattern merged into one chip."
       ],
       "commit": "pending"
     },
@@ -91,8 +106,8 @@
       "agent": "Claude",
       "summary": "Scrubber number now moves one card at a time on grammar-word cards; POS pill fills the sense row; 'from' aligned; scrubber circle back to its original size",
       "detail": [
-        "Fixed the seek-bar number freezing on grammar-word cards (en, lo, un, por\u2026) and then jumping several numbers: updateCard returned early after drawing their back, before the scrubber update.",
-        "Sense-row POS pill text 17\u219219px; the row's own padding cut (7px \u2192 3px) so the pill nearly fills it.",
+        "Fixed the seek-bar number freezing on grammar-word cards (en, lo, un, por…) and then jumping several numbers: updateCard returned early after drawing their back, before the scrubber update.",
+        "Sense-row POS pill text 17→19px; the row's own padding cut (7px → 3px) so the pill nearly fills it.",
         "'from' in the sense-row head now sits on the pill's centre line instead of floating above it.",
         "Scrubber circle back to 32px (it had grown to 40px); its number is 19px so it fills the circle instead."
       ],
@@ -102,11 +117,11 @@
       "timestamp": "2026-10-18T13:20:00+01:00",
       "date": "2026-10-18 13:20 BST",
       "agent": "Claude",
-      "summary": "Companion cards: all three now reach the deck, and the front shows \"Card N of M \u00b7 x% of uses\" on one clear pill; back-of-card controls enlarged again with tighter padding",
+      "summary": "Companion cards: all three now reach the deck, and the front shows \"Card N of M · x% of uses\" on one clear pill; back-of-card controls enlarged again with tighter padding",
       "detail": [
         "Fixed 3-way split words (e.g. fue) stopping at card 2: the deck builder only pushed the first two companions. Sessions also no longer cut a 3-card split across two batches.",
         "Front: \"Card N of M\" is now 16px bold on a tinted pill, with \"x% of uses\" beside it instead of under the frequency (the frequency is the same on every companion).",
-        "Back: pin icon 26\u219230px, information icon 18\u219223px in a 30px box, sense-row POS pill 15\u219217px with 3px 10px padding, scrubber circle 36\u219240px with a 20px number, 'Level x' label 17\u219220px."
+        "Back: pin icon 26→30px, information icon 18→23px in a 30px box, sense-row POS pill 15→17px with 3px 10px padding, scrubber circle 36→40px with a 20px number, 'Level x' label 17→20px."
       ],
       "commit": "pending"
     },
@@ -178,7 +193,7 @@
       "agent": "Antigravity",
       "summary": "Modernised card swipe feedback with progressive edge glow, frosted SVG badges, and threshold haptic tick",
       "detail": [
-        "Replaced the 72px raw Unicode \u2717 and \u2713 characters with frosted circular SVG badges that scale progressively with finger drag and snap solid with a spring bounce at the 50px commit threshold.",
+        "Replaced the 72px raw Unicode ✗ and ✓ characters with frosted circular SVG badges that scale progressively with finger drag and snap solid with a spring bounce at the 50px commit threshold.",
         "Added continuous emerald (right) and warm coral (left) edge wash and specular rim lighting on the card surface during horizontal swipes.",
         "Added an 8ms micro-haptic tick at the exact frame the swipe crosses the 50px grade threshold, with no competing sound effects."
       ],
@@ -238,7 +253,7 @@
       "agent": "Antigravity",
       "summary": "Refine Smart Skip into unified status-dot action pill and center Practice summary text",
       "detail": [
-        "Replaced the internal sliding switch with a sleek illuminated status dot indicator (\u25cb Off / \u25cf On) inside the unified Smart Skip action pill.",
+        "Replaced the internal sliding switch with a sleek illuminated status dot indicator (○ Off / ● On) inside the unified Smart Skip action pill.",
         "Tightened vertical spacing and removed dead-space padding around the Smart Skip footer so it sits cleanly and compactly beneath Study without large gaps.",
         "Centered the Practice section summary text ('X waiting' / 'Nothing to practise yet') and chevron above the Practise button, matching the centered symmetry of Study."
       ],
@@ -275,9 +290,9 @@
       "summary": "Omit zero counts from level picker progress legend and unify Smart Skip into action toggle button",
       "detail": [
         "Updated the level picker progress stats line to render only categories with counts > 0, eliminating '0 Practice' and '0 Known' when empty.",
-        "Unified Smart Skip label and segmented switch into a single centered action button ('Smart Skip \u00b7 On' / 'Smart Skip \u00b7 Off').",
+        "Unified Smart Skip label and segmented switch into a single centered action button ('Smart Skip · On' / 'Smart Skip · Off').",
         "Styled the unified Smart Skip button to match the visual language, radius, and weight of the Study and Practise buttons.",
-        "Maintained centered secondary summary ('Fewer cards, less repetition \u00b7 Details \u203a') directly below the toggle button."
+        "Maintained centered secondary summary ('Fewer cards, less repetition · Details ›') directly below the toggle button."
       ],
       "commit": "pending"
     },
@@ -353,18 +368,6 @@
         "Include related and knowledge-level review need in buildKnowledgeAwareCard so practice sessions retain due cards instead of dropping them and aborting.",
         "Clear known sense flags when all senses on a card are learned and none are explicitly marked for practice, presenting the card whole rather than greying out every sense.",
         "Add safeguards in updateCard and meaningTierClass to prevent fully learned cards from displaying as part-known cards."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-16T14:21:50.072167+00:00",
-      "date": "2026-10-16 14:21 UTC",
-      "agent": "Codex",
-      "summary": "Clearer Portuguese and Spanish function-word cards",
-      "detail": [
-        "Centre pattern formulas, keep explanations left-aligned, and show contraction parts below the word without pills.",
-        "Place examples directly below patterns and match typed chunks to the app\u2019s POS colours.",
-        "Simplify all 81 cards; use 71 traceable examples for the twelve reviewed pilot cards. Remaining source labels are explicitly unverified."
       ],
       "commit": "pending"
     }

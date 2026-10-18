@@ -642,11 +642,13 @@ class ProductShellTests(unittest.TestCase):
         extras = (APP_ROOT / "js" / "extras.js").read_text(encoding="utf-8")
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        # No search box and no "Study these": the list is for looking, and the
-        # advanced switches sit in their own sheet.
+        # No search box and no "Study these": the list is for looking. The
+        # optional rules are one group (a sheet on a phone), and categories are
+        # chips above the list rather than a dropdown.
         self.assertNotIn('id="skippedWordsSearch"', html)
         self.assertIn('id="smartSkipMore"', html)
-        self.assertIn('id="skippedCategorySelect"', html)
+        self.assertIn('id="skippedCategoryChips"', html)
+        self.assertNotIn('id="skippedCategorySelect"', html)
         # Nothing studies the whole list, which can run to thousands of cards.
         self.assertNotIn('class="smart-skip-study" data-ss-level=', extras)
         self.assertIn('entries || []).map(({ item }) => item)', extras)
