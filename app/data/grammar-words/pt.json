@@ -10320,50 +10320,6 @@
                         }
                     },
                     {
-                        "sentence": "E flutuou no ar como se fosse um príncipe",
-                        "targetHTML": "E <span class=\"fw-token-v\">flutuou</span> no ar <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse um príncipe</span>",
-                        "translation": "",
-                        "source": "Portuguese Playlist · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Portuguese Playlist · Construção",
-                                "source_record_id": "Portuguese Playlist:Construção:0",
-                                "artist": "Portuguese Playlist",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_d0ed5abc2238",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Dançou e gargalhou como se ouvisse música",
-                        "targetHTML": "Dançou e <span class=\"fw-token-v\">gargalhou</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se ouvisse música</span>",
-                        "translation": "",
-                        "source": "Portuguese Playlist · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Portuguese Playlist · Construção",
-                                "source_record_id": "Portuguese Playlist:Construção:0",
-                                "artist": "Portuguese Playlist",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_f9da4e848597",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
                         "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
                         "targetHTML": "E nós somos os mesmos e <span class=\"fw-token-v\">vivemos</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">os nossos pais</span>",
                         "translation": "",
@@ -10399,182 +10355,6 @@
                                 "song": "Construção"
                             },
                             "sentence_id": "artist_eb54c5059eb5",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "E flutuou no ar como se fosse sábado",
-                        "targetHTML": "E <span class=\"fw-token-v\">flutuou</span> no ar <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse sábado</span>",
-                        "translation": "",
-                        "source": "Portuguese Playlist · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Portuguese Playlist · Construção",
-                                "source_record_id": "Portuguese Playlist:Construção:0",
-                                "artist": "Portuguese Playlist",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_b98278886bed",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Sentou pra descansar como se fosse um príncipe",
-                        "targetHTML": "Sentou pra <span class=\"fw-token-v\">descansar</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse um príncipe</span>",
-                        "translation": "",
-                        "source": "Polyglot PT · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Polyglot PT · Construção",
-                                "source_record_id": "Polyglot PT:Construção:0",
-                                "artist": "Polyglot PT",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_5cdc83df1259",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Beijou sua mulher como se fosse lógico",
-                        "targetHTML": "<span class=\"fw-token-v\">Beijou</span> sua mulher <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse lógico</span>",
-                        "translation": "",
-                        "source": "Polyglot PT · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Polyglot PT · Construção",
-                                "source_record_id": "Polyglot PT:Construção:0",
-                                "artist": "Polyglot PT",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_9f7c8fe5ec5d",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Beijou sua mulher como se fosse a última",
-                        "targetHTML": "<span class=\"fw-token-v\">Beijou</span> sua mulher <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse a última</span>",
-                        "translation": "",
-                        "source": "Polyglot PT · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Polyglot PT · Construção",
-                                "source_record_id": "Polyglot PT:Construção:0",
-                                "artist": "Polyglot PT",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_bdf4268ca2a3",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Sentou pra descansar como se fosse sábado",
-                        "targetHTML": "Sentou pra <span class=\"fw-token-v\">descansar</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse sábado</span>",
-                        "translation": "",
-                        "source": "Polyglot PT · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Polyglot PT · Construção",
-                                "source_record_id": "Polyglot PT:Construção:0",
-                                "artist": "Polyglot PT",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_2240066e0c9b",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Sentou pra descansar como se fosse um pássaro",
-                        "targetHTML": "Sentou pra <span class=\"fw-token-v\">descansar</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse um pássaro</span>",
-                        "translation": "",
-                        "source": "Polyglot PT · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Polyglot PT · Construção",
-                                "source_record_id": "Polyglot PT:Construção:0",
-                                "artist": "Polyglot PT",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_80ece1a877b4",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Subiu a construção como se fosse máquina",
-                        "targetHTML": "<span class=\"fw-token-v\">Subiu</span> a construção <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse máquina</span>",
-                        "translation": "",
-                        "source": "Polyglot PT · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Polyglot PT · Construção",
-                                "source_record_id": "Polyglot PT:Construção:0",
-                                "artist": "Polyglot PT",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_a069362a6d93",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "pt:como:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Conjunction/preposition como pattern 0."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Subiu a construção como se fosse sólido",
-                        "targetHTML": "<span class=\"fw-token-v\">Subiu</span> a construção <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse sólido</span>",
-                        "translation": "",
-                        "source": "Polyglot PT · Construção",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Polyglot PT · Construção",
-                                "source_record_id": "Polyglot PT:Construção:0",
-                                "artist": "Polyglot PT",
-                                "song": "Construção"
-                            },
-                            "sentence_id": "artist_e6400488fd59",
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "pt:como:0",
@@ -10631,87 +10411,19 @@
                             }
                         },
                         {
-                            "sentence": "E flutuou no ar como se fosse um príncipe",
-                            "targetHTML": "E <span class=\"fw-token-v\">flutuou</span> no ar <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse um príncipe</span>",
+                            "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
+                            "targetHTML": "E nós somos os mesmos e <span class=\"fw-token-v\">vivemos</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">os nossos pais</span>",
                             "translation": "",
-                            "source": "Portuguese Playlist · Construção",
+                            "source": "Portuguese Playlist · Como Nossos Pais",
                             "channel": "artist",
                             "metadata": {
                                 "source": {
-                                    "name": "Portuguese Playlist · Construção",
-                                    "source_record_id": "Portuguese Playlist:Construção:0",
+                                    "name": "Portuguese Playlist · Como Nossos Pais",
+                                    "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
                                     "artist": "Portuguese Playlist",
-                                    "song": "Construção"
+                                    "song": "Como Nossos Pais"
                                 },
-                                "sentence_id": "artist_d0ed5abc2238",
-                                "channel": "artist",
-                                "automaticSyntax": {
-                                    "patternId": "pt:como:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Conjunction/preposition como pattern 0."
-                                }
-                            }
-                        }
-                    ],
-                    "Polyglot PT": [
-                        {
-                            "sentence": "Sentou pra descansar como se fosse um príncipe",
-                            "targetHTML": "Sentou pra <span class=\"fw-token-v\">descansar</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse um príncipe</span>",
-                            "translation": "",
-                            "source": "Polyglot PT · Construção",
-                            "channel": "artist",
-                            "metadata": {
-                                "source": {
-                                    "name": "Polyglot PT · Construção",
-                                    "source_record_id": "Polyglot PT:Construção:0",
-                                    "artist": "Polyglot PT",
-                                    "song": "Construção"
-                                },
-                                "sentence_id": "artist_5cdc83df1259",
-                                "channel": "artist",
-                                "automaticSyntax": {
-                                    "patternId": "pt:como:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Conjunction/preposition como pattern 0."
-                                }
-                            }
-                        },
-                        {
-                            "sentence": "Beijou sua mulher como se fosse lógico",
-                            "targetHTML": "<span class=\"fw-token-v\">Beijou</span> sua mulher <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse lógico</span>",
-                            "translation": "",
-                            "source": "Polyglot PT · Construção",
-                            "channel": "artist",
-                            "metadata": {
-                                "source": {
-                                    "name": "Polyglot PT · Construção",
-                                    "source_record_id": "Polyglot PT:Construção:0",
-                                    "artist": "Polyglot PT",
-                                    "song": "Construção"
-                                },
-                                "sentence_id": "artist_9f7c8fe5ec5d",
-                                "channel": "artist",
-                                "automaticSyntax": {
-                                    "patternId": "pt:como:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Conjunction/preposition como pattern 0."
-                                }
-                            }
-                        },
-                        {
-                            "sentence": "Beijou sua mulher como se fosse a última",
-                            "targetHTML": "<span class=\"fw-token-v\">Beijou</span> sua mulher <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse a última</span>",
-                            "translation": "",
-                            "source": "Polyglot PT · Construção",
-                            "channel": "artist",
-                            "metadata": {
-                                "source": {
-                                    "name": "Polyglot PT · Construção",
-                                    "source_record_id": "Polyglot PT:Construção:0",
-                                    "artist": "Polyglot PT",
-                                    "song": "Construção"
-                                },
-                                "sentence_id": "artist_bdf4268ca2a3",
+                                "sentence_id": "artist_11473680a873",
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "pt:como:0",
