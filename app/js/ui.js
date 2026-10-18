@@ -3049,6 +3049,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         const upcoming = plan?.summariseUpcoming?.(window.getUpcomingReviewTimes?.(selectedLanguage) || []) || null;
         const upcomingText = plan?.describeUpcoming?.(upcoming) || '';
         practiseUpcoming = upcoming;
+        // Everything scheduled beyond the next batch and the rest of this week.
+        const upcomingAfter = Math.max(0, (upcoming?.total || 0) - (upcoming?.nextCount || 0) - (upcoming?.laterThisWeek || 0));
         const practiseCap = plan?.sessionCardLimit?.('practice') || QUICK_REVIEW_LIMIT;
         const practiseCount = Math.min(globalTotal, practiseCap);
         const row = (tone, label, count) => `<div class="home-practise-row is-${tone}">
@@ -3062,6 +3064,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
                     ${dueCount > 0 ? row('due', 'Due for review', dueCount) : ''}
                     ${upcoming?.nextCount ? row('upcoming', `Coming back ${upcoming.nextLabel}`, upcoming.nextCount) : ''}
+                    ${upcoming?.laterThisWeek ? row('upcoming', 'Later this week', upcoming.laterThisWeek) : ''}
+                    ${upcomingAfter > 0 ? row('upcoming', 'After this week', upcomingAfter) : ''}
                 </div>`;
         } else {
             const empty = !srsOn
@@ -3283,10 +3287,9 @@ function wireLevelChoice() {
     });
 }
 
-// Learn and Practise share the home screen and one is open at a time. Until
-// the learner opens one themselves this visit, Practise opens first once
-// enough mistakes are waiting. `mistakes` is -1 when there is no Practise.
-const HOME_PRACTISE_FIRST_MISTAKES = 5;
+// Learn and Practise share the home screen and one is open at a time. Learn
+// opens first; Practise stays folded (with its short version) until the
+// learner opens it this visit. `mistakes` is -1 when there is no Practise.
 let _homeSectionChosen = null;
 let _homeSectionWired = false;
 function applyHomeSection(mistakes) {
@@ -3301,8 +3304,7 @@ function applyHomeSection(mistakes) {
             setHomeSectionOpen(panel, _homeSectionChosen);
         });
     }
-    const open = mistakes < 0 ? 'learn'
-        : (_homeSectionChosen || (mistakes >= HOME_PRACTISE_FIRST_MISTAKES ? 'practise' : 'learn'));
+    const open = mistakes < 0 ? 'learn' : (_homeSectionChosen || 'learn');
     setHomeSectionOpen(panel, open);
 }
 

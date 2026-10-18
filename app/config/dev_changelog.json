@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T09:30:00+01:00",
+      "date": "2026-10-19 09:30 BST",
+      "agent": "Claude",
+      "summary": "Home: Learn opens first; Practise shows what is coming later",
+      "detail": [
+        "Phones and tablets: Learn is always the card open on arrival, with Practise folded under it. It used to open Practise first once 5 or more mistakes were waiting.",
+        "Practise now lists the whole outlook under the next batch: \"Later this week\" and \"After this week\", as well as \"Coming back …\"."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T03:20:00+01:00",
       "date": "2026-10-19 03:20 BST",
       "agent": "Claude",
@@ -344,19 +355,6 @@
         "Eliminated the visible 'Sense details' uppercase eyebrow text so the modal opens straight to the unpacked content.",
         "Preserved accessible modal labeling via aria-label on the dialog.",
         "Added top-right close button clearance for the first content section."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T15:48:00+01:00",
-      "date": "2026-10-18 15:48 BST",
-      "agent": "Antigravity",
-      "summary": "Sense information modals: delta-only details, eliminated original dictionary text repetition, and inflection-aware deduplication",
-      "detail": [
-        "Eliminated the \"Original dictionary text\" section entirely from learner information modals to avoid repetitive dumps.",
-        "Removed the redundant meaning h2 header inside the dialog so the modal only shows newly unpacked delta details.",
-        "Added inflection-aware stem matching so inflected card rows (e.g. \"remembers\", \"bales\") correctly deduplicate against citation-form notes (e.g. \"to remember\", \"a bale\").",
-        "Preserved raw dictionary context in the underlying data object while promoting genuine context clauses into the Usage section."
       ],
       "commit": "pending"
     }
