@@ -1,13 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=5bb27267';
-import { readJsonWithTimeout } from './read-request.js?v=5bb27267';
-import { validateVocabularyIndex } from './data-contracts.js?v=5bb27267';
-import { formatRoute } from './routes.js?v=5bb27267';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=5bb27267';
-import { releaseUrl } from './release-host.js?v=5bb27267';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=5bb27267';
+import './state.js?v=1c56b33c';
+import { readJsonWithTimeout } from './read-request.js?v=1c56b33c';
+import { validateVocabularyIndex } from './data-contracts.js?v=1c56b33c';
+import { formatRoute } from './routes.js?v=1c56b33c';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=1c56b33c';
+import { releaseUrl } from './release-host.js?v=1c56b33c';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=1c56b33c';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1232,6 +1232,9 @@ function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
             id: `${item.id}::split::${t.headword}_${t.pos}`,
             fullId: `${baseFullId}::split::${t.headword}_${t.pos}`,
             citationForm: t.headword, partOfSpeech: t.pos,
+            // The parent's flag describes its own citation form; each half
+            // is pronominal exactly when its headword is (irse, not ir).
+            isPronominal: /(?:ar|er|ir|ír)se$/iu.test(t.headword || ''),
             meanings: bucket.main, unusedMenuSenses: bucket.unused,
             translation: bucket.main[0]?.meaning || '',
             targetSentence: bucket.main[0]?.targetSentence || '',
