@@ -397,9 +397,9 @@ body:not(.desktop-workspace) #topBar::before {
 }
 body:not(.desktop-workspace) #topBar .learning-context-chip {
     min-height: 40px;
-    padding: 4px 12px 4px 8px;
-    border: 1px solid var(--border-light);
-    border-radius: 20px;
+    padding: 4px 8px 4px 2px;
+    border: 0;
+    border-radius: 10px;
     background: transparent;
 }
 body:not(.desktop-workspace) #topBar .learning-context-flag { font-size: 20px; }
