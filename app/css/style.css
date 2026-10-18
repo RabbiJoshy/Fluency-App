@@ -17731,11 +17731,13 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   opacity: 0;
-  pointer-events: auto;
+  /* Stays in the DOM after the animation; only block taps while shown. */
+  pointer-events: none;
   transition: opacity 0.28s ease;
 }
 .smart-skip-backdrop.visible {
   opacity: 1;
+  pointer-events: auto;
 }
 .smart-skip-backdrop.fade-out {
   opacity: 0;
