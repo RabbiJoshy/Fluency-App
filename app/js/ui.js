@@ -755,7 +755,7 @@ function learningModeCopy(language = selectedLanguage) {
     return {
         title: 'Choose your vocabulary',
         intro: [
-            'Common words first. What’s common depends on where the words come from.'
+            'This app teaches the most common words first. What’s common depends on where the words come from.'
         ],
         speech: {
             label: 'Speech',

@@ -693,3 +693,17 @@ body.desktop-workspace #setupPanel[data-home-open] .home-section-toggle { displa
 body.desktop-workspace #setupPanel[data-home-open] :is(#step2, #reviewDeckSection) > .step-header { display: flex !important; }
 body.desktop-workspace #setupPanel[data-home-open] #step2 > .level-choosing { display: grid !important; }
 body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not([style*="none"]) { display: flex !important; }
+/* Both cards start their content at the top, so icons and titles line up
+   even though Music's button is shorter (Spotify sits beneath it). */
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
+        align-content: start !important;
+        align-items: center;
+    }
+}
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, #standardSourcePickerBtn) { padding: 20px !important; }
+}
+@media (min-width: 1024px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, #standardSourcePickerBtn) { padding: 26px !important; }
+}
