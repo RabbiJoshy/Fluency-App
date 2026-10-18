@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T01:00:00+01:00",
+      "date": "2026-10-19 01:00 BST",
+      "agent": "Claude",
+      "summary": "Home: seedling and clock icons for Learn and Practise; larger titles on desktop",
+      "detail": [
+        "Learn has a white seedling and Practise a white history clock, by the names on both the open cards and the folded rows.",
+        "On desktop the two names are larger (24–34px) with a little more room above, using the spare height.",
+        "Choose your vocabulary: \"You can switch between Speech and Music any time\" is left-aligned with the title and intro."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T00:30:00+01:00",
       "date": "2026-10-19 00:30 BST",
       "agent": "Claude",
@@ -352,18 +364,6 @@
         "Sense-row POS pill text 17→19px; the row's own padding cut (7px → 3px) so the pill nearly fills it.",
         "'from' in the sense-row head now sits on the pill's centre line instead of floating above it.",
         "Scrubber circle back to 32px (it had grown to 40px); its number is 19px so it fills the circle instead."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T13:20:00+01:00",
-      "date": "2026-10-18 13:20 BST",
-      "agent": "Claude",
-      "summary": "Companion cards: all three now reach the deck, and the front shows \"Card N of M · x% of uses\" on one clear pill; back-of-card controls enlarged again with tighter padding",
-      "detail": [
-        "Fixed 3-way split words (e.g. fue) stopping at card 2: the deck builder only pushed the first two companions. Sessions also no longer cut a 3-card split across two batches.",
-        "Front: \"Card N of M\" is now 16px bold on a tinted pill, with \"x% of uses\" beside it instead of under the frequency (the frequency is the same on every companion).",
-        "Back: pin icon 26→30px, information icon 18→23px in a 30px box, sense-row POS pill 15→17px with 3px 10px padding, scrubber circle 36→40px with a 20px number, 'Level x' label 17→20px."
       ],
       "commit": "pending"
     }

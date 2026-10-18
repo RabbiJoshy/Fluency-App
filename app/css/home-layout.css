@@ -42,6 +42,23 @@
     font-size: 20px;
     justify-self: start;
 }
+/* Learn (seedling) and Practise (history clock): white line icons by the
+   names, so the two read as different things without more colour. */
+#setupPanel .home-section-icon {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+#setupPanel .home-section > .step-header > .step-title-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+}
 
 /* The closed section is one row. */
 #setupPanel .home-section-toggle {
@@ -447,8 +464,9 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel .home-section { margin: 0; width: 100%; max-width: none; align-self: stretch; box-sizing: border-box; }
     #setupPanel #step2:not(.hidden):not([style*="none"]),
     #setupPanel #reviewDeckSection:not(.hidden):not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
-    #setupPanel .home-section > .step-header { padding: 16px 2vw 0; }
-    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(17px, 1.5vw, 24px); }
+    /* Desktop has the height to spare, so the two names read as titles. */
+    #setupPanel .home-section > .step-header { padding: 2.4vh 2vw 0.6vh; }
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(24px, 2.1vw, 34px); letter-spacing: -0.01em; }
     #setupPanel .home-section-footer { margin-top: 0; padding: 12px 2vw; }
     #setupPanel .home-section-toggle { padding: 1.6vh 2vw; font-size: var(--home-text); }
     #setupPanel .home-section-toggle-meta { font-size: var(--home-text); }
@@ -653,7 +671,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     margin: 16px 0 0;
     color: var(--text-muted);
     font-size: 14px;
-    text-align: center;
+    text-align: left !important;
 }
 
 @media (min-width: 768px) {

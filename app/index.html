@@ -535,12 +535,12 @@
             <div id="step2" class="setup-step home-section" style="display: none;">
                 <!-- Learn and Practise fold into each other: the closed one is this one row. -->
                 <button type="button" class="home-section-toggle" data-home-section="learn" aria-expanded="true">
-                    <strong>Learn</strong><span class="home-section-toggle-meta" id="learnSectionMeta"></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span>
+                    <svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"/><path d="M12 20l0 -10"/></svg><strong>Learn</strong><span class="home-section-toggle-meta" id="learnSectionMeta"></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span>
                     <span class="home-section-peek" id="learnSectionPeek"></span>
                 </button>
                 <div class="step-header step-header-with-help">
                     <span class="step-number">2</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels and sessions">Learn <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels and sessions"><svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"/><path d="M12 20l0 -10"/></svg>Learn <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div class="step-header-actions">
                         <span id="levelInfoLine" class="level-info-line" style="display: none;"></span>
                         <button type="button" id="levelModeToggle" class="level-mode-btn" style="display: none;" aria-hidden="true" tabindex="-1">CEFR</button>
@@ -612,11 +612,11 @@
                  binds them; ui.js fills #reviewDeckBody. -->
             <div id="reviewDeckSection" class="setup-step review-deck-step home-section" hidden>
                 <button type="button" class="home-section-toggle" data-home-section="practise" aria-expanded="false">
-                    <strong>Practise</strong><span class="home-section-toggle-meta" id="practiseSectionMeta"></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span>
+                    <svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg><strong>Practise</strong><span class="home-section-toggle-meta" id="practiseSectionMeta"></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span>
                     <span class="home-section-peek" id="practiseSectionPeek"></span>
                 </button>
                 <div class="step-header step-header-with-help">
-                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice">Practise <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice"><svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg>Practise <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div id="practiceTooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="practiceHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
                             <h3 id="practiceHelpTitle">Practise</h3>
