@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T18:05:00+01:00",
+      "date": "2026-10-18 18:05 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip: one text size, near-black surfaces (trial), and Compare with lists only usable languages",
+      "detail": [
+        "Every piece of text on the Smart Skip page is one size (17px on desktop, 15px on a phone); only the page title and sheet titles are larger. Weight and colour carry the hierarchy.",
+        "Trial, Smart Skip page only, dark theme: rule cards, the word list, chips and sheets use near-black surfaces (#0d0e10) instead of the slate blue-grey.",
+        "Compare with shows only known languages this deck has look-alike data for; a known language without data no longer appears as a chip that does nothing."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T17:40:00+01:00",
       "date": "2026-10-18 17:40 BST",
       "agent": "Claude",
@@ -358,18 +370,6 @@
         "Eliminated touchdown jump when grabbing the scrubber thumb by keeping card position stable on initial touch.",
         "Implemented steady, tactile 18px per card stepping during drag so numbers advance sequentially without skipping.",
         "Preserved direct track tapping so tapping anywhere along the rail continues to seek directly to the tapped position."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-16T17:16:00+01:00",
-      "date": "2026-10-16 17:16 BST",
-      "agent": "Antigravity",
-      "summary": "Fix card and level scrubbers getting stuck and jumping cards/levels",
-      "detail": [
-        "Replaced artificial hold plateau and dead-zone calculation in card-position seek bar with direct, proportional rail positioning.",
-        "Set deck scrubber active state during card-position seek bar drag to prevent smooth-scroll fighting.",
-        "Prevented level ruler scrubber from executing premature level commits and programmatic centering while pointer drags are in progress."
       ],
       "commit": "pending"
     }

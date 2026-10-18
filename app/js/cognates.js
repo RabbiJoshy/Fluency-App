@@ -506,8 +506,12 @@ function renderKnownLanguagePicker() {
     const selectedCodes = readSelected();
     const target = globalThis.config?.languages?.[globalThis.selectedLanguage];
     const targetCode = target?.routeCode || target?.speechLang?.split('-')[0] || globalThis.selectedLanguage?.slice(0, 2);
+    // Only languages that can do something here: ones you know that this deck
+    // has look-alike data for. A known language without data would be a chip
+    // that switches nothing.
+    const available = new Set(availableKnownLanguages());
     const codesToShow = [...new Set([...(selectedCodes.length ? selectedCodes : ['en']), ...activeKnownLanguages()])]
-        .filter(code => code !== targetCode);
+        .filter(code => code !== targetCode && available.has(code));
     const active = new Set(activeKnownLanguages());
     const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 

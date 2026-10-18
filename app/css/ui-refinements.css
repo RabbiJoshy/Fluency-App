@@ -702,9 +702,17 @@
    Selectors start at #fastModeModal so they outrank the older Smart Skip rules
    in style.css without !important. */
 
-/* Dark theme: the page is black, so the rule cards and the list read as
-   surfaces on it. */
-:root:not([data-theme="light"]) #fastModeModal { --bg-primary: #000; }
+/* Dark theme: a black page, and surfaces (rule cards, the list, chips,
+   sheets) only just lifted off it instead of the app's slate blue-grey.
+   Trial on this page before deciding whether the whole app goes this dark. */
+:root:not([data-theme="light"]) #fastModeModal {
+  --bg-primary: #000;
+  --bg-card: #0d0e10;
+  --bg-card-hover: #17191c;
+  --bg-tertiary: #0d0e10;
+  --border-color: #24272b;
+  --border-light: #24272b;
+}
 
 #fastModeModal .smart-skip-body {
   box-sizing: border-box;
@@ -733,7 +741,7 @@
   padding: 0;
   background: none;
   text-align: left;
-  font: 700 20px/1.2 var(--font-emphasis);
+  font: 700 var(--ss-title)/1.2 var(--font-emphasis);
   letter-spacing: -0.01em;
   color: var(--text-primary);
 }
@@ -741,14 +749,14 @@
   flex: 1;
   min-width: 0;
   color: var(--text-muted);
-  font: 500 13px/1.2 var(--font-reading);
+  font: 500 var(--ss-text)/1.2 var(--font-reading);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 #fastModeModal .smart-skip-master { display: inline-flex; align-items: center; gap: 8px; flex: none; }
-#fastModeModal .smart-skip-master-state { color: var(--text-secondary); font: 600 13px/1 var(--font-reading); }
+#fastModeModal .smart-skip-master-state { color: var(--text-secondary); font: 600 var(--ss-text)/1 var(--font-reading); }
 #fastModeModal .smart-skip-header-row .fast-mode-close {
   position: static;
   flex: none;
@@ -765,7 +773,6 @@
   -webkit-backdrop-filter: none;
   box-shadow: none;
   color: var(--text-secondary);
-  font-size: 15px;
   line-height: 1;
   cursor: pointer;
 }
@@ -807,7 +814,7 @@
   min-width: 0;
   padding: 0;
   color: var(--text-primary);
-  font: 600 14.5px/1.25 var(--font-reading);
+  font: 600 var(--ss-text)/1.25 var(--font-reading);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -837,7 +844,7 @@
   border-radius: 0;
   background: none;
   color: var(--text-muted);
-  font: 500 12.5px/1 var(--font-reading);
+  font: 500 var(--ss-text)/1 var(--font-reading);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -854,11 +861,11 @@
 #fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer {
   margin: 0;
   color: var(--text-secondary);
-  font: 400 13.5px/1.5 var(--font-reading);
+  font: 400 var(--ss-text)/1.5 var(--font-reading);
   opacity: 1;
 }
 #fastModeModal .smart-skip-shortcut-detail em { color: var(--text-primary); font-style: normal; font-weight: 600; }
-#fastModeModal .smart-skip-sheet-title { margin: 0; color: var(--text-primary); font: 700 17px/1.25 var(--font-emphasis); }
+#fastModeModal .smart-skip-sheet-title { margin: 0; color: var(--text-primary); font: 700 var(--ss-sheet-title)/1.25 var(--font-emphasis); }
 #fastModeModal .smart-skip-sheet-done {
   width: 100%;
   min-height: 44px;
@@ -867,7 +874,7 @@
   border-radius: 10px;
   background: var(--bg-card-hover);
   color: var(--text-primary);
-  font: 600 14.5px/1 var(--font-reading);
+  font: 600 var(--ss-text)/1 var(--font-reading);
   cursor: pointer;
 }
 
@@ -876,7 +883,7 @@
 #fastModeModal .known-languages-bar-header { margin: 0 0 6px; }
 #fastModeModal .known-languages-bar-title {
   color: var(--text-muted);
-  font: 600 12px/1 var(--font-reading);
+  font: 600 var(--ss-text)/1 var(--font-reading);
   letter-spacing: 0;
   text-transform: none;
 }
@@ -892,7 +899,7 @@
   border-radius: 999px;
   background: none;
   color: var(--text-secondary);
-  font: 500 13px/1 var(--font-reading);
+  font: 500 var(--ss-text)/1 var(--font-reading);
   cursor: pointer;
 }
 #fastModeModal .known-language-chip.is-active {
@@ -919,20 +926,20 @@
   background: none;
   box-shadow: none;
   color: var(--text-secondary);
-  font: 500 13.5px/1 var(--font-reading);
+  font: 500 var(--ss-text)/1 var(--font-reading);
   text-align: left;
   cursor: pointer;
 }
 #fastModeModal .smart-skip-more-options[hidden],
 #fastModeModal .smart-skip-more-rules[hidden] { display: none; }
 #fastModeModal .smart-skip-more-options > span:first-child { flex: 1; }
-#fastModeModal .smart-skip-more-state:not(:empty) { padding: 0; background: none; color: var(--text-muted); font-size: 12.5px; }
+#fastModeModal .smart-skip-more-state:not(:empty) { padding: 0; background: none; color: var(--text-muted); }
 #fastModeModal .smart-skip-more-options svg { flex: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.7; }
 #fastModeModal .smart-skip-more-rules { display: none; }
-#fastModeModal .smart-skip-more-title { margin: 0; color: var(--text-primary); font: 700 17px/1.25 var(--font-emphasis); }
+#fastModeModal .smart-skip-more-title { margin: 0; color: var(--text-primary); font: 700 var(--ss-sheet-title)/1.25 var(--font-emphasis); }
 #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row { padding: 0; min-height: 44px; }
 #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail { display: block; padding: 0 0 12px; margin-top: -4px; }
-#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail .fast-mode-explainer { font-size: 13px; color: var(--text-muted); }
+#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail .fast-mode-explainer { color: var(--text-muted); }
 
 /* Phone sheets: the open description or More rules rises from the bottom. */
 #fastModeModal .smart-skip-sheet-backdrop {
@@ -969,7 +976,7 @@
 
 /* The word list: one panel, its category chips and language switch on top. */
 #fastModeModal .smart-skip-words { display: grid; gap: 8px; margin: 14px 0 0; }
-#fastModeModal .smart-skip-words > .fast-mode-explainer { margin: 0; color: var(--text-muted); font-size: 13px; }
+#fastModeModal .smart-skip-words > .fast-mode-explainer { margin: 0; color: var(--text-muted); }
 #fastModeModal .smart-skip-panel {
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -1006,7 +1013,7 @@
   border-radius: 999px;
   background: none;
   color: var(--text-secondary);
-  font: 600 13px/1 var(--font-reading);
+  font: 600 var(--ss-text)/1 var(--font-reading);
   white-space: nowrap;
   cursor: pointer;
 }
@@ -1041,7 +1048,7 @@
   border-radius: 8px;
   background: none;
   color: var(--text-secondary);
-  font: 600 13px/1 var(--font-reading);
+  font: 600 var(--ss-text)/1 var(--font-reading);
   white-space: nowrap;
   cursor: pointer;
 }
@@ -1062,7 +1069,7 @@
   border-bottom: 1px solid var(--border-color);
   background: color-mix(in srgb, var(--text-primary) 4%, transparent);
   color: var(--text-muted);
-  font: 600 12px/1 var(--font-reading);
+  font: 600 var(--ss-text)/1 var(--font-reading);
 }
 #fastModeModal .smart-skip-panel .smart-skip-row {
   height: auto;
@@ -1070,8 +1077,7 @@
   border-bottom: 0;
 }
 #fastModeModal .smart-skip-panel .smart-skip-row:hover { background: var(--bg-card-hover); }
-#fastModeModal .smart-skip-panel .smart-skip-w { font: 600 15px/1.2 var(--font-reading); }
-#fastModeModal .smart-skip-panel .smart-skip-g { font-size: 14.5px; }
+#fastModeModal .smart-skip-panel .smart-skip-w { font: 600 var(--ss-text)/1.2 var(--font-reading); }
 #fastModeModal .smart-skip-panel .smart-skip-empty { padding: 22px 14px; border-top: 1px solid var(--border-color); }
 
 /* Wide screens: the page fills the window. Below the header, two columns
@@ -1106,11 +1112,9 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
     white-space: nowrap;
   }
-  #fastModeModal .smart-skip-summary { flex: 1; text-align: right; font-size: 15px; }
-  #fastModeModal .smart-skip-master-state { font-size: 14px; }
+  #fastModeModal .smart-skip-summary { flex: 1; text-align: right; }
   #fastModeModal .smart-skip-body > .smart-skip-shortcuts {
     grid-column: 1;
     grid-row: 2;
@@ -1160,13 +1164,9 @@
   #fastModeModal .smart-skip-sheet-done,
   #fastModeModal .smart-skip-sheet-backdrop,
   #fastModeModal .smart-skip-more-title { display: none; }
-  #fastModeModal .smart-skip-shortcut-name { font-size: 17px; }
-  #fastModeModal .smart-skip-shortcut-count,
-  #fastModeModal .smart-skip-shortcut-count:not(:empty) { font-size: 14px; }
-  #fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer { font-size: 15px; line-height: 1.55; }
-  #fastModeModal .known-languages-bar-title { font-size: 13px; }
+  #fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer { line-height: 1.55; }
   #fastModeModal .known-language-chip,
-  #fastModeModal .known-language-add-btn { min-height: 34px; padding: 0 13px; font-size: 14px; }
+  #fastModeModal .known-language-add-btn { min-height: 34px; padding: 0 13px; }
   #fastModeModal .smart-skip-switch { width: 44px; height: 26px; }
   #fastModeModal .smart-skip-switch::after { width: 20px; height: 20px; }
   #fastModeModal .smart-skip-switch[aria-checked="true"]::after { transform: translateX(18px); }
@@ -1178,7 +1178,6 @@
     padding: 0 4px;
     border: 0;
     border-radius: 8px;
-    font-size: 15px;
   }
   #fastModeModal .smart-skip-shortcuts > .smart-skip-more-options:hover { color: var(--text-primary); }
   #fastModeModal .smart-skip-more-options svg { transition: transform 0.15s ease; }
@@ -1187,19 +1186,18 @@
   #fastModeModal .smart-skip-more-rules.is-expanded:not([hidden]) { display: block; padding: 0 4px; }
   #fastModeModal .smart-skip-more-rules > .smart-skip-shortcut + .smart-skip-shortcut { border-top: 0; }
   #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row { min-height: 42px; }
-  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-name { font-size: 15.5px; font-weight: 500; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-name { font-weight: 500; }
   #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail { padding: 0 0 10px; margin-top: -2px; }
-  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail .fast-mode-explainer { font-size: 14px; }
 
   /* Narrower desktops (nav open, or a small laptop): a slimmer rules column
      and tighter Type and Rank columns, so words are not cut short. */
-  #fastModeModal .smart-skip-panel .smart-skip-table { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 56px; }
-  #fastModeModal .smart-skip-panel .smart-skip-table.has-tag { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 88px 52px; }
+  #fastModeModal .smart-skip-panel .smart-skip-table { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 60px; }
+  #fastModeModal .smart-skip-panel .smart-skip-table.has-tag { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 112px 60px; }
   #fastModeModal .smart-skip-panel .smart-skip-table[data-cat="lemma"] { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr) 52px; }
 
   /* Larger list type on a wide screen. */
   #fastModeModal .smart-skip-lang-btn { display: inline-flex; justify-self: start; }
-  #fastModeModal .smart-skip-lang-btn button { flex: none; min-height: 34px; padding: 0 14px; font-size: 14px; }
+  #fastModeModal .smart-skip-lang-btn button { flex: none; min-height: 34px; padding: 0 14px; }
   /* The chips stay in view at the top of the list column as it scrolls. */
   #fastModeModal .smart-skip-browser-controls {
     position: sticky;
@@ -1209,13 +1207,28 @@
     padding: 14px 16px;
     background: var(--bg-card);
   }
-  #fastModeModal .smart-skip-cat { min-height: 36px; padding: 0 14px; font-size: 14px; }
-  #fastModeModal .smart-skip-panel .smart-skip-head { height: 38px; padding: 0 16px; font-size: 13.5px; }
+  #fastModeModal .smart-skip-cat { min-height: 36px; padding: 0 14px; }
+  #fastModeModal .smart-skip-panel .smart-skip-head { height: 38px; padding: 0 16px; }
   #fastModeModal .smart-skip-panel .smart-skip-row { min-height: 52px; padding: 0 16px; }
-  #fastModeModal .smart-skip-panel .smart-skip-w { font-size: 17.5px; }
-  #fastModeModal .smart-skip-panel .smart-skip-g { font-size: 16.5px; }
-  #fastModeModal .smart-skip-panel .smart-skip-rank,
-  #fastModeModal .smart-skip-panel .smart-skip-tag,
-  #fastModeModal .smart-skip-panel .smart-skip-nforms { font-size: 14px; }
-  #fastModeModal .smart-skip-panel .smart-skip-forms { font-size: 15px; }
 }
+
+/* Type: one size for every piece of text on the page except the titles
+   (page title, sheet titles). Weight and colour carry the hierarchy, as in
+   the mockup, instead of half a dozen sizes. These also reset the older
+   per-element sizes in style.css. */
+#fastModeModal { --ss-text: 15px; --ss-title: 21px; --ss-sheet-title: 18px; }
+@media (min-width: 900px) {
+  #fastModeModal { --ss-text: 17px; --ss-title: 26px; --ss-sheet-title: 19px; }
+}
+#fastModeModal .smart-skip-body :is(
+  .smart-skip-summary, .smart-skip-master-state,
+  .smart-skip-shortcut-name, .smart-skip-shortcut-count, .fast-mode-explainer, .fast-mode-none,
+  .known-languages-bar-title, .known-language-chip, .known-language-add-btn,
+  .smart-skip-more-options, .smart-skip-more-state,
+  .smart-skip-cat, .smart-skip-lang-btn button, .smart-skip-source-picker, .smart-skip-source-picker select,
+  .smart-skip-results-count, .range-btn-new,
+  .smart-skip-head, .smart-skip-w, .smart-skip-g, .smart-skip-rank, .smart-skip-tag,
+  .smart-skip-forms, .smart-skip-nforms, .smart-skip-more, .smart-skip-chip, .smart-skip-expand-open, .smart-skip-empty
+) { font-size: var(--ss-text); }
+#fastModeModal .smart-skip-body :is(.smart-skip-cat, .smart-skip-lang-btn button) span { font-size: inherit; }
+#fastModeModal .smart-skip-body .smart-skip-shortcut-detail em { font-size: inherit; }
