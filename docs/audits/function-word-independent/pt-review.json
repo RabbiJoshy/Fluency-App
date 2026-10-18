@@ -1,0 +1,414 @@
+[
+  {
+    "example_id": "fresh_sentence_f2ac034b4b2163ebd571b80f6e30683d",
+    "pattern_indices": [],
+    "naturalness": "hold",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "The targeted de belongs to the fixed expression além de, not either taught pattern. Autorizados a entrar is more idiomatic than autorizados para entrar in everyday Brazilian Portuguese.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Besides me presupposes context, and autorizados para entrar is less idiomatic than autorizados a entrar in Brazilian Portuguese."
+  },
+  {
+    "example_id": "fresh_sentence_e7b397c8c4b772b6c788de3f7a54ab59",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "hold",
+    "translation": "fail",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "cópias"
+      },
+      {
+        "slot": "connector",
+        "text": "de"
+      },
+      {
+        "slot": "c",
+        "text": "segurança"
+      }
+    ],
+    "reason": "De segurança specifies the purpose/type of cópias. The omitted subject and estas require context; tivesse enviado sounds more literary or European than everyday Brazilian talvez tenha enviado. The English adds an unsupported expletive and specifies she.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "Estas and the omitted sender have unresolved referents; the verb form also needs a clearer conversational Brazilian setting."
+  },
+  {
+    "example_id": "fresh_sentence_34356f453252e66c9086f7ee21cd72a5",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "hold",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "coisa"
+      },
+      {
+        "slot": "connector",
+        "text": "de"
+      },
+      {
+        "slot": "c",
+        "text": "realidade virtual"
+      }
+    ],
+    "reason": "The noun modifier identifies the subject/type of coisa, within the broad adding-a-detail pattern. Penso sempre ser interessante is stiff and unclear in everyday Brazilian Portuguese; the English expands it into a vivid quoted reaction.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "The final clause is stiff and unclear, distracting from an otherwise usable noun modifier."
+  },
+  {
+    "example_id": "fresh_sentence_8308eb661beaec394914d50a2944be22",
+    "pattern_indices": [],
+    "naturalness": "hold",
+    "translation": "fail",
+    "expected_chunks": [],
+    "reason": "De is part of the spatial expression para cima de, not verb-selected de or an ordinary noun-detail construction. Outra needs a contextual referent; obriga-a is formal/European in conversational register. The English introduces explicit sexual content and describes a materially different action.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "Outra has no explicit referent; the construction and clitic placement are a poor fit for an everyday Brazilian card."
+  },
+  {
+    "example_id": "fresh_sentence_e9fb008fe3181a798a43f45777e056cb",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "hold",
+    "expected_chunks": [],
+    "reason": "O que is interrogative what, outside all three que patterns. The Portuguese is natural; the English adds uncertainty, RAAF and Sir, requiring wider subtitle context.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The unexplained pairing of a communist and two pilots presupposes a narrative setting."
+  },
+  {
+    "example_id": "fresh_sentence_cf86e4f114eb588d5053afdeb59a39a7",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "um africano"
+      },
+      {
+        "slot": "connector",
+        "text": "que"
+      },
+      {
+        "slot": "c",
+        "text": "me leve, pelo interior, à minha aldeia"
+      }
+    ],
+    "reason": "Que introduces a relative clause modifying africano. Grammatically natural, though aldeia and the setting depend on narrative context; commas around pelo interior are optional.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The African journey and minha aldeia require a specific narrative setting; parenthetical commas add complexity."
+  },
+  {
+    "example_id": "fresh_sentence_2eb496cb1f19975fd44974fe1bf5548c",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "ouvi dizer"
+      },
+      {
+        "slot": "connector",
+        "text": "que"
+      },
+      {
+        "slot": "c",
+        "text": "é o homem certo"
+      }
+    ],
+    "reason": "Ouvi dizer que introduces reported information. É can address você with the subject omitted; the English help-me-do-it expansion is a reasonable contextual rendering of homem certo.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The fur-trade setting and omitted addressee of é o homem certo make this a narrative-heavy example."
+  },
+  {
+    "example_id": "fresh_sentence_33ec951919a4be25e70b8a976c4d5983",
+    "pattern_indices": [],
+    "naturalness": "hold",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Initial Que is interrogative what, not a statement linker, relative or comparison. Que faria você is grammatical but literary/formal; everyday Brazilian Portuguese favors O que você faria.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The inverted Que faria você is literary compared with everyday Brazilian O que você faria."
+  },
+  {
+    "example_id": "fresh_sentence_5c4414fab1a8baabe07ca2f9d6860e71",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "hold",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "Se"
+      },
+      {
+        "slot": "v",
+        "text": "ele cooperar e falar"
+      },
+      {
+        "slot": "c",
+        "text": "podemos seguir essa pista até ao topo"
+      }
+    ],
+    "reason": "Clear conditional with both condition and consequence. Até ao topo is characteristically European; Brazilian usage usually até o topo. English changes the condition to getting them to talk and shifts can to could.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Essa pista and topo are figurative references needing context; até ao also departs from default Brazilian usage."
+  },
+  {
+    "example_id": "fresh_sentence_e63eeac5dff8b6caef341dd9a02af336",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "fail",
+    "expected_chunks": [],
+    "reason": "Se means whether in an embedded question after saber, not conditional if or a reflexive/lexical pronoun. The Portuguese is acceptable in Brazil, though estou esperando is more conversational. English adds an entire unsupported sentence about Reynaldo and Colombia.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Dele and the expected shipment presume prior context; a shorter explicit subject would teach more cleanly."
+  },
+  {
+    "example_id": "fresh_sentence_77f067d102d52153442b7a19fc2cd1fc",
+    "pattern_indices": [],
+    "naturalness": "hold",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Se in como se costuma dizer marks an impersonal/generalized construction, not a reflexive or lexically pronominal verb. The fragment is conventional but needs an antecedent; negra can describe a feminine noun, and a person-directed reading warrants contextual editorial review.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "A fragment with no referent for negra; the simile may distract or become inappropriate depending on its referent."
+  },
+  {
+    "example_id": "fresh_sentence_d7245dcad5c68315d626ab8af9944c22",
+    "pattern_indices": [],
+    "naturalness": "fail",
+    "translation": "hold",
+    "expected_chunks": [],
+    "reason": "Se is an impersonal subject marker with pender, outside the taught patterns. The Portuguese lacks an expected copula and uses an awkward literary formulation; one would expect Não é uma ocupação.... English undertaking may name the occupation but that information is absent from this isolated Portuguese fragment.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "The missing copula, literary wording and unspecified occupation make the isolated fragment unsuitable."
+  },
+  {
+    "example_id": "fresh_sentence_ec9e523ba5c95919c77e3b28f6a05c17",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "hold",
+    "expected_chunks": [],
+    "reason": "O que means what/that which as a nominal relative construction; o is neither a masculine noun article nor an object clitic here. Portuguese is natural; English specia l contains a visible spacing error.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "O que fizemos aqui depends on an unspecified shared event and location."
+  },
+  {
+    "example_id": "fresh_sentence_b3a2d0c960748084f015d49f31ba27c2",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "o"
+      },
+      {
+        "slot": "c",
+        "text": "anúncio"
+      }
+    ],
+    "reason": "O is the masculine singular article before anúncio. Brazilian Portuguese is natural. English bought that ad adds a purchase and strong certainty absent from coloquei o anúncio, achei.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The advertisement and the unspecified something sought require context, while the two subordinate clauses add unnecessary load."
+  },
+  {
+    "example_id": "fresh_sentence_243fa08e67150ba22e56f8f2e8fc13fd",
+    "pattern_indices": [],
+    "naturalness": "hold",
+    "translation": "fail",
+    "expected_chunks": [],
+    "reason": "O que is a nominal relative meaning what, outside the two o patterns. Vais and quiseres are standard European and some regional Brazilian tu usage, not the default everyday Brazilian register. English adds a separate utterance and name absent from Portuguese.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "Default Brazilian register mismatch from vais/quiseres; also begins from an unstated situation granting freedom."
+  },
+  {
+    "example_id": "fresh_sentence_e4e0255985544a087fe3f231bda0caaa",
+    "pattern_indices": [],
+    "naturalness": "fail",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Targeted o belongs to the degree expression o mais rápido, not an article before a noun or an object clitic; carregá-lo is a separate token. O mais rápido que seus membros podiam carregá-lo is an awkward calque; Brazilian Portuguese would normally use tão rápido quanto... or o mais rápido que podia.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "The degree construction is a malformed, distracting calque and unsuitable as a model sentence."
+  },
+  {
+    "example_id": "fresh_sentence_52ea443a86e99ef4d570e684233a5c1f",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "nos"
+      },
+      {
+        "slot": "v",
+        "text": "conhecermos"
+      }
+    ],
+    "reason": "Nos is a first-person plural object pronoun, here reciprocal each other. It fits the broad us/object pattern, though the teaching rule should explicitly mention the reciprocal reading. Natural Brazilian Portuguese.",
+    "standalone_teaching": "pass"
+  },
+  {
+    "example_id": "fresh_sentence_241f3b950b7893d0ca807858388fff51",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "hold",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "nos"
+      },
+      {
+        "slot": "c",
+        "text": "últimos 2 meses"
+      }
+    ],
+    "reason": "Nos is em + os before a masculine plural time expression; include últimos 2 in the noun phrase. Andou a passear is European; Brazilian speech favors ficou andando/passeando. Passear implies strolling whereas hanging around may merely mean lingering.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "European andou a passear and an unspecified subject make this unsuitable for default Brazilian teaching."
+  },
+  {
+    "example_id": "fresh_sentence_bd224deb612cfdbae0912dc84613158b",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "hold",
+    "translation": "fail",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "nos"
+      },
+      {
+        "slot": "v",
+        "text": "dará"
+      }
+    ],
+    "reason": "Nos is the indirect object to us. Espectáculo and estatuto are European spelling/lexical choices; estatuto real needs context even there. Real estate means property, not estatuto real, so the translation exposes a substantive mistranslation.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "European spelling and opaque estatuto real obscure the intended meaning; the aligned translation is substantively wrong."
+  },
+  {
+    "example_id": "fresh_sentence_ccb0a3b3d15633ba1bc0c56029414f60",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "hold",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "cabe"
+      },
+      {
+        "slot": "connector",
+        "text": "nos"
+      }
+    ],
+    "reason": "Enclitic nos means to us with caber; include the actual verb-before-clitic order despite the displayed formula. Cabe-nos is correct but formal for everyday Brazilian speech; cabe a nós or a gente decide is more conversational.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Cabe-nos is formal for everyday Brazilian usage, and entretanto assumes a preceding contrast."
+  },
+  {
+    "example_id": "fresh_sentence_56154ac52b9129a52e19de803eb8a7ea",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "fail",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "naquele"
+      },
+      {
+        "slot": "c",
+        "text": "momento"
+      }
+    ],
+    "reason": "Naquele momento clearly fits the time use. Estás/começares are European or regional tu forms, and antes de começares prestes a cair is malformed: antes de estares prestes a cair would be grammatical. English conveys the apparent intent but cannot validate the malformed ending.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "Malformed final clause and European/regional tu forms make the sentence unsuitable as a Brazilian model."
+  },
+  {
+    "example_id": "fresh_sentence_24f6eaec15e7f2d18c5099b96ebdf87e",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "naquele"
+      },
+      {
+        "slot": "c",
+        "text": "idioma"
+      }
+    ],
+    "reason": "Naquele combines em + aquele before masculine singular idioma. Natural expository Brazilian Portuguese; capitalization of Inteligência Artificial is stylistic.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Grammatical but long and conceptually dense for a simple connector card; a shorter example would isolate naquele idioma."
+  },
+  {
+    "example_id": "fresh_sentence_3b23c390684c948aa85f3de62cc73bd6",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "naquele"
+      },
+      {
+        "slot": "c",
+        "text": "momento"
+      }
+    ],
+    "reason": "Clear temporal naquele momento. Souberam naturally means found out/came to know; knew right away can fit a narrative context but adds immediacy beyond at that moment.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "What they learned and which moment are both unstated, so the isolated example conveys little."
+  },
+  {
+    "example_id": "fresh_sentence_f391fb652f5917bd25f8f4422b3e2e9b",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "naquele"
+      },
+      {
+        "slot": "c",
+        "text": "corredor"
+      }
+    ],
+    "reason": "Clear place reference with em + aquele. Natural Brazilian direction; English head left down gives a slightly freer but acceptable directional rendering.",
+    "standalone_teaching": "pass"
+  }
+]

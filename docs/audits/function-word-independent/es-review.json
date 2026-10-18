@@ -1,0 +1,425 @@
+[
+  {
+    "example_id": "fresh_sentence_1abb52c417f0aa017988d639834231be",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Natural and broadly understandable. Algo de is a quantity expression (some/a little), not either taught de pattern; her is one possible contextual reading of sus.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Eso and sus require narrative reference; the target quantity use also falls outside the supplied patterns."
+  },
+  {
+    "example_id": "fresh_sentence_102a3f27eec7aa29e8e6151c1f8df23f",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Natural colloquial Spanish. De verdad is an adverbial expression meaning really, not verb + de or noun + de.",
+    "standalone_teaching": "pass"
+  },
+  {
+    "example_id": "fresh_sentence_93bcf0260dd020be170853822a51dcf9",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "depende"
+      },
+      {
+        "slot": "connector",
+        "text": "de"
+      },
+      {
+        "slot": "c",
+        "text": "lo que recuerdes"
+      }
+    ],
+    "reason": "Depender de clearly supports the verb pattern. The Spanish means what you remember; the English shifts this to how much you can remember and is slightly awkward without It.",
+    "standalone_teaching": "pass"
+  },
+  {
+    "example_id": "fresh_sentence_d0e8135d12e59c51dd602f54935d5e1e",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "pass",
+    "translation": "fail",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "oponente"
+      },
+      {
+        "slot": "connector",
+        "text": "de"
+      },
+      {
+        "slot": "c",
+        "text": "Ares"
+      }
+    ],
+    "reason": "Natural announcement in context. Oponente de Ares adds a relational detail to a noun. The English is garbled and does not convey the selected opponent.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The selected man, next participant and named Ares rely on a narrative setting; the supplied translation is unusable."
+  },
+  {
+    "example_id": "fresh_sentence_617193cfa9e887393badf0b4cbfed451",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "fail",
+    "expected_chunks": [],
+    "reason": "Natural interrupted dialogue; es solo que introduces an explanation and is outside the three taught que uses. The English is unrelated.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "Interrupted explanation, ellipsis and narrative references make a poor standalone card; the supplied translation is unrelated."
+  },
+  {
+    "example_id": "fresh_sentence_e00554813dcd4e64747dbcd184f40ccd",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "Espero"
+      },
+      {
+        "slot": "connector",
+        "text": "que"
+      },
+      {
+        "slot": "c",
+        "text": "no queden dudas"
+      }
+    ],
+    "reason": "Clear hope + que clause, natural throughout the Spanish-speaking world. The English roughly conveys certainty but changes I hope no doubts remain into a claim being unquestionable.",
+    "standalone_teaching": "pass"
+  },
+  {
+    "example_id": "fresh_sentence_311f51df1c20d8b2fb3084c187669f4d",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "olvidemos"
+      },
+      {
+        "slot": "connector",
+        "text": "que"
+      },
+      {
+        "slot": "c",
+        "text": "su candidato perdió"
+      }
+    ],
+    "reason": "Natural negative exhortation. Olvidar + que is a cognitive statement complement, within the thinking/knowing family; su needs context for his, her, their or your.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Su candidato has an unresolved possessor, and the exhortation presupposes an ongoing political discussion."
+  },
+  {
+    "example_id": "fresh_sentence_72204a3e42e5ece21594169276f8a7ef",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "pass",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "v",
+        "text": "barco"
+      },
+      {
+        "slot": "connector",
+        "text": "que"
+      },
+      {
+        "slot": "c",
+        "text": "nos lleve a Quito"
+      }
+    ],
+    "reason": "Clear relative clause modifying barco; the subjunctive naturally describes the boat needed for the plan. English flattens that intended destination into an actual journey and adds down. A boat reaching inland Quito requires special narrative context.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Ahí and the journey plan need context, while reaching Quito by boat is geographically distracting."
+  },
+  {
+    "example_id": "fresh_sentence_c20943bf774795fc0c62e069d62fb330",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "se"
+      },
+      {
+        "slot": "v",
+        "text": "lleva bien con todas"
+      }
+    ],
+    "reason": "Llevarse bien con is a pronominal construction, so the full expression matters. Todas refers to an understood feminine group; everybody is acceptable in that context.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Todas requires an understood feminine group; Jesse alone does not supply that reference."
+  },
+  {
+    "example_id": "fresh_sentence_dfbf2e3710c72bbf99282a3563c9ab72",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "se"
+      },
+      {
+        "slot": "v",
+        "text": "equivoca"
+      }
+    ],
+    "reason": "Equivocarse is pronominal. Natural polite/formal address if the subject is usted; he or she is also possible from context.",
+    "standalone_teaching": "pass"
+  },
+  {
+    "example_id": "fresh_sentence_570edb1f3981aee78f53d270fb0e3d19",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "se"
+      },
+      {
+        "slot": "v",
+        "text": "empareja"
+      }
+    ],
+    "reason": "Pronominal change of state: it becomes even/aligned. Colloquial Latin American emparejarse and tirar for pull are understandable; a comma before así and final punctuation would improve presentation. This is not impersonal se.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The object of tírala is unresolved, así depends on a demonstrated action, and punctuation is incomplete."
+  },
+  {
+    "example_id": "fresh_sentence_1a0caedd618c6e1ac77933d9814ead5d",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "se"
+      },
+      {
+        "slot": "v",
+        "text": "refiere"
+      }
+    ],
+    "reason": "Referirse a occurs in the fixed topic expression en lo que a ... se refiere. The pronominal verb supports pattern 0, not impersonal se. Estáis/vosotros signals Spain; natural with a couple being addressed.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The couple addressed is unresolved, and the topic idiom plus vosotros adds distracting complexity for a basic se card."
+  },
+  {
+    "example_id": "fresh_sentence_13f4327b9a638a858aadfa757f82c760",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "pass",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "lo"
+      },
+      {
+        "slot": "v",
+        "text": "hacemos"
+      }
+    ],
+    "reason": "Lo refers to an understood action/idea. Natural speech despite an unmatched opening quotation mark. English one of these things narrows Spanish these things, though the overall proposal is similar.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "Lo has no standalone antecedent, estas cosas is unspecified, and the opening quotation mark is unmatched."
+  },
+  {
+    "example_id": "fresh_sentence_7a6a79bd2919516cd010f0a302083f84",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "pass",
+    "translation": "hold",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "lo"
+      },
+      {
+        "slot": "v",
+        "text": "es"
+      }
+    ],
+    "reason": "Lo substitutes for the predicate su nombre real, an anaphoric idea covered by that. Colloquial seguro que is broadly understandable, with seguro de que preferable in careful prose. English are you serious is not the same question as are you sure it is, so context is needed.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The two-sentence identity exchange and anaphoric predicate lo add complexity, alongside the held translation and informal seguro que."
+  },
+  {
+    "example_id": "fresh_sentence_6356cd5bfc27b8489e776b44aff8c39c",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "lo"
+      },
+      {
+        "slot": "v",
+        "text": "tengo que explicar"
+      }
+    ],
+    "reason": "Lo is the thing/idea explained and climbs before the full tener que explicar construction. Os is informal plural address in Spain; natural and accurately translated.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Lo has no antecedent identifying what must be explained; the sentence clearly needs a prior discussion."
+  },
+  {
+    "example_id": "fresh_sentence_3e6bf0836db664fd60a08b69555bee8d",
+    "pattern_indices": [],
+    "naturalness": "hold",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Lo que is a nominal relative construction, outside lo + adjective and object-pronoun lo + verb. The intended meaning matches the English, but cuidar que ... permanece is poor Spanish here: cuidar de que/asegurarse de que ... permanezca is needed; fondo de guerra also sounds literal.",
+    "standalone_teaching": "fail",
+    "standalone_reason": "The awkward mood and verb construction need repair, su is unresolved, and nominal-relative lo is outside the supplied patterns."
+  },
+  {
+    "example_id": "fresh_sentence_fafd3bb2cedabfd6ff333cb9f7824ade",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Natural reciprocal nos vemos means see each other/see you, rather than the taught object us/to us construction. Concentración is a sports training gathering; mini-camp is context-specific but plausible.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The sports gathering is assumed context, and reciprocal nos falls outside the supplied us/to us pattern."
+  },
+  {
+    "example_id": "fresh_sentence_cf22c7f8a38b2733d36031769a03c327",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Nos belongs to pronominal acercarse (we were approaching), not an object meaning us/to us. Natural wording and an accurate contextual English rendering.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The inferred subject of sintió and the situation being approached are unresolved; embedded clauses add complexity."
+  },
+  {
+    "example_id": "fresh_sentence_0391f8a19a47d4da9a200c24f08ca8b1",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "nos"
+      },
+      {
+        "slot": "v",
+        "text": "dio"
+      }
+    ],
+    "reason": "Nos is the indirect object to us in Nassar gave us a lead. Natural continuation fragment in dialogue; the English preserves that discourse structure.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Razón por la que is a discourse continuation fragment with an unspecified lead and narrative named character."
+  },
+  {
+    "example_id": "fresh_sentence_0a79f06679535cce36ac22e5012134d8",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Nos is reciprocal, explicitly reinforced by el uno al otro, rather than the taught us/to us object use. Natural supportive dialogue; vale is especially associated with Spain.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Who the reciprocal pair are is unstated, and the supported construction is outside the supplied us/to us pattern."
+  },
+  {
+    "example_id": "fresh_sentence_e7e44de3805218167f43daf1c895ed87",
+    "pattern_indices": [
+      0
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "al"
+      },
+      {
+        "slot": "c",
+        "text": "jefe"
+      }
+    ],
+    "reason": "Al is a + el marking the recipient to the boss, so the to/at the rule applies even though the formula calls the slot a destination. Natural and accurate.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "Lo refers to unspecified information, and se lo introduces an additional pronoun construction alongside al."
+  },
+  {
+    "example_id": "fresh_sentence_33b9b7198f7e19b908db93c64dc719ee",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Al contracts the personal a plus el before the animate direct object of llamar. Here it does not mean to/at the and is not a destination; neither taught pattern explains this use. English summons is a natural contextual translation, though puede adds can/authority.",
+    "standalone_teaching": "hold",
+    "standalone_reason": "The king and capitalized Guardian assume a fictional setting; personal a also falls outside the supplied to/at the pattern."
+  },
+  {
+    "example_id": "fresh_sentence_ee3f8606673ebf36ed8639deb4ddf383",
+    "pattern_indices": [],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [],
+    "reason": "Al día is a frequency expression meaning per day/a day. It is neither to/at a destination nor al + infinitive. Natural Spanish and English.",
+    "standalone_teaching": "pass"
+  },
+  {
+    "example_id": "fresh_sentence_f582448cb34fdf8de6c230f78a28fc6c",
+    "pattern_indices": [
+      1
+    ],
+    "naturalness": "pass",
+    "translation": "pass",
+    "expected_chunks": [
+      {
+        "slot": "connector",
+        "text": "Al"
+      },
+      {
+        "slot": "v",
+        "text": "beber"
+      },
+      {
+        "slot": "c",
+        "text": "un purgante"
+      }
+    ],
+    "reason": "Clear temporal al + infinitive construction, with its object included. Broadly understandable; tomar un purgante and quedarse en casa would be more usual choices in some regions, but the given wording is acceptable.",
+    "standalone_teaching": "pass"
+  }
+]
