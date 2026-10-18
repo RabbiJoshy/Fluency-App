@@ -1,21 +1,55 @@
-// Extra practice & tools workspace — manages the Extra menu and tools.
+window._conjugationDecks = window._conjugationDecks || {};
+if (!window.registerConjugationDeck) {
+    window.registerConjugationDeck = function (payload) {
+        window._conjugationDecks[payload.language] = payload;
+    };
+}
+if (!window.registerConjugationNotVerbs) {
+    window._conjugationNotVerbs = window._conjugationNotVerbs || {};
+    window.registerConjugationNotVerbs = function (payload) {
+        const words = {};
+        (payload.words || []).forEach(w => { words[w] = true; });
+        window._conjugationNotVerbs[payload.language] = words;
+    };
+}
 
-let scriptsLoaded = false;
-const loadedDecks = new Set();
+const scriptPromises = new Map();
 
 function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        const existing = document.querySelector(`script[src="${src}"]`);
-        if (existing) {
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const cleanSrc = src.replace(/^\/+/, '');
+    const fullUrl = `${origin}/${cleanSrc}`;
+
+    if (scriptPromises.has(fullUrl)) {
+        return scriptPromises.get(fullUrl);
+    }
+
+    const p = new Promise((resolve, reject) => {
+        const existing = document.querySelector(`script[src="${src}"], script[src="${fullUrl}"]`);
+        if (existing && existing.dataset.loaded === 'true') {
             resolve();
             return;
         }
+        if (existing) {
+            existing.addEventListener('load', () => resolve(), { once: true });
+            existing.addEventListener('error', () => reject(new Error(`Failed to load script: ${src}`)), { once: true });
+            return;
+        }
         const script = document.createElement('script');
-        script.src = src;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+        script.src = fullUrl;
+        script.onload = () => {
+            script.dataset.loaded = 'true';
+            resolve();
+        };
+        script.onerror = () => {
+            scriptPromises.delete(fullUrl);
+            reject(new Error(`Failed to load script: ${src}`));
+        };
         document.head.appendChild(script);
     });
+
+    scriptPromises.set(fullUrl, p);
+    return p;
 }
 
 export function currentLanguageKey() {
@@ -74,7 +108,7 @@ export function updateExtraUI() {
     }
 }
 
-export async function openConjugationsScreen() {
+export async function openConjugationsScreen(targetVerb = null, targetView = null) {
     const drillCode = conjugationDrillCode() || 'es';
     const menuView = document.getElementById('extraMenuView');
     const conjView = document.getElementById('extraConjugationsView');
@@ -87,24 +121,31 @@ export async function openConjugationsScreen() {
     window.onLeaveConjugationMode = backToExtraMenu;
 
     try {
+        const url = new URL(window.location.href);
+        const base = url.pathname.replace(/\/conjugation\/?$/, '') || '';
+        const drillPath = (base + '/conjugation').replace(/^\/\//, '/');
+        const search = targetVerb ? `?verb=${encodeURIComponent(targetVerb)}` : '';
+        history.replaceState({ screen: 'conjugation' }, '', drillPath + search);
+    } catch (_) {}
+
+    try {
         if (!window.ConjugationProgress) {
-            await loadScript('conjugation/progress.js?v=934cd764');
+            await loadScript('conjugation/progress.js?v=ef59e8e5');
         }
         if (!window.conjugationBoot) {
-            await loadScript('conjugation/app.js?v=934cd764');
+            await loadScript('conjugation/app.js?v=ef59e8e5');
         }
-        if (!loadedDecks.has(drillCode)) {
-            await loadScript(`conjugation/data/${drillCode}.js?v=934cd764`);
+        if (!window._conjugationDecks || !window._conjugationDecks[drillCode]) {
+            await loadScript(`conjugation/data/${drillCode}.js?v=ef59e8e5`);
             try {
-                await loadScript(`conjugation/data/${drillCode}-not-verbs.js?v=934cd764`);
+                await loadScript(`conjugation/data/${drillCode}-not-verbs.js?v=ef59e8e5`);
             } catch (_) {
                 // not-verbs is optional
             }
-            loadedDecks.add(drillCode);
         }
 
         if (typeof window.conjugationBoot === 'function') {
-            window.conjugationBoot(drillCode);
+            window.conjugationBoot(drillCode, targetVerb, targetView);
         }
     } catch (err) {
         console.error('Failed to boot conjugations screen:', err);
@@ -274,6 +315,12 @@ export function backToExtraMenu() {
     if (conjView) conjView.hidden = true;
     if (songPickerView) songPickerView.hidden = true;
     if (menuView) menuView.hidden = false;
+    try {
+        if (window.location.pathname.includes('/conjugation')) {
+            const basePath = window.location.pathname.replace(/\/conjugation\/?$/, '') || '/';
+            history.replaceState({ screen: 'extra' }, '', basePath);
+        }
+    } catch (_) {}
 }
 
 export function openExtraModal() {
@@ -290,6 +337,21 @@ export function closeExtraModal() {
     if (modal) {
         modal.classList.add('hidden');
     }
+    const conjView = document.getElementById('extraConjugationsView');
+    const songPickerView = document.getElementById('extraSongPickerView');
+    const menuView = document.getElementById('extraMenuView');
+    if (conjView) conjView.hidden = true;
+    if (songPickerView) songPickerView.hidden = true;
+    if (menuView) menuView.hidden = false;
+    if (typeof window.showConjugationScreen === 'function') {
+        try { window.showConjugationScreen('setup'); } catch (_) {}
+    }
+    try {
+        if (window.location.pathname.includes('/conjugation')) {
+            const basePath = window.location.pathname.replace(/\/conjugation\/?$/, '') || '/';
+            history.replaceState({ screen: 'home' }, '', basePath);
+        }
+    } catch (_) {}
 }
 
 export function initExtraWorkspace() {
@@ -314,6 +376,9 @@ export function initExtraWorkspace() {
 
     const conjBackBtn = document.getElementById('extraConjugationsBackBtn');
     conjBackBtn?.addEventListener('click', backToExtraMenu);
+
+    const conjCloseBtn = document.getElementById('extraConjugationsCloseBtn');
+    conjCloseBtn?.addEventListener('click', closeExtraModal);
 
     const songPickerBackBtn = document.getElementById('extraSongPickerBackBtn');
     songPickerBackBtn?.addEventListener('click', backToExtraMenu);
@@ -379,10 +444,20 @@ export function initExtraWorkspace() {
     }
 
     window.openExtraModal = openExtraModal;
-    window.openConjugationsScreen = () => {
+    window.openConjugationsScreen = (targetVerb = null, targetView = null) => {
         openExtraModal();
-        openConjugationsScreen();
+        openConjugationsScreen(targetVerb, targetView);
     };
+    window.addEventListener('popstate', () => {
+        const isConj = window.location.pathname.includes('/conjugation');
+        const conjView = document.getElementById('extraConjugationsView');
+        if (!isConj && conjView && !conjView.hidden) {
+            backToExtraMenu();
+        } else if (isConj && (!conjView || conjView.hidden)) {
+            const urlParams = new URLSearchParams(window.location.search);
+            window.openConjugationsScreen(urlParams.get('verb'));
+        }
+    });
     window.openSongPickerScreen = () => {
         openExtraModal();
         openSongPickerScreen();

@@ -2,6 +2,44 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T14:45:00+01:00",
+      "date": "2026-10-18 14:45 BST",
+      "agent": "Antigravity",
+      "summary": "Verb drills: collapsible tense groupings with pill buttons, Start box at top, simplified header, and robust embedded loading",
+      "detail": [
+        "Grouped tenses by mood (Indicative, Subjunctive, Imperative) into collapsible sections so they stay compact, with active moods open by default.",
+        "Replaced text toggles with clean, neutral pill buttons for 'all' / 'none' and '+ X' rarer tenses, removing garish red styling.",
+        "Moved the Start summary box to the top of setup with ordered settings below, and simplified header to title + close button.",
+        "Unified conjugation mode into a zero-latency embedded view with /conjugation URL and shared deck promise caching."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T14:05:00+01:00",
+      "date": "2026-10-18 14:05 BST",
+      "agent": "Claude",
+      "summary": "Scrubber number now moves one card at a time on grammar-word cards; POS pill fills the sense row; 'from' aligned; scrubber circle back to its original size",
+      "detail": [
+        "Fixed the seek-bar number freezing on grammar-word cards (en, lo, un, por…) and then jumping several numbers: updateCard returned early after drawing their back, before the scrubber update.",
+        "Sense-row POS pill text 17→19px; the row's own padding cut (7px → 3px) so the pill nearly fills it.",
+        "'from' in the sense-row head now sits on the pill's centre line instead of floating above it.",
+        "Scrubber circle back to 32px (it had grown to 40px); its number is 19px so it fills the circle instead."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T13:20:00+01:00",
+      "date": "2026-10-18 13:20 BST",
+      "agent": "Claude",
+      "summary": "Companion cards: all three now reach the deck, and the front shows \"Card N of M · x% of uses\" on one clear pill; back-of-card controls enlarged again with tighter padding",
+      "detail": [
+        "Fixed 3-way split words (e.g. fue) stopping at card 2: the deck builder only pushed the first two companions. Sessions also no longer cut a 3-card split across two batches.",
+        "Front: \"Card N of M\" is now 16px bold on a tinted pill, with \"x% of uses\" beside it instead of under the frequency (the frequency is the same on every companion).",
+        "Back: pin icon 26→30px, information icon 18→23px in a 30px box, sense-row POS pill 15→17px with 3px 10px padding, scrubber circle 36→40px with a 20px number, 'Level x' label 17→20px."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T11:46:00+01:00",
       "date": "2026-10-18 11:46 BST",
       "agent": "Antigravity",
@@ -345,55 +383,6 @@
         "Desktop sidebar trail now reads clearly: Spanish -> Vocabulary: Artists / Spotify playlists -> Artist / Playlist name."
       ],
       "commit": "df2ff1a9"
-    },
-    {
-      "timestamp": "2026-10-15T10:41:00+01:00",
-      "date": "2026-10-15 10:41 BST",
-      "agent": "Antigravity",
-      "summary": "Streamlined 'Languages you know' modal with punchy Smart Skip copy and concrete bridge examples",
-      "detail": [
-        "Replaced verbose modal instructions and 'coming soon' disclaimers with a punchy single sentence explaining the purpose of known languages for skipping familiar words.",
-        "Removed the redundant 'Manage all languages in Settings' button to declutter the modal.",
-        "Simplified the cross-language transfer explanation with clear, concrete examples (e.g., learn noche in Spanish → skip noite in Portuguese)."
-      ],
-      "commit": "0bccb82c"
-    },
-    {
-      "timestamp": "2026-10-15T09:15:00+01:00",
-      "date": "2026-10-15 09:15 BST",
-      "agent": "Antigravity",
-      "summary": "Mnemonic memory tips redesigned for intuitive cognitive clarity with hero morpheme flow & pattern twins",
-      "detail": [
-        "Memory tips modal now leads immediately with the English anchor word ('Think of English: rapidly') rather than an edit script.",
-        "Replaced single-letter DNA alignment grid with visual morpheme chunking: emerald for shared roots and amber for shifting affixes (-mente → -ly, es- → s-).",
-        "Added pattern twins section showing how rules transfer across familiar words (e.g. totalmente → totally, perfectamente → perfectly).",
-        "Added Romance initial prefix rules (es- → s-), Italian language support, and amber lightbulb tile accent."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-15T00:41:00+01:00",
-      "date": "2026-10-15 00:41 BST",
-      "agent": "Antigravity",
-      "summary": "Modernized Portuguese function words with deterministic content cycling & ambient glow system",
-      "detail": [
-        "Closed-class focus words (que, de, se, o, nos, naquele) now feature a deterministic grammatical layout on card backs with content-word variation pills (e.g. gostar, precisar, depender for de) and clean contraction breakdown formulas (em + aquele for naquele; contextual em + os for nos).",
-        "Function words receive a single, dedicated signature ambient glow: Periwinkle Moonstone Off-White (rgb(212, 218, 245)), giving structural grammar words elevated distinction without competing with the chromatic POS spectrum.",
-        "Non-function words receive ambient glow per Part of Speech: multi-corner radial lighting on unified cards with multiple parts of speech, and single-POS lighting on companion cards ('Card 1 of 2')."
-      ],
-      "commit": "69c66a4c"
-    },
-    {
-      "timestamp": "2026-10-14T22:18:59+01:00",
-      "date": "2026-10-14 22:18 BST",
-      "agent": "Claude",
-      "summary": "“Languages you know” moved into Settings → Study and shows flags instead of a sentence.",
-      "detail": [
-        "Now sits under Show first on the Study tab (it was on the App tab).",
-        "The row shows one flag per language you know; hover a flag for its name. The explanatory line is now a tooltip.",
-        "Closing the editor returns you to the Study tab."
-      ],
-      "commit": "pending"
     }
   ]
 }

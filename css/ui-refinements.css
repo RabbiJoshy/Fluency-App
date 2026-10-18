@@ -42,7 +42,9 @@
     line-height: inherit;
     align-self: baseline;
 }
-.pos-collapsible .pos-lemma-from { margin: 0 5px 0 0; }
+/* In the sense-row head "from" sits on the pill's centre line, not on a
+   baseline of its own that floats it above "Verb" and "ser". */
+.pos-collapsible .pos-lemma-from { margin: 0 5px 0 0; align-self: center; line-height: 1; }
 .meaning-row.meaning-row-known,
 .meaning-row.is-known-meaning,
 .group-card-varying-cell.is-known-subsense {
@@ -54,7 +56,7 @@
 .study-level-label {
     flex: none;
     color: var(--text-secondary);
-    font: 700 17px/1.2 var(--font-reading);
+    font: 700 20px/1.2 var(--font-reading);
     white-space: nowrap;
 }
 .study-level-label[hidden] { display: none; }
@@ -241,8 +243,7 @@
 }
 .pos-collapsible .pos-section-head { align-items: center; }
 
-/* Companion usage is context alongside the frequency, never a rank. */
-.split-frequency { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+/* Companion usage sits beside "Card N of M", never a rank. */
 .split-usage-share {
     pointer-events: auto;
     align-self: center;

@@ -1,44 +1,44 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=934cd764';
-import { releaseUrl } from './release-host.js?v=934cd764';
-import './theme.js?v=934cd764';
-import './desktop-shell.js?v=934cd764';
-import './extra-workspace.js?v=934cd764';
-import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=934cd764';
-import './ai-preference.js?v=934cd764';
-import { installFlagRendering } from './flags.js?v=934cd764';
-import { IS_STAGING } from './env.js?v=934cd764';
-import './state.js?v=934cd764';
-import './offline-db.js?v=934cd764';
-import './sync-queue.js?v=934cd764';
-import { initOfflineContent } from './offline-content.js?v=934cd764';
-import './speech.js?v=934cd764';
-import './artist-ui.js?v=934cd764';
-import './auth.js?v=934cd764';
-import './tutorial.js?v=934cd764';
-import './walkthrough.js?v=934cd764';
-import './estimation.js?v=934cd764';
-import './config.js?v=934cd764';
-import './progress.js?v=934cd764';
-import './knowledge.js?v=934cd764';
-import './session-plan.js?v=934cd764';
-import './ui.js?v=934cd764';
-import './vocab.js?v=934cd764';
-import './language-profile.js?v=934cd764';
-import './smart-skip-pairs.js?v=934cd764';
-import './bridge.js?v=934cd764';
-import './cognates.js?v=934cd764';
-import './coverage.js?v=934cd764';
-import './fast-mode.js?v=934cd764';
-import './extras.js?v=934cd764';
-import './review-home.js?v=934cd764';
-import './song-sets.js?v=934cd764';
-import './playlist-live.js?v=934cd764';
-import './spotify-playlist-import.js?v=934cd764';
-import './vocabulary-import.js?v=934cd764';
-import './flashcards.js?v=934cd764';
-import { validateArtistCatalog } from './data-contracts.js?v=934cd764';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=ef59e8e5';
+import { releaseUrl } from './release-host.js?v=ef59e8e5';
+import './theme.js?v=ef59e8e5';
+import './desktop-shell.js?v=ef59e8e5';
+import './extra-workspace.js?v=ef59e8e5';
+import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=ef59e8e5';
+import './ai-preference.js?v=ef59e8e5';
+import { installFlagRendering } from './flags.js?v=ef59e8e5';
+import { IS_STAGING } from './env.js?v=ef59e8e5';
+import './state.js?v=ef59e8e5';
+import './offline-db.js?v=ef59e8e5';
+import './sync-queue.js?v=ef59e8e5';
+import { initOfflineContent } from './offline-content.js?v=ef59e8e5';
+import './speech.js?v=ef59e8e5';
+import './artist-ui.js?v=ef59e8e5';
+import './auth.js?v=ef59e8e5';
+import './tutorial.js?v=ef59e8e5';
+import './walkthrough.js?v=ef59e8e5';
+import './estimation.js?v=ef59e8e5';
+import './config.js?v=ef59e8e5';
+import './progress.js?v=ef59e8e5';
+import './knowledge.js?v=ef59e8e5';
+import './session-plan.js?v=ef59e8e5';
+import './ui.js?v=ef59e8e5';
+import './vocab.js?v=ef59e8e5';
+import './language-profile.js?v=ef59e8e5';
+import './smart-skip-pairs.js?v=ef59e8e5';
+import './bridge.js?v=ef59e8e5';
+import './cognates.js?v=ef59e8e5';
+import './coverage.js?v=ef59e8e5';
+import './fast-mode.js?v=ef59e8e5';
+import './extras.js?v=ef59e8e5';
+import './review-home.js?v=ef59e8e5';
+import './song-sets.js?v=ef59e8e5';
+import './playlist-live.js?v=ef59e8e5';
+import './spotify-playlist-import.js?v=ef59e8e5';
+import './vocabulary-import.js?v=ef59e8e5';
+import './flashcards.js?v=ef59e8e5';
+import { validateArtistCatalog } from './data-contracts.js?v=ef59e8e5';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -92,7 +92,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=934cd764').catch(error => {
+    ? import('./spotify.js?v=ef59e8e5').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -747,18 +747,37 @@ loadConfig().then(async () => {
         if (appDataTabBtn) appDataTabBtn.hidden = false;
         if (settingsAdminLabel) settingsAdminLabel.hidden = false;
     }
-    // #/es/conjugate[/verb] names the drill page, which is its own document.
+    // #/es/conjugate[/verb] names the embedded conjugation drill screen.
     // A language with no drill deck opens that language instead.
     if (window.fluencyRoute?.kind === 'conjugate') {
         const route = window.fluencyRoute;
         const key = languageKeyFor(route.language, config.languages);
-        const drillHref = conjugationDrillHref(key, route.verb, config.languages);
-        if (drillHref) {
-            window.location.replace(drillHref);
-            return;
+        const drillCode = config.languages?.[key]?.conjugationDrill;
+        if (drillCode) {
+            setTimeout(() => {
+                if (typeof window.openConjugationsScreen === 'function') {
+                    window.openConjugationsScreen(route.verb);
+                }
+            }, 50);
+        } else {
+            window.fluencyRoute = { kind: 'language', language: route.language };
+            replaceRoute(window.fluencyRoute);
         }
-        window.fluencyRoute = { kind: 'language', language: route.language };
-        replaceRoute(window.fluencyRoute);
+    }
+    const initialParams = new URLSearchParams(window.location.search);
+    const isConjugationReq = window.fluencyRoute?.kind !== 'conjugate' && (
+        initialParams.get('screen') === 'conjugation' ||
+        initialParams.get('activity') === 'verbs' ||
+        window.location.pathname.endsWith('/conjugation') ||
+        window.location.pathname.endsWith('/conjugation/')
+    );
+    if (isConjugationReq) {
+        const verb = initialParams.get('verb');
+        setTimeout(() => {
+            if (typeof window.openConjugationsScreen === 'function') {
+                window.openConjugationsScreen(verb);
+            }
+        }, 60);
     }
     renderLanguageTabs();
     // A language is a durable learning context, not a choice learners should
@@ -1789,7 +1808,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=934cd764')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=ef59e8e5')).catch(() => null);
             window.spotifyLogin?.();
         });
     }

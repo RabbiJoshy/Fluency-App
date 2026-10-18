@@ -130,9 +130,42 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--border-color);
+}
+
+.extra-conjugations-title {
+  margin: 0;
+  font: 700 24px/1.2 var(--font-emphasis);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.extra-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease, transform .1s ease;
+}
+
+.extra-close-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.extra-close-btn:active {
+  transform: scale(0.95);
 }
 
 .extra-back-btn {
@@ -357,12 +390,12 @@
 }
 
 .extra-conjugations-view .check:has(input:checked) {
-  border-color: var(--accent-primary);
-  background: var(--bg-card);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .extra-conjugations-view .check input {
-  accent-color: var(--accent-primary);
+  accent-color: var(--accent-blue, #3b82f6);
   margin: 0;
 }
 
@@ -387,28 +420,110 @@
   flex: none;
 }
 
-.extra-conjugations-view .mood {
-  margin-top: 14px;
+.extra-conjugations-view .mood-group {
+  margin-top: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.extra-conjugations-view .mood-group[open] {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .extra-conjugations-view .mood-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
+  color: var(--text-primary, #ffffff);
+  transition: background-color 0.15s ease;
 }
 
-.extra-conjugations-view .mood-head button {
-  border: 0;
-  background: none;
-  font: inherit;
-  font-size: 12px;
-  color: var(--accent-primary);
+.extra-conjugations-view .mood-head::-webkit-details-marker {
+  display: none;
+}
+
+.extra-conjugations-view .mood-head:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.extra-conjugations-view .mood-head-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.extra-conjugations-view .mood-chevron {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text-muted, #71717a);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
+}
+
+.extra-conjugations-view .mood-group[open] .mood-chevron {
+  transform: rotate(90deg);
+  color: var(--text-primary, #ffffff);
+}
+
+.extra-conjugations-view .mood-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+}
+
+.extra-conjugations-view .mood-badge {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted, #a1a1aa);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1px 7px;
+  border-radius: 9999px;
+  letter-spacing: 0.01em;
+}
+
+.extra-conjugations-view .mood-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: #d4d4d8;
   cursor: pointer;
-  padding: 2px 4px;
+  transition: all 0.15s ease;
+  line-height: 1.4;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.extra-conjugations-view .mood-toggle-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: #ffffff;
+}
+
+.extra-conjugations-view .mood-toggle-pill:active {
+  transform: scale(0.95);
+}
+
+.extra-conjugations-view .mood-body {
+  padding: 0 14px 12px 14px;
 }
 
 .extra-conjugations-view .compound-dot {
@@ -425,33 +540,59 @@
   margin-top: 8px;
 }
 
+.extra-conjugations-view .mood-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary, #a1a1aa);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.extra-conjugations-view .mood-more:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+
 .extra-conjugations-view button.linkish {
   border: 0;
   background: none;
   font: inherit;
-  font-size: 12.5px;
-  color: var(--accent-primary);
+  font-size: 12px;
+  color: var(--text-secondary, #a1a1aa);
   cursor: pointer;
   padding: 2px 0;
+  transition: color 0.15s ease;
+}
+
+.extra-conjugations-view button.linkish:hover {
+  color: var(--text-primary, #ffffff);
 }
 
 .extra-conjugations-view .summary {
-  position: sticky;
-  bottom: 0;
-  margin-top: 16px;
+  position: static;
+  margin-top: 0;
+  margin-bottom: 20px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 14px;
-  padding: 14px 18px;
+  border-radius: 16px;
+  padding: 16px 20px;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 6px 18px;
+  gap: 8px 18px;
   align-items: center;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   max-width: 680px;
   margin-left: auto;
   margin-right: auto;
-  z-index: 10;
 }
 
 .extra-conjugations-view .summary-main {
@@ -523,14 +664,31 @@
   transition: opacity .15s ease, background-color .15s ease;
 }
 
-.extra-conjugations-view button.primary {
-  background: var(--start-accent, var(--accent-primary));
+.extra-conjugations-view button.primary,
+.extra-conjugations-view #start {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
   color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 10px rgba(225, 29, 72, 0.3);
+  transition: all 0.15s ease;
 }
 
-.extra-conjugations-view button.primary[disabled] {
-  opacity: .45;
+.extra-conjugations-view button.primary:hover:not([disabled]),
+.extra-conjugations-view #start:hover:not([disabled]) {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.45);
+  transform: translateY(-1px);
+}
+
+.extra-conjugations-view button.primary[disabled],
+.extra-conjugations-view #start[disabled] {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted, #71717a);
+  border-color: transparent;
+  box-shadow: none;
+  opacity: 0.45;
   cursor: default;
+  transform: none;
 }
 
 .extra-conjugations-view button.secondary {
@@ -566,73 +724,166 @@
 .extra-conjugations-view .card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 18px;
-  padding: 36px 28px;
+  border-radius: 20px;
+  padding: 34px 24px;
   text-align: center;
-  min-height: 320px;
+  min-height: 360px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  gap: 16px;
   cursor: pointer;
   user-select: none;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
-  transition: transform .15s ease, box-shadow .15s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
 
+.extra-conjugations-view .card:hover {
+  border-color: var(--border-light, var(--text-muted));
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.18);
+}
+
+.extra-conjugations-view .card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Tense badge: prominent, structured, high-legibility ── */
 .extra-conjugations-view .card-tense {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.extra-conjugations-view .card-tense-mood {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.extra-conjugations-view .card-tense-sep {
+  color: var(--text-muted);
+  opacity: 0.5;
+  font-size: 14px;
+}
+
+.extra-conjugations-view .card-tense-name {
+  font-family: var(--font-emphasis);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* Mood-specific accents */
+.extra-conjugations-view .card-tense[data-mood*="subj"] {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: linear-gradient(180deg, var(--bg-secondary), rgba(167, 139, 250, 0.12));
+}
+.extra-conjugations-view .card-tense[data-mood*="subj"] .card-tense-mood { color: #c084fc; }
+
+.extra-conjugations-view .card-tense[data-mood*="imp"] {
+  border-color: rgba(245, 166, 35, 0.45);
+  background: linear-gradient(180deg, var(--bg-secondary), rgba(245, 166, 35, 0.12));
+}
+.extra-conjugations-view .card-tense[data-mood*="imp"] .card-tense-mood { color: var(--accent-amber); }
+
+/* The clue line. Sits with the tense as card metadata */
+.extra-conjugations-view .card-clue {
+  font-family: var(--font-reading);
   font-size: 12.5px;
-  letter-spacing: .06em;
+  letter-spacing: .03em;
+  color: var(--clue-colour, var(--text-muted));
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  display: inline-block;
+  margin: 0 auto;
+}
+
+/* ── Prompt section: Subject & Verb ── */
+.extra-conjugations-view .card-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 0;
+}
+
+.extra-conjugations-view .card-subject-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.extra-conjugations-view .card-subject-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--text-muted);
 }
 
+.extra-conjugations-view .card-person {
+  font-family: var(--font-emphasis);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
 .extra-conjugations-view .card-verb {
   font-family: var(--font-emphasis);
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 34px;
+  font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.15;
   color: var(--text-primary);
-}
-
-.extra-conjugations-view .card-translation {
-  display: block;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-.extra-conjugations-view .card-clue {
-  font-family: var(--font-reading);
-  font-size: 12px;
-  letter-spacing: .04em;
-  color: var(--clue-colour, var(--text-muted));
 }
 
 .extra-conjugations-view .card-verb.is-clued #card-headword {
   color: var(--clue-colour, inherit);
 }
 
-.extra-conjugations-view .card-person {
-  font-size: 16px;
-  font-weight: 600;
+.extra-conjugations-view .card-translation {
+  display: block;
+  font-family: var(--font-reading);
+  font-size: 15px;
+  font-weight: 400;
   color: var(--text-secondary);
-  letter-spacing: .01em;
+  margin-top: 4px;
 }
 
+/* ── Answer section ── */
 .extra-conjugations-view .card-answer {
   border-top: 1px solid var(--border-color);
-  margin-top: 14px;
-  padding-top: 18px;
+  margin-top: 10px;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .extra-conjugations-view .card-form {
   font-family: var(--font-emphasis);
-  font-size: 36px;
-  font-weight: 650;
+  font-size: 40px;
+  font-weight: 700;
   letter-spacing: -0.02em;
+  line-height: 1.15;
   color: var(--text-primary);
 }
 
@@ -641,7 +892,7 @@
 }
 
 .extra-conjugations-view .card-form .form-stem {
-  opacity: .62;
+  opacity: .88;
   font-weight: 600;
 }
 
@@ -984,6 +1235,22 @@
   .extra-conjugations-view .summary-actions button {
     flex: 1;
   }
+}
+
+@media (min-width: 900px) {
+  .extra-conjugations-view .card {
+    min-height: 440px;
+    padding: 46px 36px;
+    gap: 22px;
+  }
+  .extra-conjugations-view .card-tense { padding: 10px 24px; gap: 12px; }
+  .extra-conjugations-view .card-tense-mood { font-size: 14px; }
+  .extra-conjugations-view .card-tense-name { font-size: 20px; }
+  .extra-conjugations-view .card-subject-label { font-size: 12px; }
+  .extra-conjugations-view .card-person { font-size: 34px; }
+  .extra-conjugations-view .card-verb { font-size: 44px; }
+  .extra-conjugations-view .card-translation { font-size: 17px; }
+  .extra-conjugations-view .card-form { font-size: 52px; }
 }
 
 /* ── Embedded Song Picker View ────────────────────────────── */

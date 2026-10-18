@@ -11,7 +11,8 @@
 (function () {
   'use strict';
 
-  var decks = {};
+  window._conjugationDecks = window._conjugationDecks || {};
+  var decks = window._conjugationDecks;
   var deck = null;
 
   var state = {
@@ -48,6 +49,7 @@
   var revealed = false;
   var soloVerb = null;   // set by ?verb=, cleared when the selection changes
   var expandedMoods = {};  // mood label -> the rarer tenses are showing
+  var openMoods = {};      // mood label -> boolean indicating whether grouping is expanded
 
   var CODE_ORDER = ['0', '1', '2', '3', '4'];
   var OPAQUE = '*';
@@ -59,7 +61,8 @@
   // Drill forms the vocabulary treats as something else (casa, para), built by
   // scripts/build_conjugation_not_verbs.py; a missed card for one of these
   // does not pull its look-alike verb forward.
-  var notVerbs = {};
+  window._conjugationNotVerbs = window._conjugationNotVerbs || {};
+  var notVerbs = window._conjugationNotVerbs;
   window.registerConjugationNotVerbs = function (payload) {
     var words = {};
     (payload.words || []).forEach(function (word) { words[word] = true; });
@@ -439,21 +442,53 @@
         ? group
         : group.filter(function (t) { return rare.indexOf(t) === -1; });
 
-      var block = el('div', 'mood');
-      var head = el('div', 'mood-head');
-      head.appendChild(el('span', null, mood));
+      var selectedCount = group.filter(function (t) { return state.tenses[t.id]; }).length;
+      var isOpen = openMoods[mood] !== undefined ? openMoods[mood] : (selectedCount > 0);
+
+      var block = document.createElement('details');
+      block.className = 'mood mood-group';
+      block.open = !!isOpen;
+      block.ontoggle = function () {
+        openMoods[mood] = block.open;
+      };
+
+      var head = document.createElement('summary');
+      head.className = 'mood-head';
+
+      var headLeft = el('div', 'mood-head-left');
+      var chevron = el('span', 'mood-chevron', '›');
+      chevron.setAttribute('aria-hidden', 'true');
+      headLeft.appendChild(chevron);
+      headLeft.appendChild(el('span', 'mood-title', mood));
+
+      var badge = el('span', 'mood-badge');
+      badge.textContent = selectedCount === group.length
+        ? 'all ' + group.length
+        : selectedCount === 0
+          ? 'none'
+          : selectedCount + ' of ' + group.length;
+      headLeft.appendChild(badge);
+      head.appendChild(headLeft);
 
       var allOn = group.every(function (t) { return state.tenses[t.id]; });
-      var toggle = el('button', null, allOn ? 'none' : 'all');
-      toggle.onclick = function () {
+      var toggle = el('button', 'mood-toggle-pill', allOn ? 'none' : 'all');
+      toggle.type = 'button';
+      toggle.setAttribute('aria-label', (allOn ? 'Deselect all ' : 'Select all ') + mood + ' tenses');
+      toggle.onclick = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         group.forEach(function (t) { state.tenses[t.id] = !allOn; });
-        if (!allOn) expandedMoods[mood] = true;
+        if (!allOn) {
+          expandedMoods[mood] = true;
+          openMoods[mood] = true;
+        }
         renderTenses();
         refreshSummary();
       };
       head.appendChild(toggle);
       block.appendChild(head);
 
+      var body = el('div', 'mood-body');
       var checks = el('div', 'checks');
       shown.forEach(function (tense) {
         var label = el('label', 'check');
@@ -471,18 +506,23 @@
         label.appendChild(el('span', 'check-count', tense.persons.length + ' forms'));
         checks.appendChild(label);
       });
-      block.appendChild(checks);
+      body.appendChild(checks);
 
       if (rare.length && !expandedMoods[mood]) {
-        var more = el('button', 'linkish mood-more',
-          '+ ' + rare.length + ' rarer ' + (rare.length === 1 ? 'tense' : 'tenses'));
-        more.onclick = function () {
+        var more = el('button', 'linkish mood-more', '+ ' + rare.length);
+        more.type = 'button';
+        more.setAttribute('aria-label', 'Show ' + rare.length + ' more tenses');
+        more.onclick = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
           expandedMoods[mood] = true;
+          openMoods[mood] = true;
           renderTenses();
         };
-        block.appendChild(more);
+        body.appendChild(more);
       }
 
+      block.appendChild(body);
       host.appendChild(block);
     });
   }
@@ -1385,6 +1425,8 @@
     // different exits.
     if ($('back-to-study')) $('back-to-study').hidden = name === 'tables';
     if ($('extraConjugationsBackBtn')) $('extraConjugationsBackBtn').hidden = name === 'tables';
+    if ($('extraConjugationsCloseBtn')) $('extraConjugationsCloseBtn').hidden = name === 'tables';
+    if ($('topbar-close')) $('topbar-close').hidden = name === 'tables';
     if (name === 'tables') {
       if ($('tables-back')) $('tables-back').lastChild.textContent = queue.length ? ' Back to drill' : ' Back';
     }
@@ -1416,7 +1458,18 @@
     } else if (!tables && soloVerb) {
       params.set('verb', soloVerb.h);
     }
-    if (window._embeddedConjugation) return;
+    if (window._embeddedConjugation) {
+      try {
+        var base = window.location.pathname.replace(/\/conjugation\/?$/, '') || '';
+        var nextPath = (base + '/conjugation').replace(/^\/\//, '/');
+        var query = params.toString() ? '?' + params.toString() : '';
+        var nextUrl = nextPath + query;
+        if (window.location.pathname + window.location.search !== nextUrl) {
+          history.replaceState({ screen: 'conjugation' }, '', nextUrl);
+        }
+      } catch (_) {}
+      return;
+    }
     var next = window.location.pathname + '?' + params.toString();
     if (next !== window.location.pathname + window.location.search) {
       history.replaceState(null, '', next);
@@ -1447,6 +1500,7 @@
     queue = [];
     tableVerb = null;
     expandedMoods = {};
+    openMoods = {};
     computeFamilies();
     renderDeckPicker();
     renderProvenance();
@@ -1549,13 +1603,9 @@
     }).catch(function () { /* keep the page accent */ });
   }
 
-  /* One entry point from the app: conjugation/?lang=pt&verb=ter drills that
-   * verb across every tense it has. ?view=table opens the paradigm instead. */
-  function applyDeepLink() {
-    var params = new URLSearchParams(window.location.search);
-    var wanted = (params.get('verb') || '').trim().toLowerCase();
+  function applyTargetVerb(wanted, view, tense) {
     if (!wanted) return false;
-
+    wanted = wanted.trim().toLowerCase();
     var verb = deck.verbs.filter(function (v) {
       return v.h.toLowerCase() === wanted;
     })[0];
@@ -1568,8 +1618,7 @@
 
     tableVerb = verb;
     $('table-search').value = verb.h;
-    if (params.get('view') === 'table') {
-      var tense = params.get('tense');
+    if (view === 'table') {
       tableTense = tense && tenseById(tense) ? tense : 'all';
       $('table-tense').value = tableTense;
       showScreen('tables');
@@ -1592,17 +1641,28 @@
     return true;
   }
 
-  window.conjugationBoot = function (targetLang) {
+  /* One entry point from the app: conjugation/?lang=pt&verb=ter drills that
+   * verb across every tense it has. ?view=table opens the paradigm instead. */
+  function applyDeepLink() {
+    var params = new URLSearchParams(window.location.search);
+    var wanted = (params.get('verb') || '').trim().toLowerCase();
+    if (!wanted) return false;
+    return applyTargetVerb(wanted, params.get('view'), params.get('tense'));
+  }
+
+  window.conjugationBoot = function (targetLang, targetVerb, targetView) {
     if (targetLang && decks[targetLang]) {
       window._requestedConjugationLang = targetLang;
     }
     var codes = Object.keys(decks);
     if (!codes.length) {
-      var container = $('extraConjugationsContainer') || document.querySelector('main');
-      if (container) {
-        container.innerHTML =
-          '<p class="empty">No deck loaded. Run ' +
-          '<code>scripts/build_conjugation_drill.py</code> first.</p>';
+      if (!window._embeddedConjugation) {
+        var container = $('extraConjugationsContainer') || document.querySelector('main');
+        if (container) {
+          container.innerHTML =
+            '<p class="empty">No deck loaded. Run ' +
+            '<code>scripts/build_conjugation_drill.py</code> first.</p>';
+        }
       }
       return;
     }
@@ -1678,6 +1738,11 @@
       });
     }
 
-    if (!applyDeepLink()) showScreen('setup');
+    if (targetVerb) {
+      applyTargetVerb(targetVerb, targetView);
+    } else if (!applyDeepLink()) {
+      showScreen('setup');
+    }
   };
+  window.showConjugationScreen = showScreen;
 })();

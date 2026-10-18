@@ -16,7 +16,7 @@
 
 // Cells are matched to the card's word exactly as the sense-row English is,
 // so a -se table ("me siento") opens on the card's tense and marks its form.
-import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=934cd764';
+import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=ef59e8e5';
 
 const CONJ_UI = {
     spanish: {
@@ -257,7 +257,7 @@ export function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
 
     const drillUrl = conjugationDrillUrl(infinitive);
     const drillLinkHTML = drillUrl ? `
-        <a href="${drillUrl}" class="conj-drill-link" title="Drill ${infinitive} in conjugation mode">
+        <a href="${drillUrl}" class="conj-drill-link" data-verb="${infinitive}" title="Drill ${infinitive} in conjugation mode">
             <span>All tenses in conjugation mode</span>
         </a>` : '';
 
@@ -371,6 +371,15 @@ async function toggleConjugationTable() {
             _builtPanelCache.set(cacheKey, inner);
         }
         panel.innerHTML = inner;
+        const drillLink = panel.querySelector('.conj-drill-link');
+        if (drillLink) {
+            drillLink.addEventListener('click', (e) => {
+                if (typeof window.openConjugationsScreen === 'function') {
+                    e.preventDefault();
+                    window.openConjugationsScreen(drillLink.dataset.verb || lemma);
+                }
+            });
+        }
     }
     // A freshly moved node has no committed layout, so the slide-in would be
     // skipped. Reading a layout property commits the "from" state; unlike a

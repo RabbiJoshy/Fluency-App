@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=934cd764';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=934cd764';
-import { songCreditHTML } from './song-credit.js?v=934cd764';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=934cd764';
+import './state.js?v=ef59e8e5';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=ef59e8e5';
+import { songCreditHTML } from './song-credit.js?v=ef59e8e5';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=ef59e8e5';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=934cd764';
-import './speech.js?v=934cd764';
-import { goToRoute, routeCodeFor } from './routes.js?v=934cd764';
-import { memoryTipTileHTML } from './memory-tips.js?v=934cd764';
+import { fitSenseRowText } from './card-row-layout.js?v=ef59e8e5';
+import './speech.js?v=ef59e8e5';
+import { goToRoute, routeCodeFor } from './routes.js?v=ef59e8e5';
+import { memoryTipTileHTML } from './memory-tips.js?v=ef59e8e5';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=934cd764';
-import './side-dock.js?v=934cd764';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=934cd764';
+} from './function-word-card.js?v=ef59e8e5';
+import './side-dock.js?v=ef59e8e5';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=ef59e8e5';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=934cd764';
+} from './example-personalisation.js?v=ef59e8e5';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=934cd764';
+} from './spanishdict-usage.js?v=ef59e8e5';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=934cd764';
+} from './reverse-cues.js?v=ef59e8e5';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -68,7 +68,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=934cd764';
+} from './card-metadata-pills.js?v=ef59e8e5';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6025,7 +6025,7 @@ function sensePinButtonHTML(indices, isPinned, extraStyle = '') {
     const list = (Array.isArray(indices) ? indices : [indices]).filter(i => Number.isInteger(i) && i >= 0);
     const style = extraStyle ? ` style="${extraStyle}"` : '';
     const label = isPinned ? 'Unpin this meaning' : 'Pin this meaning for practice';
-    return `<button type="button" class="sense-pin-btn${isPinned ? ' is-pinned' : ''}"${style} aria-pressed="${Boolean(isPinned)}" aria-label="${label}" title="${label}" onclick="togglePinMeaningIndices(event, [${list.join(',')}])"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="26" height="26" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
+    return `<button type="button" class="sense-pin-btn${isPinned ? ' is-pinned' : ''}"${style} aria-pressed="${Boolean(isPinned)}" aria-label="${label}" title="${label}" onclick="togglePinMeaningIndices(event, [${list.join(',')}])"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="30" height="30" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
 }
 
 function prominenceBadgeHTML(promInfo, extraStyle = '') {
@@ -6667,13 +6667,16 @@ function renderCardWikipediaBadge(card) {
             if (isSplitCard) {
                 const s = card.splitInfo;
                 // A companion card shows only its own lemma/POS pill(s), built
-                // from its own senses; one "Card N of M" cue sits under them.
+                // from its own senses; one "Card N of M · x% of uses" cue sits
+                // under them. The share belongs to this card, not to the
+                // word's frequency, which is the same on every companion.
                 frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
                 if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
                 const noteRgb = getPosAccentRgb(s.pos || card.partOfSpeech);
                 frontPOSEl.style.setProperty('--split-accent', noteRgb);
-                const splitNoteHTML = '<div class="split-card-note is-counter">'
+                const splitNoteHTML = '<div class="split-card-note is-counter"><span class="split-card-counter">'
                     + `<button type="button" class="split-pill-count" aria-expanded="false" aria-label="Card ${s.index} of ${s.total}: why separate cards?" onclick="toggleSplitCardTip(event)">Card ${s.index} of ${s.total}</button>`
+                    + splitUsageShareHTML(card) + '</span>'
                     + '<span class="split-card-tip" role="tooltip" hidden>'
                     + (s.kind === 'reflexive'
                         ? 'This verb has ordinary and pronominal uses, so each gets its own flashcard. '
@@ -6848,11 +6851,11 @@ function renderCardWikipediaBadge(card) {
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocabulary Rank';
         frontRankingEl.innerHTML =
             cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), rankOf, true)
-            + (freqHtml ? `<div class="split-frequency">${freqHtml}${splitUsageShareHTML(card)}</div>` : splitUsageShareHTML(card));
+            + freqHtml;
         frontRankingEl.style.display = 'flex';
     } else {
-        frontRankingEl.innerHTML = splitUsageShareHTML(card);
-        frontRankingEl.style.display = frontRankingEl.innerHTML ? 'flex' : 'none';
+        frontRankingEl.innerHTML = '';
+        frontRankingEl.style.display = 'none';
     }
 
     let backWordText = backWord;
@@ -8871,24 +8874,28 @@ function renderCardWikipediaBadge(card) {
         // face so flipping and card navigation still move them together.
         const backFace = renderedBack.closest('.card-back');
         backFace?.querySelector(':scope > .links-section')?.remove();
+        // A grammar word's back has no sense rows to lay out, but the rest of
+        // updateCard (seek-bar number, nav buttons) must still run: returning
+        // here froze the scrubber on these cards, then jumped it several
+        // numbers at the next ordinary card.
         if (ptGrammarWord) {
             backFace?.classList.remove('has-action-tray');
             renderedBack.innerHTML = backHTML;
             renderedBack._fluencyRenderedHTML = backHTML;
-            return;
+        } else {
+            renderedBack.innerHTML = backHTML;
+            const actionTray = renderedBack.querySelector(':scope > .links-section');
+            if (actionTray && backFace) renderedBack.after(actionTray);
+            backFace?.classList.toggle('has-action-tray', Boolean(actionTray));
+            placeRowInformationButtons(renderedBack);
+            placeRowLeadMarks(renderedBack);
+            arrangeSenseCueAreas(renderedBack);
+            markCompactInactiveRows(renderedBack);
+            markSingleSenseSections(renderedBack);
+            addRarerSensesRow(renderedBack, card);
+            renderedBack._fluencyRenderedHTML = backHTML;
+            bindGrammarPairChips(renderedBack);
         }
-        renderedBack.innerHTML = backHTML;
-        const actionTray = renderedBack.querySelector(':scope > .links-section');
-        if (actionTray && backFace) renderedBack.after(actionTray);
-        backFace?.classList.toggle('has-action-tray', Boolean(actionTray));
-        placeRowInformationButtons(renderedBack);
-        placeRowLeadMarks(renderedBack);
-        arrangeSenseCueAreas(renderedBack);
-        markCompactInactiveRows(renderedBack);
-        markSingleSenseSections(renderedBack);
-        addRarerSensesRow(renderedBack, card);
-        renderedBack._fluencyRenderedHTML = backHTML;
-        bindGrammarPairChips(renderedBack);
     }
 
     // Post-render layout pass:
@@ -8911,7 +8918,7 @@ function renderCardWikipediaBadge(card) {
     // Previously there was a hardcoded "> 3 rows → cap at 3 rows" rule that
     // forced scrolling even when the card had plenty of room; this replaces
     // it with a genuine content-vs-space check.
-    if (backDomChanged) {
+    if (backDomChanged && !ptGrammarWord) {
         const backEl = document.getElementById('backContent');
         if (backEl) {
             // Cap the headword against the POS pill first: it can change the
@@ -10936,8 +10943,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '934cd764';
-const MODALS_ASSET_VERSION = '934cd764';
+const ASSET_VERSION = 'ef59e8e5';
+const MODALS_ASSET_VERSION = 'ef59e8e5';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
