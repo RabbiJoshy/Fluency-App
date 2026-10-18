@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T15:35:00+01:00",
+      "date": "2026-10-18 15:35 BST",
+      "agent": "Antigravity",
+      "summary": "Verb drills: plain-text tense, mood pill only when mixed, progress bar key toggle, and default selection guard",
+      "detail": [
+        "Card: tense is styled matching person without a pill container; mood is omitted for indicative and only appears as a tag when drilling multiple moods.",
+        "Card: fixed empty stub oval caused by clue pill CSS overriding the hidden attribute.",
+        "Setup: removed Resume button; total count displays breakdown (verbs · tenses · persons); progress bar is tappable to reveal/hide its mastery key.",
+        "Setup: safe default selection guaranteed (present tense and all persons) so the drill never loads empty."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T15:22:00+01:00",
       "date": "2026-10-18 15:22 BST",
       "agent": "Antigravity",

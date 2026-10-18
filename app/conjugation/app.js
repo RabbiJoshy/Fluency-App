@@ -50,6 +50,7 @@
   var soloVerb = null;   // set by ?verb=, cleared when the selection changes
   var expandedMoods = {};  // mood label -> the rarer tenses are showing
   var openMoods = {};      // mood label -> boolean indicating whether grouping is expanded
+  var legendOpen = false;  // the progress bar's key, shown when the bar is tapped
 
   var CODE_ORDER = ['0', '1', '2', '3', '4'];
   var OPAQUE = '*';
@@ -94,6 +95,17 @@
   }
 
   function tenseLabel(tense) { return tense.mood + ' · ' + tense.tense; }
+
+  // How many distinct moods the round in flight draws from (cached per queue).
+  var moodCount = { queue: null, n: 0 };
+  function moodsInPlay() {
+    if (moodCount.queue !== queue) {
+      var seen = {};
+      queue.forEach(function (card) { seen[card.tense.mood] = true; });
+      moodCount = { queue: queue, n: Object.keys(seen).length };
+    }
+    return moodCount.n;
+  }
 
   function personLabel(person) { return deck.pronouns[person] || person; }
 
@@ -907,6 +919,12 @@
     var cardCount = state.coverage === 'one' ? lessonCount : cards.length;
 
     $('sum-cards').textContent = cardCount.toLocaleString();
+    var plural = function (n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); };
+    $('sum-detail').textContent = [
+      plural(selection.verbs.length, 'verb'),
+      plural(selection.tenseIds.length, 'tense'),
+      plural(selection.persons.length, 'person')
+    ].join(' · ');
 
     $('coverage-hint').textContent = state.coverage === 'one'
       ? 'Your selection holds ' + cards.length.toLocaleString() + ' forms but only ' +
@@ -947,10 +965,20 @@
   /* What the selection holds, by how well it is known. Absent records are
    * "new", declared as such, not hidden. */
   function renderProgressSummary(stats) {
-    var parts = [];
-    if (stats.known) parts.push(stats.known.toLocaleString() + ' of ' + stats.total.toLocaleString() + ' known');
-    if (stats.due) parts.push(stats.due.toLocaleString() + ' due');
-    $('sum-progress').textContent = parts.join(' · ');
+    // The bar says what is left; tapping it reveals this key.
+    var legend = $('sum-progress');
+    legend.innerHTML = '';
+    if (stats.total) {
+      [['known', stats.known], ['learning', stats.learning],
+       ['missed', stats.missed], ['new', stats.new]].forEach(function (part) {
+        if (!part[1]) return;
+        var item = el('span', 'legend-item');
+        item.appendChild(el('span', 'legend-dot dot-' + part[0]));
+        item.appendChild(document.createTextNode(part[1].toLocaleString() + ' ' + part[0]));
+        legend.appendChild(item);
+      });
+    }
+    legend.hidden = !legendOpen || !legend.childNodes.length;
 
     var practised = Object.keys(progress.forms).length;
     $('progress-hint').textContent = practised
@@ -965,9 +993,12 @@
       (state.fromCards && cardMisses && Object.keys(cardMisses).length ? ' · flashcard mistakes first' : '');
   }
 
+  // The setup screen no longer has a Resume button (only Start), so there is
+  // nothing to draw; kept so callers need not know.
   function refreshResume() {
-    var session = P.loadSession(deck.language);
     var button = $('resume');
+    if (!button) return;
+    var session = P.loadSession(deck.language);
     var left = session ? session.keys.length - Object.keys(session.results || {}).length : 0;
     button.hidden = !session || left <= 0;
     if (!button.hidden) {
@@ -1019,13 +1050,14 @@
     var tenseNode = $('card-tense');
     tenseNode.innerHTML = '';
     if (card.tense.mood && card.tense.tense) {
-      var moodSpan = el('span', 'card-tense-mood', card.tense.mood);
-      var sepSpan = el('span', 'card-tense-sep', '·');
-      var tenseSpan = el('span', 'card-tense-name', card.tense.tense);
-      tenseNode.appendChild(moodSpan);
-      tenseNode.appendChild(sepSpan);
-      tenseNode.appendChild(tenseSpan);
-      tenseNode.dataset.mood = (card.tense.mood || '').toLowerCase();
+      tenseNode.appendChild(el('span', 'card-tense-name', card.tense.tense));
+      // Indicative is the assumed default, and a mood is only worth naming
+      // when the round mixes moods; otherwise there is nothing to tell apart.
+      if (!/^indic/i.test(card.tense.mood) && moodsInPlay() > 1) {
+        var moodPill = el('span', 'card-mood-pill', card.tense.mood);
+        moodPill.dataset.mood = card.tense.mood.toLowerCase();
+        tenseNode.appendChild(moodPill);
+      }
     } else {
       tenseNode.textContent = tenseLabel(card.tense);
     }
@@ -1535,6 +1567,12 @@
     state.scope = 50;
 
     applySavedSettings();
+    // Whatever was saved, never open on nothing: with no tense or no person
+    // the count reads 0 and the screen looks as if it failed to load.
+    if (!selectedTenseIds().length && opening) state.tenses[opening.id] = true;
+    if (!selectedPersons().length) {
+      deck.person_order.forEach(function (person) { state.persons[person] = true; });
+    }
     $('scope').value = state.scope;
     renderTenses();
     renderPersons();
@@ -1687,6 +1725,17 @@
       refreshSummary();
     };
     if ($('start')) $('start').onclick = startDrill;
+    if ($('sum-bar')) {
+      var toggleLegend = function () {
+        legendOpen = !legendOpen;
+        $('sum-bar').setAttribute('aria-expanded', String(legendOpen));
+        $('sum-progress').hidden = !legendOpen;
+      };
+      $('sum-bar').onclick = toggleLegend;
+      $('sum-bar').onkeydown = function (event) {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleLegend(); }
+      };
+    }
     if ($('resume')) $('resume').onclick = resumeRound;
     if ($('progress-reset')) $('progress-reset').onclick = resetProgress;
     if ($('grade-hit')) $('grade-hit').onclick = function () { gradeCurrent(true); blurActive(); };
