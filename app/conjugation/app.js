@@ -889,12 +889,6 @@
     var cardCount = state.coverage === 'one' ? lessonCount : cards.length;
 
     $('sum-cards').textContent = cardCount.toLocaleString();
-    var plural = function (n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); };
-    $('sum-detail').textContent = [
-      plural(selection.verbs.length, 'verb'),
-      plural(selection.tenseIds.length, 'tense'),
-      plural(selection.persons.length, 'person')
-    ].join(' · ');
 
     $('coverage-hint').textContent = state.coverage === 'one'
       ? 'Your selection holds ' + cards.length.toLocaleString() + ' forms but only ' +
@@ -904,19 +898,18 @@
         (cards.length - lessonCount).toLocaleString() +
         ' that repeat a pattern you have already seen.';
 
+    // Progress through the selection: known / learning / missed. The rest is
+    // new, left as the empty track.
     var bar = $('sum-bar');
     bar.innerHTML = '';
-    var total = CODE_ORDER.reduce(function (sum, code) {
-      return sum + (state.types[code] ? selection.byType[code] : 0);
-    }, 0);
-    CODE_ORDER.forEach(function (code) {
-      if (!state.types[code] || !selection.byType[code]) return;
-      var slice = el('span');
-      slice.style.background = 'var(--c' + code + ')';
-      slice.style.width = (selection.byType[code] / total * 100) + '%';
-      slice.title = selection.byType[code] + ' ' + deck.code_labels[code];
-      bar.appendChild(slice);
-    });
+    [['known', stats.known], ['learning', stats.learning], ['missed', stats.missed]]
+      .forEach(function (part) {
+        if (!part[1] || !stats.total) return;
+        var slice = el('span', 'bar-' + part[0]);
+        slice.style.width = (part[1] / stats.total * 100) + '%';
+        slice.title = part[1].toLocaleString() + ' ' + part[0];
+        bar.appendChild(slice);
+      });
 
     $('start').disabled = cardCount === 0;
 
@@ -937,13 +930,9 @@
    * "new", declared as such, not hidden. */
   function renderProgressSummary(stats) {
     var parts = [];
-    if (stats.known) parts.push(stats.known.toLocaleString() + ' known');
-    if (stats.learning) parts.push(stats.learning.toLocaleString() + ' learning');
-    if (stats.missed) parts.push(stats.missed.toLocaleString() + ' missed');
-    if (stats.new) parts.push(stats.new.toLocaleString() + ' new');
-    var line = stats.total ? parts.join(' · ') : '';
-    if (stats.due) line += ' · ' + stats.due.toLocaleString() + ' due';
-    $('sum-progress').textContent = line;
+    if (stats.known) parts.push(stats.known.toLocaleString() + ' of ' + stats.total.toLocaleString() + ' known');
+    if (stats.due) parts.push(stats.due.toLocaleString() + ' due');
+    $('sum-progress').textContent = parts.join(' · ');
 
     var practised = Object.keys(progress.forms).length;
     $('progress-hint').textContent = practised
@@ -1043,39 +1032,36 @@
       clue.hidden = false;
     }
 
-    $('card-headword').textContent = state.reverse ? meaning : card.verb.h;
-    $('card-translation').textContent = state.reverse
+    // Small facts about the verb sit with its meaning, not as chips.
+    var notes = [];
+    if (card.verb.r) notes.push('reflexive');
+    if (card.tense.compound) notes.push('participle ' + (card.verb.pp || '—'));
+    var translation = state.reverse
       ? (revealed ? card.verb.h : '')
       : meaning;
+    $('card-headword').textContent = state.reverse ? meaning : card.verb.h;
+    $('card-translation').textContent = [translation].concat(notes)
+      .filter(Boolean).join(' · ');
     $('card-person').textContent = personLabel(card.person);
     paintForm($('card-form'), card.form, card.lesson, card.code);
 
     var chips = $('card-chips');
     chips.innerHTML = '';
 
+    // One chip: what kind of form this is, and the verbs that share its pattern.
     var typeChip = el('span', 'chip');
     var swatch = el('span', 'swatch');
     swatch.style.background = 'var(--c' + card.code + ')';
     typeChip.appendChild(swatch);
     typeChip.appendChild(el('span', null,
       card.code === '-' ? 'no form' : deck.code_labels[card.code]));
-    chips.appendChild(typeChip);
-
-    if (card.tense.compound) {
-      chips.appendChild(el('span', 'chip', 'compound · participle ' + (card.verb.pp || '—')));
-    }
     if (card.lesson && card.lesson.d !== '') {
       var others = card.lesson.v.filter(function (h) { return h !== card.verb.h; });
-      var lessonChip = el('span', 'chip');
-      lessonChip.appendChild(el('span', 'chip-delta', patternLabel({ d: card.lesson.d })));
-      if (others.length) {
-        lessonChip.appendChild(el('span', null, 'like ' + others.slice(0, 3).join(', ')));
-      } else {
-        lessonChip.appendChild(el('span', null, 'only this verb'));
-      }
-      chips.appendChild(lessonChip);
+      typeChip.appendChild(el('span', 'chip-delta', patternLabel({ d: card.lesson.d })));
+      typeChip.appendChild(el('span', null,
+        others.length ? 'like ' + others.slice(0, 3).join(', ') : 'only this verb'));
     }
-    if (card.verb.r) chips.appendChild(el('span', 'chip', 'reflexive'));
+    chips.appendChild(typeChip);
 
     var inspect = el('button', 'chip chip-action', 'see the table');
     inspect.onclick = function (event) {

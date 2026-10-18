@@ -586,7 +586,7 @@
   border-radius: 16px;
   padding: 16px 20px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: 8px 18px;
   align-items: center;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
@@ -632,6 +632,10 @@
 .extra-conjugations-view .summary-bar span {
   display: block;
 }
+
+.extra-conjugations-view .summary-bar .bar-known { background: #22c55e; }
+.extra-conjugations-view .summary-bar .bar-learning { background: #f5a623; }
+.extra-conjugations-view .summary-bar .bar-missed { background: #ef4444; }
 
 .extra-conjugations-view .summary-actions {
   display: flex;
@@ -748,6 +752,21 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
+}
+
+/* Person → tense: one linked prompt ("translate this person into this tense") */
+.extra-conjugations-view .card-cue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.extra-conjugations-view .card-arrow {
+  color: var(--text-muted);
+  font-size: 22px;
+  line-height: 1;
 }
 
 /* ── Tense badge: prominent, structured, high-legibility ── */
@@ -876,6 +895,12 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
+}
+
+/* `display: flex` above would otherwise beat the [hidden] attribute and show
+   the answer before the card is tapped. */
+.extra-conjugations-view .card-answer[hidden] {
+  display: none;
 }
 
 .extra-conjugations-view .card-form {
