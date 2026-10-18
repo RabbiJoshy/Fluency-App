@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=25d8b301';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=25d8b301';
-import { readFastTrack } from './fast-track-preferences.js?v=25d8b301';
-import './session-plan.js?v=25d8b301';
+import './state.js?v=5bb27267';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=5bb27267';
+import { readFastTrack } from './fast-track-preferences.js?v=5bb27267';
+import './session-plan.js?v=5bb27267';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3036,7 +3036,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     let practiseMistakes = 0;
     let practiseTotal = 0;
     let practiseDue = 0;
-    let practiseUpcoming = null;
     if (currentUser && !currentUser.isGuest) {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
         const globalTotal = Number(summary?.total) || 0;
@@ -3047,8 +3046,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         practiseDue = dueCount;
         const srsOn = typeof spacedRepetitionEnabled === 'undefined' || spacedRepetitionEnabled !== false;
         const upcoming = plan?.summariseUpcoming?.(window.getUpcomingReviewTimes?.(selectedLanguage) || []) || null;
+        // What comes back later only matters once nothing is waiting.
         const upcomingText = plan?.describeUpcoming?.(upcoming) || '';
-        practiseUpcoming = upcoming;
+
         const practiseCap = plan?.sessionCardLimit?.('practice') || QUICK_REVIEW_LIMIT;
         const practiseCount = Math.min(globalTotal, practiseCap);
         const row = (tone, label, count) => `<div class="home-practise-row is-${tone}">
@@ -3061,7 +3061,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 <div class="home-practise-rows">
                     ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
                     ${dueCount > 0 ? row('due', 'Due for review', dueCount) : ''}
-                    ${upcoming?.nextCount ? row('upcoming', `Coming back ${upcoming.nextLabel}`, upcoming.nextCount) : ''}
                 </div>`;
         } else {
             const empty = !srsOn
@@ -3176,7 +3175,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         practisePeek.innerHTML = [
             practiseMistakes > 0 ? peekItem('mistake', `${practiseMistakes.toLocaleString()} ${practiseMistakes === 1 ? 'mistake' : 'mistakes'}`) : '',
             practiseDue > 0 ? peekItem('due', `${practiseDue.toLocaleString()} due`) : '',
-            practiseUpcoming?.nextCount ? peekItem('upcoming', `${practiseUpcoming.nextCount.toLocaleString()} back ${practiseUpcoming.nextLabel}`) : ''
         ].join('');
         practisePeek.hidden = !practisePeek.innerHTML;
     }
@@ -3283,10 +3281,9 @@ function wireLevelChoice() {
     });
 }
 
-// Learn and Practise share the home screen and one is open at a time. Until
-// the learner opens one themselves this visit, Practise opens first once
-// enough mistakes are waiting. `mistakes` is -1 when there is no Practise.
-const HOME_PRACTISE_FIRST_MISTAKES = 5;
+// Learn and Practise share the home screen and one is open at a time. Learn
+// opens first; Practise stays folded (with its short version) until the
+// learner opens it this visit. `mistakes` is -1 when there is no Practise.
 let _homeSectionChosen = null;
 let _homeSectionWired = false;
 function applyHomeSection(mistakes) {
@@ -3301,8 +3298,7 @@ function applyHomeSection(mistakes) {
             setHomeSectionOpen(panel, _homeSectionChosen);
         });
     }
-    const open = mistakes < 0 ? 'learn'
-        : (_homeSectionChosen || (mistakes >= HOME_PRACTISE_FIRST_MISTAKES ? 'practise' : 'learn'));
+    const open = mistakes < 0 ? 'learn' : (_homeSectionChosen || 'learn');
     setHomeSectionOpen(panel, open);
 }
 
@@ -3556,7 +3552,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=25d8b301')
+        import('./spotify.js?v=5bb27267')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

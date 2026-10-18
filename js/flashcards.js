@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=25d8b301';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=25d8b301';
-import { songCreditHTML } from './song-credit.js?v=25d8b301';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=25d8b301';
+import './state.js?v=5bb27267';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=5bb27267';
+import { songCreditHTML } from './song-credit.js?v=5bb27267';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=5bb27267';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=25d8b301';
-import './speech.js?v=25d8b301';
-import { goToRoute, routeCodeFor } from './routes.js?v=25d8b301';
-import { memoryTipTileHTML } from './memory-tips.js?v=25d8b301';
+import { fitSenseRowText } from './card-row-layout.js?v=5bb27267';
+import './speech.js?v=5bb27267';
+import { goToRoute, routeCodeFor } from './routes.js?v=5bb27267';
+import { memoryTipTileHTML } from './memory-tips.js?v=5bb27267';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=25d8b301';
-import './side-dock.js?v=25d8b301';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=25d8b301';
+} from './function-word-card.js?v=5bb27267';
+import './side-dock.js?v=5bb27267';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=5bb27267';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=25d8b301';
+} from './example-personalisation.js?v=5bb27267';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=25d8b301';
+} from './spanishdict-usage.js?v=5bb27267';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=25d8b301';
+} from './reverse-cues.js?v=5bb27267';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,7 +69,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=25d8b301';
+} from './card-metadata-pills.js?v=5bb27267';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -10949,8 +10949,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '25d8b301';
-const MODALS_ASSET_VERSION = '25d8b301';
+const ASSET_VERSION = '5bb27267';
+const MODALS_ASSET_VERSION = '5bb27267';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

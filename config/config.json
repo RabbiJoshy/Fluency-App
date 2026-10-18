@@ -222,7 +222,7 @@
       "releaseManifestPath": "releases/nl/speech/nl-speech-cascade-proto2-6000x10/manifest.json",
       "releaseCompositionPath": "releases/nl/speech/nl-speech-cascade-proto2-6000x10/composition.json",
       "conjugationsPath": null,
-      "cognatesPath": null,
+      "cognatesPath": "cognates/nl/cognates.json",
       "mergeExceptionsPath": "data/merge-exceptions/nl.json",
       "coveragePath": null,
       "exampleTargetField": "example_dutch",
