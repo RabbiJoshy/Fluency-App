@@ -369,11 +369,19 @@ function getRelationExamples(relation, cardOrContext) {{
                 if (matched.length > 0) return matched;
             }}
             // When the selected artist has no matches, do NOT return another artist's lyrics!
-            // Fall back to verified speech or standard curriculum examples.
+            // Prefer verified speech examples first
             if (relation.speech_examples && relation.speech_examples.length > 0) {{
                 return relation.speech_examples;
             }}
-            return relation.examples || (relation.targetHTML ? [relation] : []);
+            // Final fallback: explicitly exclude any other artist's lyrics from relation.examples
+            const safeExamples = (relation.examples || []).filter(ex => {{
+                const isArtist = ex.channel === 'artist' || !!ex?.metadata?.source?.artist;
+                if (!isArtist) return true; // clean dialogue / curriculum baseline
+                const a = String(ex?.metadata?.source?.artist || ex?.source || '').toLowerCase();
+                return a.includes(artistName) || artistName.includes(a);
+            }});
+            if (safeExamples.length > 0) return safeExamples;
+            return [];
         }} else if (relation.artist_examples && relation.artist_examples.length > 0) {{
             return relation.artist_examples;
         }}

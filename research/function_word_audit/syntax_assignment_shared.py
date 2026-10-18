@@ -646,14 +646,20 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
             'pt': {'viver', 'agir', 'cantar', 'falar', 'correr', 'brilhar', 'comportar', 'ser', 'ficar', 'sentir', 'pensar', 'morrer', 'parecer', 'andar', 'dançar', 'dormir', 'sonhar', 'tropeçar', 'beber', 'soluçar'},
             'es': {'vivir', 'actuar', 'cantar', 'hablar', 'correr', 'brillar', 'comportar', 'ser', 'estar', 'quedar', 'sentir', 'pensar', 'morir', 'parecer', 'andar', 'bailar', 'dormir', 'soñar', 'tropezar', 'beber'}
         }
+        # Conflicting/ambiguous signals: comparison verb with a role head ("canta como um cantor", "corre como um policial")
+        # Semantically ambiguous between comparison and capacity; strictly abstain rather than forcing either
+        if gl in COMPARISON_VERBS.get(lang, set()) and hl in ROLE_HEADS.get(lang, set()):
+            return None
 
         # Pattern 1: Role / Job / Capacity (como + role/job)
-        # Role-verb checks and explicit role heads take precedence
-        if (gl in ROLE_VERBS.get(lang, set()) or hl in ROLE_HEADS.get(lang, set())) and focus['deprel'] == 'case' and head['upos'] in {'NOUN', 'PROPN', 'ADJ'}:
-            pat = 1
+        # Governed by role verbs ("trabalhar como engenheiro", "atuar como porta-voz", "servir como base")
+        # or explicit role heads where the verb does not express manner comparison
+        if gl in ROLE_VERBS.get(lang, set()) or (hl in ROLE_HEADS.get(lang, set()) and gl not in COMPARISON_VERBS.get(lang, set())):
+            if focus['deprel'] == 'case' and head['upos'] in {'NOUN', 'PROPN', 'ADJ'}:
+                pat = 1
         # Pattern 0: Comparison (verb + como: "Like / in the same way")
-        # Governed by comparison verbs (viver, agir, cantar, falar, correr, etc.); unfamiliar nouns do NOT automatically imply comparison
-        elif v_span and v_span[1] <= start and gl in COMPARISON_VERBS.get(lang, set()):
+        # Governed by comparison verbs with non-role heads ("vivemos como os nossos pais", "canta como um pássaro")
+        elif v_span and v_span[1] <= start and gl in COMPARISON_VERBS.get(lang, set()) and hl not in ROLE_HEADS.get(lang, set()):
             pat = 0
 
         # Strict abstention if neither pattern applies

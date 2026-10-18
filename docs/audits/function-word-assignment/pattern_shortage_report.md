@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-- **Speech Deck Coverage:** 85 / 115 patterns with $\ge 3$ distinct verified speech examples (30 shortages).
+- **Speech Deck Coverage:** 84 / 115 patterns with $\ge 3$ distinct verified speech examples (31 shortages).
 - **Artist Deck Coverage:** 49 / 115 patterns with $\ge 3$ distinct verified artist examples (66 shortages).
 - **Cross-Deck Unified Coverage:** 74 / 115 patterns with $\ge 3$ fresh verified examples (41 shortages).
 
@@ -24,6 +24,7 @@ Patterns with fewer than 3 verified speech matches from dialogue/subtitles:
 | `es:para:1` | Who for | `para + a person` | 0 | -3 | Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria. |
 | `es:con:0` | Who with | `con + a person` | 2 | -1 | Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria. |
 | `es:con:1` | How / with what | `con + a tool / way of doing it` | 1 | -2 | Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria. |
+| `es:como:0` | Like / in the same way | `verb + como` | 2 | -1 | Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria. |
 | `es:como:1` | As / in a role | `como + a role / job` | 0 | -3 | Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria. |
 | `es:esto:0` | This | `esto + verb` | 2 | -1 | Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria. |
 | `pt:em:0` | Where | `em + a place` | 1 | -2 | Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria. |
@@ -176,7 +177,7 @@ Patterns with fewer than 3 verified artist matches from lyrics:
 | `es:al:0` | To / at the | 3 | 0 | 0 | 0 | Shortage reported |
 | `es:al:1` | When doing something | 3 | 0 | 0 | 0 | Shortage reported |
 | `es:algo:0` | Something | 3 | 14 | 10 | 4 | Full verified coverage |
-| `es:como:0` | Like / in the same way | 3 | 4 | 3 | 1 | Full verified coverage |
+| `es:como:0` | Like / in the same way | 3 | 3 | 2 | 1 | Full verified coverage |
 | `es:como:1` | As / in a role | 3 | 0 | 0 | 0 | Shortage reported |
 | `es:con:0` | Who with | 3 | 2 | 2 | 0 | Shortage reported |
 | `es:con:1` | How / with what | 3 | 1 | 1 | 0 | Shortage reported |

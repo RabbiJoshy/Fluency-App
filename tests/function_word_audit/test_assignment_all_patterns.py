@@ -421,6 +421,37 @@ class AllPatternsAssignmentTests(unittest.TestCase):
         res = assign(row, obs)
         self.assertEqual(res['status'], 'abstain')  # not licensed by comparison or role verb
 
+    def test_canta_como_um_cantor_profissional_abstains(self):
+        sentence = "Ele canta como um cantor profissional."
+        words = [
+            mock_token(1, "Ele", "PRON", 2, "nsubj", 0, 3, lemma="ele"),
+            mock_token(2, "canta", "VERB", 0, "root", 4, 9, lemma="cantar"),
+            mock_token(3, "como", "ADP", 5, "case", 10, 14, lemma="como"),
+            mock_token(4, "um", "DET", 5, "det", 15, 17, lemma="um"),
+            mock_token(5, "cantor", "NOUN", 2, "obl", 18, 24, lemma="cantor"),
+            mock_token(6, "profissional", "ADJ", 5, "amod", 25, 37, lemma="profissional"),
+            mock_token(7, ".", "PUNCT", 2, "punct", 37, 38, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[10, 14]]}
+        row = {'language': 'pt', 'word': 'como', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')  # ambiguous: comparison verb with profession noun
+
+    def test_corre_como_um_policial_abstains(self):
+        sentence = "Ele corre como um policial."
+        words = [
+            mock_token(1, "Ele", "PRON", 2, "nsubj", 0, 3, lemma="ele"),
+            mock_token(2, "corre", "VERB", 0, "root", 4, 9, lemma="correr"),
+            mock_token(3, "como", "ADP", 5, "case", 10, 14, lemma="como"),
+            mock_token(4, "um", "DET", 5, "det", 15, 17, lemma="um"),
+            mock_token(5, "policial", "NOUN", 2, "obl", 18, 26, lemma="policial"),
+            mock_token(6, ".", "PUNCT", 2, "punct", 26, 27, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[10, 14]]}
+        row = {'language': 'pt', 'word': 'como', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')  # ambiguous: comparison verb with profession noun
+
 if __name__ == '__main__':
     unittest.main()
 

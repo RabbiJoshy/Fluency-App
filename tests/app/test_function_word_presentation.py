@@ -39,6 +39,14 @@ const speechHtml = vm.runInContext("functionWordBlockHTML({word:'como', channel:
 assert.ok(speechHtml.includes('data-deck="speech"'));
 const artistShortageHtml = vm.runInContext("functionWordBlockHTML({word:'como', channel:'artist', artist:'Artist A With Shortage'},'pt')", ctx);
 assert.ok(!artistShortageHtml.includes('Portuguese Playlist'), 'Shortage for Artist A must not return Portuguese Playlist lyrics');
+const fixtureNoSpeech = {
+    tag: 'Like / in the same way',
+    speech_examples: [],
+    artist_examples: [{sentence:'s', targetHTML:'Song by Artist B', source:'Artist B · Song', channel:'artist', metadata:{source:{artist:'Artist B'}}}],
+    examples: [{sentence:'s', targetHTML:'Song by Artist B', source:'Artist B · Song', channel:'artist', metadata:{source:{artist:'Artist B'}}}]
+};
+const resNoSpeech = vm.runInContext("getRelationExamples(" + JSON.stringify(fixtureNoSpeech) + ", {channel:'artist', artist:'Artist A'})", ctx);
+assert.equal(resNoSpeech.length, 0, 'Must exclude Artist B lyrics when speech_examples is empty');
 '''
         run=subprocess.run(['node','-e',script],cwd=ROOT,text=True,capture_output=True)
         self.assertEqual(run.returncode,0,run.stderr)

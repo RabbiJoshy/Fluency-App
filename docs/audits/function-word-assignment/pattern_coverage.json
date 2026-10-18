@@ -2,8 +2,8 @@
   "matcher_version": "syntax-assignment/v1.1",
   "total_patterns": 115,
   "speech_deck": {
-    "patterns_ge_3": 85,
-    "shortage_count": 30,
+    "patterns_ge_3": 84,
+    "shortage_count": 31,
     "shortages": [
       {
         "pattern_id": "es:a:0",
@@ -59,6 +59,14 @@
         "formula": "<span class=\"fw-token-connector\">con</span> + <span class=\"fw-token-c\">a tool / way of doing it</span>",
         "matches_found": 1,
         "shortage": 2,
+        "reason": "Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria."
+      },
+      {
+        "pattern_id": "es:como:0",
+        "tag": "Like / in the same way",
+        "formula": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span>",
+        "matches_found": 2,
+        "shortage": 1,
         "reason": "Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria."
       },
       {
@@ -2808,8 +2816,8 @@
     "es:como:0": {
       "tag": "Like / in the same way",
       "total_examples_assigned": 3,
-      "fresh_matches_count": 4,
-      "speech_matches_count": 3,
+      "fresh_matches_count": 3,
+      "speech_matches_count": 2,
       "artist_matches_count": 1,
       "artist_deck_by_artist": {
         "Rosalía": [
@@ -2837,7 +2845,7 @@
           }
         ]
       },
-      "speech_shortage": 0,
+      "speech_shortage": 1,
       "artist_shortage": 2,
       "is_shortage": false,
       "shortage_count": 0
