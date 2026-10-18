@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T15:10:00+01:00",
+      "date": "2026-10-18 15:10 BST",
+      "agent": "Claude",
+      "summary": "Front POS pill moved up to sit just under the card's top edge on phones",
+      "detail": [
+        "Card front, phones: the centred POS/lemma pill(s) now sit 18px below the card's top edge (was 76px), so they read as the card's heading; the Card N of M pill follows underneath."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T14:45:00+01:00",
       "date": "2026-10-18 14:45 BST",
       "agent": "Antigravity",
@@ -359,30 +369,6 @@
         "Sidebar trail Level 2 reflects 'Choose…' until a source option is picked, keeping the sidebar and page in full alignment."
       ],
       "commit": "1168755a"
-    },
-    {
-      "timestamp": "2026-10-15T11:28:00+01:00",
-      "date": "2026-10-15 11:28 BST",
-      "agent": "Antigravity",
-      "summary": "Desktop sidebar trail refined: 3-tier hierarchy with Vocabulary (Speech/Music) -> Music (Artists/Spotify) -> Source",
-      "detail": [
-        "The primary Vocabulary chip now cleanly offers the Speech vs Music choice.",
-        "Underneath Vocabulary in Music mode, a dedicated subrow chip offers the music options (Artists vs Spotify playlists).",
-        "The source chip sits beneath the music options chip, displaying the selected artist or playlist name with quick switching."
-      ],
-      "commit": "974d2d21"
-    },
-    {
-      "timestamp": "2026-10-15T11:08:00+01:00",
-      "date": "2026-10-15 11:08 BST",
-      "agent": "Antigravity",
-      "summary": "Streamlined music navigation: eliminated nested sidebars, direct choosing set menu flow, and clear sidebar hierarchy",
-      "detail": [
-        "Eliminated the nested secondary sidebar (Artists, Spotify playlists, Study setup) in the music complex; replaced with a clean horizontal source switcher.",
-        "Selecting an artist or Spotify playlist takes the learner directly through selection into the main choosing set menu without nested workspaces.",
-        "Desktop sidebar trail now reads clearly: Spanish -> Vocabulary: Artists / Spotify playlists -> Artist / Playlist name."
-      ],
-      "commit": "df2ff1a9"
     }
   ]
 }
