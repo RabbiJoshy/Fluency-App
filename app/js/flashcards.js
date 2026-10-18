@@ -6790,7 +6790,7 @@ function renderCardWikipediaBadge(card) {
         if (practiceBadgeEl) {
             practiceBadgeEl.hidden = !hasPractice;
             practiceBadgeEl.textContent = hasPractice
-                ? `${remainingCount} ${remainingCount === 1 ? 'meaning' : 'meanings'} to practise${knownCount ? ` · ${knownCount} already known` : ''}` : '';
+                ? `${remainingCount} of ${practiceInfo.total} meanings to practise` : '';
         }
     }
 

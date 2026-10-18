@@ -685,6 +685,10 @@ const cases = [
 
     // Unmerged plural noun
     { actual: englishProductionCue(nounUnmerged, nounSense, null), expected: 'houses' },
+    // A gloss that is already plural is left alone ("planses" bug)
+    { actual: englishProductionCue(nounUnmerged, { ...nounSense, meaning: 'houses', translation: 'houses' }, null), expected: 'houses' },
+    { actual: englishProductionCue({ ...nounUnmerged, targetWord: 'planes', lemma: 'plan', productionAnswer: 'planes' }, { ...nounSense, headword: 'plan', meaning: 'plans', translation: 'plans' }, null), expected: 'plans' },
+    { actual: englishProductionCue({ ...nounUnmerged, targetWord: 'clases', lemma: 'clase', productionAnswer: 'clases' }, { ...nounSense, headword: 'clase', meaning: 'class', translation: 'class' }, null), expected: 'classes' },
     // Merged plural noun - normal direction
     { actual: englishProductionCue(nounMerged, nounSense, null), expected: null },
     // Merged plural noun - reverse direction

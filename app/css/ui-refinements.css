@@ -233,14 +233,6 @@
 }
 .app-loading-mark:has(.is-app-logo):not(.has-art) { border: 0; background: transparent; box-shadow: none; }
 .auth-welcome-mark:has(.app-brand-icon) { padding: 0; overflow: hidden; border: 0; background: transparent; box-shadow: none; }
-.front-practice-badge {
-  padding: 7px 12px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent-primary) 10%, transparent);
-  color: var(--text-secondary);
-  font-size: 13px;
-  line-height: 1.4;
-}
 .pos-collapsible .pos-section-head { align-items: center; }
 
 /* Companion usage sits beside "Card N of M", never a rank. */
