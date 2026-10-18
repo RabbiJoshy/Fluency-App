@@ -391,6 +391,36 @@ class AllPatternsAssignmentTests(unittest.TestCase):
         como_rel0 = pt["como"]["relations"][0]
         self.assertIn("pais", json.dumps(como_rel0))
 
+    def test_trabalho_como_engenheiro_is_role(self):
+        sentence = "Trabalho como engenheiro."
+        words = [
+            mock_token(1, "Trabalho", "VERB", 0, "root", 0, 8, lemma="trabalhar"),
+            mock_token(2, "como", "ADP", 3, "case", 9, 13, lemma="como"),
+            mock_token(3, "engenheiro", "NOUN", 1, "obl", 14, 24, lemma="engenheiro"),
+            mock_token(4, ".", "PUNCT", 1, "punct", 24, 25, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[9, 13]]}
+        row = {'language': 'pt', 'word': 'como', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'candidate')
+        self.assertEqual(res['pattern'], 1)  # role/job, NOT 0 (comparison)
+        self.assertEqual(res['pattern_id'], 'pt:como:1')
+
+    def test_unfamiliar_noun_and_verb_abstains_from_comparison(self):
+        sentence = "Comprei o carro como novo."
+        words = [
+            mock_token(1, "Comprei", "VERB", 0, "root", 0, 7, lemma="comprar"),
+            mock_token(2, "o", "DET", 3, "det", 8, 9, lemma="o"),
+            mock_token(3, "carro", "NOUN", 1, "obj", 10, 15, lemma="carro"),
+            mock_token(4, "como", "ADP", 5, "case", 16, 20, lemma="como"),
+            mock_token(5, "novo", "ADJ", 1, "obl", 21, 25, lemma="novo"),
+            mock_token(6, ".", "PUNCT", 1, "punct", 25, 26, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[16, 20]]}
+        row = {'language': 'pt', 'word': 'como', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')  # not licensed by comparison or role verb
+
 if __name__ == '__main__':
     unittest.main()
 

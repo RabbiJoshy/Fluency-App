@@ -8,7 +8,7 @@
 ## Executive Summary
 
 - **Speech Deck Coverage:** 85 / 115 patterns with $\ge 3$ distinct verified speech examples (30 shortages).
-- **Artist Deck Coverage:** 50 / 115 patterns with $\ge 3$ distinct verified artist examples (65 shortages).
+- **Artist Deck Coverage:** 49 / 115 patterns with $\ge 3$ distinct verified artist examples (66 shortages).
 - **Cross-Deck Unified Coverage:** 74 / 115 patterns with $\ge 3$ fresh verified examples (41 shortages).
 
 ## Speech Deck Shortages
@@ -77,6 +77,7 @@ Patterns with fewer than 3 verified artist matches from lyrics:
 | `es:los:1` | Them | `los + verb` | 0 | -3 | Corpus scarcity in artist lyrics material or strict grammatical licensing criteria. |
 | `es:lo:0` | The … thing / part | `lo + adjective` | 0 | -3 | Corpus scarcity in artist lyrics material or strict grammatical licensing criteria. |
 | `es:lo:1` | Him / it / that | `lo + verb` | 0 | -3 | Corpus scarcity in artist lyrics material or strict grammatical licensing criteria. |
+| `es:como:0` | Like / in the same way | `verb + como` | 1 | -2 | Corpus scarcity in artist lyrics material or strict grammatical licensing criteria. |
 | `es:como:1` | As / in a role | `como + a role / job` | 0 | -3 | Corpus scarcity in artist lyrics material or strict grammatical licensing criteria. |
 | `es:tú:0` | you | `Tú + verb` | 2 | -1 | Corpus scarcity in artist lyrics material or strict grammatical licensing criteria. |
 | `es:esto:0` | This | `esto + verb` | 1 | -2 | Corpus scarcity in artist lyrics material or strict grammatical licensing criteria. |
@@ -175,7 +176,7 @@ Patterns with fewer than 3 verified artist matches from lyrics:
 | `es:al:0` | To / at the | 3 | 0 | 0 | 0 | Shortage reported |
 | `es:al:1` | When doing something | 3 | 0 | 0 | 0 | Shortage reported |
 | `es:algo:0` | Something | 3 | 14 | 10 | 4 | Full verified coverage |
-| `es:como:0` | Like / in the same way | 3 | 8 | 4 | 4 | Full verified coverage |
+| `es:como:0` | Like / in the same way | 3 | 4 | 3 | 1 | Full verified coverage |
 | `es:como:1` | As / in a role | 3 | 0 | 0 | 0 | Shortage reported |
 | `es:con:0` | Who with | 3 | 2 | 2 | 0 | Shortage reported |
 | `es:con:1` | How / with what | 3 | 1 | 1 | 0 | Shortage reported |
@@ -231,7 +232,7 @@ Patterns with fewer than 3 verified artist matches from lyrics:
 | `pt:até:1` | Even | 3 | 0 | 0 | 0 | Shortage reported |
 | `pt:com:0` | Who with | 3 | 7 | 4 | 3 | Full verified coverage |
 | `pt:com:1` | How / with what | 3 | 2 | 1 | 1 | Shortage reported |
-| `pt:como:0` | Like / in the same way | 3 | 15 | 1 | 14 | Full verified coverage |
+| `pt:como:0` | Like / in the same way | 3 | 5 | 1 | 4 | Full verified coverage |
 | `pt:como:1` | As / in a role | 3 | 0 | 0 | 0 | Shortage reported |
 | `pt:da:0` | Of / from the | 3 | 26 | 14 | 12 | Full verified coverage |
 | `pt:de:0` | Verbs with de | 3 | 7 | 4 | 3 | Full verified coverage |

@@ -37,6 +37,8 @@ assert.ok(artistHtml.includes('data-artist="Portuguese Playlist"'));
 assert.ok(artistHtml.includes('Portuguese Playlist'));
 const speechHtml = vm.runInContext("functionWordBlockHTML({word:'como', channel:'speech'},'pt')", ctx);
 assert.ok(speechHtml.includes('data-deck="speech"'));
+const artistShortageHtml = vm.runInContext("functionWordBlockHTML({word:'como', channel:'artist', artist:'Artist A With Shortage'},'pt')", ctx);
+assert.ok(!artistShortageHtml.includes('Portuguese Playlist'), 'Shortage for Artist A must not return Portuguese Playlist lyrics');
 '''
         run=subprocess.run(['node','-e',script],cwd=ROOT,text=True,capture_output=True)
         self.assertEqual(run.returncode,0,run.stderr)

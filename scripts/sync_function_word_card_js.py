@@ -351,23 +351,30 @@ function getRelationExamples(relation, cardOrContext) {{
     }}
 
     if (channel === 'artist') {{
-        // If an artist is selected, match to the selected artist
-        if (artistName && relation.artist_examples_by_artist) {{
-            for (const [art, exs] of Object.entries(relation.artist_examples_by_artist)) {{
-                const a = art.toLowerCase();
-                if (a.includes(artistName) || artistName.includes(a)) {{
-                    if (exs && exs.length > 0) return exs;
+        // If an artist is selected, match to the selected artist ONLY
+        if (artistName) {{
+            if (relation.artist_examples_by_artist) {{
+                for (const [art, exs] of Object.entries(relation.artist_examples_by_artist)) {{
+                    const a = art.toLowerCase();
+                    if (a.includes(artistName) || artistName.includes(a)) {{
+                        if (exs && exs.length > 0) return exs;
+                    }}
                 }}
             }}
-        }}
-        if (relation.artist_examples && relation.artist_examples.length > 0) {{
-            if (artistName) {{
+            if (relation.artist_examples && relation.artist_examples.length > 0) {{
                 const matched = relation.artist_examples.filter(ex => {{
                     const a = String(ex?.metadata?.source?.artist || ex?.source || '').toLowerCase();
                     return a.includes(artistName) || artistName.includes(a);
                 }});
                 if (matched.length > 0) return matched;
             }}
+            // When the selected artist has no matches, do NOT return another artist's lyrics!
+            // Fall back to verified speech or standard curriculum examples.
+            if (relation.speech_examples && relation.speech_examples.length > 0) {{
+                return relation.speech_examples;
+            }}
+            return relation.examples || (relation.targetHTML ? [relation] : []);
+        }} else if (relation.artist_examples && relation.artist_examples.length > 0) {{
             return relation.artist_examples;
         }}
     }} else {{

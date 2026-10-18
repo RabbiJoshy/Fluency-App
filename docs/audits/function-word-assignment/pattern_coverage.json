@@ -248,8 +248,8 @@
     ]
   },
   "artist_deck": {
-    "patterns_ge_3": 50,
-    "shortage_count": 65,
+    "patterns_ge_3": 49,
+    "shortage_count": 66,
     "shortages": [
       {
         "pattern_id": "es:de:0",
@@ -433,6 +433,14 @@
         "formula": "<span class=\"fw-token-connector\">lo</span> + <span class=\"fw-token-v\">verb</span>",
         "matches_found": 0,
         "shortage": 3,
+        "reason": "Corpus scarcity in artist lyrics material or strict grammatical licensing criteria."
+      },
+      {
+        "pattern_id": "es:como:0",
+        "tag": "Like / in the same way",
+        "formula": "<span class=\"fw-token-v\">verb</span> + <span class=\"fw-token-connector\">como</span>",
+        "matches_found": 1,
+        "shortage": 2,
         "reason": "Corpus scarcity in artist lyrics material or strict grammatical licensing criteria."
       },
       {
@@ -2800,33 +2808,11 @@
     "es:como:0": {
       "tag": "Like / in the same way",
       "total_examples_assigned": 3,
-      "fresh_matches_count": 8,
-      "speech_matches_count": 4,
-      "artist_matches_count": 4,
+      "fresh_matches_count": 4,
+      "speech_matches_count": 3,
+      "artist_matches_count": 1,
       "artist_deck_by_artist": {
         "Rosalía": [
-          {
-            "sentence": "Frank me dice que abra el mundo como una nue'",
-            "targetHTML": "Frank me dice que <span class=\"fw-token-v\">abra</span> el mundo <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">una nue</span>&#x27;",
-            "translation": "Frank tells me to open the world like a new one",
-            "source": "Rosalía · SAOKO",
-            "channel": "artist",
-            "metadata": {
-              "source": {
-                "name": "Rosalía · SAOKO",
-                "source_record_id": "Rosalía:SAOKO:57740",
-                "artist": "Rosalía",
-                "song": "SAOKO"
-              },
-              "sentence_id": "artist_9fe70a0a39f4",
-              "channel": "artist",
-              "automaticSyntax": {
-                "patternId": "es:como:0",
-                "matcherVersion": "syntax-assignment/v1.1",
-                "reason": "Conjunction/preposition como pattern 0."
-              }
-            }
-          },
           {
             "sentence": "Brilla el sol como que va a explotar",
             "targetHTML": "<span class=\"fw-token-v\">Brilla</span> el sol <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">que va a explotar</span>",
@@ -2848,33 +2834,11 @@
                 "reason": "Conjunction/preposition como pattern 0."
               }
             }
-          },
-          {
-            "sentence": "No puedes tratarme como a las demás",
-            "targetHTML": "No <span class=\"fw-token-v\">puedes tratarme</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">a las demás</span>",
-            "translation": "You can't treat me like the others",
-            "source": "Rosalía · Llámame Más Tarde",
-            "channel": "artist",
-            "metadata": {
-              "source": {
-                "name": "Rosalía · Llámame Más Tarde",
-                "source_record_id": "Rosalía:Llámame Más Tarde:0",
-                "artist": "Rosalía",
-                "song": "Llámame Más Tarde"
-              },
-              "sentence_id": "artist_e687beceeae9",
-              "channel": "artist",
-              "automaticSyntax": {
-                "patternId": "es:como:0",
-                "matcherVersion": "syntax-assignment/v1.1",
-                "reason": "Conjunction/preposition como pattern 0."
-              }
-            }
           }
         ]
       },
       "speech_shortage": 0,
-      "artist_shortage": 0,
+      "artist_shortage": 2,
       "is_shortage": false,
       "shortage_count": 0
     },
@@ -4926,9 +4890,9 @@
     "pt:como:0": {
       "tag": "Like / in the same way",
       "total_examples_assigned": 3,
-      "fresh_matches_count": 15,
+      "fresh_matches_count": 5,
       "speech_matches_count": 1,
-      "artist_matches_count": 14,
+      "artist_matches_count": 4,
       "artist_deck_by_artist": {
         "Portuguese Playlist": [
           {
@@ -4976,87 +4940,19 @@
             }
           },
           {
-            "sentence": "E flutuou no ar como se fosse um príncipe",
-            "targetHTML": "E <span class=\"fw-token-v\">flutuou</span> no ar <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse um príncipe</span>",
+            "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
+            "targetHTML": "E nós somos os mesmos e <span class=\"fw-token-v\">vivemos</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">os nossos pais</span>",
             "translation": "",
-            "source": "Portuguese Playlist · Construção",
+            "source": "Portuguese Playlist · Como Nossos Pais",
             "channel": "artist",
             "metadata": {
               "source": {
-                "name": "Portuguese Playlist · Construção",
-                "source_record_id": "Portuguese Playlist:Construção:0",
+                "name": "Portuguese Playlist · Como Nossos Pais",
+                "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
                 "artist": "Portuguese Playlist",
-                "song": "Construção"
+                "song": "Como Nossos Pais"
               },
-              "sentence_id": "artist_d0ed5abc2238",
-              "channel": "artist",
-              "automaticSyntax": {
-                "patternId": "pt:como:0",
-                "matcherVersion": "syntax-assignment/v1.1",
-                "reason": "Conjunction/preposition como pattern 0."
-              }
-            }
-          }
-        ],
-        "Polyglot PT": [
-          {
-            "sentence": "Sentou pra descansar como se fosse um príncipe",
-            "targetHTML": "Sentou pra <span class=\"fw-token-v\">descansar</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse um príncipe</span>",
-            "translation": "",
-            "source": "Polyglot PT · Construção",
-            "channel": "artist",
-            "metadata": {
-              "source": {
-                "name": "Polyglot PT · Construção",
-                "source_record_id": "Polyglot PT:Construção:0",
-                "artist": "Polyglot PT",
-                "song": "Construção"
-              },
-              "sentence_id": "artist_5cdc83df1259",
-              "channel": "artist",
-              "automaticSyntax": {
-                "patternId": "pt:como:0",
-                "matcherVersion": "syntax-assignment/v1.1",
-                "reason": "Conjunction/preposition como pattern 0."
-              }
-            }
-          },
-          {
-            "sentence": "Beijou sua mulher como se fosse lógico",
-            "targetHTML": "<span class=\"fw-token-v\">Beijou</span> sua mulher <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse lógico</span>",
-            "translation": "",
-            "source": "Polyglot PT · Construção",
-            "channel": "artist",
-            "metadata": {
-              "source": {
-                "name": "Polyglot PT · Construção",
-                "source_record_id": "Polyglot PT:Construção:0",
-                "artist": "Polyglot PT",
-                "song": "Construção"
-              },
-              "sentence_id": "artist_9f7c8fe5ec5d",
-              "channel": "artist",
-              "automaticSyntax": {
-                "patternId": "pt:como:0",
-                "matcherVersion": "syntax-assignment/v1.1",
-                "reason": "Conjunction/preposition como pattern 0."
-              }
-            }
-          },
-          {
-            "sentence": "Beijou sua mulher como se fosse a última",
-            "targetHTML": "<span class=\"fw-token-v\">Beijou</span> sua mulher <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">se fosse a última</span>",
-            "translation": "",
-            "source": "Polyglot PT · Construção",
-            "channel": "artist",
-            "metadata": {
-              "source": {
-                "name": "Polyglot PT · Construção",
-                "source_record_id": "Polyglot PT:Construção:0",
-                "artist": "Polyglot PT",
-                "song": "Construção"
-              },
-              "sentence_id": "artist_bdf4268ca2a3",
+              "sentence_id": "artist_11473680a873",
               "channel": "artist",
               "automaticSyntax": {
                 "patternId": "pt:como:0",

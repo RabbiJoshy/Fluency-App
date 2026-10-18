@@ -625,31 +625,36 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
 
         pat = None
         ROLE_HEADS = {
-            'pt': {'médico', 'doutor', 'professor', 'advogado', 'diretor', 'presidente', 'guia',
-                   'testemunha', 'voluntário', 'secretário', 'gerente', 'juiz', 'garçom', 'motorista',
-                   'estudante', 'soldado', 'enfermeiro', 'modelo', 'exemplo', 'base', 'refém', 'escudo'},
-            'es': {'médico', 'doctor', 'profesor', 'abogado', 'director', 'presidente', 'guía',
-                   'testigo', 'voluntario', 'secretario', 'gerente', 'juez', 'camarero', 'conductor',
-                   'estudiante', 'soldado', 'enfermero', 'modelo', 'ejemplo', 'base', 'rehén', 'escudo'}
+            'pt': {'médico', 'doutor', 'professor', 'advogado', 'engenheiro', 'arquiteto', 'diretor',
+                   'presidente', 'guia', 'testemunha', 'voluntário', 'secretário', 'gerente', 'juiz',
+                   'garçom', 'motorista', 'estudante', 'soldado', 'enfermeiro', 'modelo', 'exemplo',
+                   'base', 'refém', 'escudo', 'ator', 'atriz', 'cantor', 'cantora', 'consultor',
+                   'estagiário', 'porta-voz', 'especialista', 'terapeuta', 'pesquisador', 'embaixador',
+                   'líder', 'coordenador', 'representante', 'amigo', 'piloto', 'policial'},
+            'es': {'médico', 'doctor', 'profesor', 'abogado', 'ingeniero', 'arquitecto', 'director',
+                   'presidente', 'guía', 'testigo', 'voluntario', 'secretario', 'gerente', 'juez',
+                   'camarero', 'conductor', 'estudiante', 'soldado', 'enfermero', 'modelo', 'ejemplo',
+                   'base', 'rehén', 'escudo', 'actor', 'actriz', 'cantante', 'consultor',
+                   'becario', 'portavoz', 'especialista', 'terapeuta', 'investigador', 'embajador',
+                   'líder', 'coordinador', 'representante', 'amigo', 'piloto', 'policía'}
         }
         ROLE_VERBS = {
-            'pt': {'trabalhar', 'servir', 'funcionar', 'atuar', 'operar', 'exercer', 'usar', 'empregar', 'contratar'},
-            'es': {'trabajar', 'servir', 'funcionar', 'actuar', 'operar', 'ejercer', 'usar', 'emplear', 'contratar'}
+            'pt': {'trabalhar', 'servir', 'funcionar', 'atuar', 'operar', 'exercer', 'usar', 'empregar', 'contratar', 'participar', 'chamar'},
+            'es': {'trabajar', 'servir', 'funcionar', 'actuar', 'operar', 'ejercer', 'usar', 'emplear', 'contratar', 'participar', 'llamar'}
         }
         COMPARISON_VERBS = {
             'pt': {'viver', 'agir', 'cantar', 'falar', 'correr', 'brilhar', 'comportar', 'ser', 'ficar', 'sentir', 'pensar', 'morrer', 'parecer', 'andar', 'dançar', 'dormir', 'sonhar', 'tropeçar', 'beber', 'soluçar'},
             'es': {'vivir', 'actuar', 'cantar', 'hablar', 'correr', 'brillar', 'comportar', 'ser', 'estar', 'quedar', 'sentir', 'pensar', 'morir', 'parecer', 'andar', 'bailar', 'dormir', 'soñar', 'tropezar', 'beber'}
         }
 
-        # Pattern 0: Comparison (verb + como: "Like / in the same way")
-        # When governed by activity/state/manner verbs, it is always a comparison (e.g. "vivemos como os nossos pais", "canta como um pássaro")
-        if v_span and v_span[1] <= start and (gl in COMPARISON_VERBS.get(lang, set()) or hl not in ROLE_HEADS.get(lang, set())):
-            pat = 0
         # Pattern 1: Role / Job / Capacity (como + role/job)
-        # Governed by role verbs ("trabalhar como...") or head is explicitly a profession/capacity
-        elif focus['deprel'] == 'case' and head['upos'] in {'NOUN', 'PROPN'}:
-            if gl in ROLE_VERBS.get(lang, set()) or hl in ROLE_HEADS.get(lang, set()):
-                pat = 1
+        # Role-verb checks and explicit role heads take precedence
+        if (gl in ROLE_VERBS.get(lang, set()) or hl in ROLE_HEADS.get(lang, set())) and focus['deprel'] == 'case' and head['upos'] in {'NOUN', 'PROPN', 'ADJ'}:
+            pat = 1
+        # Pattern 0: Comparison (verb + como: "Like / in the same way")
+        # Governed by comparison verbs (viver, agir, cantar, falar, correr, etc.); unfamiliar nouns do NOT automatically imply comparison
+        elif v_span and v_span[1] <= start and gl in COMPARISON_VERBS.get(lang, set()):
+            pat = 0
 
         # Strict abstention if neither pattern applies
         if pat is None:
