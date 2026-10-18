@@ -377,8 +377,13 @@ export function initExtraWorkspace() {
     const conjBackBtn = document.getElementById('extraConjugationsBackBtn');
     conjBackBtn?.addEventListener('click', backToExtraMenu);
 
+    // Close steps back one level: in a drill → the conjugation menu; in the
+    // conjugation menu → the Extra menu (not out of Extra altogether).
     const conjCloseBtn = document.getElementById('extraConjugationsCloseBtn');
-    conjCloseBtn?.addEventListener('click', closeExtraModal);
+    conjCloseBtn?.addEventListener('click', () => {
+        if (window.conjugationCloseStep?.()) return;
+        backToExtraMenu();
+    });
 
     const songPickerBackBtn = document.getElementById('extraSongPickerBackBtn');
     songPickerBackBtn?.addEventListener('click', backToExtraMenu);

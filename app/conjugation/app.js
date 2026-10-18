@@ -334,14 +334,32 @@
     });
   }
 
-  // Adds the chip once the file is in, if this form has sentences; the card
+  // Small line icons for the card's tools (no text; the label is for
+  // screen readers and the hover title).
+  var ICON_TABLE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/></svg>';
+  var ICON_SENTENCES = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>' +
+    '<path d="M8.5 10.5h7M8.5 13.5h4"/></svg>';
+
+  function toolButton(icon, label) {
+    var button = el('button', 'card-tool');
+    button.type = 'button';
+    button.innerHTML = icon;
+    button.title = label;
+    button.setAttribute('aria-label', label);
+    return button;
+  }
+
+  // Adds the tool once the file is in, if this form has sentences; the card
   // may have moved on by then, so it checks it is still the one showing.
-  function offerExamples(card, chips) {
+  function offerExamples(card, tools) {
     loadExamples().then(function (payload) {
       var sentences = examplesFor(payload, card.form);
       if (!sentences.length || queue[position] !== card || !revealed) return;
-      var toggle = el('button', 'chip chip-action', 'see sentences');
-      toggle.type = 'button';
+      var toggle = toolButton(ICON_SENTENCES, 'See example sentences');
       toggle.setAttribute('aria-expanded', String(examplesOpenFor === card.key));
       toggle.onclick = function (event) {
         event.stopPropagation();   // don't also flip the card
@@ -349,7 +367,7 @@
         toggle.setAttribute('aria-expanded', String(examplesOpenFor === card.key));
         renderExamples(card, sentences);
       };
-      chips.appendChild(toggle);
+      tools.appendChild(toggle);
       renderExamples(card, sentences);
     });
   }
@@ -1063,16 +1081,19 @@
     }
     chips.appendChild(typeChip);
 
-    var inspect = el('button', 'chip chip-action', 'see the table');
+    // Icon-only tools on their own line below the pill.
+    var tools = el('div', 'card-tools');
+    var inspect = toolButton(ICON_TABLE, 'See the full table');
     inspect.onclick = function (event) {
       event.stopPropagation();   // don't also flip the card
       inspectCurrent();
     };
-    chips.appendChild(inspect);
+    tools.appendChild(inspect);
+    chips.appendChild(tools);
 
     if (examplesOpenFor !== card.key) examplesOpenFor = null;
     $('card-examples').hidden = true;
-    if (revealed) offerExamples(card, chips);
+    if (revealed) offerExamples(card, tools);
 
     $('card-answer').hidden = !revealed;
     $('grade').hidden = !revealed;
@@ -1731,4 +1752,15 @@
     }
   };
   window.showConjugationScreen = showScreen;
+  // The top-bar close button asks this first: inside a drill it should go back
+  // to the conjugation menu (the round is already saved, so Resume still works),
+  // not leave conjugations altogether. Returns true when it handled the click.
+  window.conjugationCloseStep = function () {
+    var drill = $('screen-drill');
+    if (!drill || !drill.classList.contains('is-active')) return false;
+    queue = [];
+    finished = false;
+    showScreen('setup');
+    return true;
+  };
 })();

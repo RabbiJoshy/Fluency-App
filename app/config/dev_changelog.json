@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T15:22:00+01:00",
+      "date": "2026-10-18 15:22 BST",
+      "agent": "Antigravity",
+      "summary": "Verb drills: icon buttons for table and sentences, and the close button now steps back one level",
+      "detail": [
+        "Card: 'see the table' and 'see sentences' are now icon buttons (table grid, speech bubble) on their own line under the regular/irregular pill.",
+        "Close button: in the conjugation menu it returns to the Extra menu; inside a drill it returns to the conjugation menu (the round is saved, so Resume still works)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T15:15:00+01:00",
       "date": "2026-10-18 15:15 BST",
       "agent": "Antigravity",

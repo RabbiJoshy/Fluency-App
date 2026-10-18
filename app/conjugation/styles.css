@@ -371,6 +371,17 @@ button.ghost { background: none; color: var(--ink-2); }
   font-family: inherit; border: 1px solid var(--line); cursor: pointer;
   color: var(--accent); background: transparent;
 }
+/* Icon-only tools (full table, example sentences), one line under the pill */
+.card-tools { flex-basis: 100%; display: flex; justify-content: center; gap: 10px; }
+.card-tool {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--line); background: transparent;
+  color: var(--ink-2); cursor: pointer;
+}
+.card-tool:hover, .card-tool[aria-expanded="true"] {
+  color: var(--accent); border-color: var(--accent); background: var(--surface-2);
+}
 .chip {
   font-size: 12px; padding: 3px 9px; border-radius: 999px;
   background: var(--surface-2); color: var(--ink-2);
