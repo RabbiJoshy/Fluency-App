@@ -65,6 +65,7 @@ import {
     senseCollocationHTML,
     definitionLabel,
     glossPieces,
+    glossBaseStems,
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
@@ -856,9 +857,14 @@ function dropNoteLinesShownIn(copy, ...scopes) {
     const words = text => senseNoteTextKey(text).split(/[^\p{L}\p{N}]+/u).filter(Boolean);
     const shown = new Set(scopes.filter(Boolean).flatMap(shownTextPieces).flatMap(words));
     words(copy.dataset.senseNoteBaseGloss).forEach(word => shown.add(word));
+    const shownStems = new Set([...shown].flatMap(w => glossBaseStems(w)));
     const isShown = text => {
-        const textWords = words(text);
-        return textWords.length > 0 && textWords.every(word => shown.has(word));
+        const textWords = words(text).filter(w => !['to', 'a', 'an', 'the'].includes(w));
+        return textWords.length > 0 && textWords.every(word => {
+            if (shown.has(word) || shownStems.has(word)) return true;
+            const stems = glossBaseStems(word);
+            return stems.some(s => shown.has(s) || shownStems.has(s));
+        });
     };
     copy.querySelectorAll('p').forEach(p => {
         // "At this time; at the present situation" under "at this time"

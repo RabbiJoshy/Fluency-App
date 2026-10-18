@@ -28,7 +28,7 @@ for(const [usage,raw] of [
  assert.equal(presentation.note.original.originalContext,raw,'source text stays intact in the data');
 }
 const extended=ui.senseNoteHTML(view('in formal writing','used in formal writing, especially in legal documents'));
-assert.match(extended,/Original dictionary text/);
+assert(!extended.includes('Original dictionary text'));
 assert.match(extended,/especially in legal documents/);
 ''')
         self.assertEqual(result.returncode, 0, result.stderr)

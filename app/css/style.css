@@ -21718,7 +21718,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     border-color: rgba(255, 255, 255, 0.28);
 }
 .sense-note-eyebrow {
-    margin: 0 36px 4px 0;
+    margin: 0 36px 12px 0;
     color: var(--accent-primary, #67bf85);
     font: 650 10.5px/1.2 var(--font-emphasis, var(--font-data));
     letter-spacing: 0.08em;

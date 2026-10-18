@@ -44,8 +44,8 @@ for (const [translation, expected] of examples) {
  if (expected !== translation) {
   assert.equal(p.transformation.policy, 'learner-card-trimming/v1');
   assert.equal(p.note.original.originalGloss, translation);
-  assert(ui.senseNoteHTML(p).includes(ui.escapeCardText(translation)));
-  assert(ui.senseNoteHTML(p).includes('Original dictionary text'));
+  assert(!ui.senseNoteHTML(p).includes('Original dictionary text'));
+  assert(ui.senseNoteHTML(p).includes('sense-note-trigger'));
  }
 }
 const siblings = [
@@ -59,7 +59,9 @@ const nao = {translation: "not; don't; haven't (negates the meaning of the verb 
 const p = view(nao);
 assert.equal(p.gloss, "not; don't; haven't");
 assert.equal(p.note.original.originalContext, nao.context);
-assert(ui.senseNoteHTML(p).includes(ui.escapeCardText(nao.context)));
+assert(!ui.senseNoteHTML(p).includes(ui.escapeCardText(nao.context)));
+assert(ui.senseNoteHTML(p).includes('Negates the meaning of the verb or adverb'));
+assert(!ui.senseNoteHTML(p).includes('Original dictionary text'));
 // An already projected/inflected input must still expose original dictionary text.
 assert.equal(view(nao, [nao], true, p.gloss).note.original.originalGloss, nao.translation);
 // Unbalanced source text is retained, rather than completed by invention.
