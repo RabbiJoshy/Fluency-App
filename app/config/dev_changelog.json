@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T15:58:00+01:00",
+      "date": "2026-10-18 15:58 BST",
+      "agent": "Antigravity",
+      "summary": "Sense information modals: removed boilerplate 'Sense details' header",
+      "detail": [
+        "Eliminated the visible 'Sense details' uppercase eyebrow text so the modal opens straight to the unpacked content.",
+        "Preserved accessible modal labeling via aria-label on the dialog.",
+        "Added top-right close button clearance for the first content section."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T15:48:00+01:00",
       "date": "2026-10-18 15:48 BST",
       "agent": "Antigravity",
@@ -353,18 +365,6 @@
         "Centre pattern formulas, keep explanations left-aligned, and show contraction parts below the word without pills.",
         "Place examples directly below patterns and match typed chunks to the app\u2019s POS colours.",
         "Simplify all 81 cards; use 71 traceable examples for the twelve reviewed pilot cards. Remaining source labels are explicitly unverified."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-16T01:02:00+01:00",
-      "date": "2026-10-16 01:02 BST",
-      "agent": "Antigravity",
-      "summary": "Align Tutorial, Walkthrough, About, and replica cards with current POS pills, ambient glow, and Smart Skip panel",
-      "detail": [
-        "Set darkened POS pill colour (--front-pos-rgb), ambient card glow (--card-ambient-glow), and inflected 'from <lemma>' prefix on replica cards in Tutorial and Walkthrough.",
-        "Updated the Tutorial Smart Skip page and notes to match the two-line Off/On + 'Fewer cards, less repetition' + Details panel on the home screen.",
-        "Aligned About demo cards and footnote with the current single-POS back header, darkened front POS pill, and live Spotify playlist deck support."
       ],
       "commit": "pending"
     }
