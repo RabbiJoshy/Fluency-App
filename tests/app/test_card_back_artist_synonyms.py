@@ -20,8 +20,8 @@ class CardBackArtistSynonymsTests(unittest.TestCase):
         assert.ok(!indexHtml.includes('class="cbs-end-label"'), 'cbs-end-label must not be in app/index.html');
         assert.ok(uiRefinements.includes('.cbs-end-label { display: none !important; }'), 'cbs-end-label hidden in ui-refinements');
 
-        // 2. Symmetric track-wrap margins (20px left and right)
-        assert.ok(styleCss.includes('margin: 0 20px;'), 'cbs-track-wrap must have symmetric 20px margins (half the 40px thumb)');
+        // 2. Symmetric track-wrap margins (16px left and right)
+        assert.ok(styleCss.includes('margin: 0 16px;'), 'cbs-track-wrap must have symmetric 16px margins (half the 32px thumb)');
 
         // 3. Clean circular 44px gear button
         assert.ok(styleCss.includes('.cbs-gear {\n            flex: 0 0 44px;\n            width: 44px;\n            height: 44px;'),

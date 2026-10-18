@@ -8874,24 +8874,28 @@ function renderCardWikipediaBadge(card) {
         // face so flipping and card navigation still move them together.
         const backFace = renderedBack.closest('.card-back');
         backFace?.querySelector(':scope > .links-section')?.remove();
+        // A grammar word's back has no sense rows to lay out, but the rest of
+        // updateCard (seek-bar number, nav buttons) must still run: returning
+        // here froze the scrubber on these cards, then jumped it several
+        // numbers at the next ordinary card.
         if (ptGrammarWord) {
             backFace?.classList.remove('has-action-tray');
             renderedBack.innerHTML = backHTML;
             renderedBack._fluencyRenderedHTML = backHTML;
-            return;
+        } else {
+            renderedBack.innerHTML = backHTML;
+            const actionTray = renderedBack.querySelector(':scope > .links-section');
+            if (actionTray && backFace) renderedBack.after(actionTray);
+            backFace?.classList.toggle('has-action-tray', Boolean(actionTray));
+            placeRowInformationButtons(renderedBack);
+            placeRowLeadMarks(renderedBack);
+            arrangeSenseCueAreas(renderedBack);
+            markCompactInactiveRows(renderedBack);
+            markSingleSenseSections(renderedBack);
+            addRarerSensesRow(renderedBack, card);
+            renderedBack._fluencyRenderedHTML = backHTML;
+            bindGrammarPairChips(renderedBack);
         }
-        renderedBack.innerHTML = backHTML;
-        const actionTray = renderedBack.querySelector(':scope > .links-section');
-        if (actionTray && backFace) renderedBack.after(actionTray);
-        backFace?.classList.toggle('has-action-tray', Boolean(actionTray));
-        placeRowInformationButtons(renderedBack);
-        placeRowLeadMarks(renderedBack);
-        arrangeSenseCueAreas(renderedBack);
-        markCompactInactiveRows(renderedBack);
-        markSingleSenseSections(renderedBack);
-        addRarerSensesRow(renderedBack, card);
-        renderedBack._fluencyRenderedHTML = backHTML;
-        bindGrammarPairChips(renderedBack);
     }
 
     // Post-render layout pass:
@@ -8914,7 +8918,7 @@ function renderCardWikipediaBadge(card) {
     // Previously there was a hardcoded "> 3 rows → cap at 3 rows" rule that
     // forced scrolling even when the card had plenty of room; this replaces
     // it with a genuine content-vs-space check.
-    if (backDomChanged) {
+    if (backDomChanged && !ptGrammarWord) {
         const backEl = document.getElementById('backContent');
         if (backEl) {
             // Cap the headword against the POS pill first: it can change the

@@ -42,7 +42,9 @@
     line-height: inherit;
     align-self: baseline;
 }
-.pos-collapsible .pos-lemma-from { margin: 0 5px 0 0; }
+/* In the sense-row head "from" sits on the pill's centre line, not on a
+   baseline of its own that floats it above "Verb" and "ser". */
+.pos-collapsible .pos-lemma-from { margin: 0 5px 0 0; align-self: center; line-height: 1; }
 .meaning-row.meaning-row-known,
 .meaning-row.is-known-meaning,
 .group-card-varying-cell.is-known-subsense {

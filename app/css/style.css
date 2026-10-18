@@ -1983,7 +1983,7 @@
             flex: 1;
             height: 100%;
             /* Left and right insets are half the thumb, so it never clips at 0% or 100%. */
-            margin: 0 20px;
+            margin: 0 16px;
         }
         .cbs-track,
         .cbs-fill {
@@ -2008,12 +2008,12 @@
             left: calc(var(--cbs-t, 0) * 100%);
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: #ffffff;
             color: #1a1f26;
-            font: 800 20px/1 var(--font-reading);
+            font: 800 19px/1 var(--font-reading);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2698,8 +2698,8 @@
             align-items: center;
             gap: 7px;
             width: 100%;
-            min-height: 38px;
-            padding: 7px 10px;
+            min-height: 36px;
+            padding: 3px 10px 3px 4px;
             background: rgba(var(--sense-match-rgb), 0.10);
             border: none;
             border-left: 3px solid rgb(var(--sense-match-rgb));
@@ -2713,14 +2713,14 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 3px 10px;
+            padding: 5px 11px;
             min-height: 30px;
             border-radius: 999px;
             background: color-mix(in srgb, rgb(var(--sense-match-rgb, 160, 160, 160)) 52%, #10151a);
             border: 1px solid transparent;
             color: #fff;
             font-family: var(--font-reading);
-            font-size: 17px;
+            font-size: 19px;
             font-weight: 700;
             line-height: 1;
             letter-spacing: 0;
@@ -24383,7 +24383,7 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-label { color: var(--warning); }
 
 /* Seek-bar thumb: a circle for "25", a pill for "25A" so the letter fits. */
-.cbs-thumb { width: auto; min-width: 40px; padding: 0 5px; border-radius: 999px; box-sizing: border-box; }
+.cbs-thumb { width: auto; min-width: 32px; padding: 0 3px; border-radius: 999px; box-sizing: border-box; letter-spacing: -0.02em; }
 
 /* Split words: "Card 1 of 2" sits on its own pill instead of a "Flashcard 1 of 2"
    line floating between the two, so the count can only mean that card. The
