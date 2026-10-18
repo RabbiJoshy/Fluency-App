@@ -123,5 +123,275 @@
   "meaning_floor": 0.75,
   "meaning_weight": 0.25,
   "candidate_budget": 400,
-  "default_threshold": 0.8
+  "default_threshold": 0.8,
+  "tip_rules": [
+    {
+      "from": "ost",
+      "to": "ość",
+      "where": "end",
+      "twins": [
+        "radost → radość",
+        "bolest → boleść"
+      ]
+    },
+    {
+      "from": "ce",
+      "to": "cja",
+      "where": "end",
+      "twins": [
+        "situace → sytuacja",
+        "tradice → tradycja"
+      ]
+    },
+    {
+      "from": "ie",
+      "to": "ia",
+      "where": "end",
+      "twins": [
+        "historie → historia",
+        "energie → energia"
+      ]
+    },
+    {
+      "from": "ický",
+      "to": "yczny",
+      "where": "end",
+      "twins": [
+        "klasický → klasyczny",
+        "fantastický → fantastyczny"
+      ]
+    },
+    {
+      "from": "ivní",
+      "to": "ywny",
+      "where": "end",
+      "twins": [
+        "aktivní → aktywny",
+        "kreativní → kreatywny"
+      ]
+    },
+    {
+      "from": "ní",
+      "to": "ny",
+      "where": "end",
+      "twins": [
+        "totální → totalny",
+        "normální → normalny"
+      ]
+    },
+    {
+      "from": "ně",
+      "to": "nie",
+      "where": "end",
+      "twins": [
+        "totálně → totalnie",
+        "konkrétně → konkretnie"
+      ]
+    },
+    {
+      "from": "ovat",
+      "to": "ować",
+      "where": "end",
+      "twins": [
+        "informovat → informować",
+        "ignorovat → ignorować"
+      ]
+    },
+    {
+      "from": "vat",
+      "to": "wać",
+      "where": "end",
+      "twins": [
+        "malovat → malować",
+        "nazvat → nazwać"
+      ]
+    },
+    {
+      "from": "it",
+      "to": "ić",
+      "where": "end",
+      "twins": [
+        "modlit → modlić",
+        "spálit → spalić"
+      ]
+    },
+    {
+      "from": "et",
+      "to": "eć",
+      "where": "end",
+      "twins": [
+        "letět → lecieć",
+        "vidět → widzieć"
+      ]
+    },
+    {
+      "from": "at",
+      "to": "ać",
+      "where": "end",
+      "twins": [
+        "skákat → skakać",
+        "dostat → dostać"
+      ]
+    },
+    {
+      "from": "out",
+      "to": "ąć",
+      "where": "end",
+      "twins": [
+        "dotknout → dotknąć",
+        "zamknout → zamknąć"
+      ]
+    },
+    {
+      "from": "ou",
+      "to": "ą",
+      "where": "end",
+      "twins": [
+        "tajnou → tajną",
+        "starou → starą"
+      ]
+    },
+    {
+      "from": "ý",
+      "to": "y",
+      "where": "end",
+      "twins": [
+        "dobrý → dobry",
+        "starý → stary"
+      ]
+    },
+    {
+      "from": "h",
+      "to": "g",
+      "where": "any",
+      "twins": [
+        "bohatý → bogaty",
+        "hora → góra"
+      ]
+    },
+    {
+      "from": "v",
+      "to": "w",
+      "where": "any",
+      "twins": [
+        "barva → barwa",
+        "voda → woda"
+      ]
+    },
+    {
+      "from": "ř",
+      "to": "rz",
+      "where": "any",
+      "twins": [
+        "řeka → rzeka",
+        "moře → morze"
+      ]
+    },
+    {
+      "from": "š",
+      "to": "sz",
+      "where": "any",
+      "twins": [
+        "škola → szkoła",
+        "náš → nasz"
+      ]
+    },
+    {
+      "from": "č",
+      "to": "cz",
+      "where": "any",
+      "twins": [
+        "člověk → człowiek",
+        "učit → uczyć"
+      ]
+    },
+    {
+      "from": "ž",
+      "to": "ż",
+      "where": "any",
+      "twins": [
+        "žena → żona",
+        "může → może"
+      ]
+    },
+    {
+      "from": "ě",
+      "to": "ie",
+      "where": "any",
+      "twins": [
+        "věrný → wierny",
+        "měsíc → miesiąc"
+      ]
+    },
+    {
+      "from": "ů",
+      "to": "ó",
+      "where": "any",
+      "twins": [
+        "dům → dom",
+        "bůh → bóg"
+      ]
+    },
+    {
+      "from": "ou",
+      "to": "ą",
+      "where": "any",
+      "twins": [
+        "mouka → mąka",
+        "kousek → kąsek"
+      ]
+    },
+    {
+      "from": "i",
+      "to": "y",
+      "where": "any",
+      "twins": [
+        "aktivní → aktywny",
+        "politika → polityka"
+      ]
+    },
+    {
+      "from": "l",
+      "to": "ł",
+      "where": "any",
+      "twins": [
+        "generál → generał",
+        "kanál → kanał"
+      ]
+    },
+    {
+      "from": "ň",
+      "to": "ń",
+      "where": "any",
+      "twins": [
+        "kůň → koń",
+        "dlaň → dłoń"
+      ]
+    },
+    {
+      "from": "o",
+      "to": "ó",
+      "where": "any",
+      "twins": [
+        "hora → góra",
+        "mozek → mózg"
+      ]
+    },
+    {
+      "from": "",
+      "to": "",
+      "where": "double",
+      "free": true,
+      "label": "The known word doubles the consonant",
+      "twins": []
+    },
+    {
+      "from": "",
+      "to": "",
+      "where": "single",
+      "free": true,
+      "label": "The known word writes the double letter once",
+      "twins": []
+    }
+  ]
 }

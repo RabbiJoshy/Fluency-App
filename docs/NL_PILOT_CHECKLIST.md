@@ -56,7 +56,7 @@ hand-labelled items (M, about a day). Pilot: yes.
 |---|---|
 | Declared entries (contractions, slang, fillers) | missing (0 entries) |
 | Conjugations | missing; no `raw/conjugations/nl`; Kaikki path is the candidate |
-| Cognates | partial: `config/cognates/nl-en.json`, `app/cognates/nl` present; calibration open |
+| Cognates | wired 2026-10-19: `app/cognates/nl/cognates.json` rebuilt for `nl-speech-cascade-proto2-6000x10`, memory tips on; 0.80 cutoff not recalibrated for this deck |
 | MWE overlay | missing; no `config/mwe/nl-*` |
 | Lexical relations | missing; no `raw/lexical-relations/nl` |
 | Reflexive tagger (`zich`) | missing; es/pt only |

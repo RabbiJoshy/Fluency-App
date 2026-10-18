@@ -134,5 +134,480 @@
   "cognet_pairs": "cognet/pairs/eng-por.tsv",
   "cognet_target_column": 1,
   "notes": "Portuguese read by an English speaker. The transparent pairs are Latinate vocabulary shared through both languages' borrowing (informação/information, possível/possible) plus outright loans. Nasal vowels and the lh/nh digraphs are folded; the rest is edit distance. Threshold 0.70. Cutoff 0.75, unchanged by the move to a dictionary-wide map: 199 of the 3,000-card deck (7%), 3,443 of 19,326 scored surfaces. 0.75-0.80 holds (agente/agent, alarme/alarm, artista/artist, classe/class) and 0.70-0.75 is where half-truths collect (banco/bank, bando/band, chefe/chef). No false friend from the standard list reaches the cutoff: puxar 0.37, pretender 0.71, assistir 0.69, costume 0.52, livraria 0.12, and esquisito and exito find no match at all. 2026-09-28: the surface scorer moved to edit-distance/v1 (decision 0027, provisional) and cognate mode became per sense (decision 0028). The cutoff above was carried over, not recalibrated; the calibration figures earlier in this note were measured on the legacy scorer.",
-  "known_must_be_a_gloss": true
+  "known_must_be_a_gloss": true,
+  "tip_rules": [
+    {
+      "from": "idades",
+      "to": "ities",
+      "where": "end",
+      "twins": [
+        "universidades → universities",
+        "atividades → activities"
+      ]
+    },
+    {
+      "from": "idade",
+      "to": "ity",
+      "where": "end",
+      "twins": [
+        "realidade → reality",
+        "universidade → university"
+      ]
+    },
+    {
+      "from": "dade",
+      "to": "ty",
+      "where": "end",
+      "twins": [
+        "sociedade → society",
+        "variedade → variety"
+      ]
+    },
+    {
+      "from": "ções",
+      "to": "tions",
+      "where": "end",
+      "twins": [
+        "nações → nations",
+        "ações → actions"
+      ]
+    },
+    {
+      "from": "ção",
+      "to": "tion",
+      "where": "end",
+      "twins": [
+        "nação → nation",
+        "ação → action"
+      ]
+    },
+    {
+      "from": "sões",
+      "to": "sions",
+      "where": "end",
+      "twins": [
+        "decisões → decisions",
+        "versões → versions"
+      ]
+    },
+    {
+      "from": "são",
+      "to": "sion",
+      "where": "end",
+      "twins": [
+        "decisão → decision",
+        "televisão → television"
+      ]
+    },
+    {
+      "from": "mente",
+      "to": "ly",
+      "where": "end",
+      "twins": [
+        "totalmente → totally",
+        "perfeitamente → perfectly"
+      ],
+      "stem_vowel": "a",
+      "stem_vowel_label": "Drop the feminine -a"
+    },
+    {
+      "from": "osos",
+      "to": "ous",
+      "where": "end",
+      "twins": [
+        "famosos → famous",
+        "curiosos → curious"
+      ]
+    },
+    {
+      "from": "osas",
+      "to": "ous",
+      "where": "end",
+      "twins": [
+        "famosas → famous",
+        "curiosas → curious"
+      ]
+    },
+    {
+      "from": "oso",
+      "to": "ous",
+      "where": "end",
+      "twins": [
+        "famoso → famous",
+        "curioso → curious"
+      ]
+    },
+    {
+      "from": "osa",
+      "to": "ous",
+      "where": "end",
+      "twins": [
+        "famosa → famous",
+        "curiosa → curious"
+      ]
+    },
+    {
+      "from": "ismo",
+      "to": "ism",
+      "where": "end",
+      "twins": [
+        "turismo → tourism",
+        "otimismo → optimism"
+      ]
+    },
+    {
+      "from": "istas",
+      "to": "ists",
+      "where": "end",
+      "twins": [
+        "artistas → artists",
+        "turistas → tourists"
+      ]
+    },
+    {
+      "from": "ista",
+      "to": "ist",
+      "where": "end",
+      "twins": [
+        "artista → artist",
+        "turista → tourist"
+      ]
+    },
+    {
+      "from": "ivo",
+      "to": "ive",
+      "where": "end",
+      "twins": [
+        "ativo → active",
+        "criativo → creative"
+      ]
+    },
+    {
+      "from": "iva",
+      "to": "ive",
+      "where": "end",
+      "twins": [
+        "ativa → active",
+        "criativa → creative"
+      ]
+    },
+    {
+      "from": "ico",
+      "to": "ic",
+      "where": "end",
+      "twins": [
+        "público → public",
+        "mágico → magic"
+      ]
+    },
+    {
+      "from": "ica",
+      "to": "ic",
+      "where": "end",
+      "twins": [
+        "música → music",
+        "mágica → magic"
+      ]
+    },
+    {
+      "from": "ário",
+      "to": "ary",
+      "where": "end",
+      "twins": [
+        "necessário → necessary",
+        "dicionário → dictionary"
+      ]
+    },
+    {
+      "from": "ária",
+      "to": "ary",
+      "where": "end",
+      "twins": [
+        "primária → primary",
+        "voluntária → voluntary"
+      ]
+    },
+    {
+      "from": "ância",
+      "to": "ance",
+      "where": "end",
+      "twins": [
+        "distância → distance",
+        "importância → importance"
+      ]
+    },
+    {
+      "from": "ência",
+      "to": "ence",
+      "where": "end",
+      "twins": [
+        "ciência → science",
+        "experiência → experience"
+      ]
+    },
+    {
+      "from": "antes",
+      "to": "ants",
+      "where": "end",
+      "twins": [
+        "elefantes → elephants",
+        "restaurantes → restaurants"
+      ]
+    },
+    {
+      "from": "ante",
+      "to": "ant",
+      "where": "end",
+      "twins": [
+        "importante → important",
+        "elegante → elegant"
+      ]
+    },
+    {
+      "from": "entes",
+      "to": "ents",
+      "where": "end",
+      "twins": [
+        "acidentes → accidents",
+        "presidentes → presidents"
+      ]
+    },
+    {
+      "from": "ente",
+      "to": "ent",
+      "where": "end",
+      "twins": [
+        "diferente → different",
+        "presidente → president"
+      ]
+    },
+    {
+      "from": "ável",
+      "to": "able",
+      "where": "end",
+      "twins": [
+        "provável → probable",
+        "confortável → comfortable"
+      ]
+    },
+    {
+      "from": "ível",
+      "to": "ible",
+      "where": "end",
+      "twins": [
+        "possível → possible",
+        "terrível → terrible"
+      ]
+    },
+    {
+      "from": "agem",
+      "to": "age",
+      "where": "end",
+      "twins": [
+        "mensagem → message",
+        "imagem → image"
+      ]
+    },
+    {
+      "from": "ura",
+      "to": "ure",
+      "where": "end",
+      "twins": [
+        "cultura → culture",
+        "aventura → adventure"
+      ]
+    },
+    {
+      "from": "ia",
+      "to": "y",
+      "where": "end",
+      "twins": [
+        "história → history",
+        "memória → memory"
+      ]
+    },
+    {
+      "from": "izar",
+      "to": "ize",
+      "where": "end",
+      "twins": [
+        "organizar → organize",
+        "utilizar → utilize"
+      ]
+    },
+    {
+      "from": "ificar",
+      "to": "ify",
+      "where": "end",
+      "twins": [
+        "classificar → classify",
+        "identificar → identify"
+      ]
+    },
+    {
+      "from": "ar",
+      "to": "ate",
+      "where": "end",
+      "twins": [
+        "celebrar → celebrate",
+        "separar → separate"
+      ]
+    },
+    {
+      "from": "ar",
+      "to": "e",
+      "where": "end",
+      "twins": [
+        "preparar → prepare",
+        "usar → use"
+      ]
+    },
+    {
+      "from": "ar",
+      "to": "",
+      "where": "end",
+      "twins": [
+        "aceitar → accept",
+        "informar → inform"
+      ]
+    },
+    {
+      "from": "er",
+      "to": "",
+      "where": "end",
+      "twins": [
+        "responder → respond",
+        "ofender → offend"
+      ]
+    },
+    {
+      "from": "ir",
+      "to": "e",
+      "where": "end",
+      "twins": [
+        "decidir → decide",
+        "dividir → divide"
+      ]
+    },
+    {
+      "from": "ir",
+      "to": "",
+      "where": "end",
+      "twins": [
+        "admitir → admit",
+        "insistir → insist"
+      ]
+    },
+    {
+      "from": "o",
+      "to": "e",
+      "where": "end",
+      "twins": [
+        "minuto → minute",
+        "absoluto → absolute"
+      ]
+    },
+    {
+      "from": "a",
+      "to": "e",
+      "where": "end",
+      "twins": [
+        "causa → cause",
+        "rosa → rose"
+      ]
+    },
+    {
+      "from": "es",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the plural -es",
+      "twins": []
+    },
+    {
+      "from": "s",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the plural -s",
+      "twins": []
+    },
+    {
+      "from": "o",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the final -o",
+      "twins": []
+    },
+    {
+      "from": "a",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the final -a",
+      "twins": []
+    },
+    {
+      "from": "e",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the final -e",
+      "twins": []
+    },
+    {
+      "from": "es",
+      "to": "s",
+      "where": "start",
+      "twins": [
+        "escola → school",
+        "especial → special"
+      ],
+      "before": "consonant"
+    },
+    {
+      "from": "f",
+      "to": "ph",
+      "where": "any",
+      "twins": [
+        "foto → photo",
+        "telefone → telephone"
+      ]
+    },
+    {
+      "from": "t",
+      "to": "th",
+      "where": "any",
+      "twins": [
+        "teatro → theatre",
+        "método → method"
+      ]
+    },
+    {
+      "from": "i",
+      "to": "y",
+      "where": "any",
+      "twins": [
+        "sistema → system",
+        "ritmo → rhythm"
+      ]
+    },
+    {
+      "from": "",
+      "to": "",
+      "where": "double",
+      "free": true,
+      "label": "English doubles the consonant",
+      "twins": []
+    },
+    {
+      "from": "",
+      "to": "",
+      "where": "single",
+      "free": true,
+      "label": "English writes the double letter once",
+      "twins": []
+    }
+  ]
 }

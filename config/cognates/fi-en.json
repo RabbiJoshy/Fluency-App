@@ -60,5 +60,165 @@
   "meaning_weight": 0.25,
   "candidate_budget": 400,
   "default_threshold": 0.85,
-  "known_must_be_a_gloss": true
+  "known_must_be_a_gloss": true,
+  "tip_rules": [
+    {
+      "from": "aatio",
+      "to": "ation",
+      "where": "end",
+      "twins": [
+        "informaatio → information",
+        "operaatio → operation"
+      ]
+    },
+    {
+      "from": "ismi",
+      "to": "ism",
+      "where": "end",
+      "twins": [
+        "kapitalismi → capitalism",
+        "realismi → realism"
+      ]
+    },
+    {
+      "from": "isti",
+      "to": "ist",
+      "where": "end",
+      "twins": [
+        "turisti → tourist",
+        "artisti → artist"
+      ]
+    },
+    {
+      "from": "teetti",
+      "to": "ty",
+      "where": "end",
+      "twins": [
+        "universiteetti → university",
+        "majesteetti → majesty"
+      ]
+    },
+    {
+      "from": "tti",
+      "to": "t",
+      "where": "end",
+      "twins": [
+        "agentti → agent",
+        "presidentti → president"
+      ]
+    },
+    {
+      "from": "ori",
+      "to": "or",
+      "where": "end",
+      "twins": [
+        "professori → professor",
+        "traktori → tractor"
+      ]
+    },
+    {
+      "from": "ia",
+      "to": "y",
+      "where": "end",
+      "twins": [
+        "historia → history",
+        "teoria → theory"
+      ]
+    },
+    {
+      "from": "ikka",
+      "to": "ic",
+      "where": "end",
+      "twins": [
+        "klinikka → clinic",
+        "logiikka → logic"
+      ]
+    },
+    {
+      "from": "i",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the final -i Finnish adds to loanwords",
+      "twins": []
+    },
+    {
+      "from": "a",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the final -a",
+      "twins": []
+    },
+    {
+      "from": "aa",
+      "to": "a",
+      "where": "any",
+      "twins": [
+        "baari → bar",
+        "kaaos → chaos"
+      ]
+    },
+    {
+      "from": "ee",
+      "to": "e",
+      "where": "any",
+      "twins": [
+        "teema → theme",
+        "geeni → gene"
+      ]
+    },
+    {
+      "from": "ii",
+      "to": "i",
+      "where": "any",
+      "twins": [
+        "musiikki → music",
+        "kriisi → crisis"
+      ]
+    },
+    {
+      "from": "oo",
+      "to": "o",
+      "where": "any",
+      "twins": [
+        "idiootti → idiot",
+        "miljoona → million"
+      ]
+    },
+    {
+      "from": "uu",
+      "to": "u",
+      "where": "any",
+      "twins": [
+        "minuutti → minute",
+        "kulttuuri → culture"
+      ]
+    },
+    {
+      "from": "k",
+      "to": "c",
+      "where": "any",
+      "twins": [
+        "konsertti → concert",
+        "klubi → club"
+      ]
+    },
+    {
+      "from": "",
+      "to": "",
+      "where": "double",
+      "free": true,
+      "label": "The known word doubles the consonant",
+      "twins": []
+    },
+    {
+      "from": "",
+      "to": "",
+      "where": "single",
+      "free": true,
+      "label": "The known word writes the double letter once",
+      "twins": []
+    }
+  ]
 }

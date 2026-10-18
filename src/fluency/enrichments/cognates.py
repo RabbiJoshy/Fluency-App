@@ -665,6 +665,8 @@ def build_app_cognates_by_sense(
         "cognet": {side.code: side.policy.cognet_pairs for side in sides},
         "routes": routes,
         "thresholds": {side.code: float(side.policy.default_threshold) for side in sides},
+        # known language -> the correspondences a memory tip may name
+        "tip_rules": {side.code: [dict(rule) for rule in side.policy.tip_rules] for side in sides if side.policy.tip_rules},
         # surface -> headword -> English word -> known language -> closeness
         "scores": scores,
         # the same keys -> the known word, where it is not the English word itself

@@ -1,100 +1,264 @@
-"""Memory tips build a step-by-step link from the card's own English glosses."""
+"""Memory tips explain only map-vouched cognates, and only with named rules."""
 
+import json
+import os
 import shutil
 import subprocess
+import sys
 import unittest
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[2]
+MODULE = ROOT / "app/js/memory-tips.js"
+COGNATES = ROOT / "app/js/cognates.js"
+POLICIES = ROOT / "config/cognates"
 
-MODULE = Path(__file__).resolve().parents[2] / "app/js/memory-tips.js"
+
+def _rules(pair: str) -> list:
+    return json.loads((POLICIES / f"{pair}.json").read_text(encoding="utf-8"))["tip_rules"]
+
+
+def _node(script: str, **env: str) -> str:
+    return subprocess.run(
+        ["node", "--input-type=module", "-e", script],
+        capture_output=True, text=True, check=True, env={**os.environ, **env},
+    ).stdout.strip()
 
 
 class MemoryTipTests(unittest.TestCase):
-    def _run(self, body: str) -> str:
+    """The cognate map is stubbed: `partners` is what it vouches for."""
+
+    def _run(self, body: str, partners: dict, pair: str = "es-en") -> str:
         script = (
-            f"import('{MODULE.as_uri()}').then(m => {{"
-            "const tip = (w, g, l='spanish') => m.memoryTipFor("
-            "{targetWord: w, meanings: [{meaning: g}]}, l);"
-            f"{body}}});"
+            f"const RULES = {json.dumps(_rules(pair), ensure_ascii=False)};"
+            f"const PARTNERS = {json.dumps(partners, ensure_ascii=False)};"
+            "globalThis.cognateTipRules = code => code === 'en' ? RULES : [];"
+            "globalThis.cognateTipPartner = card => PARTNERS[card.word] || null;"
+            f"const m = await import('{MODULE.as_uri()}');"
+            "const tip = w => m.memoryTipFor({word: w, meanings: []}, 'spanish');"
+            "const rows = t => t.rows.map(r => r.kind + ':' + r.label).join(' | ');"
+            f"{body}"
         )
-        return subprocess.run(
-            ["node", "-e", script], capture_output=True, text=True, check=True
-        ).stdout.strip()
+        return _node(script)
 
     @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_adverb_ending_is_a_named_pattern_with_steps(self) -> None:
+    def test_no_tip_without_the_maps_verdict(self) -> None:
+        # hace glosses "has", and the two look alike, but the map does not call
+        # them cognates, so there is nothing to explain.
+        out = self._run("console.log(tip('hace'), tip('chica'));", {})
+        self.assertEqual(out, "null null")
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
+    def test_adverb_is_named_rules_only(self) -> None:
         out = self._run(
-            "const t = tip('rápidamente','quickly; rapidly');"
-            "console.log(t.english, t.tier, t.from, t.to, t.steps.map(s => s.kind).join('>'));"
+            "const t = tip('rápidamente'); console.log(t.english, t.tier, rows(t), t.accents);",
+            {"rápidamente": {"score": 0.9, "word": "rapidly", "headword": "rápidamente"}},
         )
-        self.assertEqual(out, "rapidly pattern mente ly accent>rule>drop")
+        self.assertEqual(out, "rapidly pattern free:Drop the feminine -a | rule:-mente → -ly true")
 
     @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_same_spelling_and_verb_drop(self) -> None:
+    def test_prefix_suffix_and_letter_rules(self) -> None:
         out = self._run(
-            "console.log(tip('hotel','hotel').tier, tip('informar','to inform').tier,"
-            " tip('informar','to inform').english);"
+            "console.log([tip('estación'), tip('foto'), tip('cuestión')]"
+            ".map(t => t.tier + ' ' + rows(t)).join(' / '));",
+            {
+                "estación": {"score": 1, "word": "station"},
+                "foto": {"score": 1, "word": "photo"},
+                "cuestión": {"score": 1, "word": "question"},
+            },
         )
-        self.assertEqual(out, "same pattern inform")
-
-    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_a_loose_link_is_offered_as_loose(self) -> None:
-        out = self._run("const t = tip('tiempo','time'); console.log(t.tier, t.english);")
-        self.assertEqual(out, "loose time")
-
-    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_unrelated_meaning_gets_no_tip(self) -> None:
-        # Same ending shape, but the card's own gloss is a different word.
-        out = self._run(
-            "console.log(tip('actualmente','currently'), tip('chica','girl'),"
-            " tip('embarazada','pregnant'));"
+        self.assertEqual(
+            out,
+            "pattern rule:es- → s- | rule:-ción → -tion / pattern rule:f → ph"
+            " / pattern rule:cu → qu",
         )
-        self.assertEqual(out, "null null null")
 
     @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_the_decks_own_lemma_is_not_an_english_partner(self) -> None:
+    def test_unexplained_letters_are_a_spelling_difference_not_a_rule(self) -> None:
         out = self._run(
-            "console.log(m.memoryTipFor({targetWord:'gostaram', meanings:["
-            "{meaning:'gostar', headword:'gostar'}]}, 'portuguese'));"
+            "const t = tip('negociación'); console.log(t.tier, rows(t), t.rows.at(-1).detail);",
+            {"negociación": {"score": 0.9, "word": "negotiation"}},
+        )
+        self.assertEqual(
+            out, "close rule:-ción → -tion | spelling:Small spelling difference c → t"
+        )
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
+    def test_same_word_doubled_letter_and_inflected_form(self) -> None:
+        out = self._run(
+            "console.log(tip('hotel').tier, rows(tip('acceso')),"
+            " tip('accidentes').form, rows(tip('accidentes')));",
+            {
+                "hotel": {"score": 1, "word": "hotel"},
+                "acceso": {"score": 0.8, "word": "access"},
+                "accidentes": {"score": 0.8, "word": "accident", "headword": "accidente"},
+            },
+        )
+        self.assertEqual(
+            out,
+            "same free:English doubles the s | free:Drop the final -o accidente rule:-ente → -ent",
+        )
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
+    def test_a_pair_the_rules_barely_touch_has_no_tip(self) -> None:
+        out = self._run(
+            "console.log(tip('ojo'), tip('perro'));",
+            {"ojo": {"score": 0.8, "word": "eye"}, "perro": {"score": 0.8, "word": "dog"}},
+        )
+        self.assertEqual(out, "null null")
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
+    def test_no_rules_for_the_pair_means_no_tip(self) -> None:
+        out = _node(
+            "globalThis.cognateTipRules = () => [];"
+            "globalThis.cognateTipPartner = () => ({score: 1, word: 'hotel'});"
+            f"const m = await import('{MODULE.as_uri()}');"
+            "console.log(m.memoryTipFor({word: 'hotel', meanings: []}, 'czech'));"
         )
         self.assertEqual(out, "null")
 
     @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_unsupported_language_has_no_tip(self) -> None:
-        out = self._run("console.log(tip('rychle','quickly','czech'));")
-        self.assertEqual(out, "null")
+    def test_french_circumflex_and_accented_prefix(self) -> None:
+        out = self._run(
+            "console.log(rows(tip('forêt')), '/', rows(tip('école')));",
+            {"forêt": {"score": 1, "word": "forest"}, "école": {"score": 1, "word": "school"}},
+            pair="fr-en",
+        )
+        self.assertEqual(
+            out,
+            "rule:ê → es / rule:é- → s- | free:Drop the final -e | spelling:Small spelling difference",
+        )
+
+
+class OtherPairsTests(unittest.TestCase):
+    """Dutch, Finnish and Czech read through English, and Czech through Polish."""
+
+    def _run(self, body: str, rules: dict, partners: dict, languages: list) -> str:
+        script = (
+            f"const RULES = {json.dumps(rules, ensure_ascii=False)};"
+            f"const PARTNERS = {json.dumps(partners, ensure_ascii=False)};"
+            f"globalThis.cognateTipLanguages = () => {json.dumps(languages)};"
+            "globalThis.cognateTipRules = code => RULES[code] || [];"
+            "globalThis.cognateTipPartner = (card, code) => PARTNERS[code]?.[card.word] || null;"
+            f"const m = await import('{MODULE.as_uri()}');"
+            "const tip = w => m.memoryTipFor({word: w, meanings: []});"
+            "const say = t => t ? `${t.known}:${t.english} ${t.tier} ` + t.rows.map(r => r.label).join(' | ') : 'null';"
+            f"{body}"
+        )
+        return _node(script)
 
     @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_prefix_rule_alone(self) -> None:
+    def test_dutch_and_finnish_endings(self) -> None:
         out = self._run(
-            "const t = tip('espacio','space');"
-            "console.log(t.tier, t.prefixFrom, t.prefixTo, t.english);"
+            "console.log(say(tip('universiteit')), '/', say(tip('pensioen')));",
+            {"en": _rules("nl-en")},
+            {"en": {"universiteit": {"score": 1, "word": "university"},
+                    "pensioen": {"score": 1, "word": "pension"}}},
+            ["en"],
         )
-        self.assertEqual(out, "pattern es s space")
+        self.assertEqual(out, "en:university pattern -iteit → -ity / en:pension pattern -ioen → -ion")
+        out = self._run(
+            "console.log(say(tip('presidentti')));",
+            {"en": _rules("fi-en")},
+            {"en": {"presidentti": {"score": 0.9, "word": "president"}}},
+            ["en"],
+        )
+        self.assertEqual(out, "en:president pattern -tti → -t")
 
     @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_prefix_and_suffix_combination(self) -> None:
-        out = self._run(
-            "const t = tip('estación','station');"
-            "console.log(t.tier, t.prefixFrom, t.prefixTo, t.from, t.to, t.english);"
+    def test_czech_card_through_polish_only_when_the_learner_reads_it(self) -> None:
+        rules = {"en": _rules("cs-en"), "pl": _rules("cs-pl")}
+        partners = {
+            "en": {"kriminální": {"score": 0.9, "word": "criminal"}},
+            "pl": {"kriminální": {"score": 0.9, "word": "kryminalny"},
+                   "bloků": {"score": 0.9, "word": "bloku", "headword": "blok"}},
+        }
+        body = "console.log(say(tip('kriminální')), '/', say(tip('bloků')));"
+        self.assertEqual(
+            self._run(body, rules, partners, ["en"]),
+            "en:criminal pattern k → c | -ální → -al / null",
         )
-        self.assertEqual(out, "pattern es s ción tion station")
+        # Both are regular patterns; Polish wins the tie. The Polish word is
+        # the same inflection as the card, so the card is explained as is.
+        self.assertEqual(
+            self._run(body, rules, partners, ["en", "pl"]),
+            "pl:kryminalny pattern i → y / pl:bloku same",
+        )
 
-    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_italian_language_support(self) -> None:
-        out = self._run(
-            "const t = tip('rapidamente','rapidly','italian');"
-            "console.log(t.tier, t.from, t.to, t.english);"
-        )
-        self.assertEqual(out, "pattern mente ly rapidly")
 
-    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS tests")
-    def test_takeaway_and_twins_generated(self) -> None:
-        out = self._run(
-            "const t = tip('rápidamente','rapidly');"
-            "console.log(Boolean(t.takeaway), t.twins.length > 0, t.chunks.source.suffix);"
+class TipPartnerTests(unittest.TestCase):
+    """cognates.js names the partner from the strongest sense over the cutoff."""
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS vm tests")
+    def test_partner_comes_from_a_sense_over_the_cutoff(self) -> None:
+        script = r"""
+            import fs from 'node:fs';
+            import vm from 'node:vm';
+            const source = fs.readFileSync(process.env.COGNATES_JS, 'utf8').replace(/^import .*$/mg, '');
+            const payload = {
+                schema: 'cognate-score/v4', language: 'es', known_languages: ['en', 'pl'],
+                thresholds: { en: 0.75, pl: 0.8 },
+                tip_rules: {
+                    en: [{ from: 'o', to: '', where: 'end', free: true, label: 'x', twins: [] }],
+                    pl: [{ from: 'v', to: 'w', where: 'any', twins: [] }],
+                },
+                scores: {
+                    hace: { hacer: { do: { en: 0.2 } } },
+                    banco: { banco: { bank: { en: 0.8 } } },
+                    accidentes: { accidente: { accident: { en: 0.78 } } },
+                },
+                matches: {},
+            };
+            const context = {
+                console, localStorage: { getItem: () => null, setItem: () => {} },
+                document: { getElementById: () => null },
+                fetch: async () => ({ ok: true, json: async () => payload }),
+            };
+            context.globalThis = context;
+            vm.runInNewContext(source, context);
+            await context.loadCognateScores({ cognatesPath: 'x' });
+            const deck = [
+                { word: 'hace', meanings: [{ headword: 'hacer', translation: 'to do; has' }] },
+                { word: 'banco', meanings: [
+                    { headword: 'banco', translation: 'bank' },
+                    { headword: 'banco', translation: 'school (of fish)' },
+                ]},
+                { word: 'accidentes', meanings: [{ headword: 'accidente', translation: 'accident' }] },
+            ];
+            context.applyCognateScores(deck, 'es');
+            const out = deck.map(item => {
+                const p = context.cognateTipPartner(item, 'en');
+                return p ? `${p.word}:${p.headword}:${p.meaning.translation}` : 'null';
+            });
+            out.push(context.cognateTipRules('en').length, context.cognateTipRules('pl').length);
+            out.push(context.cognateTipLanguages().join('+'));
+            context.writeKnownLanguages(['en', 'pl']);
+            await Promise.resolve();
+            out.push(context.cognateTipLanguages().join('+'));
+            console.log(out.join(' '));
+        """
+        out = _node(script, COGNATES_JS=str(COGNATES))
+        # Polish is offered only once the learner reads it.
+        self.assertEqual(out, "null bank:banco:bank accident:accidente:accident 1 1 en en+pl")
+
+
+class ShippedRulesTests(unittest.TestCase):
+    def test_shipped_maps_carry_the_configs_tip_rules(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts/sync_cognate_tip_rules.py"), "--check"],
+            capture_output=True, text=True,
         )
-        self.assertEqual(out, "true true -mente")
+        self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_every_rule_is_well_formed(self) -> None:
+        for pair in ("es-en", "pt-en", "fr-en", "nl-en", "fi-en", "cs-en", "cs-pl"):
+            for rule in _rules(pair):
+                self.assertIn(rule["where"], {"start", "end", "any", "double", "single"}, (pair, rule))
+                if rule.get("free"):
+                    self.assertTrue(rule.get("label"), (pair, rule))
+                else:
+                    self.assertGreaterEqual(len(rule["twins"]), 2, (pair, rule))
+                    self.assertNotEqual(rule["from"], rule["to"], (pair, rule))
 
 
 if __name__ == "__main__":

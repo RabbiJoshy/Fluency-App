@@ -9,7 +9,7 @@ import { installCardTouch } from './card-touch.js';
 import { fitSenseRowText } from './card-row-layout.js?v=20261013rows';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20261013music';
-import { memoryTipTileHTML } from './memory-tips.js?v=1';
+import { memoryTipTileHTML } from './memory-tips.js?v=20261019rules';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,

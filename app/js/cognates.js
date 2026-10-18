@@ -78,6 +78,8 @@ let cognateCards = null;
 // which several languages share, so the map must never outlive its language.
 let cognateLanguage = null;
 let cognateSurfaceScorers = {};
+// known language -> the regular correspondences a memory tip may name.
+let cognateTipRuleSets = {};
 let selectedKnownLanguages = null;
 
 function readSelected() {
@@ -231,7 +233,7 @@ function senseCognate(item, meaning, code) {
     for (const pivot of [...senseAlternatives(meaning?.translation || meaning?.meaning)].sort()) {
         for (const key of keys) {
             const score = Number(map[key]?.[pivot]?.[code] || 0);
-            if (score > best.score) best = { score, word: named[key]?.[pivot]?.[code] || pivot };
+            if (score > best.score) best = { score, word: named[key]?.[pivot]?.[code] || pivot, headword: key || null };
         }
     }
     return best;
@@ -427,6 +429,7 @@ async function loadCognateScores(langConfig) {
     cognateLanguage = null;
     cognateSchema = 'cognate-score/v1';
     cognateCards = null;
+    cognateTipRuleSets = {};
     await globalThis.loadBridge?.(langConfig);
     const path = langConfig && langConfig.cognatesPath;
     if (!path) return;
@@ -457,6 +460,9 @@ async function loadCognateScores(langConfig) {
         cognateSurfaceScorers = (payload.surface_scorers && typeof payload.surface_scorers === 'object')
             ? payload.surface_scorers
             : {};
+        cognateTipRuleSets = (payload.tip_rules && typeof payload.tip_rules === 'object')
+            ? payload.tip_rules
+            : {};
         if (isSenseRouted(cognateSchema) && payload.cards && typeof payload.cards === 'object') {
             // The precomputed card verdicts describe one release's senses. A
             // deck built from another release keeps every card until its
@@ -477,6 +483,7 @@ async function loadCognateScores(langConfig) {
         cognateLanguages = [];
         cognateThresholds = {};
         cognateSurfaceScorers = {};
+        cognateTipRuleSets = {};
         cognateLanguage = null;
         cognateSchema = 'cognate-score/v1';
         cognateCards = null;
@@ -605,7 +612,53 @@ function isCognateKnownForLanguage(item, code) {
     return false;
 }
 
+// The known word a memory tip may explain for this card, and the sense it
+// comes from: the strongest shown sense that clears the language's own cutoff.
+// Null whenever the map does not call the card a cognate, so a tip can never
+// be built from a word that only looks alike.
+function cognateTipPartner(item, code) {
+    if (!item || !code) return null;
+    const cutoff = cognateThresholdFor(code);
+    if (cutoff === null) return null;
+    if (isSenseItem(item)) {
+        const meanings = (item.meanings || []).filter(meaning =>
+            String(meaning?.translation || meaning?.meaning || '').trim());
+        let best = null;
+        for (const meaning of meanings) {
+            const verdict = item.cognate_sense_map ? senseCognate(item, meaning, code) : null;
+            if (verdict?.word && verdict.score >= cutoff && (!best || verdict.score > best.score)) {
+                best = { ...verdict, meaning };
+            }
+        }
+        if (best) return best;
+        const shipped = meanings.length === 0 ? item.cognate_card?.[code] : null;
+        if (shipped && Number(shipped[0]) >= cutoff && shipped[1]) {
+            return { score: Number(shipped[0]), word: String(shipped[1]), headword: null, meaning: null };
+        }
+        return null;
+    }
+    const score = Number(item.cognate_scores?.[code] || 0);
+    const word = item.cognate_match_words?.[code];
+    return word && score >= cutoff ? { score, word: String(word), headword: null, meaning: null } : null;
+}
+
+function cognateTipRules(code) {
+    const rules = cognateTipRuleSets?.[code];
+    return Array.isArray(rules) ? rules : [];
+}
+
+// The languages a memory tip may explain a card through: English always,
+// since the card is glossed in it, and any other language only when the
+// learner reads it. A pair needs its own rules to be offered at all.
+function cognateTipLanguages() {
+    const codes = ['en', ...activeKnownLanguages().filter(code => code !== 'en')];
+    return codes.filter(code => cognateTipRules(code).length);
+}
+
 globalThis.cognateThresholdFor = cognateThresholdFor;
+globalThis.cognateTipPartner = cognateTipPartner;
+globalThis.cognateTipRules = cognateTipRules;
+globalThis.cognateTipLanguages = cognateTipLanguages;
 globalThis.isCognateKnown = isCognateKnown;
 globalThis.isCognateKnownForLanguage = isCognateKnownForLanguage;
 globalThis.knownLanguageFlag = knownLanguageFlag;

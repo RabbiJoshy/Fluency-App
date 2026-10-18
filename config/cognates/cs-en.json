@@ -73,5 +73,271 @@
   "meaning_weight": 0.25,
   "candidate_budget": 400,
   "default_threshold": 0.75,
-  "known_must_be_a_gloss": true
+  "known_must_be_a_gloss": true,
+  "tip_rules": [
+    {
+      "from": "ace",
+      "to": "ation",
+      "where": "end",
+      "twins": [
+        "situace → situation",
+        "organizace → organization"
+      ]
+    },
+    {
+      "from": "ita",
+      "to": "ity",
+      "where": "end",
+      "twins": [
+        "realita → reality",
+        "identita → identity"
+      ]
+    },
+    {
+      "from": "ie",
+      "to": "y",
+      "where": "end",
+      "twins": [
+        "strategie → strategy",
+        "historie → history"
+      ]
+    },
+    {
+      "from": "ický",
+      "to": "ical",
+      "where": "end",
+      "twins": [
+        "politický → political",
+        "historický → historical"
+      ]
+    },
+    {
+      "from": "ický",
+      "to": "ic",
+      "where": "end",
+      "twins": [
+        "romantický → romantic",
+        "fantastický → fantastic"
+      ]
+    },
+    {
+      "from": "ivní",
+      "to": "ive",
+      "where": "end",
+      "twins": [
+        "aktivní → active",
+        "negativní → negative"
+      ]
+    },
+    {
+      "from": "ální",
+      "to": "al",
+      "where": "end",
+      "twins": [
+        "generální → general",
+        "centrální → central"
+      ]
+    },
+    {
+      "from": "ní",
+      "to": "",
+      "where": "end",
+      "twins": [
+        "elegantní → elegant",
+        "inteligentní → intelligent"
+      ]
+    },
+    {
+      "from": "ní",
+      "to": "e",
+      "where": "end",
+      "twins": [
+        "extrémní → extreme",
+        "mobilní → mobile"
+      ]
+    },
+    {
+      "from": "ně",
+      "to": "ly",
+      "where": "end",
+      "twins": [
+        "totálně → totally",
+        "speciálně → specially"
+      ]
+    },
+    {
+      "from": "ismus",
+      "to": "ism",
+      "where": "end",
+      "twins": [
+        "turismus → tourism",
+        "optimismus → optimism"
+      ]
+    },
+    {
+      "from": "ista",
+      "to": "ist",
+      "where": "end",
+      "twins": [
+        "turista → tourist",
+        "pianista → pianist"
+      ]
+    },
+    {
+      "from": "ura",
+      "to": "ure",
+      "where": "end",
+      "twins": [
+        "kultura → culture",
+        "struktura → structure"
+      ]
+    },
+    {
+      "from": "ovat",
+      "to": "ate",
+      "where": "end",
+      "twins": [
+        "komunikovat → communicate",
+        "operovat → operate"
+      ]
+    },
+    {
+      "from": "ovat",
+      "to": "",
+      "where": "end",
+      "twins": [
+        "informovat → inform",
+        "respektovat → respect"
+      ]
+    },
+    {
+      "from": "ovat",
+      "to": "e",
+      "where": "end",
+      "twins": [
+        "organizovat → organize",
+        "kombinovat → combine"
+      ]
+    },
+    {
+      "from": "a",
+      "to": "e",
+      "where": "end",
+      "twins": [
+        "zóna → zone",
+        "scéna → scene"
+      ]
+    },
+    {
+      "from": "a",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the final -a",
+      "twins": []
+    },
+    {
+      "from": "e",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the final -e",
+      "twins": []
+    },
+    {
+      "from": "y",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the plural -y",
+      "twins": []
+    },
+    {
+      "from": "i",
+      "to": "",
+      "where": "end",
+      "free": true,
+      "label": "Drop the plural -i",
+      "twins": []
+    },
+    {
+      "from": "k",
+      "to": "c",
+      "where": "any",
+      "twins": [
+        "kultura → culture",
+        "projekt → project"
+      ]
+    },
+    {
+      "from": "kv",
+      "to": "qu",
+      "where": "any",
+      "twins": [
+        "kvalita → quality",
+        "kvóta → quota"
+      ]
+    },
+    {
+      "from": "f",
+      "to": "ph",
+      "where": "any",
+      "twins": [
+        "telefon → telephone",
+        "filozofie → philosophy"
+      ]
+    },
+    {
+      "from": "t",
+      "to": "th",
+      "where": "any",
+      "twins": [
+        "teorie → theory",
+        "metoda → method"
+      ]
+    },
+    {
+      "from": "i",
+      "to": "y",
+      "where": "any",
+      "twins": [
+        "systém → system",
+        "typ → type"
+      ]
+    },
+    {
+      "from": "z",
+      "to": "s",
+      "where": "any",
+      "twins": [
+        "prezident → president",
+        "muzeum → museum"
+      ]
+    },
+    {
+      "from": "š",
+      "to": "sh",
+      "where": "any",
+      "twins": [
+        "šok → shock",
+        "šerif → sheriff"
+      ]
+    },
+    {
+      "from": "",
+      "to": "",
+      "where": "double",
+      "free": true,
+      "label": "The known word doubles the consonant",
+      "twins": []
+    },
+    {
+      "from": "",
+      "to": "",
+      "where": "single",
+      "free": true,
+      "label": "The known word writes the double letter once",
+      "twins": []
+    }
+  ]
 }

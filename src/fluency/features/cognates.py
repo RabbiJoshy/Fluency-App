@@ -160,6 +160,11 @@ class CognatePolicy:
     # for the pair (Finnish), rather than leaving it to be inferred.
     cognet_pairs: str | None = None
     cognet_target_column: int = 0
+    # The regular correspondences a memory tip may name (-mente -> -ly,
+    # es- -> s-, f -> ph), each with the twin words that show it working.
+    # Display only: the scorer never reads them, and a tip is offered only for
+    # a pair this policy has already scored as a cognate.
+    tip_rules: tuple[Mapping[str, Any], ...] = field(default=(), hash=False, compare=False)
     notes: str = ""
 
     def __post_init__(self) -> None:
@@ -199,6 +204,15 @@ class CognatePolicy:
                 out.append((str(rule[0]), str(rule[1])))
             return tuple(out)
 
+        def tip_rules() -> tuple[Mapping[str, Any], ...]:
+            raw = value.get("tip_rules") or []
+            if not isinstance(raw, list) or not all(isinstance(rule, Mapping) for rule in raw):
+                raise CognatePolicyError("tip_rules is a list of rule objects")
+            for rule in raw:
+                if rule.get("where") not in ("start", "end", "any", "double", "single"):
+                    raise CognatePolicyError("a tip rule's where is start, end, any, double or single")
+            return tuple(dict(rule) for rule in raw)
+
         known = dict(value)
         if not known.get("surface_scorer"):
             raise CognatePolicyError(
@@ -223,6 +237,7 @@ class CognatePolicy:
             ending_rules=rules("ending_rules"),
             cognet_pairs=(str(known["cognet_pairs"]) if known.get("cognet_pairs") else None),
             cognet_target_column=int(known.get("cognet_target_column", 0)),
+            tip_rules=tip_rules(),
             notes=str(known.get("notes", "")),
         )
 
@@ -246,6 +261,7 @@ class CognatePolicy:
             "ending_rules": [list(rule) for rule in self.ending_rules],
             "cognet_pairs": self.cognet_pairs,
             "cognet_target_column": self.cognet_target_column,
+            "tip_rules": [dict(rule) for rule in self.tip_rules],
             "notes": self.notes,
         }
 
