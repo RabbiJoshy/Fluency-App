@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=df7e37f8';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=df7e37f8';
-import { readFastTrack } from './fast-track-preferences.js?v=df7e37f8';
-import './session-plan.js?v=df7e37f8';
+import './state.js?v=87a002f6';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=87a002f6';
+import { readFastTrack } from './fast-track-preferences.js?v=87a002f6';
+import './session-plan.js?v=87a002f6';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3032,6 +3032,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     let reviewHTML = '';
     let practiseMistakes = 0;
     let practiseTotal = 0;
+    let practiseDue = 0;
+    let practiseUpcoming = null;
     if (currentUser && !currentUser.isGuest) {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
         const globalTotal = Number(summary?.total) || 0;
@@ -3039,9 +3041,11 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         const dueCount = summary?.due?.length || 0;
         practiseMistakes = mistakes;
         practiseTotal = globalTotal;
+        practiseDue = dueCount;
         const srsOn = typeof spacedRepetitionEnabled === 'undefined' || spacedRepetitionEnabled !== false;
         const upcoming = plan?.summariseUpcoming?.(window.getUpcomingReviewTimes?.(selectedLanguage) || []) || null;
         const upcomingText = plan?.describeUpcoming?.(upcoming) || '';
+        practiseUpcoming = upcoming;
         const practiseCap = plan?.sessionCardLimit?.('practice') || QUICK_REVIEW_LIMIT;
         const practiseCount = Math.min(globalTotal, practiseCap);
         const row = (tone, label, count) => `<div class="home-practise-row is-${tone}">
@@ -3147,13 +3151,31 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         if (reviewBody) reviewBody.innerHTML = reviewHTML;
         reviewSection.hidden = !reviewHTML;
     }
+    // The folded section keeps a short version of itself: Learn its level,
+    // bar and counts; Practise its total and what makes it up.
     const learnMeta = document.getElementById('learnSectionMeta');
-    if (learnMeta) learnMeta.textContent = `${levelNumber > 0 ? `Level ${levelNumber}` : 'This level'} · ${levelNewCount.toLocaleString()} new`;
+    if (learnMeta) {
+        const wordsText = document.getElementById('homeLevelWords')?.textContent || '';
+        learnMeta.textContent = `${levelNumber > 0 ? `Level ${levelNumber}` : 'This level'}${wordsText ? ` · ${wordsText}` : ''}`;
+    }
+    const learnPeek = document.getElementById('learnSectionPeek');
+    if (learnPeek) {
+        learnPeek.innerHTML = `<span class="home-level-bar is-peek" aria-hidden="true">${barHTML}</span>
+            <span class="home-level-stats">${statsHTML}</span>`;
+    }
     const practiseMeta = document.getElementById('practiseSectionMeta');
     if (practiseMeta) {
-        practiseMeta.textContent = practiseTotal > 0
-            ? `${practiseTotal.toLocaleString()} waiting${practiseMistakes > 0 ? ` · ${practiseMistakes.toLocaleString()} ${practiseMistakes === 1 ? 'mistake' : 'mistakes'}` : ''}`
-            : 'All caught up';
+        practiseMeta.textContent = practiseTotal > 0 ? `${practiseTotal.toLocaleString()} waiting` : 'All caught up';
+    }
+    const practisePeek = document.getElementById('practiseSectionPeek');
+    if (practisePeek) {
+        const peekItem = (tone, text) => `<span class="home-peek-item is-${tone}"><i aria-hidden="true"></i>${text}</span>`;
+        practisePeek.innerHTML = [
+            practiseMistakes > 0 ? peekItem('mistake', `${practiseMistakes.toLocaleString()} ${practiseMistakes === 1 ? 'mistake' : 'mistakes'}`) : '',
+            practiseDue > 0 ? peekItem('due', `${practiseDue.toLocaleString()} due`) : '',
+            practiseUpcoming?.nextCount ? peekItem('upcoming', `${practiseUpcoming.nextCount.toLocaleString()} back ${practiseUpcoming.nextLabel}`) : ''
+        ].join('');
+        practisePeek.hidden = !practisePeek.innerHTML;
     }
     applyHomeSection(reviewHTML ? practiseMistakes : -1);
     document.getElementById('step4').style.display = 'block';
@@ -3531,7 +3553,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=df7e37f8')
+        import('./spotify.js?v=87a002f6')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

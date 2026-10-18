@@ -1,4 +1,4 @@
-import { songCreditHTML } from './song-credit.js?v=df7e37f8';
+import { songCreditHTML } from './song-credit.js?v=87a002f6';
 // The replica card: real demo entries and the markup that draws them.
 //
 // Two features show a flashcard without the app having loaded a deck, and they

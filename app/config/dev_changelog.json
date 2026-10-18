@@ -2,6 +2,51 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T00:10:00+01:00",
+      "date": "2026-10-19 00:10 BST",
+      "agent": "Claude",
+      "summary": "Home: the folded Learn or Practise card keeps a short version; desktop example words sit above the level bar",
+      "detail": [
+        "Phones and tablets: the closed card is no longer a single line. Folded Learn shows its level and words, the level bar and its counts; folded Practise shows the total and a line of mistakes, due and coming back. Tapping it opens it, and the button at the bottom follows whichever card is open.",
+        "Desktop: the level's example words moved from under the level number to the right-hand column, above the bar, which makes the Learn card shorter."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T23:50:00+01:00",
+      "date": "2026-10-18 23:50 BST",
+      "agent": "Claude",
+      "summary": "Function-word examples: only the parts the pattern names are coloured",
+      "detail": [
+        "Where a pattern was shortened (e.g. \"think + que\" no longer names the clause after it), that part of the example sentence is now plain text instead of keeping its colour.",
+        "Applies to 109 slots across the 115 Spanish and Portuguese patterns; the fix is in the generator template too, so re-syncing keeps it."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T23:30:00+01:00",
+      "date": "2026-10-18 23:30 BST",
+      "agent": "Claude",
+      "summary": "Function-word cards: active pattern marked by a part-of-speech bar on its left edge",
+      "detail": [
+        "Replaces the full coloured outline and tint: the active pattern now has a neutral lift and a 3px bar in its part-of-speech colour on the left.",
+        "The function word itself stays white in the patterns and the example, over its part-of-speech underline, even where the pattern writes its colour inline."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T23:10:00+01:00",
+      "date": "2026-10-18 23:10 BST",
+      "agent": "Claude",
+      "summary": "Black palette on startup, sign-in and end of session; function-word cards match ordinary cards",
+      "detail": [
+        "The loading screen, Welcome back, sign-in and the end-of-session card now use the black page and near-black cards. The end-of-session card is no longer tinted with the accent.",
+        "The rail down the left of a part of speech's sense rows is slightly thinner (1.5px) when the active sense is elsewhere.",
+        "Function-word cards: the active pattern has the same part-of-speech outline as an active sense row. The word itself stays white with a part-of-speech underline, in the patterns and in the example."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T22:35:00+01:00",
       "date": "2026-10-18 22:35 BST",
       "agent": "Claude",
@@ -321,55 +366,6 @@
         "Increased sense information trigger (.sense-note-trigger) from 14px (22x22px box) to 18px (28x28px box).",
         "Enlarged the POS pill on the sense section row (.pos-section-label) from 13px (24px height, 3px 9px padding) to 15px (28px height, 5px 12px padding).",
         "Enlarged the level scrubber thumb circle and number (.cbs-thumb) from 32px / 13px to 36px / 16px, and the 'Level x' label (.study-level-label) from 14px to 17px."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T21:46:00+01:00",
-      "date": "2026-10-17 21:46 BST",
-      "agent": "Antigravity",
-      "summary": "Move memory tip lightbulb to headword corner, rename Pin meaning(s), and add 5-tile compact fallback",
-      "detail": [
-        "Moved the memory tip trigger out of the bottom action row to an unboxed golden lightbulb at the top-right corner of the back headword (.headword-memory-tip-btn) so learner cards in ES/PT/CS/NL/FI never exceed 4 bottom buttons.",
-        "Renamed the bottom button label from \"Pin a meaning\" to \"Pin meaning(s)\" across live cards, tutorial steps, and card replicas.",
-        "Added a .links-section:has(> :nth-child(5)) compact layout and horizontal scroll fallback for the rare 5+ tile case (such as when Synonyms or the admin Dictionary button is present alongside Rare uses, Pin meaning(s), Conjugate, and Look up)."
-      ],
-      "commit": "c1a20268"
-    },
-    {
-      "timestamp": "2026-10-17T21:25:00+01:00",
-      "date": "2026-10-17 21:25 BST",
-      "agent": "Antigravity",
-      "summary": "Deduplicated sense note modals with consolidated sections, filtered row tags, and polished dialog styling",
-      "detail": [
-        "Changed modal eyebrow from \"Usage notes\" to \"Sense details\" to eliminate label repetition above \"Usage\" sections.",
-        "Filtered redundant raw context and gloss clauses under \"Original dictionary text\" that merely echoed previously rendered meaning and usage notes.",
-        "Consolidated matching sections across grouped card rows so duplicate \"Usage\" and \"Grammar\" headers are merged instead of stacked consecutively.",
-        "Enhanced modal overlay with animated scale/fade entrance, fallback border coloring, and dynamic inherit of the card's accent color."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T20:45:00+01:00",
-      "date": "2026-10-17 20:45 BST",
-      "agent": "Antigravity",
-      "summary": "Flick velocity grading, seamless swipe release trajectory, 2D damped follow, and deck-rise card entrance",
-      "detail": [
-        "Added horizontal flick velocity recognition (>= 0.45 px/ms past 22px) so quick thumb flicks commit and fire the 8ms haptic tick without needing a full 50px drag.",
-        "Preserved exact release coordinates (--swipe-from-x/y/rot) into the exit keyframes so swiped cards fly off smoothly from the finger lift point, while cancelled drags spring back via .swipe-rebound.",
-        "Added 16% damped vertical follow, grab-point tilt scaling, and a 200ms deck-rise entrance animation (.card-deck-enter) for incoming cards on both mobile and desktop."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T20:43:00+01:00",
-      "date": "2026-10-17 20:43 BST",
-      "agent": "Antigravity",
-      "summary": "Unboxed 22x22 pushpin icons with full-gutter touch targets and 2px sense-matched POS indent rail",
-      "detail": [
-        "Removed box border and background from .sense-pin-btn while increasing the pushpin SVG icon to 22x22 inside a 38x36px full-height gutter hit zone.",
-        "Changed .pos-collapsible.is-open .meaning-pos-rows vertical rail to 2px solid rgb(var(--sense-match-rgb)) and reduced its indent from 13px to 9px.",
-        "Widened .pct-column for pinned/pinning group rows and kept grouped sub-senses expanded while pinning mode is active."
       ],
       "commit": "pending"
     }
