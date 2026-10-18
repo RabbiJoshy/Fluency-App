@@ -420,8 +420,8 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
    the headline numbers scale with the window. */
 @media (min-width: 1024px) {
     /* JS sets display:block inline on these; override it unless hidden. */
-    #setupPanel.file-upload:not([style*="none"]),
-    body.desktop-workspace #setupPanel.file-upload:not([style*="none"]) {
+    #setupPanel.file-upload:not(.hidden):not([style*="none"]),
+    body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]) {
         display: flex !important;
         flex-direction: column;
         gap: 12px;
@@ -431,8 +431,8 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     }
     #setupPanel.file-upload { align-items: stretch; }
     #setupPanel .home-section { margin: 0; width: 100%; max-width: none; align-self: stretch; box-sizing: border-box; }
-    #setupPanel #step2:not([style*="none"]),
-    #setupPanel #reviewDeckSection:not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
+    #setupPanel #step2:not(.hidden):not([style*="none"]),
+    #setupPanel #reviewDeckSection:not(.hidden):not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
     #setupPanel .home-section > .step-header { padding: 16px 2vw 0; }
     #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(17px, 1.5vw, 24px); }
     #setupPanel .home-section-footer { margin-top: 0; padding: 12px 2vw; }
@@ -449,7 +449,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
         align-items: center;
     }
     #setupPanel #step2 #levelSelector { grid-column: 1; grid-row: 1; padding: 4px 0 14px; }
-    #setupPanel #step4:not([style*="none"]) { display: contents !important; }
+    #setupPanel #step4:not(.hidden):not([style*="none"]) { display: contents !important; }
     #setupPanel #step2 #rangeSelector { grid-column: 2; grid-row: 1; }
     #setupPanel #step2 .home-section-footer { grid-column: 1 / -1; grid-row: 2; }
     #setupPanel #step2 .home-level-progress { padding: 0 3vw 0 1vw; }
@@ -692,7 +692,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
 body.desktop-workspace #setupPanel[data-home-open] .home-section-toggle { display: none !important; }
 body.desktop-workspace #setupPanel[data-home-open] :is(#step2, #reviewDeckSection) > .step-header { display: flex !important; }
 body.desktop-workspace #setupPanel[data-home-open] #step2 > .level-choosing { display: grid !important; }
-body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not([style*="none"]) { display: flex !important; }
+body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):not([style*="none"]) { display: flex !important; }
 /* Both cards start their content at the top, so icons and titles line up
    even though Music's button is shorter (Spotify sits beneath it). */
 @media (min-width: 768px) {

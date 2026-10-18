@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T22:35:00+01:00",
+      "date": "2026-10-18 22:35 BST",
+      "agent": "Claude",
+      "summary": "Fix: on desktop the main menu stayed on top when starting a study session",
+      "detail": [
+        "The desktop home layout forced the setup panel to show with !important unless it had an inline display:none, which also beat the .hidden class the app adds when a session starts. The panel now steps aside for .hidden.",
+        "The same guard is on every other forced display rule in home-layout.css (Learn, Practise, the level body)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T22:15:00+01:00",
       "date": "2026-10-18 22:15 BST",
       "agent": "Claude",
@@ -359,18 +370,6 @@
         "Removed box border and background from .sense-pin-btn while increasing the pushpin SVG icon to 22x22 inside a 38x36px full-height gutter hit zone.",
         "Changed .pos-collapsible.is-open .meaning-pos-rows vertical rail to 2px solid rgb(var(--sense-match-rgb)) and reduced its indent from 13px to 9px.",
         "Widened .pct-column for pinned/pinning group rows and kept grouped sub-senses expanded while pinning mode is active."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T20:06:00+01:00",
-      "date": "2026-10-17 20:06 BST",
-      "agent": "Antigravity",
-      "summary": "Modernised card swipe feedback with progressive edge glow, frosted SVG badges, and threshold haptic tick",
-      "detail": [
-        "Replaced the 72px raw Unicode ✗ and ✓ characters with frosted circular SVG badges that scale progressively with finger drag and snap solid with a spring bounce at the 50px commit threshold.",
-        "Added continuous emerald (right) and warm coral (left) edge wash and specular rim lighting on the card surface during horizontal swipes.",
-        "Added an 8ms micro-haptic tick at the exact frame the swipe crosses the 50px grade threshold, with no competing sound effects."
       ],
       "commit": "pending"
     }
