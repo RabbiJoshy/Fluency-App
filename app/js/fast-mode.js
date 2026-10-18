@@ -597,6 +597,8 @@ function openFastModePage({ section } = {}) {
     markFastTrackPageSeen();
     if (!section) globalThis.resetSkippedCategory?.();
     closeSmartSkipSheets();
+    document.getElementById('smartSkipMore')?.classList.remove('is-expanded');
+    document.getElementById('smartSkipMoreOptions')?.setAttribute('aria-expanded', 'false');
     refresh();
     updateStreamlineLanguageExamples();
     globalThis.renderFastTrackSkippedDecks?.();
@@ -618,9 +620,12 @@ function closeFastModePage({ reopenSettings = true } = {}) {
 function init() {
     // A sheet is a phone arrangement; widening the window puts its content
     // back in place.
+    // The list also changes scroller (its own column on a wide screen, the page
+    // on a phone), so it is rebuilt to watch the right one.
     window.matchMedia('(max-width: 899px)').addEventListener('change', () => {
         closeSmartSkipSheets();
         refresh();
+        globalThis.renderSkippedWords?.(undefined, { force: true });
     });
     document.getElementById('smartSkipPageSwitch')?.addEventListener('click', () => {
         applyFastMode(currentState() !== 'on');
@@ -701,8 +706,18 @@ function init() {
             openSmartSkipSheet(detail, info);
         });
     });
-    document.getElementById('smartSkipMoreOptions')?.addEventListener('click', () => {
-        openSmartSkipSheet(document.getElementById('smartSkipMore'));
+    // More rules: on a wide screen it unfolds in place (folded each time the
+    // page opens, since they are optional); on a phone it opens as a sheet.
+    document.getElementById('smartSkipMoreOptions')?.addEventListener('click', event => {
+        const group = document.getElementById('smartSkipMore');
+        if (!group) return;
+        if (window.matchMedia('(min-width: 900px)').matches) {
+            const open = !group.classList.contains('is-expanded');
+            group.classList.toggle('is-expanded', open);
+            event.currentTarget.setAttribute('aria-expanded', String(open));
+            return;
+        }
+        openSmartSkipSheet(group);
     });
     document.querySelectorAll('#fastModeModal .smart-skip-sheet-done').forEach(done => {
         done.addEventListener('click', closeSmartSkipSheets);

@@ -639,13 +639,15 @@
   max-height: none !important;
 }
 
-/* 2. Full-Bleed Studio Canvas on ALL screen sizes (Mobile + Desktop) */
+/* 2. Full-Bleed Studio Canvas on ALL screen sizes (Mobile + Desktop). Its
+   height comes from inset: 0, never from 100dvh: the app zooms the page
+   (--ui-zoom), and inside a zoomed page 100dvh is not the window's height,
+   which left the page ending short of the bottom edge. */
 #fastModeModal.modal:not(.hidden) {
   position: fixed !important;
   inset: 0 !important;
   width: 100% !important;
-  height: 100% !important;
-  height: 100dvh !important;
+  height: auto !important;
   max-width: none !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -672,8 +674,9 @@
 #fastModeModal:not(.hidden) .fast-mode-page {
   width: 100% !important;
   max-width: none !important;
+  flex: 1 1 auto !important;
   height: 100% !important;
-  height: 100dvh !important;
+  min-height: 0 !important;
   max-height: none !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -723,7 +726,6 @@
   margin: 0 -16px 12px;
   padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
   background: var(--bg-primary, var(--bg-card));
-  border-bottom: 1px solid var(--border-color);
 }
 #fastModeModal .smart-skip-body .smart-skip-header-row > h2 {
   position: static;
@@ -975,6 +977,7 @@
   overflow: clip;
 }
 #fastModeModal .smart-skip-browser-controls {
+  position: static;
   display: grid;
   gap: 8px;
   padding: 10px 12px;
@@ -1071,46 +1074,54 @@
 #fastModeModal .smart-skip-panel .smart-skip-g { font-size: 14.5px; }
 #fastModeModal .smart-skip-panel .smart-skip-empty { padding: 22px 14px; border-top: 1px solid var(--border-color); }
 
-/* Wide screens: the page fills the window. The rules are a sidebar running
-   from under the header to the bottom edge; the list takes every column to its
-   right and at least the full height. The title is centred in the header. */
+/* Wide screens: the page fills the window. Below the header, two columns
+   fill the rest of the height and scroll on their own: the rules sidebar
+   (the one dividing line) and the word list. More rules stays folded until
+   asked for. Type is larger than on a phone: there is room for it. */
 @media (min-width: 900px) {
-  #fastModeModal { --ss-head-h: 64px; --ss-side-w: clamp(280px, 25vw, 340px); }
+  #fastModeModal { --ss-side-w: clamp(320px, 28vw, 400px); }
   #fastModeModal .smart-skip-body {
     display: grid;
     grid-template-columns: var(--ss-side-w) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
     gap: 0;
-    align-items: start;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
     max-width: none;
-    min-height: 100%;
     padding: 0;
+    overflow: hidden;
   }
   #fastModeModal .smart-skip-body .smart-skip-header-row {
     grid-column: 1 / -1;
+    grid-row: 1;
+    position: relative;
     box-sizing: border-box;
-    height: var(--ss-head-h);
+    height: 68px;
     margin: 0;
-    padding: 0 24px;
+    padding: 0 28px;
   }
   #fastModeModal .smart-skip-body .smart-skip-header-row > h2 {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 22px;
+    font-size: 24px;
     white-space: nowrap;
   }
-  #fastModeModal .smart-skip-summary { flex: 1; text-align: right; font-size: 14px; }
+  #fastModeModal .smart-skip-summary { flex: 1; text-align: right; font-size: 15px; }
+  #fastModeModal .smart-skip-master-state { font-size: 14px; }
   #fastModeModal .smart-skip-body > .smart-skip-shortcuts {
     grid-column: 1;
-    grid-row: 2 / span 2;
-    position: sticky;
-    top: var(--ss-head-h);
+    grid-row: 2;
+    position: static;
+    align-self: stretch;
     box-sizing: border-box;
-    height: calc(100dvh - var(--ss-head-h));
+    height: auto;
+    min-height: 0;
     max-height: none;
     overflow-y: auto;
-    padding: 20px 18px 32px;
+    padding: 8px 22px 32px;
     border: 0;
     border-right: 1px solid var(--border-color);
     border-radius: 0;
@@ -1119,44 +1130,66 @@
   #fastModeModal .smart-skip-body > .smart-skip-words {
     grid-column: 2;
     grid-row: 2;
+    align-self: stretch;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     box-sizing: border-box;
-    min-height: calc(100dvh - var(--ss-head-h));
-    margin: 0;
-    padding: 20px 24px 24px;
     min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    margin: 0;
+    padding: 8px 28px 28px;
   }
-  #fastModeModal .smart-skip-body > .smart-skip-words > .smart-skip-panel { flex: 1; }
-  #fastModeModal .smart-skip-body > .fast-mode-admin-details { grid-column: 2; grid-row: 3; margin: 0 24px 24px; }
+  #fastModeModal .smart-skip-body > .smart-skip-words > .smart-skip-panel { flex: 1 0 auto; }
+  #fastModeModal .smart-skip-body > .fast-mode-admin-details { grid-column: 1 / -1; grid-row: 3; margin: 0 28px 16px; }
 
   /* Each main rule is its own card with its description under the title. */
   #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut {
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 14px;
     background: var(--bg-card);
-    padding: 12px 14px 14px;
+    padding: 16px 18px 18px;
   }
-  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut + .smart-skip-shortcut { margin-top: 10px; border-top: 1px solid var(--border-color); }
-  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-row { min-height: 0; padding: 0; }
-  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-detail { display: grid; gap: 10px; padding: 6px 0 0; }
-  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .fast-mode-none { padding: 6px 0 0; }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut + .smart-skip-shortcut { margin-top: 12px; border-top: 1px solid var(--border-color); }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-row { min-height: 0; padding: 0; gap: 10px; }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-detail { display: grid; gap: 12px; padding: 8px 0 0; }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .fast-mode-none { padding: 8px 0 0; }
   #fastModeModal .smart-skip-info,
   #fastModeModal .smart-skip-sheet-title,
   #fastModeModal .smart-skip-sheet-done,
   #fastModeModal .smart-skip-sheet-backdrop,
-  #fastModeModal .smart-skip-shortcuts > .smart-skip-more-options { display: none; }
-  #fastModeModal .smart-skip-shortcut-name { font-size: 15px; }
+  #fastModeModal .smart-skip-more-title { display: none; }
+  #fastModeModal .smart-skip-shortcut-name { font-size: 17px; }
+  #fastModeModal .smart-skip-shortcut-count,
+  #fastModeModal .smart-skip-shortcut-count:not(:empty) { font-size: 14px; }
+  #fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer { font-size: 15px; line-height: 1.55; }
+  #fastModeModal .known-languages-bar-title { font-size: 13px; }
+  #fastModeModal .known-language-chip,
+  #fastModeModal .known-language-add-btn { min-height: 34px; padding: 0 13px; font-size: 14px; }
+  #fastModeModal .smart-skip-switch { width: 44px; height: 26px; }
+  #fastModeModal .smart-skip-switch::after { width: 20px; height: 20px; }
+  #fastModeModal .smart-skip-switch[aria-checked="true"]::after { transform: translateX(18px); }
 
-  /* More rules: listed in place under a small heading, no card. */
-  #fastModeModal .smart-skip-more-rules:not([hidden]) { display: block; margin-top: 18px; padding: 0 14px; }
-  #fastModeModal .smart-skip-more-title { margin: 0 0 4px; color: var(--text-muted); font: 600 12.5px/1 var(--font-reading); }
+  /* More rules: a quiet disclosure row; the rules open in place under it. */
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-more-options {
+    margin-top: 14px;
+    min-height: 44px;
+    padding: 0 4px;
+    border: 0;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-more-options:hover { color: var(--text-primary); }
+  #fastModeModal .smart-skip-more-options svg { transition: transform 0.15s ease; }
+  #fastModeModal .smart-skip-more-options[aria-expanded="true"] svg { transform: rotate(90deg); }
+  #fastModeModal .smart-skip-more-rules:not([hidden]) { display: none; }
+  #fastModeModal .smart-skip-more-rules.is-expanded:not([hidden]) { display: block; padding: 0 4px; }
   #fastModeModal .smart-skip-more-rules > .smart-skip-shortcut + .smart-skip-shortcut { border-top: 0; }
-  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row { min-height: 38px; }
-  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-name { font-size: 14px; font-weight: 500; }
-  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail { padding: 0 0 6px; }
-  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail .fast-mode-explainer { font-size: 12.5px; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row { min-height: 42px; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-name { font-size: 15.5px; font-weight: 500; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail { padding: 0 0 10px; margin-top: -2px; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail .fast-mode-explainer { font-size: 14px; }
 
   /* Narrower desktops (nav open, or a small laptop): a slimmer rules column
      and tighter Type and Rank columns, so words are not cut short. */
@@ -1166,11 +1199,23 @@
 
   /* Larger list type on a wide screen. */
   #fastModeModal .smart-skip-lang-btn { display: inline-flex; justify-self: start; }
-  #fastModeModal .smart-skip-lang-btn button { flex: none; }
-  #fastModeModal .smart-skip-browser-controls { padding: 12px 14px; }
-  #fastModeModal .smart-skip-panel .smart-skip-head { height: 34px; font-size: 12.5px; }
-  #fastModeModal .smart-skip-panel .smart-skip-row { min-height: 46px; }
-  #fastModeModal .smart-skip-panel .smart-skip-w { font-size: 16px; }
-  #fastModeModal .smart-skip-panel .smart-skip-g { font-size: 15px; }
-  #fastModeModal .smart-skip-panel .smart-skip-rank { font-size: 13px; }
+  #fastModeModal .smart-skip-lang-btn button { flex: none; min-height: 34px; padding: 0 14px; font-size: 14px; }
+  /* The chips stay in view at the top of the list column as it scrolls. */
+  #fastModeModal .smart-skip-browser-controls {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--bg-card);
+  }
+  #fastModeModal .smart-skip-cat { min-height: 36px; padding: 0 14px; font-size: 14px; }
+  #fastModeModal .smart-skip-panel .smart-skip-head { height: 38px; padding: 0 16px; font-size: 13.5px; }
+  #fastModeModal .smart-skip-panel .smart-skip-row { min-height: 52px; padding: 0 16px; }
+  #fastModeModal .smart-skip-panel .smart-skip-w { font-size: 17.5px; }
+  #fastModeModal .smart-skip-panel .smart-skip-g { font-size: 16.5px; }
+  #fastModeModal .smart-skip-panel .smart-skip-rank,
+  #fastModeModal .smart-skip-panel .smart-skip-tag,
+  #fastModeModal .smart-skip-panel .smart-skip-nforms { font-size: 14px; }
+  #fastModeModal .smart-skip-panel .smart-skip-forms { font-size: 15px; }
 }

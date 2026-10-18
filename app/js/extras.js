@@ -940,7 +940,10 @@ function smartSkipLevelHtml(level, index) {
     </li>`;
 }
 
+// What scrolls the list: its own column on a wide screen, the page on a phone.
 function smartSkipScroller() {
+    const words = document.querySelector('#fastModeModal .smart-skip-words');
+    if (words && getComputedStyle(words).overflowY === 'auto') return words;
     return document.querySelector('#fastModeModal > .modal-content');
 }
 

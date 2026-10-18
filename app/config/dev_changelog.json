@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T17:40:00+01:00",
+      "date": "2026-10-18 17:40 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip desktop: sidebar reaches the bottom, More rules folded, larger text, no header line",
+      "detail": [
+        "The page is sized from the window edges instead of 100dvh, which the app's page zoom shrank (at 0.9 zoom the page ended 90px short of the bottom).",
+        "Desktop: the rules sidebar and the word list each fill the height below the header and scroll on their own; the chips stay at the top of the list.",
+        "Desktop: More rules is folded behind one row by default and unfolds in place.",
+        "Desktop: wider sidebar (up to 400px) and larger text throughout the rules and the list.",
+        "Removed the hairline under the header; the sidebar's divider stays."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T17:04:00+01:00",
       "date": "2026-10-18 17:04 BST",
       "agent": "Claude",
@@ -356,18 +370,6 @@
         "Replaced artificial hold plateau and dead-zone calculation in card-position seek bar with direct, proportional rail positioning.",
         "Set deck scrubber active state during card-position seek bar drag to prevent smooth-scroll fighting.",
         "Prevented level ruler scrubber from executing premature level commits and programmatic centering while pointer drags are in progress."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-16T16:58:00+01:00",
-      "date": "2026-10-16 16:58 BST",
-      "agent": "Antigravity",
-      "summary": "Fix practice session loading and prevent multi-meaning cards from showing all senses greyed out",
-      "detail": [
-        "Include related and knowledge-level review need in buildKnowledgeAwareCard so practice sessions retain due cards instead of dropping them and aborting.",
-        "Clear known sense flags when all senses on a card are learned and none are explicitly marked for practice, presenting the card whole rather than greying out every sense.",
-        "Add safeguards in updateCard and meaningTierClass to prevent fully learned cards from displaying as part-known cards."
       ],
       "commit": "pending"
     }

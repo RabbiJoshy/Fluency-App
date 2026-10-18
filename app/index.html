@@ -1588,9 +1588,9 @@
                             <button class="lemma-toggle-btn" data-lemma="on">On</button>
                         </div>
                     </div>
-                    <!-- Phones: one row that opens the optional rules as a sheet.
-                         Wide screens list them in place and hide this row. -->
-                    <button type="button" id="smartSkipMoreOptions" class="smart-skip-more-options" aria-haspopup="dialog" hidden>
+                    <!-- The optional rules, folded behind one row: a sheet on a phone,
+                         unfolding in place on a wide screen. -->
+                    <button type="button" id="smartSkipMoreOptions" class="smart-skip-more-options" aria-controls="smartSkipMore" aria-expanded="false" hidden>
                         <span>More rules</span>
                         <span class="smart-skip-more-state" id="smartSkipMoreState"></span>
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
