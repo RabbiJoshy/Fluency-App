@@ -188,39 +188,106 @@ button.ghost { background: none; color: var(--ink-2); }
 
 .card {
   background: var(--surface); border: 1px solid var(--line);
-  border-radius: 16px; padding: 30px 24px; text-align: center;
-  min-height: 320px; display: flex; flex-direction: column;
-  justify-content: center; gap: 10px; cursor: pointer;
+  border-radius: 20px; padding: 34px 24px; text-align: center;
+  min-height: 360px; display: flex; flex-direction: column;
+  justify-content: center; gap: 16px; cursor: pointer;
   -webkit-user-select: none; user-select: none; touch-action: pan-y;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
-.card-tense { font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
-.card-verb {
-  font-family: var(--font-emphasis);
-  font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15;
+.card:hover {
+  border-color: var(--border-light, var(--ink-3));
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.18);
 }
-.card-translation { display: block; font-size: 14px; font-weight: 400; color: var(--ink-3); margin-top: 4px; }
-/* The clue line. Sits with the tense as card metadata, above the question
-   itself, so it reads as a condition on the prompt rather than part of it. */
+
+.card-header {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+
+/* ── Tense badge: prominent, structured, high-legibility ── */
+.card-tense {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 8px 20px; border-radius: 999px;
+  background: var(--surface-2); border: 1px solid var(--line);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.card-tense-mood {
+  font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-2);
+}
+.card-tense-sep {
+  color: var(--ink-3); opacity: 0.5; font-size: 14px;
+}
+.card-tense-name {
+  font-family: var(--font-emphasis); font-size: 17px; font-weight: 700;
+  color: var(--ink); letter-spacing: -0.01em;
+}
+
+/* Mood-specific accents */
+.card-tense[data-mood*="subj"] {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: linear-gradient(180deg, var(--surface-2), rgba(167, 139, 250, 0.12));
+}
+.card-tense[data-mood*="subj"] .card-tense-mood { color: #c084fc; }
+
+.card-tense[data-mood*="imp"] {
+  border-color: rgba(245, 166, 35, 0.45);
+  background: linear-gradient(180deg, var(--surface-2), rgba(245, 166, 35, 0.12));
+}
+.card-tense[data-mood*="imp"] .card-tense-mood { color: var(--accent-amber); }
+
+/* The clue line. Sits with the tense as card metadata */
 .card-clue {
   font-family: var(--font-data);
-  font-size: 12px; letter-spacing: .04em;
+  font-size: 12.5px; letter-spacing: .03em;
   color: var(--clue-colour, var(--ink-3));
+  padding: 4px 12px; border-radius: 8px;
+  background: var(--surface-2); border: 1px solid var(--line);
+  display: inline-block; margin: 0 auto;
 }
-.card-verb.is-clued #card-headword { color: var(--clue-colour, inherit); }
 
-.card-person {
-  font-size: 15px; font-weight: 600; color: var(--ink-2);
-  letter-spacing: .01em;
+/* ── Prompt section: Subject & Verb ── */
+.card-prompt {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  margin: 4px 0;
 }
-.card-answer { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 18px; }
+.card-subject-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.card-subject-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.card-person {
+  font-family: var(--font-emphasis);
+  font-size: 28px; font-weight: 700; color: var(--ink);
+  letter-spacing: -0.02em; line-height: 1.2;
+}
+
+.card-verb {
+  font-family: var(--font-emphasis);
+  font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
+}
+.card-verb #card-headword { color: var(--ink); }
+.card-verb.is-clued #card-headword { color: var(--clue-colour, inherit); }
+.card-translation {
+  display: block; font-family: var(--font-reading);
+  font-size: 15px; font-weight: 400; color: var(--ink-2); margin-top: 4px;
+}
+
+/* ── Answer section ── */
+.card-answer {
+  border-top: 1px solid var(--line); margin-top: 10px; padding-top: 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
 .card-form {
   font-family: var(--font-emphasis);
-  font-size: 34px; font-weight: 650; letter-spacing: -0.02em;
+  font-size: 40px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
 }
 /* The ending is the lesson. Colouring it by form type is the whole point of
    the card, so it carries the type colour while the stem stays plain. */
 .form-ending { color: var(--ending-colour, inherit); }
-.card-form .form-stem { opacity: .62; font-weight: 600; }
+.card-form .form-stem { opacity: .88; font-weight: 600; }
 .card-chips { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
 .chip-action {
   font-family: inherit; border: 1px solid var(--line); cursor: pointer;
@@ -303,15 +370,18 @@ code {
   .drill-wrap { max-width: 800px; }
   .tables-wrap { max-width: 960px; }
   .card {
-    min-height: 420px;
-    padding: 42px 32px;
-    gap: 14px;
+    min-height: 440px;
+    padding: 46px 36px;
+    gap: 22px;
   }
-  .card-tense { font-size: 14px; }
-  .card-verb { font-size: 42px; }
-  .card-person { font-size: 20px; }
-  .card-form { font-size: 48px; }
-  .card-translation { font-size: 16px; }
+  .card-tense { padding: 10px 24px; gap: 12px; }
+  .card-tense-mood { font-size: 14px; }
+  .card-tense-name { font-size: 20px; }
+  .card-subject-label { font-size: 12px; }
+  .card-person { font-size: 34px; }
+  .card-verb { font-size: 44px; }
+  .card-translation { font-size: 17px; }
+  .card-form { font-size: 52px; }
   .paradigm h3 { font-size: 26px; }
   .ptable { font-size: 16px; }
   .ptable th { font-size: 14px; }

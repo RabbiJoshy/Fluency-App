@@ -969,7 +969,19 @@
     var card = queue[position];
     var meaning = card.verb.t || '';
 
-    $('card-tense').textContent = tenseLabel(card.tense);
+    var tenseNode = $('card-tense');
+    tenseNode.innerHTML = '';
+    if (card.tense.mood && card.tense.tense) {
+      var moodSpan = el('span', 'card-tense-mood', card.tense.mood);
+      var sepSpan = el('span', 'card-tense-sep', '·');
+      var tenseSpan = el('span', 'card-tense-name', card.tense.tense);
+      tenseNode.appendChild(moodSpan);
+      tenseNode.appendChild(sepSpan);
+      tenseNode.appendChild(tenseSpan);
+      tenseNode.dataset.mood = (card.tense.mood || '').toLowerCase();
+    } else {
+      tenseNode.textContent = tenseLabel(card.tense);
+    }
 
     var clue = $('card-clue');
     var verbNode = document.querySelector('.card-verb');
