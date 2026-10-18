@@ -290,7 +290,59 @@ class AllPatternsAssignmentTests(unittest.TestCase):
         res = assign(row, obs)
         self.assertEqual(res['status'], 'abstain')  # indirect question ("whether") abstains from conditional "if"
 
+    def test_en_la_necesidad_abstract_noun_abstains(self):
+        sentence = "Señor, ayúdanos siempre en la necesidad."
+        words = [
+            mock_token(1, "Señor", "NOUN", 3, "vocative", 0, 5, lemma="señor"),
+            mock_token(2, ",", "PUNCT", 1, "punct", 5, 6, lemma=","),
+            mock_token(3, "ayúdanos", "VERB", 0, "root", 7, 15, lemma="ayudar"),
+            mock_token(4, "siempre", "ADV", 3, "advmod", 16, 23, lemma="siempre"),
+            mock_token(5, "en", "ADP", 7, "case", 24, 26, lemma="en"),
+            mock_token(6, "la", "DET", 7, "det", 27, 29, lemma="el"),
+            mock_token(7, "necesidad", "NOUN", 3, "obl", 30, 39, lemma="necesidad"),
+            mock_token(8, ".", "PUNCT", 3, "punct", 39, 40, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[24, 26]]}
+        row = {'language': 'es', 'word': 'en', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')  # abstract state noun abstains from locative "en"
+
+    def test_como_e_suposto_interrogative_abstains(self):
+        sentence = "Como é suposto abateres um dos empréstimos?"
+        words = [
+            mock_token(1, "Como", "ADV", 3, "advmod", 0, 4, lemma="como"),
+            mock_token(2, "é", "AUX", 3, "cop", 5, 6, lemma="ser"),
+            mock_token(3, "suposto", "ADJ", 0, "root", 7, 14, lemma="supor"),
+            mock_token(4, "abateres", "VERB", 3, "csubj", 15, 23, lemma="abater"),
+            mock_token(5, "um", "NUM", 4, "obj", 24, 26, lemma="um"),
+            mock_token(6, "dos", "ADP", 7, "case", 27, 30, lemma="de"),
+            mock_token(7, "empréstimos", "NOUN", 5, "nmod", 31, 42, lemma="empréstimo"),
+            mock_token(8, "?", "PUNCT", 3, "punct", 42, 43, lemma="?")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[0, 4]]}
+        row = {'language': 'pt', 'word': 'como', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'abstain')  # interrogative "how" abstains from comparative "como"
+
+    def test_como_comparative_with_preceding_verb(self):
+        sentence = "Ele canta como um pássaro."
+        words = [
+            mock_token(1, "Ele", "PRON", 2, "nsubj", 0, 3, lemma="ele"),
+            mock_token(2, "canta", "VERB", 0, "root", 4, 9, lemma="cantar"),
+            mock_token(3, "como", "ADP", 5, "case", 10, 14, lemma="como"),
+            mock_token(4, "um", "DET", 5, "det", 15, 17, lemma="um"),
+            mock_token(5, "pássaro", "NOUN", 2, "obl", 18, 25, lemma="pássaro"),
+            mock_token(6, ".", "PUNCT", 2, "punct", 25, 26, lemma=".")
+        ]
+        obs = {'parser': 'mock', 'sentences': [words], 'spans': [[10, 14]]}
+        row = {'language': 'pt', 'word': 'como', 'sentence': sentence}
+        res = assign(row, obs)
+        self.assertEqual(res['status'], 'candidate')
+        self.assertEqual(res['pattern'], 0)
+        self.assertEqual(res['pattern_id'], 'pt:como:0')
+
 if __name__ == '__main__':
     unittest.main()
+
 
 

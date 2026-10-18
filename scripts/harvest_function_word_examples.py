@@ -221,7 +221,7 @@ def get_pattern_pos(lang: str, word: str, idx: int, tag: str = "", formula: str 
     # Conjunctions
     if word in {'pero', 'mas', 'porque', 'cuando', 'quando', 'y', 'e', 'si'}:
         return 'conj'
-    if word == 'se' and idx == 0:
+    if lang == 'pt' and word == 'se' and idx == 0:
         return 'conj'
     if word == 'que' and idx in {0, 2}:
         return 'conj'
@@ -245,7 +245,7 @@ def get_pattern_pos(lang: str, word: str, idx: int, tag: str = "", formula: str 
         return 'pron'
     if word == 'nos' and idx == 0:
         return 'pron'
-    if word == 'se' and idx == 1:
+    if word == 'se' and (lang == 'es' or idx == 1):
         return 'pron'
     if word == 'que' and idx == 1:
         return 'pron'  # relative pronoun
@@ -345,13 +345,17 @@ def main():
                     }
                 })
 
-    # Evaluate pattern coverage honestly: separate fresh verified matches from fallbacks
+    # Evaluate pattern coverage per deck and overall
     final_pattern_status = {}
     shortages = []
+    speech_deck_shortages = []
+    artist_deck_shortages = []
 
     PILOT_WORDS = {'naquele', 'que', 'de', 'se', 'nos', 'o', 'al', 'el', 'la', 'los', 'lo', 'un'}
 
     patterns_with_ge_3_fresh = 0
+    speech_deck_patterns_full = 0
+    artist_deck_patterns_full = 0
 
     for pid, pinfo in all_patterns.items():
         lang = pinfo["lang"]
@@ -363,6 +367,59 @@ def main():
         speech_matches = [ex for ex in fresh if ex.get("channel") == "speech"]
         artist_matches = [ex for ex in fresh if ex.get("channel") == "artist"]
 
+        # 1. Speech Deck Generation (target: 3 distinct speech examples)
+        speech_deck_examples = []
+        speech_ids = set()
+        for ex in speech_matches:
+            ident = example_identity(ex["sentence"])
+            if ident not in speech_ids:
+                speech_ids.add(ident)
+                speech_deck_examples.append(ex)
+                if len(speech_deck_examples) >= 3:
+                    break
+
+        has_speech_deck_full = len(speech_deck_examples) >= 3
+        if has_speech_deck_full:
+            speech_deck_patterns_full += 1
+            speech_shortage = 0
+        else:
+            speech_shortage = 3 - len(speech_deck_examples)
+            speech_deck_shortages.append({
+                "pattern_id": pid,
+                "tag": pinfo["tag"],
+                "formula": pinfo["formulaHTML"],
+                "matches_found": len(speech_deck_examples),
+                "shortage": speech_shortage,
+                "reason": "Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria."
+            })
+
+        # 2. Artist Deck Generation (target: 3 distinct artist examples)
+        artist_deck_examples = []
+        artist_ids = set()
+        for ex in artist_matches:
+            ident = example_identity(ex["sentence"])
+            if ident not in artist_ids:
+                artist_ids.add(ident)
+                artist_deck_examples.append(ex)
+                if len(artist_deck_examples) >= 3:
+                    break
+
+        has_artist_deck_full = len(artist_deck_examples) >= 3
+        if has_artist_deck_full:
+            artist_deck_patterns_full += 1
+            artist_shortage = 0
+        else:
+            artist_shortage = 3 - len(artist_deck_examples)
+            artist_deck_shortages.append({
+                "pattern_id": pid,
+                "tag": pinfo["tag"],
+                "formula": pinfo["formulaHTML"],
+                "matches_found": len(artist_deck_examples),
+                "shortage": artist_shortage,
+                "reason": "Corpus scarcity in artist lyrics material or strict grammatical licensing criteria."
+            })
+
+        # 3. Overall Cross-Deck Match Status
         has_ge_3_fresh = len(fresh) >= 3
         if has_ge_3_fresh:
             patterns_with_ge_3_fresh += 1
@@ -410,8 +467,8 @@ def main():
                         if len(combined) >= 3:
                             break
         else:
-            # Fresh verified matches from source material
-            for ex in fresh:
+            # Prefer speech deck examples first, then artist deck examples
+            for ex in speech_deck_examples + artist_deck_examples:
                 ident = example_identity(ex["sentence"])
                 if ident not in comb_identities:
                     comb_identities.add(ident)
@@ -438,6 +495,10 @@ def main():
             "fresh_matches_count": len(fresh),
             "speech_matches_count": len(speech_matches),
             "artist_matches_count": len(artist_matches),
+            "speech_deck_examples": speech_deck_examples,
+            "artist_deck_examples": artist_deck_examples,
+            "speech_shortage": speech_shortage,
+            "artist_shortage": artist_shortage,
             "is_shortage": is_shortage,
             "shortage_count": shortage_count if is_shortage else 0,
             "examples": combined
@@ -446,8 +507,12 @@ def main():
     # Print summary
     print("\n================ PATTERN COVERAGE & SHORTAGE AUDIT ================")
     print(f"Total patterns audited: {len(all_patterns)} (51 ES, 64 PT)")
-    print(f"Patterns with >= 3 fresh verified examples: {patterns_with_ge_3_fresh} / {len(all_patterns)} ({patterns_with_ge_3_fresh/len(all_patterns)*100:.1f}%)")
-    print(f"Patterns with reported shortages (< 3 fresh matches): {len(shortages)} / {len(all_patterns)}")
+    print(f"Speech Deck full patterns (>= 3 speech matches): {speech_deck_patterns_full} / {len(all_patterns)} ({speech_deck_patterns_full/len(all_patterns)*100:.1f}%)")
+    print(f"Speech Deck shortages: {len(speech_deck_shortages)} / {len(all_patterns)}")
+    print(f"Artist Deck full patterns (>= 3 artist matches): {artist_deck_patterns_full} / {len(all_patterns)} ({artist_deck_patterns_full/len(all_patterns)*100:.1f}%)")
+    print(f"Artist Deck shortages: {len(artist_deck_shortages)} / {len(all_patterns)}")
+    print(f"Cross-deck unified patterns (>= 3 fresh matches): {patterns_with_ge_3_fresh} / {len(all_patterns)} ({patterns_with_ge_3_fresh/len(all_patterns)*100:.1f}%)")
+    print(f"Cross-deck reported shortages (< 3 fresh matches): {len(shortages)} / {len(all_patterns)}")
 
     # Write Shortage & Coverage Report
     report_lines = [
@@ -457,30 +522,53 @@ def main():
         f"**Matcher Version:** `{VERSION}`  ",
         f"**Total Patterns Audited:** {len(all_patterns)} (51 Spanish, 64 Portuguese)  ",
         f"**Pilot Patterns (Vetted & Traceable):** 24 patterns (12 words)  ",
-        f"**Patterns with >= 3 Fresh Verified Examples:** {patterns_with_ge_3_fresh}  ",
-        f"**Patterns with Reported Shortages (< 3 fresh examples):** {len(shortages)}  ",
         "",
-        "## Shortage Inventory",
+        "## Executive Summary",
         "",
-        "The following patterns have fewer than 3 verified fresh matches in the source speech and artist corpora.",
-        "To ensure card rendering and flip-cycling remain operational in the app, existing placeholder examples",
-        "are retained as secondary fallbacks (`is_legacy_fallback: true`), while the shortages are documented below.",
+        f"- **Speech Deck Coverage:** {speech_deck_patterns_full} / {len(all_patterns)} patterns with $\\ge 3$ distinct verified speech examples ({len(speech_deck_shortages)} shortages).",
+        f"- **Artist Deck Coverage:** {artist_deck_patterns_full} / {len(all_patterns)} patterns with $\\ge 3$ distinct verified artist examples ({len(artist_deck_shortages)} shortages).",
+        f"- **Cross-Deck Unified Coverage:** {patterns_with_ge_3_fresh} / {len(all_patterns)} patterns with $\\ge 3$ fresh verified examples ({len(shortages)} shortages).",
         "",
-        "| Pattern ID | Tag | Formula | Fresh Found | Shortage | Speech Matches | Artist Matches | Reason |",
-        "|---|---|---|---|---|---|---|---|"
+        "## Speech Deck Shortages",
+        "",
+        "Patterns with fewer than 3 verified speech matches from dialogue/subtitles:",
+        "",
+        "| Pattern ID | Tag | Formula | Matches Found | Shortage | Reason |",
+        "|---|---|---|---|---|---|"
     ]
-    if not shortages:
-        report_lines.append("| None | — | — | — | — | — | — | All patterns have at least 3 distinct confident examples. |")
-    else:
-        for s in shortages:
-            clean_form = re.sub(r"<[^>]+>", "", s["formula"] or "")
-            report_lines.append(f"| `{s['pattern_id']}` | {s['tag']} | `{clean_form}` | {s['fresh_matches_found']} | -{s['shortage_count']} | {s['speech_matches']} | {s['artist_matches']} | {s['reason']} |")
+    for s in speech_deck_shortages:
+        clean_form = re.sub(r"<[^>]+>", "", s["formula"] or "")
+        report_lines.append(f"| `{s['pattern_id']}` | {s['tag']} | `{clean_form}` | {s['matches_found']} | -{s['shortage']} | {s['reason']} |")
+
+    report_lines.extend([
+        "",
+        "## Artist Deck Shortages",
+        "",
+        "Patterns with fewer than 3 verified artist matches from lyrics:",
+        "",
+        "| Pattern ID | Tag | Formula | Matches Found | Shortage | Reason |",
+        "|---|---|---|---|---|---|"
+    ])
+    for s in artist_deck_shortages:
+        clean_form = re.sub(r"<[^>]+>", "", s["formula"] or "")
+        report_lines.append(f"| `{s['pattern_id']}` | {s['tag']} | `{clean_form}` | {s['matches_found']} | -{s['shortage']} | {s['reason']} |")
+
+    report_lines.extend([
+        "",
+        "## Cross-Deck Unified Shortage Inventory",
+        "",
+        "| Pattern ID | Tag | Formula | Fresh Found | Shortage | Speech | Artist | Reason |",
+        "|---|---|---|---|---|---|---|---|"
+    ])
+    for s in shortages:
+        clean_form = re.sub(r"<[^>]+>", "", s["formula"] or "")
+        report_lines.append(f"| `{s['pattern_id']}` | {s['tag']} | `{clean_form}` | {s['fresh_matches_found']} | -{s['shortage_count']} | {s['speech_matches']} | {s['artist_matches']} | {s['reason']} |")
 
     report_lines.extend([
         "",
         "## Complete Pattern Breakdown",
         "",
-        "| Pattern ID | Tag | Total Examples | Fresh Matches | Speech | Artist | Status |",
+        "| Pattern ID | Tag | Total Assigned | Fresh Total | Speech Deck | Artist Deck | Unified Status |",
         "|---|---|---|---|---|---|---|"
     ])
     for pid in sorted(all_patterns.keys()):
@@ -498,10 +586,22 @@ def main():
     cov_path.write_text(json.dumps({
         "matcher_version": VERSION,
         "total_patterns": len(all_patterns),
-        "patterns_ge_3_fresh": patterns_with_ge_3_fresh,
-        "shortage_count": len(shortages),
-        "shortages": shortages,
-        "patterns": {pid: {k: v for k, v in stat.items() if k != "examples"} for pid, stat in final_pattern_status.items()}
+        "speech_deck": {
+            "patterns_ge_3": speech_deck_patterns_full,
+            "shortage_count": len(speech_deck_shortages),
+            "shortages": speech_deck_shortages
+        },
+        "artist_deck": {
+            "patterns_ge_3": artist_deck_patterns_full,
+            "shortage_count": len(artist_deck_shortages),
+            "shortages": artist_deck_shortages
+        },
+        "unified": {
+            "patterns_ge_3_fresh": patterns_with_ge_3_fresh,
+            "shortage_count": len(shortages),
+            "shortages": shortages
+        },
+        "patterns": {pid: {k: v for k, v in stat.items() if not k.endswith("_examples") and k != "examples"} for pid, stat in final_pattern_status.items()}
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     if args.apply:
@@ -512,6 +612,8 @@ def main():
             suite = es_suite if lang == "es" else pt_suite
             rel = suite[w]["relations"][idx]
             rel["pos"] = get_pattern_pos(lang, w, idx, rel.get("tag", ""), rel.get("formulaHTML", ""))
+            rel["speech_examples"] = stat["speech_deck_examples"]
+            rel["artist_examples"] = stat["artist_deck_examples"]
             rel["examples"] = stat["examples"]
             if stat["examples"] and w not in PILOT_WORDS:
                 rel["targetHTML"] = stat["examples"][0]["targetHTML"]

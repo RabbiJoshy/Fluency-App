@@ -108,7 +108,7 @@ function fwSlotHTML(html, relation) {{
     if (relation?.pos) {{
         const pos = relation.pos;
         const rgb = fwPresentation.posRgb?.(pos);
-        const connectorStyle = rgb ? ` style="--sense-match-rgb: ${{rgb}}; --fw-pos-rgb: ${{rgb}}; color: rgb(${{rgb}});"` : '';
+        const connectorStyle = rgb ? ` style="--sense-match-rgb: ${{rgb}}; --fw-pos-rgb: ${{rgb}};"` : '';
         out = out.replace(/<span class=['"]fw-token-connector['"]>/g, `<span class="fw-token-connector" data-pos="${{esc(pos)}}"${{connectorStyle}}>`);
     }}
     return out;

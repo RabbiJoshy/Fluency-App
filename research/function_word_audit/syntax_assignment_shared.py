@@ -111,6 +111,44 @@ INSTRUMENT_HEADS = {
     'es': {'bolígrafo', 'pluma', 'cuchillo', 'cuchara', 'tenedor', 'llave', 'coche', 'martillo', 'arma', 'pistola', 'teléfono', 'ordenador', 'computadora', 'libro', 'dinero', 'agua', 'mano'}
 }
 
+LOCATIVE_HEADS = {
+    'pt': {'casa', 'quarto', 'cidade', 'país', 'rua', 'estrada', 'escola', 'hospital',
+           'trabalho', 'escritório', 'parque', 'praça', 'praia', 'mar', 'floresta', 'bosque',
+           'hotel', 'restaurante', 'bar', 'loja', 'sala', 'cozinha', 'jardim', 'prédio',
+           'edifício', 'igreja', 'banco', 'cinema', 'teatro', 'aeroporto', 'estação',
+           'porto', 'ilha', 'rio', 'montanha', 'mundo', 'terra', 'chão', 'mesa', 'cama',
+           'prisão', 'manicômio', 'tribunal', 'universidade', 'apartamento', 'quarto',
+           'banheiro', 'estádio', 'campo', 'vila', 'aldeia', 'carro', 'ônibus', 'trem',
+           'avião', 'barco', 'navio', 'gaveta', 'bolsa', 'bolso', 'caixa', 'parede', 'lado', 'lugar'},
+    'es': {'casa', 'habitación', 'cuarto', 'ciudad', 'país', 'calle', 'carretera', 'camino',
+           'escuela', 'colegio', 'hospital', 'trabajo', 'oficina', 'parque', 'plaza', 'playa',
+           'mar', 'bosque', 'hotel', 'restaurante', 'bar', 'tienda', 'sala', 'cocina',
+           'jardín', 'edificio', 'iglesia', 'banco', 'cine', 'teatro', 'aeropuerto',
+           'estación', 'puerto', 'isla', 'río', 'montaña', 'mundo', 'tierra', 'suelo',
+           'mesa', 'cama', 'prisión', 'cárcel', 'manicomio', 'tribunal', 'universidad',
+           'apartamento', 'departamento', 'piso', 'baño', 'estadio', 'campo', 'pueblo',
+           'aldea', 'coche', 'auto', 'autobús', 'tren', 'avión', 'barco', 'cajón', 'bolso',
+           'bolsillo', 'caja', 'pared', 'lado', 'lugar', 'sitio'}
+}
+
+LOCATIVE_VERBS = {
+    'pt': {'estar', 'viver', 'morar', 'ficar', 'trabalhar', 'nascer', 'morrer', 'dormir',
+           'entrar', 'cair', 'sentar', 'deitar', 'passar', 'colocar', 'pôr', 'guardar'},
+    'es': {'estar', 'vivir', 'morar', 'quedar', 'quedarse', 'trabajar', 'nacer', 'morir',
+           'dormir', 'entrar', 'caer', 'sentar', 'sentarse', 'acostar', 'pasar', 'poner', 'guardar'}
+}
+
+ABSTRACT_STATE_HEADS = {
+    'pt': {'necesidade', 'necessidade', 'dúvida', 'perigo', 'paz', 'calma', 'segredo', 'realidade',
+           'geral', 'efeito', 'teoria', 'vão', 'prática', 'silêncio', 'choque', 'pânico',
+           'tentativa', 'vida', 'caso', 'ordem', 'modo', 'forma', 'jeito', 'mudança', 'situação',
+           'amor', 'risco', 'verdade', 'conta', 'graça'},
+    'es': {'necesidad', 'duda', 'peligro', 'paz', 'calma', 'secreto', 'realidad',
+           'general', 'efecto', 'teoría', 'vano', 'práctica', 'silencio', 'shock', 'pánico',
+           'intento', 'vida', 'caso', 'orden', 'modo', 'forma', 'cambio', 'situación',
+           'amor', 'riesgo', 'verdad', 'cuenta', 'gracia'}
+}
+
 
 
 def _features(node: dict[str, Any]) -> dict[str, str]:
@@ -330,7 +368,21 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
     # en/em:0 (place) vs en/em:1 (time)
     if (lang, word) in {('es', 'en'), ('pt', 'em')} and head and focus['deprel'] == 'case':
         hl = head['lemma'].lower()
-        pat = 1 if hl in TIME_HEADS[lang] else 0
+        pat = None
+        if hl in TIME_HEADS[lang]:
+            pat = 1
+        else:
+            gov = byid.get(head['head'])
+            gl = gov['lemma'].lower() if gov else ''
+            is_place = hl in LOCATIVE_HEADS.get(lang, set()) or hl in DESTINATION_HEADS.get(lang, set())
+            is_loc_verb = gov and gl in LOCATIVE_VERBS.get(lang, set())
+            if (is_place or is_loc_verb) and hl not in ABSTRACT_STATE_HEADS.get(lang, set()) and head['upos'] in {'NOUN', 'PROPN'}:
+                pat = 0
+
+        # Strict abstention if neither time nor place is positively licensed
+        if pat is None:
+            return None
+
         gov = byid.get(head['head'])
         v_span = _verb_complex(sent, gov, focus_bounds, lang, text) if (gov and gov['upos'] in {'VERB', 'AUX'}) else None
         c_span = _noun_phrase(sent, head, focus_bounds, text) or _constituent_interval(sent, _subtree(sent, head), focus_bounds, text)
@@ -560,10 +612,34 @@ def decide_shared(row: dict[str, Any], obs: dict[str, Any] | None) -> dict[str, 
 
     # como:0 (comparison) vs como:1 (role/as)
     if word == 'como' and head:
-        pat = 1 if focus['deprel'] == 'case' and head['upos'] in {'NOUN', 'PROPN'} else 0
-        c_span = _constituent_interval(sent, [n for n in _subtree(sent, head) if _bounds(n)[0] >= end], focus_bounds, text)
+        # Block interrogative/manner "how" ("¿Cómo estás?", "Como é suposto...", etc.)
+        if text.rstrip().endswith('?') or start == 0:
+            return None
+        if focus.get('deprel') in {'advmod'} or _features(focus).get('PronType') == 'Int':
+            return None
+
         gov = byid.get(head['head'])
+        gl = gov['lemma'].lower() if gov else ''
+        hl = head['lemma'].lower()
         v_span = _verb_complex(sent, gov, focus_bounds, lang, text) if (gov and gov['upos'] in {'VERB', 'AUX'}) else None
+
+        pat = None
+        # Pattern 1: Role / Job / Capacity (como + role/job)
+        if focus['deprel'] == 'case' and head['upos'] in {'NOUN', 'PROPN'}:
+            if hl in HUMAN_HEADS.get(lang, set()) or hl in {'ejemplo', 'exemplo', 'modelo', 'base', 'guía', 'guia', 'prueba', 'prova'}:
+                pat = 1
+
+        # Pattern 0: Comparison (verb + como: "Like / in the same way")
+        # Formula strictly requires preceding verb: verb + como
+        if pat is None:
+            if v_span and v_span[1] <= start:
+                pat = 0
+
+        # Strict abstention if neither pattern applies
+        if pat is None:
+            return None
+
+        c_span = _constituent_interval(sent, [n for n in _subtree(sent, head) if _bounds(n)[0] >= end], focus_bounds, text)
         parts = [('c', c_span)]
         if pat == 0 and v_span and v_span[1] <= start:
             parts.insert(0, ('v', v_span))
