@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T03:20:00+01:00",
+      "date": "2026-10-19 03:20 BST",
+      "agent": "Claude",
+      "summary": "Progress: Import known words and Export mistakes at the foot of the page",
+      "detail": [
+        "The same two actions as Settings → Your words, under the counts they affect. Import shows only when signed in and opens the import screen; Export downloads the CSV and reports here.",
+        "Side by side on wider screens, stacked rows on phones. Settings → Your words keeps them too."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T03:00:00+01:00",
       "date": "2026-10-19 03:00 BST",
       "agent": "Claude",
@@ -346,19 +357,6 @@
         "Removed the redundant meaning h2 header inside the dialog so the modal only shows newly unpacked delta details.",
         "Added inflection-aware stem matching so inflected card rows (e.g. \"remembers\", \"bales\") correctly deduplicate against citation-form notes (e.g. \"to remember\", \"a bale\").",
         "Preserved raw dictionary context in the underlying data object while promoting genuine context clauses into the Usage section."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T15:35:00+01:00",
-      "date": "2026-10-18 15:35 BST",
-      "agent": "Antigravity",
-      "summary": "Verb drills: plain-text tense, mood pill only when mixed, progress bar key toggle, and default selection guard",
-      "detail": [
-        "Card: tense is styled matching person without a pill container; mood is omitted for indicative and only appears as a tag when drilling multiple moods.",
-        "Card: fixed empty stub oval caused by clue pill CSS overriding the hidden attribute.",
-        "Setup: removed Resume button; total count displays breakdown (verbs · tenses · persons); progress bar is tappable to reveal/hide its mastery key.",
-        "Setup: safe default selection guaranteed (present tense and all persons) so the drill never loads empty."
       ],
       "commit": "pending"
     }

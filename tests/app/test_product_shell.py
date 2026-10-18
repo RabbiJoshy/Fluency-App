@@ -618,8 +618,10 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="savedWordsBody"', overview)
         self.assertIn('id="settingsAccountBtn"', overview)
         self.assertIn('id="appearanceSettingsTitle">Theme', overview)
-        self.assertNotIn('id="progressImportKnownBtn"', html)
-        self.assertNotIn('id="progressExportMistakesBtn"', html)
+        # Progress repeats the two word actions at its foot, beside the counts.
+        progress = html[html.index('id="totalStatsModal"'):html.index('id="settingsModal"')]
+        self.assertIn('id="progressImportKnownBtn"', progress)
+        self.assertIn('id="progressExportMistakesBtn"', progress)
         self.assertIn('id="settingsBackBtn"', html)
         self.assertIn('function setupSettingsOverview()', ui)
         self.assertIn('> .settings-tabs { display: none !important; }', css)
