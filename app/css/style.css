@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=ef59e8e5");
+@import url("./appearance.css?v=0003b21d");
 
 
         * {
@@ -19458,7 +19458,7 @@ body.artist-mode #flashcardMode::before {
 }
 @media (max-width: 767px) {
   .card-front .card-pos-list.is-lemma-map {
-    top: 76px;
+    top: 18px;
     padding: 0 12px;
     max-width: 100%;
   }
@@ -20970,7 +20970,9 @@ body.rare-uses-open { overflow: hidden; }
   .card-face.card-back { padding-left: 16px; padding-right: 16px; }
 }
 @media (max-width: 767px) {
-  .card-front .card-pos-list.is-lemma-map { top: 76px; max-width: calc(100% - 24px); }
+  /* Pinned close under the card's top edge so the pill reads as the card's
+     heading (as it heads the sense row on the back), not as a floating label. */
+  .card-front .card-pos-list.is-lemma-map { top: 18px; max-width: calc(100% - 24px); }
   .card-front .card-pos-list.is-lemma-map.pos-count-2,
   .card-front .card-pos-list.is-lemma-map.pos-count-3,
   .card-front .card-pos-list.is-lemma-map.pos-count-4,
@@ -21716,7 +21718,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     border-color: rgba(255, 255, 255, 0.28);
 }
 .sense-note-eyebrow {
-    margin: 0 36px 4px 0;
+    margin: 0 36px 12px 0;
     color: var(--accent-primary, #67bf85);
     font: 650 10.5px/1.2 var(--font-emphasis, var(--font-data));
     letter-spacing: 0.08em;

@@ -586,7 +586,7 @@
   border-radius: 16px;
   padding: 16px 20px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: 8px 18px;
   align-items: center;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
@@ -596,6 +596,8 @@
 }
 
 .extra-conjugations-view .summary-main {
+  grid-column: 1;
+  grid-row: 1;
   display: flex;
   align-items: baseline;
   gap: 6px;
@@ -616,24 +618,39 @@
 }
 
 .extra-conjugations-view .summary-detail {
+  grid-column: 1;
+  grid-row: 2;
   font-size: 13px;
   color: var(--text-secondary);
 }
 
+/* The bar is tappable (it reveals its key). The transparent borders enlarge
+   the hit area without making the visible bar any thicker. */
 .extra-conjugations-view .summary-bar {
   grid-column: 1 / -1;
   display: flex;
   height: 6px;
+  box-sizing: content-box;
+  border-block: 5px solid transparent;
+  margin-block: -5px;
   border-radius: 999px;
   overflow: hidden;
   background: var(--bg-secondary);
+  background-clip: padding-box;
+  cursor: pointer;
 }
 
 .extra-conjugations-view .summary-bar span {
   display: block;
 }
 
+.extra-conjugations-view .summary-bar .bar-known { background: #22c55e; }
+.extra-conjugations-view .summary-bar .bar-learning { background: #f5a623; }
+.extra-conjugations-view .summary-bar .bar-missed { background: #ef4444; }
+
 .extra-conjugations-view .summary-actions {
+  grid-column: 2;
+  grid-row: 1 / span 2;
   display: flex;
   gap: 8px;
   align-items: center;
@@ -644,11 +661,39 @@
   display: none;
 }
 
+/* The bar's key, shown when the bar is tapped */
 .extra-conjugations-view .summary-progress {
   grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
   font-size: 12.5px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
+}
+
+.extra-conjugations-view .summary-progress[hidden] {
+  display: none;
+}
+
+.extra-conjugations-view .legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.extra-conjugations-view .legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.extra-conjugations-view .legend-dot.dot-known { background: #22c55e; }
+.extra-conjugations-view .legend-dot.dot-learning { background: #f5a623; }
+.extra-conjugations-view .legend-dot.dot-missed { background: #ef4444; }
+.extra-conjugations-view .legend-dot.dot-new {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
 }
 
 .extra-conjugations-view button.primary,
@@ -750,53 +795,61 @@
   gap: 8px;
 }
 
-/* ── Tense badge: prominent, structured, high-legibility ── */
+/* Person → tense: one linked prompt ("translate this person into this tense") */
+.extra-conjugations-view .card-cue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.extra-conjugations-view .card-arrow {
+  color: var(--text-muted);
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ── Tense: set exactly like the person it pairs with ── */
 .extra-conjugations-view .card-tense {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 8px 20px;
-  border-radius: 999px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-.extra-conjugations-view .card-tense-mood {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.extra-conjugations-view .card-tense-sep {
-  color: var(--text-muted);
-  opacity: 0.5;
-  font-size: 14px;
+  flex-wrap: wrap;
+  gap: 8px 10px;
 }
 
 .extra-conjugations-view .card-tense-name {
   font-family: var(--font-emphasis);
-  font-size: 17px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-/* Mood-specific accents */
-.extra-conjugations-view .card-tense[data-mood*="subj"] {
+/* Mood tag: only shown for a non-indicative mood when moods are mixed */
+.extra-conjugations-view .card-mood-pill {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+}
+.extra-conjugations-view .card-mood-pill[data-mood*="subj"] {
+  color: #c084fc;
   border-color: rgba(167, 139, 250, 0.45);
-  background: linear-gradient(180deg, var(--bg-secondary), rgba(167, 139, 250, 0.12));
+  background: rgba(167, 139, 250, 0.12);
 }
-.extra-conjugations-view .card-tense[data-mood*="subj"] .card-tense-mood { color: #c084fc; }
-
-.extra-conjugations-view .card-tense[data-mood*="imp"] {
+.extra-conjugations-view .card-mood-pill[data-mood*="imp"] {
+  color: var(--accent-amber);
   border-color: rgba(245, 166, 35, 0.45);
-  background: linear-gradient(180deg, var(--bg-secondary), rgba(245, 166, 35, 0.12));
+  background: rgba(245, 166, 35, 0.12);
 }
-.extra-conjugations-view .card-tense[data-mood*="imp"] .card-tense-mood { color: var(--accent-amber); }
 
 /* The clue line. Sits with the tense as card metadata */
 .extra-conjugations-view .card-clue {
@@ -810,6 +863,12 @@
   border: 1px solid var(--border-color);
   display: inline-block;
   margin: 0 auto;
+}
+
+/* `display: inline-block` above would otherwise beat [hidden] and leave an
+   empty padded pill (a stub oval) on the card whenever there is no clue. */
+.extra-conjugations-view .card-clue[hidden] {
+  display: none;
 }
 
 /* ── Prompt section: Subject & Verb ── */
@@ -878,6 +937,12 @@
   gap: 12px;
 }
 
+/* `display: flex` above would otherwise beat the [hidden] attribute and show
+   the answer before the card is tapped. */
+.extra-conjugations-view .card-answer[hidden] {
+  display: none;
+}
+
 .extra-conjugations-view .card-form {
   font-family: var(--font-emphasis);
   font-size: 40px;
@@ -921,6 +986,36 @@
   cursor: pointer;
   color: var(--accent-primary);
   background: transparent;
+}
+
+/* Icon-only tools (full table, example sentences), one line under the pill */
+.extra-conjugations-view .card-tools {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.extra-conjugations-view .card-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+}
+
+.extra-conjugations-view .card-tool:hover,
+.extra-conjugations-view .card-tool[aria-expanded="true"] {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background: var(--bg-secondary);
 }
 
 .extra-conjugations-view .card-examples {
@@ -1228,6 +1323,12 @@
   .extra-conjugations-view .summary {
     grid-template-columns: 1fr;
   }
+  .extra-conjugations-view .summary-main,
+  .extra-conjugations-view .summary-detail,
+  .extra-conjugations-view .summary-actions {
+    grid-column: 1;
+    grid-row: auto;
+  }
   .extra-conjugations-view .summary-actions {
     justify-content: stretch;
     margin-top: 12px;
@@ -1243,9 +1344,7 @@
     padding: 46px 36px;
     gap: 22px;
   }
-  .extra-conjugations-view .card-tense { padding: 10px 24px; gap: 12px; }
-  .extra-conjugations-view .card-tense-mood { font-size: 14px; }
-  .extra-conjugations-view .card-tense-name { font-size: 20px; }
+  .extra-conjugations-view .card-tense-name { font-size: 34px; }
   .extra-conjugations-view .card-subject-label { font-size: 12px; }
   .extra-conjugations-view .card-person { font-size: 34px; }
   .extra-conjugations-view .card-verb { font-size: 44px; }

@@ -130,15 +130,15 @@ export async function openConjugationsScreen(targetVerb = null, targetView = nul
 
     try {
         if (!window.ConjugationProgress) {
-            await loadScript('conjugation/progress.js?v=ef59e8e5');
+            await loadScript('conjugation/progress.js?v=0003b21d');
         }
         if (!window.conjugationBoot) {
-            await loadScript('conjugation/app.js?v=ef59e8e5');
+            await loadScript('conjugation/app.js?v=0003b21d');
         }
         if (!window._conjugationDecks || !window._conjugationDecks[drillCode]) {
-            await loadScript(`conjugation/data/${drillCode}.js?v=ef59e8e5`);
+            await loadScript(`conjugation/data/${drillCode}.js?v=0003b21d`);
             try {
-                await loadScript(`conjugation/data/${drillCode}-not-verbs.js?v=ef59e8e5`);
+                await loadScript(`conjugation/data/${drillCode}-not-verbs.js?v=0003b21d`);
             } catch (_) {
                 // not-verbs is optional
             }
@@ -377,8 +377,13 @@ export function initExtraWorkspace() {
     const conjBackBtn = document.getElementById('extraConjugationsBackBtn');
     conjBackBtn?.addEventListener('click', backToExtraMenu);
 
+    // Close steps back one level: in a drill → the conjugation menu; in the
+    // conjugation menu → the Extra menu (not out of Extra altogether).
     const conjCloseBtn = document.getElementById('extraConjugationsCloseBtn');
-    conjCloseBtn?.addEventListener('click', closeExtraModal);
+    conjCloseBtn?.addEventListener('click', () => {
+        if (window.conjugationCloseStep?.()) return;
+        backToExtraMenu();
+    });
 
     const songPickerBackBtn = document.getElementById('extraSongPickerBackBtn');
     songPickerBackBtn?.addEventListener('click', backToExtraMenu);

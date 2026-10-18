@@ -50,6 +50,7 @@
   var soloVerb = null;   // set by ?verb=, cleared when the selection changes
   var expandedMoods = {};  // mood label -> the rarer tenses are showing
   var openMoods = {};      // mood label -> boolean indicating whether grouping is expanded
+  var legendOpen = false;  // the progress bar's key, shown when the bar is tapped
 
   var CODE_ORDER = ['0', '1', '2', '3', '4'];
   var OPAQUE = '*';
@@ -94,6 +95,17 @@
   }
 
   function tenseLabel(tense) { return tense.mood + ' · ' + tense.tense; }
+
+  // How many distinct moods the round in flight draws from (cached per queue).
+  var moodCount = { queue: null, n: 0 };
+  function moodsInPlay() {
+    if (moodCount.queue !== queue) {
+      var seen = {};
+      queue.forEach(function (card) { seen[card.tense.mood] = true; });
+      moodCount = { queue: queue, n: Object.keys(seen).length };
+    }
+    return moodCount.n;
+  }
 
   function personLabel(person) { return deck.pronouns[person] || person; }
 
@@ -334,14 +346,32 @@
     });
   }
 
-  // Adds the chip once the file is in, if this form has sentences; the card
+  // Small line icons for the card's tools (no text; the label is for
+  // screen readers and the hover title).
+  var ICON_TABLE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/></svg>';
+  var ICON_SENTENCES = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>' +
+    '<path d="M8.5 10.5h7M8.5 13.5h4"/></svg>';
+
+  function toolButton(icon, label) {
+    var button = el('button', 'card-tool');
+    button.type = 'button';
+    button.innerHTML = icon;
+    button.title = label;
+    button.setAttribute('aria-label', label);
+    return button;
+  }
+
+  // Adds the tool once the file is in, if this form has sentences; the card
   // may have moved on by then, so it checks it is still the one showing.
-  function offerExamples(card, chips) {
+  function offerExamples(card, tools) {
     loadExamples().then(function (payload) {
       var sentences = examplesFor(payload, card.form);
       if (!sentences.length || queue[position] !== card || !revealed) return;
-      var toggle = el('button', 'chip chip-action', 'see sentences');
-      toggle.type = 'button';
+      var toggle = toolButton(ICON_SENTENCES, 'See example sentences');
       toggle.setAttribute('aria-expanded', String(examplesOpenFor === card.key));
       toggle.onclick = function (event) {
         event.stopPropagation();   // don't also flip the card
@@ -349,7 +379,7 @@
         toggle.setAttribute('aria-expanded', String(examplesOpenFor === card.key));
         renderExamples(card, sentences);
       };
-      chips.appendChild(toggle);
+      tools.appendChild(toggle);
       renderExamples(card, sentences);
     });
   }
@@ -904,19 +934,18 @@
         (cards.length - lessonCount).toLocaleString() +
         ' that repeat a pattern you have already seen.';
 
+    // Progress through the selection: known / learning / missed. The rest is
+    // new, left as the empty track.
     var bar = $('sum-bar');
     bar.innerHTML = '';
-    var total = CODE_ORDER.reduce(function (sum, code) {
-      return sum + (state.types[code] ? selection.byType[code] : 0);
-    }, 0);
-    CODE_ORDER.forEach(function (code) {
-      if (!state.types[code] || !selection.byType[code]) return;
-      var slice = el('span');
-      slice.style.background = 'var(--c' + code + ')';
-      slice.style.width = (selection.byType[code] / total * 100) + '%';
-      slice.title = selection.byType[code] + ' ' + deck.code_labels[code];
-      bar.appendChild(slice);
-    });
+    [['known', stats.known], ['learning', stats.learning], ['missed', stats.missed]]
+      .forEach(function (part) {
+        if (!part[1] || !stats.total) return;
+        var slice = el('span', 'bar-' + part[0]);
+        slice.style.width = (part[1] / stats.total * 100) + '%';
+        slice.title = part[1].toLocaleString() + ' ' + part[0];
+        bar.appendChild(slice);
+      });
 
     $('start').disabled = cardCount === 0;
 
@@ -936,14 +965,20 @@
   /* What the selection holds, by how well it is known. Absent records are
    * "new", declared as such, not hidden. */
   function renderProgressSummary(stats) {
-    var parts = [];
-    if (stats.known) parts.push(stats.known.toLocaleString() + ' known');
-    if (stats.learning) parts.push(stats.learning.toLocaleString() + ' learning');
-    if (stats.missed) parts.push(stats.missed.toLocaleString() + ' missed');
-    if (stats.new) parts.push(stats.new.toLocaleString() + ' new');
-    var line = stats.total ? parts.join(' · ') : '';
-    if (stats.due) line += ' · ' + stats.due.toLocaleString() + ' due';
-    $('sum-progress').textContent = line;
+    // The bar says what is left; tapping it reveals this key.
+    var legend = $('sum-progress');
+    legend.innerHTML = '';
+    if (stats.total) {
+      [['known', stats.known], ['learning', stats.learning],
+       ['missed', stats.missed], ['new', stats.new]].forEach(function (part) {
+        if (!part[1]) return;
+        var item = el('span', 'legend-item');
+        item.appendChild(el('span', 'legend-dot dot-' + part[0]));
+        item.appendChild(document.createTextNode(part[1].toLocaleString() + ' ' + part[0]));
+        legend.appendChild(item);
+      });
+    }
+    legend.hidden = !legendOpen || !legend.childNodes.length;
 
     var practised = Object.keys(progress.forms).length;
     $('progress-hint').textContent = practised
@@ -958,9 +993,12 @@
       (state.fromCards && cardMisses && Object.keys(cardMisses).length ? ' · flashcard mistakes first' : '');
   }
 
+  // The setup screen no longer has a Resume button (only Start), so there is
+  // nothing to draw; kept so callers need not know.
   function refreshResume() {
-    var session = P.loadSession(deck.language);
     var button = $('resume');
+    if (!button) return;
+    var session = P.loadSession(deck.language);
     var left = session ? session.keys.length - Object.keys(session.results || {}).length : 0;
     button.hidden = !session || left <= 0;
     if (!button.hidden) {
@@ -1012,13 +1050,14 @@
     var tenseNode = $('card-tense');
     tenseNode.innerHTML = '';
     if (card.tense.mood && card.tense.tense) {
-      var moodSpan = el('span', 'card-tense-mood', card.tense.mood);
-      var sepSpan = el('span', 'card-tense-sep', '·');
-      var tenseSpan = el('span', 'card-tense-name', card.tense.tense);
-      tenseNode.appendChild(moodSpan);
-      tenseNode.appendChild(sepSpan);
-      tenseNode.appendChild(tenseSpan);
-      tenseNode.dataset.mood = (card.tense.mood || '').toLowerCase();
+      tenseNode.appendChild(el('span', 'card-tense-name', card.tense.tense));
+      // Indicative is the assumed default, and a mood is only worth naming
+      // when the round mixes moods; otherwise there is nothing to tell apart.
+      if (!/^indic/i.test(card.tense.mood) && moodsInPlay() > 1) {
+        var moodPill = el('span', 'card-mood-pill', card.tense.mood);
+        moodPill.dataset.mood = card.tense.mood.toLowerCase();
+        tenseNode.appendChild(moodPill);
+      }
     } else {
       tenseNode.textContent = tenseLabel(card.tense);
     }
@@ -1043,50 +1082,50 @@
       clue.hidden = false;
     }
 
-    $('card-headword').textContent = state.reverse ? meaning : card.verb.h;
-    $('card-translation').textContent = state.reverse
+    // Small facts about the verb sit with its meaning, not as chips.
+    var notes = [];
+    if (card.verb.r) notes.push('reflexive');
+    if (card.tense.compound) notes.push('participle ' + (card.verb.pp || '—'));
+    var translation = state.reverse
       ? (revealed ? card.verb.h : '')
       : meaning;
+    $('card-headword').textContent = state.reverse ? meaning : card.verb.h;
+    $('card-translation').textContent = [translation].concat(notes)
+      .filter(Boolean).join(' · ');
     $('card-person').textContent = personLabel(card.person);
     paintForm($('card-form'), card.form, card.lesson, card.code);
 
     var chips = $('card-chips');
     chips.innerHTML = '';
 
+    // One chip: what kind of form this is, and the verbs that share its pattern.
     var typeChip = el('span', 'chip');
     var swatch = el('span', 'swatch');
     swatch.style.background = 'var(--c' + card.code + ')';
     typeChip.appendChild(swatch);
     typeChip.appendChild(el('span', null,
       card.code === '-' ? 'no form' : deck.code_labels[card.code]));
-    chips.appendChild(typeChip);
-
-    if (card.tense.compound) {
-      chips.appendChild(el('span', 'chip', 'compound · participle ' + (card.verb.pp || '—')));
-    }
     if (card.lesson && card.lesson.d !== '') {
       var others = card.lesson.v.filter(function (h) { return h !== card.verb.h; });
-      var lessonChip = el('span', 'chip');
-      lessonChip.appendChild(el('span', 'chip-delta', patternLabel({ d: card.lesson.d })));
-      if (others.length) {
-        lessonChip.appendChild(el('span', null, 'like ' + others.slice(0, 3).join(', ')));
-      } else {
-        lessonChip.appendChild(el('span', null, 'only this verb'));
-      }
-      chips.appendChild(lessonChip);
+      typeChip.appendChild(el('span', 'chip-delta', patternLabel({ d: card.lesson.d })));
+      typeChip.appendChild(el('span', null,
+        others.length ? 'like ' + others.slice(0, 3).join(', ') : 'only this verb'));
     }
-    if (card.verb.r) chips.appendChild(el('span', 'chip', 'reflexive'));
+    chips.appendChild(typeChip);
 
-    var inspect = el('button', 'chip chip-action', 'see the table');
+    // Icon-only tools on their own line below the pill.
+    var tools = el('div', 'card-tools');
+    var inspect = toolButton(ICON_TABLE, 'See the full table');
     inspect.onclick = function (event) {
       event.stopPropagation();   // don't also flip the card
       inspectCurrent();
     };
-    chips.appendChild(inspect);
+    tools.appendChild(inspect);
+    chips.appendChild(tools);
 
     if (examplesOpenFor !== card.key) examplesOpenFor = null;
     $('card-examples').hidden = true;
-    if (revealed) offerExamples(card, chips);
+    if (revealed) offerExamples(card, tools);
 
     $('card-answer').hidden = !revealed;
     $('grade').hidden = !revealed;
@@ -1528,6 +1567,12 @@
     state.scope = 50;
 
     applySavedSettings();
+    // Whatever was saved, never open on nothing: with no tense or no person
+    // the count reads 0 and the screen looks as if it failed to load.
+    if (!selectedTenseIds().length && opening) state.tenses[opening.id] = true;
+    if (!selectedPersons().length) {
+      deck.person_order.forEach(function (person) { state.persons[person] = true; });
+    }
     $('scope').value = state.scope;
     renderTenses();
     renderPersons();
@@ -1680,6 +1725,17 @@
       refreshSummary();
     };
     if ($('start')) $('start').onclick = startDrill;
+    if ($('sum-bar')) {
+      var toggleLegend = function () {
+        legendOpen = !legendOpen;
+        $('sum-bar').setAttribute('aria-expanded', String(legendOpen));
+        $('sum-progress').hidden = !legendOpen;
+      };
+      $('sum-bar').onclick = toggleLegend;
+      $('sum-bar').onkeydown = function (event) {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleLegend(); }
+      };
+    }
     if ($('resume')) $('resume').onclick = resumeRound;
     if ($('progress-reset')) $('progress-reset').onclick = resetProgress;
     if ($('grade-hit')) $('grade-hit').onclick = function () { gradeCurrent(true); blurActive(); };
@@ -1745,4 +1801,15 @@
     }
   };
   window.showConjugationScreen = showScreen;
+  // The top-bar close button asks this first: inside a drill it should go back
+  // to the conjugation menu (the round is already saved, so Resume still works),
+  // not leave conjugations altogether. Returns true when it handled the click.
+  window.conjugationCloseStep = function () {
+    var drill = $('screen-drill');
+    if (!drill || !drill.classList.contains('is-active')) return false;
+    queue = [];
+    finished = false;
+    showScreen('setup');
+    return true;
+  };
 })();

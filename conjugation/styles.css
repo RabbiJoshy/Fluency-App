@@ -210,18 +210,28 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   position: static; margin-top: 0; margin-bottom: 20px;
   background: var(--surface); border: 1px solid var(--line);
   border-radius: var(--radius); padding: 16px 20px;
-  display: grid; grid-template-columns: auto 1fr auto; gap: 8px 18px;
+  display: grid; grid-template-columns: 1fr auto; gap: 8px 18px;
   align-items: center;
   box-shadow: 0 2px 12px rgba(0,0,0,.04);
 }
-.summary-main { display: flex; align-items: baseline; gap: 6px; }
+.summary-main { grid-column: 1; grid-row: 1; display: flex; align-items: baseline; gap: 6px; }
 .summary-count { font-family: var(--font-data); font-size: 30px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 .summary-unit { color: var(--ink-3); font-size: 14px; }
-.summary-detail { font-size: 13px; color: var(--ink-2); }
-.summary-bar { grid-column: 1 / -1; display: flex; height: 6px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
+.summary-detail { grid-column: 1; grid-row: 2; font-size: 13px; color: var(--ink-2); }
+/* Tappable (reveals its key); transparent borders enlarge the hit area only. */
+.summary-bar {
+  grid-column: 1 / -1; display: flex; height: 6px; box-sizing: content-box;
+  border-block: 5px solid transparent; margin-block: -5px;
+  border-radius: 999px; overflow: hidden;
+  background: var(--surface-2); background-clip: padding-box; cursor: pointer;
+}
 .summary-bar span { display: block; }
+.summary-bar .bar-known { background: #22c55e; }
+.summary-bar .bar-learning { background: #f5a623; }
+.summary-bar .bar-missed { background: #ef4444; }
 @media (max-width: 620px) {
   .summary { grid-template-columns: 1fr; }
+  .summary-main, .summary-detail, .summary-actions { grid-column: 1; grid-row: auto; }
 }
 
 button.primary, button.secondary, button.ghost {
@@ -270,38 +280,35 @@ button.ghost { background: none; color: var(--ink-2); }
 .card-header {
   display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
+/* Person → tense: one linked prompt */
+.card-cue {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 8px 14px;
+}
+.card-arrow { color: var(--ink-3); font-size: 22px; line-height: 1; }
 
-/* ── Tense badge: prominent, structured, high-legibility ── */
+/* ── Tense: set exactly like the person it pairs with ── */
 .card-tense {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 8px 20px; border-radius: 999px;
-  background: var(--surface-2); border: 1px solid var(--line);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-.card-tense-mood {
-  font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--ink-2);
-}
-.card-tense-sep {
-  color: var(--ink-3); opacity: 0.5; font-size: 14px;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 8px 10px;
 }
 .card-tense-name {
-  font-family: var(--font-emphasis); font-size: 17px; font-weight: 700;
-  color: var(--ink); letter-spacing: -0.01em;
+  font-family: var(--font-emphasis); font-size: 28px; font-weight: 700;
+  color: var(--ink); letter-spacing: -0.02em; line-height: 1.2;
 }
 
-/* Mood-specific accents */
-.card-tense[data-mood*="subj"] {
-  border-color: rgba(167, 139, 250, 0.45);
-  background: linear-gradient(180deg, var(--surface-2), rgba(167, 139, 250, 0.12));
+/* Mood tag: only shown for a non-indicative mood when moods are mixed */
+.card-mood-pill {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 999px;
+  color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line);
 }
-.card-tense[data-mood*="subj"] .card-tense-mood { color: #c084fc; }
-
-.card-tense[data-mood*="imp"] {
-  border-color: rgba(245, 166, 35, 0.45);
-  background: linear-gradient(180deg, var(--surface-2), rgba(245, 166, 35, 0.12));
+.card-mood-pill[data-mood*="subj"] {
+  color: #c084fc; border-color: rgba(167, 139, 250, 0.45); background: rgba(167, 139, 250, 0.12);
 }
-.card-tense[data-mood*="imp"] .card-tense-mood { color: var(--accent-amber); }
+.card-mood-pill[data-mood*="imp"] {
+  color: var(--accent-amber); border-color: rgba(245, 166, 35, 0.45); background: rgba(245, 166, 35, 0.12);
+}
 
 /* The clue line. Sits with the tense as card metadata */
 .card-clue {
@@ -312,6 +319,9 @@ button.ghost { background: none; color: var(--ink-2); }
   background: var(--surface-2); border: 1px solid var(--line);
   display: inline-block; margin: 0 auto;
 }
+/* `display: inline-block` would otherwise beat [hidden] and leave an empty
+   padded pill (a stub oval) on the card whenever there is no clue. */
+.card-clue[hidden] { display: none; }
 
 /* ── Prompt section: Subject & Verb ── */
 .card-prompt {
@@ -347,6 +357,8 @@ button.ghost { background: none; color: var(--ink-2); }
   border-top: 1px solid var(--line); margin-top: 10px; padding-top: 20px;
   display: flex; flex-direction: column; align-items: center; gap: 12px;
 }
+/* `display: flex` would otherwise beat [hidden] and show the answer early. */
+.card-answer[hidden] { display: none; }
 .card-form {
   font-family: var(--font-emphasis);
   font-size: 40px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
@@ -359,6 +371,17 @@ button.ghost { background: none; color: var(--ink-2); }
 .chip-action {
   font-family: inherit; border: 1px solid var(--line); cursor: pointer;
   color: var(--accent); background: transparent;
+}
+/* Icon-only tools (full table, example sentences), one line under the pill */
+.card-tools { flex-basis: 100%; display: flex; justify-content: center; gap: 10px; }
+.card-tool {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--line); background: transparent;
+  color: var(--ink-2); cursor: pointer;
+}
+.card-tool:hover, .card-tool[aria-expanded="true"] {
+  color: var(--accent); border-color: var(--accent); background: var(--surface-2);
 }
 .chip {
   font-size: 12px; padding: 3px 9px; border-radius: 999px;
@@ -452,9 +475,7 @@ code {
     padding: 46px 36px;
     gap: 22px;
   }
-  .card-tense { padding: 10px 24px; gap: 12px; }
-  .card-tense-mood { font-size: 14px; }
-  .card-tense-name { font-size: 20px; }
+  .card-tense-name { font-size: 34px; }
   .card-subject-label { font-size: 12px; }
   .card-person { font-size: 34px; }
   .card-verb { font-size: 44px; }
@@ -483,12 +504,19 @@ code {
 }
 
 /* ── progress ──────────────────────────────────────────── */
-.summary-actions { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
+.summary-actions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
 .summary-actions [hidden] { display: none; }
-.summary-progress { grid-column: 1 / -1; font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
-.summary-progress:empty { display: none; }
+/* The bar's key, shown when the bar is tapped */
+.summary-progress { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.summary-progress[hidden], .summary-progress:empty { display: none; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.legend-dot.dot-known { background: #22c55e; }
+.legend-dot.dot-learning { background: #f5a623; }
+.legend-dot.dot-missed { background: #ef4444; }
+.legend-dot.dot-new { background: var(--surface-2); border: 1px solid var(--line); }
 @media (max-width: 620px) {
-  .summary-actions { justify-content: stretch; margin-top: 12px; }
+  .summary-actions { grid-column: 1; grid-row: auto; justify-content: stretch; margin-top: 12px; }
   .summary-actions button { flex: 1; }
   .summary .summary-actions #start { margin-top: 0; }
 }

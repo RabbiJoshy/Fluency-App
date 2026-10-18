@@ -13,10 +13,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-<script src="../js/appearance-bootstrap.js?v=ef59e8e5"></script>
-<link rel="stylesheet" href="../css/appearance.css?v=ef59e8e5">
-<script type="module" src="../js/theme.js?v=ef59e8e5"></script>
-<link rel="stylesheet" href="styles.css?v=ef59e8e5">
+<script src="../js/appearance-bootstrap.js?v=0003b21d"></script>
+<link rel="stylesheet" href="../css/appearance.css?v=0003b21d">
+<script type="module" src="../js/theme.js?v=0003b21d"></script>
+<link rel="stylesheet" href="styles.css?v=0003b21d">
   <link rel="icon" type="image/png" href="../icons/icon-192.png">
   <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 </head>
@@ -38,11 +38,10 @@
     </div>
     <div class="summary-detail" id="sum-detail"></div>
     <div class="summary-actions">
-      <button class="secondary" id="resume" type="button" hidden>Resume</button>
       <button class="primary" id="start" disabled>Start</button>
     </div>
-    <div class="summary-bar" id="sum-bar"></div>
-    <div class="summary-progress" id="sum-progress"></div>
+    <div class="summary-bar" id="sum-bar" role="button" tabindex="0" aria-expanded="false" aria-label="Progress key"></div>
+    <div class="summary-progress" id="sum-progress" hidden></div>
   </div>
 
   <div class="stack">
@@ -194,16 +193,15 @@
 
     <div class="card" id="card">
       <div class="card-header">
-        <div class="card-tense" id="card-tense"></div>
+        <div class="card-cue">
+          <div class="card-person" id="card-person"></div>
+          <span class="card-arrow" aria-hidden="true">→</span>
+          <div class="card-tense" id="card-tense"></div>
+        </div>
         <div class="card-clue" id="card-clue" hidden></div>
       </div>
 
       <div class="card-prompt">
-        <div class="card-subject-wrap">
-          <span class="card-subject-label">Subject</span>
-          <div class="card-person" id="card-person"></div>
-        </div>
-
         <div class="card-verb">
           <span id="card-headword"></span>
           <span class="card-translation" id="card-translation"></span>
@@ -257,14 +255,14 @@
      same voice, chosen by the same scorer, as a flashcard. It is a leaf
      module: it imports only state.js and touches no UI. -->
 <script type="module" src="../js/speech.js"></script>
-<script src="progress.js?v=ef59e8e5"></script>
-<script src="app.js?v=ef59e8e5"></script>
-<script src="data/es.js?v=ef59e8e5"></script>
-<script src="data/pt.js?v=ef59e8e5"></script>
-<script src="data/cs.js?v=ef59e8e5"></script>
-<script src="data/es-not-verbs.js?v=ef59e8e5"></script>
-<script src="data/pt-not-verbs.js?v=ef59e8e5"></script>
-<script src="data/cs-not-verbs.js?v=ef59e8e5"></script>
+<script src="progress.js?v=0003b21d"></script>
+<script src="app.js?v=0003b21d"></script>
+<script src="data/es.js?v=0003b21d"></script>
+<script src="data/pt.js?v=0003b21d"></script>
+<script src="data/cs.js?v=0003b21d"></script>
+<script src="data/es-not-verbs.js?v=0003b21d"></script>
+<script src="data/pt-not-verbs.js?v=0003b21d"></script>
+<script src="data/cs-not-verbs.js?v=0003b21d"></script>
 <script>window.conjugationBoot && window.conjugationBoot();</script>
 </body>
 </html>

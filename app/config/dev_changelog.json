@@ -2,6 +2,65 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T15:48:00+01:00",
+      "date": "2026-10-18 15:48 BST",
+      "agent": "Antigravity",
+      "summary": "Sense information modals: delta-only details, eliminated original dictionary text repetition, and inflection-aware deduplication",
+      "detail": [
+        "Eliminated the \"Original dictionary text\" section entirely from learner information modals to avoid repetitive dumps.",
+        "Removed the redundant meaning h2 header inside the dialog so the modal only shows newly unpacked delta details.",
+        "Added inflection-aware stem matching so inflected card rows (e.g. \"remembers\", \"bales\") correctly deduplicate against citation-form notes (e.g. \"to remember\", \"a bale\").",
+        "Preserved raw dictionary context in the underlying data object while promoting genuine context clauses into the Usage section."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T15:35:00+01:00",
+      "date": "2026-10-18 15:35 BST",
+      "agent": "Antigravity",
+      "summary": "Verb drills: plain-text tense, mood pill only when mixed, progress bar key toggle, and default selection guard",
+      "detail": [
+        "Card: tense is styled matching person without a pill container; mood is omitted for indicative and only appears as a tag when drilling multiple moods.",
+        "Card: fixed empty stub oval caused by clue pill CSS overriding the hidden attribute.",
+        "Setup: removed Resume button; total count displays breakdown (verbs \u00b7 tenses \u00b7 persons); progress bar is tappable to reveal/hide its mastery key.",
+        "Setup: safe default selection guaranteed (present tense and all persons) so the drill never loads empty."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T15:22:00+01:00",
+      "date": "2026-10-18 15:22 BST",
+      "agent": "Antigravity",
+      "summary": "Verb drills: icon buttons for table and sentences, and the close button now steps back one level",
+      "detail": [
+        "Card: 'see the table' and 'see sentences' are now icon buttons (table grid, speech bubble) on their own line under the regular/irregular pill.",
+        "Close button: in the conjugation menu it returns to the Extra menu; inside a drill it returns to the conjugation menu (the round is saved, so Resume still works)."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T15:15:00+01:00",
+      "date": "2026-10-18 15:15 BST",
+      "agent": "Antigravity",
+      "summary": "Verb drills: simpler Start box, answer hidden until you tap, and person \u2192 tense linked on the card",
+      "detail": [
+        "Setup: removed the verbs/tenses/persons line; the bar now shows progress (known / learning / missed) and the line under it is just 'N of M known \u00b7 N due'.",
+        "Card: fixed the answer showing before you tap (a display rule was overriding the hidden attribute).",
+        "Card: person and tense now sit on one row (yo \u2192 Indicative \u00b7 Present) with the verb underneath; removed the 'Subject' label; reflexive/participle moved next to the translation; type and pattern merged into one chip."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-18T15:10:00+01:00",
+      "date": "2026-10-18 15:10 BST",
+      "agent": "Claude",
+      "summary": "Front POS pill moved up to sit just under the card's top edge on phones",
+      "detail": [
+        "Card front, phones: the centred POS/lemma pill(s) now sit 18px below the card's top edge (was 76px), so they read as the card's heading; the Card N of M pill follows underneath."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T14:45:00+01:00",
       "date": "2026-10-18 14:45 BST",
       "agent": "Antigravity",
@@ -20,8 +79,8 @@
       "agent": "Claude",
       "summary": "Scrubber number now moves one card at a time on grammar-word cards; POS pill fills the sense row; 'from' aligned; scrubber circle back to its original size",
       "detail": [
-        "Fixed the seek-bar number freezing on grammar-word cards (en, lo, un, por…) and then jumping several numbers: updateCard returned early after drawing their back, before the scrubber update.",
-        "Sense-row POS pill text 17→19px; the row's own padding cut (7px → 3px) so the pill nearly fills it.",
+        "Fixed the seek-bar number freezing on grammar-word cards (en, lo, un, por\u2026) and then jumping several numbers: updateCard returned early after drawing their back, before the scrubber update.",
+        "Sense-row POS pill text 17\u219219px; the row's own padding cut (7px \u2192 3px) so the pill nearly fills it.",
         "'from' in the sense-row head now sits on the pill's centre line instead of floating above it.",
         "Scrubber circle back to 32px (it had grown to 40px); its number is 19px so it fills the circle instead."
       ],
@@ -31,11 +90,11 @@
       "timestamp": "2026-10-18T13:20:00+01:00",
       "date": "2026-10-18 13:20 BST",
       "agent": "Claude",
-      "summary": "Companion cards: all three now reach the deck, and the front shows \"Card N of M · x% of uses\" on one clear pill; back-of-card controls enlarged again with tighter padding",
+      "summary": "Companion cards: all three now reach the deck, and the front shows \"Card N of M \u00b7 x% of uses\" on one clear pill; back-of-card controls enlarged again with tighter padding",
       "detail": [
         "Fixed 3-way split words (e.g. fue) stopping at card 2: the deck builder only pushed the first two companions. Sessions also no longer cut a 3-card split across two batches.",
         "Front: \"Card N of M\" is now 16px bold on a tinted pill, with \"x% of uses\" beside it instead of under the frequency (the frequency is the same on every companion).",
-        "Back: pin icon 26→30px, information icon 18→23px in a 30px box, sense-row POS pill 15→17px with 3px 10px padding, scrubber circle 36→40px with a 20px number, 'Level x' label 17→20px."
+        "Back: pin icon 26\u219230px, information icon 18\u219223px in a 30px box, sense-row POS pill 15\u219217px with 3px 10px padding, scrubber circle 36\u219240px with a 20px number, 'Level x' label 17\u219220px."
       ],
       "commit": "pending"
     },
@@ -107,7 +166,7 @@
       "agent": "Antigravity",
       "summary": "Modernised card swipe feedback with progressive edge glow, frosted SVG badges, and threshold haptic tick",
       "detail": [
-        "Replaced the 72px raw Unicode ✗ and ✓ characters with frosted circular SVG badges that scale progressively with finger drag and snap solid with a spring bounce at the 50px commit threshold.",
+        "Replaced the 72px raw Unicode \u2717 and \u2713 characters with frosted circular SVG badges that scale progressively with finger drag and snap solid with a spring bounce at the 50px commit threshold.",
         "Added continuous emerald (right) and warm coral (left) edge wash and specular rim lighting on the card surface during horizontal swipes.",
         "Added an 8ms micro-haptic tick at the exact frame the swipe crosses the 50px grade threshold, with no competing sound effects."
       ],
@@ -167,7 +226,7 @@
       "agent": "Antigravity",
       "summary": "Refine Smart Skip into unified status-dot action pill and center Practice summary text",
       "detail": [
-        "Replaced the internal sliding switch with a sleek illuminated status dot indicator (○ Off / ● On) inside the unified Smart Skip action pill.",
+        "Replaced the internal sliding switch with a sleek illuminated status dot indicator (\u25cb Off / \u25cf On) inside the unified Smart Skip action pill.",
         "Tightened vertical spacing and removed dead-space padding around the Smart Skip footer so it sits cleanly and compactly beneath Study without large gaps.",
         "Centered the Practice section summary text ('X waiting' / 'Nothing to practise yet') and chevron above the Practise button, matching the centered symmetry of Study."
       ],
@@ -204,9 +263,9 @@
       "summary": "Omit zero counts from level picker progress legend and unify Smart Skip into action toggle button",
       "detail": [
         "Updated the level picker progress stats line to render only categories with counts > 0, eliminating '0 Practice' and '0 Known' when empty.",
-        "Unified Smart Skip label and segmented switch into a single centered action button ('Smart Skip · On' / 'Smart Skip · Off').",
+        "Unified Smart Skip label and segmented switch into a single centered action button ('Smart Skip \u00b7 On' / 'Smart Skip \u00b7 Off').",
         "Styled the unified Smart Skip button to match the visual language, radius, and weight of the Study and Practise buttons.",
-        "Maintained centered secondary summary ('Fewer cards, less repetition · Details ›') directly below the toggle button."
+        "Maintained centered secondary summary ('Fewer cards, less repetition \u00b7 Details \u203a') directly below the toggle button."
       ],
       "commit": "pending"
     },
@@ -292,7 +351,7 @@
       "summary": "Clearer Portuguese and Spanish function-word cards",
       "detail": [
         "Centre pattern formulas, keep explanations left-aligned, and show contraction parts below the word without pills.",
-        "Place examples directly below patterns and match typed chunks to the app’s POS colours.",
+        "Place examples directly below patterns and match typed chunks to the app\u2019s POS colours.",
         "Simplify all 81 cards; use 71 traceable examples for the twelve reviewed pilot cards. Remaining source labels are explicitly unverified."
       ],
       "commit": "pending"
@@ -308,81 +367,6 @@
         "Aligned About demo cards and footnote with the current single-POS back header, darkened front POS pill, and live Spotify playlist deck support."
       ],
       "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-16T00:19:31+01:00",
-      "date": "2026-10-16 00:19 BST",
-      "agent": "Codex",
-      "summary": "Compact two-line Smart Skip panel on desktop and mobile",
-      "detail": [
-        "Smart Skip and On/Off share the first row; “Fewer cards, less repetition” and Details share the second.",
-        "Removed the home-page information icon, example words and changing count to keep the panel compact.",
-        "Details opens the existing Smart Skip screen without changing the On/Off selection."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-16T00:15:00+01:00",
-      "date": "2026-10-16 00:15 BST",
-      "agent": "Claude",
-      "summary": "Lemma/POS pills lose their dark backing: each is its own colour, darkened, with white text; companion cue is small plain text",
-      "detail": [
-        "Each companion card lists the lemma/POS pill(s) built from its own senses; the dimmed sibling pill is gone.",
-        "A single small \"Card N of M\" label sits on its own line under the pills and still opens the \"why separate cards?\" note.",
-        "Parts of speech of one lemma are one joined pill (hairline gap, only the outer ends rounded); full names, short names only when they do not fit.",
-        "No capsule behind any lemma/POS pill: the pill is a muted, darkened POS colour (mixed toward slate) with white text and no outline, straight on the card glow; a lemma is plain text beside it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-15T14:58:00+01:00",
-      "date": "2026-10-15 14:58 BST",
-      "agent": "Antigravity",
-      "summary": "Fix language and mode state persistence bugs and enrich choice information across music and vocabulary",
-      "detail": [
-        "Fixed critical bug where changing language or mode left activeArtist or window.activeArtist set, causing the sidebar and UI to still say Spanish when another language or mode was chosen.",
-        "Synced currentLearningMode() to accurately recognize music workspace without being masked by stale speech classes.",
-        "Enriched the Music choices screen with language-specific catalog counts, curated artist previews, and clear Spotify guidance.",
-        "Added informative album counts and vocabulary size metrics to catalog artist cards, plus clear descriptions in desktop trail dropdowns."
-      ],
-      "commit": "82a43df2"
-    },
-    {
-      "timestamp": "2026-10-15T14:40:00+01:00",
-      "date": "2026-10-15 14:40 BST",
-      "agent": "Antigravity",
-      "summary": "Guided on-page music mode selection and removal of redundant 'Back to vocabulary' button",
-      "detail": [
-        "Landing on Music mode now visually guides the learner on the page with dedicated cards for Artists and Spotify playlists rather than jumping straight into artist browsing.",
-        "Removed the redundant '‹ Back to vocabulary' button since sidebar chips handle mode and language switching.",
-        "In sub-pages (Artists, Spotify playlists, Songs), the on-page '‹ Back' button returns to the previous guided step (e.g. from Artists back to music source choices).",
-        "Sidebar trail Level 2 reflects 'Choose…' until a source option is picked, keeping the sidebar and page in full alignment."
-      ],
-      "commit": "1168755a"
-    },
-    {
-      "timestamp": "2026-10-15T11:28:00+01:00",
-      "date": "2026-10-15 11:28 BST",
-      "agent": "Antigravity",
-      "summary": "Desktop sidebar trail refined: 3-tier hierarchy with Vocabulary (Speech/Music) -> Music (Artists/Spotify) -> Source",
-      "detail": [
-        "The primary Vocabulary chip now cleanly offers the Speech vs Music choice.",
-        "Underneath Vocabulary in Music mode, a dedicated subrow chip offers the music options (Artists vs Spotify playlists).",
-        "The source chip sits beneath the music options chip, displaying the selected artist or playlist name with quick switching."
-      ],
-      "commit": "974d2d21"
-    },
-    {
-      "timestamp": "2026-10-15T11:08:00+01:00",
-      "date": "2026-10-15 11:08 BST",
-      "agent": "Antigravity",
-      "summary": "Streamlined music navigation: eliminated nested sidebars, direct choosing set menu flow, and clear sidebar hierarchy",
-      "detail": [
-        "Eliminated the nested secondary sidebar (Artists, Spotify playlists, Study setup) in the music complex; replaced with a clean horizontal source switcher.",
-        "Selecting an artist or Spotify playlist takes the learner directly through selection into the main choosing set menu without nested workspaces.",
-        "Desktop sidebar trail now reads clearly: Spanish -> Vocabulary: Artists / Spotify playlists -> Artist / Playlist name."
-      ],
-      "commit": "df2ff1a9"
     }
   ]
 }
