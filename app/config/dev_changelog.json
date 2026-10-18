@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T00:10:00+01:00",
+      "date": "2026-10-19 00:10 BST",
+      "agent": "Claude",
+      "summary": "Home: the folded Learn or Practise card keeps a short version; desktop example words sit above the level bar",
+      "detail": [
+        "Phones and tablets: the closed card is no longer a single line. Folded Learn shows its level and words, the level bar and its counts; folded Practise shows the total and a line of mistakes, due and coming back. Tapping it opens it, and the button at the bottom follows whichever card is open.",
+        "Desktop: the level's example words moved from under the level number to the right-hand column, above the bar, which makes the Learn card shorter."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T23:50:00+01:00",
       "date": "2026-10-18 23:50 BST",
       "agent": "Claude",
@@ -357,18 +368,6 @@
         "Enlarged the level scrubber thumb circle and number (.cbs-thumb) from 32px / 13px to 36px / 16px, and the 'Level x' label (.study-level-label) from 14px to 17px."
       ],
       "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T21:46:00+01:00",
-      "date": "2026-10-17 21:46 BST",
-      "agent": "Antigravity",
-      "summary": "Move memory tip lightbulb to headword corner, rename Pin meaning(s), and add 5-tile compact fallback",
-      "detail": [
-        "Moved the memory tip trigger out of the bottom action row to an unboxed golden lightbulb at the top-right corner of the back headword (.headword-memory-tip-btn) so learner cards in ES/PT/CS/NL/FI never exceed 4 bottom buttons.",
-        "Renamed the bottom button label from \"Pin a meaning\" to \"Pin meaning(s)\" across live cards, tutorial steps, and card replicas.",
-        "Added a .links-section:has(> :nth-child(5)) compact layout and horizontal scroll fallback for the rare 5+ tile case (such as when Synonyms or the admin Dictionary button is present alongside Rare uses, Pin meaning(s), Conjugate, and Look up)."
-      ],
-      "commit": "c1a20268"
     }
   ]
 }
