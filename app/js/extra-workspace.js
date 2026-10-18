@@ -15,10 +15,14 @@ if (!window.registerConjugationNotVerbs) {
 
 const scriptPromises = new Map();
 
+// The app's own folder (this file is app/js/). Production lives under
+// /Fluency-App/, so scripts resolve from here, not from the site root or the
+// /conjugation address the drill puts in the bar.
+const APP_ROOT = new URL('../', import.meta.url);
+
 function loadScript(src) {
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const cleanSrc = src.replace(/^\/+/, '');
-    const fullUrl = `${origin}/${cleanSrc}`;
+    const fullUrl = new URL(cleanSrc, APP_ROOT).href;
 
     if (scriptPromises.has(fullUrl)) {
         return scriptPromises.get(fullUrl);
@@ -122,8 +126,8 @@ export async function openConjugationsScreen(targetVerb = null, targetView = nul
 
     try {
         const url = new URL(window.location.href);
-        const base = url.pathname.replace(/\/conjugation\/?$/, '') || '';
-        const drillPath = (base + '/conjugation').replace(/^\/\//, '/');
+        const base = url.pathname.replace(/\/conjugation\/?$/, '').replace(/\/+$/, '');
+        const drillPath = `${base}/conjugation`;
         const search = targetVerb ? `?verb=${encodeURIComponent(targetVerb)}` : '';
         history.replaceState({ screen: 'conjugation' }, '', drillPath + search);
     } catch (_) {}

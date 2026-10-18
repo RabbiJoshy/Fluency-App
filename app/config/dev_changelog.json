@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T03:00:00+01:00",
+      "date": "2026-10-19 03:00 BST",
+      "agent": "Claude",
+      "summary": "Fix: Conjugations never loaded on the live site",
+      "detail": [
+        "The embedded verb drill loaded its scripts from the site root (/conjugation/…). Production lives under /Fluency-App/, so every script 404'd and the drill sat on \"0 cards\". Scripts now load from the app's own folder; staging was unaffected because it is served from the root.",
+        "The address the drill puts in the bar no longer has a double slash (/Fluency-App//conjugation), which also sent its data requests to the wrong place."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T02:30:00+01:00",
       "date": "2026-10-19 02:30 BST",
       "agent": "Claude",
@@ -348,17 +359,6 @@
         "Card: fixed empty stub oval caused by clue pill CSS overriding the hidden attribute.",
         "Setup: removed Resume button; total count displays breakdown (verbs · tenses · persons); progress bar is tappable to reveal/hide its mastery key.",
         "Setup: safe default selection guaranteed (present tense and all persons) so the drill never loads empty."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T15:22:00+01:00",
-      "date": "2026-10-18 15:22 BST",
-      "agent": "Antigravity",
-      "summary": "Verb drills: icon buttons for table and sentences, and the close button now steps back one level",
-      "detail": [
-        "Card: 'see the table' and 'see sentences' are now icon buttons (table grid, speech bubble) on their own line under the regular/irregular pill.",
-        "Close button: in the conjugation menu it returns to the Extra menu; inside a drill it returns to the conjugation menu (the round is saved, so Resume still works)."
       ],
       "commit": "pending"
     }
