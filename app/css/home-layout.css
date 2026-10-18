@@ -7,7 +7,7 @@
     #setupPanel.file-upload,
     body.desktop-workspace #setupPanel.file-upload {
         display: block;
-        max-width: 560px;
+        max-width: none;
         margin-inline: auto;
     }
 }
@@ -380,3 +380,83 @@ body:not(.desktop-workspace) #topBar .gear-btn {
 }
 body:not(.desktop-workspace) #topBar .top-bar-icon-btn svg,
 body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; }
+
+/* --- Wide screens: fill the window -------------------------------------
+   Nothing here scrolls, so nothing is capped in pixels: the column takes the
+   width beside the sidebar, the open card takes the height left over, and
+   the headline numbers scale with the window. */
+@media (min-width: 1024px) {
+    /* JS sets display:block inline on these; override it unless hidden. */
+    #setupPanel.file-upload:not([style*="none"]),
+    body.desktop-workspace #setupPanel.file-upload:not([style*="none"]) {
+        display: flex !important;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+        min-height: calc(100dvh - 56px);
+        box-sizing: border-box;
+        padding-inline: 2vw;
+    }
+    #setupPanel.file-upload { align-items: stretch; }
+    #setupPanel .home-section { margin: 0; width: 100%; max-width: none; align-self: stretch; box-sizing: border-box; }
+    #setupPanel #step2:not([style*="none"]),
+    #setupPanel #reviewDeckSection:not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
+    #setupPanel[data-home-open="learn"] #step2,
+    #setupPanel[data-home-open="practise"] #reviewDeckSection { flex: 1 1 auto; }
+    #setupPanel .home-section > .step-header { padding: 2.4vh 2vw 0; }
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(17px, 1.5vw, 24px); }
+    #setupPanel .home-section-footer { margin-top: auto; padding: 2vh 2vw; }
+    #setupPanel .home-section-toggle { padding: 1.6vh 2vw; font-size: clamp(15px, 1.2vw, 19px); }
+    #setupPanel .home-section-toggle-meta { font-size: clamp(14px, 1.05vw, 17px); }
+
+    /* Learn: picker on the left, this level's progress on the right, the
+       footer across both. #step4 joins the grid unless JS has hidden it. */
+    #setupPanel #step2 .level-choosing {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        grid-template-rows: 1fr auto;
+        align-items: center;
+    }
+    #setupPanel #step2 #levelSelector { grid-column: 1; grid-row: 1; padding: 2vh 0; }
+    #setupPanel #step4:not([style*="none"]) { display: contents !important; }
+    #setupPanel #step2 #rangeSelector { grid-column: 2; grid-row: 1; }
+    #setupPanel #step2 .home-section-footer { grid-column: 1 / -1; grid-row: 2; }
+    #setupPanel #step2 .home-level-progress { padding: 0 3vw 0 1vw; }
+    #setupPanel #step2 .home-level-bar { height: clamp(8px, 1.2vh, 14px); border-radius: 7px; }
+    #setupPanel #step2 .home-level-stats { margin-top: 1.6vh; font-size: clamp(13px, 1.05vw, 17px); gap: 6px 1.4vw; }
+    .home-level-stepper { max-width: none; gap: 2vw; }
+    .home-level-step { width: clamp(44px, 4vw, 64px); height: clamp(44px, 4vw, 64px); font-size: clamp(28px, 2.6vw, 42px); }
+    .home-level-eyebrow { font-size: clamp(12px, 1vw, 16px); }
+    .home-level-readout strong { font-size: clamp(40px, 6vw, 96px); }
+    .home-level-words { font-size: clamp(13px, 1.1vw, 18px); }
+    #setupPanel #lswExamples,
+    #setupPanel #lswExamples .lsw-egs,
+    #setupPanel #lswExamples .lsw-egs * { font-size: clamp(13px, 1.05vw, 17px); }
+    #setupPanel #lswExamples { padding: 0 1vw; }
+
+    /* Practise: the total on the left, the breakdown on the right. */
+    #setupPanel #reviewDeckBody:not([style*="none"]) { flex: 1 1 auto; display: flex; flex-direction: column; }
+    .home-practise {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        column-gap: 3vw;
+        align-content: center;
+        align-items: center;
+        padding: 2vh 2vw;
+    }
+    .home-practise-total { grid-column: 1; grid-row: 1 / span 2; padding: 0; }
+    .home-practise-total strong { font-size: clamp(40px, 6vw, 96px); }
+    .home-practise-total span { font-size: clamp(13px, 1.05vw, 17px); }
+    .home-practise-row { padding: 1.4vh 0; font-size: clamp(14px, 1.15vw, 19px); }
+    .home-practise-rows { grid-column: 2; grid-row: 1; }
+    .home-practise-browse { grid-column: 2; grid-row: 2; justify-self: start; font-size: clamp(13px, 1vw, 16px); }
+    .home-practise-total.is-empty { grid-column: 1 / -1; grid-row: 1; }
+    .home-practise-total.is-empty + .home-practise-browse { grid-column: 1 / -1; grid-row: 2; justify-self: center; }
+
+    .home-cta { min-height: clamp(44px, 5.5vh, 60px); }
+    .home-cta-main { font-size: clamp(15px, 1.2vw, 19px); padding: 0 2vw; }
+    .home-smart-skip-copy { font-size: clamp(13px, 1vw, 16px); }
+    .home-footer-hint { font-size: clamp(13px, 1vw, 16px); }
+}

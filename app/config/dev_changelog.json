@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T19:48:00+01:00",
+      "date": "2026-10-18 19:48 BST",
+      "agent": "Claude",
+      "summary": "Home on desktop fills the window instead of a narrow 560px column",
+      "detail": [
+        "From 1024px wide: the column takes the full width beside the sidebar and the open card stretches to the bottom of the window, with its button at the bottom of the card.",
+        "Learn: level picker and example words on the left, the level's progress bar and counts on the right. Practise: the total on the left, Mistakes / Due / Coming back on the right.",
+        "Headline numbers, labels and the button scale with the window size rather than using fixed pixel sizes. Phones are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T19:26:00+01:00",
       "date": "2026-10-18 19:26 BST",
       "agent": "Claude",
@@ -359,19 +371,6 @@
         "Unified Smart Skip label and segmented switch into a single centered action button ('Smart Skip · On' / 'Smart Skip · Off').",
         "Styled the unified Smart Skip button to match the visual language, radius, and weight of the Study and Practise buttons.",
         "Maintained centered secondary summary ('Fewer cards, less repetition · Details ›') directly below the toggle button."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T14:58:00+01:00",
-      "date": "2026-10-17 14:58 BST",
-      "agent": "Antigravity",
-      "summary": "Eliminate runaway loading mark reflow loop and detach hidden loading screen to stop CPU overheating",
-      "detail": [
-        "Enforced strict is-hidden checks in applyLoadingMarkImage and updateLoadingMark so background image rotation intervals never run when the loading screen is hidden.",
-        "Incremented loading mark generation on hideAppLoading so delayed async image manifest fetches immediately discard their results and never spawn background intervals.",
-        "Guarded synchronous offsetWidth layout reads and pop animations so hidden loading elements never trigger forced browser DOM reflows.",
-        "Added display: none !important and paused all child CSS keyframe animations on .app-loading-screen.is-hidden so the GPU and layout engine completely detach the overlay."
       ],
       "commit": "pending"
     }
