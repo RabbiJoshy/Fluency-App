@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=87a002f6';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=87a002f6';
-import { readFastTrack } from './fast-track-preferences.js?v=87a002f6';
-import './session-plan.js?v=87a002f6';
+import './state.js?v=4eaea73c';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=4eaea73c';
+import { readFastTrack } from './fast-track-preferences.js?v=4eaea73c';
+import './session-plan.js?v=4eaea73c';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -753,14 +753,15 @@ const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" s
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
-        title: 'Choose your vocabulary',
+        title: 'Choose what to learn from',
         intro: [
-            'This app teaches the most common words first. What’s common depends on where the words come from.'
+            'We count how often each word appears in films and TV, or in songs, and give you flashcards in that order, most common first.',
+            'Your progress is shared between the two.'
         ],
         speech: {
             label: 'Speech',
             description: 'Words and examples from films and TV.',
-            bestFor: ['Starting a new language', 'Everyday conversations'],
+            bestFor: ['Starting from scratch', 'Everyday conversation', 'Following films and TV'],
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
@@ -768,7 +769,9 @@ function learningModeCopy(language = selectedLanguage) {
             description: lyricsCatalog
                 ? 'Words and examples from songs, artists and your playlists.'
                 : 'Words and examples from your Spotify playlists.',
-            bestFor: ['Your favourite artists', 'Learning by listening'],
+            bestFor: lyricsCatalog
+                ? ['Understanding your favourite songs', 'Studying your own playlists', 'Learning by listening']
+                : ['Studying your own playlists', 'Learning by listening'],
             iconHTML: MODE_ICON_MUSIC
         }
     };
@@ -3553,7 +3556,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=87a002f6')
+        import('./spotify.js?v=4eaea73c')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

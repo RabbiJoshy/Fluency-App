@@ -42,6 +42,23 @@
     font-size: 20px;
     justify-self: start;
 }
+/* Learn (seedling) and Practise (history clock): white line icons by the
+   names, so the two read as different things without more colour. */
+#setupPanel .home-section-icon {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+#setupPanel .home-section > .step-header > .step-title-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+}
 
 /* The closed section is one row. */
 #setupPanel .home-section-toggle {
@@ -447,8 +464,9 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel .home-section { margin: 0; width: 100%; max-width: none; align-self: stretch; box-sizing: border-box; }
     #setupPanel #step2:not(.hidden):not([style*="none"]),
     #setupPanel #reviewDeckSection:not(.hidden):not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
-    #setupPanel .home-section > .step-header { padding: 16px 2vw 0; }
-    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(17px, 1.5vw, 24px); }
+    /* Desktop has the height to spare, so the two names read as titles. */
+    #setupPanel .home-section > .step-header { padding: 2.4vh 2vw 0.6vh; }
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(24px, 2.1vw, 34px); letter-spacing: -0.01em; }
     #setupPanel .home-section-footer { margin-top: 0; padding: 12px 2vw; }
     #setupPanel .home-section-toggle { padding: 1.6vh 2vw; font-size: var(--home-text); }
     #setupPanel .home-section-toggle-meta { font-size: var(--home-text); }
@@ -548,7 +566,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     background: transparent;
 }
 /* The card surface: Speech's button itself, and Music's wrapper. */
-:is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceSpeechBtn,
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-speech,
 :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music {
     margin: 0;
     border: 1px solid var(--border-color);
@@ -557,8 +575,8 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     box-shadow: none;
     overflow: hidden;
 }
-:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music { display: flex; flex-direction: column; padding: 0; }
-:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music #standardSourcePickerBtn {
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-speech, .standard-source-music) { display: flex; flex-direction: column; padding: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, #standardSourcePickerBtn) {
     flex: 1;
     margin: 0;
     border: 0;
@@ -579,7 +597,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     cursor: pointer;
     transition: border-color .15s ease, background .15s ease;
 }
-:is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceSpeechBtn:hover:not(:disabled),
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-speech:hover:not(:has(:disabled)),
 :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music:hover { border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color)); }
 :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon {
     grid-area: icon;
@@ -653,7 +671,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     margin: 16px 0 0;
     color: var(--text-muted);
     font-size: 14px;
-    text-align: center;
+    text-align: left !important;
 }
 
 @media (min-width: 768px) {
@@ -675,20 +693,36 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
 }
 :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-heading { width: 100%; }
 :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { display: block; width: 100%; }
-:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music:not(:hover) { border-color: var(--border-color); }
-/* Phones: icon, name and › share the first row. */
-@media (max-width: 767px) {
-    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
-        grid-template-columns: auto 1fr auto;
-        grid-template-areas: "icon name tail";
-        column-gap: 12px;
-        row-gap: 8px;
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-speech, .standard-source-music):not(:hover) { border-color: var(--border-color); }
+/* Icon, name and › share the first row; Best for sits under them. The intro
+   says where the words come from, so the cards drop their own sentence. */
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "icon name tail";
+    column-gap: 12px;
+    row-gap: 8px;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy { display: contents; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { grid-area: name; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy small { display: none; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor { grid-column: 1 / -1; grid-row: 2; margin-top: 4px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-reassurance { display: none; }
+/* Speech's source line balances Music's Spotify footer side by side only. */
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-subtitles { display: none; }
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-subtitles {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-top: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        font-size: var(--home-text);
     }
-    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy { display: contents; }
-    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { grid-area: name; }
-    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy small { grid-column: 1 / -1; grid-row: 2; }
-    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor { grid-column: 1 / -1; grid-row: 3; }
-    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor { margin-top: 2px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-subtitles svg {
+        width: 20px; height: 20px; flex: none;
+        fill: none; stroke: #f5c518; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
 }
 :is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-choice, .standard-source-choice-intro) { max-width: none; }
 :is(#step1.language-summary-active, #step1) #standardSourceCard :is(.vocabulary-choice-bullets, .vocabulary-choice-bullets li, .choice-sheet-bestfor, .choice-sheet-bestfor em) { text-align: left; }
@@ -702,7 +736,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     border-top: 1px solid var(--border-color) !important;
     border-radius: 0 !important;
 }
-:is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, .standard-source-music) { align-self: stretch !important; height: auto; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-speech, .standard-source-music) { align-self: stretch !important; height: auto; }
 :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro { justify-items: start !important; }
 
 /* Desktop with the sidebar: Learn and Practise are both open, one above the
