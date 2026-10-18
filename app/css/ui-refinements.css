@@ -54,7 +54,7 @@
 .study-level-label {
     flex: none;
     color: var(--text-secondary);
-    font: 600 14px/1.2 var(--font-reading);
+    font: 700 17px/1.2 var(--font-reading);
     white-space: nowrap;
 }
 .study-level-label[hidden] { display: none; }
