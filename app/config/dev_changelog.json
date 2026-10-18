@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T13:20:00+01:00",
+      "date": "2026-10-18 13:20 BST",
+      "agent": "Claude",
+      "summary": "Companion cards: all three now reach the deck, and the front shows \"Card N of M · x% of uses\" on one clear pill; back-of-card controls enlarged again with tighter padding",
+      "detail": [
+        "Fixed 3-way split words (e.g. fue) stopping at card 2: the deck builder only pushed the first two companions. Sessions also no longer cut a 3-card split across two batches.",
+        "Front: \"Card N of M\" is now 16px bold on a tinted pill, with \"x% of uses\" beside it instead of under the frequency (the frequency is the same on every companion).",
+        "Back: pin icon 26→30px, information icon 18→23px in a 30px box, sense-row POS pill 15→17px with 3px 10px padding, scrubber circle 36→40px with a 20px number, 'Level x' label 17→20px."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T11:46:00+01:00",
       "date": "2026-10-18 11:46 BST",
       "agent": "Antigravity",
@@ -357,43 +369,6 @@
         "Simplified the cross-language transfer explanation with clear, concrete examples (e.g., learn noche in Spanish → skip noite in Portuguese)."
       ],
       "commit": "0bccb82c"
-    },
-    {
-      "timestamp": "2026-10-15T09:15:00+01:00",
-      "date": "2026-10-15 09:15 BST",
-      "agent": "Antigravity",
-      "summary": "Mnemonic memory tips redesigned for intuitive cognitive clarity with hero morpheme flow & pattern twins",
-      "detail": [
-        "Memory tips modal now leads immediately with the English anchor word ('Think of English: rapidly') rather than an edit script.",
-        "Replaced single-letter DNA alignment grid with visual morpheme chunking: emerald for shared roots and amber for shifting affixes (-mente → -ly, es- → s-).",
-        "Added pattern twins section showing how rules transfer across familiar words (e.g. totalmente → totally, perfectamente → perfectly).",
-        "Added Romance initial prefix rules (es- → s-), Italian language support, and amber lightbulb tile accent."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-15T00:41:00+01:00",
-      "date": "2026-10-15 00:41 BST",
-      "agent": "Antigravity",
-      "summary": "Modernized Portuguese function words with deterministic content cycling & ambient glow system",
-      "detail": [
-        "Closed-class focus words (que, de, se, o, nos, naquele) now feature a deterministic grammatical layout on card backs with content-word variation pills (e.g. gostar, precisar, depender for de) and clean contraction breakdown formulas (em + aquele for naquele; contextual em + os for nos).",
-        "Function words receive a single, dedicated signature ambient glow: Periwinkle Moonstone Off-White (rgb(212, 218, 245)), giving structural grammar words elevated distinction without competing with the chromatic POS spectrum.",
-        "Non-function words receive ambient glow per Part of Speech: multi-corner radial lighting on unified cards with multiple parts of speech, and single-POS lighting on companion cards ('Card 1 of 2')."
-      ],
-      "commit": "69c66a4c"
-    },
-    {
-      "timestamp": "2026-10-14T22:18:59+01:00",
-      "date": "2026-10-14 22:18 BST",
-      "agent": "Claude",
-      "summary": "“Languages you know” moved into Settings → Study and shows flags instead of a sentence.",
-      "detail": [
-        "Now sits under Show first on the Study tab (it was on the App tab).",
-        "The row shows one flag per language you know; hover a flag for its name. The explanatory line is now a tooltip.",
-        "Closing the editor returns you to the Study tab."
-      ],
-      "commit": "pending"
     }
   ]
 }

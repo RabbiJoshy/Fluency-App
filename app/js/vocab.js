@@ -2965,7 +2965,8 @@ window.recordGuestSessionAnswer = recordGuestSessionAnswer;
 
 function selectStudySessionCards(cards, limit = 20) {
     let end = Math.min(cards.length, limit);
-    if (end < cards.length && cards[end - 1]?.splitInfo && cards[end]?.splitInfo
+    // Never cut a split word's companions across sessions (7A|7B|7C).
+    while (end > 1 && end < cards.length && cards[end - 1]?.splitInfo && cards[end]?.splitInfo
         && cards[end - 1].targetWord === cards[end].targetWord) end--;
     return { cards: cards.slice(0, end), remaining: cards.length - end };
 }
@@ -3745,15 +3746,14 @@ async function loadVocabularyData(rangeString, opts = {}) {
 
             const splitPair = buildSplitCardPair(item, card, meanings);
             if (splitPair) {
-                const [card1, card2] = splitPair;
-                const deckCard1 = buildKnowledgeAwareCard(card1, {
-                    skipWhenNothingToPractise: studyMode === 'review'
+                // A homograph can split three or more ways; every companion
+                // goes in, not just the first two.
+                splitPair.forEach(companion => {
+                    const deckCard = buildKnowledgeAwareCard(companion, {
+                        skipWhenNothingToPractise: studyMode === 'review'
+                    });
+                    if (deckCard) flashcards.push(deckCard);
                 });
-                const deckCard2 = buildKnowledgeAwareCard(card2, {
-                    skipWhenNothingToPractise: studyMode === 'review'
-                });
-                if (deckCard1) flashcards.push(deckCard1);
-                if (deckCard2) flashcards.push(deckCard2);
             } else {
                 // Sets and Review share one card shape: known senses greyed,
                 // the rest fronted and answered. Review skips a word with

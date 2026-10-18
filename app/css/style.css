@@ -1983,7 +1983,7 @@
             flex: 1;
             height: 100%;
             /* Left and right insets are half the thumb, so it never clips at 0% or 100%. */
-            margin: 0 16px;
+            margin: 0 20px;
         }
         .cbs-track,
         .cbs-fill {
@@ -2008,12 +2008,12 @@
             left: calc(var(--cbs-t, 0) * 100%);
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: #ffffff;
             color: #1a1f26;
-            font: 800 16px/1 var(--font-reading);
+            font: 800 20px/1 var(--font-reading);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2713,14 +2713,14 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 5px 12px;
-            min-height: 28px;
+            padding: 3px 10px;
+            min-height: 30px;
             border-radius: 999px;
             background: color-mix(in srgb, rgb(var(--sense-match-rgb, 160, 160, 160)) 52%, #10151a);
             border: 1px solid transparent;
             color: #fff;
             font-family: var(--font-reading);
-            font-size: 15px;
+            font-size: 17px;
             font-weight: 700;
             line-height: 1;
             letter-spacing: 0;
@@ -2959,8 +2959,8 @@
             -webkit-tap-highlight-color: transparent;
         }
         .sense-pin-btn .sense-pin-icon {
-            width: 26px;
-            height: 26px;
+            width: 30px;
+            height: 30px;
         }
         .sense-pin-btn:hover,
         .sense-pin-btn:focus-visible {
@@ -3764,16 +3764,16 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            min-width: 28px;
-            height: 28px;
-            min-height: 28px;
+            width: 30px;
+            min-width: 30px;
+            height: 30px;
+            min-height: 30px;
             border: none;
             border-radius: 6px;
             padding: 0;
             background: transparent;
             color: rgba(var(--sense-match-rgb), 0.85);
-            font: italic 700 18px/1 Georgia, "Times New Roman", serif;
+            font: italic 700 23px/1 Georgia, "Times New Roman", serif;
             margin: 0;
             cursor: pointer;
             transition: color 0.15s ease, background 0.15s ease;
@@ -21566,7 +21566,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 .meaning-row .sense-metadata-detail + .sense-metadata-detail::before { content: none; }
 .meaning-row .sense-metadata-tier--grammar,
 .meaning-row .sense-metadata-tier--details { gap: 4px 8px; }
-.meaning-row .sense-note-trigger { font-size: 18px; }
+.meaning-row .sense-note-trigger { font-size: 23px; }
 .meaning-row .group-card-varying-cell > .meaning-context-cell,
 .meaning-row .group-card-varying-cell > .row-adaptive-text,
 .meaning-row-regular:not(.is-current-sense) .meaning-row-translation {
@@ -21627,10 +21627,10 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     z-index: 2;
     display: inline-flex;
     margin: 0;
-    width: 28px;
-    min-width: 28px;
-    height: 28px;
-    min-height: 28px;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
     padding: 0;
     border-radius: 6px;
     flex: 0 0 auto;
@@ -24173,7 +24173,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #cardTutorialStage .sentence { flex: 0 0 auto; max-height: none; overflow: visible; box-sizing: border-box; }
 #cardTutorialStage .meaning-row { padding-left: 44px !important; }
 #cardTutorialStage .sense-note-trigger { left: 2px; width: 44px; height: 44px; min-width: 44px; border: 0; background: transparent; }
-#cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; font-size: 18px; border: 0; border-radius: 6px; background: transparent; }
+#cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; font-size: 23px; border: 0; border-radius: 6px; background: transparent; }
 #cardTutorialStage .sense-prominence-badge { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 #cardTutorialStage .meaning-row-body { padding-right: 48px !important; }
 #cardTutorialStage .meaning-row .sense-cue-area { max-width: 100%; }
@@ -24383,7 +24383,7 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-label { color: var(--warning); }
 
 /* Seek-bar thumb: a circle for "25", a pill for "25A" so the letter fits. */
-.cbs-thumb { width: auto; min-width: 36px; padding: 0 7px; border-radius: 999px; box-sizing: border-box; }
+.cbs-thumb { width: auto; min-width: 40px; padding: 0 5px; border-radius: 999px; box-sizing: border-box; }
 
 /* Split words: "Card 1 of 2" sits on its own pill instead of a "Flashcard 1 of 2"
    line floating between the two, so the count can only mean that card. The
@@ -25961,20 +25961,39 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .known-language-flag.is-code { font: 700 11px var(--font-emphasis); color: var(--text-secondary); }
 
-/* Companion cards: one small "Card N of M" cue under the card's own pill(s).
-   Plain text, no tint; tapping it opens the explanation. */
+/* Companion cards: one "Card N of M · x% of uses" cue under the card's own
+   pill(s), on a tinted pill so it reads at a glance on a phone. Tapping the
+   count opens the explanation; the share is this card's slice of the word. */
 .card-front .card-pos-list.is-lemma-map > .split-card-note.is-counter {
   flex: 0 0 100%;
-  margin: 0;
+  margin: 2px 0 0;
   text-align: center;
+}
+.split-card-note.is-counter > .split-card-counter {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: rgba(var(--split-accent, 160, 160, 160), 0.2);
 }
 .card-pos-list .split-card-note.is-counter .split-pill-count {
   background: none;
   color: var(--text-primary);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 2px 4px;
-  opacity: 0.85;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 6px 8px;
+  opacity: 1;
+}
+.card-pos-list .split-card-note.is-counter .split-usage-share {
+  align-self: center;
+  padding: 6px 10px 6px 0;
+  font: 500 15px/1 var(--font-reading);
+  color: var(--text-secondary);
+}
+.card-pos-list .split-card-note.is-counter .split-usage-share::before {
+  content: "·";
+  margin-right: 8px;
+  color: var(--text-muted);
 }
 
 /* Function-word cards: typed chunks, centred formulas and compact construction header. */

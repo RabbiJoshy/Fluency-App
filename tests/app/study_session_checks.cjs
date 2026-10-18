@@ -18,6 +18,15 @@ const {createHarness} = require('./estimation_harness.cjs');
     assert.equal(paired.cards.length,19);
     assert.equal(paired.remaining,46);
     assert.equal(h.selectStudySessionCards(cards.slice(19)).cards[1].fullId,'pair-b');
+    // A three-way split (fue: ser / ir / ...) stays whole when the cut lands
+    // between its second and third card.
+    const triple=cards.map(c=>({...c}));
+    triple[18]={fullId:'tri-a',targetWord:'tri',splitInfo:{index:1}};
+    triple[19]={fullId:'tri-b',targetWord:'tri',splitInfo:{index:2}};
+    triple[20]={fullId:'tri-c',targetWord:'tri',splitInfo:{index:3}};
+    const tripled=h.selectStudySessionCards(triple);
+    assert.equal(tripled.cards.length,18);
+    assert.equal(tripled.remaining,47);
 
     h.currentUser={isGuest:true};
     const guestWord={word:'guestword',id:'guest-id'};
