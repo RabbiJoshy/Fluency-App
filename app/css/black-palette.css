@@ -5,7 +5,10 @@
    theme's defaults and this file goes. */
 :root:not([data-theme="light"]) body:is(
     :has(#setupPanel:not(.hidden):not([style*="none"])),  /* home */
-    :has(#appContent:not(.hidden))                       /* flashcards */
+    :has(#appContent:not(.hidden)),                      /* flashcards */
+    :has(#appLoadingScreen:not(.is-hidden)),             /* startup */
+    :has(#resumeLastSetCard),                            /* welcome back */
+    .auth-active                                         /* sign-in */
 ) {
     --bg-primary: #000;
     --bg-secondary: #0d0e10;
@@ -18,8 +21,18 @@
 }
 :root:not([data-theme="light"]) body:is(
     :has(#setupPanel:not(.hidden):not([style*="none"])),
-    :has(#appContent:not(.hidden))
+    :has(#appContent:not(.hidden)),
+    :has(#appLoadingScreen:not(.is-hidden)),
+    :has(#resumeLastSetCard),
+    .auth-active
 ) .container { background: transparent; }
+
+/* End of a session: a plain lifted card like the rest, not one tinted with
+   the accent. */
+:root:not([data-theme="light"]) .deck-complete-content {
+    background: var(--bg-card);
+    border-color: var(--border-light);
+}
 
 /* Flashcards: panels and pop-ups that type their blue-grey in directly
    instead of using the surface variables. Panels on the card sit one step

@@ -3077,6 +3077,10 @@
             padding-left: 4px;
             border-left: 2px solid rgb(var(--sense-match-rgb));
         }
+        /* A sense other than the active one keeps a slightly lighter rail. */
+        .pos-collapsible.is-open:not(:has(.meaning-row.is-current-sense)) .meaning-pos-rows {
+            border-left-width: 1.5px;
+        }
 
         /* A fixed grammar bay keeps one to four POS labels stable beside the
            headword. One or two labels form one centred row; three or four use
@@ -26009,3 +26013,24 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-credit-start { overflow:visible; white-space:normal; min-width:0; max-width:75%; display:flex; align-items:center; }
 .fw-credit-start .example-source-chip { max-width:100%; }
 .fw-example-credit-row { min-height:42px; }
+
+/* Function-word cards match ordinary cards: the active pattern carries the
+   word's part-of-speech outline, and the word itself keeps white text over a
+   part-of-speech underline in the patterns and the example. */
+.fw-relation-box.is-selected,
+.fw-relation-box[aria-pressed="true"] {
+  border: 2px solid rgb(var(--sense-match-rgb));
+  background: rgba(var(--sense-match-rgb), 0.10);
+  padding: 8px 13px;
+}
+.fw-token-connector, .fw-sentence-target .fw-token-connector {
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 3px;
+  padding: 0 0.14em;
+  box-shadow: inset 0 -3px 0 rgb(var(--sense-match-rgb));
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.fw-relation-formula .fw-token-connector { box-shadow: inset 0 -2px 0 rgb(var(--sense-match-rgb)); }

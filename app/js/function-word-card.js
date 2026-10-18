@@ -31195,7 +31195,7 @@ export function functionWordBlockHTML(card, lang) {
         const ticksHTML = renderFwTicks(examples.length, _activeExampleIndex);
 
         return `
-            <div class="fw-deterministic-card" data-word="${esc(wordKey)}" data-lang="${esc(lang || 'pt')}">
+            <div class="fw-deterministic-card" data-word="${esc(wordKey)}" data-lang="${esc(lang || 'pt')}" style="--sense-match-rgb: ${fwPresentation.posRgb?.(card?.pos || card?.meanings?.[0]?.pos) || 'var(--accent-primary-rgb)'};">
                 <div class="fw-header">
                     <h2 class="fw-heading">${esc(wordKey)}</h2>
                     ${partsBoxHTML}
