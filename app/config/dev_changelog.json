@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T00:30:00+01:00",
+      "date": "2026-10-19 00:30 BST",
+      "agent": "Claude",
+      "summary": "Practise info: one title; clearer Due for review line",
+      "detail": [
+        "The Practise information sheet had a small \"Practice\" label above its \"Practise\" title; only the title is left.",
+        "Due for review now reads \"Words recently correct, scheduled for spaced repetition.\""
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T00:10:00+01:00",
       "date": "2026-10-19 00:10 BST",
       "agent": "Claude",
@@ -353,19 +364,6 @@
         "Fixed 3-way split words (e.g. fue) stopping at card 2: the deck builder only pushed the first two companions. Sessions also no longer cut a 3-card split across two batches.",
         "Front: \"Card N of M\" is now 16px bold on a tinted pill, with \"x% of uses\" beside it instead of under the frequency (the frequency is the same on every companion).",
         "Back: pin icon 26→30px, information icon 18→23px in a 30px box, sense-row POS pill 15→17px with 3px 10px padding, scrubber circle 36→40px with a 20px number, 'Level x' label 17→20px."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T11:46:00+01:00",
-      "date": "2026-10-18 11:46 BST",
-      "agent": "Antigravity",
-      "summary": "Enlarge row pin icon, sense info icon, sense-row POS pill, and level scrubber circle and label",
-      "detail": [
-        "Increased sense-row pin icon (.sense-pin-icon) from 22x22px to 26x26px.",
-        "Increased sense information trigger (.sense-note-trigger) from 14px (22x22px box) to 18px (28x28px box).",
-        "Enlarged the POS pill on the sense section row (.pos-section-label) from 13px (24px height, 3px 9px padding) to 15px (28px height, 5px 12px padding).",
-        "Enlarged the level scrubber thumb circle and number (.cbs-thumb) from 32px / 13px to 36px / 16px, and the 'Level x' label (.study-level-label) from 14px to 17px."
       ],
       "commit": "pending"
     }
