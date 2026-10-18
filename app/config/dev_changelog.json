@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-18T18:30:00+01:00",
+      "date": "2026-10-18 18:30 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip desktop: no divider, wider sidebar, closer columns, larger text",
+      "detail": [
+        "Removed the vertical line between the rules sidebar and the word list, and brought the two columns closer together.",
+        "Wider sidebar (up to 480px) and larger text on desktop: 19px for everything, 28px title; 17px on narrower desktops under 1280px.",
+        "Category chips wrap on desktop instead of scrolling; the row arrow has its own space so it no longer overlaps Rank; rule names wrap instead of being cut short."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-18T18:05:00+01:00",
       "date": "2026-10-18 18:05 BST",
       "agent": "Claude",
@@ -358,18 +370,6 @@
         "Remove duplicate titles, eyebrow context pills, and redundant modal close buttons from Extra workspace.",
         "Make lyrics translation card description generic ('lyrics of any song') rather than specific to the current artist.",
         "Document UI guideline in CLAUDE.md to avoid duplicate titles and multi-spot navigation."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-17T12:29:00+01:00",
-      "date": "2026-10-17 12:29 BST",
-      "agent": "Antigravity",
-      "summary": "Fix card scrubber jumping on touchdown and skipping numbers abruptly",
-      "detail": [
-        "Eliminated touchdown jump when grabbing the scrubber thumb by keeping card position stable on initial touch.",
-        "Implemented steady, tactile 18px per card stepping during drag so numbers advance sequentially without skipping.",
-        "Preserved direct track tapping so tapping anywhere along the rail continues to seek directly to the tapped position."
       ],
       "commit": "pending"
     }
