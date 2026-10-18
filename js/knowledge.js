@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=1c56b33c';
-import { sendOrQueue } from './sync-queue.js?v=1c56b33c';
+import './state.js?v=ad979b48';
+import { sendOrQueue } from './sync-queue.js?v=ad979b48';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -776,6 +776,12 @@ function getPracticeMeaningInfo(card) {
     if (indices.size === 0 && rowLearned.size > 1 && known.size >= rowLearned.size) {
         known.clear();
     }
+    // Pins mean "some of these, not the rest". A miss marks every meaning for
+    // practice, which is the whole card, so show it whole rather than pinned.
+    if (focusItems.length > 1 && practising >= focusItems.length) {
+        indices.clear();
+        practising = 0;
+    }
     return { indices, known, knownCount, practising, total: focusItems.length };
 }
 
@@ -815,6 +821,8 @@ function getKnowledgeOverviewFraction(card) {
         const state = getKnowledgeItemState(card, item);
         return state.needsReview && state.reviewReason === 'incorrect';
     }).length;
+    // Every meaning marked is the whole card, not a pinned subset.
+    if (rows.length > 1 && flagged >= rows.length) return { flagged: 0, total: rows.length };
     return { flagged, total: rows.length };
 }
 

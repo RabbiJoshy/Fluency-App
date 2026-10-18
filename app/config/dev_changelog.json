@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T00:38:00+01:00",
+      "date": "2026-10-19 00:38 BST",
+      "agent": "Claude",
+      "summary": "Pins only show for some meanings; clearer practise pill; plural glosses no longer doubled",
+      "detail": [
+        "A card with every meaning marked after a miss now comes back whole, with no pins; pins and the pill appear once only some meanings are pinned.",
+        "The front pill reads \"2 of 4 meanings to practise\" in larger, bolder text.",
+        "A plural noun whose English gloss is already plural (plans, cops, mountains) is no longer pluralised again (\"planses\")."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T09:50:00+01:00",
       "date": "2026-10-19 09:50 BST",
       "agent": "Claude",
@@ -339,21 +351,6 @@
         "Desktop: More rules is folded behind one row by default and unfolds in place.",
         "Desktop: wider sidebar (up to 400px) and larger text throughout the rules and the list.",
         "Removed the hairline under the header; the sidebar's divider stays."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T17:04:00+01:00",
-      "date": "2026-10-18 17:04 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip page redesign: one-line header, rules sidebar on desktop, compact switches and sheets on phones, chips above the word list",
-      "detail": [
-        "Header: centred 'Smart Skip' title on desktop, words-skipped count, a page on/off switch and close button; the page background is black in the dark theme.",
-        "Desktop: full-width page; the rules sit in a sidebar running to the bottom edge with every description shown, including 'Compare with' language chips and the optional rules listed in place.",
-        "Phone: the two main switches and a 'More rules' row sit in one card above the list; each rule's description (and the look-alike languages) opens from its ⓘ as a bottom sheet, as does More rules. The Rules/Skipped words tabs, the browse banner, tagline and emoji icons are gone.",
-        "Word list: the category dropdown is now a row of chips; look-alikes with more than one known language get an English | French style switch, and the column header names the language shown, so rows need no language label.",
-        "Flags removed from Smart Skip column headers, the language switch and the look-alike language chips; languages are named in words.",
-        "Replaced the 700-line !important Smart Skip block in ui-refinements.css with one scoped set of styles."
       ],
       "commit": "pending"
     }

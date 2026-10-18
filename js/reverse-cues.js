@@ -186,6 +186,14 @@ function isRegularSpanishPlural(surface, lemma) {
     return candidates.has(target);
 }
 
+// Some dictionary glosses of a plural Spanish form are already plural
+// ("plans", "cops", "mountains"): pluralising them again gave "planses".
+// Singular nouns that end in s almost always end in ss, us, is, as or os.
+const ENGLISH_PLURAL_VALUES = new Set(Object.values(IRREGULAR_ENGLISH_PLURALS));
+function englishGlossIsPlural(lower) {
+    return ENGLISH_PLURAL_VALUES.has(lower) || /[^suiao]s$/u.test(lower);
+}
+
 function pluralizeEnglishWord(gloss) {
     const word = String(gloss || '').trim();
     if (!/^[A-Za-z]+$/u.test(word)) return null;
@@ -194,7 +202,7 @@ function pluralizeEnglishWord(gloss) {
     let plural;
     if (IRREGULAR_ENGLISH_PLURALS[lower]) {
         plural = IRREGULAR_ENGLISH_PLURALS[lower];
-    } else if (INVARIANT_ENGLISH_PLURALS.has(lower)) {
+    } else if (INVARIANT_ENGLISH_PLURALS.has(lower) || englishGlossIsPlural(lower)) {
         plural = lower;
     } else if (/[^aeiou]y$/u.test(lower)) {
         plural = `${lower.slice(0, -1)}ies`;
