@@ -14,7 +14,7 @@ MOTION = {'ir', 'venir', 'llegar', 'volver', 'subir', 'bajar', 'entrar'}
 
 
 def decide_es(row, obs):
-    if row.get('language') != 'es' or row.get('word') not in {'se', 'lo', 'que', 'al'}:
+    if row.get('language') != 'es' or row.get('word') not in {'se', 'lo', 'que', 'al', 'del'}:
         return None
     text, word = row['sentence'], row['word']
     evidence = {'parser': obs.get('parser') if obs else None}
@@ -74,7 +74,7 @@ def decide_es(row, obs):
             return stop('Constituent offsets are invalid.')
         if any(a['end'] > b['start'] for a, b in zip(chunks, chunks[1:])):
             return stop('Constituent spans overlap.')
-        expected = ['v', 'connector', 'c'] if word == 'que' else ['connector', 'c' if word == 'al' and pattern == 0 else 'v']
+        expected = ['v', 'connector', 'c'] if word == 'que' else ['connector', 'c' if ((word in {'al', 'del'}) and pattern == 0) else 'v']
         if [c['slot'] for c in chunks] != expected:
             return stop('Constituent order does not match the displayed formula.')
         for c in chunks:
@@ -162,4 +162,14 @@ def decide_es(row, obs):
         if focus['deprel'] == 'case' and head['deprel'] == 'obl' and gov and gov['lemma'] in MOTION and head['lemma'] in DESTINATIONS:
             return emit(0, [('c', constituent(descendants(head)))], 'Motion predicate and licensed destination fit al + destination.')
         return stop('Personal-a, recipient and rate uses do not establish the displayed destination slot.')
+
+    if word == 'del':
+        if head and head['upos'] in {'NOUN', 'PROPN'} and bounds(head)[0] >= end:
+            hf = head.get('feats') or ''
+            if 'Gender=Masc' not in hf and 'Gender=' in hf:
+                return stop('Del requires masculine noun agreement.')
+            phrase = constituent(descendants(head))
+            if phrase and not text[end:phrase[0]].strip():
+                return emit(0, [('c', phrase)], 'Del contraction attached to masculine noun.')
+        return stop('Del lacks valid nominal attachment.')
     return None

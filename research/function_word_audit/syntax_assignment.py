@@ -91,12 +91,15 @@ def complete_chunks(row,obs,result):
     return revised
 
 def assign(row,obs):
+    row=dict(row);row.setdefault('automatic_label',{})
     from syntax_assignment_pt import decide_pt
     from syntax_assignment_es import decide_es
     from syntax_assignment_basic import decide_basic
+    from syntax_assignment_shared import decide_shared
     result=decide_basic(row,obs)
     if result is None:result=(decide_pt if row['language']=='pt' else decide_es)(row,obs)
     if result is None:result=common(row,obs)
+    if result is None:result=decide_shared(row,obs)
     if result is None:result=legacy(row,obs)
     result=complete_chunks(row,obs,result)
     if result['status']=='candidate':

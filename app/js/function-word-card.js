@@ -1702,6 +1702,21 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                             "type": "tvEpisode",
                             "year": "2017"
                         }
+                    },
+                    {
+                        "sentence": "Esta história é muito mais interessante que aquela.",
+                        "targetHTML": "Esta história é muito <span class=\"fw-token-v\">mais</span> interessante <span class=\"fw-token-connector\">que</span> <span class=\"fw-token-c\">aquela</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:que:2",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Comparative marker plus que."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
@@ -2354,6 +2369,21 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                             "title": "The Locomotion Reverberation",
                             "type": "tvEpisode",
                             "year": "2017"
+                        }
+                    },
+                    {
+                        "sentence": "Esta história é muito mais interessante que aquela.",
+                        "targetHTML": "Esta história é muito <span class=\"fw-token-v\">mais</span> interessante <span class=\"fw-token-connector\">que</span> <span class=\"fw-token-c\">aquela</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:que:2",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Comparative marker plus que."
+                            }
                         }
                     }
                 ],
@@ -5860,39 +5890,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "estar",
                     "trabalhar"
                 ],
-                "targetHTML": "<span class='fw-token-v'>Moro</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>Lisboa</span>.",
-                "translation": "I live in Lisbon.",
+                "targetHTML": "Por conta própria, na medida <span class=\"fw-token-connector\">em</span> <span class=\"fw-token-c\">que</span> se pode ser.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-v'>Moro</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>Lisboa</span>.",
-                        "translation": "I live in Lisbon.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Por conta própria, na medida em que se pode ser.",
+                        "targetHTML": "Por conta própria, na medida <span class=\"fw-token-connector\">em</span> <span class=\"fw-token-c\">que</span> se pode ser.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:em:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition em governing locative nominal."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Eles <span class='fw-token-v'>ficaram</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>casa</span> hoje.",
-                        "translation": "They stayed at home today.",
-                        "source": "Conversation"
+                        "sentence": "Cortem-no em pedaços e atirem-no para os cães.",
+                        "targetHTML": "Cortem-no <span class=\"fw-token-connector\">em</span> <span class=\"fw-token-c\">pedaços</span> e atirem-no para os cães.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:em:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition em governing locative nominal."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-v'>Trabalho</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>um hospital</span>.",
-                        "translation": "I work in a hospital.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Nós <span class='fw-token-v'>entramos</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>uma sala ampla</span>.",
-                        "translation": "We entered a large room.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "O café <span class='fw-token-v'>fica</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>frente à estação</span>.",
-                        "translation": "The cafe is in front of the station.",
-                        "source": "Contemporary speech"
+                        "sentence": "Uma vez decidido seguir em frente, precisa descobrir como.",
+                        "targetHTML": "Uma vez decidido <span class=\"fw-token-v\">seguir</span> <span class=\"fw-token-connector\">em</span> <span class=\"fw-token-c\">frente</span>, precisa descobrir como.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:em:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition em governing locative nominal."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "When",
@@ -5923,22 +5974,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Terminaremos</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>duas semanas</span>.",
                         "translation": "We will finish in two weeks.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "O curso <span class=\"fw-token-v\">começa</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>setembro</span>.",
-                        "translation": "The course starts in September.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Eles <span class=\"fw-token-v\">voltam</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>poucos dias</span>.",
-                        "translation": "They return in a few days.",
-                        "source": "Contemporary dialogue"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ],
         "uses": [
@@ -5954,39 +5996,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "estar",
                     "trabalhar"
                 ],
-                "targetHTML": "<span class='fw-token-v'>Moro</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>Lisboa</span>.",
-                "translation": "I live in Lisbon.",
+                "targetHTML": "Por conta própria, na medida <span class=\"fw-token-connector\">em</span> <span class=\"fw-token-c\">que</span> se pode ser.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-v'>Moro</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>Lisboa</span>.",
-                        "translation": "I live in Lisbon.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Por conta própria, na medida em que se pode ser.",
+                        "targetHTML": "Por conta própria, na medida <span class=\"fw-token-connector\">em</span> <span class=\"fw-token-c\">que</span> se pode ser.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:em:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition em governing locative nominal."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Eles <span class='fw-token-v'>ficaram</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>casa</span> hoje.",
-                        "translation": "They stayed at home today.",
-                        "source": "Conversation"
+                        "sentence": "Cortem-no em pedaços e atirem-no para os cães.",
+                        "targetHTML": "Cortem-no <span class=\"fw-token-connector\">em</span> <span class=\"fw-token-c\">pedaços</span> e atirem-no para os cães.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:em:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition em governing locative nominal."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-v'>Trabalho</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>um hospital</span>.",
-                        "translation": "I work in a hospital.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Nós <span class='fw-token-v'>entramos</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>uma sala ampla</span>.",
-                        "translation": "We entered a large room.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "O café <span class='fw-token-v'>fica</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>frente à estação</span>.",
-                        "translation": "The cafe is in front of the station.",
-                        "source": "Contemporary speech"
+                        "sentence": "Uma vez decidido seguir em frente, precisa descobrir como.",
+                        "targetHTML": "Uma vez decidido <span class=\"fw-token-v\">seguir</span> <span class=\"fw-token-connector\">em</span> <span class=\"fw-token-c\">frente</span>, precisa descobrir como.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:em:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition em governing locative nominal."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "When",
@@ -6017,22 +6080,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Terminaremos</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>duas semanas</span>.",
                         "translation": "We will finish in two weeks.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "O curso <span class=\"fw-token-v\">começa</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>setembro</span>.",
-                        "translation": "The course starts in September.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Eles <span class=\"fw-token-v\">voltam</span> <span class='fw-token-connector'>em</span> <span class='fw-token-c'>poucos dias</span>.",
-                        "translation": "They return in a few days.",
-                        "source": "Contemporary dialogue"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ]
     },
@@ -6071,22 +6125,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Ela <span class='fw-token-v'>olhou</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>o céu</span>.",
                         "translation": "She looked toward the sky.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Vamos <span class='fw-token-v'>voltar</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>o hotel</span>.",
-                        "translation": "We are returning to the hotel.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "O comboio <span class='fw-token-v'>parte</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>o Porto</span>.",
-                        "translation": "The train departs for Porto.",
-                        "source": "Contemporary speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Everyday speech"
             },
             {
                 "tag": "What for",
@@ -6100,39 +6145,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "correr",
                     "ligar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Estudo</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
-                "translation": "I study in order to learn.",
+                "targetHTML": "Certamente que vocês não são tão tolos <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">voltar sem isso</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Estudo</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
-                        "translation": "I study in order to learn.",
-                        "source": "Conversation"
+                        "sentence": "Certamente que vocês não são tão tolos para voltar sem isso.",
+                        "targetHTML": "Certamente que vocês não são tão tolos <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">voltar sem isso</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:para:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Trabalho</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>sustentar minha família</span>.",
-                        "translation": "I work in order to support my family.",
-                        "source": "Everyday speech"
+                        "sentence": "Preciso do voto dele para ganhar o poder de que necessito para proteger a minha família.",
+                        "targetHTML": "Preciso do voto dele <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">ganhar o poder de que necessito para proteger a minha família</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:para:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Ligou</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>saber notícias</span>.",
-                        "translation": "Called in order to get news.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Paramos</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>descansar um pouco</span>.",
-                        "translation": "We stopped in order to rest a bit.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Correu</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>não perder o autocarro</span>.",
-                        "translation": "Ran in order not to miss the bus.",
-                        "source": "Literature"
+                        "sentence": "Mas um garoto precisa da sua mãe para se tornar num homem.",
+                        "targetHTML": "Mas um garoto <span class=\"fw-token-v\">precisa</span> da sua mãe <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">se tornar num homem</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:para:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Who for",
@@ -6163,22 +6229,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Cozinhei <span class=\"fw-token-v\">jantar</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>todos nós</span>.",
                         "translation": "I cooked dinner for all of us.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Há <span class=\"fw-token-v\">lugar</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>mais uma pessoa</span>?",
-                        "translation": "Is there room for one more person?",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Deixei <span class=\"fw-token-v\">um bilhete</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>ela</span>.",
-                        "translation": "I left a note for her.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "noun",
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ],
         "uses": [
@@ -6211,22 +6268,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Ela <span class='fw-token-v'>olhou</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>o céu</span>.",
                         "translation": "She looked toward the sky.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Vamos <span class='fw-token-v'>voltar</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>o hotel</span>.",
-                        "translation": "We are returning to the hotel.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "O comboio <span class='fw-token-v'>parte</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>o Porto</span>.",
-                        "translation": "The train departs for Porto.",
-                        "source": "Contemporary speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Everyday speech"
             },
             {
                 "tag": "What for",
@@ -6240,39 +6288,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "correr",
                     "ligar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Estudo</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
-                "translation": "I study in order to learn.",
+                "targetHTML": "Certamente que vocês não são tão tolos <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">voltar sem isso</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Estudo</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
-                        "translation": "I study in order to learn.",
-                        "source": "Conversation"
+                        "sentence": "Certamente que vocês não são tão tolos para voltar sem isso.",
+                        "targetHTML": "Certamente que vocês não são tão tolos <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">voltar sem isso</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:para:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Trabalho</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>sustentar minha família</span>.",
-                        "translation": "I work in order to support my family.",
-                        "source": "Everyday speech"
+                        "sentence": "Preciso do voto dele para ganhar o poder de que necessito para proteger a minha família.",
+                        "targetHTML": "Preciso do voto dele <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">ganhar o poder de que necessito para proteger a minha família</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:para:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Ligou</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>saber notícias</span>.",
-                        "translation": "Called in order to get news.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Paramos</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>descansar um pouco</span>.",
-                        "translation": "We stopped in order to rest a bit.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Correu</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>não perder o autocarro</span>.",
-                        "translation": "Ran in order not to miss the bus.",
-                        "source": "Literature"
+                        "sentence": "Mas um garoto precisa da sua mãe para se tornar num homem.",
+                        "targetHTML": "Mas um garoto <span class=\"fw-token-v\">precisa</span> da sua mãe <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">se tornar num homem</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:para:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Who for",
@@ -6303,22 +6372,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Cozinhei <span class=\"fw-token-v\">jantar</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>todos nós</span>.",
                         "translation": "I cooked dinner for all of us.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Há <span class=\"fw-token-v\">lugar</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>mais uma pessoa</span>?",
-                        "translation": "Is there room for one more person?",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Deixei <span class=\"fw-token-v\">um bilhete</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>ela</span>.",
-                        "translation": "I left a note for her.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "noun",
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ]
     },
@@ -6340,39 +6400,50 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "viver",
                     "trabalhar"
                 ],
-                "targetHTML": "<span class='fw-token-v'>Falo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>você</span> amanhã.",
-                "translation": "I speak with you tomorrow.",
+                "targetHTML": "Devo encontrar-me <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">eles</span> na doca com armas?",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Devo encontrar-me com eles na doca com armas?",
+                        "targetHTML": "Devo encontrar-me <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">eles</span> na doca com armas?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 0."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Se há alguém com contas a acertar, sou eu com ele.",
+                        "targetHTML": "Se há alguém com contas a acertar, sou eu <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">ele</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 0."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "<span class='fw-token-v'>Falo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>você</span> amanhã.",
                         "translation": "I speak with you tomorrow.",
                         "source": "Everyday dialogue"
-                    },
-                    {
-                        "targetHTML": "Fui ao cinema <span class='fw-token-connector'>com</span> <span class='fw-token-c'>meus amigos</span>.",
-                        "translation": "I went to the cinema with my friends.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Ela <span class='fw-token-v'>mora</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>a irmã</span>.",
-                        "translation": "She lives with her sister.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Quero <span class='fw-token-v'>conversar</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>o gerente</span>.",
-                        "translation": "I want to speak with the manager.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Nós <span class='fw-token-v'>trabalhamos</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>profissionais excelentes</span>.",
-                        "translation": "We work with excellent professionals.",
-                        "source": "Contemporary speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "How / with what",
@@ -6386,39 +6457,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "olhar",
                     "tratar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Escrevo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>cuidado</span>.",
-                "translation": "I write with care.",
+                "targetHTML": "Minha filmadora <span class=\"fw-token-v\">veio</span> <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">um editor</span> de vídeos embutido.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Escrevo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>cuidado</span>.",
-                        "translation": "I write with care.",
-                        "source": "Dialogue"
+                        "sentence": "Minha filmadora veio com um editor de vídeos embutido.",
+                        "targetHTML": "Minha filmadora <span class=\"fw-token-v\">veio</span> <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">um editor</span> de vídeos embutido.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele <span class=\"fw-token-v\">abriu</span> a porta <span class='fw-token-connector'>com</span> <span class='fw-token-c'>a chave reserva</span>.",
-                        "translation": "He opened the door with the spare key.",
-                        "source": "Conversation"
+                        "sentence": "Por favor, um caso com o tipo universitário sem nome?",
+                        "targetHTML": "Por favor, um caso <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">o tipo universitário</span> sem nome?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Ouvimos</span> tudo <span class='fw-token-connector'>com</span> <span class='fw-token-c'>muita atenção</span>.",
-                        "translation": "We listened to everything with great attention.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Cortei</span> o papel <span class='fw-token-connector'>com</span> <span class='fw-token-c'>uma tesoura</span>.",
-                        "translation": "I cut the paper with scissors.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Tratou</span> os convidados <span class='fw-token-connector'>com</span> <span class='fw-token-c'>extrema simpatia</span>.",
-                        "translation": "Treated the guests with extreme warmth.",
-                        "source": "Literature"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">8 anos</span>... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 1."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -6434,39 +6526,50 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "viver",
                     "trabalhar"
                 ],
-                "targetHTML": "<span class='fw-token-v'>Falo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>você</span> amanhã.",
-                "translation": "I speak with you tomorrow.",
+                "targetHTML": "Devo encontrar-me <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">eles</span> na doca com armas?",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Devo encontrar-me com eles na doca com armas?",
+                        "targetHTML": "Devo encontrar-me <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">eles</span> na doca com armas?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 0."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Se há alguém com contas a acertar, sou eu com ele.",
+                        "targetHTML": "Se há alguém com contas a acertar, sou eu <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">ele</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 0."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "<span class='fw-token-v'>Falo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>você</span> amanhã.",
                         "translation": "I speak with you tomorrow.",
                         "source": "Everyday dialogue"
-                    },
-                    {
-                        "targetHTML": "Fui ao cinema <span class='fw-token-connector'>com</span> <span class='fw-token-c'>meus amigos</span>.",
-                        "translation": "I went to the cinema with my friends.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Ela <span class='fw-token-v'>mora</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>a irmã</span>.",
-                        "translation": "She lives with her sister.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Quero <span class='fw-token-v'>conversar</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>o gerente</span>.",
-                        "translation": "I want to speak with the manager.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Nós <span class='fw-token-v'>trabalhamos</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>profissionais excelentes</span>.",
-                        "translation": "We work with excellent professionals.",
-                        "source": "Contemporary speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "How / with what",
@@ -6480,39 +6583,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "olhar",
                     "tratar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Escrevo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>cuidado</span>.",
-                "translation": "I write with care.",
+                "targetHTML": "Minha filmadora <span class=\"fw-token-v\">veio</span> <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">um editor</span> de vídeos embutido.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Escrevo</span> <span class='fw-token-connector'>com</span> <span class='fw-token-c'>cuidado</span>.",
-                        "translation": "I write with care.",
-                        "source": "Dialogue"
+                        "sentence": "Minha filmadora veio com um editor de vídeos embutido.",
+                        "targetHTML": "Minha filmadora <span class=\"fw-token-v\">veio</span> <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">um editor</span> de vídeos embutido.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele <span class=\"fw-token-v\">abriu</span> a porta <span class='fw-token-connector'>com</span> <span class='fw-token-c'>a chave reserva</span>.",
-                        "translation": "He opened the door with the spare key.",
-                        "source": "Conversation"
+                        "sentence": "Por favor, um caso com o tipo universitário sem nome?",
+                        "targetHTML": "Por favor, um caso <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">o tipo universitário</span> sem nome?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Ouvimos</span> tudo <span class='fw-token-connector'>com</span> <span class='fw-token-c'>muita atenção</span>.",
-                        "translation": "We listened to everything with great attention.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Cortei</span> o papel <span class='fw-token-connector'>com</span> <span class='fw-token-c'>uma tesoura</span>.",
-                        "translation": "I cut the paper with scissors.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Tratou</span> os convidados <span class='fw-token-connector'>com</span> <span class='fw-token-c'>extrema simpatia</span>.",
-                        "translation": "Treated the guests with extreme warmth.",
-                        "source": "Literature"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio <span class=\"fw-token-connector\">com</span> <span class=\"fw-token-c\">8 anos</span>... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:com:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition com pattern 1."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -6534,39 +6658,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "pagar",
                     "agradecer"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
-                "translation": "Thank you for helping.",
+                "targetHTML": "<span class=\"fw-token-connector\">Por</span> <span class=\"fw-token-c\">conta própria</span>, na medida em que se pode ser.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
-                        "translation": "Thank you for helping.",
-                        "source": "Everyday speech"
+                        "sentence": "Por conta própria, na medida em que se pode ser.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Por</span> <span class=\"fw-token-c\">conta própria</span>, na medida em que se pode ser.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Espero</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>notícias suas</span>.",
-                        "translation": "I wait for news from you.",
-                        "source": "Dialogue"
+                        "sentence": "Por que você não pode explicar o que está fazendo?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Por</span> <span class=\"fw-token-c\">que</span> você não pode explicar o que está fazendo?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele <span class=\"fw-token-v\">foi elogiado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>sua coragem</span>.",
-                        "translation": "He was praised for his courage.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Pagou</span> vinte euros <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aquele livro</span>.",
-                        "translation": "Paid twenty euros for that book.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Agradeço</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>toda a paciência</span>.",
-                        "translation": "I thank you for all the patience.",
-                        "source": "Subtitles"
+                        "sentence": "Precisamos de todos os concorrentes no palco, por favor.",
+                        "targetHTML": "<span class=\"fw-token-v\">Precisamos</span> de todos os concorrentes no palco, <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">favor</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Through / along",
@@ -6580,9 +6725,24 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "olhar",
                     "entrar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
-                "translation": "I walk around here.",
+                "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Não conseguia entender por que Deus havia levado um discípulo tão dedicado.",
+                        "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:por:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 1."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
                         "translation": "I walk around here.",
@@ -6592,27 +6752,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Passamos</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>uma ponte antiga</span>.",
                         "translation": "We passed through an old bridge.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Olhou</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>entre as grades</span>.",
-                        "translation": "Looked through between the railings.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "O gato <span class=\"fw-token-v\">entrou</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>uma brecha na janela</span>.",
-                        "translation": "The cat entered through a gap in the window.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Viajamos</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>estradas desertas</span>.",
-                        "translation": "We traveled through deserted roads.",
-                        "source": "Contemporary speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -6628,39 +6774,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "pagar",
                     "agradecer"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
-                "translation": "Thank you for helping.",
+                "targetHTML": "<span class=\"fw-token-connector\">Por</span> <span class=\"fw-token-c\">conta própria</span>, na medida em que se pode ser.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Obrigado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>ajudar</span>.",
-                        "translation": "Thank you for helping.",
-                        "source": "Everyday speech"
+                        "sentence": "Por conta própria, na medida em que se pode ser.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Por</span> <span class=\"fw-token-c\">conta própria</span>, na medida em que se pode ser.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Espero</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>notícias suas</span>.",
-                        "translation": "I wait for news from you.",
-                        "source": "Dialogue"
+                        "sentence": "Por que você não pode explicar o que está fazendo?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Por</span> <span class=\"fw-token-c\">que</span> você não pode explicar o que está fazendo?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele <span class=\"fw-token-v\">foi elogiado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>sua coragem</span>.",
-                        "translation": "He was praised for his courage.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Pagou</span> vinte euros <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aquele livro</span>.",
-                        "translation": "Paid twenty euros for that book.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Agradeço</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>toda a paciência</span>.",
-                        "translation": "I thank you for all the patience.",
-                        "source": "Subtitles"
+                        "sentence": "Precisamos de todos os concorrentes no palco, por favor.",
+                        "targetHTML": "<span class=\"fw-token-v\">Precisamos</span> de todos os concorrentes no palco, <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">favor</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Through / along",
@@ -6674,9 +6841,24 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "olhar",
                     "entrar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
-                "translation": "I walk around here.",
+                "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Não conseguia entender por que Deus havia levado um discípulo tão dedicado.",
+                        "targetHTML": "Não conseguia entender <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">que</span> Deus havia levado um discípulo tão dedicado.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:por:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 1."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "<span class=\"fw-token-v\">Caminho</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>aqui</span>.",
                         "translation": "I walk around here.",
@@ -6686,27 +6868,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Passamos</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>uma ponte antiga</span>.",
                         "translation": "We passed through an old bridge.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Olhou</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>entre as grades</span>.",
-                        "translation": "Looked through between the railings.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "O gato <span class=\"fw-token-v\">entrou</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>uma brecha na janela</span>.",
-                        "translation": "The cat entered through a gap in the window.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Viajamos</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>estradas desertas</span>.",
-                        "translation": "We traveled through deserted roads.",
-                        "source": "Contemporary speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -6732,38 +6900,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "cinema",
                     "hospital"
                 ],
-                "targetHTML": "O livro está <span class='fw-token-connector'>no</span> <span class='fw-token-c'>quarto</span>.",
-                "translation": "The book is in the room.",
+                "targetHTML": "Sem desconto <span class=\"fw-token-connector\">no</span> <span class=\"fw-token-c\">Dia</span> da Vitória!",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "O livro está <span class='fw-token-connector'>no</span> <span class='fw-token-c'>quarto</span>.",
-                        "translation": "The book is in the room.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Sem desconto no Dia da Vitória!",
+                        "targetHTML": "Sem desconto <span class=\"fw-token-connector\">no</span> <span class=\"fw-token-c\">Dia</span> da Vitória!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:no:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele ainda está <span class='fw-token-connector'>no</span> <span class='fw-token-c'>trabalho</span>.",
-                        "translation": "He is still at work.",
-                        "source": "Conversation"
+                        "sentence": "Nada como uma noite no teatro que acaba com uma dor de cabeça!",
+                        "targetHTML": "Nada como uma noite <span class=\"fw-token-connector\">no</span> <span class=\"fw-token-c\">teatro</span> que acaba com uma dor de cabeça!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:no:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Nos encontramos <span class='fw-token-connector'>no</span> <span class='fw-token-c'>cinema às oito</span>.",
-                        "translation": "We met at the cinema at eight.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Não há ninguém como ele <span class='fw-token-connector'>no</span> <span class='fw-token-c'>mundo</span>.",
-                        "translation": "There is no one like him in the world.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Esqueci a carteira <span class='fw-token-connector'>no</span> <span class='fw-token-c'>carro</span>.",
-                        "translation": "I forgot my wallet in the car.",
-                        "source": "Dialogue"
+                        "sentence": "Deves estar no lugar errado.",
+                        "targetHTML": "Deves estar <span class=\"fw-token-connector\">no</span> <span class=\"fw-token-c\">lugar</span> errado.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:no:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -6779,38 +6968,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "cinema",
                     "hospital"
                 ],
-                "targetHTML": "O livro está <span class='fw-token-connector'>no</span> <span class='fw-token-c'>quarto</span>.",
-                "translation": "The book is in the room.",
+                "targetHTML": "Sem desconto <span class=\"fw-token-connector\">no</span> <span class=\"fw-token-c\">Dia</span> da Vitória!",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "O livro está <span class='fw-token-connector'>no</span> <span class='fw-token-c'>quarto</span>.",
-                        "translation": "The book is in the room.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Sem desconto no Dia da Vitória!",
+                        "targetHTML": "Sem desconto <span class=\"fw-token-connector\">no</span> <span class=\"fw-token-c\">Dia</span> da Vitória!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:no:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele ainda está <span class='fw-token-connector'>no</span> <span class='fw-token-c'>trabalho</span>.",
-                        "translation": "He is still at work.",
-                        "source": "Conversation"
+                        "sentence": "Nada como uma noite no teatro que acaba com uma dor de cabeça!",
+                        "targetHTML": "Nada como uma noite <span class=\"fw-token-connector\">no</span> <span class=\"fw-token-c\">teatro</span> que acaba com uma dor de cabeça!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:no:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Nos encontramos <span class='fw-token-connector'>no</span> <span class='fw-token-c'>cinema às oito</span>.",
-                        "translation": "We met at the cinema at eight.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Não há ninguém como ele <span class='fw-token-connector'>no</span> <span class='fw-token-c'>mundo</span>.",
-                        "translation": "There is no one like him in the world.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Esqueci a carteira <span class='fw-token-connector'>no</span> <span class='fw-token-c'>carro</span>.",
-                        "translation": "I forgot my wallet in the car.",
-                        "source": "Dialogue"
+                        "sentence": "Deves estar no lugar errado.",
+                        "targetHTML": "Deves estar <span class=\"fw-token-connector\">no</span> <span class=\"fw-token-c\">lugar</span> errado.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:no:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -6836,38 +7046,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "escola",
                     "cozinha"
                 ],
-                "targetHTML": "Ela está <span class='fw-token-connector'>na</span> <span class='fw-token-c'>praia</span>.",
-                "translation": "She is at the beach.",
+                "targetHTML": "Por conta própria, <span class=\"fw-token-connector\">na</span> <span class=\"fw-token-c\">medida</span> em que se pode ser.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Ela está <span class='fw-token-connector'>na</span> <span class='fw-token-c'>praia</span>.",
-                        "translation": "She is at the beach.",
-                        "source": "Conversation"
+                        "sentence": "Por conta própria, na medida em que se pode ser.",
+                        "targetHTML": "Por conta própria, <span class=\"fw-token-connector\">na</span> <span class=\"fw-token-c\">medida</span> em que se pode ser.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:na:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "A carta está <span class='fw-token-connector'>na</span> <span class='fw-token-c'>mesa da sala</span>.",
-                        "translation": "The letter is on the living room table.",
-                        "source": "Dialogue"
+                        "sentence": "Obrigada. Há um urso na cidade, Carrie.",
+                        "targetHTML": "Obrigada. Há um urso <span class=\"fw-token-connector\">na</span> <span class=\"fw-token-c\">cidade</span>, Carrie.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:na:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Vi muitas pessoas <span class='fw-token-connector'>na</span> <span class='fw-token-c'>rua principal</span>.",
-                        "translation": "I saw many people on the main street.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "As crianças estão <span class='fw-token-connector'>na</span> <span class='fw-token-c'>escola agora</span>.",
-                        "translation": "The children are at school now.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Ela cozinha <span class='fw-token-connector'>na</span> <span class='fw-token-c'>cozinha espaçosa</span>.",
-                        "translation": "She cooks in the spacious kitchen.",
-                        "source": "Literature"
+                        "sentence": "A assassina está na prisão.",
+                        "targetHTML": "A assassina está <span class=\"fw-token-connector\">na</span> <span class=\"fw-token-c\">prisão</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:na:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -6883,38 +7114,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "escola",
                     "cozinha"
                 ],
-                "targetHTML": "Ela está <span class='fw-token-connector'>na</span> <span class='fw-token-c'>praia</span>.",
-                "translation": "She is at the beach.",
+                "targetHTML": "Por conta própria, <span class=\"fw-token-connector\">na</span> <span class=\"fw-token-c\">medida</span> em que se pode ser.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Ela está <span class='fw-token-connector'>na</span> <span class='fw-token-c'>praia</span>.",
-                        "translation": "She is at the beach.",
-                        "source": "Conversation"
+                        "sentence": "Por conta própria, na medida em que se pode ser.",
+                        "targetHTML": "Por conta própria, <span class=\"fw-token-connector\">na</span> <span class=\"fw-token-c\">medida</span> em que se pode ser.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:na:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "A carta está <span class='fw-token-connector'>na</span> <span class='fw-token-c'>mesa da sala</span>.",
-                        "translation": "The letter is on the living room table.",
-                        "source": "Dialogue"
+                        "sentence": "Obrigada. Há um urso na cidade, Carrie.",
+                        "targetHTML": "Obrigada. Há um urso <span class=\"fw-token-connector\">na</span> <span class=\"fw-token-c\">cidade</span>, Carrie.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:na:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Vi muitas pessoas <span class='fw-token-connector'>na</span> <span class='fw-token-c'>rua principal</span>.",
-                        "translation": "I saw many people on the main street.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "As crianças estão <span class='fw-token-connector'>na</span> <span class='fw-token-c'>escola agora</span>.",
-                        "translation": "The children are at school now.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Ela cozinha <span class='fw-token-connector'>na</span> <span class='fw-token-c'>cozinha espaçosa</span>.",
-                        "translation": "She cooks in the spacious kitchen.",
-                        "source": "Literature"
+                        "sentence": "A assassina está na prisão.",
+                        "targetHTML": "A assassina está <span class=\"fw-token-connector\">na</span> <span class=\"fw-token-c\">prisão</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:na:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -6940,38 +7192,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "Brasil",
                     "governo"
                 ],
-                "targetHTML": "Este é o carro <span class='fw-token-connector'>do</span> <span class='fw-token-c'>meu pai</span>.",
-                "translation": "This is my father's car.",
+                "targetHTML": "Energia igual a campo magnético vezes comprimento <span class=\"fw-token-connector\">do</span> <span class=\"fw-token-c\">condutor</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Este é o carro <span class='fw-token-connector'>do</span> <span class='fw-token-c'>meu pai</span>.",
-                        "translation": "This is my father's car.",
-                        "source": "Conversation"
+                        "sentence": "Energia igual a campo magnético vezes comprimento do condutor.",
+                        "targetHTML": "Energia igual a campo magnético vezes comprimento <span class=\"fw-token-connector\">do</span> <span class=\"fw-token-c\">condutor</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:do:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "A porta <span class='fw-token-connector'>do</span> <span class='fw-token-c'>hotel</span> estava fechada.",
-                        "translation": "The hotel door was closed.",
-                        "source": "Dialogue"
+                        "sentence": "Preciso do voto dele para ganhar o poder de que necessito para proteger a minha família.",
+                        "targetHTML": "Preciso <span class=\"fw-token-connector\">do</span> <span class=\"fw-token-c\">voto</span> dele para ganhar o poder de que necessito para proteger a minha família.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:do:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Gostei muito <span class='fw-token-connector'>do</span> <span class='fw-token-c'>final do filme</span>.",
-                        "translation": "I liked the end of the movie a lot.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Ele veio direto <span class='fw-token-connector'>do</span> <span class='fw-token-c'>aeroporto</span>.",
-                        "translation": "He came straight from the airport.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "A decisão <span class='fw-token-connector'>do</span> <span class='fw-token-c'>juiz foi definitiva</span>.",
-                        "translation": "The judge's decision was final.",
-                        "source": "Literature"
+                        "sentence": "Isto quer dizer que se vai retirar do acordo depois de eu cumprir a minha parte?",
+                        "targetHTML": "Isto quer dizer que se vai retirar <span class=\"fw-token-connector\">do</span> <span class=\"fw-token-c\">acordo</span> depois de eu cumprir a minha parte?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:do:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -6987,38 +7260,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "Brasil",
                     "governo"
                 ],
-                "targetHTML": "Este é o carro <span class='fw-token-connector'>do</span> <span class='fw-token-c'>meu pai</span>.",
-                "translation": "This is my father's car.",
+                "targetHTML": "Energia igual a campo magnético vezes comprimento <span class=\"fw-token-connector\">do</span> <span class=\"fw-token-c\">condutor</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Este é o carro <span class='fw-token-connector'>do</span> <span class='fw-token-c'>meu pai</span>.",
-                        "translation": "This is my father's car.",
-                        "source": "Conversation"
+                        "sentence": "Energia igual a campo magnético vezes comprimento do condutor.",
+                        "targetHTML": "Energia igual a campo magnético vezes comprimento <span class=\"fw-token-connector\">do</span> <span class=\"fw-token-c\">condutor</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:do:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "A porta <span class='fw-token-connector'>do</span> <span class='fw-token-c'>hotel</span> estava fechada.",
-                        "translation": "The hotel door was closed.",
-                        "source": "Dialogue"
+                        "sentence": "Preciso do voto dele para ganhar o poder de que necessito para proteger a minha família.",
+                        "targetHTML": "Preciso <span class=\"fw-token-connector\">do</span> <span class=\"fw-token-c\">voto</span> dele para ganhar o poder de que necessito para proteger a minha família.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:do:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Gostei muito <span class='fw-token-connector'>do</span> <span class='fw-token-c'>final do filme</span>.",
-                        "translation": "I liked the end of the movie a lot.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Ele veio direto <span class='fw-token-connector'>do</span> <span class='fw-token-c'>aeroporto</span>.",
-                        "translation": "He came straight from the airport.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "A decisão <span class='fw-token-connector'>do</span> <span class='fw-token-c'>juiz foi definitiva</span>.",
-                        "translation": "The judge's decision was final.",
-                        "source": "Literature"
+                        "sentence": "Isto quer dizer que se vai retirar do acordo depois de eu cumprir a minha parte?",
+                        "targetHTML": "Isto quer dizer que se vai retirar <span class=\"fw-token-connector\">do</span> <span class=\"fw-token-c\">acordo</span> depois de eu cumprir a minha parte?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:do:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -7044,38 +7338,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "janela",
                     "música"
                 ],
-                "targetHTML": "Esta é a chave <span class='fw-token-connector'>da</span> <span class='fw-token-c'>casa</span>.",
-                "translation": "This is the key to the house.",
+                "targetHTML": "Acho que veio daquele lado <span class=\"fw-token-connector\">da</span> <span class=\"fw-token-c\">sucata</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Esta é a chave <span class='fw-token-connector'>da</span> <span class='fw-token-c'>casa</span>.",
-                        "translation": "This is the key to the house.",
-                        "source": "Dialogue"
+                        "sentence": "Acho que veio daquele lado da sucata.",
+                        "targetHTML": "Acho que veio daquele lado <span class=\"fw-token-connector\">da</span> <span class=\"fw-token-c\">sucata</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:da:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "O sorriso <span class='fw-token-connector'>da</span> <span class='fw-token-c'>mãe acalmou a todos</span>.",
-                        "translation": "The mother's smile calmed everyone.",
-                        "source": "Literature"
+                        "sentence": "Mas um garoto precisa da sua mãe para se tornar num homem.",
+                        "targetHTML": "Mas um garoto precisa <span class=\"fw-token-connector\">da</span> <span class=\"fw-token-c\">sua mãe</span> para se tornar num homem.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:da:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "A vista <span class='fw-token-connector'>da</span> <span class='fw-token-c'>janela é deslumbrante</span>.",
-                        "translation": "The view from the window is breathtaking.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Conhecemos os cantos <span class='fw-token-connector'>da</span> <span class='fw-token-c'>cidade antiga</span>.",
-                        "translation": "We know the corners of the old city.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "O ritmo <span class='fw-token-connector'>da</span> <span class='fw-token-c'>música empolgou a sala</span>.",
-                        "translation": "The rhythm of the music excited the room.",
-                        "source": "Everyday speech"
+                        "sentence": "Então parta da minha casa, e deixe-me sozinho.",
+                        "targetHTML": "Então parta <span class=\"fw-token-connector\">da</span> <span class=\"fw-token-c\">minha casa</span>, e deixe-me sozinho.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:da:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -7091,38 +7406,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "janela",
                     "música"
                 ],
-                "targetHTML": "Esta é a chave <span class='fw-token-connector'>da</span> <span class='fw-token-c'>casa</span>.",
-                "translation": "This is the key to the house.",
+                "targetHTML": "Acho que veio daquele lado <span class=\"fw-token-connector\">da</span> <span class=\"fw-token-c\">sucata</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Esta é a chave <span class='fw-token-connector'>da</span> <span class='fw-token-c'>casa</span>.",
-                        "translation": "This is the key to the house.",
-                        "source": "Dialogue"
+                        "sentence": "Acho que veio daquele lado da sucata.",
+                        "targetHTML": "Acho que veio daquele lado <span class=\"fw-token-connector\">da</span> <span class=\"fw-token-c\">sucata</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:da:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "O sorriso <span class='fw-token-connector'>da</span> <span class='fw-token-c'>mãe acalmou a todos</span>.",
-                        "translation": "The mother's smile calmed everyone.",
-                        "source": "Literature"
+                        "sentence": "Mas um garoto precisa da sua mãe para se tornar num homem.",
+                        "targetHTML": "Mas um garoto precisa <span class=\"fw-token-connector\">da</span> <span class=\"fw-token-c\">sua mãe</span> para se tornar num homem.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:da:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "A vista <span class='fw-token-connector'>da</span> <span class='fw-token-c'>janela é deslumbrante</span>.",
-                        "translation": "The view from the window is breathtaking.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Conhecemos os cantos <span class='fw-token-connector'>da</span> <span class='fw-token-c'>cidade antiga</span>.",
-                        "translation": "We know the corners of the old city.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "O ritmo <span class='fw-token-connector'>da</span> <span class='fw-token-c'>música empolgou a sala</span>.",
-                        "translation": "The rhythm of the music excited the room.",
-                        "source": "Everyday speech"
+                        "sentence": "Então parta da minha casa, e deixe-me sozinho.",
+                        "targetHTML": "Então parta <span class=\"fw-token-connector\">da</span> <span class=\"fw-token-c\">minha casa</span>, e deixe-me sozinho.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:da:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -7144,39 +7480,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "correr",
                     "tratar"
                 ],
-                "targetHTML": "Ela <span class=\"fw-token-v\">canta</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>um pássaro</span>.",
-                "translation": "She sings like a bird.",
+                "targetHTML": "Se o tiver mordido, será que <span class=\"fw-token-v\">fica</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">eu</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Ela <span class=\"fw-token-v\">canta</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>um pássaro</span>.",
-                        "translation": "She sings like a bird.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Se o tiver mordido, será que fica como eu?",
+                        "targetHTML": "Se o tiver mordido, será que <span class=\"fw-token-v\">fica</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">eu</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele <span class=\"fw-token-v\">agiu</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>um verdadeiro herói</span>.",
-                        "translation": "He acted like a true hero.",
-                        "source": "Conversation"
+                        "sentence": "Como é suposto abateres um dos empréstimos?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Como</span> <span class=\"fw-token-c\">é suposto abateres um dos empréstimos</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Seus olhos <span class=\"fw-token-v\">brilham</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>estrelas</span>.",
-                        "translation": "Her eyes shine like stars.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Faz</span> as coisas <span class='fw-token-connector'>como</span> <span class='fw-token-c'>sempre fez</span>.",
-                        "translation": "Does things like he always did.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Correu</span> rápido <span class='fw-token-connector'>como</span> <span class='fw-token-c'>o vento</span>.",
-                        "translation": "Ran fast like the wind.",
-                        "source": "Dialogue"
+                        "sentence": "Mas não sabemos como será a resolução disto tudo.",
+                        "targetHTML": "Mas não sabemos <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">será a resolução disto tudo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "As / in a role",
@@ -7189,38 +7546,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "voluntário",
                     "testemunha"
                 ],
-                "targetHTML": "Trabalho <span class='fw-token-connector'>como</span> <span class='fw-token-c'>engenheiro</span>.",
-                "translation": "I work as an engineer.",
+                "targetHTML": "Nada <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">uma noite no teatro que acaba com uma dor de cabeça</span>!",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Trabalho <span class='fw-token-connector'>como</span> <span class='fw-token-c'>engenheiro</span>.",
-                        "translation": "I work as an engineer.",
-                        "source": "Conversation"
+                        "sentence": "Nada como uma noite no teatro que acaba com uma dor de cabeça!",
+                        "targetHTML": "Nada <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">uma noite no teatro que acaba com uma dor de cabeça</span>!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele atuou <span class='fw-token-connector'>como</span> <span class='fw-token-c'>porta-voz do grupo</span>.",
-                        "translation": "He acted as spokesperson for the group.",
-                        "source": "Dialogue"
+                        "sentence": "Já não vos estais a comportar como um Rei.",
+                        "targetHTML": "Já não vos estais a comportar <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">um Rei</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ela participou <span class='fw-token-connector'>como</span> <span class='fw-token-c'>voluntária no projeto</span>.",
-                        "translation": "She took part as a volunteer in the project.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Falo <span class='fw-token-connector'>como</span> <span class='fw-token-c'>amigo preocupado</span>.",
-                        "translation": "I speak as a concerned friend.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Foi chamado <span class='fw-token-connector'>como</span> <span class='fw-token-c'>testemunha principal</span>.",
-                        "translation": "Was called as chief witness.",
-                        "source": "Literature"
+                        "sentence": "Eles rejeitaram as críticas dele, considerando-as como hipocrisia.",
+                        "targetHTML": "Eles rejeitaram as críticas dele, considerando-as <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">hipocrisia</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 1."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -7236,39 +7614,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "correr",
                     "tratar"
                 ],
-                "targetHTML": "Ela <span class=\"fw-token-v\">canta</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>um pássaro</span>.",
-                "translation": "She sings like a bird.",
+                "targetHTML": "Se o tiver mordido, será que <span class=\"fw-token-v\">fica</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">eu</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Ela <span class=\"fw-token-v\">canta</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>um pássaro</span>.",
-                        "translation": "She sings like a bird.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Se o tiver mordido, será que fica como eu?",
+                        "targetHTML": "Se o tiver mordido, será que <span class=\"fw-token-v\">fica</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">eu</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele <span class=\"fw-token-v\">agiu</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>um verdadeiro herói</span>.",
-                        "translation": "He acted like a true hero.",
-                        "source": "Conversation"
+                        "sentence": "Como é suposto abateres um dos empréstimos?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Como</span> <span class=\"fw-token-c\">é suposto abateres um dos empréstimos</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Seus olhos <span class=\"fw-token-v\">brilham</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>estrelas</span>.",
-                        "translation": "Her eyes shine like stars.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Faz</span> as coisas <span class='fw-token-connector'>como</span> <span class='fw-token-c'>sempre fez</span>.",
-                        "translation": "Does things like he always did.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Correu</span> rápido <span class='fw-token-connector'>como</span> <span class='fw-token-c'>o vento</span>.",
-                        "translation": "Ran fast like the wind.",
-                        "source": "Dialogue"
+                        "sentence": "Mas não sabemos como será a resolução disto tudo.",
+                        "targetHTML": "Mas não sabemos <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">será a resolução disto tudo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "As / in a role",
@@ -7281,38 +7680,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "voluntário",
                     "testemunha"
                 ],
-                "targetHTML": "Trabalho <span class='fw-token-connector'>como</span> <span class='fw-token-c'>engenheiro</span>.",
-                "translation": "I work as an engineer.",
+                "targetHTML": "Nada <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">uma noite no teatro que acaba com uma dor de cabeça</span>!",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Trabalho <span class='fw-token-connector'>como</span> <span class='fw-token-c'>engenheiro</span>.",
-                        "translation": "I work as an engineer.",
-                        "source": "Conversation"
+                        "sentence": "Nada como uma noite no teatro que acaba com uma dor de cabeça!",
+                        "targetHTML": "Nada <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">uma noite no teatro que acaba com uma dor de cabeça</span>!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele atuou <span class='fw-token-connector'>como</span> <span class='fw-token-c'>porta-voz do grupo</span>.",
-                        "translation": "He acted as spokesperson for the group.",
-                        "source": "Dialogue"
+                        "sentence": "Já não vos estais a comportar como um Rei.",
+                        "targetHTML": "Já não vos estais a comportar <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">um Rei</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ela participou <span class='fw-token-connector'>como</span> <span class='fw-token-c'>voluntária no projeto</span>.",
-                        "translation": "She took part as a volunteer in the project.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Falo <span class='fw-token-connector'>como</span> <span class='fw-token-c'>amigo preocupado</span>.",
-                        "translation": "I speak as a concerned friend.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Foi chamado <span class='fw-token-connector'>como</span> <span class='fw-token-c'>testemunha principal</span>.",
-                        "translation": "Was called as chief witness.",
-                        "source": "Literature"
+                        "sentence": "Eles rejeitaram as críticas dele, considerando-as como hipocrisia.",
+                        "targetHTML": "Eles rejeitaram as críticas dele, considerando-as <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">hipocrisia</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:como:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 1."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -7333,39 +7753,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "saber",
                     "chamar"
                 ],
-                "targetHTML": "<span class='fw-token-v'>Tentei</span>, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>não consegui</span>.",
-                "translation": "I tried, but I could not.",
+                "targetHTML": "<span class=\"fw-token-v\">Há poucas pessoas em quem confiar</span>, <span class=\"fw-token-connector\">mas</span> <span class=\"fw-token-c\">pensei que você era uma delas</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-v'>Tentei</span>, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>não consegui</span>.",
-                        "translation": "I tried, but I could not.",
-                        "source": "Dialogue"
+                        "sentence": "Há poucas pessoas em quem confiar, mas pensei que você era uma delas.",
+                        "targetHTML": "<span class=\"fw-token-v\">Há poucas pessoas em quem confiar</span>, <span class=\"fw-token-connector\">mas</span> <span class=\"fw-token-c\">pensei que você era uma delas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:mas:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction mas."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Queria sair, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>estava a chover forte</span>.",
-                        "translation": "I wanted to go out, but it was raining hard.",
-                        "source": "Conversation"
+                        "sentence": "Mas um garoto precisa da sua mãe para se tornar num homem.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Mas</span> <span class=\"fw-token-c\">um garoto precisa da sua mãe para se tornar num homem</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:mas:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction mas."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele sabia a resposta, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>ficou calado</span>.",
-                        "translation": "He knew the answer, but stayed silent.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Procurei por todo o lado, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>nada encontrei</span>.",
-                        "translation": "I searched everywhere, but found nothing.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "O plano era bom, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>faltou tempo</span>.",
-                        "translation": "The plan was good, but time ran short.",
-                        "source": "Everyday speech"
+                        "sentence": "Sei que as coisas estão duras, mas você é um sobrevivente, Ahmed.",
+                        "targetHTML": "<span class=\"fw-token-v\">Sei que as coisas estão duras</span>, <span class=\"fw-token-connector\">mas</span> <span class=\"fw-token-c\">você é um sobrevivente, Ahmed</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:mas:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction mas."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -7380,39 +7821,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "saber",
                     "chamar"
                 ],
-                "targetHTML": "<span class='fw-token-v'>Tentei</span>, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>não consegui</span>.",
-                "translation": "I tried, but I could not.",
+                "targetHTML": "<span class=\"fw-token-v\">Há poucas pessoas em quem confiar</span>, <span class=\"fw-token-connector\">mas</span> <span class=\"fw-token-c\">pensei que você era uma delas</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-v'>Tentei</span>, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>não consegui</span>.",
-                        "translation": "I tried, but I could not.",
-                        "source": "Dialogue"
+                        "sentence": "Há poucas pessoas em quem confiar, mas pensei que você era uma delas.",
+                        "targetHTML": "<span class=\"fw-token-v\">Há poucas pessoas em quem confiar</span>, <span class=\"fw-token-connector\">mas</span> <span class=\"fw-token-c\">pensei que você era uma delas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:mas:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction mas."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Queria sair, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>estava a chover forte</span>.",
-                        "translation": "I wanted to go out, but it was raining hard.",
-                        "source": "Conversation"
+                        "sentence": "Mas um garoto precisa da sua mãe para se tornar num homem.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Mas</span> <span class=\"fw-token-c\">um garoto precisa da sua mãe para se tornar num homem</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:mas:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction mas."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele sabia a resposta, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>ficou calado</span>.",
-                        "translation": "He knew the answer, but stayed silent.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Procurei por todo o lado, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>nada encontrei</span>.",
-                        "translation": "I searched everywhere, but found nothing.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "O plano era bom, <span class='fw-token-connector'>mas</span> <span class='fw-token-c'>faltou tempo</span>.",
-                        "translation": "The plan was good, but time ran short.",
-                        "source": "Everyday speech"
+                        "sentence": "Sei que as coisas estão duras, mas você é um sobrevivente, Ahmed.",
+                        "targetHTML": "<span class=\"fw-token-v\">Sei que as coisas estão duras</span>, <span class=\"fw-token-connector\">mas</span> <span class=\"fw-token-c\">você é um sobrevivente, Ahmed</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:mas:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction mas."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -7434,39 +7896,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "entregar",
                     "levar"
                 ],
-                "targetHTML": "Vou <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Lisboa</span> amanhã.",
-                "translation": "I go to Lisbon tomorrow.",
+                "targetHTML": "<span class=\"fw-token-connector\">A</span> <span class=\"fw-token-c\">propósito</span>, você já leu meu último livro sobre este assunto?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Vou <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Lisboa</span> amanhã.",
-                        "translation": "I go to Lisbon tomorrow.",
-                        "source": "Conversation"
+                        "sentence": "A propósito, você já leu meu último livro sobre este assunto?",
+                        "targetHTML": "<span class=\"fw-token-connector\">A</span> <span class=\"fw-token-c\">propósito</span>, você já leu meu último livro sobre este assunto?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Chegamos <span class='fw-token-connector'>a</span> <span class='fw-token-c'>casa são e salvos</span>.",
-                        "translation": "We arrived home safe and sound.",
-                        "source": "Dialogue"
+                        "sentence": "Energia igual a campo magnético vezes comprimento do condutor.",
+                        "targetHTML": "Energia igual <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">campo magnético</span> vezes comprimento do condutor.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Entregou o documento <span class='fw-token-connector'>a</span> <span class='fw-token-c'>ele</span>.",
-                        "translation": "Delivered the document to him.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Escreveu uma nota <span class='fw-token-connector'>a</span> <span class='fw-token-c'>um amigo</span>.",
-                        "translation": "Wrote a note to a friend.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Eles voltaram <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Porto Alegre</span>.",
-                        "translation": "They returned to Porto Alegre.",
-                        "source": "Literature"
+                        "sentence": "Para o venderem a um médico para experiências médicas.",
+                        "targetHTML": "Para o <span class=\"fw-token-v\">venderem</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">um médico</span> para experiências médicas.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "The",
@@ -7480,38 +7963,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "vida",
                     "viagem"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>casa</span> é bonita.",
-                "translation": "The house is pretty.",
+                "targetHTML": "Tom decidiu que não seria sensato tentar atravessar <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">velha ponte de cordas</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>casa</span> é bonita.",
-                        "translation": "The house is pretty.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Tom decidiu que não seria sensato tentar atravessar a velha ponte de cordas.",
+                        "targetHTML": "Tom decidiu que não seria sensato tentar atravessar <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">velha ponte de cordas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>porta</span> principal estava trancada.",
-                        "translation": "The main door was locked.",
-                        "source": "Dialogue"
+                        "sentence": "Preciso do voto dele para ganhar o poder de que necessito para proteger a minha família.",
+                        "targetHTML": "Preciso do voto dele para ganhar o poder de que necessito para proteger <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">minha família</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>cidade</span> acorda cedo.",
-                        "translation": "The city wakes up early.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>noite</span> estava fresca e calma.",
-                        "translation": "The night was cool and quiet.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>viagem</span> correu muito bem.",
-                        "translation": "The trip went very well.",
-                        "source": "Conversation"
+                        "sentence": "A assassina está na prisão.",
+                        "targetHTML": "<span class=\"fw-token-connector\">A</span> <span class=\"fw-token-c\">assassina</span> está na prisão.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Her / it",
@@ -7541,21 +8045,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Todos <span class='fw-token-connector'>a</span> <span class='fw-token-v'>respeitam</span> pelo trabalho sério.",
                         "translation": "Everyone respects her for her earnest work.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Nunca mais <span class='fw-token-connector'>a</span> <span class='fw-token-v'>encontrei</span> depois disso.",
-                        "translation": "I never met her again after that.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "O médico <span class='fw-token-connector'>a</span> <span class='fw-token-v'>examinou</span> com cuidado.",
-                        "translation": "The doctor examined her carefully.",
-                        "source": "Everyday speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Conversation"
             }
         ],
         "uses": [
@@ -7571,39 +8066,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "entregar",
                     "levar"
                 ],
-                "targetHTML": "Vou <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Lisboa</span> amanhã.",
-                "translation": "I go to Lisbon tomorrow.",
+                "targetHTML": "<span class=\"fw-token-connector\">A</span> <span class=\"fw-token-c\">propósito</span>, você já leu meu último livro sobre este assunto?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Vou <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Lisboa</span> amanhã.",
-                        "translation": "I go to Lisbon tomorrow.",
-                        "source": "Conversation"
+                        "sentence": "A propósito, você já leu meu último livro sobre este assunto?",
+                        "targetHTML": "<span class=\"fw-token-connector\">A</span> <span class=\"fw-token-c\">propósito</span>, você já leu meu último livro sobre este assunto?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Chegamos <span class='fw-token-connector'>a</span> <span class='fw-token-c'>casa são e salvos</span>.",
-                        "translation": "We arrived home safe and sound.",
-                        "source": "Dialogue"
+                        "sentence": "Energia igual a campo magnético vezes comprimento do condutor.",
+                        "targetHTML": "Energia igual <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">campo magnético</span> vezes comprimento do condutor.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Entregou o documento <span class='fw-token-connector'>a</span> <span class='fw-token-c'>ele</span>.",
-                        "translation": "Delivered the document to him.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Escreveu uma nota <span class='fw-token-connector'>a</span> <span class='fw-token-c'>um amigo</span>.",
-                        "translation": "Wrote a note to a friend.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Eles voltaram <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Porto Alegre</span>.",
-                        "translation": "They returned to Porto Alegre.",
-                        "source": "Literature"
+                        "sentence": "Para o venderem a um médico para experiências médicas.",
+                        "targetHTML": "Para o <span class=\"fw-token-v\">venderem</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">um médico</span> para experiências médicas.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "The",
@@ -7617,38 +8133,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "vida",
                     "viagem"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>casa</span> é bonita.",
-                "translation": "The house is pretty.",
+                "targetHTML": "Tom decidiu que não seria sensato tentar atravessar <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">velha ponte de cordas</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>casa</span> é bonita.",
-                        "translation": "The house is pretty.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Tom decidiu que não seria sensato tentar atravessar a velha ponte de cordas.",
+                        "targetHTML": "Tom decidiu que não seria sensato tentar atravessar <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">velha ponte de cordas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>porta</span> principal estava trancada.",
-                        "translation": "The main door was locked.",
-                        "source": "Dialogue"
+                        "sentence": "Preciso do voto dele para ganhar o poder de que necessito para proteger a minha família.",
+                        "targetHTML": "Preciso do voto dele para ganhar o poder de que necessito para proteger <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">minha família</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>cidade</span> acorda cedo.",
-                        "translation": "The city wakes up early.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>noite</span> estava fresca e calma.",
-                        "translation": "The night was cool and quiet.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>A</span> <span class='fw-token-c'>viagem</span> correu muito bem.",
-                        "translation": "The trip went very well.",
-                        "source": "Conversation"
+                        "sentence": "A assassina está na prisão.",
+                        "targetHTML": "<span class=\"fw-token-connector\">A</span> <span class=\"fw-token-c\">assassina</span> está na prisão.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Her / it",
@@ -7678,21 +8215,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Todos <span class='fw-token-connector'>a</span> <span class='fw-token-v'>respeitam</span> pelo trabalho sério.",
                         "translation": "Everyone respects her for her earnest work.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Nunca mais <span class='fw-token-connector'>a</span> <span class='fw-token-v'>encontrei</span> depois disso.",
-                        "translation": "I never met her again after that.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "O médico <span class='fw-token-connector'>a</span> <span class='fw-token-v'>examinou</span> com cuidado.",
-                        "translation": "The doctor examined her carefully.",
-                        "source": "Everyday speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Conversation"
             }
         ]
     },
@@ -7714,39 +8242,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "falar",
                     "sorrir"
                 ],
-                "targetHTML": "Comprei pão <span class='fw-token-connector'>e</span> <span class='fw-token-c'>queijo</span>.",
-                "translation": "I bought bread and cheese.",
+                "targetHTML": "<span class=\"fw-token-v\">Maria</span> <span class=\"fw-token-connector\">e</span> <span class=\"fw-token-c\">eu</span> nos tornamos bons amigos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Comprei pão <span class='fw-token-connector'>e</span> <span class='fw-token-c'>queijo</span>.",
-                        "translation": "I bought bread and cheese.",
-                        "source": "Everyday speech"
+                        "sentence": "Maria e eu nos tornamos bons amigos.",
+                        "targetHTML": "<span class=\"fw-token-v\">Maria</span> <span class=\"fw-token-connector\">e</span> <span class=\"fw-token-c\">eu</span> nos tornamos bons amigos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:e:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction e."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele levantou-se <span class='fw-token-connector'>e</span> <span class='fw-token-c'>abriu a janela</span>.",
-                        "translation": "He stood up and opened the window.",
-                        "source": "Dialogue"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio com 8 anos... <span class=\"fw-token-connector\">e</span> <span class=\"fw-token-c\">pararam de me fazer visitas quando eu tinha 11 anos</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:e:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction e."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Trabalho de dia <span class='fw-token-connector'>e</span> <span class='fw-token-c'>estudo à noite</span>.",
-                        "translation": "I work during the day and study at night.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Ela sorriu <span class='fw-token-connector'>e</span> <span class='fw-token-c'>agradeceu a ajuda</span>.",
-                        "translation": "She smiled and thanked for the help.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Comemos fruta <span class='fw-token-connector'>e</span> <span class='fw-token-c'>bebemos sumo fresco</span>.",
-                        "translation": "We ate fruit and drank fresh juice.",
-                        "source": "Subtitles"
+                        "sentence": "Certo, bata e luvas.",
+                        "targetHTML": "Certo, <span class=\"fw-token-v\">bata</span> <span class=\"fw-token-connector\">e</span> <span class=\"fw-token-c\">luvas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:e:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction e."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "mixed"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -7762,39 +8311,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "falar",
                     "sorrir"
                 ],
-                "targetHTML": "Comprei pão <span class='fw-token-connector'>e</span> <span class='fw-token-c'>queijo</span>.",
-                "translation": "I bought bread and cheese.",
+                "targetHTML": "<span class=\"fw-token-v\">Maria</span> <span class=\"fw-token-connector\">e</span> <span class=\"fw-token-c\">eu</span> nos tornamos bons amigos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Comprei pão <span class='fw-token-connector'>e</span> <span class='fw-token-c'>queijo</span>.",
-                        "translation": "I bought bread and cheese.",
-                        "source": "Everyday speech"
+                        "sentence": "Maria e eu nos tornamos bons amigos.",
+                        "targetHTML": "<span class=\"fw-token-v\">Maria</span> <span class=\"fw-token-connector\">e</span> <span class=\"fw-token-c\">eu</span> nos tornamos bons amigos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:e:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction e."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele levantou-se <span class='fw-token-connector'>e</span> <span class='fw-token-c'>abriu a janela</span>.",
-                        "translation": "He stood up and opened the window.",
-                        "source": "Dialogue"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio com 8 anos... <span class=\"fw-token-connector\">e</span> <span class=\"fw-token-c\">pararam de me fazer visitas quando eu tinha 11 anos</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:e:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction e."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Trabalho de dia <span class='fw-token-connector'>e</span> <span class='fw-token-c'>estudo à noite</span>.",
-                        "translation": "I work during the day and study at night.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Ela sorriu <span class='fw-token-connector'>e</span> <span class='fw-token-c'>agradeceu a ajuda</span>.",
-                        "translation": "She smiled and thanked for the help.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Comemos fruta <span class='fw-token-connector'>e</span> <span class='fw-token-c'>bebemos sumo fresco</span>.",
-                        "translation": "We ate fruit and drank fresh juice.",
-                        "source": "Subtitles"
+                        "sentence": "Certo, bata e luvas.",
+                        "targetHTML": "Certo, <span class=\"fw-token-v\">bata</span> <span class=\"fw-token-connector\">e</span> <span class=\"fw-token-c\">luvas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:e:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction e."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "mixed"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -7816,38 +8386,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "estar",
                     "fazer"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>moro</span> aqui.",
-                "translation": "I live here.",
+                "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando <span class=\"fw-token-connector\">eu</span> <span class=\"fw-token-v\">tinha</span> 11 anos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>moro</span> aqui.",
-                        "translation": "I live here.",
-                        "source": "Everyday speech"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando <span class=\"fw-token-connector\">eu</span> <span class=\"fw-token-v\">tinha</span> 11 anos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:eu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>sei</span> exatamente o que fazer.",
-                        "translation": "I know exactly what to do.",
-                        "source": "Dialogue"
+                        "sentence": "Eu venho quando posso.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Eu</span> <span class=\"fw-token-v\">venho</span> quando posso.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:eu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>quero</span> falar com você.",
-                        "translation": "I want to talk with you.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>estou</span> pronto para começar.",
-                        "translation": "I am ready to start.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>fiz</span> o melhor que pude.",
-                        "translation": "I did the best that I could.",
-                        "source": "Literature"
+                        "sentence": "Eu oro por vocês todos os dias.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Eu</span> <span class=\"fw-token-v\">oro</span> por vocês todos os dias.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:eu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -7863,38 +8454,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "estar",
                     "fazer"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>moro</span> aqui.",
-                "translation": "I live here.",
+                "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando <span class=\"fw-token-connector\">eu</span> <span class=\"fw-token-v\">tinha</span> 11 anos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>moro</span> aqui.",
-                        "translation": "I live here.",
-                        "source": "Everyday speech"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando <span class=\"fw-token-connector\">eu</span> <span class=\"fw-token-v\">tinha</span> 11 anos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:eu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>sei</span> exatamente o que fazer.",
-                        "translation": "I know exactly what to do.",
-                        "source": "Dialogue"
+                        "sentence": "Eu venho quando posso.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Eu</span> <span class=\"fw-token-v\">venho</span> quando posso.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:eu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>quero</span> falar com você.",
-                        "translation": "I want to talk with you.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>estou</span> pronto para começar.",
-                        "translation": "I am ready to start.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Eu</span> <span class='fw-token-v'>fiz</span> o melhor que pude.",
-                        "translation": "I did the best that I could.",
-                        "source": "Literature"
+                        "sentence": "Eu oro por vocês todos os dias.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Eu</span> <span class=\"fw-token-v\">oro</span> por vocês todos os dias.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:eu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -7915,38 +8527,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "saber",
                     "viver"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>trabalha</span> muito.",
-                "translation": "He works a lot.",
+                "targetHTML": "<span class=\"fw-token-connector\">Ele</span> <span class=\"fw-token-v\">não come</span> a mulher há mais de um ano.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>trabalha</span> muito.",
-                        "translation": "He works a lot.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Ele não come a mulher há mais de um ano.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Ele</span> <span class=\"fw-token-v\">não come</span> a mulher há mais de um ano.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ele:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>chegou</span> na hora combinada.",
-                        "translation": "He arrived at the agreed time.",
-                        "source": "Conversation"
+                        "sentence": "Isso é a última coisa que ele se recorda.",
+                        "targetHTML": "Isso é a última coisa que <span class=\"fw-token-connector\">ele</span> <span class=\"fw-token-v\">se recorda</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ele:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>sabe</span> o caminho de volta.",
-                        "translation": "He knows the way back.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>disse</span> que viria cedo.",
-                        "translation": "He said he would come early.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>vive</span> num mundo próprio.",
-                        "translation": "He lives in a world of his own.",
-                        "source": "Literature"
+                        "sentence": "Ele disse que pensou que você queria expandir o mandado de busca",
+                        "targetHTML": "<span class=\"fw-token-connector\">Ele</span> <span class=\"fw-token-v\">disse</span> que pensou que você queria expandir o mandado de busca",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ele:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "After a preposition",
@@ -7977,21 +8610,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Não podemos decidir sem <span class='fw-token-connector'>ele</span>.",
                         "translation": "We cannot decide without him.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Todos perguntaram por <span class='fw-token-connector'>ele</span>.",
-                        "translation": "Everyone asked for him.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Escreveram uma matéria sobre <span class='fw-token-connector'>ele</span>.",
-                        "translation": "They wrote an article about him.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "prep"
-                }
+                },
+                "source": "Conversation"
             }
         ],
         "uses": [
@@ -8006,38 +8630,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "saber",
                     "viver"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>trabalha</span> muito.",
-                "translation": "He works a lot.",
+                "targetHTML": "<span class=\"fw-token-connector\">Ele</span> <span class=\"fw-token-v\">não come</span> a mulher há mais de um ano.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>trabalha</span> muito.",
-                        "translation": "He works a lot.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Ele não come a mulher há mais de um ano.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Ele</span> <span class=\"fw-token-v\">não come</span> a mulher há mais de um ano.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ele:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>chegou</span> na hora combinada.",
-                        "translation": "He arrived at the agreed time.",
-                        "source": "Conversation"
+                        "sentence": "Isso é a última coisa que ele se recorda.",
+                        "targetHTML": "Isso é a última coisa que <span class=\"fw-token-connector\">ele</span> <span class=\"fw-token-v\">se recorda</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ele:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>sabe</span> o caminho de volta.",
-                        "translation": "He knows the way back.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>disse</span> que viria cedo.",
-                        "translation": "He said he would come early.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ele</span> <span class='fw-token-v'>vive</span> num mundo próprio.",
-                        "translation": "He lives in a world of his own.",
-                        "source": "Literature"
+                        "sentence": "Ele disse que pensou que você queria expandir o mandado de busca",
+                        "targetHTML": "<span class=\"fw-token-connector\">Ele</span> <span class=\"fw-token-v\">disse</span> que pensou que você queria expandir o mandado de busca",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ele:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "After a preposition",
@@ -8068,21 +8713,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Não podemos decidir sem <span class='fw-token-connector'>ele</span>.",
                         "translation": "We cannot decide without him.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Todos perguntaram por <span class='fw-token-connector'>ele</span>.",
-                        "translation": "Everyone asked for him.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Escreveram uma matéria sobre <span class='fw-token-connector'>ele</span>.",
-                        "translation": "They wrote an article about him.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "prep"
-                }
+                },
+                "source": "Conversation"
             }
         ]
     },
@@ -8103,38 +8739,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "estudar",
                     "voltar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>sabe</span> a resposta.",
-                "translation": "She knows the answer.",
+                "targetHTML": "<span class=\"fw-token-connector\">Ela</span> <span class=\"fw-token-v\">quer</span> fazer-lhe mal, Reina.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>sabe</span> a resposta.",
-                        "translation": "She knows the answer.",
-                        "source": "Everyday speech"
+                        "sentence": "Ela quer fazer-lhe mal, Reina.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Ela</span> <span class=\"fw-token-v\">quer</span> fazer-lhe mal, Reina.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>fala</span> três línguas fluentemente.",
-                        "translation": "She speaks three languages fluently.",
-                        "source": "Conversation"
+                        "sentence": "- Tocou, e ela mexeu no cabelo.",
+                        "targetHTML": "- Tocou, e <span class=\"fw-token-connector\">ela</span> <span class=\"fw-token-v\">mexeu</span> no cabelo.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>sorriu</span> calorosamente para nós.",
-                        "translation": "She smiled warmly at us.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>estuda</span> medicina na capital.",
-                        "translation": "She studies medicine in the capital.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>voltou</span> de viagem ontem.",
-                        "translation": "She returned from her trip yesterday.",
-                        "source": "Subtitles"
+                        "sentence": "Ela atirou para aqui.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Ela</span> <span class=\"fw-token-v\">atirou</span> para aqui.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -8149,38 +8806,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "estudar",
                     "voltar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>sabe</span> a resposta.",
-                "translation": "She knows the answer.",
+                "targetHTML": "<span class=\"fw-token-connector\">Ela</span> <span class=\"fw-token-v\">quer</span> fazer-lhe mal, Reina.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>sabe</span> a resposta.",
-                        "translation": "She knows the answer.",
-                        "source": "Everyday speech"
+                        "sentence": "Ela quer fazer-lhe mal, Reina.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Ela</span> <span class=\"fw-token-v\">quer</span> fazer-lhe mal, Reina.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>fala</span> três línguas fluentemente.",
-                        "translation": "She speaks three languages fluently.",
-                        "source": "Conversation"
+                        "sentence": "- Tocou, e ela mexeu no cabelo.",
+                        "targetHTML": "- Tocou, e <span class=\"fw-token-connector\">ela</span> <span class=\"fw-token-v\">mexeu</span> no cabelo.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>sorriu</span> calorosamente para nós.",
-                        "translation": "She smiled warmly at us.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>estuda</span> medicina na capital.",
-                        "translation": "She studies medicine in the capital.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ela</span> <span class='fw-token-v'>voltou</span> de viagem ontem.",
-                        "translation": "She returned from her trip yesterday.",
-                        "source": "Subtitles"
+                        "sentence": "Ela atirou para aqui.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Ela</span> <span class=\"fw-token-v\">atirou</span> para aqui.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -8202,38 +8880,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "café",
                     "lugar"
                 ],
-                "targetHTML": "Tenho <span class='fw-token-connector'>um</span> <span class='fw-token-c'>irmão</span>.",
-                "translation": "I have a brother.",
+                "targetHTML": "Minha filmadora veio com <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">editor de vídeos embutido</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Tenho <span class='fw-token-connector'>um</span> <span class='fw-token-c'>irmão</span>.",
-                        "translation": "I have a brother.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Minha filmadora veio com um editor de vídeos embutido.",
+                        "targetHTML": "Minha filmadora veio com <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">editor de vídeos embutido</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:um:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Conheci <span class='fw-token-connector'>um</span> <span class='fw-token-c'>amigo legal</span>.",
-                        "translation": "I met a cool friend.",
-                        "source": "Conversation"
+                        "sentence": "Por favor, um caso com o tipo universitário sem nome?",
+                        "targetHTML": "Por favor, <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">caso com o tipo universitário sem nome</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:um:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Tomamos <span class='fw-token-connector'>um</span> <span class='fw-token-c'>café juntos</span>.",
-                        "translation": "We had a coffee together.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Li <span class='fw-token-connector'>um</span> <span class='fw-token-c'>livro fantástico</span>.",
-                        "translation": "I read a fantastic book.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Procuramos <span class='fw-token-connector'>um</span> <span class='fw-token-c'>lugar tranquilo</span>.",
-                        "translation": "We looked for a quiet place.",
-                        "source": "Literature"
+                        "sentence": "Obrigada. Há um urso na cidade, Carrie.",
+                        "targetHTML": "Obrigada. Há <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">urso</span> na cidade, Carrie.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:um:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -8249,38 +8948,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "café",
                     "lugar"
                 ],
-                "targetHTML": "Tenho <span class='fw-token-connector'>um</span> <span class='fw-token-c'>irmão</span>.",
-                "translation": "I have a brother.",
+                "targetHTML": "Minha filmadora veio com <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">editor de vídeos embutido</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Tenho <span class='fw-token-connector'>um</span> <span class='fw-token-c'>irmão</span>.",
-                        "translation": "I have a brother.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Minha filmadora veio com um editor de vídeos embutido.",
+                        "targetHTML": "Minha filmadora veio com <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">editor de vídeos embutido</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:um:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Conheci <span class='fw-token-connector'>um</span> <span class='fw-token-c'>amigo legal</span>.",
-                        "translation": "I met a cool friend.",
-                        "source": "Conversation"
+                        "sentence": "Por favor, um caso com o tipo universitário sem nome?",
+                        "targetHTML": "Por favor, <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">caso com o tipo universitário sem nome</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:um:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Tomamos <span class='fw-token-connector'>um</span> <span class='fw-token-c'>café juntos</span>.",
-                        "translation": "We had a coffee together.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Li <span class='fw-token-connector'>um</span> <span class='fw-token-c'>livro fantástico</span>.",
-                        "translation": "I read a fantastic book.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Procuramos <span class='fw-token-connector'>um</span> <span class='fw-token-c'>lugar tranquilo</span>.",
-                        "translation": "We looked for a quiet place.",
-                        "source": "Literature"
+                        "sentence": "Obrigada. Há um urso na cidade, Carrie.",
+                        "targetHTML": "Obrigada. Há <span class=\"fw-token-connector\">um</span> <span class=\"fw-token-c\">urso</span> na cidade, Carrie.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:um:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -8302,38 +9022,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "pergunta",
                     "história"
                 ],
-                "targetHTML": "Vi <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>fotografia</span>.",
-                "translation": "I saw a photograph.",
+                "targetHTML": "Nada como uma noite no teatro que acaba com <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">dor de cabeça</span>!",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Vi <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>fotografia</span>.",
-                        "translation": "I saw a photograph.",
-                        "source": "Conversation"
+                        "sentence": "Nada como uma noite no teatro que acaba com uma dor de cabeça!",
+                        "targetHTML": "Nada como uma noite no teatro que acaba com <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">dor de cabeça</span>!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:uma:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ela teve <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>ideia brilhante</span>.",
-                        "translation": "She had a brilliant idea.",
-                        "source": "Dialogue"
+                        "sentence": "Dizem que o Latim é uma língua morta, mas acho que está só a descansar.",
+                        "targetHTML": "Dizem que o Latim é <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">língua morta</span>, mas acho que está só a descansar.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:uma:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ficarei aqui por <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>semana</span>.",
-                        "translation": "I will stay here for a week.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Quero fazer <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>pergunta simples</span>.",
-                        "translation": "I want to ask a simple question.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Contou-nos <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>história engraçada</span>.",
-                        "translation": "Told us a funny story.",
-                        "source": "Literature"
+                        "sentence": "Eu poderia te sugerir uma outra estratégia?",
+                        "targetHTML": "Eu poderia te sugerir <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">outra estratégia</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:uma:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -8349,38 +9090,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "pergunta",
                     "história"
                 ],
-                "targetHTML": "Vi <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>fotografia</span>.",
-                "translation": "I saw a photograph.",
+                "targetHTML": "Nada como uma noite no teatro que acaba com <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">dor de cabeça</span>!",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Vi <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>fotografia</span>.",
-                        "translation": "I saw a photograph.",
-                        "source": "Conversation"
+                        "sentence": "Nada como uma noite no teatro que acaba com uma dor de cabeça!",
+                        "targetHTML": "Nada como uma noite no teatro que acaba com <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">dor de cabeça</span>!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:uma:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ela teve <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>ideia brilhante</span>.",
-                        "translation": "She had a brilliant idea.",
-                        "source": "Dialogue"
+                        "sentence": "Dizem que o Latim é uma língua morta, mas acho que está só a descansar.",
+                        "targetHTML": "Dizem que o Latim é <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">língua morta</span>, mas acho que está só a descansar.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:uma:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ficarei aqui por <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>semana</span>.",
-                        "translation": "I will stay here for a week.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Quero fazer <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>pergunta simples</span>.",
-                        "translation": "I want to ask a simple question.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Contou-nos <span class='fw-token-connector'>uma</span> <span class='fw-token-c'>história engraçada</span>.",
-                        "translation": "Told us a funny story.",
-                        "source": "Literature"
+                        "sentence": "Eu poderia te sugerir uma outra estratégia?",
+                        "targetHTML": "Eu poderia te sugerir <span class=\"fw-token-connector\">uma</span> <span class=\"fw-token-c\">outra estratégia</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:uma:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -8402,38 +9164,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "homens",
                     "carros"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>livros</span> estão na mesa.",
-                "translation": "The books are on the table.",
+                "targetHTML": "Cortem-no em pedaços e atirem-no para <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">cães</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>livros</span> estão na mesa.",
-                        "translation": "The books are on the table.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Cortem-no em pedaços e atirem-no para os cães.",
+                        "targetHTML": "Cortem-no em pedaços e atirem-no para <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">cães</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:os:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>dias</span> passam voando.",
-                        "translation": "The days fly by.",
-                        "source": "Conversation"
+                        "sentence": "Tens os outros jogadores da equipa, os amigos altos, com as camisolas com números?",
+                        "targetHTML": "Tens os outros jogadores da equipa, <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">amigos altos</span>, com as camisolas com números?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:os:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>meus amigos</span> chegam logo.",
-                        "translation": "My friends arrive soon.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>olhos dela</span> brilhavam.",
-                        "translation": "Her eyes were shining.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>carros</span> pararam no sinal.",
-                        "translation": "The cars stopped at the light.",
-                        "source": "Subtitles"
+                        "sentence": "Precisamos de todos os concorrentes no palco, por favor.",
+                        "targetHTML": "Precisamos de todos <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">concorrentes</span> no palco, por favor.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:os:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Them",
@@ -8446,9 +9229,24 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "ouvir",
                     "deixar"
                 ],
-                "targetHTML": "Eu <span class='fw-token-connector'>os</span> <span class='fw-token-v'>vi</span> no cinema.",
-                "translation": "I saw them at the movies.",
+                "targetHTML": "É como se &quot;A&quot; <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-v\">tivesse modificado</span>, para poder rastrear cada um dos nossos movimentos.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "É como se \"A\" os tivesse modificado, para poder rastrear cada um dos nossos movimentos.",
+                        "targetHTML": "É como se &quot;A&quot; <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-v\">tivesse modificado</span>, para poder rastrear cada um dos nossos movimentos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:os:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun os governed by verb."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "Eu <span class='fw-token-connector'>os</span> <span class='fw-token-v'>vi</span> no cinema.",
                         "translation": "I saw them at the movies.",
@@ -8458,26 +9256,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Não <span class='fw-token-connector'>os</span> <span class='fw-token-v'>encontrei</span> em casa.",
                         "translation": "I did not find them at home.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Eu <span class='fw-token-connector'>os</span> <span class='fw-token-v'>comprei</span> na feira de manhã.",
-                        "translation": "I bought them at the morning market.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "O professor <span class='fw-token-connector'>os</span> <span class='fw-token-v'>chamou</span> para conversar.",
-                        "translation": "The teacher called them to talk.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Guardei<span class='fw-token-connector'>-os</span> com cuidado.",
-                        "translation": "I stored them carefully.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -8493,38 +9277,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "homens",
                     "carros"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>livros</span> estão na mesa.",
-                "translation": "The books are on the table.",
+                "targetHTML": "Cortem-no em pedaços e atirem-no para <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">cães</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>livros</span> estão na mesa.",
-                        "translation": "The books are on the table.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Cortem-no em pedaços e atirem-no para os cães.",
+                        "targetHTML": "Cortem-no em pedaços e atirem-no para <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">cães</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:os:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>dias</span> passam voando.",
-                        "translation": "The days fly by.",
-                        "source": "Conversation"
+                        "sentence": "Tens os outros jogadores da equipa, os amigos altos, com as camisolas com números?",
+                        "targetHTML": "Tens os outros jogadores da equipa, <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">amigos altos</span>, com as camisolas com números?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:os:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>meus amigos</span> chegam logo.",
-                        "translation": "My friends arrive soon.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>olhos dela</span> brilhavam.",
-                        "translation": "Her eyes were shining.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Os</span> <span class='fw-token-c'>carros</span> pararam no sinal.",
-                        "translation": "The cars stopped at the light.",
-                        "source": "Subtitles"
+                        "sentence": "Precisamos de todos os concorrentes no palco, por favor.",
+                        "targetHTML": "Precisamos de todos <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">concorrentes</span> no palco, por favor.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:os:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Them",
@@ -8537,9 +9342,24 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "ouvir",
                     "deixar"
                 ],
-                "targetHTML": "Eu <span class='fw-token-connector'>os</span> <span class='fw-token-v'>vi</span> no cinema.",
-                "translation": "I saw them at the movies.",
+                "targetHTML": "É como se &quot;A&quot; <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-v\">tivesse modificado</span>, para poder rastrear cada um dos nossos movimentos.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "É como se \"A\" os tivesse modificado, para poder rastrear cada um dos nossos movimentos.",
+                        "targetHTML": "É como se &quot;A&quot; <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-v\">tivesse modificado</span>, para poder rastrear cada um dos nossos movimentos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:os:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun os governed by verb."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "Eu <span class='fw-token-connector'>os</span> <span class='fw-token-v'>vi</span> no cinema.",
                         "translation": "I saw them at the movies.",
@@ -8549,26 +9369,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Não <span class='fw-token-connector'>os</span> <span class='fw-token-v'>encontrei</span> em casa.",
                         "translation": "I did not find them at home.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Eu <span class='fw-token-connector'>os</span> <span class='fw-token-v'>comprei</span> na feira de manhã.",
-                        "translation": "I bought them at the morning market.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "O professor <span class='fw-token-connector'>os</span> <span class='fw-token-v'>chamou</span> para conversar.",
-                        "translation": "The teacher called them to talk.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Guardei<span class='fw-token-connector'>-os</span> com cuidado.",
-                        "translation": "I stored them carefully.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -8590,38 +9396,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "pessoas",
                     "ruas"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>portas</span> estão abertas.",
-                "translation": "The doors are open.",
+                "targetHTML": "<span class=\"fw-token-connector\">As</span> <span class=\"fw-token-c\">crianças</span> já não eram pacientes, eram internadas.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>portas</span> estão abertas.",
-                        "translation": "The doors are open.",
-                        "source": "Everyday speech"
+                        "sentence": "As crianças já não eram pacientes, eram internadas.",
+                        "targetHTML": "<span class=\"fw-token-connector\">As</span> <span class=\"fw-token-c\">crianças</span> já não eram pacientes, eram internadas.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:as:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>flores</span> do jardim desabrocharam.",
-                        "translation": "The garden flowers blossomed.",
-                        "source": "Conversation"
+                        "sentence": "Sei que as coisas estão duras, mas você é um sobrevivente, Ahmed.",
+                        "targetHTML": "Sei que <span class=\"fw-token-connector\">as</span> <span class=\"fw-token-c\">coisas</span> estão duras, mas você é um sobrevivente, Ahmed.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:as:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>pessoas</span> aplaudiram de pé.",
-                        "translation": "The people gave a standing ovation.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>ruas</span> estavam iluminadas.",
-                        "translation": "The streets were illuminated.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Entendo bem <span class='fw-token-connector'>as</span> <span class='fw-token-c'>tuas dúvidas</span>.",
-                        "translation": "I understand your questions well.",
-                        "source": "Literature"
+                        "sentence": "Achas as minhas ideias mal passadas.",
+                        "targetHTML": "Achas <span class=\"fw-token-connector\">as</span> <span class=\"fw-token-c\">minhas ideias mal passadas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:as:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -8637,38 +9464,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "pessoas",
                     "ruas"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>portas</span> estão abertas.",
-                "translation": "The doors are open.",
+                "targetHTML": "<span class=\"fw-token-connector\">As</span> <span class=\"fw-token-c\">crianças</span> já não eram pacientes, eram internadas.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>portas</span> estão abertas.",
-                        "translation": "The doors are open.",
-                        "source": "Everyday speech"
+                        "sentence": "As crianças já não eram pacientes, eram internadas.",
+                        "targetHTML": "<span class=\"fw-token-connector\">As</span> <span class=\"fw-token-c\">crianças</span> já não eram pacientes, eram internadas.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:as:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>flores</span> do jardim desabrocharam.",
-                        "translation": "The garden flowers blossomed.",
-                        "source": "Conversation"
+                        "sentence": "Sei que as coisas estão duras, mas você é um sobrevivente, Ahmed.",
+                        "targetHTML": "Sei que <span class=\"fw-token-connector\">as</span> <span class=\"fw-token-c\">coisas</span> estão duras, mas você é um sobrevivente, Ahmed.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:as:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>pessoas</span> aplaudiram de pé.",
-                        "translation": "The people gave a standing ovation.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>As</span> <span class='fw-token-c'>ruas</span> estavam iluminadas.",
-                        "translation": "The streets were illuminated.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Entendo bem <span class='fw-token-connector'>as</span> <span class='fw-token-c'>tuas dúvidas</span>.",
-                        "translation": "I understand your questions well.",
-                        "source": "Literature"
+                        "sentence": "Achas as minhas ideias mal passadas.",
+                        "targetHTML": "Achas <span class=\"fw-token-connector\">as</span> <span class=\"fw-token-c\">minhas ideias mal passadas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:as:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -8690,38 +9538,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "dizer",
                     "avisar"
                 ],
-                "targetHTML": "Ele <span class='fw-token-connector'>me</span> <span class='fw-token-v'>ajudou</span> hoje.",
-                "translation": "He helped me today.",
+                "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">fazer</span> visitas quando eu tinha 11 anos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Ele <span class='fw-token-connector'>me</span> <span class='fw-token-v'>ajudou</span> hoje.",
-                        "translation": "He helped me today.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">fazer</span> visitas quando eu tinha 11 anos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ela <span class='fw-token-connector'>me</span> <span class='fw-token-v'>chamou</span> para jantar.",
-                        "translation": "She invited me for dinner.",
-                        "source": "Conversation"
+                        "sentence": "Também não me interessam os culpados.",
+                        "targetHTML": "Também não <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">interessam</span> os culpados.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Você <span class='fw-token-connector'>me</span> <span class='fw-token-v'>ouviu</span> bem?",
-                        "translation": "Did you hear me well?",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Ele <span class='fw-token-connector'>me</span> <span class='fw-token-v'>deu</span> um bom conselho.",
-                        "translation": "He gave me good advice.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Me</span> <span class='fw-token-v'>avisa</span> quando chegar.",
-                        "translation": "Let me know when you arrive.",
-                        "source": "Contemporary speech"
+                        "sentence": "Eu me mudei para esta casa ontem.",
+                        "targetHTML": "Eu <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">mudei</span> para esta casa ontem.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Myself / part of a verb",
@@ -8751,21 +9620,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-v'>Sentei</span><span class='fw-token-connector'>-me</span> no banco da praça.",
                         "translation": "I sat down on the square bench.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-v'>Esqueci</span><span class='fw-token-connector'>-me</span> da carteira em casa.",
-                        "translation": "I forgot my wallet at home.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-v'>Levantei</span><span class='fw-token-connector'>-me</span> ao amanhecer.",
-                        "translation": "I got up at daybreak.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Dialogue"
             }
         ],
         "uses": [
@@ -8781,38 +9641,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "dizer",
                     "avisar"
                 ],
-                "targetHTML": "Ele <span class='fw-token-connector'>me</span> <span class='fw-token-v'>ajudou</span> hoje.",
-                "translation": "He helped me today.",
+                "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">fazer</span> visitas quando eu tinha 11 anos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Ele <span class='fw-token-connector'>me</span> <span class='fw-token-v'>ajudou</span> hoje.",
-                        "translation": "He helped me today.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">fazer</span> visitas quando eu tinha 11 anos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ela <span class='fw-token-connector'>me</span> <span class='fw-token-v'>chamou</span> para jantar.",
-                        "translation": "She invited me for dinner.",
-                        "source": "Conversation"
+                        "sentence": "Também não me interessam os culpados.",
+                        "targetHTML": "Também não <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">interessam</span> os culpados.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Você <span class='fw-token-connector'>me</span> <span class='fw-token-v'>ouviu</span> bem?",
-                        "translation": "Did you hear me well?",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Ele <span class='fw-token-connector'>me</span> <span class='fw-token-v'>deu</span> um bom conselho.",
-                        "translation": "He gave me good advice.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Me</span> <span class='fw-token-v'>avisa</span> quando chegar.",
-                        "translation": "Let me know when you arrive.",
-                        "source": "Contemporary speech"
+                        "sentence": "Eu me mudei para esta casa ontem.",
+                        "targetHTML": "Eu <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">mudei</span> para esta casa ontem.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Myself / part of a verb",
@@ -8842,21 +9723,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-v'>Sentei</span><span class='fw-token-connector'>-me</span> no banco da praça.",
                         "translation": "I sat down on the square bench.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-v'>Esqueci</span><span class='fw-token-connector'>-me</span> da carteira em casa.",
-                        "translation": "I forgot my wallet at home.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-v'>Levantei</span><span class='fw-token-connector'>-me</span> ao amanhecer.",
-                        "translation": "I got up at daybreak.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Dialogue"
             }
         ]
     },
@@ -8878,38 +9750,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "ouvir",
                     "esperar"
                 ],
-                "targetHTML": "Eu <span class='fw-token-connector'>te</span> <span class='fw-token-v'>amo</span>.",
-                "translation": "I love you.",
+                "targetHTML": "&quot;Não estamos interessados neste.&quot; Por outro lado, alguém <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">escolheu</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Eu <span class='fw-token-connector'>te</span> <span class='fw-token-v'>amo</span>.",
-                        "translation": "I love you.",
-                        "source": "Everyday dialogue"
+                        "sentence": "\"Não estamos interessados neste.\" Por outro lado, alguém te escolheu.",
+                        "targetHTML": "&quot;Não estamos interessados neste.&quot; Por outro lado, alguém <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">escolheu</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Eu <span class='fw-token-connector'>te</span> <span class='fw-token-v'>vi</span> ontem à tarde.",
-                        "translation": "I saw you yesterday afternoon.",
-                        "source": "Conversation"
+                        "sentence": "Eu estaria preocupado se não te tivesses sentido.",
+                        "targetHTML": "Eu estaria preocupado se não <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">tivesses</span> sentido.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Eu <span class='fw-token-connector'>te</span> <span class='fw-token-v'>ligo</span> mais tarde.",
-                        "translation": "I will call you later.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Vou <span class='fw-token-connector'>te</span> <span class='fw-token-v'>contar</span> uma novidade.",
-                        "translation": "I will tell you some news.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Nós <span class='fw-token-connector'>te</span> <span class='fw-token-v'>esperamos</span> no saguão.",
-                        "translation": "We wait for you in the lobby.",
-                        "source": "Literature"
+                        "sentence": "Não, quando te mudaste para cá, vim para um churrasco formal.",
+                        "targetHTML": "Não, quando <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">mudaste</span> para cá, vim para um churrasco formal.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -8925,38 +9818,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "ouvir",
                     "esperar"
                 ],
-                "targetHTML": "Eu <span class='fw-token-connector'>te</span> <span class='fw-token-v'>amo</span>.",
-                "translation": "I love you.",
+                "targetHTML": "&quot;Não estamos interessados neste.&quot; Por outro lado, alguém <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">escolheu</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Eu <span class='fw-token-connector'>te</span> <span class='fw-token-v'>amo</span>.",
-                        "translation": "I love you.",
-                        "source": "Everyday dialogue"
+                        "sentence": "\"Não estamos interessados neste.\" Por outro lado, alguém te escolheu.",
+                        "targetHTML": "&quot;Não estamos interessados neste.&quot; Por outro lado, alguém <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">escolheu</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Eu <span class='fw-token-connector'>te</span> <span class='fw-token-v'>vi</span> ontem à tarde.",
-                        "translation": "I saw you yesterday afternoon.",
-                        "source": "Conversation"
+                        "sentence": "Eu estaria preocupado se não te tivesses sentido.",
+                        "targetHTML": "Eu estaria preocupado se não <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">tivesses</span> sentido.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Eu <span class='fw-token-connector'>te</span> <span class='fw-token-v'>ligo</span> mais tarde.",
-                        "translation": "I will call you later.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Vou <span class='fw-token-connector'>te</span> <span class='fw-token-v'>contar</span> uma novidade.",
-                        "translation": "I will tell you some news.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Nós <span class='fw-token-connector'>te</span> <span class='fw-token-v'>esperamos</span> no saguão.",
-                        "translation": "We wait for you in the lobby.",
-                        "source": "Literature"
+                        "sentence": "Não, quando te mudaste para cá, vim para um churrasco formal.",
+                        "targetHTML": "Não, quando <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">mudaste</span> para cá, vim para um churrasco formal.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -8978,38 +9892,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "enviar",
                     "pedir"
                 ],
-                "targetHTML": "Eu <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>dei</span> o livro.",
-                "translation": "I gave him the book.",
+                "targetHTML": "Nós <span class=\"fw-token-connector\">lhe</span> <span class=\"fw-token-v\">desejamos</span> isso: Paz.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Eu <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>dei</span> o livro.",
-                        "translation": "I gave him the book.",
-                        "source": "Dialogue"
+                        "sentence": "Nós lhe desejamos isso: Paz.",
+                        "targetHTML": "Nós <span class=\"fw-token-connector\">lhe</span> <span class=\"fw-token-v\">desejamos</span> isso: Paz.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:lhe:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun lhe governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ela <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>disse</span> a verdade.",
-                        "translation": "She told him the truth.",
-                        "source": "Conversation"
+                        "sentence": "É por isso que lhe tentamos abrir um caminho até à Casa Branca para fazer alterações.",
+                        "targetHTML": "É por isso que <span class=\"fw-token-connector\">lhe</span> <span class=\"fw-token-v\">tentamos</span> abrir um caminho até à Casa Branca para fazer alterações.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:lhe:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun lhe governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "O carteiro <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>entregou</span> a encomenda.",
-                        "translation": "The mail carrier delivered the package to her.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Eu <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>enviei</span> uma mensagem ontem.",
-                        "translation": "I sent him a message yesterday.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Lhe</span> <span class='fw-token-v'>desejo</span> toda a sorte do mundo.",
-                        "translation": "I wish you all the luck in the world.",
-                        "source": "Literature"
+                        "sentence": "Faça assim como lhe digo.",
+                        "targetHTML": "Faça assim como <span class=\"fw-token-connector\">lhe</span> <span class=\"fw-token-v\">digo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:lhe:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun lhe governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -9025,38 +9960,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "enviar",
                     "pedir"
                 ],
-                "targetHTML": "Eu <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>dei</span> o livro.",
-                "translation": "I gave him the book.",
+                "targetHTML": "Nós <span class=\"fw-token-connector\">lhe</span> <span class=\"fw-token-v\">desejamos</span> isso: Paz.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Eu <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>dei</span> o livro.",
-                        "translation": "I gave him the book.",
-                        "source": "Dialogue"
+                        "sentence": "Nós lhe desejamos isso: Paz.",
+                        "targetHTML": "Nós <span class=\"fw-token-connector\">lhe</span> <span class=\"fw-token-v\">desejamos</span> isso: Paz.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:lhe:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun lhe governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ela <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>disse</span> a verdade.",
-                        "translation": "She told him the truth.",
-                        "source": "Conversation"
+                        "sentence": "É por isso que lhe tentamos abrir um caminho até à Casa Branca para fazer alterações.",
+                        "targetHTML": "É por isso que <span class=\"fw-token-connector\">lhe</span> <span class=\"fw-token-v\">tentamos</span> abrir um caminho até à Casa Branca para fazer alterações.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:lhe:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun lhe governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "O carteiro <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>entregou</span> a encomenda.",
-                        "translation": "The mail carrier delivered the package to her.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Eu <span class='fw-token-connector'>lhe</span> <span class='fw-token-v'>enviei</span> uma mensagem ontem.",
-                        "translation": "I sent him a message yesterday.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Lhe</span> <span class='fw-token-v'>desejo</span> toda a sorte do mundo.",
-                        "translation": "I wish you all the luck in the world.",
-                        "source": "Literature"
+                        "sentence": "Faça assim como lhe digo.",
+                        "targetHTML": "Faça assim como <span class=\"fw-token-connector\">lhe</span> <span class=\"fw-token-v\">digo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:lhe:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun lhe governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -9081,38 +10037,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "fim",
                     "redor"
                 ],
-                "targetHTML": "Vou <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>mercado</span>.",
-                "translation": "I am going to the market.",
+                "targetHTML": "Acho que finalmente vai atrás da equivalência <span class=\"fw-token-connector\">ao</span> <span class=\"fw-token-c\">secundário</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Vou <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>mercado</span>.",
-                        "translation": "I am going to the market.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Acho que finalmente vai atrás da equivalência ao secundário.",
+                        "targetHTML": "Acho que finalmente vai atrás da equivalência <span class=\"fw-token-connector\">ao</span> <span class=\"fw-token-c\">secundário</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ao:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Fomos <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>cinema</span> ver a estreia.",
-                        "translation": "We went to the cinema to see the premiere.",
-                        "source": "Conversation"
+                        "sentence": "Eles podem caminhar ao sol!",
+                        "targetHTML": "Eles podem caminhar <span class=\"fw-token-connector\">ao</span> <span class=\"fw-token-c\">sol</span>!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ao:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Voltou <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>trabalho na segunda-feira</span>.",
-                        "translation": "Returned to work on Monday.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Chegamos <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>fim da jornada</span>.",
-                        "translation": "We reached the end of the journey.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Olhou <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>redor com curiosidade</span>.",
-                        "translation": "Looked around with curiosity.",
-                        "source": "Subtitles"
+                        "sentence": "Dominaste a espada, mas ao teu coração falha a determinação.",
+                        "targetHTML": "Dominaste a espada, mas <span class=\"fw-token-connector\">ao</span> <span class=\"fw-token-c\">teu coração</span> falha a determinação.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ao:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "When doing something",
@@ -9142,21 +10119,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Ao</span> <span class='fw-token-v'>abrir</span> a porta, sentiu o vento frio.",
                         "translation": "Upon opening the door, felt the cold wind.",
                         "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Sorriu <span class='fw-token-connector'>ao</span> <span class='fw-token-v'>ver</span> os velhos amigos.",
-                        "translation": "Smiled upon seeing the old friends.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ao</span> <span class='fw-token-v'>entrar</span> na sala, percebeu o silêncio.",
-                        "translation": "Upon entering the room, noticed the silence.",
-                        "source": "Conversation"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Everyday speech"
             }
         ],
         "uses": [
@@ -9171,38 +10139,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "fim",
                     "redor"
                 ],
-                "targetHTML": "Vou <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>mercado</span>.",
-                "translation": "I am going to the market.",
+                "targetHTML": "Acho que finalmente vai atrás da equivalência <span class=\"fw-token-connector\">ao</span> <span class=\"fw-token-c\">secundário</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Vou <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>mercado</span>.",
-                        "translation": "I am going to the market.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Acho que finalmente vai atrás da equivalência ao secundário.",
+                        "targetHTML": "Acho que finalmente vai atrás da equivalência <span class=\"fw-token-connector\">ao</span> <span class=\"fw-token-c\">secundário</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ao:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Fomos <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>cinema</span> ver a estreia.",
-                        "translation": "We went to the cinema to see the premiere.",
-                        "source": "Conversation"
+                        "sentence": "Eles podem caminhar ao sol!",
+                        "targetHTML": "Eles podem caminhar <span class=\"fw-token-connector\">ao</span> <span class=\"fw-token-c\">sol</span>!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ao:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Voltou <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>trabalho na segunda-feira</span>.",
-                        "translation": "Returned to work on Monday.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Chegamos <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>fim da jornada</span>.",
-                        "translation": "We reached the end of the journey.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Olhou <span class='fw-token-connector'>ao</span> <span class='fw-token-c'>redor com curiosidade</span>.",
-                        "translation": "Looked around with curiosity.",
-                        "source": "Subtitles"
+                        "sentence": "Dominaste a espada, mas ao teu coração falha a determinação.",
+                        "targetHTML": "Dominaste a espada, mas <span class=\"fw-token-connector\">ao</span> <span class=\"fw-token-c\">teu coração</span> falha a determinação.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:ao:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "When doing something",
@@ -9232,21 +10221,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Ao</span> <span class='fw-token-v'>abrir</span> a porta, sentiu o vento frio.",
                         "translation": "Upon opening the door, felt the cold wind.",
                         "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Sorriu <span class='fw-token-connector'>ao</span> <span class='fw-token-v'>ver</span> os velhos amigos.",
-                        "translation": "Smiled upon seeing the old friends.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Ao</span> <span class='fw-token-v'>entrar</span> na sala, percebeu o silêncio.",
-                        "translation": "Upon entering the room, noticed the silence.",
-                        "source": "Conversation"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Everyday speech"
             }
         ]
     },
@@ -9271,38 +10251,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "hora",
                     "tarde"
                 ],
-                "targetHTML": "Chegamos <span class='fw-token-connector'>à</span> <span class='fw-token-c'>noite</span>.",
-                "translation": "We arrived at night.",
+                "targetHTML": "Não se sabe onde subiram <span class=\"fw-token-connector\">à</span> <span class=\"fw-token-c\">sonda</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Chegamos <span class='fw-token-connector'>à</span> <span class='fw-token-c'>noite</span>.",
-                        "translation": "We arrived at night.",
-                        "source": "Dialogue"
+                        "sentence": "Não se sabe onde subiram à sonda.",
+                        "targetHTML": "Não se sabe onde subiram <span class=\"fw-token-connector\">à</span> <span class=\"fw-token-c\">sonda</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:à:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Fomos <span class='fw-token-connector'>à</span> <span class='fw-token-c'>praia tomar sol</span>.",
-                        "translation": "We went to the beach to sunbathe.",
-                        "source": "Conversation"
+                        "sentence": "-Nada. Pensava que estavam à toa.",
+                        "targetHTML": "-Nada. Pensava que estavam <span class=\"fw-token-connector\">à</span> <span class=\"fw-token-c\">toa</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:à:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "As crianças foram <span class='fw-token-connector'>à</span> <span class='fw-token-c'>escola de manhã</span>.",
-                        "translation": "The kids went to school in the morning.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "O filme começa <span class='fw-token-connector'>à</span> <span class='fw-token-c'>uma da tarde</span>.",
-                        "translation": "The film begins at one in the afternoon.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Voltaremos <span class='fw-token-connector'>à</span> <span class='fw-token-c'>nossa rotina habitual</span>.",
-                        "translation": "We will return to our usual routine.",
-                        "source": "Literature"
+                        "sentence": "Então... Somos todos pecadores destinados à condenação.",
+                        "targetHTML": "Então... Somos todos pecadores destinados <span class=\"fw-token-connector\">à</span> <span class=\"fw-token-c\">condenação</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:à:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -9317,38 +10318,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "hora",
                     "tarde"
                 ],
-                "targetHTML": "Chegamos <span class='fw-token-connector'>à</span> <span class='fw-token-c'>noite</span>.",
-                "translation": "We arrived at night.",
+                "targetHTML": "Não se sabe onde subiram <span class=\"fw-token-connector\">à</span> <span class=\"fw-token-c\">sonda</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Chegamos <span class='fw-token-connector'>à</span> <span class='fw-token-c'>noite</span>.",
-                        "translation": "We arrived at night.",
-                        "source": "Dialogue"
+                        "sentence": "Não se sabe onde subiram à sonda.",
+                        "targetHTML": "Não se sabe onde subiram <span class=\"fw-token-connector\">à</span> <span class=\"fw-token-c\">sonda</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:à:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Fomos <span class='fw-token-connector'>à</span> <span class='fw-token-c'>praia tomar sol</span>.",
-                        "translation": "We went to the beach to sunbathe.",
-                        "source": "Conversation"
+                        "sentence": "-Nada. Pensava que estavam à toa.",
+                        "targetHTML": "-Nada. Pensava que estavam <span class=\"fw-token-connector\">à</span> <span class=\"fw-token-c\">toa</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:à:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "As crianças foram <span class='fw-token-connector'>à</span> <span class='fw-token-c'>escola de manhã</span>.",
-                        "translation": "The kids went to school in the morning.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "O filme começa <span class='fw-token-connector'>à</span> <span class='fw-token-c'>uma da tarde</span>.",
-                        "translation": "The film begins at one in the afternoon.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Voltaremos <span class='fw-token-connector'>à</span> <span class='fw-token-c'>nossa rotina habitual</span>.",
-                        "translation": "We will return to our usual routine.",
-                        "source": "Literature"
+                        "sentence": "Então... Somos todos pecadores destinados à condenação.",
+                        "targetHTML": "Então... Somos todos pecadores destinados <span class=\"fw-token-connector\">à</span> <span class=\"fw-token-c\">condenação</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:à:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -9373,38 +10395,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "apoio",
                     "mundo"
                 ],
-                "targetHTML": "Caminhei <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>parque</span>.",
-                "translation": "I walked through the park.",
+                "targetHTML": "Ninguém do Clã tentou fazer isso há, <span class=\"fw-token-connector\">pelo</span> <span class=\"fw-token-c\">menos</span>, três gerações.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Caminhei <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>parque</span>.",
-                        "translation": "I walked through the park.",
-                        "source": "Everyday speech"
+                        "sentence": "Ninguém do Clã tentou fazer isso há, pelo menos, três gerações.",
+                        "targetHTML": "Ninguém do Clã tentou fazer isso há, <span class=\"fw-token-connector\">pelo</span> <span class=\"fw-token-c\">menos</span>, três gerações.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pelo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Obrigado <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>apoio constante</span>.",
-                        "translation": "Thank you for the constant support.",
-                        "source": "Dialogue"
+                        "sentence": "Pelo menos não sem uma ajudinha.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Pelo</span> <span class=\"fw-token-c\">menos</span> não sem uma ajudinha.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pelo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Passamos <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>caminho mais curto</span>.",
-                        "translation": "We passed through the shortest path.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Foi reconhecido <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>bom trabalho</span>.",
-                        "translation": "Was recognized for the good work.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Viajou <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>mundo todo</span>.",
-                        "translation": "Traveled throughout the whole world.",
-                        "source": "Literature"
+                        "sentence": "Não sou obcecada pelo controlo.",
+                        "targetHTML": "Não sou obcecada <span class=\"fw-token-connector\">pelo</span> <span class=\"fw-token-c\">controlo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pelo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -9419,38 +10462,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "apoio",
                     "mundo"
                 ],
-                "targetHTML": "Caminhei <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>parque</span>.",
-                "translation": "I walked through the park.",
+                "targetHTML": "Ninguém do Clã tentou fazer isso há, <span class=\"fw-token-connector\">pelo</span> <span class=\"fw-token-c\">menos</span>, três gerações.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Caminhei <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>parque</span>.",
-                        "translation": "I walked through the park.",
-                        "source": "Everyday speech"
+                        "sentence": "Ninguém do Clã tentou fazer isso há, pelo menos, três gerações.",
+                        "targetHTML": "Ninguém do Clã tentou fazer isso há, <span class=\"fw-token-connector\">pelo</span> <span class=\"fw-token-c\">menos</span>, três gerações.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pelo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Obrigado <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>apoio constante</span>.",
-                        "translation": "Thank you for the constant support.",
-                        "source": "Dialogue"
+                        "sentence": "Pelo menos não sem uma ajudinha.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Pelo</span> <span class=\"fw-token-c\">menos</span> não sem uma ajudinha.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pelo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Passamos <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>caminho mais curto</span>.",
-                        "translation": "We passed through the shortest path.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Foi reconhecido <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>bom trabalho</span>.",
-                        "translation": "Was recognized for the good work.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Viajou <span class='fw-token-connector'>pelo</span> <span class='fw-token-c'>mundo todo</span>.",
-                        "translation": "Traveled throughout the whole world.",
-                        "source": "Literature"
+                        "sentence": "Não sou obcecada pelo controlo.",
+                        "targetHTML": "Não sou obcecada <span class=\"fw-token-connector\">pelo</span> <span class=\"fw-token-c\">controlo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pelo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -9475,38 +10539,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "manhã",
                     "vida"
                 ],
-                "targetHTML": "Obrigado <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>ajuda</span>.",
-                "translation": "Thank you for the help.",
+                "targetHTML": "Peço desculpa <span class=\"fw-token-connector\">pela</span> <span class=\"fw-token-c\">tirada</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Obrigado <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>ajuda</span>.",
-                        "translation": "Thank you for the help.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Peço desculpa pela tirada.",
+                        "targetHTML": "Peço desculpa <span class=\"fw-token-connector\">pela</span> <span class=\"fw-token-c\">tirada</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Passeamos <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>cidade antiga</span>.",
-                        "translation": "We strolled through the old city.",
-                        "source": "Conversation"
+                        "sentence": "Ele seguiu o outro gajo pela floresta.",
+                        "targetHTML": "Ele seguiu o outro gajo <span class=\"fw-token-connector\">pela</span> <span class=\"fw-token-c\">floresta</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Olhou <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>janela do quarto</span>.",
-                        "translation": "Looked through the bedroom window.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Caminha <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>manhã bem cedo</span>.",
-                        "translation": "Walks in the very early morning.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Lutou <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>justiça com determinação</span>.",
-                        "translation": "Fought for justice with determination.",
-                        "source": "Dialogue"
+                        "sentence": "Minha mãe é a primeira a se levantar pela manhã.",
+                        "targetHTML": "Minha mãe é a primeira a se levantar <span class=\"fw-token-connector\">pela</span> <span class=\"fw-token-c\">manhã</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -9521,38 +10606,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "manhã",
                     "vida"
                 ],
-                "targetHTML": "Obrigado <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>ajuda</span>.",
-                "translation": "Thank you for the help.",
+                "targetHTML": "Peço desculpa <span class=\"fw-token-connector\">pela</span> <span class=\"fw-token-c\">tirada</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Obrigado <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>ajuda</span>.",
-                        "translation": "Thank you for the help.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Peço desculpa pela tirada.",
+                        "targetHTML": "Peço desculpa <span class=\"fw-token-connector\">pela</span> <span class=\"fw-token-c\">tirada</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Passeamos <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>cidade antiga</span>.",
-                        "translation": "We strolled through the old city.",
-                        "source": "Conversation"
+                        "sentence": "Ele seguiu o outro gajo pela floresta.",
+                        "targetHTML": "Ele seguiu o outro gajo <span class=\"fw-token-connector\">pela</span> <span class=\"fw-token-c\">floresta</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Olhou <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>janela do quarto</span>.",
-                        "translation": "Looked through the bedroom window.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Caminha <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>manhã bem cedo</span>.",
-                        "translation": "Walks in the very early morning.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Lutou <span class='fw-token-connector'>pela</span> <span class='fw-token-c'>justiça com determinação</span>.",
-                        "translation": "Fought for justice with determination.",
-                        "source": "Dialogue"
+                        "sentence": "Minha mãe é a primeira a se levantar pela manhã.",
+                        "targetHTML": "Minha mãe é a primeira a se levantar <span class=\"fw-token-connector\">pela</span> <span class=\"fw-token-c\">manhã</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:pela:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -9577,38 +10683,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "lugar",
                     "momento"
                 ],
-                "targetHTML": "Moro <span class='fw-token-connector'>num</span> <span class='fw-token-c'>apartamento</span>.",
-                "translation": "I live in an apartment.",
+                "targetHTML": "Eles prenderam-me <span class=\"fw-token-connector\">num</span> <span class=\"fw-token-c\">colégio</span> com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Moro <span class='fw-token-connector'>num</span> <span class='fw-token-c'>apartamento</span>.",
-                        "translation": "I live in an apartment.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me <span class=\"fw-token-connector\">num</span> <span class=\"fw-token-c\">colégio</span> com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:num:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Tudo aconteceu <span class='fw-token-connector'>num</span> <span class='fw-token-c'>segundo</span>.",
-                        "translation": "Everything happened in a second.",
-                        "source": "Conversation"
+                        "sentence": "Mas um garoto precisa da sua mãe para se tornar num homem.",
+                        "targetHTML": "Mas um garoto precisa da sua mãe para se tornar <span class=\"fw-token-connector\">num</span> <span class=\"fw-token-c\">homem</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:num:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Num</span> <span class='fw-token-c'>dia chuvoso</span>, ficamos lendo.",
-                        "translation": "On a rainy day, we stayed reading.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Eles vivem <span class='fw-token-connector'>num</span> <span class='fw-token-c'>lugar tranquilo</span>.",
-                        "translation": "They live in a quiet place.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Conhecemo-nos <span class='fw-token-connector'>num</span> <span class='fw-token-c'>evento cultural</span>.",
-                        "translation": "We met at a cultural event.",
-                        "source": "Dialogue"
+                        "sentence": "Eles matam as suas vítimas num local e desfazem-se delas noutro.",
+                        "targetHTML": "Eles matam as suas vítimas <span class=\"fw-token-connector\">num</span> <span class=\"fw-token-c\">local</span> e desfazem-se delas noutro.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:num:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -9623,38 +10750,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "lugar",
                     "momento"
                 ],
-                "targetHTML": "Moro <span class='fw-token-connector'>num</span> <span class='fw-token-c'>apartamento</span>.",
-                "translation": "I live in an apartment.",
+                "targetHTML": "Eles prenderam-me <span class=\"fw-token-connector\">num</span> <span class=\"fw-token-c\">colégio</span> com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Moro <span class='fw-token-connector'>num</span> <span class='fw-token-c'>apartamento</span>.",
-                        "translation": "I live in an apartment.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me <span class=\"fw-token-connector\">num</span> <span class=\"fw-token-c\">colégio</span> com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:num:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Tudo aconteceu <span class='fw-token-connector'>num</span> <span class='fw-token-c'>segundo</span>.",
-                        "translation": "Everything happened in a second.",
-                        "source": "Conversation"
+                        "sentence": "Mas um garoto precisa da sua mãe para se tornar num homem.",
+                        "targetHTML": "Mas um garoto precisa da sua mãe para se tornar <span class=\"fw-token-connector\">num</span> <span class=\"fw-token-c\">homem</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:num:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Num</span> <span class='fw-token-c'>dia chuvoso</span>, ficamos lendo.",
-                        "translation": "On a rainy day, we stayed reading.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Eles vivem <span class='fw-token-connector'>num</span> <span class='fw-token-c'>lugar tranquilo</span>.",
-                        "translation": "They live in a quiet place.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Conhecemo-nos <span class='fw-token-connector'>num</span> <span class='fw-token-c'>evento cultural</span>.",
-                        "translation": "We met at a cultural event.",
-                        "source": "Dialogue"
+                        "sentence": "Eles matam as suas vítimas num local e desfazem-se delas noutro.",
+                        "targetHTML": "Eles matam as suas vítimas <span class=\"fw-token-connector\">num</span> <span class=\"fw-token-c\">local</span> e desfazem-se delas noutro.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:num:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -9679,38 +10827,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "viagem",
                     "mesa"
                 ],
-                "targetHTML": "Entrei <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>loja</span>.",
-                "translation": "I entered a shop.",
+                "targetHTML": "É assim desde que conseguiu pegar <span class=\"fw-token-connector\">numa</span> <span class=\"fw-token-c\">bola</span> de basebol.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Entrei <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>loja</span>.",
-                        "translation": "I entered a shop.",
-                        "source": "Conversation"
+                        "sentence": "É assim desde que conseguiu pegar numa bola de basebol.",
+                        "targetHTML": "É assim desde que conseguiu pegar <span class=\"fw-token-connector\">numa</span> <span class=\"fw-token-c\">bola</span> de basebol.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:numa:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ficamos hospedados <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>pousada</span>.",
-                        "translation": "We stayed hosted at an inn.",
-                        "source": "Dialogue"
+                        "sentence": "Não do tipo de inferno que te prende numa pedra.",
+                        "targetHTML": "Não do tipo de inferno que te prende <span class=\"fw-token-connector\">numa</span> <span class=\"fw-token-c\">pedra</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:numa:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Numa</span> <span class='fw-token-c'>noite fria</span>, acendemos a lareira.",
-                        "translation": "On a cold night, we lit the fireplace.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Ela trabalha <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>empresa de tecnologia</span>.",
-                        "translation": "She works at a technology company.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Sentamo-nos <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>mesa perto da janela</span>.",
-                        "translation": "We sat at a table near the window.",
-                        "source": "Everyday speech"
+                        "sentence": "\"Estás numa maré de azar.",
+                        "targetHTML": "&quot;Estás <span class=\"fw-token-connector\">numa</span> <span class=\"fw-token-c\">maré</span> de azar.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:numa:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -9725,38 +10894,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "viagem",
                     "mesa"
                 ],
-                "targetHTML": "Entrei <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>loja</span>.",
-                "translation": "I entered a shop.",
+                "targetHTML": "É assim desde que conseguiu pegar <span class=\"fw-token-connector\">numa</span> <span class=\"fw-token-c\">bola</span> de basebol.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Entrei <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>loja</span>.",
-                        "translation": "I entered a shop.",
-                        "source": "Conversation"
+                        "sentence": "É assim desde que conseguiu pegar numa bola de basebol.",
+                        "targetHTML": "É assim desde que conseguiu pegar <span class=\"fw-token-connector\">numa</span> <span class=\"fw-token-c\">bola</span> de basebol.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:numa:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ficamos hospedados <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>pousada</span>.",
-                        "translation": "We stayed hosted at an inn.",
-                        "source": "Dialogue"
+                        "sentence": "Não do tipo de inferno que te prende numa pedra.",
+                        "targetHTML": "Não do tipo de inferno que te prende <span class=\"fw-token-connector\">numa</span> <span class=\"fw-token-c\">pedra</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:numa:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Numa</span> <span class='fw-token-c'>noite fria</span>, acendemos a lareira.",
-                        "translation": "On a cold night, we lit the fireplace.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Ela trabalha <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>empresa de tecnologia</span>.",
-                        "translation": "She works at a technology company.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Sentamo-nos <span class='fw-token-connector'>numa</span> <span class='fw-token-c'>mesa perto da janela</span>.",
-                        "translation": "We sat at a table near the window.",
-                        "source": "Everyday speech"
+                        "sentence": "\"Estás numa maré de azar.",
+                        "targetHTML": "&quot;Estás <span class=\"fw-token-connector\">numa</span> <span class=\"fw-token-c\">maré</span> de azar.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:numa:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Contraction components, nominal attachment and agreement agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -9798,21 +10988,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Gostei muito da ideia <span class='fw-token-connector'>dele</span>.",
                         "translation": "I really liked his idea.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "O carro <span class='fw-token-connector'>dele</span> está parado ali.",
-                        "translation": "His car is parked there.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "O trabalho <span class='fw-token-connector'>dele</span> foi elogiado por todos.",
-                        "translation": "His work was praised by all.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "noun"
-                }
+                },
+                "source": "Everyday dialogue"
             }
         ],
         "uses": [
@@ -9844,21 +11025,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Gostei muito da ideia <span class='fw-token-connector'>dele</span>.",
                         "translation": "I really liked his idea.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "O carro <span class='fw-token-connector'>dele</span> está parado ali.",
-                        "translation": "His car is parked there.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "O trabalho <span class='fw-token-connector'>dele</span> foi elogiado por todos.",
-                        "translation": "His work was praised by all.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "noun"
-                }
+                },
+                "source": "Everyday dialogue"
             }
         ]
     },
@@ -9900,21 +11072,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Respeito muito a opinião <span class='fw-token-connector'>dela</span>.",
                         "translation": "I respect her opinion a lot.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "A irmã <span class='fw-token-connector'>dela</span> chega amanhã.",
-                        "translation": "Her sister arrives tomorrow.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "O sorriso <span class='fw-token-connector'>dela</span> iluminou o ambiente.",
-                        "translation": "Her smile lit up the room.",
-                        "source": "Subtitles"
                     }
                 ],
                 "slotTypes": {
                     "v": "noun"
-                }
+                },
+                "source": "Everyday speech"
             }
         ],
         "uses": [
@@ -9946,21 +11109,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "Respeito muito a opinião <span class='fw-token-connector'>dela</span>.",
                         "translation": "I respect her opinion a lot.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "A irmã <span class='fw-token-connector'>dela</span> chega amanhã.",
-                        "translation": "Her sister arrives tomorrow.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "O sorriso <span class='fw-token-connector'>dela</span> iluminou o ambiente.",
-                        "translation": "Her smile lit up the room.",
-                        "source": "Subtitles"
                     }
                 ],
                 "slotTypes": {
                     "v": "noun"
-                }
+                },
+                "source": "Everyday speech"
             }
         ]
     },
@@ -9981,39 +11135,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "dúvida",
                     "problema"
                 ],
-                "targetHTML": "Café <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>açúcar</span>, por favor.",
-                "translation": "Coffee without sugar, please.",
+                "targetHTML": "Por favor, um caso com o tipo universitário <span class=\"fw-token-connector\">sem</span> <span class=\"fw-token-c\">nome</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Café <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>açúcar</span>, por favor.",
-                        "translation": "Coffee without sugar, please.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Por favor, um caso com o tipo universitário sem nome?",
+                        "targetHTML": "Por favor, um caso com o tipo universitário <span class=\"fw-token-connector\">sem</span> <span class=\"fw-token-c\">nome</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sem:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sem privation pattern."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele falou <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>qualquer hesitação</span>.",
-                        "translation": "He spoke without any hesitation.",
-                        "source": "Dialogue"
+                        "sentence": "Sem desconto no Dia da Vitória!",
+                        "targetHTML": "<span class=\"fw-token-connector\">Sem</span> <span class=\"fw-token-c\">desconto no Dia da Vitória</span>!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sem:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sem privation pattern."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Saímos <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>pressa nenhuma</span>.",
-                        "translation": "We left without any rush.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Isso é, <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>dúvida</span>, a melhor opção.",
-                        "translation": "That is, without doubt, the best option.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Resolvemos a questão <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>problemas</span>.",
-                        "translation": "We solved the issue without problems.",
-                        "source": "Literature"
+                        "sentence": "Certamente que vocês não são tão tolos para voltar sem isso.",
+                        "targetHTML": "Certamente que vocês não são tão tolos para <span class=\"fw-token-v\">voltar</span> <span class=\"fw-token-connector\">sem</span> <span class=\"fw-token-c\">isso</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sem:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sem privation pattern."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -10028,39 +11203,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "dúvida",
                     "problema"
                 ],
-                "targetHTML": "Café <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>açúcar</span>, por favor.",
-                "translation": "Coffee without sugar, please.",
+                "targetHTML": "Por favor, um caso com o tipo universitário <span class=\"fw-token-connector\">sem</span> <span class=\"fw-token-c\">nome</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Café <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>açúcar</span>, por favor.",
-                        "translation": "Coffee without sugar, please.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Por favor, um caso com o tipo universitário sem nome?",
+                        "targetHTML": "Por favor, um caso com o tipo universitário <span class=\"fw-token-connector\">sem</span> <span class=\"fw-token-c\">nome</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sem:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sem privation pattern."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Ele falou <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>qualquer hesitação</span>.",
-                        "translation": "He spoke without any hesitation.",
-                        "source": "Dialogue"
+                        "sentence": "Sem desconto no Dia da Vitória!",
+                        "targetHTML": "<span class=\"fw-token-connector\">Sem</span> <span class=\"fw-token-c\">desconto no Dia da Vitória</span>!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sem:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sem privation pattern."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Saímos <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>pressa nenhuma</span>.",
-                        "translation": "We left without any rush.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Isso é, <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>dúvida</span>, a melhor opção.",
-                        "translation": "That is, without doubt, the best option.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Resolvemos a questão <span class='fw-token-connector'>sem</span> <span class='fw-token-c'>problemas</span>.",
-                        "translation": "We solved the issue without problems.",
-                        "source": "Literature"
+                        "sentence": "Certamente que vocês não são tão tolos para voltar sem isso.",
+                        "targetHTML": "Certamente que vocês não são tão tolos para <span class=\"fw-token-v\">voltar</span> <span class=\"fw-token-connector\">sem</span> <span class=\"fw-token-c\">isso</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sem:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sem privation pattern."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -10081,39 +11277,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "discutir",
                     "pensar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Falamos</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o projeto</span>.",
-                "translation": "We talked about the project.",
+                "targetHTML": "A propósito, você já <span class=\"fw-token-v\">leu</span> meu último livro <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">este assunto</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Falamos</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o projeto</span>.",
-                        "translation": "We talked about the project.",
-                        "source": "Dialogue"
+                        "sentence": "A propósito, você já leu meu último livro sobre este assunto?",
+                        "targetHTML": "A propósito, você já <span class=\"fw-token-v\">leu</span> meu último livro <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">este assunto</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sobre:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sobre pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Li <span class=\"fw-token-v\">um livro</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>história europeia</span>.",
-                        "translation": "I read a book about European history.",
-                        "source": "Conversation"
+                        "sentence": "Bem, se estivesse a escrever sobre isto, faria uma retrospetiva sobre o tema.",
+                        "targetHTML": "Bem, se estivesse a <span class=\"fw-token-v\">escrever</span> <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isto</span>, faria uma retrospetiva sobre o tema.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sobre:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sobre pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Eles <span class=\"fw-token-v\">discutiram</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o futuro do trabalho</span>.",
-                        "translation": "They discussed about the future of work.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Gostaria de <span class=\"fw-token-v\">saber</span> mais <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>isso</span>.",
-                        "translation": "I would like to know more about that.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Escreveu <span class=\"fw-token-v\">um ensaio</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a arte moderna</span>.",
-                        "translation": "Wrote an essay about modern art.",
-                        "source": "Literature"
+                        "sentence": "Contou-me que ela estava envolvida nesse julgamento. Lembra-se dela falar sobre isso com alguém?",
+                        "targetHTML": "Contou-me que ela estava envolvida nesse julgamento. Lembra-se dela <span class=\"fw-token-v\">falar</span> <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isso</span> com alguém?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sobre:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sobre pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "On / above",
@@ -10143,22 +11360,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Deixou</span> o casaco <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a cama</span>.",
                         "translation": "Left the coat upon the bed.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "As chaves <span class=\"fw-token-v\">ficaram</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o balcão</span>.",
-                        "translation": "The keys were left on the counter.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "O sol poente <span class=\"fw-token-v\">brilhava</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a cidade</span>.",
-                        "translation": "The setting sun shone over the city.",
-                        "source": "Everyday speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Dialogue"
             }
         ],
         "uses": [
@@ -10173,39 +11381,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "discutir",
                     "pensar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Falamos</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o projeto</span>.",
-                "translation": "We talked about the project.",
+                "targetHTML": "A propósito, você já <span class=\"fw-token-v\">leu</span> meu último livro <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">este assunto</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Falamos</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o projeto</span>.",
-                        "translation": "We talked about the project.",
-                        "source": "Dialogue"
+                        "sentence": "A propósito, você já leu meu último livro sobre este assunto?",
+                        "targetHTML": "A propósito, você já <span class=\"fw-token-v\">leu</span> meu último livro <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">este assunto</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sobre:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sobre pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Li <span class=\"fw-token-v\">um livro</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>história europeia</span>.",
-                        "translation": "I read a book about European history.",
-                        "source": "Conversation"
+                        "sentence": "Bem, se estivesse a escrever sobre isto, faria uma retrospetiva sobre o tema.",
+                        "targetHTML": "Bem, se estivesse a <span class=\"fw-token-v\">escrever</span> <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isto</span>, faria uma retrospetiva sobre o tema.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sobre:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sobre pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Eles <span class=\"fw-token-v\">discutiram</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o futuro do trabalho</span>.",
-                        "translation": "They discussed about the future of work.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Gostaria de <span class=\"fw-token-v\">saber</span> mais <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>isso</span>.",
-                        "translation": "I would like to know more about that.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Escreveu <span class=\"fw-token-v\">um ensaio</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a arte moderna</span>.",
-                        "translation": "Wrote an essay about modern art.",
-                        "source": "Literature"
+                        "sentence": "Contou-me que ela estava envolvida nesse julgamento. Lembra-se dela falar sobre isso com alguém?",
+                        "targetHTML": "Contou-me que ela estava envolvida nesse julgamento. Lembra-se dela <span class=\"fw-token-v\">falar</span> <span class=\"fw-token-connector\">sobre</span> <span class=\"fw-token-c\">isso</span> com alguém?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:sobre:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sobre pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "On / above",
@@ -10235,22 +11464,13 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Deixou</span> o casaco <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a cama</span>.",
                         "translation": "Left the coat upon the bed.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "As chaves <span class=\"fw-token-v\">ficaram</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>o balcão</span>.",
-                        "translation": "The keys were left on the counter.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "O sol poente <span class=\"fw-token-v\">brilhava</span> <span class='fw-token-connector'>sobre</span> <span class='fw-token-c'>a cidade</span>.",
-                        "translation": "The setting sun shone over the city.",
-                        "source": "Everyday speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Dialogue"
             }
         ]
     },
@@ -10271,39 +11491,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "trabalhar",
                     "ir"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Vou caminhar</span> <span class='fw-token-connector'>até</span> <span class='fw-token-c'>a esquina</span>.",
-                "translation": "I will walk as far as the corner.",
+                "targetHTML": "Parece que o Axe <span class=\"fw-token-v\">chegou</span> <span class=\"fw-token-connector\">até</span> <span class=\"fw-token-c\">si</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Vou caminhar</span> <span class='fw-token-connector'>até</span> <span class='fw-token-c'>a esquina</span>.",
-                        "translation": "I will walk as far as the corner.",
-                        "source": "Dialogue"
+                        "sentence": "Parece que o Axe chegou até si.",
+                        "targetHTML": "Parece que o Axe <span class=\"fw-token-v\">chegou</span> <span class=\"fw-token-connector\">até</span> <span class=\"fw-token-c\">si</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:até:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Até pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Ficamos</span> no evento <span class='fw-token-connector'>até</span> <span class='fw-token-c'>às dez</span>.",
-                        "translation": "We stayed at the event until ten.",
-                        "source": "Conversation"
+                        "sentence": "É por isso que lhe tentamos abrir um caminho até à Casa Branca para fazer alterações.",
+                        "targetHTML": "É por isso que lhe tentamos <span class=\"fw-token-v\">abrir</span> um caminho <span class=\"fw-token-connector\">até</span> <span class=\"fw-token-c\">à Casa Branca</span> para fazer alterações.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:até:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Até pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Espere</span> aqui <span class='fw-token-connector'>até</span> <span class='fw-token-c'>eu voltar</span>.",
-                        "translation": "Wait here until I return.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Trabalhou</span> sem parar <span class='fw-token-connector'>até</span> <span class='fw-token-c'>ao anoitecer</span>.",
-                        "translation": "Worked non-stop until nightfall.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Dirigiram</span> <span class='fw-token-connector'>até</span> <span class='fw-token-c'>a fronteira</span>.",
-                        "translation": "They drove as far as the border.",
-                        "source": "Everyday speech"
+                        "sentence": "Ficamos escondidas até termos documentos.",
+                        "targetHTML": "<span class=\"fw-token-v\">Ficamos</span> escondidas <span class=\"fw-token-connector\">até</span> <span class=\"fw-token-c\">termos documentos</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:até:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Até pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Even",
@@ -10333,21 +11574,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Até</span> <span class='fw-token-c'>os especialistas</span> erraram a previsão.",
                         "translation": "Even the experts missed the prediction.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Estava tão frio que <span class='fw-token-connector'>até</span> <span class='fw-token-c'>a água congelou</span>.",
-                        "translation": "It was so cold that even the water froze.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Até</span> <span class='fw-token-c'>o vento</span> parecia sussurrar segredos.",
-                        "translation": "Even the wind seemed to whisper secrets.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ],
         "uses": [
@@ -10362,39 +11594,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "trabalhar",
                     "ir"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Vou caminhar</span> <span class='fw-token-connector'>até</span> <span class='fw-token-c'>a esquina</span>.",
-                "translation": "I will walk as far as the corner.",
+                "targetHTML": "Parece que o Axe <span class=\"fw-token-v\">chegou</span> <span class=\"fw-token-connector\">até</span> <span class=\"fw-token-c\">si</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Vou caminhar</span> <span class='fw-token-connector'>até</span> <span class='fw-token-c'>a esquina</span>.",
-                        "translation": "I will walk as far as the corner.",
-                        "source": "Dialogue"
+                        "sentence": "Parece que o Axe chegou até si.",
+                        "targetHTML": "Parece que o Axe <span class=\"fw-token-v\">chegou</span> <span class=\"fw-token-connector\">até</span> <span class=\"fw-token-c\">si</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:até:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Até pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Ficamos</span> no evento <span class='fw-token-connector'>até</span> <span class='fw-token-c'>às dez</span>.",
-                        "translation": "We stayed at the event until ten.",
-                        "source": "Conversation"
+                        "sentence": "É por isso que lhe tentamos abrir um caminho até à Casa Branca para fazer alterações.",
+                        "targetHTML": "É por isso que lhe tentamos <span class=\"fw-token-v\">abrir</span> um caminho <span class=\"fw-token-connector\">até</span> <span class=\"fw-token-c\">à Casa Branca</span> para fazer alterações.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:até:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Até pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Espere</span> aqui <span class='fw-token-connector'>até</span> <span class='fw-token-c'>eu voltar</span>.",
-                        "translation": "Wait here until I return.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Trabalhou</span> sem parar <span class='fw-token-connector'>até</span> <span class='fw-token-c'>ao anoitecer</span>.",
-                        "translation": "Worked non-stop until nightfall.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Dirigiram</span> <span class='fw-token-connector'>até</span> <span class='fw-token-c'>a fronteira</span>.",
-                        "translation": "They drove as far as the border.",
-                        "source": "Everyday speech"
+                        "sentence": "Ficamos escondidas até termos documentos.",
+                        "targetHTML": "<span class=\"fw-token-v\">Ficamos</span> escondidas <span class=\"fw-token-connector\">até</span> <span class=\"fw-token-c\">termos documentos</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:até:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Até pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Even",
@@ -10424,21 +11677,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Até</span> <span class='fw-token-c'>os especialistas</span> erraram a previsão.",
                         "translation": "Even the experts missed the prediction.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Estava tão frio que <span class='fw-token-connector'>até</span> <span class='fw-token-c'>a água congelou</span>.",
-                        "translation": "It was so cold that even the water froze.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Até</span> <span class='fw-token-c'>o vento</span> parecia sussurrar segredos.",
-                        "translation": "Even the wind seemed to whisper secrets.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ]
     },
@@ -10459,39 +11703,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "querer",
                     "precisar"
                 ],
-                "targetHTML": "Fiquei em casa <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>choveu</span>.",
-                "translation": "I stayed home because it rained.",
+                "targetHTML": "<span class=\"fw-token-v\">Senti</span> a tua falta <span class=\"fw-token-connector\">porque</span> <span class=\"fw-token-c\">te amo</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Fiquei em casa <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>choveu</span>.",
-                        "translation": "I stayed home because it rained.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Senti a tua falta porque te amo.",
+                        "targetHTML": "<span class=\"fw-token-v\">Senti</span> a tua falta <span class=\"fw-token-connector\">porque</span> <span class=\"fw-token-c\">te amo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Não fui à festa <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>estava muito cansado</span>.",
-                        "translation": "I didn't go to the party because I was very tired.",
-                        "source": "Conversation"
+                        "sentence": "Porque não vens, e trazes as crianças?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">não vens, e trazes as crianças</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Estudo português <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>amo a cultura</span>.",
-                        "translation": "I study Portuguese because I love the culture.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Ele sorriu <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>ouviu uma boa notícia</span>.",
-                        "translation": "He smiled because he heard good news.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Perguntei <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>queria ter a certeza</span>.",
-                        "translation": "I asked because I wanted to be sure.",
-                        "source": "Dialogue"
+                        "sentence": "Porque foi treinado para isto.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">foi treinado para isto</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -10506,39 +11771,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "querer",
                     "precisar"
                 ],
-                "targetHTML": "Fiquei em casa <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>choveu</span>.",
-                "translation": "I stayed home because it rained.",
+                "targetHTML": "<span class=\"fw-token-v\">Senti</span> a tua falta <span class=\"fw-token-connector\">porque</span> <span class=\"fw-token-c\">te amo</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Fiquei em casa <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>choveu</span>.",
-                        "translation": "I stayed home because it rained.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Senti a tua falta porque te amo.",
+                        "targetHTML": "<span class=\"fw-token-v\">Senti</span> a tua falta <span class=\"fw-token-connector\">porque</span> <span class=\"fw-token-c\">te amo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Não fui à festa <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>estava muito cansado</span>.",
-                        "translation": "I didn't go to the party because I was very tired.",
-                        "source": "Conversation"
+                        "sentence": "Porque não vens, e trazes as crianças?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">não vens, e trazes as crianças</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Estudo português <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>amo a cultura</span>.",
-                        "translation": "I study Portuguese because I love the culture.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Ele sorriu <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>ouviu uma boa notícia</span>.",
-                        "translation": "He smiled because he heard good news.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Perguntei <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>queria ter a certeza</span>.",
-                        "translation": "I asked because I wanted to be sure.",
-                        "source": "Dialogue"
+                        "sentence": "Porque foi treinado para isto.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">foi treinado para isto</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -10559,39 +11845,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "sair",
                     "voltar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Quando</span> <span class='fw-token-v'>cheguei</span>, <span class='fw-token-c'>todos aplaudiram</span>.",
-                "translation": "When I arrived, everyone applauded.",
+                "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de me <span class=\"fw-token-v\">fazer</span> visitas <span class=\"fw-token-connector\">quando</span> <span class=\"fw-token-c\">eu tinha 11 anos</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> <span class='fw-token-v'>cheguei</span>, <span class='fw-token-c'>todos aplaudiram</span>.",
-                        "translation": "When I arrived, everyone applauded.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de me <span class=\"fw-token-v\">fazer</span> visitas <span class=\"fw-token-connector\">quando</span> <span class=\"fw-token-c\">eu tinha 11 anos</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:quando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction quando."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> você <span class='fw-token-v'>puder</span>, ligue-me por favor.",
-                        "translation": "When you can, please call me.",
-                        "source": "Conversation"
+                        "sentence": "Eu venho quando posso.",
+                        "targetHTML": "Eu <span class=\"fw-token-v\">venho</span> <span class=\"fw-token-connector\">quando</span> <span class=\"fw-token-c\">posso</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:quando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction quando."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> o sol <span class='fw-token-v'>nasce</span>, a cidade ganha vida.",
-                        "translation": "When the sun rises, the city comes alive.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> <span class='fw-token-v'>terminares</span> o trabalho, avisa.",
-                        "translation": "When you finish the work, let me know.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> era jovem, viajava muito.",
-                        "translation": "When I was young, I used to travel a lot.",
-                        "source": "Subtitles"
+                        "sentence": "Quando estiver resolvido, sigo em frente.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Quando</span> <span class=\"fw-token-c\">estiver resolvido</span>, sigo em frente.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:quando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction quando."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -10606,39 +11913,60 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "sair",
                     "voltar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Quando</span> <span class='fw-token-v'>cheguei</span>, <span class='fw-token-c'>todos aplaudiram</span>.",
-                "translation": "When I arrived, everyone applauded.",
+                "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de me <span class=\"fw-token-v\">fazer</span> visitas <span class=\"fw-token-connector\">quando</span> <span class=\"fw-token-c\">eu tinha 11 anos</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> <span class='fw-token-v'>cheguei</span>, <span class='fw-token-c'>todos aplaudiram</span>.",
-                        "translation": "When I arrived, everyone applauded.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eles prenderam-me num colégio com 8 anos... e pararam de me fazer visitas quando eu tinha 11 anos.",
+                        "targetHTML": "Eles prenderam-me num colégio com 8 anos... e pararam de me <span class=\"fw-token-v\">fazer</span> visitas <span class=\"fw-token-connector\">quando</span> <span class=\"fw-token-c\">eu tinha 11 anos</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:quando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction quando."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> você <span class='fw-token-v'>puder</span>, ligue-me por favor.",
-                        "translation": "When you can, please call me.",
-                        "source": "Conversation"
+                        "sentence": "Eu venho quando posso.",
+                        "targetHTML": "Eu <span class=\"fw-token-v\">venho</span> <span class=\"fw-token-connector\">quando</span> <span class=\"fw-token-c\">posso</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:quando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction quando."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> o sol <span class='fw-token-v'>nasce</span>, a cidade ganha vida.",
-                        "translation": "When the sun rises, the city comes alive.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> <span class='fw-token-v'>terminares</span> o trabalho, avisa.",
-                        "translation": "When you finish the work, let me know.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Quando</span> era jovem, viajava muito.",
-                        "translation": "When I was young, I used to travel a lot.",
-                        "source": "Subtitles"
+                        "sentence": "Quando estiver resolvido, sigo em frente.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Quando</span> <span class=\"fw-token-c\">estiver resolvido</span>, sigo em frente.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:quando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction quando."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -10676,21 +12004,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Isso</span> não <span class='fw-token-v'>faz</span> sentido nenhum.",
                         "translation": "That makes no sense at all.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Isso</span> <span class='fw-token-v'>mudou</span> toda a situação.",
-                        "translation": "That changed the whole situation.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Já sabia <span class='fw-token-connector'>disso</span> antes de falarem.",
-                        "translation": "I already knew about that before they spoke.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Dialogue"
             }
         ],
         "uses": [
@@ -10722,21 +12041,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Isso</span> não <span class='fw-token-v'>faz</span> sentido nenhum.",
                         "translation": "That makes no sense at all.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Isso</span> <span class='fw-token-v'>mudou</span> toda a situação.",
-                        "translation": "That changed the whole situation.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Já sabia <span class='fw-token-connector'>disso</span> antes de falarem.",
-                        "translation": "I already knew about that before they spoke.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Dialogue"
             }
         ]
     },
@@ -10757,38 +12067,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "bastar",
                     "custar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>é</span> para você.",
-                "translation": "This is for you.",
+                "targetHTML": "<span class=\"fw-token-connector\">Isto</span> <span class=\"fw-token-v\">quer</span> dizer que se vai retirar do acordo depois de eu cumprir a minha parte?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>é</span> para você.",
-                        "translation": "This is for you.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Isto quer dizer que se vai retirar do acordo depois de eu cumprir a minha parte?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Isto</span> <span class=\"fw-token-v\">quer</span> dizer que se vai retirar do acordo depois de eu cumprir a minha parte?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:isto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject isto attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>parece</span> delicioso.",
-                        "translation": "This looks delicious.",
-                        "source": "Conversation"
+                        "sentence": "Indicou no seu pedido que isto aconteceu num ambiente de alta tensão?",
+                        "targetHTML": "Indicou no seu pedido que <span class=\"fw-token-connector\">isto</span> <span class=\"fw-token-v\">aconteceu</span> num ambiente de alta tensão?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:isto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject isto attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>pertence</span> ao meu colega.",
-                        "translation": "This belongs to my colleague.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>basta</span> por hoje.",
-                        "translation": "This is enough for today.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>custou</span> muito menos do que imaginei.",
-                        "translation": "This cost much less than I imagined.",
-                        "source": "Literature"
+                        "sentence": "Acho que não está perceber que isto está a passar em directo na internet.",
+                        "targetHTML": "Acho que não está perceber que <span class=\"fw-token-connector\">isto</span> <span class=\"fw-token-v\">está</span> a passar em directo na internet.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:isto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject isto attached to verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -10803,38 +12134,59 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "bastar",
                     "custar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>é</span> para você.",
-                "translation": "This is for you.",
+                "targetHTML": "<span class=\"fw-token-connector\">Isto</span> <span class=\"fw-token-v\">quer</span> dizer que se vai retirar do acordo depois de eu cumprir a minha parte?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>é</span> para você.",
-                        "translation": "This is for you.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Isto quer dizer que se vai retirar do acordo depois de eu cumprir a minha parte?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Isto</span> <span class=\"fw-token-v\">quer</span> dizer que se vai retirar do acordo depois de eu cumprir a minha parte?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:isto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject isto attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>parece</span> delicioso.",
-                        "translation": "This looks delicious.",
-                        "source": "Conversation"
+                        "sentence": "Indicou no seu pedido que isto aconteceu num ambiente de alta tensão?",
+                        "targetHTML": "Indicou no seu pedido que <span class=\"fw-token-connector\">isto</span> <span class=\"fw-token-v\">aconteceu</span> num ambiente de alta tensão?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:isto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject isto attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>pertence</span> ao meu colega.",
-                        "translation": "This belongs to my colleague.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>basta</span> por hoje.",
-                        "translation": "This is enough for today.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Isto</span> <span class='fw-token-v'>custou</span> muito menos do que imaginei.",
-                        "translation": "This cost much less than I imagined.",
-                        "source": "Literature"
+                        "sentence": "Acho que não está perceber que isto está a passar em directo na internet.",
+                        "targetHTML": "Acho que não está perceber que <span class=\"fw-token-connector\">isto</span> <span class=\"fw-token-v\">está</span> a passar em directo na internet.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:isto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject isto attached to verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -10855,9 +12207,24 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "terminar",
                     "ficar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">está</span> bem.",
-                "translation": "Everything is fine.",
+                "targetHTML": "<span class=\"fw-token-connector\">Tudo</span> o que está aqui <span class=\"fw-token-v\">deve</span> recuperar as informações apagadas dos dispositivos da vítima, ok?",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Tudo o que está aqui deve recuperar as informações apagadas dos dispositivos da vítima, ok?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Tudo</span> o que está aqui <span class=\"fw-token-v\">deve</span> recuperar as informações apagadas dos dispositivos da vítima, ok?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:tudo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject tudo attached to verb."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">está</span> bem.",
                         "translation": "Everything is fine.",
@@ -10867,26 +12234,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">correu</span> perfeitamente no evento.",
                         "translation": "Everything went perfectly at the event.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">mudou</span> depois daquele dia.",
-                        "translation": "Everything changed after that day.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Entendi <span class='fw-token-connector'>tudo</span> o que explicaste.",
-                        "translation": "I understood everything that you explained.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">ficou</span> calmo após a tempestade.",
-                        "translation": "Everything became quiet after the storm.",
-                        "source": "Subtitles"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -10901,9 +12254,24 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                     "terminar",
                     "ficar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">está</span> bem.",
-                "translation": "Everything is fine.",
+                "targetHTML": "<span class=\"fw-token-connector\">Tudo</span> o que está aqui <span class=\"fw-token-v\">deve</span> recuperar as informações apagadas dos dispositivos da vítima, ok?",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Tudo o que está aqui deve recuperar as informações apagadas dos dispositivos da vítima, ok?",
+                        "targetHTML": "<span class=\"fw-token-connector\">Tudo</span> o que está aqui <span class=\"fw-token-v\">deve</span> recuperar as informações apagadas dos dispositivos da vítima, ok?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "pt:tudo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject tudo attached to verb."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">está</span> bem.",
                         "translation": "Everything is fine.",
@@ -10913,26 +12281,12 @@ export const PORTUGUESE_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">correu</span> perfeitamente no evento.",
                         "translation": "Everything went perfectly at the event.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">mudou</span> depois daquele dia.",
-                        "translation": "Everything changed after that day.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Entendi <span class='fw-token-connector'>tudo</span> o que explicaste.",
-                        "translation": "I understood everything that you explained.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Tudo</span> <span class=\"fw-token-v\">ficou</span> calmo após a tempestade.",
-                        "translation": "Everything became quiet after the storm.",
-                        "source": "Subtitles"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     }
@@ -13383,39 +14737,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "volver",
                     "entrar"
                 ],
-                "targetHTML": "Voy <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Madrid</span>.",
-                "translation": "I am going to Madrid.",
+                "targetHTML": "Eso es como <span class=\"fw-token-v\">darle</span> un arma cargada <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">un asesino</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Voy <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Madrid</span>.",
-                        "translation": "I am going to Madrid.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eso es como darle un arma cargada a un asesino.",
+                        "targetHTML": "Eso es como <span class=\"fw-token-v\">darle</span> un arma cargada <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">un asesino</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Llegamos <span class='fw-token-connector'>a</span> <span class='fw-token-c'>casa sanos y salvos</span>.",
-                        "translation": "We arrived home safe and sound.",
-                        "source": "Conversation"
+                        "sentence": "¿Conoce usted a ese hombre del sombrero grande?",
+                        "targetHTML": "¿<span class=\"fw-token-v\">Conoce</span> usted <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">ese hombre</span> del sombrero grande?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Regresaron <span class='fw-token-connector'>a</span> <span class='fw-token-c'>España el mes pasado</span>.",
-                        "translation": "They returned to Spain last month.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Fuimos <span class='fw-token-connector'>a</span> <span class='fw-token-c'>la plaza mayor</span>.",
-                        "translation": "We went to the main square.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "El tren viaja <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Valencia</span>.",
-                        "translation": "The train travels to Valencia.",
-                        "source": "Literature"
+                        "sentence": "Hubo un sector del público que silbó a Tom.",
+                        "targetHTML": "Hubo un sector del público que <span class=\"fw-token-v\">silbó</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">Tom</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Before a person",
@@ -13428,39 +14803,50 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "esperar",
                     "cuidar"
                 ],
-                "targetHTML": "Veo <span class='fw-token-connector'>a</span> <span class='fw-token-c'>María</span> todos los días.",
-                "translation": "I see María every day.",
+                "targetHTML": "Mi gente cree que cuando <span class=\"fw-token-v\">matas</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">alguien</span>, consigues su poder.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Mi gente cree que cuando matas a alguien, consigues su poder.",
+                        "targetHTML": "Mi gente cree que cuando <span class=\"fw-token-v\">matas</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">alguien</span>, consigues su poder.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 1."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "El que me dejó a mí antes que dejar su botella",
+                        "targetHTML": "El que me <span class=\"fw-token-v\">dejó</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">mí</span> antes que dejar su botella",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 1."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "Veo <span class='fw-token-connector'>a</span> <span class='fw-token-c'>María</span> todos los días.",
                         "translation": "I see María every day.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Conocí <span class='fw-token-connector'>a</span> <span class='fw-token-c'>tu hermano en la fiesta</span>.",
-                        "translation": "I met your brother at the party.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Llamé <span class='fw-token-connector'>a</span> <span class='fw-token-c'>mis padres anoche</span>.",
-                        "translation": "I called my parents last night.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Estamos esperando <span class='fw-token-connector'>a</span> <span class='fw-token-c'>los demás invitados</span>.",
-                        "translation": "We are waiting for the rest of the guests.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Cuida mucho <span class='fw-token-connector'>a</span> <span class='fw-token-c'>sus abuelos</span>.",
-                        "translation": "Takes great care of his grandparents.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -13475,39 +14861,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "volver",
                     "entrar"
                 ],
-                "targetHTML": "Voy <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Madrid</span>.",
-                "translation": "I am going to Madrid.",
+                "targetHTML": "Eso es como <span class=\"fw-token-v\">darle</span> un arma cargada <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">un asesino</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Voy <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Madrid</span>.",
-                        "translation": "I am going to Madrid.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eso es como darle un arma cargada a un asesino.",
+                        "targetHTML": "Eso es como <span class=\"fw-token-v\">darle</span> un arma cargada <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">un asesino</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Llegamos <span class='fw-token-connector'>a</span> <span class='fw-token-c'>casa sanos y salvos</span>.",
-                        "translation": "We arrived home safe and sound.",
-                        "source": "Conversation"
+                        "sentence": "¿Conoce usted a ese hombre del sombrero grande?",
+                        "targetHTML": "¿<span class=\"fw-token-v\">Conoce</span> usted <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">ese hombre</span> del sombrero grande?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Regresaron <span class='fw-token-connector'>a</span> <span class='fw-token-c'>España el mes pasado</span>.",
-                        "translation": "They returned to Spain last month.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Fuimos <span class='fw-token-connector'>a</span> <span class='fw-token-c'>la plaza mayor</span>.",
-                        "translation": "We went to the main square.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "El tren viaja <span class='fw-token-connector'>a</span> <span class='fw-token-c'>Valencia</span>.",
-                        "translation": "The train travels to Valencia.",
-                        "source": "Literature"
+                        "sentence": "Hubo un sector del público que silbó a Tom.",
+                        "targetHTML": "Hubo un sector del público que <span class=\"fw-token-v\">silbó</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">Tom</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Before a person",
@@ -13520,39 +14927,50 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "esperar",
                     "cuidar"
                 ],
-                "targetHTML": "Veo <span class='fw-token-connector'>a</span> <span class='fw-token-c'>María</span> todos los días.",
-                "translation": "I see María every day.",
+                "targetHTML": "Mi gente cree que cuando <span class=\"fw-token-v\">matas</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">alguien</span>, consigues su poder.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Mi gente cree que cuando matas a alguien, consigues su poder.",
+                        "targetHTML": "Mi gente cree que cuando <span class=\"fw-token-v\">matas</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">alguien</span>, consigues su poder.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 1."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "El que me dejó a mí antes que dejar su botella",
+                        "targetHTML": "El que me <span class=\"fw-token-v\">dejó</span> <span class=\"fw-token-connector\">a</span> <span class=\"fw-token-c\">mí</span> antes que dejar su botella",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:a:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition a pattern 1."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "Veo <span class='fw-token-connector'>a</span> <span class='fw-token-c'>María</span> todos los días.",
                         "translation": "I see María every day.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Conocí <span class='fw-token-connector'>a</span> <span class='fw-token-c'>tu hermano en la fiesta</span>.",
-                        "translation": "I met your brother at the party.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Llamé <span class='fw-token-connector'>a</span> <span class='fw-token-c'>mis padres anoche</span>.",
-                        "translation": "I called my parents last night.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Estamos esperando <span class='fw-token-connector'>a</span> <span class='fw-token-c'>los demás invitados</span>.",
-                        "translation": "We are waiting for the rest of the guests.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Cuida mucho <span class='fw-token-connector'>a</span> <span class='fw-token-c'>sus abuelos</span>.",
-                        "translation": "Takes great care of his grandparents.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -13573,39 +14991,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "quedarse",
                     "entrar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Vivo</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>Sevilla</span>.",
-                "translation": "I live in Seville.",
+                "targetHTML": "<span class=\"fw-token-connector\">En</span> <span class=\"fw-token-c\">una prisión manicomio</span> por el asesinato de 6 camioneros.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Vivo</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>Sevilla</span>.",
-                        "translation": "I live in Seville.",
-                        "source": "Everyday dialogue"
+                        "sentence": "En una prisión manicomio por el asesinato de 6 camioneros.",
+                        "targetHTML": "<span class=\"fw-token-connector\">En</span> <span class=\"fw-token-c\">una prisión manicomio</span> por el asesinato de 6 camioneros.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:en:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition en governing locative nominal."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Estamos</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>el centro de la ciudad</span>.",
-                        "translation": "We are in the city center.",
-                        "source": "Conversation"
+                        "sentence": "\"Señor, ayúdanos siempre en la necesidad.\"",
+                        "targetHTML": "&quot;Señor, <span class=\"fw-token-v\">ayúdanos</span> siempre <span class=\"fw-token-connector\">en</span> <span class=\"fw-token-c\">la necesidad</span>.&quot;",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:en:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition en governing locative nominal."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Trabaja</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>un restaurante cerca</span>.",
-                        "translation": "Works at a restaurant nearby.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Nos <span class=\"fw-token-v\">quedamos</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>casa descansando</span>.",
-                        "translation": "We stayed at home resting.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "El libro <span class=\"fw-token-v\">está guardado</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>la biblioteca</span>.",
-                        "translation": "The book is kept in the library.",
-                        "source": "Literature"
+                        "sentence": "Ella está en la cama con un resfriado.",
+                        "targetHTML": "Ella <span class=\"fw-token-v\">está</span> <span class=\"fw-token-connector\">en</span> <span class=\"fw-token-c\">la cama</span> con un resfriado.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:en:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition en governing locative nominal."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "When",
@@ -13635,22 +15074,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Estará</span> listo <span class='fw-token-connector'>en</span> <span class='fw-token-c'>cinco minutos</span>.",
                         "translation": "It will be ready in five minutes.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Las clases <span class=\"fw-token-v\">comienzan</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>septiembre</span>.",
-                        "translation": "Classes begin in September.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Volveremos</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>pocas horas</span>.",
-                        "translation": "We will return in a few hours.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ],
         "uses": [
@@ -13665,39 +15095,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "quedarse",
                     "entrar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Vivo</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>Sevilla</span>.",
-                "translation": "I live in Seville.",
+                "targetHTML": "<span class=\"fw-token-connector\">En</span> <span class=\"fw-token-c\">una prisión manicomio</span> por el asesinato de 6 camioneros.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Vivo</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>Sevilla</span>.",
-                        "translation": "I live in Seville.",
-                        "source": "Everyday dialogue"
+                        "sentence": "En una prisión manicomio por el asesinato de 6 camioneros.",
+                        "targetHTML": "<span class=\"fw-token-connector\">En</span> <span class=\"fw-token-c\">una prisión manicomio</span> por el asesinato de 6 camioneros.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:en:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition en governing locative nominal."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Estamos</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>el centro de la ciudad</span>.",
-                        "translation": "We are in the city center.",
-                        "source": "Conversation"
+                        "sentence": "\"Señor, ayúdanos siempre en la necesidad.\"",
+                        "targetHTML": "&quot;Señor, <span class=\"fw-token-v\">ayúdanos</span> siempre <span class=\"fw-token-connector\">en</span> <span class=\"fw-token-c\">la necesidad</span>.&quot;",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:en:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition en governing locative nominal."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Trabaja</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>un restaurante cerca</span>.",
-                        "translation": "Works at a restaurant nearby.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Nos <span class=\"fw-token-v\">quedamos</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>casa descansando</span>.",
-                        "translation": "We stayed at home resting.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "El libro <span class=\"fw-token-v\">está guardado</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>la biblioteca</span>.",
-                        "translation": "The book is kept in the library.",
-                        "source": "Literature"
+                        "sentence": "Ella está en la cama con un resfriado.",
+                        "targetHTML": "Ella <span class=\"fw-token-v\">está</span> <span class=\"fw-token-connector\">en</span> <span class=\"fw-token-c\">la cama</span> con un resfriado.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:en:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition en governing locative nominal."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "When",
@@ -13727,22 +15178,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Estará</span> listo <span class='fw-token-connector'>en</span> <span class='fw-token-c'>cinco minutos</span>.",
                         "translation": "It will be ready in five minutes.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Las clases <span class=\"fw-token-v\">comienzan</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>septiembre</span>.",
-                        "translation": "Classes begin in September.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Volveremos</span> <span class='fw-token-connector'>en</span> <span class='fw-token-c'>pocas horas</span>.",
-                        "translation": "We will return in a few hours.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ]
     },
@@ -13763,39 +15205,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "esperar",
                     "pagar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Gracias</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>venir</span>.",
-                "translation": "Thank you for coming.",
+                "targetHTML": "Dijo que el otro chico <span class=\"fw-token-v\">fue suspendido</span> <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">tres días</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Gracias</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>venir</span>.",
-                        "translation": "Thank you for coming.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Dijo que el otro chico fue suspendido por tres días.",
+                        "targetHTML": "Dijo que el otro chico <span class=\"fw-token-v\">fue suspendido</span> <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">tres días</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Te <span class=\"fw-token-v\">preocupas</span> demasiado <span class='fw-token-connector'>por</span> <span class='fw-token-c'>eso</span>.",
-                        "translation": "You worry too much about that.",
-                        "source": "Conversation"
+                        "sentence": "En una prisión manicomio por el asesinato de 6 camioneros.",
+                        "targetHTML": "En una prisión manicomio <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">el asesinato</span> de 6 camioneros.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Lucharon</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>sus derechos</span>.",
-                        "translation": "They fought for their rights.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Pagó</span> diez euros <span class='fw-token-connector'>por</span> <span class='fw-token-c'>el billete</span>.",
-                        "translation": "Paid ten euros for the ticket.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Fue premiado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>su gran esfuerzo</span>.",
-                        "translation": "Was awarded for his great effort.",
-                        "source": "Subtitles"
+                        "sentence": "¿Pero por qué un agente tan famoso abandonó la agencia de inteligencia?",
+                        "targetHTML": "¿Pero <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">qué</span> un agente tan famoso abandonó la agencia de inteligencia?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Through / along",
@@ -13825,22 +15288,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Miró</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>la ventana del tren</span>.",
                         "translation": "Looked through the train window.",
                         "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "El gato <span class=\"fw-token-v\">entró</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>el balcón</span>.",
-                        "translation": "The cat entered through the balcony.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Viajamos</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>toda Andalucía</span>.",
-                        "translation": "We traveled throughout Andalusia.",
-                        "source": "Everyday speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Dialogue"
             }
         ],
         "uses": [
@@ -13855,39 +15309,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "esperar",
                     "pagar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Gracias</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>venir</span>.",
-                "translation": "Thank you for coming.",
+                "targetHTML": "Dijo que el otro chico <span class=\"fw-token-v\">fue suspendido</span> <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">tres días</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Gracias</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>venir</span>.",
-                        "translation": "Thank you for coming.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Dijo que el otro chico fue suspendido por tres días.",
+                        "targetHTML": "Dijo que el otro chico <span class=\"fw-token-v\">fue suspendido</span> <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">tres días</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Te <span class=\"fw-token-v\">preocupas</span> demasiado <span class='fw-token-connector'>por</span> <span class='fw-token-c'>eso</span>.",
-                        "translation": "You worry too much about that.",
-                        "source": "Conversation"
+                        "sentence": "En una prisión manicomio por el asesinato de 6 camioneros.",
+                        "targetHTML": "En una prisión manicomio <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">el asesinato</span> de 6 camioneros.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Lucharon</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>sus derechos</span>.",
-                        "translation": "They fought for their rights.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Pagó</span> diez euros <span class='fw-token-connector'>por</span> <span class='fw-token-c'>el billete</span>.",
-                        "translation": "Paid ten euros for the ticket.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Fue premiado</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>su gran esfuerzo</span>.",
-                        "translation": "Was awarded for his great effort.",
-                        "source": "Subtitles"
+                        "sentence": "¿Pero por qué un agente tan famoso abandonó la agencia de inteligencia?",
+                        "targetHTML": "¿Pero <span class=\"fw-token-connector\">por</span> <span class=\"fw-token-c\">qué</span> un agente tan famoso abandonó la agencia de inteligencia?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:por:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition por pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Through / along",
@@ -13917,22 +15392,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class=\"fw-token-v\">Miró</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>la ventana del tren</span>.",
                         "translation": "Looked through the train window.",
                         "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "El gato <span class=\"fw-token-v\">entró</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>el balcón</span>.",
-                        "translation": "The cat entered through the balcony.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Viajamos</span> <span class='fw-token-connector'>por</span> <span class='fw-token-c'>toda Andalucía</span>.",
-                        "translation": "We traveled throughout Andalusia.",
-                        "source": "Everyday speech"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Dialogue"
             }
         ]
     },
@@ -13953,39 +15419,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "salir",
                     "llamar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Estudio</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
-                "translation": "I study in order to learn.",
+                "targetHTML": "Un tutor para su niño, caballeros que lo <span class=\"fw-token-v\">entrenen</span> <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">pelear y montar</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Estudio</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
-                        "translation": "I study in order to learn.",
-                        "source": "Conversation"
+                        "sentence": "Un tutor para su niño, caballeros que lo entrenen para pelear y montar.",
+                        "targetHTML": "Un tutor para su niño, caballeros que lo <span class=\"fw-token-v\">entrenen</span> <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">pelear y montar</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:para:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Ahorro</span> dinero <span class='fw-token-connector'>para</span> <span class='fw-token-c'>viajar en verano</span>.",
-                        "translation": "I save money in order to travel in summer.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Tenemos que atravesar el sello magnético para llegar al dispositivo manual.",
+                        "targetHTML": "Tenemos que <span class=\"fw-token-v\">atravesar</span> el sello magnético <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">llegar al dispositivo manual</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:para:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Llamé</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>confirmar la cita</span>.",
-                        "translation": "I called to confirm the appointment.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Nos <span class=\"fw-token-v\">detuvimos</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>descansar</span>.",
-                        "translation": "We stopped to rest.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Trabajan</span> duro <span class='fw-token-connector'>para</span> <span class='fw-token-c'>construir un buen futuro</span>.",
-                        "translation": "They work hard to build a good future.",
-                        "source": "Literature"
+                        "sentence": "- Sólo una muestra de orina, para asegurarnos de que no tiene heroína o crack.",
+                        "targetHTML": "- Sólo una muestra de orina, <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">asegurarnos de que no tiene heroína o crack</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:para:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Who for",
@@ -14015,22 +15502,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "Hay espacio <span class='fw-token-connector'>para</span> <span class='fw-token-c'>dos personas más</span>.",
                         "translation": "There is room for two more people.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Preparé la cena <span class='fw-token-connector'>para</span> <span class='fw-token-c'>la familia</span>.",
-                        "translation": "I prepared dinner for the family.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Un mensaje especial <span class='fw-token-connector'>para</span> <span class='fw-token-c'>los graduados</span>.",
-                        "translation": "A special message for the graduates.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Everyday dialogue"
             }
         ],
         "uses": [
@@ -14045,39 +15523,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "salir",
                     "llamar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Estudio</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
-                "translation": "I study in order to learn.",
+                "targetHTML": "Un tutor para su niño, caballeros que lo <span class=\"fw-token-v\">entrenen</span> <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">pelear y montar</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Estudio</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>aprender</span>.",
-                        "translation": "I study in order to learn.",
-                        "source": "Conversation"
+                        "sentence": "Un tutor para su niño, caballeros que lo entrenen para pelear y montar.",
+                        "targetHTML": "Un tutor para su niño, caballeros que lo <span class=\"fw-token-v\">entrenen</span> <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">pelear y montar</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:para:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Ahorro</span> dinero <span class='fw-token-connector'>para</span> <span class='fw-token-c'>viajar en verano</span>.",
-                        "translation": "I save money in order to travel in summer.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Tenemos que atravesar el sello magnético para llegar al dispositivo manual.",
+                        "targetHTML": "Tenemos que <span class=\"fw-token-v\">atravesar</span> el sello magnético <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">llegar al dispositivo manual</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:para:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Llamé</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>confirmar la cita</span>.",
-                        "translation": "I called to confirm the appointment.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Nos <span class=\"fw-token-v\">detuvimos</span> <span class='fw-token-connector'>para</span> <span class='fw-token-c'>descansar</span>.",
-                        "translation": "We stopped to rest.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Trabajan</span> duro <span class='fw-token-connector'>para</span> <span class='fw-token-c'>construir un buen futuro</span>.",
-                        "translation": "They work hard to build a good future.",
-                        "source": "Literature"
+                        "sentence": "- Sólo una muestra de orina, para asegurarnos de que no tiene heroína o crack.",
+                        "targetHTML": "- Sólo una muestra de orina, <span class=\"fw-token-connector\">para</span> <span class=\"fw-token-c\">asegurarnos de que no tiene heroína o crack</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:para:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "para introducing infinitive purpose clause."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "Who for",
@@ -14107,22 +15606,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "Hay espacio <span class='fw-token-connector'>para</span> <span class='fw-token-c'>dos personas más</span>.",
                         "translation": "There is room for two more people.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Preparé la cena <span class='fw-token-connector'>para</span> <span class='fw-token-c'>la familia</span>.",
-                        "translation": "I prepared dinner for the family.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Un mensaje especial <span class='fw-token-connector'>para</span> <span class='fw-token-c'>los graduados</span>.",
-                        "translation": "A special message for the graduates.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Everyday dialogue"
             }
         ]
     },
@@ -14143,9 +15633,24 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "vivir",
                     "trabajar"
                 ],
-                "targetHTML": "Ceno <span class='fw-token-connector'>con</span> <span class='fw-token-c'>mis amigos</span>.",
-                "translation": "I have dinner with my friends.",
+                "targetHTML": "<span class=\"fw-token-v\">Vivo</span> <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">mi madre</span>, mi hermano y mis abuelos.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Vivo con mi madre, mi hermano y mis abuelos.",
+                        "targetHTML": "<span class=\"fw-token-v\">Vivo</span> <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">mi madre</span>, mi hermano y mis abuelos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:con:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition con pattern 0."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "Ceno <span class='fw-token-connector'>con</span> <span class='fw-token-c'>mis amigos</span>.",
                         "translation": "I have dinner with my friends.",
@@ -14155,27 +15660,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "Hablé <span class='fw-token-connector'>con</span> <span class='fw-token-c'>el médico esta mañana</span>.",
                         "translation": "I spoke with the doctor this morning.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Vive <span class='fw-token-connector'>con</span> <span class='fw-token-c'>su familia en Granada</span>.",
-                        "translation": "Lives with her family in Granada.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Salimos <span class='fw-token-connector'>con</span> <span class='fw-token-c'>los compañeros de clase</span>.",
-                        "translation": "We went out with classmates.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Trabajo a diario <span class='fw-token-connector'>con</span> <span class='fw-token-c'>un equipo excelente</span>.",
-                        "translation": "I work daily with an excellent team.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "How / with what",
@@ -14188,39 +15679,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "cortar",
                     "tratar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Escribo</span> <span class='fw-token-connector'>con</span> <span class='fw-token-c'>cuidado</span>.",
-                "translation": "I write with care.",
+                "targetHTML": "Tiene una mala relación <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">el papeleo</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Escribo</span> <span class='fw-token-connector'>con</span> <span class='fw-token-c'>cuidado</span>.",
-                        "translation": "I write with care.",
-                        "source": "Dialogue"
+                        "sentence": "Tiene una mala relación con el papeleo.",
+                        "targetHTML": "Tiene una mala relación <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">el papeleo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:con:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition con pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Abrió</span> la caja <span class='fw-token-connector'>con</span> <span class='fw-token-c'>unas tijeras</span>.",
-                        "translation": "Opened the box with scissors.",
-                        "source": "Conversation"
+                        "sentence": "Ella está en la cama con un resfriado.",
+                        "targetHTML": "Ella <span class=\"fw-token-v\">está</span> en la cama <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">un resfriado</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:con:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition con pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Escuchó</span> la noticia <span class='fw-token-connector'>con</span> <span class='fw-token-c'>mucha sorpresa</span>.",
-                        "translation": "Listened to the news with great surprise.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Cortó</span> el pan <span class='fw-token-connector'>con</span> <span class='fw-token-c'>un cuchillo afilado</span>.",
-                        "translation": "Cut the bread with a sharp knife.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Trató</span> el tema <span class='fw-token-connector'>con</span> <span class='fw-token-c'>máxima seriedad</span>.",
-                        "translation": "Treated the subject with utmost seriousness.",
-                        "source": "Literature"
+                        "sentence": "Siempre y cuando entiendas, que tu deber principal es con mis aves.",
+                        "targetHTML": "Siempre y cuando entiendas, que tu deber principal es <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">mis aves</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:con:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition con pattern 1."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -14235,9 +15747,24 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "vivir",
                     "trabajar"
                 ],
-                "targetHTML": "Ceno <span class='fw-token-connector'>con</span> <span class='fw-token-c'>mis amigos</span>.",
-                "translation": "I have dinner with my friends.",
+                "targetHTML": "<span class=\"fw-token-v\">Vivo</span> <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">mi madre</span>, mi hermano y mis abuelos.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "Vivo con mi madre, mi hermano y mis abuelos.",
+                        "targetHTML": "<span class=\"fw-token-v\">Vivo</span> <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">mi madre</span>, mi hermano y mis abuelos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:con:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition con pattern 0."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "Ceno <span class='fw-token-connector'>con</span> <span class='fw-token-c'>mis amigos</span>.",
                         "translation": "I have dinner with my friends.",
@@ -14247,27 +15774,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "Hablé <span class='fw-token-connector'>con</span> <span class='fw-token-c'>el médico esta mañana</span>.",
                         "translation": "I spoke with the doctor this morning.",
                         "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "Vive <span class='fw-token-connector'>con</span> <span class='fw-token-c'>su familia en Granada</span>.",
-                        "translation": "Lives with her family in Granada.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Salimos <span class='fw-token-connector'>con</span> <span class='fw-token-c'>los compañeros de clase</span>.",
-                        "translation": "We went out with classmates.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Trabajo a diario <span class='fw-token-connector'>con</span> <span class='fw-token-c'>un equipo excelente</span>.",
-                        "translation": "I work daily with an excellent team.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "How / with what",
@@ -14280,39 +15793,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "cortar",
                     "tratar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Escribo</span> <span class='fw-token-connector'>con</span> <span class='fw-token-c'>cuidado</span>.",
-                "translation": "I write with care.",
+                "targetHTML": "Tiene una mala relación <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">el papeleo</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Escribo</span> <span class='fw-token-connector'>con</span> <span class='fw-token-c'>cuidado</span>.",
-                        "translation": "I write with care.",
-                        "source": "Dialogue"
+                        "sentence": "Tiene una mala relación con el papeleo.",
+                        "targetHTML": "Tiene una mala relación <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">el papeleo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:con:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition con pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Abrió</span> la caja <span class='fw-token-connector'>con</span> <span class='fw-token-c'>unas tijeras</span>.",
-                        "translation": "Opened the box with scissors.",
-                        "source": "Conversation"
+                        "sentence": "Ella está en la cama con un resfriado.",
+                        "targetHTML": "Ella <span class=\"fw-token-v\">está</span> en la cama <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">un resfriado</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:con:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition con pattern 1."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Escuchó</span> la noticia <span class='fw-token-connector'>con</span> <span class='fw-token-c'>mucha sorpresa</span>.",
-                        "translation": "Listened to the news with great surprise.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Cortó</span> el pan <span class='fw-token-connector'>con</span> <span class='fw-token-c'>un cuchillo afilado</span>.",
-                        "translation": "Cut the bread with a sharp knife.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Trató</span> el tema <span class='fw-token-connector'>con</span> <span class='fw-token-c'>máxima seriedad</span>.",
-                        "translation": "Treated the subject with utmost seriousness.",
-                        "source": "Literature"
+                        "sentence": "Siempre y cuando entiendas, que tu deber principal es con mis aves.",
+                        "targetHTML": "Siempre y cuando entiendas, que tu deber principal es <span class=\"fw-token-connector\">con</span> <span class=\"fw-token-c\">mis aves</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:con:1",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition con pattern 1."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -14333,39 +15867,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "prisa",
                     "problema"
                 ],
-                "targetHTML": "Café <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>azúcar</span>, por favor.",
-                "translation": "Coffee without sugar, please.",
+                "targetHTML": "<span class=\"fw-token-connector\">Sin</span> <span class=\"fw-token-c\">maldad, sin celos</span>. Era toda bondad.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Café <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>azúcar</span>, por favor.",
-                        "translation": "Coffee without sugar, please.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Sin maldad, sin celos. Era toda bondad.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Sin</span> <span class=\"fw-token-c\">maldad, sin celos</span>. Era toda bondad.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:sin:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sin privation pattern."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Es, <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>duda</span>, la mejor elección.",
-                        "translation": "It is, without doubt, the best choice.",
-                        "source": "Conversation"
+                        "sentence": "La caja no se puede abrir sin una compra.",
+                        "targetHTML": "La caja no se <span class=\"fw-token-v\">puede abrir</span> <span class=\"fw-token-connector\">sin</span> <span class=\"fw-token-c\">una compra</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:sin:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sin privation pattern."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Actuó <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>miedo ante el peligro</span>.",
-                        "translation": "Acted without fear before danger.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Caminamos <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>prisa por el paseo</span>.",
-                        "translation": "We walked without rush along the promenade.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Resolvieron el conflicto <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>ningún problema</span>.",
-                        "translation": "They resolved the conflict without any problem.",
-                        "source": "Dialogue"
+                        "sentence": "Sin ti la vida es horrible.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Sin</span> <span class=\"fw-token-c\">ti</span> la vida es horrible.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:sin:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sin privation pattern."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -14380,39 +15935,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "prisa",
                     "problema"
                 ],
-                "targetHTML": "Café <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>azúcar</span>, por favor.",
-                "translation": "Coffee without sugar, please.",
+                "targetHTML": "<span class=\"fw-token-connector\">Sin</span> <span class=\"fw-token-c\">maldad, sin celos</span>. Era toda bondad.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Café <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>azúcar</span>, por favor.",
-                        "translation": "Coffee without sugar, please.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Sin maldad, sin celos. Era toda bondad.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Sin</span> <span class=\"fw-token-c\">maldad, sin celos</span>. Era toda bondad.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:sin:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sin privation pattern."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Es, <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>duda</span>, la mejor elección.",
-                        "translation": "It is, without doubt, the best choice.",
-                        "source": "Conversation"
+                        "sentence": "La caja no se puede abrir sin una compra.",
+                        "targetHTML": "La caja no se <span class=\"fw-token-v\">puede abrir</span> <span class=\"fw-token-connector\">sin</span> <span class=\"fw-token-c\">una compra</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:sin:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sin privation pattern."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Actuó <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>miedo ante el peligro</span>.",
-                        "translation": "Acted without fear before danger.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "Caminamos <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>prisa por el paseo</span>.",
-                        "translation": "We walked without rush along the promenade.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Resolvieron el conflicto <span class='fw-token-connector'>sin</span> <span class='fw-token-c'>ningún problema</span>.",
-                        "translation": "They resolved the conflict without any problem.",
-                        "source": "Dialogue"
+                        "sentence": "Sin ti la vida es horrible.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Sin</span> <span class=\"fw-token-c\">ti</span> la vida es horrible.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:sin:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Preposition sin privation pattern."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -15405,38 +16981,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "decir",
                     "gustar"
                 ],
-                "targetHTML": "Ella <span class='fw-token-connector'>me</span> <span class='fw-token-v'>llamó</span> por teléfono.",
-                "translation": "She called me on the phone.",
+                "targetHTML": "Mi tío <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">compró</span> un reloj, que es muy exacto.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Ella <span class='fw-token-connector'>me</span> <span class='fw-token-v'>llamó</span> por teléfono.",
-                        "translation": "She called me on the phone.",
-                        "source": "Everyday speech"
+                        "sentence": "Mi tío me compró un reloj, que es muy exacto.",
+                        "targetHTML": "Mi tío <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">compró</span> un reloj, que es muy exacto.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "¿<span class='fw-token-connector'>Me</span> <span class='fw-token-v'>puedes ayudar</span> un segundo?",
-                        "translation": "Can you help me for a second?",
-                        "source": "Conversation"
+                        "sentence": "Y me dieron una propina del diez por ciento.",
+                        "targetHTML": "Y <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dieron</span> una propina del diez por ciento.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Él <span class='fw-token-connector'>me</span> <span class='fw-token-v'>dio</span> una excelente noticia.",
-                        "translation": "He gave me great news.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Me</span> <span class='fw-token-v'>gusta</span> mucho este lugar.",
-                        "translation": "I like this place very much.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Ella <span class='fw-token-connector'>me</span> <span class='fw-token-v'>dijo</span> la verdad completa.",
-                        "translation": "She told me the whole truth.",
-                        "source": "Literature"
+                        "sentence": "Nunca uso, por eso me pica.",
+                        "targetHTML": "Nunca uso, por eso <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">pica</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -15451,38 +17048,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "decir",
                     "gustar"
                 ],
-                "targetHTML": "Ella <span class='fw-token-connector'>me</span> <span class='fw-token-v'>llamó</span> por teléfono.",
-                "translation": "She called me on the phone.",
+                "targetHTML": "Mi tío <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">compró</span> un reloj, que es muy exacto.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Ella <span class='fw-token-connector'>me</span> <span class='fw-token-v'>llamó</span> por teléfono.",
-                        "translation": "She called me on the phone.",
-                        "source": "Everyday speech"
+                        "sentence": "Mi tío me compró un reloj, que es muy exacto.",
+                        "targetHTML": "Mi tío <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">compró</span> un reloj, que es muy exacto.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "¿<span class='fw-token-connector'>Me</span> <span class='fw-token-v'>puedes ayudar</span> un segundo?",
-                        "translation": "Can you help me for a second?",
-                        "source": "Conversation"
+                        "sentence": "Y me dieron una propina del diez por ciento.",
+                        "targetHTML": "Y <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dieron</span> una propina del diez por ciento.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Él <span class='fw-token-connector'>me</span> <span class='fw-token-v'>dio</span> una excelente noticia.",
-                        "translation": "He gave me great news.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Me</span> <span class='fw-token-v'>gusta</span> mucho este lugar.",
-                        "translation": "I like this place very much.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Ella <span class='fw-token-connector'>me</span> <span class='fw-token-v'>dijo</span> la verdad completa.",
-                        "translation": "She told me the whole truth.",
-                        "source": "Literature"
+                        "sentence": "Nunca uso, por eso me pica.",
+                        "targetHTML": "Nunca uso, por eso <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">pica</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:me:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -15503,38 +17121,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "esperar",
                     "decir"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>quiero</span> mucho.",
-                "translation": "I love you very much.",
+                "targetHTML": "<span class=\"fw-token-connector\">Te</span> <span class=\"fw-token-v\">he puesto</span> el freno.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>quiero</span> mucho.",
-                        "translation": "I love you very much.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Te he puesto el freno.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Te</span> <span class=\"fw-token-v\">he puesto</span> el freno.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>vi</span> ayer en la plaza.",
-                        "translation": "I saw you yesterday in the square.",
-                        "source": "Conversation"
+                        "sentence": "Pero te doy mi palabra; ya se está arreglando.",
+                        "targetHTML": "Pero <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">doy</span> mi palabra; ya se está arreglando.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>llamo</span> en cuanto llegue a casa.",
-                        "translation": "I will call you as soon as I arrive home.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>esperamos</span> en la entrada del teatro.",
-                        "translation": "We wait for you at the theatre entrance.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>deseo</span> lo mejor en tu examen.",
-                        "translation": "I wish you the best in your exam.",
-                        "source": "Literature"
+                        "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
+                        "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -15549,38 +17188,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "esperar",
                     "decir"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>quiero</span> mucho.",
-                "translation": "I love you very much.",
+                "targetHTML": "<span class=\"fw-token-connector\">Te</span> <span class=\"fw-token-v\">he puesto</span> el freno.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>quiero</span> mucho.",
-                        "translation": "I love you very much.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Te he puesto el freno.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Te</span> <span class=\"fw-token-v\">he puesto</span> el freno.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>vi</span> ayer en la plaza.",
-                        "translation": "I saw you yesterday in the square.",
-                        "source": "Conversation"
+                        "sentence": "Pero te doy mi palabra; ya se está arreglando.",
+                        "targetHTML": "Pero <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">doy</span> mi palabra; ya se está arreglando.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>llamo</span> en cuanto llegue a casa.",
-                        "translation": "I will call you as soon as I arrive home.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>esperamos</span> en la entrada del teatro.",
-                        "translation": "We wait for you at the theatre entrance.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Te</span> <span class='fw-token-v'>deseo</span> lo mejor en tu examen.",
-                        "translation": "I wish you the best in your exam.",
-                        "source": "Literature"
+                        "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
+                        "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -16117,38 +17777,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "decir",
                     "entregar"
                 ],
-                "targetHTML": "Yo <span class='fw-token-connector'>le</span> <span class='fw-token-v'>escribí</span> una carta.",
-                "translation": "I wrote him a letter.",
+                "targetHTML": "<span class=\"fw-token-connector\">Le</span> <span class=\"fw-token-v\">dio</span> un bonito regalo.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Yo <span class='fw-token-connector'>le</span> <span class='fw-token-v'>escribí</span> una carta.",
-                        "translation": "I wrote him a letter.",
-                        "source": "Dialogue"
+                        "sentence": "Le dio un bonito regalo.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Le</span> <span class=\"fw-token-v\">dio</span> un bonito regalo.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:le:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun le governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Le</span> <span class='fw-token-v'>entregué</span> las llaves a la recepcionista.",
-                        "translation": "I handed the keys to the receptionist.",
-                        "source": "Conversation"
+                        "sentence": "Le pedí que me llamara a las cinco.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Le</span> <span class=\"fw-token-v\">pedí</span> que me llamara a las cinco.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:le:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun le governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "El médico <span class='fw-token-connector'>le</span> <span class='fw-token-v'>recetó</span> descanso.",
-                        "translation": "The doctor prescribed him rest.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Le</span> <span class='fw-token-v'>pregunté</span> la hora amablemente.",
-                        "translation": "I asked her the time politely.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Nadie <span class='fw-token-connector'>le</span> <span class='fw-token-v'>dijo</span> nada sobre el cambio.",
-                        "translation": "Nobody told him anything about the change.",
-                        "source": "Literature"
+                        "sentence": "Estos tubos le dicen a la máquina a qué fecha viajar.",
+                        "targetHTML": "Estos tubos <span class=\"fw-token-connector\">le</span> <span class=\"fw-token-v\">dicen</span> a la máquina a qué fecha viajar.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:le:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun le governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -16163,38 +17844,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "decir",
                     "entregar"
                 ],
-                "targetHTML": "Yo <span class='fw-token-connector'>le</span> <span class='fw-token-v'>escribí</span> una carta.",
-                "translation": "I wrote him a letter.",
+                "targetHTML": "<span class=\"fw-token-connector\">Le</span> <span class=\"fw-token-v\">dio</span> un bonito regalo.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Yo <span class='fw-token-connector'>le</span> <span class='fw-token-v'>escribí</span> una carta.",
-                        "translation": "I wrote him a letter.",
-                        "source": "Dialogue"
+                        "sentence": "Le dio un bonito regalo.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Le</span> <span class=\"fw-token-v\">dio</span> un bonito regalo.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:le:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun le governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Le</span> <span class='fw-token-v'>entregué</span> las llaves a la recepcionista.",
-                        "translation": "I handed the keys to the receptionist.",
-                        "source": "Conversation"
+                        "sentence": "Le pedí que me llamara a las cinco.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Le</span> <span class=\"fw-token-v\">pedí</span> que me llamara a las cinco.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:le:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun le governed by verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "El médico <span class='fw-token-connector'>le</span> <span class='fw-token-v'>recetó</span> descanso.",
-                        "translation": "The doctor prescribed him rest.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Le</span> <span class='fw-token-v'>pregunté</span> la hora amablemente.",
-                        "translation": "I asked her the time politely.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Nadie <span class='fw-token-connector'>le</span> <span class='fw-token-v'>dijo</span> nada sobre el cambio.",
-                        "translation": "Nobody told him anything about the change.",
-                        "source": "Literature"
+                        "sentence": "Estos tubos le dicen a la máquina a qué fecha viajar.",
+                        "targetHTML": "Estos tubos <span class=\"fw-token-connector\">le</span> <span class=\"fw-token-v\">dicen</span> a la máquina a qué fecha viajar.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:le:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Clitic pronoun le governed by verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -17245,38 +18947,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "edificio",
                     "río"
                 ],
-                "targetHTML": "La puerta <span class='fw-token-connector'>del</span> <span class='fw-token-c'>hotel</span> está cerrada.",
-                "translation": "The door of the hotel is closed.",
+                "targetHTML": "¿Conoce usted a ese hombre <span class=\"fw-token-connector\">del</span> <span class=\"fw-token-c\">sombrero grande</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "La puerta <span class='fw-token-connector'>del</span> <span class='fw-token-c'>hotel</span> está cerrada.",
-                        "translation": "The door of the hotel is closed.",
-                        "source": "Everyday dialogue"
+                        "sentence": "¿Conoce usted a ese hombre del sombrero grande?",
+                        "targetHTML": "¿Conoce usted a ese hombre <span class=\"fw-token-connector\">del</span> <span class=\"fw-token-c\">sombrero grande</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:del:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Del contraction attached to masculine noun."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "El final <span class='fw-token-connector'>del</span> <span class='fw-token-c'>libro fue emocionante</span>.",
-                        "translation": "The end of the book was exciting.",
-                        "source": "Conversation"
+                        "sentence": "Hubo un sector del público que silbó a Tom.",
+                        "targetHTML": "Hubo un sector <span class=\"fw-token-connector\">del</span> <span class=\"fw-token-c\">público</span> que silbó a Tom.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:del:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Del contraction attached to masculine noun."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Viene <span class='fw-token-connector'>del</span> <span class='fw-token-c'>centro en bicicleta</span>.",
-                        "translation": "Comes from downtown by bicycle.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Es una de las maravillas <span class='fw-token-connector'>del</span> <span class='fw-token-c'>mundo</span>.",
-                        "translation": "It is one of the wonders of the world.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "La vista <span class='fw-token-connector'>del</span> <span class='fw-token-c'>valle nos impresionó</span>.",
-                        "translation": "The view of the valley impressed us.",
-                        "source": "Dialogue"
+                        "sentence": "Estos son ganadores del concurso.",
+                        "targetHTML": "Estos son ganadores <span class=\"fw-token-connector\">del</span> <span class=\"fw-token-c\">concurso</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:del:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Del contraction attached to masculine noun."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -17291,38 +19014,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "edificio",
                     "río"
                 ],
-                "targetHTML": "La puerta <span class='fw-token-connector'>del</span> <span class='fw-token-c'>hotel</span> está cerrada.",
-                "translation": "The door of the hotel is closed.",
+                "targetHTML": "¿Conoce usted a ese hombre <span class=\"fw-token-connector\">del</span> <span class=\"fw-token-c\">sombrero grande</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "La puerta <span class='fw-token-connector'>del</span> <span class='fw-token-c'>hotel</span> está cerrada.",
-                        "translation": "The door of the hotel is closed.",
-                        "source": "Everyday dialogue"
+                        "sentence": "¿Conoce usted a ese hombre del sombrero grande?",
+                        "targetHTML": "¿Conoce usted a ese hombre <span class=\"fw-token-connector\">del</span> <span class=\"fw-token-c\">sombrero grande</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:del:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Del contraction attached to masculine noun."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "El final <span class='fw-token-connector'>del</span> <span class='fw-token-c'>libro fue emocionante</span>.",
-                        "translation": "The end of the book was exciting.",
-                        "source": "Conversation"
+                        "sentence": "Hubo un sector del público que silbó a Tom.",
+                        "targetHTML": "Hubo un sector <span class=\"fw-token-connector\">del</span> <span class=\"fw-token-c\">público</span> que silbó a Tom.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:del:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Del contraction attached to masculine noun."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Viene <span class='fw-token-connector'>del</span> <span class='fw-token-c'>centro en bicicleta</span>.",
-                        "translation": "Comes from downtown by bicycle.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Es una de las maravillas <span class='fw-token-connector'>del</span> <span class='fw-token-c'>mundo</span>.",
-                        "translation": "It is one of the wonders of the world.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "La vista <span class='fw-token-connector'>del</span> <span class='fw-token-c'>valle nos impresionó</span>.",
-                        "translation": "The view of the valley impressed us.",
-                        "source": "Dialogue"
+                        "sentence": "Estos son ganadores del concurso.",
+                        "targetHTML": "Estos son ganadores <span class=\"fw-token-connector\">del</span> <span class=\"fw-token-c\">concurso</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:del:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Del contraction attached to masculine noun."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -17360,16 +19104,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>El</span> <span class='fw-token-c'>tren de las ocho</span> ya partió.",
                         "translation": "The eight o'clock train already left.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>El</span> <span class='fw-token-c'>tiempo</span> pasa muy rápido aquí.",
-                        "translation": "Time passes very quickly here.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>El</span> <span class='fw-token-c'>viento</span> soplaba suavemente entre los árboles.",
-                        "translation": "The wind blew gently among the trees.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -17406,16 +19140,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>El</span> <span class='fw-token-c'>tren de las ocho</span> ya partió.",
                         "translation": "The eight o'clock train already left.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>El</span> <span class='fw-token-c'>tiempo</span> pasa muy rápido aquí.",
-                        "translation": "Time passes very quickly here.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>El</span> <span class='fw-token-c'>viento</span> soplaba suavemente entre los árboles.",
-                        "translation": "The wind blew gently among the trees.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -17458,16 +19182,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>La</span> <span class='fw-token-c'>ciudad</span> duerme bajo las estrellas.",
                         "translation": "The city sleeps under the stars.",
                         "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>La</span> <span class='fw-token-c'>noche</span> era serena y estrellada.",
-                        "translation": "The night was serene and starry.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>La</span> <span class='fw-token-c'>música</span> llenaba todo el salón.",
-                        "translation": "The music filled the entire hall.",
-                        "source": "Dialogue"
                     }
                 ],
                 "slotTypes": {
@@ -17502,16 +19216,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>La</span> <span class='fw-token-v'>llamé</span> para avisarle del retraso.",
                         "translation": "I called her to notify her of the delay.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Todos <span class='fw-token-connector'>la</span> <span class='fw-token-v'>escucharon</span> con respeto.",
-                        "translation": "Everyone listened to her with respect.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "La llave estaba perdida, pero por fin <span class='fw-token-connector'>la</span> <span class='fw-token-v'>encontré</span>.",
-                        "translation": "The key was lost, but at last I found it.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -17548,16 +19252,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>La</span> <span class='fw-token-c'>ciudad</span> duerme bajo las estrellas.",
                         "translation": "The city sleeps under the stars.",
                         "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>La</span> <span class='fw-token-c'>noche</span> era serena y estrellada.",
-                        "translation": "The night was serene and starry.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>La</span> <span class='fw-token-c'>música</span> llenaba todo el salón.",
-                        "translation": "The music filled the entire hall.",
-                        "source": "Dialogue"
                     }
                 ],
                 "slotTypes": {
@@ -17592,16 +19286,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>La</span> <span class='fw-token-v'>llamé</span> para avisarle del retraso.",
                         "translation": "I called her to notify her of the delay.",
                         "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Todos <span class='fw-token-connector'>la</span> <span class='fw-token-v'>escucharon</span> con respeto.",
-                        "translation": "Everyone listened to her with respect.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "La llave estaba perdida, pero por fin <span class='fw-token-connector'>la</span> <span class='fw-token-v'>encontré</span>.",
-                        "translation": "The key was lost, but at last I found it.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -17644,16 +19328,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Los</span> <span class='fw-token-c'>días soleados</span> son mis favoritos.",
                         "translation": "Sunny days are my favorites.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Los</span> <span class='fw-token-c'>amigos</span> se reunieron para celebrar.",
-                        "translation": "The friends met to celebrate.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Los</span> <span class='fw-token-c'>pájaros</span> cantaban al amanecer.",
-                        "translation": "The birds sang at dawn.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -17688,16 +19362,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Los</span> <span class='fw-token-v'>recogí</span> de la estación a tiempo.",
                         "translation": "I picked them up from the station in time.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Si encuentras los papeles, <span class='fw-token-connector'>los</span> <span class='fw-token-v'>dejas</span> aquí.",
-                        "translation": "If you find the papers, leave them here.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "El abuelo <span class='fw-token-connector'>los</span> <span class='fw-token-v'>abrazó</span> con emoción.",
-                        "translation": "The grandfather hugged them with emotion.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -17734,16 +19398,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Los</span> <span class='fw-token-c'>días soleados</span> son mis favoritos.",
                         "translation": "Sunny days are my favorites.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Los</span> <span class='fw-token-c'>amigos</span> se reunieron para celebrar.",
-                        "translation": "The friends met to celebrate.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Los</span> <span class='fw-token-c'>pájaros</span> cantaban al amanecer.",
-                        "translation": "The birds sang at dawn.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -17778,16 +19432,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "<span class='fw-token-connector'>Los</span> <span class='fw-token-v'>recogí</span> de la estación a tiempo.",
                         "translation": "I picked them up from the station in time.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Si encuentras los papeles, <span class='fw-token-connector'>los</span> <span class='fw-token-v'>dejas</span> aquí.",
-                        "translation": "If you find the papers, leave them here.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "El abuelo <span class='fw-token-connector'>los</span> <span class='fw-token-v'>abrazó</span> con emoción.",
-                        "translation": "The grandfather hugged them with emotion.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -17813,38 +19457,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "personas",
                     "calles"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>llaves</span> están en la mesa.",
-                "translation": "The keys are on the table.",
+                "targetHTML": "Oye, quería darte <span class=\"fw-token-connector\">las</span> <span class=\"fw-token-c\">gracias</span> por los vestidos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>llaves</span> están en la mesa.",
-                        "translation": "The keys are on the table.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Oye, quería darte las gracias por los vestidos.",
+                        "targetHTML": "Oye, quería darte <span class=\"fw-token-connector\">las</span> <span class=\"fw-token-c\">gracias</span> por los vestidos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:las:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>flores del patio</span> huelen de maravilla.",
-                        "translation": "The courtyard flowers smell wonderful.",
-                        "source": "Conversation"
+                        "sentence": "Le pedí que me llamara a las cinco.",
+                        "targetHTML": "Le pedí que me llamara a <span class=\"fw-token-connector\">las</span> <span class=\"fw-token-c\">cinco</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:las:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>calles</span> estaban llenas de luces navideñas.",
-                        "translation": "The streets were full of Christmas lights.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>personas</span> escuchaban con atención.",
-                        "translation": "The people listened with attention.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Hay que poner <span class='fw-token-connector'>las</span> <span class='fw-token-c'>cosas</span> en su sitio.",
-                        "translation": "One must put things in their place.",
-                        "source": "Literature"
+                        "sentence": "Necesito que suspendas las visitas a los presos nada de contacto con los del campamento.",
+                        "targetHTML": "Necesito que suspendas <span class=\"fw-token-connector\">las</span> <span class=\"fw-token-c\">visitas a los presos</span> nada de contacto con los del campamento.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:las:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -17859,38 +19524,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "personas",
                     "calles"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>llaves</span> están en la mesa.",
-                "translation": "The keys are on the table.",
+                "targetHTML": "Oye, quería darte <span class=\"fw-token-connector\">las</span> <span class=\"fw-token-c\">gracias</span> por los vestidos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>llaves</span> están en la mesa.",
-                        "translation": "The keys are on the table.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Oye, quería darte las gracias por los vestidos.",
+                        "targetHTML": "Oye, quería darte <span class=\"fw-token-connector\">las</span> <span class=\"fw-token-c\">gracias</span> por los vestidos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:las:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>flores del patio</span> huelen de maravilla.",
-                        "translation": "The courtyard flowers smell wonderful.",
-                        "source": "Conversation"
+                        "sentence": "Le pedí que me llamara a las cinco.",
+                        "targetHTML": "Le pedí que me llamara a <span class=\"fw-token-connector\">las</span> <span class=\"fw-token-c\">cinco</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:las:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>calles</span> estaban llenas de luces navideñas.",
-                        "translation": "The streets were full of Christmas lights.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Las</span> <span class='fw-token-c'>personas</span> escuchaban con atención.",
-                        "translation": "The people listened with attention.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Hay que poner <span class='fw-token-connector'>las</span> <span class='fw-token-c'>cosas</span> en su sitio.",
-                        "translation": "One must put things in their place.",
-                        "source": "Literature"
+                        "sentence": "Necesito que suspendas las visitas a los presos nada de contacto con los del campamento.",
+                        "targetHTML": "Necesito que suspendas <span class=\"fw-token-connector\">las</span> <span class=\"fw-token-c\">visitas a los presos</span> nada de contacto con los del campamento.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:las:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -18928,16 +20614,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "Compré <span class='fw-token-connector'>un</span> <span class='fw-token-c'>libro muy interesante</span>.",
                         "translation": "I bought a very interesting book.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Fue <span class='fw-token-connector'>un</span> <span class='fw-token-c'>día inolvidable para todos</span>.",
-                        "translation": "It was an unforgettable day for everyone.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Buscamos <span class='fw-token-connector'>un</span> <span class='fw-token-c'>lugar tranquilo para charlar</span>.",
-                        "translation": "We are looking for a quiet place to chat.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -18974,16 +20650,6 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "Compré <span class='fw-token-connector'>un</span> <span class='fw-token-c'>libro muy interesante</span>.",
                         "translation": "I bought a very interesting book.",
                         "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Fue <span class='fw-token-connector'>un</span> <span class='fw-token-c'>día inolvidable para todos</span>.",
-                        "translation": "It was an unforgettable day for everyone.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Buscamos <span class='fw-token-connector'>un</span> <span class='fw-token-c'>lugar tranquilo para charlar</span>.",
-                        "translation": "We are looking for a quiet place to chat.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
@@ -19009,38 +20675,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "semana",
                     "historia"
                 ],
-                "targetHTML": "Es <span class='fw-token-connector'>una</span> <span class='fw-token-c'>buena idea</span>.",
-                "translation": "It is a good idea.",
+                "targetHTML": "Tiene <span class=\"fw-token-connector\">una</span> <span class=\"fw-token-c\">mala relación con el papeleo</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Es <span class='fw-token-connector'>una</span> <span class='fw-token-c'>buena idea</span>.",
-                        "translation": "It is a good idea.",
-                        "source": "Everyday speech"
+                        "sentence": "Tiene una mala relación con el papeleo.",
+                        "targetHTML": "Tiene <span class=\"fw-token-connector\">una</span> <span class=\"fw-token-c\">mala relación con el papeleo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:una:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Alquilamos <span class='fw-token-connector'>una</span> <span class='fw-token-c'>casa cerca de la playa</span>.",
-                        "translation": "We rented a house near the beach.",
-                        "source": "Conversation"
+                        "sentence": "En una prisión manicomio por el asesinato de 6 camioneros.",
+                        "targetHTML": "En <span class=\"fw-token-connector\">una</span> <span class=\"fw-token-c\">prisión manicomio por el asesinato de 6 camioneros</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:una:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Quiero hacer <span class='fw-token-connector'>una</span> <span class='fw-token-c'>pregunta rápida</span>.",
-                        "translation": "I want to ask a quick question.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Contó <span class='fw-token-connector'>una</span> <span class='fw-token-c'>historia emocionante</span>.",
-                        "translation": "Told an exciting story.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Esperamos durante <span class='fw-token-connector'>una</span> <span class='fw-token-c'>semana entera</span>.",
-                        "translation": "We waited for a whole week.",
-                        "source": "Literature"
+                        "sentence": "Y me dieron una propina del diez por ciento.",
+                        "targetHTML": "Y me dieron <span class=\"fw-token-connector\">una</span> <span class=\"fw-token-c\">propina del diez por ciento</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:una:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -19055,38 +20742,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "semana",
                     "historia"
                 ],
-                "targetHTML": "Es <span class='fw-token-connector'>una</span> <span class='fw-token-c'>buena idea</span>.",
-                "translation": "It is a good idea.",
+                "targetHTML": "Tiene <span class=\"fw-token-connector\">una</span> <span class=\"fw-token-c\">mala relación con el papeleo</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Es <span class='fw-token-connector'>una</span> <span class='fw-token-c'>buena idea</span>.",
-                        "translation": "It is a good idea.",
-                        "source": "Everyday speech"
+                        "sentence": "Tiene una mala relación con el papeleo.",
+                        "targetHTML": "Tiene <span class=\"fw-token-connector\">una</span> <span class=\"fw-token-c\">mala relación con el papeleo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:una:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Alquilamos <span class='fw-token-connector'>una</span> <span class='fw-token-c'>casa cerca de la playa</span>.",
-                        "translation": "We rented a house near the beach.",
-                        "source": "Conversation"
+                        "sentence": "En una prisión manicomio por el asesinato de 6 camioneros.",
+                        "targetHTML": "En <span class=\"fw-token-connector\">una</span> <span class=\"fw-token-c\">prisión manicomio por el asesinato de 6 camioneros</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:una:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Quiero hacer <span class='fw-token-connector'>una</span> <span class='fw-token-c'>pregunta rápida</span>.",
-                        "translation": "I want to ask a quick question.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Contó <span class='fw-token-connector'>una</span> <span class='fw-token-c'>historia emocionante</span>.",
-                        "translation": "Told an exciting story.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Esperamos durante <span class='fw-token-connector'>una</span> <span class='fw-token-c'>semana entera</span>.",
-                        "translation": "We waited for a whole week.",
-                        "source": "Literature"
+                        "sentence": "Y me dieron una propina del diez por ciento.",
+                        "targetHTML": "Y me dieron <span class=\"fw-token-connector\">una</span> <span class=\"fw-token-c\">propina del diez por ciento</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:una:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -19108,39 +20816,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "cantar",
                     "bailar"
                 ],
-                "targetHTML": "Compré pan <span class='fw-token-connector'>y</span> <span class='fw-token-c'>leche</span>.",
-                "translation": "I bought bread and milk.",
+                "targetHTML": "Vivo con mi madre, mi hermano <span class=\"fw-token-connector\">y</span> <span class=\"fw-token-c\">mis abuelos</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Compré pan <span class='fw-token-connector'>y</span> <span class='fw-token-c'>leche</span>.",
-                        "translation": "I bought bread and milk.",
-                        "source": "Everyday speech"
+                        "sentence": "Vivo con mi madre, mi hermano y mis abuelos.",
+                        "targetHTML": "Vivo con mi madre, mi hermano <span class=\"fw-token-connector\">y</span> <span class=\"fw-token-c\">mis abuelos</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:y:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction y."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Se levantó temprano <span class='fw-token-connector'>y</span> <span class='fw-token-c'>salió a correr</span>.",
-                        "translation": "Got up early and went out to run.",
-                        "source": "Conversation"
+                        "sentence": "No es precisamente vender drogas y matar gente.",
+                        "targetHTML": "No es precisamente <span class=\"fw-token-v\">vender drogas</span> <span class=\"fw-token-connector\">y</span> <span class=\"fw-token-c\">matar gente</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:y:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction y."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Cantan <span class='fw-token-connector'>y</span> <span class='fw-token-c'>bailan con alegría</span>.",
-                        "translation": "They sing and dance with joy.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "El día era fresco <span class='fw-token-connector'>y</span> <span class='fw-token-c'>despejado</span>.",
-                        "translation": "The day was cool and clear.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Escuchó la pregunta <span class='fw-token-connector'>y</span> <span class='fw-token-c'>asintió en silencio</span>.",
-                        "translation": "Heard the question and nodded in silence.",
-                        "source": "Literature"
+                        "sentence": "Hay muchos carros en Nueva York y todos necesitan tiro.",
+                        "targetHTML": "Hay muchos carros en Nueva York <span class=\"fw-token-connector\">y</span> <span class=\"fw-token-c\">todos necesitan tiro</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:y:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction y."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "mixed"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -19156,39 +20885,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "cantar",
                     "bailar"
                 ],
-                "targetHTML": "Compré pan <span class='fw-token-connector'>y</span> <span class='fw-token-c'>leche</span>.",
-                "translation": "I bought bread and milk.",
+                "targetHTML": "Vivo con mi madre, mi hermano <span class=\"fw-token-connector\">y</span> <span class=\"fw-token-c\">mis abuelos</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Compré pan <span class='fw-token-connector'>y</span> <span class='fw-token-c'>leche</span>.",
-                        "translation": "I bought bread and milk.",
-                        "source": "Everyday speech"
+                        "sentence": "Vivo con mi madre, mi hermano y mis abuelos.",
+                        "targetHTML": "Vivo con mi madre, mi hermano <span class=\"fw-token-connector\">y</span> <span class=\"fw-token-c\">mis abuelos</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:y:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction y."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Se levantó temprano <span class='fw-token-connector'>y</span> <span class='fw-token-c'>salió a correr</span>.",
-                        "translation": "Got up early and went out to run.",
-                        "source": "Conversation"
+                        "sentence": "No es precisamente vender drogas y matar gente.",
+                        "targetHTML": "No es precisamente <span class=\"fw-token-v\">vender drogas</span> <span class=\"fw-token-connector\">y</span> <span class=\"fw-token-c\">matar gente</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:y:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction y."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Cantan <span class='fw-token-connector'>y</span> <span class='fw-token-c'>bailan con alegría</span>.",
-                        "translation": "They sing and dance with joy.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "El día era fresco <span class='fw-token-connector'>y</span> <span class='fw-token-c'>despejado</span>.",
-                        "translation": "The day was cool and clear.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Escuchó la pregunta <span class='fw-token-connector'>y</span> <span class='fw-token-c'>asintió en silencio</span>.",
-                        "translation": "Heard the question and nodded in silence.",
-                        "source": "Literature"
+                        "sentence": "Hay muchos carros en Nueva York y todos necesitan tiro.",
+                        "targetHTML": "Hay muchos carros en Nueva York <span class=\"fw-token-connector\">y</span> <span class=\"fw-token-c\">todos necesitan tiro</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:y:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Coordinating conjunction y."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "mixed",
                     "c": "mixed"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -19209,39 +20959,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "saber",
                     "buscar"
                 ],
-                "targetHTML": "Quería salir, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>llovía</span>.",
-                "translation": "I wanted to go out, but it was raining.",
+                "targetHTML": "¿<span class=\"fw-token-connector\">Pero</span> <span class=\"fw-token-c\">por qué un agente tan famoso abandonó la agencia de inteligencia</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Quería salir, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>llovía</span>.",
-                        "translation": "I wanted to go out, but it was raining.",
-                        "source": "Everyday dialogue"
+                        "sentence": "¿Pero por qué un agente tan famoso abandonó la agencia de inteligencia?",
+                        "targetHTML": "¿<span class=\"fw-token-connector\">Pero</span> <span class=\"fw-token-c\">por qué un agente tan famoso abandonó la agencia de inteligencia</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:pero:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction pero."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Lo intenté con todas mis fuerzas, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>no pude</span>.",
-                        "translation": "I tried with all my might, but couldn't.",
-                        "source": "Conversation"
+                        "sentence": "Pero también enfrenta la pena de prisión, gracias a su servidor.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Pero</span> <span class=\"fw-token-c\">también enfrenta la pena de prisión, gracias a su servidor</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:pero:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction pero."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Sabía la lección, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>se puso nervioso</span>.",
-                        "translation": "Knew the lesson, but got nervous.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Es caro, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>vale la pena</span>.",
-                        "translation": "It is expensive, but worth it.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Buscó por doquier, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>la carta había desaparecido</span>.",
-                        "translation": "Searched everywhere, but the letter had vanished.",
-                        "source": "Literature"
+                        "sentence": "Pero te doy mi palabra; ya se está arreglando.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Pero</span> <span class=\"fw-token-c\">te doy mi palabra; ya se está arreglando</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:pero:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction pero."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -19256,39 +21027,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "saber",
                     "buscar"
                 ],
-                "targetHTML": "Quería salir, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>llovía</span>.",
-                "translation": "I wanted to go out, but it was raining.",
+                "targetHTML": "¿<span class=\"fw-token-connector\">Pero</span> <span class=\"fw-token-c\">por qué un agente tan famoso abandonó la agencia de inteligencia</span>?",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Quería salir, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>llovía</span>.",
-                        "translation": "I wanted to go out, but it was raining.",
-                        "source": "Everyday dialogue"
+                        "sentence": "¿Pero por qué un agente tan famoso abandonó la agencia de inteligencia?",
+                        "targetHTML": "¿<span class=\"fw-token-connector\">Pero</span> <span class=\"fw-token-c\">por qué un agente tan famoso abandonó la agencia de inteligencia</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:pero:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction pero."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Lo intenté con todas mis fuerzas, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>no pude</span>.",
-                        "translation": "I tried with all my might, but couldn't.",
-                        "source": "Conversation"
+                        "sentence": "Pero también enfrenta la pena de prisión, gracias a su servidor.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Pero</span> <span class=\"fw-token-c\">también enfrenta la pena de prisión, gracias a su servidor</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:pero:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction pero."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Sabía la lección, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>se puso nervioso</span>.",
-                        "translation": "Knew the lesson, but got nervous.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Es caro, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>vale la pena</span>.",
-                        "translation": "It is expensive, but worth it.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Buscó por doquier, <span class='fw-token-connector'>pero</span> <span class='fw-token-c'>la carta había desaparecido</span>.",
-                        "translation": "Searched everywhere, but the letter had vanished.",
-                        "source": "Literature"
+                        "sentence": "Pero te doy mi palabra; ya se está arreglando.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Pero</span> <span class=\"fw-token-c\">te doy mi palabra; ya se está arreglando</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:pero:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Adversative conjunction pero."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -19309,39 +21101,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "poder",
                     "saber"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>tienes tiempo</span>, <span class='fw-token-c'>ven a verme</span>.",
-                "translation": "If you have time, come see me.",
+                "targetHTML": "Así que <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">tomas demasiado do ambos</span>, el corazón <span class=\"fw-token-v\">entra</span> en parada cardíaca.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>tienes tiempo</span>, <span class='fw-token-c'>ven a verme</span>.",
-                        "translation": "If you have time, come see me.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Así que si tomas demasiado do ambos, el corazón entra en parada cardíaca.",
+                        "targetHTML": "Así que <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">tomas demasiado do ambos</span>, el corazón <span class=\"fw-token-v\">entra</span> en parada cardíaca.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:si:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conditional conjunction si."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>llueve mañana</span>, <span class='fw-token-c'>nos quedaremos en casa</span>.",
-                        "translation": "If it rains tomorrow, we will stay at home.",
-                        "source": "Conversation"
+                        "sentence": "Y si realmente quieres ir... no puedo detenerte.",
+                        "targetHTML": "Y <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">realmente quieres ir</span>... no <span class=\"fw-token-v\">puedo detenerte</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:si:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conditional conjunction si."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>quieres</span>, <span class='fw-token-c'>podemos almorzar juntos</span>.",
-                        "translation": "If you want, we can have lunch together.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>puedes ayudarme</span>, <span class='fw-token-c'>te lo agradezco</span>.",
-                        "translation": "If you can help me, I appreciate it.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>sabes algo nuevo</span>, <span class='fw-token-c'>avísame enseguida</span>.",
-                        "translation": "If you know anything new, let me know right away.",
-                        "source": "Literature"
+                        "sentence": "Me empiezo a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "targetHTML": "Me empiezo a <span class=\"fw-token-v\">preguntar</span> <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">debería tener más miedo de tenerlos de vuelta</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:si:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conditional conjunction si."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -19356,39 +21169,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "poder",
                     "saber"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>tienes tiempo</span>, <span class='fw-token-c'>ven a verme</span>.",
-                "translation": "If you have time, come see me.",
+                "targetHTML": "Así que <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">tomas demasiado do ambos</span>, el corazón <span class=\"fw-token-v\">entra</span> en parada cardíaca.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>tienes tiempo</span>, <span class='fw-token-c'>ven a verme</span>.",
-                        "translation": "If you have time, come see me.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Así que si tomas demasiado do ambos, el corazón entra en parada cardíaca.",
+                        "targetHTML": "Así que <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">tomas demasiado do ambos</span>, el corazón <span class=\"fw-token-v\">entra</span> en parada cardíaca.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:si:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conditional conjunction si."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>llueve mañana</span>, <span class='fw-token-c'>nos quedaremos en casa</span>.",
-                        "translation": "If it rains tomorrow, we will stay at home.",
-                        "source": "Conversation"
+                        "sentence": "Y si realmente quieres ir... no puedo detenerte.",
+                        "targetHTML": "Y <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">realmente quieres ir</span>... no <span class=\"fw-token-v\">puedo detenerte</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:si:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conditional conjunction si."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>quieres</span>, <span class='fw-token-c'>podemos almorzar juntos</span>.",
-                        "translation": "If you want, we can have lunch together.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>puedes ayudarme</span>, <span class='fw-token-c'>te lo agradezco</span>.",
-                        "translation": "If you can help me, I appreciate it.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Si</span> <span class='fw-token-v'>sabes algo nuevo</span>, <span class='fw-token-c'>avísame enseguida</span>.",
-                        "translation": "If you know anything new, let me know right away.",
-                        "source": "Literature"
+                        "sentence": "Me empiezo a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "targetHTML": "Me empiezo a <span class=\"fw-token-v\">preguntar</span> <span class=\"fw-token-connector\">si</span> <span class=\"fw-token-c\">debería tener más miedo de tenerlos de vuelta</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:si:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conditional conjunction si."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -19409,39 +21243,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "hablar",
                     "actuar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Canta</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>un pájaro</span>.",
-                "translation": "Sings like a bird.",
+                "targetHTML": "Eso <span class=\"fw-token-v\">es</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">darle un arma cargada a un asesino</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Canta</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>un pájaro</span>.",
-                        "translation": "Sings like a bird.",
-                        "source": "Everyday speech"
+                        "sentence": "Eso es como darle un arma cargada a un asesino.",
+                        "targetHTML": "Eso <span class=\"fw-token-v\">es</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">darle un arma cargada a un asesino</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Corre</span> rápido <span class='fw-token-connector'>como</span> <span class='fw-token-c'>el viento</span>.",
-                        "translation": "Runs fast like the wind.",
-                        "source": "Conversation"
+                        "sentence": "Conozco este lugar como la palma de mi mano.",
+                        "targetHTML": "<span class=\"fw-token-v\">Conozco</span> este lugar <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">la palma de mi mano</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Brilla</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>el oro puro bajo el sol</span>.",
-                        "translation": "Shines like pure gold under the sun.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Actuó</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>un verdadero profesional</span>.",
-                        "translation": "Acted like a true professional.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Habla</span> español tan claro <span class='fw-token-connector'>como</span> <span class='fw-token-c'>un nativo</span>.",
-                        "translation": "Speaks Spanish as clearly as a native.",
-                        "source": "Subtitles"
+                        "sentence": "Como pensábamos, ella se había ido al extranjero.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Como</span> <span class=\"fw-token-c\">pensábamos</span>, ella se había ido al extranjero.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "As / in a role",
@@ -19471,21 +21326,12 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "Participa <span class='fw-token-connector'>como</span> <span class='fw-token-c'>voluntaria en la biblioteca</span>.",
                         "translation": "Participates as a volunteer in the library.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Te hablo <span class='fw-token-connector'>como</span> <span class='fw-token-c'>amigo sincero</span>.",
-                        "translation": "I speak to you as a sincere friend.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Declaró <span class='fw-token-connector'>como</span> <span class='fw-token-c'>testigo del suceso</span>.",
-                        "translation": "Testified as a witness of the event.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ],
         "uses": [
@@ -19500,39 +21346,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "hablar",
                     "actuar"
                 ],
-                "targetHTML": "<span class=\"fw-token-v\">Canta</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>un pájaro</span>.",
-                "translation": "Sings like a bird.",
+                "targetHTML": "Eso <span class=\"fw-token-v\">es</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">darle un arma cargada a un asesino</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Canta</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>un pájaro</span>.",
-                        "translation": "Sings like a bird.",
-                        "source": "Everyday speech"
+                        "sentence": "Eso es como darle un arma cargada a un asesino.",
+                        "targetHTML": "Eso <span class=\"fw-token-v\">es</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">darle un arma cargada a un asesino</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Corre</span> rápido <span class='fw-token-connector'>como</span> <span class='fw-token-c'>el viento</span>.",
-                        "translation": "Runs fast like the wind.",
-                        "source": "Conversation"
+                        "sentence": "Conozco este lugar como la palma de mi mano.",
+                        "targetHTML": "<span class=\"fw-token-v\">Conozco</span> este lugar <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">la palma de mi mano</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class=\"fw-token-v\">Brilla</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>el oro puro bajo el sol</span>.",
-                        "translation": "Shines like pure gold under the sun.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Actuó</span> <span class='fw-token-connector'>como</span> <span class='fw-token-c'>un verdadero profesional</span>.",
-                        "translation": "Acted like a true professional.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class=\"fw-token-v\">Habla</span> español tan claro <span class='fw-token-connector'>como</span> <span class='fw-token-c'>un nativo</span>.",
-                        "translation": "Speaks Spanish as clearly as a native.",
-                        "source": "Subtitles"
+                        "sentence": "Como pensábamos, ella se había ido al extranjero.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Como</span> <span class=\"fw-token-c\">pensábamos</span>, ella se había ido al extranjero.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:como:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Conjunction/preposition como pattern 0."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             },
             {
                 "tag": "As / in a role",
@@ -19562,21 +21429,12 @@ export const SPANISH_GRAMMAR_WORDS = {
                         "targetHTML": "Participa <span class='fw-token-connector'>como</span> <span class='fw-token-c'>voluntaria en la biblioteca</span>.",
                         "translation": "Participates as a volunteer in the library.",
                         "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Te hablo <span class='fw-token-connector'>como</span> <span class='fw-token-c'>amigo sincero</span>.",
-                        "translation": "I speak to you as a sincere friend.",
-                        "source": "Everyday speech"
-                    },
-                    {
-                        "targetHTML": "Declaró <span class='fw-token-connector'>como</span> <span class='fw-token-c'>testigo del suceso</span>.",
-                        "translation": "Testified as a witness of the event.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "c": "phrase"
-                }
+                },
+                "source": "Conversation"
             }
         ]
     },
@@ -19597,38 +21455,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "hermano",
                     "coche"
                 ],
-                "targetHTML": "Esta es <span class='fw-token-connector'>mi</span> <span class='fw-token-c'>casa</span>.",
-                "translation": "This is my house.",
+                "targetHTML": "<span class=\"fw-token-connector\">Mi</span> <span class=\"fw-token-c\">tío</span> me compró un reloj, que es muy exacto.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Esta es <span class='fw-token-connector'>mi</span> <span class='fw-token-c'>casa</span>.",
-                        "translation": "This is my house.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Mi tío me compró un reloj, que es muy exacto.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Mi</span> <span class=\"fw-token-c\">tío</span> me compró un reloj, que es muy exacto.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:mi:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Es <span class='fw-token-connector'>mi</span> <span class='fw-token-c'>mejor amigo desde la infancia</span>.",
-                        "translation": "He is my best friend since childhood.",
-                        "source": "Conversation"
+                        "sentence": "Vivo con mi madre, mi hermano y mis abuelos.",
+                        "targetHTML": "Vivo con mi madre, <span class=\"fw-token-connector\">mi</span> <span class=\"fw-token-c\">hermano</span> y mis abuelos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:mi:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Mi</span> <span class='fw-token-c'>hermano mayor</span> vive en Barcelona.",
-                        "translation": "My older brother lives in Barcelona.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "He dedicado toda <span class='fw-token-connector'>mi</span> <span class='fw-token-c'>vida</span> a este trabajo.",
-                        "translation": "I have dedicated my whole life to this work.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Mi</span> <span class='fw-token-c'>coche</span> está aparcado enfrente.",
-                        "translation": "My car is parked in front.",
-                        "source": "Subtitles"
+                        "sentence": "Conozco este lugar como la palma de mi mano.",
+                        "targetHTML": "Conozco este lugar como la palma de <span class=\"fw-token-connector\">mi</span> <span class=\"fw-token-c\">mano</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:mi:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -19643,38 +21522,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "hermano",
                     "coche"
                 ],
-                "targetHTML": "Esta es <span class='fw-token-connector'>mi</span> <span class='fw-token-c'>casa</span>.",
-                "translation": "This is my house.",
+                "targetHTML": "<span class=\"fw-token-connector\">Mi</span> <span class=\"fw-token-c\">tío</span> me compró un reloj, que es muy exacto.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Esta es <span class='fw-token-connector'>mi</span> <span class='fw-token-c'>casa</span>.",
-                        "translation": "This is my house.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Mi tío me compró un reloj, que es muy exacto.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Mi</span> <span class=\"fw-token-c\">tío</span> me compró un reloj, que es muy exacto.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:mi:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Es <span class='fw-token-connector'>mi</span> <span class='fw-token-c'>mejor amigo desde la infancia</span>.",
-                        "translation": "He is my best friend since childhood.",
-                        "source": "Conversation"
+                        "sentence": "Vivo con mi madre, mi hermano y mis abuelos.",
+                        "targetHTML": "Vivo con mi madre, <span class=\"fw-token-connector\">mi</span> <span class=\"fw-token-c\">hermano</span> y mis abuelos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:mi:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Mi</span> <span class='fw-token-c'>hermano mayor</span> vive en Barcelona.",
-                        "translation": "My older brother lives in Barcelona.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "He dedicado toda <span class='fw-token-connector'>mi</span> <span class='fw-token-c'>vida</span> a este trabajo.",
-                        "translation": "I have dedicated my whole life to this work.",
-                        "source": "Literature"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Mi</span> <span class='fw-token-c'>coche</span> está aparcado enfrente.",
-                        "translation": "My car is parked in front.",
-                        "source": "Subtitles"
+                        "sentence": "Conozco este lugar como la palma de mi mano.",
+                        "targetHTML": "Conozco este lugar como la palma de <span class=\"fw-token-connector\">mi</span> <span class=\"fw-token-c\">mano</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:mi:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -19695,38 +21595,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "trabajo",
                     "opinión"
                 ],
-                "targetHTML": "¿Cuál es <span class='fw-token-connector'>su</span> <span class='fw-token-c'>nombre</span>?",
-                "translation": "What is your (formal) / his / her name?",
+                "targetHTML": "<span class=\"fw-token-connector\">Su</span> <span class=\"fw-token-c\">auto</span> está vacío.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "¿Cuál es <span class='fw-token-connector'>su</span> <span class='fw-token-c'>nombre</span>?",
-                        "translation": "What is your (formal) / his / her name?",
-                        "source": "Everyday dialogue"
+                        "sentence": "Su auto está vacío.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Su</span> <span class=\"fw-token-c\">auto</span> está vacío.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:su:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Su</span> <span class='fw-token-c'>familia</span> es muy amable y acogedora.",
-                        "translation": "His family is very kind and welcoming.",
-                        "source": "Conversation"
+                        "sentence": "O sus manos sobre mi piel o el olor de su aliento.",
+                        "targetHTML": "O sus manos sobre mi piel o el olor de <span class=\"fw-token-connector\">su</span> <span class=\"fw-token-c\">aliento</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:su:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Admiro mucho <span class='fw-token-connector'>su</span> <span class='fw-token-c'>trabajo profesional</span>.",
-                        "translation": "I admire his professional work very much.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Su</span> <span class='fw-token-c'>opinión</span> es fundamental para nosotros.",
-                        "translation": "Your (formal) opinion is essential for us.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Visité <span class='fw-token-connector'>su</span> <span class='fw-token-c'>casa de campo el fin de semana</span>.",
-                        "translation": "I visited his country house on the weekend.",
-                        "source": "Literature"
+                        "sentence": "Y por su propio bien, duerma un poco.",
+                        "targetHTML": "Y por <span class=\"fw-token-connector\">su</span> <span class=\"fw-token-c\">propio bien</span>, duerma un poco.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:su:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -19741,38 +21662,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "trabajo",
                     "opinión"
                 ],
-                "targetHTML": "¿Cuál es <span class='fw-token-connector'>su</span> <span class='fw-token-c'>nombre</span>?",
-                "translation": "What is your (formal) / his / her name?",
+                "targetHTML": "<span class=\"fw-token-connector\">Su</span> <span class=\"fw-token-c\">auto</span> está vacío.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "¿Cuál es <span class='fw-token-connector'>su</span> <span class='fw-token-c'>nombre</span>?",
-                        "translation": "What is your (formal) / his / her name?",
-                        "source": "Everyday dialogue"
+                        "sentence": "Su auto está vacío.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Su</span> <span class=\"fw-token-c\">auto</span> está vacío.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:su:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Su</span> <span class='fw-token-c'>familia</span> es muy amable y acogedora.",
-                        "translation": "His family is very kind and welcoming.",
-                        "source": "Conversation"
+                        "sentence": "O sus manos sobre mi piel o el olor de su aliento.",
+                        "targetHTML": "O sus manos sobre mi piel o el olor de <span class=\"fw-token-connector\">su</span> <span class=\"fw-token-c\">aliento</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:su:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Admiro mucho <span class='fw-token-connector'>su</span> <span class='fw-token-c'>trabajo profesional</span>.",
-                        "translation": "I admire his professional work very much.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Su</span> <span class='fw-token-c'>opinión</span> es fundamental para nosotros.",
-                        "translation": "Your (formal) opinion is essential for us.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Visité <span class='fw-token-connector'>su</span> <span class='fw-token-c'>casa de campo el fin de semana</span>.",
-                        "translation": "I visited his country house on the weekend.",
-                        "source": "Literature"
+                        "sentence": "Y por su propio bien, duerma un poco.",
+                        "targetHTML": "Y por <span class=\"fw-token-connector\">su</span> <span class=\"fw-token-c\">propio bien</span>, duerma un poco.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:su:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -19793,38 +21735,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "idea",
                     "familia"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Tu</span> <span class='fw-token-c'>casa</span> es preciosa.",
-                "translation": "Your house is lovely.",
+                "targetHTML": "Siempre y cuando entiendas, que <span class=\"fw-token-connector\">tu</span> <span class=\"fw-token-c\">deber principal</span> es con mis aves.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Tu</span> <span class='fw-token-c'>casa</span> es preciosa.",
-                        "translation": "Your house is lovely.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Siempre y cuando entiendas, que tu deber principal es con mis aves.",
+                        "targetHTML": "Siempre y cuando entiendas, que <span class=\"fw-token-connector\">tu</span> <span class=\"fw-token-c\">deber principal</span> es con mis aves.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Me gusta mucho <span class='fw-token-connector'>tu</span> <span class='fw-token-c'>idea para el proyecto</span>.",
-                        "translation": "I like your idea for the project a lot.",
-                        "source": "Conversation"
+                        "sentence": "Estás fuera de tu marca. ¡Joder!",
+                        "targetHTML": "Estás fuera de <span class=\"fw-token-connector\">tu</span> <span class=\"fw-token-c\">marca</span>. ¡Joder!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "¿Cómo está <span class='fw-token-connector'>tu</span> <span class='fw-token-c'>familia</span>?",
-                        "translation": "How is your family?",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Ayer conocí a <span class='fw-token-connector'>tu</span> <span class='fw-token-c'>amigo Carlos</span>.",
-                        "translation": "Yesterday I met your friend Carlos.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Felicidades por <span class='fw-token-connector'>tu</span> <span class='fw-token-c'>nuevo trabajo</span>.",
-                        "translation": "Congratulations on your new job.",
-                        "source": "Literature"
+                        "sentence": "Es tu obligación llenar los espacios en blanco con posibilidades.",
+                        "targetHTML": "Es <span class=\"fw-token-connector\">tu</span> <span class=\"fw-token-c\">obligación</span> llenar los espacios en blanco con posibilidades.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -19839,38 +21802,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "idea",
                     "familia"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Tu</span> <span class='fw-token-c'>casa</span> es preciosa.",
-                "translation": "Your house is lovely.",
+                "targetHTML": "Siempre y cuando entiendas, que <span class=\"fw-token-connector\">tu</span> <span class=\"fw-token-c\">deber principal</span> es con mis aves.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Tu</span> <span class='fw-token-c'>casa</span> es preciosa.",
-                        "translation": "Your house is lovely.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Siempre y cuando entiendas, que tu deber principal es con mis aves.",
+                        "targetHTML": "Siempre y cuando entiendas, que <span class=\"fw-token-connector\">tu</span> <span class=\"fw-token-c\">deber principal</span> es con mis aves.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Me gusta mucho <span class='fw-token-connector'>tu</span> <span class='fw-token-c'>idea para el proyecto</span>.",
-                        "translation": "I like your idea for the project a lot.",
-                        "source": "Conversation"
+                        "sentence": "Estás fuera de tu marca. ¡Joder!",
+                        "targetHTML": "Estás fuera de <span class=\"fw-token-connector\">tu</span> <span class=\"fw-token-c\">marca</span>. ¡Joder!",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "¿Cómo está <span class='fw-token-connector'>tu</span> <span class='fw-token-c'>familia</span>?",
-                        "translation": "How is your family?",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Ayer conocí a <span class='fw-token-connector'>tu</span> <span class='fw-token-c'>amigo Carlos</span>.",
-                        "translation": "Yesterday I met your friend Carlos.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Felicidades por <span class='fw-token-connector'>tu</span> <span class='fw-token-c'>nuevo trabajo</span>.",
-                        "translation": "Congratulations on your new job.",
-                        "source": "Literature"
+                        "sentence": "Es tu obligación llenar los espacios en blanco con posibilidades.",
+                        "targetHTML": "Es <span class=\"fw-token-connector\">tu</span> <span class=\"fw-token-c\">obligación</span> llenar los espacios en blanco con posibilidades.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tu:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered determiner surface and noun attachment agree."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "c": "noun"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -19891,38 +21875,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "querer",
                     "estar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>sé</span> la verdad.",
-                "translation": "I know the truth.",
+                "targetHTML": "No se vosotras, Pero <span class=\"fw-token-connector\">yo</span> <span class=\"fw-token-v\">quiero</span> patear a ese capullo.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>sé</span> la verdad.",
-                        "translation": "I know the truth.",
-                        "source": "Everyday dialogue"
+                        "sentence": "No se vosotras, Pero yo quiero patear a ese capullo.",
+                        "targetHTML": "No se vosotras, Pero <span class=\"fw-token-connector\">yo</span> <span class=\"fw-token-v\">quiero</span> patear a ese capullo.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:yo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>pienso</span> que deberíamos intentarlo.",
-                        "translation": "I think that we should try it.",
-                        "source": "Conversation"
+                        "sentence": "Yo hago que entremos, lo hallamos, lo aislamos, le sacamos información, luego lo acabamos.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Yo</span> <span class=\"fw-token-v\">hago</span> que entremos, lo hallamos, lo aislamos, le sacamos información, luego lo acabamos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:yo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> no <span class='fw-token-v'>tengo</span> ninguna duda al respecto.",
-                        "translation": "I have no doubt about it.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>quiero</span> acompañarte al centro.",
-                        "translation": "I want to accompany you downtown.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>estoy</span> listo cuando tú digas.",
-                        "translation": "I am ready whenever you say.",
-                        "source": "Literature"
+                        "sentence": "- Descuida. Yo solo escucho la tercera parte de lo que dices.",
+                        "targetHTML": "- Descuida. <span class=\"fw-token-connector\">Yo</span> <span class=\"fw-token-v\">solo escucho</span> la tercera parte de lo que dices.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:yo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -19937,38 +21942,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "querer",
                     "estar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>sé</span> la verdad.",
-                "translation": "I know the truth.",
+                "targetHTML": "No se vosotras, Pero <span class=\"fw-token-connector\">yo</span> <span class=\"fw-token-v\">quiero</span> patear a ese capullo.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>sé</span> la verdad.",
-                        "translation": "I know the truth.",
-                        "source": "Everyday dialogue"
+                        "sentence": "No se vosotras, Pero yo quiero patear a ese capullo.",
+                        "targetHTML": "No se vosotras, Pero <span class=\"fw-token-connector\">yo</span> <span class=\"fw-token-v\">quiero</span> patear a ese capullo.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:yo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>pienso</span> que deberíamos intentarlo.",
-                        "translation": "I think that we should try it.",
-                        "source": "Conversation"
+                        "sentence": "Yo hago que entremos, lo hallamos, lo aislamos, le sacamos información, luego lo acabamos.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Yo</span> <span class=\"fw-token-v\">hago</span> que entremos, lo hallamos, lo aislamos, le sacamos información, luego lo acabamos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:yo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> no <span class='fw-token-v'>tengo</span> ninguna duda al respecto.",
-                        "translation": "I have no doubt about it.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>quiero</span> acompañarte al centro.",
-                        "translation": "I want to accompany you downtown.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Yo</span> <span class='fw-token-v'>estoy</span> listo cuando tú digas.",
-                        "translation": "I am ready whenever you say.",
-                        "source": "Literature"
+                        "sentence": "- Descuida. Yo solo escucho la tercera parte de lo que dices.",
+                        "targetHTML": "- Descuida. <span class=\"fw-token-connector\">Yo</span> <span class=\"fw-token-v\">solo escucho</span> la tercera parte de lo que dices.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:yo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -19989,38 +22015,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "querer",
                     "entender"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>sabes</span> lo que quiero decir.",
-                "translation": "You know what I mean.",
+                "targetHTML": "Porque <span class=\"fw-token-connector\">tú</span> <span class=\"fw-token-v\">eres</span> el que quería hacer esta estúpida cinta de audición.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>sabes</span> lo que quiero decir.",
-                        "translation": "You know what I mean.",
-                        "source": "Everyday speech"
+                        "sentence": "Porque tú eres el que quería hacer esta estúpida cinta de audición.",
+                        "targetHTML": "Porque <span class=\"fw-token-connector\">tú</span> <span class=\"fw-token-v\">eres</span> el que quería hacer esta estúpida cinta de audición.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tú:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>tienes</span> toda la razón en esto.",
-                        "translation": "You are completely right on this.",
-                        "source": "Conversation"
+                        "sentence": "Ese niño usaba esos anteojos con onda, ¿tú lo hiciste?",
+                        "targetHTML": "Ese niño usaba esos anteojos con onda, ¿<span class=\"fw-token-connector\">tú</span> <span class=\"fw-token-v\">lo hiciste</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tú:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Si <span class='fw-token-connector'>tú</span> <span class='fw-token-v'>puedes</span> venir, será genial.",
-                        "translation": "If you can come, it will be great.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>entiendes</span> mejor que nadie la situación.",
-                        "translation": "You understand the situation better than anyone.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>decides</span> qué camino tomar.",
-                        "translation": "You decide which path to take.",
-                        "source": "Literature"
+                        "sentence": "Traje algo pa' que tú te relajes",
+                        "targetHTML": "Traje algo pa&#x27; que <span class=\"fw-token-connector\">tú</span> <span class=\"fw-token-v\">te relajes</span>",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tú:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -20035,38 +22082,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "querer",
                     "entender"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>sabes</span> lo que quiero decir.",
-                "translation": "You know what I mean.",
+                "targetHTML": "Porque <span class=\"fw-token-connector\">tú</span> <span class=\"fw-token-v\">eres</span> el que quería hacer esta estúpida cinta de audición.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>sabes</span> lo que quiero decir.",
-                        "translation": "You know what I mean.",
-                        "source": "Everyday speech"
+                        "sentence": "Porque tú eres el que quería hacer esta estúpida cinta de audición.",
+                        "targetHTML": "Porque <span class=\"fw-token-connector\">tú</span> <span class=\"fw-token-v\">eres</span> el que quería hacer esta estúpida cinta de audición.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tú:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>tienes</span> toda la razón en esto.",
-                        "translation": "You are completely right on this.",
-                        "source": "Conversation"
+                        "sentence": "Ese niño usaba esos anteojos con onda, ¿tú lo hiciste?",
+                        "targetHTML": "Ese niño usaba esos anteojos con onda, ¿<span class=\"fw-token-connector\">tú</span> <span class=\"fw-token-v\">lo hiciste</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tú:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Si <span class='fw-token-connector'>tú</span> <span class='fw-token-v'>puedes</span> venir, será genial.",
-                        "translation": "If you can come, it will be great.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>entiendes</span> mejor que nadie la situación.",
-                        "translation": "You understand the situation better than anyone.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Tú</span> <span class='fw-token-v'>decides</span> qué camino tomar.",
-                        "translation": "You decide which path to take.",
-                        "source": "Literature"
+                        "sentence": "Traje algo pa' que tú te relajes",
+                        "targetHTML": "Traje algo pa&#x27; que <span class=\"fw-token-connector\">tú</span> <span class=\"fw-token-v\">te relajes</span>",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:tú:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Registered personal pronoun is the subject of an agreeing verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -20087,38 +22155,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "pasar",
                     "significar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Eso</span> <span class='fw-token-v'>es</span> verdad.",
-                "translation": "That is true.",
+                "targetHTML": "<span class=\"fw-token-connector\">Eso</span> <span class=\"fw-token-v\">es</span> como darle un arma cargada a un asesino.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eso</span> <span class='fw-token-v'>es</span> verdad.",
-                        "translation": "That is true.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eso es como darle un arma cargada a un asesino.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Eso</span> <span class=\"fw-token-v\">es</span> como darle un arma cargada a un asesino.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:eso:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject eso attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eso</span> <span class='fw-token-v'>parece</span> una magnífica solución.",
-                        "translation": "That looks like a magnificent solution.",
-                        "source": "Conversation"
+                        "sentence": "Bueno, si prefieres volver a la mina, eso... eso también vale.",
+                        "targetHTML": "Bueno, si prefieres volver a la mina, <span class=\"fw-token-connector\">eso</span>... eso también <span class=\"fw-token-v\">vale</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:eso:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject eso attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eso</span> <span class='fw-token-v'>cambia</span> las cosas por completo.",
-                        "translation": "That changes things completely.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Eso</span> no <span class='fw-token-v'>significa</span> que sea fácil.",
-                        "translation": "That does not mean that it is easy.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Precisamente por <span class='fw-token-connector'>eso</span> vine a hablar contigo.",
-                        "translation": "Precisely because of that I came to talk to you.",
-                        "source": "Literature"
+                        "sentence": "Eso es porque eres un bicho raro.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Eso</span> <span class=\"fw-token-v\">es</span> porque eres un bicho raro.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:eso:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject eso attached to verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -20133,38 +22222,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "pasar",
                     "significar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Eso</span> <span class='fw-token-v'>es</span> verdad.",
-                "translation": "That is true.",
+                "targetHTML": "<span class=\"fw-token-connector\">Eso</span> <span class=\"fw-token-v\">es</span> como darle un arma cargada a un asesino.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eso</span> <span class='fw-token-v'>es</span> verdad.",
-                        "translation": "That is true.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Eso es como darle un arma cargada a un asesino.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Eso</span> <span class=\"fw-token-v\">es</span> como darle un arma cargada a un asesino.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:eso:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject eso attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eso</span> <span class='fw-token-v'>parece</span> una magnífica solución.",
-                        "translation": "That looks like a magnificent solution.",
-                        "source": "Conversation"
+                        "sentence": "Bueno, si prefieres volver a la mina, eso... eso también vale.",
+                        "targetHTML": "Bueno, si prefieres volver a la mina, <span class=\"fw-token-connector\">eso</span>... eso también <span class=\"fw-token-v\">vale</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:eso:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject eso attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Eso</span> <span class='fw-token-v'>cambia</span> las cosas por completo.",
-                        "translation": "That changes things completely.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Eso</span> no <span class='fw-token-v'>significa</span> que sea fácil.",
-                        "translation": "That does not mean that it is easy.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Precisamente por <span class='fw-token-connector'>eso</span> vine a hablar contigo.",
-                        "translation": "Precisely because of that I came to talk to you.",
-                        "source": "Literature"
+                        "sentence": "Eso es porque eres un bicho raro.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Eso</span> <span class=\"fw-token-v\">es</span> porque eres un bicho raro.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:eso:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject eso attached to verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -20185,38 +22295,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "gustar",
                     "acabar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Esto</span> <span class='fw-token-v'>es</span> para ti.",
-                "translation": "This is for you.",
+                "targetHTML": "<span class=\"fw-token-connector\">Esto</span> <span class=\"fw-token-v\">incluye</span> contacto visual.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> <span class='fw-token-v'>es</span> para ti.",
-                        "translation": "This is for you.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Esto incluye contacto visual.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Esto</span> <span class=\"fw-token-v\">incluye</span> contacto visual.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:esto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject esto attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> <span class='fw-token-v'>funciona</span> a la perfección.",
-                        "translation": "This works to perfection.",
-                        "source": "Conversation"
+                        "sentence": "Juro... que esto no quedará así.",
+                        "targetHTML": "Juro... que <span class=\"fw-token-connector\">esto</span> no <span class=\"fw-token-v\">quedará</span> así.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:esto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject esto attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> <span class='fw-token-v'>parece</span> muy interesante.",
-                        "translation": "This looks very interesting.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> me <span class='fw-token-v'>gusta</span> cada día más.",
-                        "translation": "I like this more every day.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> apenas <span class='fw-token-v'>comienza</span>.",
-                        "translation": "This is only just beginning.",
-                        "source": "Literature"
+                        "sentence": "Yo sé que esto no volverá a pasar",
+                        "targetHTML": "Yo sé que <span class=\"fw-token-connector\">esto</span> no <span class=\"fw-token-v\">volverá</span> a pasar",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:esto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject esto attached to verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -20231,38 +22362,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "gustar",
                     "acabar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Esto</span> <span class='fw-token-v'>es</span> para ti.",
-                "translation": "This is for you.",
+                "targetHTML": "<span class=\"fw-token-connector\">Esto</span> <span class=\"fw-token-v\">incluye</span> contacto visual.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> <span class='fw-token-v'>es</span> para ti.",
-                        "translation": "This is for you.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Esto incluye contacto visual.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Esto</span> <span class=\"fw-token-v\">incluye</span> contacto visual.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:esto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject esto attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> <span class='fw-token-v'>funciona</span> a la perfección.",
-                        "translation": "This works to perfection.",
-                        "source": "Conversation"
+                        "sentence": "Juro... que esto no quedará así.",
+                        "targetHTML": "Juro... que <span class=\"fw-token-connector\">esto</span> no <span class=\"fw-token-v\">quedará</span> así.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:esto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject esto attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> <span class='fw-token-v'>parece</span> muy interesante.",
-                        "translation": "This looks very interesting.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> me <span class='fw-token-v'>gusta</span> cada día más.",
-                        "translation": "I like this more every day.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Esto</span> apenas <span class='fw-token-v'>comienza</span>.",
-                        "translation": "This is only just beginning.",
-                        "source": "Literature"
+                        "sentence": "Yo sé que esto no volverá a pasar",
+                        "targetHTML": "Yo sé que <span class=\"fw-token-connector\">esto</span> no <span class=\"fw-token-v\">volverá</span> a pasar",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:esto:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject esto attached to verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -20283,38 +22435,49 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "pasar",
                     "terminar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">está</span> bien.",
-                "translation": "Everything is fine.",
+                "targetHTML": "El universo es un átomo gigante y <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-v\">es afectado</span> por él.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "El universo es un átomo gigante y todo es afectado por él.",
+                        "targetHTML": "El universo es un átomo gigante y <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-v\">es afectado</span> por él.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:todo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject todo attached to verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Las monjas lo andan diciendo por ahí y aquí nos llega todo.",
+                        "targetHTML": "Las monjas lo andan diciendo por ahí y aquí nos <span class=\"fw-token-v\">llega</span> <span class=\"fw-token-connector\">todo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:todo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject todo attached to verb."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">está</span> bien.",
                         "translation": "Everything is fine.",
                         "source": "Everyday dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">salió</span> según lo planeado.",
-                        "translation": "Everything turned out as planned.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">cambió</span> de un momento a otro.",
-                        "translation": "Everything changed from one moment to the next.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Entendí <span class='fw-token-connector'>todo</span> sin ninguna dificultad.",
-                        "translation": "I understood everything without any difficulty.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">quedó</span> en calma tras la lluvia.",
-                        "translation": "Everything remained calm after the rain.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -20329,38 +22492,49 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "pasar",
                     "terminar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">está</span> bien.",
-                "translation": "Everything is fine.",
+                "targetHTML": "El universo es un átomo gigante y <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-v\">es afectado</span> por él.",
+                "translation": "",
                 "examples": [
+                    {
+                        "sentence": "El universo es un átomo gigante y todo es afectado por él.",
+                        "targetHTML": "El universo es un átomo gigante y <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-v\">es afectado</span> por él.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:todo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject todo attached to verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Las monjas lo andan diciendo por ahí y aquí nos llega todo.",
+                        "targetHTML": "Las monjas lo andan diciendo por ahí y aquí nos <span class=\"fw-token-v\">llega</span> <span class=\"fw-token-connector\">todo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:todo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject todo attached to verb."
+                            }
+                        }
+                    },
                     {
                         "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">está</span> bien.",
                         "translation": "Everything is fine.",
                         "source": "Everyday dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">salió</span> según lo planeado.",
-                        "translation": "Everything turned out as planned.",
-                        "source": "Conversation"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">cambió</span> de un momento a otro.",
-                        "translation": "Everything changed from one moment to the next.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Entendí <span class='fw-token-connector'>todo</span> sin ninguna dificultad.",
-                        "translation": "I understood everything without any difficulty.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Todo</span> <span class=\"fw-token-v\">quedó</span> en calma tras la lluvia.",
-                        "translation": "Everything remained calm after the rain.",
-                        "source": "Literature"
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -20381,38 +22555,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "saber",
                     "traer"
                 ],
-                "targetHTML": "Quiero comer <span class='fw-token-connector'>algo</span>.",
-                "translation": "I want to eat something.",
+                "targetHTML": "<span class=\"fw-token-v\">Encontramos</span> <span class=\"fw-token-connector\">algo</span> mas de comida para los caballos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Quiero comer <span class='fw-token-connector'>algo</span>.",
-                        "translation": "I want to eat something.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Encontramos algo mas de comida para los caballos.",
+                        "targetHTML": "<span class=\"fw-token-v\">Encontramos</span> <span class=\"fw-token-connector\">algo</span> mas de comida para los caballos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:algo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Indefinite object algo following verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Tiene <span class='fw-token-connector'>algo</span> importante que contarnos.",
-                        "translation": "Has something important to tell us.",
-                        "source": "Conversation"
+                        "sentence": "¿Ella intentó atraparlo y algo salió mal o qué?",
+                        "targetHTML": "¿Ella intentó atraparlo y <span class=\"fw-token-connector\">algo</span> <span class=\"fw-token-v\">salió</span> mal o qué?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:algo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject algo attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "¿Ha pasado <span class='fw-token-connector'>algo</span> mientras estaba fuera?",
-                        "translation": "Did something happen while I was away?",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Sé <span class='fw-token-connector'>algo</span> sobre este tema histórico.",
-                        "translation": "I know something about this historical topic.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Te traje <span class='fw-token-connector'>algo</span> del viaje que te gustará.",
-                        "translation": "I brought you something from the trip you will like.",
-                        "source": "Literature"
+                        "sentence": "Ya se me ocurrirá algo.",
+                        "targetHTML": "Ya se me <span class=\"fw-token-v\">ocurrirá</span> <span class=\"fw-token-connector\">algo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:algo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject algo attached to verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -20427,38 +22622,59 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "saber",
                     "traer"
                 ],
-                "targetHTML": "Quiero comer <span class='fw-token-connector'>algo</span>.",
-                "translation": "I want to eat something.",
+                "targetHTML": "<span class=\"fw-token-v\">Encontramos</span> <span class=\"fw-token-connector\">algo</span> mas de comida para los caballos.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "Quiero comer <span class='fw-token-connector'>algo</span>.",
-                        "translation": "I want to eat something.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Encontramos algo mas de comida para los caballos.",
+                        "targetHTML": "<span class=\"fw-token-v\">Encontramos</span> <span class=\"fw-token-connector\">algo</span> mas de comida para los caballos.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:algo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Indefinite object algo following verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Tiene <span class='fw-token-connector'>algo</span> importante que contarnos.",
-                        "translation": "Has something important to tell us.",
-                        "source": "Conversation"
+                        "sentence": "¿Ella intentó atraparlo y algo salió mal o qué?",
+                        "targetHTML": "¿Ella intentó atraparlo y <span class=\"fw-token-connector\">algo</span> <span class=\"fw-token-v\">salió</span> mal o qué?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:algo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject algo attached to verb."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "¿Ha pasado <span class='fw-token-connector'>algo</span> mientras estaba fuera?",
-                        "translation": "Did something happen while I was away?",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Sé <span class='fw-token-connector'>algo</span> sobre este tema histórico.",
-                        "translation": "I know something about this historical topic.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Te traje <span class='fw-token-connector'>algo</span> del viaje que te gustará.",
-                        "translation": "I brought you something from the trip you will like.",
-                        "source": "Literature"
+                        "sentence": "Ya se me ocurrirá algo.",
+                        "targetHTML": "Ya se me <span class=\"fw-token-v\">ocurrirá</span> <span class=\"fw-token-connector\">algo</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:algo:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Demonstrative/indefinite subject algo attached to verb."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "verb"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -20479,39 +22695,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "querer",
                     "importar"
                 ],
-                "targetHTML": "No fui <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>estaba cansado</span>.",
-                "translation": "I did not go because I was tired.",
+                "targetHTML": "<span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">Mariah no irá a ninguna parte, culpable o no</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "No fui <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>estaba cansado</span>.",
-                        "translation": "I did not go because I was tired.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Porque Mariah no irá a ninguna parte, culpable o no.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">Mariah no irá a ninguna parte, culpable o no</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Nos quedamos <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>empezó a llover</span>.",
-                        "translation": "We stayed because it started raining.",
-                        "source": "Conversation"
+                        "sentence": "Bueno, muy extraño. Porque he visto a humanos sentarse en cosas.",
+                        "targetHTML": "Bueno, muy extraño. <span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">he visto a humanos sentarse en cosas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Estudio español <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>me encanta viajar</span>.",
-                        "translation": "I study Spanish because I love traveling.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Sonrió <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>recibió buenas noticias</span>.",
-                        "translation": "Smiled because he received good news.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Te pregunto <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>me importa tu opinión</span>.",
-                        "translation": "I ask you because your opinion matters to me.",
-                        "source": "Literature"
+                        "sentence": "Quise estar en la unidad porque me enteré que tú estarías.",
+                        "targetHTML": "<span class=\"fw-token-v\">Quise estar</span> en la unidad <span class=\"fw-token-connector\">porque</span> <span class=\"fw-token-c\">me enteré que tú estarías</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -20526,39 +22763,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "querer",
                     "importar"
                 ],
-                "targetHTML": "No fui <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>estaba cansado</span>.",
-                "translation": "I did not go because I was tired.",
+                "targetHTML": "<span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">Mariah no irá a ninguna parte, culpable o no</span>.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "No fui <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>estaba cansado</span>.",
-                        "translation": "I did not go because I was tired.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Porque Mariah no irá a ninguna parte, culpable o no.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">Mariah no irá a ninguna parte, culpable o no</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Nos quedamos <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>empezó a llover</span>.",
-                        "translation": "We stayed because it started raining.",
-                        "source": "Conversation"
+                        "sentence": "Bueno, muy extraño. Porque he visto a humanos sentarse en cosas.",
+                        "targetHTML": "Bueno, muy extraño. <span class=\"fw-token-connector\">Porque</span> <span class=\"fw-token-c\">he visto a humanos sentarse en cosas</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "Estudio español <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>me encanta viajar</span>.",
-                        "translation": "I study Spanish because I love traveling.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "Sonrió <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>recibió buenas noticias</span>.",
-                        "translation": "Smiled because he received good news.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "Te pregunto <span class='fw-token-connector'>porque</span> <span class='fw-token-c'>me importa tu opinión</span>.",
-                        "translation": "I ask you because your opinion matters to me.",
-                        "source": "Literature"
+                        "sentence": "Quise estar en la unidad porque me enteré que tú estarías.",
+                        "targetHTML": "<span class=\"fw-token-v\">Quise estar</span> en la unidad <span class=\"fw-token-connector\">porque</span> <span class=\"fw-token-c\">me enteré que tú estarías</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:porque:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Causal conjunction porque."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "phrase"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     },
@@ -20579,39 +22837,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "poder",
                     "despertar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Cuando</span> <span class='fw-token-v'>llegué</span>, <span class='fw-token-c'>todos sonrieron</span>.",
-                "translation": "When I arrived, everyone smiled.",
+                "targetHTML": "Mi gente cree que <span class=\"fw-token-connector\">cuando</span> <span class=\"fw-token-c\">matas a alguien</span>, consigues su poder.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> <span class='fw-token-v'>llegué</span>, <span class='fw-token-c'>todos sonrieron</span>.",
-                        "translation": "When I arrived, everyone smiled.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Mi gente cree que cuando matas a alguien, consigues su poder.",
+                        "targetHTML": "Mi gente cree que <span class=\"fw-token-connector\">cuando</span> <span class=\"fw-token-c\">matas a alguien</span>, consigues su poder.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:cuando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction cuando."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> <span class='fw-token-v'>puedas</span>, pásate por mi oficina.",
-                        "translation": "When you can, drop by my office.",
-                        "source": "Conversation"
+                        "sentence": "Es fácil malinterpretar las cosas cuando se sacan de contexto.",
+                        "targetHTML": "Es fácil <span class=\"fw-token-v\">malinterpretar</span> las cosas <span class=\"fw-token-connector\">cuando</span> <span class=\"fw-token-c\">se sacan de contexto</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:cuando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction cuando."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> sale el sol, la plaza se llena de gente.",
-                        "translation": "When the sun rises, the square fills with people.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> era niño, vivía cerca del mar.",
-                        "translation": "When I was a boy, I lived near the sea.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> despertó, el tren ya había llegado.",
-                        "translation": "When he woke up, the train had already arrived.",
-                        "source": "Literature"
+                        "sentence": "¿Tal vez pueda pedirte un autógrafo cuando te vayas?",
+                        "targetHTML": "¿Tal vez <span class=\"fw-token-v\">pueda pedirte</span> un autógrafo <span class=\"fw-token-connector\">cuando</span> <span class=\"fw-token-c\">te vayas</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:cuando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction cuando."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ],
         "uses": [
@@ -20626,39 +22905,60 @@ export const SPANISH_GRAMMAR_WORDS = {
                     "poder",
                     "despertar"
                 ],
-                "targetHTML": "<span class='fw-token-connector'>Cuando</span> <span class='fw-token-v'>llegué</span>, <span class='fw-token-c'>todos sonrieron</span>.",
-                "translation": "When I arrived, everyone smiled.",
+                "targetHTML": "Mi gente cree que <span class=\"fw-token-connector\">cuando</span> <span class=\"fw-token-c\">matas a alguien</span>, consigues su poder.",
+                "translation": "",
                 "examples": [
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> <span class='fw-token-v'>llegué</span>, <span class='fw-token-c'>todos sonrieron</span>.",
-                        "translation": "When I arrived, everyone smiled.",
-                        "source": "Everyday dialogue"
+                        "sentence": "Mi gente cree que cuando matas a alguien, consigues su poder.",
+                        "targetHTML": "Mi gente cree que <span class=\"fw-token-connector\">cuando</span> <span class=\"fw-token-c\">matas a alguien</span>, consigues su poder.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:cuando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction cuando."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> <span class='fw-token-v'>puedas</span>, pásate por mi oficina.",
-                        "translation": "When you can, drop by my office.",
-                        "source": "Conversation"
+                        "sentence": "Es fácil malinterpretar las cosas cuando se sacan de contexto.",
+                        "targetHTML": "Es fácil <span class=\"fw-token-v\">malinterpretar</span> las cosas <span class=\"fw-token-connector\">cuando</span> <span class=\"fw-token-c\">se sacan de contexto</span>.",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:cuando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction cuando."
+                            }
+                        }
                     },
                     {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> sale el sol, la plaza se llena de gente.",
-                        "translation": "When the sun rises, the square fills with people.",
-                        "source": "Dialogue"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> era niño, vivía cerca del mar.",
-                        "translation": "When I was a boy, I lived near the sea.",
-                        "source": "Subtitles"
-                    },
-                    {
-                        "targetHTML": "<span class='fw-token-connector'>Cuando</span> despertó, el tren ya había llegado.",
-                        "translation": "When he woke up, the train had already arrived.",
-                        "source": "Literature"
+                        "sentence": "¿Tal vez pueda pedirte un autógrafo cuando te vayas?",
+                        "targetHTML": "¿Tal vez <span class=\"fw-token-v\">pueda pedirte</span> un autógrafo <span class=\"fw-token-connector\">cuando</span> <span class=\"fw-token-c\">te vayas</span>?",
+                        "translation": "",
+                        "source": "Contemporary dialogue",
+                        "metadata": {
+                            "source": null,
+                            "sentence_id": null,
+                            "automaticSyntax": {
+                                "patternId": "es:cuando:0",
+                                "matcherVersion": "syntax-assignment/v1.1",
+                                "reason": "Temporal conjunction cuando."
+                            }
+                        }
                     }
                 ],
                 "slotTypes": {
                     "v": "clause",
                     "c": "clause"
-                }
+                },
+                "source": "Contemporary dialogue"
             }
         ]
     }

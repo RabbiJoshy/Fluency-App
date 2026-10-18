@@ -5,8 +5,24 @@ Offsets always refer to the original surface, including shared-token MWT parses.
 """
 
 
+PT_CONTRACTIONS = {
+    'naquele': ('em', 'aquele', 'Masc', 'Sing', 0),
+    'nos': ('em', 'o', 'Masc', 'Plur', 1),
+    'no': ('em', 'o', 'Masc', 'Sing', 0),
+    'na': ('em', 'o', 'Fem', 'Sing', 0),
+    'num': ('em', 'um', 'Masc', 'Sing', 0),
+    'numa': ('em', 'um', 'Fem', 'Sing', 0),
+    'do': ('de', 'o', 'Masc', 'Sing', 0),
+    'da': ('de', 'o', 'Fem', 'Sing', 0),
+    'ao': ('a', 'o', 'Masc', 'Sing', 0),
+    'à': ('a', 'o', 'Fem', 'Sing', 0),
+    'pelo': ('por', 'o', 'Masc', 'Sing', 0),
+    'pela': ('por', 'o', 'Fem', 'Sing', 0),
+}
+
+
 def decide_pt(row, obs):
-    if row.get('language') != 'pt' or row.get('word') not in {'nos', 'naquele', 'se'}:
+    if row.get('language') != 'pt' or (row.get('word') not in {'nos', 'naquele', 'se'} and row.get('word') not in PT_CONTRACTIONS):
         return None
     if not obs:
         return None
@@ -84,25 +100,29 @@ def decide_pt(row, obs):
 
     # Both split em+determiner and merged ADP representations are accepted,
     # but the nominal dependency, agreement and surface order must agree.
-    if word in {'naquele', 'nos'}:
+    # Both split em/de/por/a+determiner and merged ADP representations are accepted,
+    # but the nominal dependency, agreement and surface order must agree.
+    if word in PT_CONTRACTIONS:
+        prep_base, det_base, expected_gender, expected_number, pat_idx = PT_CONTRACTIONS[word]
         cases = [n for n in focus if n['upos'] == 'ADP' and n['deprel'] == 'case'
-                 and n['lemma'].casefold() in {'em', word}]
+                 and n['lemma'].casefold() in {prep_base, word}]
         if cases:
             if len(cases) != 1:
                 return stop('Conflicting contraction case markers.')
             case = cases[0]
             noun = nodes.get(case['head'])
             evidence['head'] = noun
-            number = 'Number=Plur' if word == 'nos' else 'Number=Sing'
-            if not noun or noun['upos'] != 'NOUN' or bounds(noun)[0] < end:
+            if not noun or noun['upos'] not in ('NOUN', 'PROPN') or bounds(noun)[0] < end:
                 return stop('Contraction must attach to a following noun, never a finite verb.')
-            if 'Gender=Masc' not in (noun.get('feats') or '') or number not in (noun.get('feats') or ''):
-                return stop('Contraction lacks masculine noun agreement evidence.')
+            feats = noun.get('feats') or ''
+            if expected_gender and f'Gender={expected_gender}' not in feats:
+                return stop(f'Contraction lacks {expected_gender.lower()} noun agreement evidence.')
+            if expected_number and f'Number={expected_number}' not in feats:
+                return stop(f'Contraction lacks {expected_number.lower()} noun agreement evidence.')
             others = [n for n in focus if n['id'] != case['id']]
-            expected_lemma = 'aquele' if word == 'naquele' else 'o'
             if others and (len(others) != 1 or others[0]['upos'] != 'DET'
                            or others[0]['deprel'] != 'det' or others[0]['head'] != noun['id']
-                           or others[0]['lemma'].casefold() != expected_lemma):
+                           or others[0]['lemma'].casefold() != det_base):
                 return stop('Split contraction components disagree about their nominal head.')
             if not others and case['text'].casefold() != word:
                 return stop('Missing determiner component in the contraction parse.')
@@ -122,10 +142,10 @@ def decide_pt(row, obs):
             phrase = constituent(group)
             if not phrase or text[end:phrase[0]].strip():
                 return stop('Contraction is not adjacent to a safe nominal constituent.')
-            return emit(1 if word == 'nos' else 0, [('c', phrase)],
+            return emit(pat_idx, [('c', phrase)],
                         'Contraction components, nominal attachment and agreement agree.')
-        if word == 'naquele':
-            return stop('No em plus demonstrative contraction structure is established.')
+        if word in {'naquele', 'no', 'na', 'do', 'da', 'num', 'numa', 'pelo', 'pela', 'ao', 'à'}:
+            return stop(f'No {prep_base} plus determiner contraction structure is established.')
         if len(focus) != 1:
             return stop('Nos has no unique pronoun dependency.')
         pron = focus[0]
