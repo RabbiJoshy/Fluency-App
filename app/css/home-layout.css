@@ -16,8 +16,8 @@
     background: #000;
 }
 :root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden):not([style*="none"])) .container { background: transparent; }
-#setupPanel, #topBar { --home-text: 15px; }
-@media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 17px; } }
+#setupPanel, #topBar { --home-text: 16px; }
+@media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 18px; } }
 
 /* One centred column everywhere: no sidebar column for Practise. */
 @media (min-width: 1024px) {
@@ -51,7 +51,7 @@
 #setupPanel .home-section > .step-header > .step-number { display: none; }
 #setupPanel .home-section > .step-header > .step-title-trigger {
     margin: 0;
-    font-size: 17px;
+    font-size: 20px;
     justify-self: start;
 }
 
@@ -179,12 +179,11 @@
 }
 .home-level-stat { display: inline-flex; align-items: center; gap: 5px; }
 .home-level-stat i { width: 8px; height: 8px; border-radius: 50%; }
-.home-level-bar .is-new, .home-level-stat.is-new i { background: color-mix(in srgb, var(--text-muted) 28%, transparent); }
+.home-level-bar .is-new, .home-level-stat.is-new i { background: var(--set-new, #fff); }
 .home-level-bar .is-seen, .home-level-stat.is-seen i { background: var(--set-review, #896318); }
 .home-level-bar .is-known, .home-level-stat.is-known i { background: var(--set-known, #16734b); }
 .home-level-bar .is-estimated, .home-level-stat.is-estimated i { background: var(--set-estimated, #77669e); }
 .home-level-bar .is-skipped, .home-level-stat.is-skipped i { background: var(--set-skipped, #566477); }
-.home-level-stat.is-new i { box-shadow: inset 0 0 0 1px var(--border-light); }
 
 /* --- Footer: Smart Skip + the one button --------------------------------- */
 #setupPanel .home-section-footer {
@@ -291,11 +290,23 @@
     cursor: pointer;
 }
 .home-cta-length {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     padding: 0 14px;
     border-right: 1px solid color-mix(in srgb, currentColor 30%, transparent);
     font-size: var(--home-text);
 }
 .home-cta-main { flex: 1; padding: 0 16px; font-size: var(--home-text); }
+.home-cta-length::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    border: 1.7px solid currentColor;
+    border-radius: 50%;
+    background: linear-gradient(currentColor, currentColor) 50% 30% / 1.7px 40% no-repeat;
+    opacity: .85;
+}
 .home-cta-main:disabled { cursor: default; }
 .home-cta-length:hover, .home-cta-main:hover:not(:disabled) { background: color-mix(in srgb, #000 12%, transparent); }
 .home-footer-hint { margin: 0; color: var(--text-muted); font-size: var(--home-text); }
@@ -358,6 +369,9 @@
         background: var(--bg-primary);
         box-shadow: none;
     }
+    .home-cta { position: relative; }
+    .home-cta-length { position: relative; z-index: 1; }
+    .home-cta-main { position: absolute; inset: 0; padding: 0 16px; }
     /* Room so the last card never sits under the bar. */
     #setupPanel[data-home-open] { padding-bottom: calc(130px + env(safe-area-inset-bottom)); }
 }
