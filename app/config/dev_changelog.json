@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T02:30:00+01:00",
+      "date": "2026-10-19 02:30 BST",
+      "agent": "Claude",
+      "summary": "Desktop sidebar: a chip turns into its choices in place",
+      "detail": [
+        "Pressing Vocabulary, Music or Artist in the sidebar no longer keeps the chip and opens a menu repeating it underneath. The chip is replaced by the choices themselves, the current one ticked; clicking elsewhere or Escape brings the chip back.",
+        "The truncated one-line descriptions under Speech/Music and Artists/Spotify playlists are gone."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T02:05:00+01:00",
       "date": "2026-10-19 02:05 BST",
       "agent": "Claude",
@@ -348,18 +359,6 @@
       "detail": [
         "Card: 'see the table' and 'see sentences' are now icon buttons (table grid, speech bubble) on their own line under the regular/irregular pill.",
         "Close button: in the conjugation menu it returns to the Extra menu; inside a drill it returns to the conjugation menu (the round is saved, so Resume still works)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T15:15:00+01:00",
-      "date": "2026-10-18 15:15 BST",
-      "agent": "Antigravity",
-      "summary": "Verb drills: simpler Start box, answer hidden until you tap, and person → tense linked on the card",
-      "detail": [
-        "Setup: removed the verbs/tenses/persons line; the bar now shows progress (known / learning / missed) and the line under it is just 'N of M known · N due'.",
-        "Card: fixed the answer showing before you tap (a display rule was overriding the hidden attribute).",
-        "Card: person and tense now sit on one row (yo → Indicative · Present) with the verb underneath; removed the 'Subject' label; reflexive/participle moved next to the translation; type and pattern merged into one chip."
       ],
       "commit": "pending"
     }
