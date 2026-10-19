@@ -1,6 +1,7 @@
 // Naive live-playlist deck: tokenise lyrics in the browser, join them to the
 // speech inventory, and study those cards with unassigned song-line examples.
 import { clearRoute, parseRoute } from './routes.js?v=20261013music';
+import { releaseUrl } from './release-host.js?v=20260921rh';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -59,10 +60,11 @@ function idbRequest(request) {
 }
 
 async function loadSpeechSurfaces(language) {
-    const cfg = window._normalModeLangConfigs?.[language];
+    const cfg = window._normalModeLangConfigs?.[language] || window.config?.languages?.[language];
     if (!cfg) throw new Error(`No speech vocabulary is configured for ${language}.`);
-    const indexPath = cfg.indexPath || cfg.dataPath;
+    let indexPath = cfg.indexPath || cfg.dataPath;
     if (!indexPath) throw new Error(`No speech index for ${language}.`);
+    indexPath = releaseUrl(indexPath);
     const directory = indexPath.slice(0, indexPath.lastIndexOf('/') + 1);
     const words = new Set();
     try {
@@ -131,11 +133,11 @@ async function runTurboWorkerIntake(songs, onProgress = null) {
     });
 }
 
-async function buildPlaylistLiveDeck({ playlist, language, records, onProgress }) {
+async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, skipWsd = false }) {
     const isSpanish = (language === 'spanish' || language === 'es');
 
-    // For Spanish, run fast background TURBO worker pipeline
-    if (isSpanish && typeof Worker !== 'undefined') {
+    // For Spanish, run fast background TURBO worker pipeline unless skipWsd is requested
+    if (!skipWsd && isSpanish && typeof Worker !== 'undefined') {
         try {
             if (typeof onProgress === 'function') {
                 onProgress({ stage: 'turbo_start', message: 'Starting Turbo intake & WSD engine...' });

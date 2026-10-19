@@ -258,6 +258,7 @@ export function openMusicWorkspace(nextOptions = {}) {
         button.addEventListener('click', () => {
             playlistReturn = false;
             if (entry.isSeries) {
+                window.showAppLoading?.('Loading La Casa de Papel', 'Building study deck from dialogue…');
                 window.openSubtitleImport?.({ preselect: entry.slug });
             } else {
                 options.onSelectArtist?.(entry);
