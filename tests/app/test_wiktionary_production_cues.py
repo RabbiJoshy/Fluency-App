@@ -706,3 +706,83 @@ console.log(JSON.stringify(cases));
         for row in json.loads(result.stdout):
             self.assertEqual(row["actual"], row["expected"], row)
 
+    def test_inflect_3_modals_imperatives_and_plural_fallbacks(self) -> None:
+        """Modals get person, bare imperative prepositions drop, and nouns get (pl.)."""
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required to execute reverse-cues.js")
+        script = r"""
+import { englishProductionCue, selectReverseCueMeanings } from %s;
+
+const tables = {
+    poder: {
+        tenses: {
+            Presente: ['puedo', 'puedes', 'puede', 'podemos', 'podéis', 'pueden'],
+            Imperfecto: ['podía', 'podías', 'podía', 'podíamos', 'podíais', 'podían'],
+        },
+    },
+    deber: {
+        tenses: {
+            Presente: ['debo', 'debes', 'debe', 'debemos', 'debéis', 'deben'],
+        },
+    },
+    mirar: {
+        tenses: {
+            Imperativo: ['—', 'mira', 'mire', 'miremos', 'mirad', 'miren'],
+        },
+    },
+    escuchar: {
+        tenses: {
+            Imperativo: ['—', 'escucha', 'escuche', 'escuchemos', 'escuchad', 'escuchen'],
+        },
+    },
+    ponerse: {
+        tenses: {
+            Imperativo: ['—', 'ponte', 'póngase', 'pongámonos', 'poneos', 'pónganse'],
+        },
+    },
+};
+
+const plain = { conjugationData: tables };
+const cases = [
+    // Modals receive person cues
+    { actual: englishProductionCue({ targetWord: 'puedo' }, { pos: 'verb', headword: 'poder', translation: 'can' }, null, plain), expected: 'I can' },
+    { actual: englishProductionCue({ targetWord: 'puede' }, { pos: 'verb', headword: 'poder', translation: 'can' }, null, plain), expected: 'he/she can' },
+    { actual: englishProductionCue({ targetWord: 'podemos' }, { pos: 'verb', headword: 'poder', translation: 'can' }, null, plain), expected: 'we can' },
+    { actual: englishProductionCue({ targetWord: 'podía' }, { pos: 'verb', headword: 'poder', translation: 'can' }, null, plain), expected: 'I/he/she could' },
+    { actual: englishProductionCue({ targetWord: 'debe' }, { pos: 'verb', headword: 'deber', translation: 'should' }, null, plain), expected: 'he/she should' },
+
+    // Imperatives drop dangling prepositions (at, to, for) but keep true phrasals (on)
+    { actual: englishProductionCue({ targetWord: 'mirad' }, { pos: 'verb', headword: 'mirar', translation: 'to look at' }, null, plain), expected: 'look!' },
+    { actual: englishProductionCue({ targetWord: 'escuchad' }, { pos: 'verb', headword: 'escuchar', translation: 'to listen to' }, null, plain), expected: 'listen!' },
+    { actual: englishProductionCue({ targetWord: 'ponte' }, { pos: 'verb', headword: 'ponerse', translation: 'to put on' }, null, plain), expected: 'put on!' },
+
+    // Noun plural fallbacks
+    { actual: englishProductionCue({ targetWord: 'muertos', lemma: 'muerto', productionAnswer: 'muertos' }, { pos: 'noun', headword: 'muerto', translation: 'dead person' }, null), expected: 'dead person (pl.)' },
+    { actual: englishProductionCue({ targetWord: 'homens', lemma: 'homem', productionAnswer: 'homens' }, { pos: 'noun', headword: 'homem', translation: 'man' }, null), expected: 'men' },
+    { actual: englishProductionCue({ targetWord: 'corações', lemma: 'coração', productionAnswer: 'corações' }, { pos: 'noun', headword: 'coração', translation: 'heart' }, null), expected: 'hearts' },
+];
+
+// Usage notes are suppressed when valid meanings exist
+const cardMeanings = [
+    { pos: 'verb', translation: 'to have', headword: 'ter' },
+    { pos: 'verb', translation: 'See ter de, ter que.', headword: 'ter' },
+];
+const selected = selectReverseCueMeanings(cardMeanings, { card: { targetWord: 'tem' } });
+cases.push({
+    actual: selected.some(s => (s.translation || '').includes('See ter de')),
+    expected: false,
+});
+
+console.log(JSON.stringify(cases));
+""" % json.dumps(REVERSE_CUES.as_uri())
+        result = subprocess.run(
+            [node, "--input-type=module", "-e", script],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        for row in json.loads(result.stdout):
+            self.assertEqual(row["actual"], row["expected"], row)
+
+
