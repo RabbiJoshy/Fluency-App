@@ -20082,6 +20082,16 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
 
 /* The explainer itself: a rule, three steps, and why it is worth it. */
 .srs-info-body { padding: 4px 20px 20px; }
+.srs-info-status {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  color: var(--text-secondary);
+  font: 500 13px/1.5 var(--font-reading);
+}
+.srs-info-status strong { color: var(--text-primary); }
+.srs-info-status.is-off { background: color-mix(in srgb, #e7b668 14%, transparent); }
 .srs-info-lead { margin: 0 0 16px; color: var(--text-secondary); font: 500 13px/1.5 var(--font-reading); }
 .srs-info-steps { margin: 0 0 16px; padding: 0; list-style: none; counter-reset: srs-step; }
 .srs-info-steps li {

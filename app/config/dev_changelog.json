@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T15:20:00+01:00",
+      "date": "2026-10-19 15:20 BST",
+      "agent": "Claude",
+      "summary": "iCloud email warning is now a blocking dialog; Practise (i) opens the spaced-repetition explainer",
+      "detail": [
+        "Pressing Continue with an @icloud.com, @me.com or @mac.com address stops and shows a dialog that must be dismissed (Use another email); nothing is sent.",
+        "The (i) beside Practise on the home screen now opens the \"How Practise is scheduled\" sheet, which says whether spaced repetition is on or off. The old Practise info sheet is gone."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T14:40:00+01:00",
       "date": "2026-10-19 14:40 BST",
       "agent": "Claude",

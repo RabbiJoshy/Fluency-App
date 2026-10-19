@@ -1010,7 +1010,7 @@ class ProductShellTests(unittest.TestCase):
         # SETWISE-2: Practise runs for the chosen length, at the assumed practice pace.
         self.assertIn("window.SessionPlan?.sessionCardLimit?.('practice') || QUICK_REVIEW_LIMIT", ui)
         self.assertIn("Math.min(Number(summary?.total) || 0, cap)", ui)
-        self.assertIn('id="practiceTooltip"', html)
+        self.assertIn('data-practise-info', html)
         self.assertNotIn("startTier", practice)
         self.assertNotIn("startLevelReview", practice)
         self.assertIn("lastOutcome", progress)

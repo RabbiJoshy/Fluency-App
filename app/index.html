@@ -621,22 +621,11 @@
                  binds them; ui.js fills #reviewDeckBody. -->
             <div id="reviewDeckSection" class="setup-step review-deck-step home-section" hidden>
                 <button type="button" class="home-section-toggle" data-home-section="practise" aria-expanded="false">
-                    <svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg><strong class="home-section-name">Practise</strong><span class="home-section-info step-help-btn" data-tooltip="practiceTooltip" role="button" aria-label="About practice"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span><span class="home-section-toggle-meta" id="practiseSectionMeta"></span>
+                    <svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg><strong class="home-section-name">Practise</strong><span class="home-section-info" data-practise-info role="button" aria-label="How Practise is scheduled"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span><span class="home-section-toggle-meta" id="practiseSectionMeta"></span>
                     <span class="home-section-peek" id="practiseSectionPeek"></span>
                 </button>
-                <div id="practiceTooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="practiceHelpTitle"><div class="step-info-tooltip-inner">
-                        <div class="info-sheet-header">
-                            <h3 id="practiceHelpTitle">Practise</h3>
-                            <button type="button" class="info-sheet-close" aria-label="Close practice information">&#10005;</button>
-                        </div>
-                        <p class="info-sheet-lead">Words you missed or that are due for review collect here, from every level. Practise works through them in this order, for as long as you choose:</p>
-                        <div class="info-sheet-points">
-                            <div><span class="info-point-badge">1</span><p><strong>Mistakes:</strong> Words you recently missed or haven't mastered yet.</p></div>
-                            <div><span class="info-point-badge">2</span><p><strong>Due for review:</strong> Words recently correct, scheduled for spaced repetition.</p></div>
-                        </div>
-                    </div></div>
                 <div class="step-header step-header-with-help">
-                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice"><svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg>Practise <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-practise-info aria-haspopup="dialog" title="How Practise is scheduled"><svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg>Practise <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
 
                 </div>
                 <section id="reviewDeckBody" class="review-deck-section" aria-labelledby="reviewDeckTitle"></section>
@@ -2067,19 +2056,20 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <span class="product-modal-eyebrow">Practice</span>
-                    <h3 id="spacedRepetitionInfoTitle">How practice is scheduled</h3>
+                    <span class="product-modal-eyebrow">Practise</span>
+                    <h3 id="spacedRepetitionInfoTitle">How Practise is scheduled</h3>
                 </div>
                 <button class="modal-close" id="closeSpacedRepetitionInfoModal" aria-label="Close">✕</button>
             </div>
             <div class="srs-info-body">
-                <p class="srs-info-lead">You forget a new word within a day or two. You forget a word you have known for months far more slowly. Practice is scheduled to land just before you would have forgotten.</p>
+                <p class="srs-info-lead">You forget a new word within a day or two. You forget a word you have known for months far more slowly. Practise is scheduled to land just before you would have forgotten.</p>
+                <p class="srs-info-status" id="srsInfoStatus"></p>
                 <ol class="srs-info-steps">
                     <li><strong>Get a word right</strong><span>It waits longer before coming back — a day, then a few days, then a couple of weeks, and so on.</span></li>
                     <li><strong>Get it wrong</strong><span>It comes back soon, and the waits start growing again from there.</span></li>
                     <li><strong>Keep getting it right</strong><span>The gaps stretch to months. You stop spending time on words you already know.</span></li>
                 </ol>
-                <p class="srs-info-note">That is the whole idea: see each word about as often as you need to, and no more. Turning it off means nothing comes back on a schedule — only the words you actually got wrong stay in Practice.</p>
+                <p class="srs-info-note">That is the whole idea: see each word about as often as you need to, and no more.</p>
                 <button type="button" class="review-home-link" id="spacedRepetitionSettingsBtn">Change this in settings ›</button>
             </div>
         </div>
