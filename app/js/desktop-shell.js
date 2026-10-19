@@ -136,7 +136,8 @@ function initDesktopTrail(closePages) {
         const capabilities = window._normalModeLangConfigs?.[lang]?.capabilities
             || window.config?.languages?.[lang]?.capabilities || {};
         const speechAvailable = capabilities.speech !== false;
-        const musicAvailable = capabilities.lyrics !== false || speechAvailable;
+        const musicAvailable = (capabilities.lyrics !== false || speechAvailable)
+            && window.musicOpenFor?.(lang) !== false;
         const inMusic = mode === 'lyrics' || mode === 'live';
         menu.append(
             option(copy.speech.label, {

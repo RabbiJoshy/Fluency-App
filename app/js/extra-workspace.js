@@ -92,7 +92,8 @@ export function updateExtraUI() {
     const lyricsCard = document.getElementById('extraLyricsCard');
     const lyricsDesc = document.getElementById('extraLyricsDesc');
     if (lyricsCard) {
-        const lyricsSupported = window.config?.languages?.[langKey]?.capabilities?.lyrics !== false;
+        const lyricsSupported = window.config?.languages?.[langKey]?.capabilities?.lyrics !== false
+            && window.musicOpenFor?.(langKey) !== false;
         lyricsCard.hidden = !inMusic || !lyricsSupported;
         if (lyricsDesc) {
             lyricsDesc.textContent = 'Read and listen to the lyrics of any song line by line with synchronized translation and word lookups.';

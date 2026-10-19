@@ -1165,3 +1165,6 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     .home-cta-length { position: relative; z-index: 1; }
     .home-cta-main { position: absolute; inset: 0; flex: none; padding: 0 1vw; }
 }
+
+/* Music closed for this language (ui.js musicOpenFor): no Spotify footer. */
+#standardSourceCard .standard-source-spotify[hidden] { display: none !important; }

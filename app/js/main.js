@@ -1880,7 +1880,7 @@ function openLearningSourcePicker() {
     const languageConfig = window._normalModeLangConfigs?.[language] || config.languages?.[language] || {};
     const lyricsCatalog = languageConfig.capabilities?.lyrics !== false;
     const speechAvailable = languageConfig.capabilities?.speech !== false;
-    const lyricsAvailable = lyricsCatalog || speechAvailable;
+    const lyricsAvailable = (lyricsCatalog || speechAvailable) && window.musicOpenFor(language);
     const copy = window.learningModeCopy(language);
     const current = window.currentLearningMode?.() || null;
     const inSpeech = current === 'speech';

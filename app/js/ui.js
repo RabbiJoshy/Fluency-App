@@ -780,8 +780,17 @@ function renderLanguageTabs() {
 const MODE_ICON_SPEECH = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"></path></svg>';
 const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg>';
 
+// Music (artists, your songs, live playlists) is open in Spanish only for now.
+// The admin account (SafariMS) sees it in every language to test it. Every
+// entry point to Music asks this one question.
+function musicOpenFor(language) {
+    return language === 'spanish' || Boolean(window.isAuditAccount?.());
+}
+window.musicOpenFor = musicOpenFor;
+
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
+    const musicOpen = musicOpenFor(language);
     return {
         title: 'Choose what to learn from',
         intro: [
@@ -796,10 +805,12 @@ function learningModeCopy(language = selectedLanguage) {
         },
         lyrics: {
             label: 'Music',
-            description: lyricsCatalog
+            description: !musicOpen ? 'Coming soon'
+                : lyricsCatalog
                 ? 'Words and examples from songs, artists and your playlists.'
                 : 'Words and examples from your Spotify playlists.',
-            bestFor: lyricsCatalog
+            bestFor: !musicOpen ? []
+                : lyricsCatalog
                 ? ['Understanding your favourite songs', 'Studying your own playlists', 'Learning by listening']
                 : ['Studying your own playlists', 'Learning by listening'],
             iconHTML: MODE_ICON_MUSIC
@@ -906,7 +917,8 @@ function setupLanguageTabs() {
             const languageCapabilities = langConfig?.capabilities || {};
             const speechAvailable = languageCapabilities.speech !== false;
             const lyricsCatalog = languageCapabilities.lyrics !== false;
-            const lyricsAvailable = lyricsCatalog || speechAvailable;
+            const musicOpen = musicOpenFor(newLanguage);
+            const lyricsAvailable = (lyricsCatalog || speechAvailable) && musicOpen;
             if (speechSourceButton) {
                 speechSourceButton.disabled = !speechAvailable;
                 speechSourceButton.title = speechAvailable
@@ -926,7 +938,9 @@ function setupLanguageTabs() {
                     return item;
                 }));
             }
-            window.renderSpotifyStatus?.(document.getElementById('standardSourceSpotify'));
+            const spotifyFooter = document.getElementById('standardSourceSpotify');
+            if (spotifyFooter) spotifyFooter.hidden = !musicOpen;
+            if (musicOpen) window.renderSpotifyStatus?.(spotifyFooter);
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
                 sourceCardButton.title = lyricsCatalog
