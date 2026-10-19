@@ -3060,8 +3060,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             </div>`;
         let body;
         if (globalTotal > 0) {
-            body = `<div class="home-practise-total"><strong>${globalTotal.toLocaleString()}</strong>
-                    <span>${globalTotal === 1 ? 'word' : 'words'} waiting, from all levels</span></div>
+            const peekBar = [['is-mistake', mistakes], ['is-due', dueCount]].filter(([, n]) => n > 0)
+                .map(([kind, n]) => `<span class="${kind}" style="flex-grow:${n}"></span>`).join('');
+            body = `<div class="home-practise-total"><p><strong>${globalTotal.toLocaleString()}</strong> ${globalTotal === 1 ? 'word' : 'words'} waiting <span>· all levels</span></p>
+                    <div class="home-practise-bar" aria-hidden="true">${peekBar}</div></div>
                 <div class="home-practise-rows">
                     ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
                     ${dueCount > 0 ? row('due', 'Due for review', dueCount) : ''}

@@ -906,3 +906,39 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
         top: 1.6vh; left: 2vw; width: 28px; height: 28px;
     }
 }
+
+/* --- Round of refinements: smaller titles, icon on the title's line, white ? */
+#setupPanel .home-section > .step-header > .step-title-trigger { font-size: 18px; }
+#setupPanel .home-section-toggle .home-section-name { font-size: 18px; }
+#setupPanel .home-section-toggle { padding-top: 14px; padding-bottom: 13px; }
+/* The icon is as big as the title's text and centred on the title's line. */
+#setupPanel .home-section-toggle > .home-section-icon,
+#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+    top: 26px; left: 16px; width: 20px; height: 20px;
+}
+#setupPanel .home-section-toggle-caret { top: 25px; line-height: 22px; }
+#setupPanel .home-section-help { stroke: var(--text-primary); }
+@media (min-width: 1024px) {
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(22px, 1.9vw, 30px); }
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+        top: calc(1.6vh + 8px); left: 2vw; width: 28px; height: 28px;
+    }
+}
+
+/* Practise's headline is a sentence with the same split bar Learn has, not a
+   giant number. */
+.home-practise-total { align-items: stretch; gap: 8px; padding: 4px 0 12px; }
+.home-practise-total > p { margin: 0; text-align: center; color: var(--text-secondary); font-size: var(--home-text); }
+.home-practise-total > p strong { color: var(--text-primary); font-weight: 700; }
+.home-practise-total > p span { color: var(--text-muted); }
+.home-practise-bar { display: flex; gap: 2px; height: 6px; border-radius: 3px; overflow: hidden; }
+.home-practise-bar span { display: block; height: 100%; min-width: 3px; }
+.home-practise-bar .is-mistake { background: #e5484d; }
+.home-practise-bar .is-due { background: var(--accent-blue); }
+@media (min-width: 1024px) {
+    .home-practise-total strong { font-size: inherit; }
+    .home-practise-total > p { font-size: calc(var(--home-text) * 1.15); }
+    .home-practise-bar { height: clamp(8px, 1.2vh, 14px); border-radius: 7px; }
+}
+.home-practise-total > p strong { font-size: inherit; }
+.home-practise-total.is-empty { align-items: center; text-align: center; }

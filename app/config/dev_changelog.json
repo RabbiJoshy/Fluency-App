@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T22:50:00+01:00",
+      "date": "2026-10-19 22:50 BST",
+      "agent": "Claude",
+      "summary": "Home: smaller titles, icons level with them, white ? icons, calmer Practise headline",
+      "detail": [
+        "Learn/Practise titles are smaller (18px on phones; about 22-30px on desktop). The leaf and clock sit in the corner on the title's own line and are about the title's size.",
+        "The ? help icons are white instead of the accent colour.",
+        "Practise no longer opens with a giant number: it reads \"42 words waiting · all levels\" over a red/blue bar (mistakes / due), matching Learn's bar."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T22:10:00+01:00",
       "date": "2026-10-19 22:10 BST",
       "agent": "Claude",
