@@ -3079,7 +3079,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             <div class="home-section-footer">
                 ${globalTotal > 0 ? '<p class="home-footer-hint">Mistakes first, then due words</p>' : ''}
                 ${homeCta(lengthChip(globalTotal, 'practice'), 'id="quickReviewBtn"',
-                    globalTotal > 0 ? `Practise · ${practiseCount.toLocaleString()}` : 'Practise', globalTotal === 0)}
+                    globalTotal > 0 ? `Practise<span class="home-cta-count"> · ${practiseCount.toLocaleString()}</span>` : 'Practise', globalTotal === 0)}
             </div>`;
     }
 
@@ -3144,7 +3144,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         </div>`;
     const learnLabel = nextCount === 0
         ? 'No cards available'
-        : `Learn${levelNewCount > 0 ? ` · ${nextCount.toLocaleString()} new` : ''}`;
+        : `Learn${levelNewCount > 0 ? `<span class="home-cta-count"> · ${nextCount.toLocaleString()} new</span>` : ''}`;
     const learnSlot = document.getElementById('learnActionSlot');
     if (learnSlot) {
         learnSlot.innerHTML = homeCta(levelNewCount > 0 && nextCount > 0 ? lengthChip(levelNewCount, 'new') : '',

@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T16:40:00+01:00",
+      "date": "2026-10-19 16:40 BST",
+      "agent": "Claude",
+      "summary": "Learn and Practise buttons: bigger action word, quieter time limit and count",
+      "detail": [
+        "The action word on the Learn and Practise buttons is 20% larger and the buttons are taller.",
+        "The time limit chip and the card count (e.g. \"20 new\") are regular weight rather than bold."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T16:05:00+01:00",
       "date": "2026-10-19 16:05 BST",
       "agent": "Claude",

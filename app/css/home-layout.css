@@ -842,3 +842,12 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
 #step2Tooltip .info-point-badge.is-done { background: var(--set-known, #16734b); color: #fff; }
 #step2Tooltip .info-point-badge.is-estimated { background: var(--set-estimated, #77669e); color: #fff; }
 #step2Tooltip .info-point-badge.is-skip { background: var(--set-skipped, #566477); color: #fff; }
+
+/* The button is the main action: a larger action word, with the time limit and
+   card count quieter (regular weight) beside it. */
+.home-cta { min-height: 56px; }
+.home-cta-main { font-size: calc(var(--home-text) * 1.2); }
+.home-cta-count { font-weight: 500; font-size: var(--home-text); opacity: .9; }
+.home-cta-length { font-weight: 500; }
+@media (min-width: 768px) { .home-cta { min-height: 56px; } }
+@media (min-width: 1024px) { .home-cta { min-height: 62px; } }
