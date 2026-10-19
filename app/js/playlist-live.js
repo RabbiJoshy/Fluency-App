@@ -349,7 +349,7 @@ async function preparePlaylistLiveSession(language) {
         const deck = await idbRequest(db.transaction(DECK_STORE, 'readonly').objectStore(DECK_STORE).get(LIVE_DECK_ID));
         if (deck && (!language || deck.language === language)) {
             const isCasaDePapel = deck.playlistId === 'la-casa-de-papel' || String(deck.playlistName || '').toLowerCase().includes('casa de papel');
-            if (isCasaDePapel && deck.matchedCount < 400) {
+            if (isCasaDePapel && deck.matchedCount < 1000) {
                 const appRoot = new URL('../', import.meta.url);
                 try {
                     const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
@@ -371,7 +371,7 @@ async function preparePlaylistLiveSession(language) {
     const remote = await loadPlaylistLiveDeckFromServer(language);
     if (remote && (!language || remote.language === language) && remote.matchedCount) {
         const isCasaDePapel = remote.playlistId === 'la-casa-de-papel' || String(remote.playlistName || '').toLowerCase().includes('casa de papel');
-        if (isCasaDePapel && remote.matchedCount < 400) {
+        if (isCasaDePapel && remote.matchedCount < 1000) {
             const appRoot = new URL('../', import.meta.url);
             try {
                 const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
@@ -438,7 +438,7 @@ function applyPlaylistLiveVocabulary(items) {
         const entry = _liveDeck.surfaces[normalizeSurface(item.word)];
         if (!entry) continue;
         const lyricExamples = entry.lines.map(lyricExample);
-        const next = { ...item, sourceRank: item.sourceRank || item.rank, meanings: [...(item.meanings || [])], playlist_count: entry.count };
+        const next = { ...item, sourceRank: item.sourceRank || item.rank, meanings: [...(item.meanings || [])], playlist_count: entry.count, corpusCount: entry.count };
 
         // For Turbo engine decks with disambiguated senses
         if (isTurbo && entry.turboCard?.meanings) {

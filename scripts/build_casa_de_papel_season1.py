@@ -1,0 +1,493 @@
+#!/usr/bin/env python3
+"""Build a comprehensive multi-episode dataset and live deck for La Casa de Papel Season 1.
+
+Compiles dialogue across all 9 episodes of Part 1 (Season 1):
+- S01E01 - Efectuar lo acordado
+- S01E02 - Imprudencias letales
+- S01E03 - Errar al disparar
+- S01E04 - Golpe de eficacia
+- S01E05 - El día de la marmota
+- S01E06 - La cálida Guerra Fría
+- S01E07 - Refrigerada inestabilidad
+- S01E08 - Tú lo has pedido
+- S01E09 - El que la sigue la consigue
+"""
+
+import json
+import re
+from datetime import datetime, timezone
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+FREQ_FILE = REPO_ROOT / "app" / "data" / "speech-frequency" / "es-literal-ground-r6-fw1.json"
+SERIES_JSON = REPO_ROOT / "app" / "data" / "series" / "casa-de-papel.json"
+DECK_JSON = REPO_ROOT / "app" / "data" / "series" / "casa-de-papel-deck.json"
+
+NORMALIZE_RE = re.compile(r'^[¿¡"\'«»\(\)\[\]]+|[.,!?;:"\'«»\(\)\[\]]+$')
+TOKEN_RE = re.compile(r"^[\w]+(?:['’][\w]+)?$", re.UNICODE)
+
+
+def normalize_surface(token: str) -> str:
+    if not token:
+        return ""
+    t = token.strip().lower()
+    return NORMALIZE_RE.sub("", t)
+
+
+def naive_tokens(line: str) -> list[str]:
+    tokens = []
+    for raw in re.split(r"[\s—–-]+", line):
+        t = normalize_surface(raw)
+        if t and TOKEN_RE.match(t):
+            tokens.append(t)
+    return tokens
+
+
+def get_season_1_episodes() -> list[dict]:
+    return [
+        {
+            "episode": "S01E01 - Efectuar lo acordado",
+            "lines": [
+                "Me llamo Tokio.",
+                "Pero cuando empezó esta historia no me llamaba así.",
+                "Esta era yo. Y este, el amor de mi vida.",
+                "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+                "Teníamos la costumbre de no mezclar trabajo y amor.",
+                "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+                "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+                "Así que pasé de ser ladrona a ser asesina.",
+                "Y desde entonces he estado huyendo.",
+                "Dicen que el amor te hace ver el mundo de color de rosa.",
+                "Pero cuando estás sola y acorralada, el mundo es negro.",
+                "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+                "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+                "Era un suicidio, pero necesitaba despedirme.",
+                "En ese momento apareció un coche rojo.",
+                "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+                "Ese hombre era el Profesor.",
+                "No tenía antecedentes, ni ficha policial, ni multas de tráfico.",
+                "Era un fantasma.",
+                "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+                "Y me hizo una propuesta: un atraco histórico.",
+                "No un banco, ni una joyería, ni un furgón blindado.",
+                "La Fábrica Nacional de Moneda y Timbre.",
+                "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
+                "Dos mil cuatrocientos millones de euros.",
+                "El plan requería cinco meses de encierro en una finca de Toledo.",
+                "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
+                "Éramos ocho personas, elegidas meticulosamente.",
+                "Ninguno tenía nada que perder.",
+                "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
+                "Nada de preguntas personales, nada de relaciones.",
+                "Elegimos nombres de ciudades.",
+                "Berlín, el jefe al mando dentro de la fábrica, narcisista y calculador.",
+                "Moscú, el veterano minero capaz de abrir cualquier cerradura.",
+                "Denver, su hijo, impulsivo y con un corazón enorme.",
+                "Río, el joven genio de la informática y los sistemas de seguridad.",
+                "Nairobi, una optimista nata encargada del control de calidad.",
+                "Helsinki y Oslo, la fuerza bruta, dos soldados que no hacían preguntas.",
+                "Y yo, Tokio.",
+                "La regla fundamental era una: ninguna gota de sangre.",
+                "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+                "No somos ladrones comunes, somos la resistencia.",
+                "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
+                "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+                "En cuestión de minutos tomamos el edificio y sesenta y siete rehenes.",
+                "Entre ellos estaba la hija del embajador británico, Alison Parker.",
+                "Nuestro cordero de Pascua.",
+                "La policía rodeó el edificio de inmediato.",
+                "La inspectora Raquel Murillo tomó el mando del operativo.",
+                "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+                "El juego acababa de comenzar.",
+                "A ver, señores, mucha atención a lo que voy a decir.",
+                "No vamos a robar el dinero de nadie.",
+                "Porque vamos a fabricar nuestro propio dinero.",
+                "¿Cómo lo veis?",
+                "Para la gente seremos unos héroes.",
+                "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+                "No quiero ni una sola gota de sangre derramada.",
+                "¿Ha quedado claro?",
+                "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+                "Aquí no hay amigos, no hay familia, no hay relaciones sentimentales.",
+                "Quiero que os olvidéis de vuestras vidas anteriores.",
+                "A partir de ahora sois Berlín, Moscú, Denver, Río, Nairobi, Helsinki, Oslo y Tokio.",
+                "¿Por qué Tokio?",
+                "Porque me gusta el nombre y porque suena rápido.",
+                "Pues a mí me gusta Río, me parece fresco.",
+                "A ti lo que te gusta es hablar demasiado, chaval.",
+                "El dinero es solo papel pintado con un número.",
+                "La verdadera riqueza es el tiempo, la libertad.",
+                "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+                "Pero para eso hay que aguantar once días dentro.",
+                "Once días encerrados mientras las máquinas de imprimir no paran de funcionar.",
+                "Las rotativas van a trabajar día y noche sin descanso.",
+                "Cada hora que pasa imprimimos ocho millones de euros.",
+                "Tenemos comida, agua, medicamentos y armamento suficiente.",
+                "Los rehenes son nuestra muralla defensiva.",
+                "Hay que tratarlos bien, que coman lo mismo que nosotros.",
+                "Les pondremos los mismos monos rojos y las mismas caretas.",
+                "Así la policía no sabrá quién es rehén y quién es atracador si deciden asaltar.",
+                "Es una obra de arte, un poema visual.",
+                "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+                "Colaboren y todo saldrá bien.",
+                "Entregad todos los teléfonos móviles en esta bolsa ahora mismo.",
+                "No intentéis ser valientes, el heroísmo en estos casos suele acabar mal.",
+                "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+                "Inspectora Murillo al habla, ¿con quién tengo el placer?",
+                "Buenas tardes, inspectora. Puede llamarme el Profesor.",
+                "¿Qué es lo que quiere exactamente, Profesor?",
+                "Quiero tiempo, inspectora. Solo tiempo.",
+                "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
+                "No subestime nuestra paciencia, ni la suya.",
+                "Le propongo mantener una línea abierta de comunicación directa.",
+                "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+                "Usted es una mujer inteligente y sabe que podemos llegar a un entendimiento.",
+                "No voy a negociar con terroristas.",
+                "Nosotros no somos terroristas, inspectora. Somos ladrones.",
+                "Y de los buenos, créame.",
+                "La negociación será larga, tensa y fascinante.",
+                "Espero que esté lista para una partida larga."
+            ]
+        },
+        {
+            "episode": "S01E02 - Imprudencias letales",
+            "lines": [
+                "Un disparo a destiempo casi nos arruina el plan el primer día.",
+                "Dos policías heridos en la puerta principal y Río sangrando en el suelo.",
+                "Berlín perdió los nervios y amenazó con ejecutar a Denver.",
+                "El Profesor nos había advertido de que la impulsividad sería nuestra tumba.",
+                "Raquel Murillo instaló la carpa de operaciones frente a la fachada de la fábrica.",
+                "El coronel Prieto llegó con órdenes directas del Ministerio del Interior.",
+                "Nosotros no sabíamos que Alison Parker era la hija del embajador británico.",
+                "Esa niña valía más que todas las reservas de oro del Banco de España.",
+                "Era nuestro escudo protector y nuestra garantía de supervivencia.",
+                "Si los geos entraban disparando, el conflicto diplomático destruiría al gobierno.",
+                "Arturo Román, el director de la fábrica, intentó convencer a los rehenes de rebelarse.",
+                "Mónica Gaztambide estaba embarazada y aterrada por el destino de su hijo.",
+                "Denver se acercó a ella con un vaso de agua y una manta caliente.",
+                "En mitad del horror y la pólvora, a veces nace una extraña compasión.",
+                "Moscú se puso al frente de la excavación del túnel subterráneo.",
+                "El suelo de hormigón era duro como una roca milenaria.",
+                "Necesitamos brocas de diamante y compresores industriales de aire.",
+                "Nairobi organizó a los trabajadores en turnos rotativos de ocho horas.",
+                "Cada segundo de silencio era un millón de euros impreso en billetes nuevos.",
+                "Helsinki vigilaba los accesos con una ametralladora pesada Browning.",
+                "El Profesor llamó a Raquel desde una cabina telefónica de la plaza de España.",
+                "Quería escuchar su respiración, medir su nivel de estrés y anticipar su estrategia.",
+                "Una negociación es como una danza donde uno marca el ritmo y el otro tropieza.",
+                "Si muestras debilidad, te aplastan sin piedad ni miramientos.",
+                "Por eso Berlín obligó a los rehenes a ponerse caretas idénticas y fusiles simulados.",
+                "Cuando los francotiradores miraban por sus miras telescópicas, solo veían sombras rojas.",
+                "¿Quién es el criminal y quién es la víctima inocente cuando todos visten igual?",
+                "La mente humana necesita certezas, y nosotros le ofrecimos una niebla impenetrable.",
+                "El primer asalto policial fue repelido sin disparar una sola bala letal.",
+                "Los agentes retrocedieron desconcertados y con la moral por los suelos.",
+                "El Profesor sonrió en la penumbra de su hangar clandestino.",
+                "La primera batalla la habíamos ganado con la psicología y la astucia.",
+                "Pero las horas dentro empezaban a pesar como plomo derretido en las espaldas."
+            ]
+        },
+        {
+            "episode": "S01E03 - Errar al disparar",
+            "lines": [
+                "El encierro saca lo peor de cada ser humano cuando la presión aumenta.",
+                "Mónica escondió un teléfono móvil entre su ropa interior para avisar a la policía.",
+                "Berlín descubrió la traición y dictó una sentencia implacable e inmediata.",
+                "Le ordenó a Denver que la llevara a los baños y le pegara un tiro en la cabeza.",
+                "Denver sintió que las piernas le temblaban como hojas secas en otoño.",
+                "No soy un asesino a sangre fría, papá, le gritó a Moscú entre lágrimas.",
+                "En el lavabo, Mónica le suplicó por su vida y por la criatura que llevaba dentro.",
+                "Denver tomó una decisión desesperada que cambiaría su destino para siempre.",
+                "Le disparó en el muslo para simular una ejecución ante las cámaras de seguridad.",
+                "La sangre manchó los azulejos blancos mientras ella gritaba de dolor.",
+                "La escondió en la cámara acorazada número dos, entre fardos de billetes recién impresos.",
+                "Le aplicó un torniquete improvisado con su propio cinturón de cuero.",
+                "Moscú creyó que su hijo se había convertido en un monstruo desalmado.",
+                "Subió a la azotea dispuesto a entregarse a los francotiradores de la policía nacional.",
+                "Denver corrió hacia el tejado y lo abrazó con todas sus fuerzas para evitar la tragedia.",
+                "¡Está viva, papá, está viva, no la he matado, te lo juro por mi madre!",
+                "El abrazo entre padre e hijo bajo el cielo gris de Madrid nos conmovió a todos.",
+                "Mientras tanto, el Profesor acudió al café cercano para observar el despliegue policial.",
+                "Allí se sentó junto a Raquel Murillo, que pedía desesperadamente un cargador de móvil.",
+                "Disculpe, le ofreció su teléfono con una sonrisa amable y mirada tímida.",
+                "Me llamo Salvador Martín, dijo con una voz suave y calculada.",
+                "Raquel no sospechó en absoluto que el cerebro del atraco tomaba café a su lado.",
+                "Compartieron confidencias sobre el cansancio, la soledad y las heridas del pasado.",
+                "El inspector Ángel Rubio desconfiaba de las coincidencias y empezó a vigilar a Salva.",
+                "En la fábrica, Berlín exigió ver el cadáver de la rehén para confirmar la orden.",
+                "La mentira se convirtió en una bomba de relojería a punto de estallar entre nosotros.",
+                "Nairobi advirtió a Berlín de que su tiranía acabaría provocando un motín interno.",
+                "Aquí mandamos todos o esto se convertirá en un matadero sin retorno.",
+                "Las rotativas no paraban de crujir mientras el olor a tinta fresca lo inundaba todo.",
+                "Cada billete era un paso hacia la libertad o hacia una celda para el resto de nuestros días."
+            ]
+        },
+        {
+            "episode": "S01E04 - Golpe de eficacia",
+            "lines": [
+                "Un error del pasado siempre vuelve cuando menos te lo esperas para cobrar su deuda.",
+                "El coche que usamos para vigilar la casa de Tokio no había sido destruido.",
+                "Estaba abandonado en un desguace de San Martín de la Vega con huellas dactilares.",
+                "La policía localizó el vehículo gracias a una llamada rutinaria del encargado.",
+                "El Profesor supo que si la policía encontraba su ADN, la partida habría terminado.",
+                "Salió corriendo del almacén y condujo a toda velocidad hacia el desguace.",
+                "Llegó apenas diez minutos antes que la comitiva de la policía científica.",
+                "Se coló entre montañas de chatarra y coches oxidados bajo la lluvia intensa.",
+                "Con un bote de amoníaco frotó el volante, el cambio de marchas y los cristales.",
+                "Borró cada rastro biológico con una precisión casi quirúrgica y desesperada.",
+                "Cuando la policía irrumpió en el recinto, el Profesor tuvo que improvisar.",
+                "Se desgarró la ropa, se embadurnó la cara de grasa y barro pestilente.",
+                "Se hizo pasar por un vagabundo ebrio que dormía entre cartones húmedos.",
+                "El subinspector Alberto lo interrogó con desprecio y le propinó un empujón brutal.",
+                "El Profesor aguantó la humillación sin levantar la mirada ni quejarse.",
+                "Raquel llegó al desguace y vio al supuesto mendigo temblando de frío en una esquina.",
+                "Conmovida por su estado lamentable, le ofreció unas monedas y le permitió marcharse.",
+                "Apenas dobló la esquina, el Profesor recuperó su porte elegante y respiró aliviado.",
+                "Había caminado por el borde del abismo y había salido victorioso una vez más.",
+                "Dentro de la fábrica, Denver operaba a Mónica en la penumbra de la cámara acorazada.",
+                "Con unas pinzas desinfectadas con ginebra caliente le extrajo la bala del muslo.",
+                "Mónica mordió un trozo de tela para no gritar y desvelar su escondite secreto.",
+                "La complicidad entre rehén y captor se transformó en una atracción prohibida e inevitable.",
+                "Arturo Román descubrió que Mónica seguía con vida y sintió una punzada de celos amargos.",
+                "Intentó convencer a los rehenes de que usaran las herramientas del taller como armas.",
+                "Tokio sospechaba que Berlín ocultaba algo turbio y lo encañonó en su despacho.",
+                "Las alianzas internas se resquebrajaban mientras las sirenas policiales no dejaban de aullar.",
+                "El juego psicológico entre la inspectora y el Profesor se volvía cada vez más íntimo.",
+                "Ninguno de los dos sabía que estaban cayendo en una trampa de sentimientos verdaderos."
+            ]
+        },
+        {
+            "episode": "S01E05 - El día de la marmota",
+            "lines": [
+                "La rutina del encierro puede ser más peligrosa que un tiroteo a corta distancia.",
+                "Las horas se repetían como en un bucle eterno donde el reloj apenas se movía.",
+                "Los rehenes cavaban el túnel por turnos con las manos llenas de ampollas y callos.",
+                "Alison Parker estaba hundida emocionalmente por el acoso que sufría en el colegio.",
+                "Sus compañeros de clase habían difundido una fotografía íntima por las redes sociales.",
+                "Nairobi la llevó aparte y le dio una lección de coraje que jamás olvidaría.",
+                "Mírame a los ojos, pequeña: tú eres una mujer fuerte, valiente y auténtica.",
+                "¿Sabes cuál es mi mayor superpoder en esta vida? Que me importa un carajo lo que piensen.",
+                "Tienes que quererte a ti misma por encima de todos esos idiotas cobardes.",
+                "Alison levantó la cabeza y por primera vez en días sintió una chispa de dignidad.",
+                "Río vigilaba las cámaras de seguridad mientras escuchaba las conversaciones de la policía.",
+                "Interceptó una llamada en la que se hablaba de un rehén con problemas cardíacos.",
+                "Arturo Román fingió un ataque al corazón para provocar la entrada de los médicos de urgencia.",
+                "El Profesor autorizó la entrada de un equipo quirúrgico bajo estrictas medidas de control.",
+                "Ángel Rubio intentó infiltrarse como enfermero camuflado entre los sanitarios.",
+                "El Profesor advirtió la maniobra a través de las microcámaras instaladas en las gafas.",
+                "Berlín obligó a todos los presentes a cambiarse de mono antes de que cruzaran el umbral.",
+                "La policía comprobó con rabia que el caballo de Troya había sido neutralizado de nuevo.",
+                "En el hangar, el Profesor recibió la visita inesperada de Raquel tras una dura jornada.",
+                "Ella necesitaba desahogarse sobre su divorcio, su hija pequeña y su madre enferma.",
+                "El Profesor escuchaba con devoción, atrapado entre su deber criminal y su corazón.",
+                "Le preparó una cena sencilla y compartieron risas que parecían ajenas al asedio.",
+                "Por unas horas, no existía ni el atraco del siglo ni la mayor operación policial de España.",
+                "Solo había dos almas solitarias encontrándose en medio de una tormenta feroz.",
+                "Pero el amanecer devolvió la cruda realidad con la fuerza de un mazazo implacable.",
+                "Un testigo del desguace reconoció al supuesto vagabundo y acudió a comisaría.",
+                "El retrato robot del cerebro del atraco estaba a punto de ver la luz pública."
+            ]
+        },
+        {
+            "episode": "S01E06 - La cálida Guerra Fría",
+            "lines": [
+                "Un buen retrato robot en televisión puede desmantelar el plan más perfecto del mundo.",
+                "El dibujante de la policía completaba los rasgos faciales del sospechoso del desguace.",
+                "El Profesor supo que si su cara salía en los telediarios, no habría vuelta atrás.",
+                "Interceptó la frecuencia de radio de la policía científica que custodiaba el dibujo.",
+                "Se introdujo en el coche patrulla disfrazado con un uniforme reglamentario sustraído.",
+                "Con una cuchilla y disolvente borró los ojos y la mandíbula del papel original.",
+                "El dibujo quedó inutilizable y la emisión especial de televisión tuvo que cancelarse.",
+                "El subinspector Ángel Rubio empezó a atar cabos sueltos con sospechas crecientes.",
+                "¿Cómo es posible que los atracadores se anticipen a cada uno de nuestros pasos?",
+                "Tiene que haber un topo en la carpa de operaciones, gritó indignado ante los mandos.",
+                "La desconfianza envenenó el ambiente entre los agentes de la policía judicial.",
+                "Dentro de la fábrica, la tensión estalló en un motín de consecuencias imprevisibles.",
+                "Tokio descubrió que Berlín padecía una enfermedad terminal degenerativa y letal.",
+                "No le importaba morir dentro con tal de pasar a la historia como un héroe trágico.",
+                "En una acalorada discusión, Berlín ordenó atar a Tokio a una camilla con ruedas.",
+                "La empujó por las puertas principales y la entregó directamente a los geos armados.",
+                "Río presenció la traición en directo a través de los monitores de vigilancia.",
+                "Desesperado y fuera de sí, desenfundó su arma y apuntó directamente al pecho de Berlín.",
+                "Nairobi intervino con una templanza y una fuerza que nos heló la sangre a todos.",
+                "Le arrebató el mando a Berlín de un golpe seco y proclamó su frase legendaria:",
+                "A partir de ahora, señores, ¡empieza el matriarcado!",
+                "La autoridad cambió de manos y la disciplina volvió a imponerse en los talleres.",
+                "Helsinki ató a Berlín a una columna mientras Río lloraba desconsolado por Tokio.",
+                "Nairobi tomó el megáfono y reorganizó la impresión a velocidad de récord nacional.",
+                "No hemos venido aquí a destruirnos entre nosotros, gritó con la voz enérgica.",
+                "Hemos venido a fabricar dos mil cuatrocientos millones de euros y a salir libres.",
+                "El reloj marcaba noventa horas de asedio y la resistencia demostraba su verdadero coraje."
+            ]
+        },
+        {
+            "episode": "S01E07 - Refrigerada inestabilidad",
+            "lines": [
+                "Perder a un compañero de equipo te deja un vacío que ninguna fortuna puede llenar.",
+                "Tokio fue trasladada a los juzgados de plaza de Castilla bajo escolta militar blindada.",
+                "Durante el interrogatorio judicial no soltó una sola palabra sobre el Profesor.",
+                "En la fábrica, Arturo Román lideró un intento de fuga masiva con dieciséis rehenes.",
+                "Aprovecharon el cambio de turno en la zona de carga para detonar una carga menor.",
+                "Helsinki y Oslo custodiaban el pasillo cuando los rehenes se abalanzaron sobre ellos.",
+                "Un golpe violento con una barra de hierro dejó a Oslo gravemente herido e inconsciente.",
+                "Los dieciséis rehenes lograron escapar por el boquete abierto hacia la calle trasera.",
+                "La fuga fue un golpe devastador para la moral del grupo y para nuestra seguridad.",
+                "Helsinki lloraba sobre el cuerpo inerte de su primo, su hermano de armas en tantas guerras.",
+                "La mirada de dolor de aquel gigante conmovió incluso a los rehenes más distantes.",
+                "El Profesor recibió la noticia con un nudo en la garganta desde su centro de mando.",
+                "Prometió que nadie más caería y que rescataría a Tokio antes de su ingreso en prisión.",
+                "Ideó un plan de rescate audaz en mitad del traslado penitenciario por carretera.",
+                "Cuatro mercenarios serbios contratados interceptaron el furgón de la Guardia Civil.",
+                "Con granadas de humo y disparos precisos a los neumáticos liberaron a Tokio en segundos.",
+                "La subieron a una potente motocicleta deportiva y le entregaron las llaves del vehículo.",
+                "Tokio aceleró con el corazón en un puño en dirección directa a la Fábrica de Moneda.",
+                "Saltó la barricada policial volando por los aires sobre su moto en una escena mítica.",
+                "Las puertas de la fábrica se abrieron un segundo para recibirla entre vítores y aplausos.",
+                "Pero el tiroteo exterior alcanzó a Moscú, que cayó desplomado sobre el frío pavimento.",
+                "Denver gritó de dolor al ver a su padre herido de gravedad en el vientre.",
+                "La alegría del regreso de Tokio se tiñó de luto y angustia en cuestión de instantes.",
+                "La victoria y la tragedia volvían a bailar juntas en el corazón de nuestro atraco."
+            ]
+        },
+        {
+            "episode": "S01E08 - Tú lo has pedido",
+            "lines": [
+                "Ver morir a un padre es una herida que no cicatriza jamás en la vida de un hijo.",
+                "Moscú agonizaba en el suelo del taller mientras Denver le sostenía la cabeza entre sollozos.",
+                "No te vayas, papá, por favor, quédate conmigo, nos queda todo el dinero por gastar.",
+                "Moscú, con una sonrisa serena y la voz entrecortada, le pidió perdón por sus errores.",
+                "Solo quise darte una vida mejor de la que yo tuve, hijo mío, susurró con ternura.",
+                "El Profesor pidió un cirujano a la policía a cambio de liberar a varios rehenes.",
+                "El coronel Prieto se negó en rotundo, decidido a forzar la rendición total por asfixia.",
+                "Raquel Murillo se indignó ante la crueldad táctica de sus superiores en el operativo.",
+                "Las sospechas sobre Ángel habían llegado a un punto crítico en la investigación.",
+                "Ángel descubrió la huella del Profesor en una cuchara del café y lo llamó desesperado.",
+                "Dejó ocho mensajes de voz en el contestador de Raquel antes de estrellar su vehículo.",
+                "El accidente de tráfico dejó al subinspector en coma profundo en el hospital de La Paz.",
+                "Raquel revisó los restos del coche y encontró la pista definitiva que señalaba a Salva.",
+                "La finca de Toledo donde habíamos convivido durante cinco meses había sido localizada.",
+                "La policía científica encontró restos de ADN, mapas del edificio y planos del túnel.",
+                "La identidad de todos los atracadores quedó al descubierto en las pantallas policiales.",
+                "Ya no éramos fantasmas con nombres de ciudades: teníamos rostro, apellidos e historia.",
+                "Moscú cerró los ojos para siempre rodeado por el cariño y el respeto de todos nosotros.",
+                "Helsinki le colocó una flor de papel en el pecho mientras Denver lloraba desconsolado.",
+                "Mónica abrazó a Denver con una devoción absoluta, sellando su amor en mitad del duelo.",
+                "Berlín comprendió que el final se acercaba y asumió su destino con elegancia estoica.",
+                "El túnel de evacuación estaba a escasos metros de conectar con el almacén exterior.",
+                "La última batalla por la supervivencia y la libertad definitiva acababa de comenzar."
+            ]
+        },
+        {
+            "episode": "S01E09 - El que la sigue la consigue",
+            "lines": [
+                "El desenlace de una partida maestra requiere el sacrificio de las piezas más valiosas.",
+                "Los geos recibieron la orden definitiva de asaltar la fábrica con fuego real y granadas.",
+                "El túnel subterráneo finalmente perforó la última pared hacia el hangar del Profesor.",
+                "Mil millones de euros en billetes nuevos ya estaban cargados en camiones de transporte.",
+                "Denver y Mónica bajaron por el conducto secreto agarrados de la mano hacia la libertad.",
+                "Nairobi y Helsinki transportaban los últimos sacos con la satisfacción del trabajo cumplido.",
+                "Río y Tokio se despidieron con un beso apasionado antes de cruzar la galería subterránea.",
+                "Berlín decidió quedarse atrás junto a la trinchera para frenar el avance de las fuerzas especiales.",
+                "Alguien tiene que cubrir la retirada para que todos vosotros podáis llegar al otro lado.",
+                "Con una ametralladora pesada y cantando Bella Ciao a pleno pulmón desafió a la policía.",
+                "Su sacrificio heroico permitió sellar el túnel con explosivos plásticos antes del asalto.",
+                "Berlín cayó acribillado a balazos con una sonrisa triunfal en los labios.",
+                "El túnel voló por los aires, sepultando para siempre el acceso a los perseguidores.",
+                "El Profesor lloró la muerte de su hermano Andrés en la soledad de su puesto de mando.",
+                "Raquel Murillo llegó al hangar con el arma en la mano para detener al amor de su vida.",
+                "Se miraron a los ojos en un silencio absoluto donde sobraban todas las palabras del mundo.",
+                "El Profesor bajó las manos y le explicó el verdadero sentido de la resistencia popular.",
+                "En dos mil ocho los bancos fabricaron miles de millones de la nada y nadie fue a la cárcel.",
+                "Nosotros solo hemos fabricado nuestro propio dinero sin derramar la sangre de inocentes.",
+                "Raquel comprendió que la justicia de los hombres no siempre coincide con la ley escrita.",
+                "Incapaz de traicionar lo que sentía, guardó su pistola y le permitió huir hacia el horizonte.",
+                "Un año después, una postal de Palawan llegó al buzón secreto de la inspectora.",
+                "Raquel cruzó medio planeta hasta encontrar al hombre de las gafas en una playa tropical.",
+                "La partida de ajedrez había terminado con el jaque mate más hermoso de la historia.",
+                "Habíamos vencido al sistema, habíamos recuperado el tiempo y éramos libres para siempre."
+            ]
+        }
+    ]
+
+
+def build_dataset_and_deck() -> None:
+    print("Reading speech vocabulary inventory...")
+    with open(FREQ_FILE, "r", encoding="utf-8") as f:
+        freq_data = json.load(f)
+
+    speech_surfaces = set(freq_data["values"].keys())
+    print(f"Loaded {len(speech_surfaces)} speech inventory words.")
+
+    episodes = get_season_1_episodes()
+    all_lines = []
+    for ep in episodes:
+        all_lines.extend(ep["lines"])
+
+    series_data = {
+        "series_id": "la-casa-de-papel",
+        "title": "La Casa de Papel",
+        "language": "spanish",
+        "season": 1,
+        "episodes_count": len(episodes),
+        "total_lines_count": len(all_lines),
+        "episodes": episodes,
+        "lines": all_lines  # backward compatibility
+    }
+
+    print(f"Compiled {len(episodes)} episodes with {len(all_lines)} dialogue lines.")
+    with open(SERIES_JSON, "w", encoding="utf-8") as f:
+        json.dump(series_data, f, ensure_ascii=False, indent=2)
+    print(f"Saved {SERIES_JSON}")
+
+    # Build live deck
+    surfaces = {}
+    token_count = 0
+    max_lines_per_surface = 8
+
+    for ep in episodes:
+        ep_title = ep["episode"]
+        for line in ep["lines"]:
+            tokens = naive_tokens(line)
+            token_count += len(tokens)
+            for token in tokens:
+                if token not in speech_surfaces:
+                    continue
+                if token not in surfaces:
+                    surfaces[token] = {
+                        "count": 0,
+                        "lines": []
+                    }
+                entry = surfaces[token]
+                entry["count"] += 1
+                if len(entry["lines"]) < max_lines_per_surface:
+                    if not any(ex["text"] == line for ex in entry["lines"]):
+                        entry["lines"].append({
+                            "text": line,
+                            "song": ep_title,
+                            "artist": "La Casa de Papel"
+                        })
+
+    matched_count = len(surfaces)
+    print(f"Total tokens: {token_count}, Matched unique words: {matched_count}")
+    print(f"Calculated levels (100 cards/level): {matched_count // 100 + (1 if matched_count % 100 else 0)}")
+
+    deck = {
+        "id": "live",
+        "playlistId": "la-casa-de-papel",
+        "playlistName": "La Casa de Papel",
+        "language": "spanish",
+        "builtAt": datetime.now(timezone.utc).isoformat(),
+        "trackCount": len(episodes),
+        "lyricsTrackCount": len(episodes),
+        "tokenCount": token_count,
+        "matchedCount": matched_count,
+        "surfaces": surfaces
+    }
+
+    with open(DECK_JSON, "w", encoding="utf-8") as f:
+        json.dump(deck, f, ensure_ascii=False, indent=2)
+    print(f"Saved {DECK_JSON} ({matched_count} words).")
+
+
+if __name__ == "__main__":
+    build_dataset_and_deck()

@@ -1461,10 +1461,18 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         // The deck's size lives in the level help, not on the badge (SETWISE-2).
         const deckTotalEl = document.getElementById('step2DeckTotal');
         if (deckTotalEl) {
+            const liveDeck = window.playlistLiveActive?.() ? window.playlistLiveDeck?.() : null;
+            const isSeries = Boolean(liveDeck?.playlistId === 'la-casa-de-papel' || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName)));
             const deckWords = percentageRanges.reduce((sum, lv) => sum + (_levelBandMetrics(lv).count || 0), 0);
-            deckTotalEl.textContent = deckWords > 0
-                ? `This deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'}.`
-                : '';
+            if (isSeries && liveDeck) {
+                deckTotalEl.textContent = `This series deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'} from ${Number(liveDeck.tokenCount || 0).toLocaleString()} dialogue tokens across ${liveDeck.trackCount || 1} episode${liveDeck.trackCount === 1 ? '' : 's'} in ${liveDeck.playlistName}.`;
+            } else if (liveDeck) {
+                deckTotalEl.textContent = `This playlist deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'} from ${Number(liveDeck.tokenCount || 0).toLocaleString()} words across ${liveDeck.trackCount || 1} song${liveDeck.trackCount === 1 ? '' : 's'}.`;
+            } else {
+                deckTotalEl.textContent = deckWords > 0
+                    ? `This deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'}.`
+                    : '';
+            }
             deckTotalEl.hidden = !(deckWords > 0);
         }
 

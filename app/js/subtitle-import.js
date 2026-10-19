@@ -45,22 +45,32 @@ export async function buildSeriesLiveDeck({
     artist = 'La Casa de Papel',
     episode = 'S01E01 - Efectuar lo acordado',
     lines = [],
+    episodes = null,
     language = 'spanish',
     onProgress = null
 } = {}) {
-    if (!lines || !lines.length) {
-        throw new Error('No dialogue lines to build deck from.');
+    let records = [];
+    if (Array.isArray(episodes) && episodes.length) {
+        records = episodes.map(ep => ({
+            title: ep.title || ep.episode || 'Episode',
+            artist,
+            plainLyrics: Array.isArray(ep.lines) ? ep.lines.join('\n') : String(ep.plainLyrics || '')
+        }));
+    } else {
+        if (!lines || !lines.length) {
+            throw new Error('No dialogue lines to build deck from.');
+        }
+        records = [{
+            title: episode,
+            artist,
+            plainLyrics: lines.join('\n')
+        }];
     }
 
+    const totalLines = records.reduce((sum, r) => sum + r.plainLyrics.split('\n').filter(Boolean).length, 0);
     if (typeof onProgress === 'function') {
-        onProgress({ stage: 'intake', message: `Tokenising ${lines.length} dialogue lines…` });
+        onProgress({ stage: 'intake', message: `Tokenising ${totalLines} dialogue lines across ${records.length} episode${records.length === 1 ? '' : 's'}…` });
     }
-
-    const records = [{
-        title: episode,
-        artist,
-        plainLyrics: lines.join('\n')
-    }];
 
     const playlist = {
         id: 'la-casa-de-papel',
@@ -248,10 +258,11 @@ export async function loadCasaDePapelPreset(onProgress = null) {
         ];
 
     const deck = await buildSeriesLiveDeck({
-        title: 'La Casa de Papel',
+        title: dialogueData?.title || 'La Casa de Papel',
         artist: 'La Casa de Papel',
         episode: dialogueData?.episode || 'S01E01 - Efectuar lo acordado',
         lines,
+        episodes: dialogueData?.episodes || null,
         language: 'spanish',
         onProgress
     });

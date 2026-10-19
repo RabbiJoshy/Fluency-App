@@ -6945,9 +6945,16 @@ function renderCardWikipediaBadge(card) {
         // beneath it. The number is what a learner reads, so it gets the
         // size; the wording, units and the total-vocabulary denominator are
         // context and stay muted.
-        if (activeArtist && card.corpusCount) {
-            freqHtml = `<button type="button" class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-unit="song_lines" data-frequency-pooled="${card.corpusCountIsPooled ? '1' : '0'}" aria-label="Song line frequency information">`
-                + `<span class="card-stat-label">Song Lines</span><span class="card-stat-line"><strong class="card-stat-value">${Number(card.corpusCount).toLocaleString()}</strong></span></button>`;
+        const isLive = Boolean(window.playlistLiveActive?.());
+        const liveDeck = isLive ? window.playlistLiveDeck?.() : null;
+        const isSeries = Boolean(liveDeck?.playlistId === 'la-casa-de-papel' || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName)));
+        const countVal = card.corpusCount || card.playlist_count;
+
+        if ((activeArtist || isLive) && countVal) {
+            const labelText = isSeries ? 'Series Lines' : (isLive ? 'Playlist Lines' : 'Song Lines');
+            const unit = isSeries ? 'series_lines' : (isLive ? 'playlist_lines' : 'song_lines');
+            freqHtml = `<button type="button" class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-unit="${unit}" data-frequency-pooled="${card.corpusCountIsPooled ? '1' : '0'}" aria-label="${labelText} frequency information">`
+                + `<span class="card-stat-label">${labelText}</span><span class="card-stat-line"><strong class="card-stat-value">${Number(countVal).toLocaleString()}</strong></span></button>`;
         } else if (!activeArtist && Number(card.sourceFrequency) > 0) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
             const source = escapeCardText(card.sourceFrequencySource || 'Published frequency list');
@@ -10912,6 +10919,12 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
         tip.innerHTML = `Lines in your selected songs containing ${pooled ? 'one of the combined forms on this card' : 'this word'}. `
             + `${pooled ? 'Repeated copies of the same pooled example line count once. ' : ''}`
             + 'This is a word-level count, rather than the count for the selected meaning. Changing your songs can change this figure.';
+    } else if (button?.dataset.frequencyUnit === 'series_lines') {
+        tip.innerHTML = 'Lines in the series dialogue containing this word. '
+            + 'This is a word-level count of how often this word is spoken across the series episodes.';
+    } else if (button?.dataset.frequencyUnit === 'playlist_lines') {
+        tip.innerHTML = 'Lines in your playlist containing this word. '
+            + 'This is a word-level count of how often this word appears across your playlist tracks.';
     }
     tip.classList.toggle('freq-tooltip-wide', showList);
 
