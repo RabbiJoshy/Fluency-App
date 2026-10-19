@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T23:03:13+01:00",
+      "date": "2026-10-19 23:03 BST",
+      "agent": "Claude",
+      "summary": "Function-word rows: one-line patterns with plain English meanings; shorter examples",
+      "detail": [
+        "All 120 Spanish and Portuguese pattern rows rewritten: the pattern fits one line with short slot names (con + person), and under it the English meaning in grey (with) instead of a description (Who with).",
+        "Rows are larger: 18px pattern, 15px meaning.",
+        "Example sentences are capped at 70 characters (two lines on a phone); over-long ones were replaced from the speech and lyric pools.",
+        "Previous wording is kept on each row; the full before/after list is docs/audits/function-word-copy/rewrite_2026-10-19.tsv."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T22:37:45+01:00",
       "date": "2026-10-19 22:37 BST",
       "agent": "Claude",
@@ -333,17 +346,6 @@
       "detail": [
         "While words are waiting, Practise lists just Mistakes and Due for review; the \"Coming back …\" row (and the later-this-week rows added an hour earlier) are gone, as is \"back within …\" from the folded summary.",
         "When nothing is waiting, \"All caught up\" still says what comes back next and how many more this week."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T09:30:00+01:00",
-      "date": "2026-10-19 09:30 BST",
-      "agent": "Claude",
-      "summary": "Home: Learn opens first; Practise shows what is coming later",
-      "detail": [
-        "Phones and tablets: Learn is always the card open on arrival, with Practise folded under it. It used to open Practise first once 5 or more mistakes were waiting.",
-        "Practise now lists the whole outlook under the next batch: \"Later this week\" and \"After this week\", as well as \"Coming back …\"."
       ],
       "commit": "pending"
     }
