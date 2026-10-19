@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T20:59:05+01:00",
+      "date": "2026-10-19 20:59 BST",
+      "agent": "Claude",
+      "summary": "Card back: the bottom tool row is one tidy set of equal tiles",
+      "detail": [
+        "The tiles under the card back (Rare uses, Pin meaning, Synonyms, Conjugate, Dictionary) now share the row equally, with one icon size and line weight, and no separators.",
+        "Rare uses draws the same three-bar meter as the sense row, with one bar lit; its count is a small pill beside it.",
+        "Conjugate keeps its endings, restyled as -ar / -er / -ir.",
+        "Look up is now Dictionary, with a globe icon. Pin meaning(s) is now Pin meaning (tutorial updated to match)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T20:23:46+01:00",
       "date": "2026-10-19 20:23 BST",
       "agent": "Claude",
@@ -324,17 +337,6 @@
         "Learn has a white seedling and Practise a white history clock, by the names on both the open cards and the folded rows.",
         "On desktop the two names are larger (24–34px) with a little more room above, using the spare height.",
         "Choose your vocabulary: \"You can switch between Speech and Music any time\" is left-aligned with the title and intro."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T00:30:00+01:00",
-      "date": "2026-10-19 00:30 BST",
-      "agent": "Claude",
-      "summary": "Practise info: one title; clearer Due for review line",
-      "detail": [
-        "The Practise information sheet had a small \"Practice\" label above its \"Practise\" title; only the title is left.",
-        "Due for review now reads \"Words recently correct, scheduled for spaced repetition.\""
       ],
       "commit": "pending"
     }
