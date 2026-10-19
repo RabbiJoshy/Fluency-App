@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T21:52:36+01:00",
+      "date": "2026-10-19 21:52 BST",
+      "agent": "Claude",
+      "summary": "Function-word backs: calmer colours, normal-card font and sizes",
+      "detail": [
+        "The function word is white on a neutral highlight in the rows and the example, and the active row has a neutral outline, so que no longer changes colour between rows.",
+        "Slots that name a word type (noun, verb, adjective) are pills in the pattern row and coloured words in the example; others (\"destination\", \"more, less or better\") take no colour.",
+        "Same font as ordinary card backs (DM Sans; the rows had fallen back to Arial); 48px headword, 17px patterns, 20px example.",
+        "Credit rows centre the dots only beside a source icon; a text credit such as \"Source not verified\" keeps its full width."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T21:43:10+01:00",
       "date": "2026-10-19 21:43 BST",
       "agent": "Claude",
@@ -329,17 +342,6 @@
       "detail": [
         "The same two actions as Settings → Your words, under the counts they affect. Import shows only when signed in and opens the import screen; Export downloads the CSV and reports here.",
         "Side by side on wider screens, stacked rows on phones. Settings → Your words keeps them too."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T03:00:00+01:00",
-      "date": "2026-10-19 03:00 BST",
-      "agent": "Claude",
-      "summary": "Fix: Conjugations never loaded on the live site",
-      "detail": [
-        "The embedded verb drill loaded its scripts from the site root (/conjugation/…). Production lives under /Fluency-App/, so every script 404'd and the drill sat on \"0 cards\". Scripts now load from the app's own folder; staging was unaffected because it is served from the root.",
-        "The address the drill puts in the bar no longer has a double slash (/Fluency-App//conjugation), which also sent its data requests to the wrong place."
       ],
       "commit": "pending"
     }

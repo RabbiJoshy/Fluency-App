@@ -28,6 +28,10 @@ assert.ok(html.includes('rgb(74, 158, 255)'));
 assert.ok(html.includes('<b>tatoeba</b>'));
 const que=vm.runInContext("functionWordBlockHTML({word:'que'},'pt')",ctx);
 assert.ok(que.includes('color:rgb(0, 212, 170)">think / say / know / hope'));
+// Typed slots are pills in the pattern row; untyped ones ("more, less or better") take no colour.
+assert.ok(que.includes('class="fw-token-v fw-slot-pill" data-pos="verb"'));
+assert.ok(que.includes('<span class="fw-token-v is-untyped">more, less or better'));
+assert.ok(!que.includes('#8fb8d8') && !que.includes('#c3a6df'));
 const nodes={'.fw-sentence-target':{},'.fw-sentence-translation':{},'.fw-credit-start':{},'.fw-sentence-ticks-container':{}};
 ctx.document.querySelector=()=>({dataset:{word:'que',lang:'pt'},querySelectorAll:()=>[],querySelector:s=>nodes[s]});
 vm.runInContext('_activeExampleIndex=2;refreshFunctionWordCardBack()',ctx);

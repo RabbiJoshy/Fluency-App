@@ -5478,14 +5478,14 @@
             overflow: hidden;
         }
         /* Play controls keep their size; the ticks are what gives way. */
-        /* Source icon only (no song, no Spotify): the dots sit centred and
-           the icon keeps the left edge. Equal side insets keep them centred. */
-        .example-credit-row.has-centred-ticks {
+        /* Source icon only (no song, no Spotify, no text credit): the dots
+           sit centred and the icon keeps the left edge. Equal side insets keep them centred. */
+        .example-credit-row.has-centred-ticks:has(.example-source-chip--icon) {
             position: relative;
             justify-content: center;
             min-height: 34px;
         }
-        .example-credit-row.has-centred-ticks > .example-credit-start {
+        .example-credit-row.has-centred-ticks:has(.example-source-chip--icon) > .example-credit-start {
             position: absolute;
             left: 0;
             top: 50%;
@@ -5493,7 +5493,7 @@
             max-width: 48px;
             overflow: visible;
         }
-        .example-credit-row.has-centred-ticks > .example-credit-end {
+        .example-credit-row.has-centred-ticks:has(.example-source-chip--icon) > .example-credit-end {
             flex: 0 1 auto;
             max-width: calc(100% - 112px);
             justify-content: center;
@@ -26050,24 +26050,30 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-credit-start { overflow:visible; white-space:normal; min-width:0; max-width:75%; display:flex; align-items:center; }
 .fw-credit-start .example-source-chip { max-width:100%; }
 .fw-example-credit-row { min-height:42px; }
-/* As on ordinary cards: the source icon keeps the left edge, the dots centre. */
-.fw-example-credit-row { position:relative; justify-content:center; }
-.fw-example-credit-row > .fw-credit-start { position:absolute; left:0; top:50%; transform:translateY(-50%); max-width:48px; }
-.fw-example-credit-row > .fw-sentence-ticks-container { margin-left:0; max-width:calc(100% - 112px); }
+/* As on ordinary cards: a source icon keeps the left edge and the dots centre;
+   a text credit ("Source not verified") keeps the old left/right split. */
+.fw-example-credit-row:has(.example-source-chip--icon) { position:relative; justify-content:center; }
+.fw-example-credit-row:has(.example-source-chip--icon) > .fw-credit-start { position:absolute; left:0; top:50%; transform:translateY(-50%); max-width:48px; }
+.fw-example-credit-row:has(.example-source-chip--icon) > .fw-sentence-ticks-container { margin-left:0; max-width:calc(100% - 112px); }
 
-/* Function-word cards (2026-10-19): "del (de + el)" on one line, the parts
-   smaller and centred on the word. Each pattern is a row with its plain
-   meaning beneath; the active row is fully outlined in the word's colour
-   (contraction orange, otherwise its part of speech). The word itself is
-   tinted that colour in the pattern and the example; the heading stays white. */
+/* Function-word cards (2026-10-19): same type as ordinary card backs (DM
+   Sans; 48px headword) — the rows had been falling back to the browser's
+   button font. "del (de + el)": parts smaller and centred on the word. Each
+   pattern is a row with its plain meaning beneath; the active row has a
+   neutral outline. The function word is white on a neutral highlight in the
+   rows and the example. Only slots that name a word type take colour: a pill
+   in the row, coloured words in the example. */
+.fw-deterministic-card,
+.fw-relation-box { font-family: var(--font-reading); }
 .fw-header { margin-bottom: 12px; }
-.fw-heading { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; }
-.fw-heading-parts { font: 400 20px/1 var(--font-emphasis, "Space Grotesk"); letter-spacing: 0; color: var(--text-muted); }
+.fw-heading { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0;
+  font: 700 48px/1.1 var(--font-reading); letter-spacing: -0.5px; color: #fff; }
+.fw-heading-parts { font: 400 22px/1 var(--font-reading); letter-spacing: 0; color: var(--text-muted); }
 .fw-heading-parts[hidden] { display: none; }
-.fw-relations-list { gap: 6px; }
+.fw-relations-list { gap: 6px; margin-bottom: 12px; }
 .fw-relation-box {
   text-align: center;
-  padding: 8px 12px;
+  padding: 9px 12px;
   border: 1.5px solid transparent;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.04);
@@ -26075,21 +26081,34 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-relation-box:hover { background: rgba(255, 255, 255, 0.06); }
 .fw-relation-box.is-selected,
 .fw-relation-box[aria-pressed="true"] {
-  border-color: rgb(var(--sense-match-rgb));
-  background: rgba(var(--sense-match-rgb), 0.10);
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.07);
   box-shadow: none;
 }
-.fw-relation-formula { margin-bottom: 0; }
-.fw-relation-meaning { margin: 2px 0 0; font-size: 13.5px; line-height: 1.35; color: var(--text-secondary); }
-.fw-sentence-panel { background: rgba(255, 255, 255, 0.05); border: 0; border-radius: 12px; }
+.fw-relation-formula { margin: 0; font: 600 17px/1.6 var(--font-reading); letter-spacing: 0; color: var(--text-primary); }
+.fw-relation-meaning { margin: 1px 0 0; font: 400 14px/1.35 var(--font-reading); color: var(--text-secondary); }
+.fw-relation-formula .is-untyped { color: var(--text-secondary); font-weight: 400; }
+.fw-sentence-target .is-untyped { color: inherit; }
+.fw-slot-pill {
+  display: inline-block;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: rgba(var(--slot-rgb), 0.22);
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.6;
+  vertical-align: 1px;
+}
+.fw-sentence-panel { background: rgba(255, 255, 255, 0.05); border: 0; border-radius: 12px; padding: 14px 16px; }
+.fw-sentence-target { font: 400 20px/1.5 var(--font-reading); }
 .fw-token-connector, .fw-sentence-target .fw-token-connector,
 .fw-relation-formula .fw-token-connector {
-  color: rgb(var(--sense-match-rgb)) !important;
+  color: #fff !important;
   font-weight: 700;
   text-decoration: none;
-  background: rgba(var(--sense-match-rgb), 0.16);
+  background: rgba(255, 255, 255, 0.16);
   border-radius: 5px;
-  padding: 0 0.2em;
+  padding: 0 0.22em;
   box-shadow: none;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;

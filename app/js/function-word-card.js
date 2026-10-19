@@ -78153,7 +78153,11 @@ function fwAccentPos(relation) {
 function fwPartsHTML(parts) {
     return parts && parts.length === 2 ? `(${esc(parts[0])} + ${esc(parts[1])})` : '';
 }
-function fwSlotHTML(html, relation) {
+// Slots that name a word type (noun, verb, adjective…) take that type's
+// colour: as a pill in the pattern row, as coloured words in the example.
+// Anything else ("destination", "more, less or better", a clause) stays
+// uncoloured. The function word itself is styled white by CSS.
+function fwSlotHTML(html, relation, inPattern = false) {
     // A slot the pattern no longer names (e.g. the clause after "think + que")
     // stays plain text in the example rather than taking a colour.
     const formula = relation?.formulaHTML;
@@ -78162,15 +78166,12 @@ function fwSlotHTML(html, relation) {
         const type = relation?.slotTypes?.[side];
         const isPOS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det', 'conj', 'clitic', 'part'].includes(type);
         const rgb = isPOS ? fwPresentation.posRgb?.(type) : null;
-        const colour = rgb ? `rgb(${rgb})` : (side === 'v' ? '#8fb8d8' : '#c3a6df');
-        return `<span class="fw-token-${side}" data-pos="${type || ''}" style="color:${colour}">`;
+        if (!rgb) return `<span class="fw-token-${side} is-untyped">`;
+        const pill = inPattern ? ' fw-slot-pill' : '';
+        return `<span class="fw-token-${side}${pill}" data-pos="${type}" style="--slot-rgb: ${rgb}; color:rgb(${rgb})">`;
     });
     const pos = fwAccentPos(relation);
-    if (pos) {
-        const rgb = fwPresentation.posRgb?.(pos);
-        const connectorStyle = rgb ? ` style="--sense-match-rgb: ${rgb}; --fw-pos-rgb: ${rgb};"` : '';
-        out = out.replace(/<span class=['"]fw-token-connector['"]>/g, `<span class="fw-token-connector" data-pos="${esc(pos)}"${connectorStyle}>`);
-    }
+    if (pos) out = out.replace(/<span class=['"]fw-token-connector['"]>/g, `<span class="fw-token-connector" data-pos="${esc(pos)}">`);
     return out;
 }
 function fwCreditHTML(example) {
@@ -78682,12 +78683,11 @@ export function functionWordBlockHTML(card, lang) {
         // longer rule stays on the row as its tooltip and accessible description.
         const relationsHTML = relations.map((rel, i) => {
             const isSelected = i === _activeRelIndex;
-            const rgb = fwPresentation.posRgb?.(fwAccentPos(rel));
             const meaning = rel.tag || '';
             const rule = rel.rule || rel.description || '';
             return `
-                <button type="button" class="fw-relation-box${isSelected ? ' is-selected' : ''}" data-pos="${esc(rel.pos || '')}" aria-pressed="${isSelected}"${rgb ? ` style="--sense-match-rgb: ${rgb};"` : ''}${rule ? ` title="${esc(rule)}"` : ''} onclick="event.stopPropagation(); window.selectFunctionWordRelation(${i})">
-                    <div class="fw-relation-formula">${fwSlotHTML(rel.formulaHTML || esc(rel.formula || ''), rel)}</div>
+                <button type="button" class="fw-relation-box${isSelected ? ' is-selected' : ''}" data-pos="${esc(rel.pos || '')}" aria-pressed="${isSelected}"${rule ? ` title="${esc(rule)}"` : ''} onclick="event.stopPropagation(); window.selectFunctionWordRelation(${i})">
+                    <div class="fw-relation-formula">${fwSlotHTML(rel.formulaHTML || esc(rel.formula || ''), rel, true)}</div>
                     ${meaning ? `<p class="fw-relation-meaning">${esc(meaning)}</p>` : ''}
                 </button>`;
         }).join('');
