@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T20:02:31+01:00",
+      "date": "2026-10-19 20:02 BST",
+      "agent": "Claude",
+      "summary": "Desktop loading screen is bigger: larger picture, spinner and text",
+      "detail": [
+        "On desktop the \"Preparing your…\" loading screen now uses a larger crest/flag, a larger spinner, and bigger title and sub-text (phones unchanged)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T14:20:00+01:00",
       "date": "2026-10-20 14:20 BST",
       "agent": "Claude",
@@ -325,212 +335,6 @@
       "detail": [
         "Phones and tablets: the closed card is no longer a single line. Folded Learn shows its level and words, the level bar and its counts; folded Practise shows the total and a line of mistakes, due and coming back. Tapping it opens it, and the button at the bottom follows whichever card is open.",
         "Desktop: the level's example words moved from under the level number to the right-hand column, above the bar, which makes the Learn card shorter."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T23:50:00+01:00",
-      "date": "2026-10-18 23:50 BST",
-      "agent": "Claude",
-      "summary": "Function-word examples: only the parts the pattern names are coloured",
-      "detail": [
-        "Where a pattern was shortened (e.g. \"think + que\" no longer names the clause after it), that part of the example sentence is now plain text instead of keeping its colour.",
-        "Applies to 109 slots across the 115 Spanish and Portuguese patterns; the fix is in the generator template too, so re-syncing keeps it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T23:30:00+01:00",
-      "date": "2026-10-18 23:30 BST",
-      "agent": "Claude",
-      "summary": "Function-word cards: active pattern marked by a part-of-speech bar on its left edge",
-      "detail": [
-        "Replaces the full coloured outline and tint: the active pattern now has a neutral lift and a 3px bar in its part-of-speech colour on the left.",
-        "The function word itself stays white in the patterns and the example, over its part-of-speech underline, even where the pattern writes its colour inline."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T23:10:00+01:00",
-      "date": "2026-10-18 23:10 BST",
-      "agent": "Claude",
-      "summary": "Black palette on startup, sign-in and end of session; function-word cards match ordinary cards",
-      "detail": [
-        "The loading screen, Welcome back, sign-in and the end-of-session card now use the black page and near-black cards. The end-of-session card is no longer tinted with the accent.",
-        "The rail down the left of a part of speech's sense rows is slightly thinner (1.5px) when the active sense is elsewhere.",
-        "Function-word cards: the active pattern has the same part-of-speech outline as an active sense row. The word itself stays white with a part-of-speech underline, in the patterns and in the example."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T22:35:00+01:00",
-      "date": "2026-10-18 22:35 BST",
-      "agent": "Claude",
-      "summary": "Fix: on desktop the main menu stayed on top when starting a study session",
-      "detail": [
-        "The desktop home layout forced the setup panel to show with !important unless it had an inline display:none, which also beat the .hidden class the app adds when a session starts. The panel now steps aside for .hidden.",
-        "The same guard is on every other forced display rule in home-layout.css (Learn, Practise, the level body)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T22:15:00+01:00",
-      "date": "2026-10-18 22:15 BST",
-      "agent": "Claude",
-      "summary": "Choose your vocabulary: new opening line; Speech and Music headings line up",
-      "detail": [
-        "Opening line: 'This app teaches the most common words first. What’s common depends on where the words come from.'",
-        "On desktop the Speech and Music icons and titles sit at the same height: both cards start their content at the top and use the same padding (Music's button had 18px against Speech's 26px). Spotify stays as the Music card's footer."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T22:00:00+01:00",
-      "date": "2026-10-18 22:00 BST",
-      "agent": "Claude",
-      "summary": "Desktop home: Learn and Practise both open and only as tall as their content",
-      "detail": [
-        "With the sidebar showing, Learn and Practise are both open, Learn above Practise; the fold rows are hidden.",
-        "Cards no longer stretch to the window's height; vertical padding is fixed and smaller, and the big numbers top out at 60px. In a 1440x900 window Learn is ~290px and Practise ~320px, so both fit with room to spare.",
-        "Width is unchanged. Phones still show one card at a time."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T21:40:00+01:00",
-      "date": "2026-10-18 21:40 BST",
-      "agent": "Claude",
-      "summary": "Choose your vocabulary: two equal cards, one intro line, no 'or'",
-      "detail": [
-        "Speech and Music are two equal cards: icon, name, one sentence, Best for. Stacked on phones (icon, name and › on one row); side by side filling the width on desktop.",
-        "The three intro bullets are one line: 'Common words first. What’s common depends on where the words come from.'",
-        "Removed the 'or' divider and the 'Choose another language' button (the top bar and sidebar already switch language).",
-        "Shorter copy, also used by the pop-up picker and tutorial: 'Words and examples from films and TV.', Best for 'Everyday conversations', 'Your favourite artists', 'Learning by listening'.",
-        "Spotify is a flat footer on the Music card."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T21:10:00+01:00",
-      "date": "2026-10-18 21:10 BST",
-      "agent": "Claude",
-      "summary": "Top bar: language chip has no outline",
-      "detail": [
-        "On phones and narrow windows the flag and language name sit in the bar with no pill outline; it is still the same button."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T21:00:00+01:00",
-      "date": "2026-10-18 21:00 BST",
-      "agent": "Claude",
-      "summary": "Black palette on flashcards (dark theme)",
-      "detail": [
-        "The study screen uses the same black page and near-black card as Smart Skip and the home screen.",
-        "Panels that had blue-grey typed in now follow it: example sentences, phrase examples, and the function-word sentence panel and parts box. Pop-ups from the card (card info, word forms, frequency, sense detail, direction, lookup) use one lighter step.",
-        "Part-of-speech tints (e.g. the blue on noun meanings) are unchanged.",
-        "The palette now lives in css/black-palette.css, which lists the screens using it: home and flashcards so far (Smart Skip keeps its own trial copy). Light theme is untouched."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T20:40:00+01:00",
-      "date": "2026-10-18 20:40 BST",
-      "agent": "Claude",
-      "summary": "Home: bigger text, white New dot, clock back on the time button, centred Learn label",
-      "detail": [
-        "Shared text size up one step: 16px on phones, 18px from 1024px; section titles 20px.",
-        "New is white in the level bar and its legend again.",
-        "The clock icon is back on the 5 min button.",
-        "On phones, 'Learn · 20 new' / 'Practise · N' is centred on the whole bar rather than on the part right of the time."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T20:20:00+01:00",
-      "date": "2026-10-18 20:20 BST",
-      "agent": "Claude",
-      "summary": "Home: black page with near-black cards, one text size, flat bottom bar",
-      "detail": [
-        "Dark theme on the home screen uses the Smart Skip page's palette: a black page (#000), cards just lifted off it (#0d0e10), #24272b borders.",
-        "One text size for everything that isn't a heading or a headline number: 15px on phones, 17px from 1024px wide (as on Smart Skip). The tiny 12-14px labels are gone.",
-        "Phone bottom bar is flat: same black as the page with a line above it, no rounded box or shadow, and less padding underneath. On wider screens the card footer is no longer a separately shaded box either.",
-        "Smart Skip line ends in › instead of the word Details so it fits on one line at the larger size; the whole line still opens Smart Skip's page."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T20:02:00+01:00",
-      "date": "2026-10-18 20:02 BST",
-      "agent": "Claude",
-      "summary": "Phones: the start button is a bar across the bottom of the screen",
-      "detail": [
-        "Under 768px wide, the open card's footer (Smart Skip + 'Learn · N new', or 'Practise · N') is a full-width bar fixed to the bottom of the screen, whichever card is open.",
-        "The page leaves room underneath so the last card never sits behind the bar. Desktop is unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T19:48:00+01:00",
-      "date": "2026-10-18 19:48 BST",
-      "agent": "Claude",
-      "summary": "Home on desktop fills the window instead of a narrow 560px column",
-      "detail": [
-        "From 1024px wide: the column takes the full width beside the sidebar and the open card stretches to the bottom of the window, with its button at the bottom of the card.",
-        "Learn: level picker and example words on the left, the level's progress bar and counts on the right. Practise: the total on the left, Mistakes / Due / Coming back on the right.",
-        "Headline numbers, labels and the button scale with the window size rather than using fixed pixel sizes. Phones are unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T19:26:00+01:00",
-      "date": "2026-10-18 19:26 BST",
-      "agent": "Claude",
-      "summary": "Home screen: Learn and Practise fold into each other; one button each, plainer top bar",
-      "detail": [
-        "'Choose a level' is now 'Learn'. Learn and Practise are two cards and only one is open; the closed one is a single row (e.g. 'Practise · 12 waiting · 7 mistakes'). Tap it to swap.",
-        "Practise opens first when 5 or more mistakes are waiting, until you pick a card yourself this visit. Practise is language-wide: it lists Mistakes, Due for review and what comes back next, with 'Practise · N' at the bottom.",
-        "Level picker is ‹ Level N › with its word range (swipe on phones). The segmented scrubber and the 'Your progress' coverage bar are gone from this screen.",
-        "One bar for the chosen level: New, Seen, Known, Estimated, Skipped. 'Practice' in the level counts is now 'Seen', since Practise is no longer per level.",
-        "Smart Skip is one line above the button: 'Smart Skip · fewer cards · Details' with a switch; when on it shows how many fewer cards. The button reads 'Learn · 20 new'.",
-        "Desktop: one centred column, no empty right-hand column at 1280px and wider. Phones: the open card's footer stays at the bottom of the screen.",
-        "Top bar on phones and narrow windows: no filled, ringed rectangle; an outlined language chip and a thin line in the language's colours underneath.",
-        "Fix: after turning Smart Skip on, its invisible animation backdrop stayed over the page and blocked every tap."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T18:50:00+01:00",
-      "date": "2026-10-18 18:50 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip: app nav reaches the bottom with Bigger text on; More rules lines up with the rule cards",
-      "detail": [
-        "With Bigger text on, Smart Skip turns the page zoom off on desktop, but the left nav still divided its height by 1.15 and stopped 117px short of the bottom (783px of 900). The zoom variable is now reset with it.",
-        "The More rules row and its unfolded rules line up with the text and switches inside the rule cards above."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T18:30:00+01:00",
-      "date": "2026-10-18 18:30 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip desktop: no divider, wider sidebar, closer columns, larger text",
-      "detail": [
-        "Removed the vertical line between the rules sidebar and the word list, and brought the two columns closer together.",
-        "Wider sidebar (up to 480px) and larger text on desktop: 19px for everything, 28px title; 17px on narrower desktops under 1280px.",
-        "Category chips wrap on desktop instead of scrolling; the row arrow has its own space so it no longer overlaps Rank; rule names wrap instead of being cut short."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-18T18:05:00+01:00",
-      "date": "2026-10-18 18:05 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip: one text size, near-black surfaces (trial), and Compare with lists only usable languages",
-      "detail": [
-        "Every piece of text on the Smart Skip page is one size (17px on desktop, 15px on a phone); only the page title and sheet titles are larger. Weight and colour carry the hierarchy.",
-        "Trial, Smart Skip page only, dark theme: rule cards, the word list, chips and sheets use near-black surfaces (#0d0e10) instead of the slate blue-grey.",
-        "Compare with shows only known languages this deck has look-alike data for; a known language without data no longer appears as a chip that does nothing."
       ],
       "commit": "pending"
     }

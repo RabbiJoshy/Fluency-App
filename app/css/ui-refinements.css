@@ -1238,3 +1238,17 @@
 
 /* Smart Skip no longer switches the "Bigger text" zoom off, so the left nav keeps
    one size on every page. */
+
+/* Desktop loading screen: the phone-sized card was barely legible on a laptop.
+   Bigger crest, spinner and text; the deck-progress ring keeps its own size. */
+@media (min-width: 900px) {
+    .app-loading-card { width: min(100%, 440px); }
+    .app-loading-mark,
+    .app-loading-mark.is-free { width: 144px; height: 144px; margin-bottom: 28px; }
+    .app-loading-mark-text.is-flag { font-size: 120px; }
+    .app-loading-mark-text.is-flag .flag-img { width: 144px; height: 108px; }
+    .app-loading-visual[data-mode="spinner"] { width: 72px; height: 72px; margin-bottom: 28px; }
+    .app-loading-visual[data-mode="spinner"] .app-loading-spinner { width: 72px; height: 72px; border-width: 5px; }
+    .app-loading-card strong { font-size: 30px; }
+    .app-loading-card > span { margin-top: 10px; font-size: 18px; }
+}
