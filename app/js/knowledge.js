@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=369a5db9';
-import { sendOrQueue } from './sync-queue.js?v=369a5db9';
+import './state.js?v=74368f95';
+import { sendOrQueue } from './sync-queue.js?v=74368f95';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 

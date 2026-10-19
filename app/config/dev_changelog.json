@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T21:07:04+01:00",
+      "date": "2026-10-19 21:07 BST",
+      "agent": "Claude",
+      "summary": "Music is open in Spanish only; other languages show it as Coming soon",
+      "detail": [
+        "For every language except Spanish, Music (artists, your songs, live playlists) is greyed out with \"Coming soon\", in the home cards, the vocabulary switcher, the desktop menu and Extra's lyrics card. The Spotify footer is hidden there too.",
+        "The admin account (SafariMS) still sees Music in every language. Other accounts, Joshua and JP included, don't.",
+        "The admin-only SpanishDict tile on the card back is now labelled Admin."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T20:59:05+01:00",
       "date": "2026-10-19 20:59 BST",
       "agent": "Claude",
@@ -325,18 +337,6 @@
         "Title is now \"Choose what to learn from\". The intro says what happens: words are counted in films and TV or in songs and taught as flashcards, most common first; progress is shared between the two.",
         "Each card has its icon beside its name and three Best for points; the one-line description inside the cards is gone (the intro covers it), as is the footnote under them.",
         "Side by side (tablet and desktop), Speech has a footer, \"From real film and TV subtitles\" with a yellow film icon, to match Music's Spotify footer. Phones do not show it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T01:00:00+01:00",
-      "date": "2026-10-19 01:00 BST",
-      "agent": "Claude",
-      "summary": "Home: seedling and clock icons for Learn and Practise; larger titles on desktop",
-      "detail": [
-        "Learn has a white seedling and Practise a white history clock, by the names on both the open cards and the folded rows.",
-        "On desktop the two names are larger (24–34px) with a little more room above, using the spare height.",
-        "Choose your vocabulary: \"You can switch between Speech and Music any time\" is left-aligned with the title and intro."
       ],
       "commit": "pending"
     }

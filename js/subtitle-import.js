@@ -2,7 +2,7 @@
 // Parses .srt/.vtt/text, routes through the live no-WSD engine,
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
-import './state.js?v=369a5db9';
+import './state.js?v=74368f95';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
@@ -98,7 +98,12 @@ export async function loadCasaDePapelPreset(onProgress = null) {
     }
 
     // Fast path: load pre-solved series deck immediately
+    const appRoot = new URL('../', import.meta.url);
+    const resolvedDeckUrl = new URL('data/series/casa-de-papel-deck.json', appRoot).href;
+    const resolvedDialogueUrl = new URL('data/series/casa-de-papel.json', appRoot).href;
+
     const deckPaths = [
+        resolvedDeckUrl,
         'data/series/casa-de-papel-deck.json',
         './data/series/casa-de-papel-deck.json',
         'app/data/series/casa-de-papel-deck.json'
@@ -123,6 +128,7 @@ export async function loadCasaDePapelPreset(onProgress = null) {
 
     let dialogueData = null;
     const paths = [
+        resolvedDialogueUrl,
         'data/series/casa-de-papel.json',
         './data/series/casa-de-papel.json',
         'app/data/series/casa-de-papel.json'
