@@ -26025,27 +26025,45 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-credit-start .example-source-chip { max-width:100%; }
 .fw-example-credit-row { min-height:42px; }
 
-/* Function-word cards: the active pattern is marked by a part-of-speech bar
-   on its left edge, and the word itself keeps white text over a
-   part-of-speech underline in the patterns and the example. */
+/* Function-word cards (2026-10-19): "del (de + el)" on one line, the parts
+   smaller and centred on the word. Each pattern is a row with its plain
+   meaning beneath; the active row is fully outlined in the word's colour
+   (contraction orange, otherwise its part of speech). The word itself is
+   tinted that colour in the pattern and the example; the heading stays white. */
+.fw-header { margin-bottom: 12px; }
+.fw-heading { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; }
+.fw-heading-parts { font: 400 20px/1 var(--font-emphasis, "Space Grotesk"); letter-spacing: 0; color: var(--text-muted); }
+.fw-heading-parts[hidden] { display: none; }
+.fw-relations-list { gap: 6px; }
+.fw-relation-box {
+  text-align: center;
+  padding: 8px 12px;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+.fw-relation-box:hover { background: rgba(255, 255, 255, 0.06); }
 .fw-relation-box.is-selected,
 .fw-relation-box[aria-pressed="true"] {
-  border-color: transparent;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: inset 3px 0 0 rgb(var(--sense-match-rgb));
+  border-color: rgb(var(--sense-match-rgb));
+  background: rgba(var(--sense-match-rgb), 0.10);
+  box-shadow: none;
 }
-.fw-token-connector, .fw-sentence-target .fw-token-connector {
-  /* White even where the pattern's part of speech is written inline. */
-  color: #fff !important;
-  font-weight: 800;
+.fw-relation-formula { margin-bottom: 0; }
+.fw-relation-meaning { margin: 2px 0 0; font-size: 13.5px; line-height: 1.35; color: var(--text-secondary); }
+.fw-sentence-panel { background: rgba(255, 255, 255, 0.05); border: 0; border-radius: 12px; }
+.fw-token-connector, .fw-sentence-target .fw-token-connector,
+.fw-relation-formula .fw-token-connector {
+  color: rgb(var(--sense-match-rgb)) !important;
+  font-weight: 700;
   text-decoration: none;
-  border-radius: 3px;
-  padding: 0 0.14em;
-  box-shadow: inset 0 -3px 0 rgb(var(--sense-match-rgb));
+  background: rgba(var(--sense-match-rgb), 0.16);
+  border-radius: 5px;
+  padding: 0 0.2em;
+  box-shadow: none;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
-.fw-relation-formula .fw-token-connector { box-shadow: inset 0 -2px 0 rgb(var(--sense-match-rgb)); }
 
 /* Card-back tool row (2026-10-19): one icon size and stroke, tiles share the
    row equally at any count (2–5), no dividers. Rare uses draws the sense-row

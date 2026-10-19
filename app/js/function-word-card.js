@@ -78108,6 +78108,8 @@ function syntaxTrialEnabled() {
 for (const dict of [PORTUGUESE_GRAMMAR_WORDS, SPANISH_GRAMMAR_WORDS]) {
     for (const entry of Object.values(dict)) {
         if (!entry.uses) entry.uses = entry.relations;
+        // Every pattern of a contraction (del, naquele) takes contraction colour.
+        if (entry.parts) for (const rel of entry.relations || []) rel._contraction = true;
     }
 }
 
@@ -78141,6 +78143,16 @@ let fwPresentation = {};
 export function configureFunctionWordPresentation(options) {
     fwPresentation = options || {};
 }
+// The word's own colour in a pattern: contraction orange whenever the pattern
+// is a contraction (del, naquele, or nos as em + os), else its part of speech.
+function fwAccentPos(relation) {
+    if (!relation) return '';
+    if (relation.parts || relation._contraction) return 'contraction';
+    return relation.pos || '';
+}
+function fwPartsHTML(parts) {
+    return parts && parts.length === 2 ? `(${esc(parts[0])} + ${esc(parts[1])})` : '';
+}
 function fwSlotHTML(html, relation) {
     // A slot the pattern no longer names (e.g. the clause after "think + que")
     // stays plain text in the example rather than taking a colour.
@@ -78153,8 +78165,8 @@ function fwSlotHTML(html, relation) {
         const colour = rgb ? `rgb(${rgb})` : (side === 'v' ? '#8fb8d8' : '#c3a6df');
         return `<span class="fw-token-${side}" data-pos="${type || ''}" style="color:${colour}">`;
     });
-    if (relation?.pos) {
-        const pos = relation.pos;
+    const pos = fwAccentPos(relation);
+    if (pos) {
         const rgb = fwPresentation.posRgb?.(pos);
         const connectorStyle = rgb ? ` style="--sense-match-rgb: ${rgb}; --fw-pos-rgb: ${rgb};"` : '';
         out = out.replace(/<span class=['"]fw-token-connector['"]>/g, `<span class="fw-token-connector" data-pos="${esc(pos)}"${connectorStyle}>`);
@@ -78564,9 +78576,10 @@ function refreshFunctionWordCardBack() {
     const currentRel = relations[_activeRelIndex];
 
     // Update container POS and ambient glow
-    if (currentRel?.pos) {
-        if (container.dataset) container.dataset.pos = currentRel.pos;
-        const rgb = fwPresentation.posRgb?.(currentRel.pos);
+    const accentPos = fwAccentPos(currentRel);
+    if (accentPos) {
+        if (container.dataset) container.dataset.pos = accentPos;
+        const rgb = fwPresentation.posRgb?.(accentPos);
         if (rgb && container.style?.setProperty) container.style.setProperty('--sense-match-rgb', rgb);
     }
 
@@ -78577,15 +78590,13 @@ function refreshFunctionWordCardBack() {
         btn.classList.toggle('is-selected', isSelected);
     });
 
-    // Update contextual parts box (e.g. for hybrid nos)
-    const dynamicPartsBox = container.querySelector('.fw-dynamic-parts-box');
-    if (dynamicPartsBox) {
-        if (currentRel?.parts && currentRel.parts.length === 2) {
-            dynamicPartsBox.innerHTML = `<span class="fw-part-pill">${esc(currentRel.parts[0])}</span> <span class="fw-part-plus">+</span> <span class="fw-part-pill">${esc(currentRel.parts[1])}</span>`;
-            dynamicPartsBox.style.display = 'inline-flex';
-        } else {
-            dynamicPartsBox.style.display = 'none';
-        }
+    // Hybrid words (nos = em + os only in its contraction pattern) show their
+    // parts beside the heading while that pattern is active.
+    const dynamicParts = container.querySelector('.fw-heading-parts.is-dynamic');
+    if (dynamicParts) {
+        const text = fwPartsHTML(currentRel?.parts);
+        dynamicParts.innerHTML = text;
+        dynamicParts.hidden = !text;
     }
 
     // Get current example from deck-specific examples array
@@ -78661,34 +78672,23 @@ export function functionWordBlockHTML(card, lang) {
         if (_activeRelIndex >= relations.length) _activeRelIndex = 0;
         const currentRel = relations[_activeRelIndex];
 
-        // Permanent contraction formula box (e.g. naquele = em + aquele)
-        let partsBoxHTML = '';
-        if (fwData.parts && fwData.parts.length === 2) {
-            partsBoxHTML = `
-                <div class="fw-parts-box">
-                    <span class="fw-part-pill">${esc(fwData.parts[0])}</span>
-                    <span class="fw-part-plus">+</span>
-                    <span class="fw-part-pill">${esc(fwData.parts[1])}</span>
-                </div>`;
-        }
+        // Contraction parts sit beside the word on one line: "del (de + el)".
+        // Hybrid words (nos) show theirs only while the contraction pattern is active.
+        const partsHTML = fwData.parts
+            ? `<span class="fw-heading-parts">${fwPartsHTML(fwData.parts)}</span>`
+            : `<span class="fw-heading-parts is-dynamic"${fwPartsHTML(currentRel?.parts) ? '' : ' hidden'}>${fwPartsHTML(currentRel?.parts)}</span>`;
 
-        // Contextual formula box for hybrid words (e.g. nos = em + os when contraction relation is active)
-        let dynamicPartsHTML = '';
-        if (!fwData.parts) {
-            const hasParts = currentRel?.parts && currentRel.parts.length === 2;
-            dynamicPartsHTML = `
-                <div class="fw-parts-box fw-dynamic-parts-box" style="${hasParts ? 'display: inline-flex;' : 'display: none;'}">
-                    ${hasParts ? `<span class="fw-part-pill">${esc(currentRel.parts[0])}</span> <span class="fw-part-plus">+</span> <span class="fw-part-pill">${esc(currentRel.parts[1])}</span>` : ''}
-                </div>`;
-        }
-
-        // Relations tiles (no square brackets, color alone establishes constituents)
+        // One row per pattern: the formula, with its plain meaning beneath. The
+        // longer rule stays on the row as its tooltip and accessible description.
         const relationsHTML = relations.map((rel, i) => {
             const isSelected = i === _activeRelIndex;
+            const rgb = fwPresentation.posRgb?.(fwAccentPos(rel));
+            const meaning = rel.tag || '';
+            const rule = rel.rule || rel.description || '';
             return `
-                <button type="button" class="fw-relation-box${isSelected ? ' is-selected' : ''}" data-pos="${esc(rel.pos || '')}" aria-pressed="${isSelected}" onclick="event.stopPropagation(); window.selectFunctionWordRelation(${i})">
+                <button type="button" class="fw-relation-box${isSelected ? ' is-selected' : ''}" data-pos="${esc(rel.pos || '')}" aria-pressed="${isSelected}"${rgb ? ` style="--sense-match-rgb: ${rgb};"` : ''}${rule ? ` title="${esc(rule)}"` : ''} onclick="event.stopPropagation(); window.selectFunctionWordRelation(${i})">
                     <div class="fw-relation-formula">${fwSlotHTML(rel.formulaHTML || esc(rel.formula || ''), rel)}</div>
-                    <p class="fw-relation-rule">${esc(rel.rule || rel.description || '')}</p>
+                    ${meaning ? `<p class="fw-relation-meaning">${esc(meaning)}</p>` : ''}
                 </button>`;
         }).join('');
 
@@ -78716,12 +78716,9 @@ export function functionWordBlockHTML(card, lang) {
         const ticksHTML = renderFwTicks(examples.length, _activeExampleIndex);
 
         return `
-            <div class="fw-deterministic-card" data-word="${esc(wordKey)}" data-lang="${esc(lang || 'pt')}" data-pos="${esc(currentRel?.pos || '')}" data-deck="${esc(deckContext.channel)}" data-artist="${esc(deckContext.artist)}" style="--sense-match-rgb: ${fwPresentation.posRgb?.(currentRel?.pos || card?.pos || card?.meanings?.[0]?.pos) || 'var(--accent-primary-rgb)'};">
+            <div class="fw-deterministic-card" data-word="${esc(wordKey)}" data-lang="${esc(lang || 'pt')}" data-pos="${esc(fwAccentPos(currentRel))}" data-deck="${esc(deckContext.channel)}" data-artist="${esc(deckContext.artist)}" style="--sense-match-rgb: ${fwPresentation.posRgb?.(fwAccentPos(currentRel) || card?.pos || card?.meanings?.[0]?.pos) || 'var(--accent-primary-rgb)'};">
                 <div class="fw-header">
-                    <h2 class="fw-heading">${esc(wordKey)}</h2>
-                    ${partsBoxHTML}
-                    ${dynamicPartsHTML}
-                    <div class="fw-section-header">Function Word · Example Patterns</div>
+                    <h2 class="fw-heading"><span class="fw-heading-word">${esc(wordKey)}</span>${partsHTML}</h2>
                     ${fwData.syntaxTrial ? '<div class="fw-section-header">Reviewed example trial</div>' : ''}
                 </div>
                 <div class="fw-relations-list">

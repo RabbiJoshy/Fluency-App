@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T21:36:12+01:00",
+      "date": "2026-10-19 21:36 BST",
+      "agent": "Claude",
+      "summary": "Function-word card backs: simpler pattern rows, contraction on one line",
+      "detail": [
+        "Contractions read \"del (de + el)\" on one line, the parts smaller and centred on the word; the \"Function word · Example patterns\" label is gone.",
+        "Each pattern is one row: the pattern, with its plain meaning beneath (\"Of / from the\"). The active row is fully outlined in the word's colour.",
+        "The word is tinted the same colour in the pattern and the example sentence (contraction orange; otherwise its part of speech). The heading stays white."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T21:30:51+01:00",
       "date": "2026-10-19 21:30 BST",
       "agent": "Claude",
@@ -327,16 +339,6 @@
       "detail": [
         "Pressing Vocabulary, Music or Artist in the sidebar no longer keeps the chip and opens a menu repeating it underneath. The chip is replaced by the choices themselves, the current one ticked; clicking elsewhere or Escape brings the chip back.",
         "The truncated one-line descriptions under Speech/Music and Artists/Spotify playlists are gone."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T02:05:00+01:00",
-      "date": "2026-10-19 02:05 BST",
-      "agent": "Claude",
-      "summary": "Choose what to learn from: two Best for points per card on phones",
-      "detail": [
-        "Phones drop \"Following films and TV\" (the intro names films and TV) and \"Studying your own playlists\" (the Spotify footer covers it). Tablet and desktop keep all three."
       ],
       "commit": "pending"
     }

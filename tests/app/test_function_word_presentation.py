@@ -17,8 +17,13 @@ vm.runInContext(`
 configureFunctionWordPresentation({posRgb:p=>p==='verb'?'0, 212, 170':'74, 158, 255',provenanceHTML:e=>'<b>'+e.metadata.source.name+'</b>'});
 `,ctx);
 const html=vm.runInContext("functionWordBlockHTML({word:'naquele'},'pt')",ctx);
-assert.ok(html.indexOf('fw-heading')<html.indexOf('fw-parts-box'));
-assert.ok(html.indexOf('fw-parts-box')<html.indexOf('fw-section-header'));
+// Contraction parts share the heading line; no eyebrow above the patterns.
+assert.ok(html.includes('<span class="fw-heading-word">naquele</span><span class="fw-heading-parts">(em + aquele)</span>'));
+assert.ok(!html.includes('Example Patterns'));
+assert.ok(html.includes('class="fw-relation-meaning">In / on / at that<'));
+assert.ok(html.includes('data-pos="contraction"'));
+const nos=vm.runInContext("functionWordBlockHTML({word:'nos'},'pt')",ctx);
+assert.ok(nos.includes('<span class="fw-heading-parts is-dynamic" hidden></span>'));
 assert.ok(html.includes('rgb(74, 158, 255)'));
 assert.ok(html.includes('<b>tatoeba</b>'));
 const que=vm.runInContext("functionWordBlockHTML({word:'que'},'pt')",ctx);
