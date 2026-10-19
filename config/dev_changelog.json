@@ -2,6 +2,41 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T09:30:00+01:00",
+      "date": "2026-10-20 09:30 BST",
+      "agent": "Claude",
+      "summary": "Learn and Practise help sheets are full screen with larger text",
+      "detail": [
+        "Phones: both sheets fill the screen with the close button at the top right and reading-size text.",
+        "Desktop: both fill the workspace beside the sidebar, with a centred reading column and much larger text."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-19T22:50:00+01:00",
+      "date": "2026-10-19 22:50 BST",
+      "agent": "Claude",
+      "summary": "Home: smaller titles, icons level with them, white ? icons, calmer Practise headline",
+      "detail": [
+        "Learn/Practise titles are smaller (18px on phones; about 22-30px on desktop). The leaf and clock sit in the corner on the title's own line and are about the title's size.",
+        "The ? help icons are white instead of the accent colour.",
+        "Practise no longer opens with a giant number: it reads \"42 words waiting · all levels\" over a red/blue bar (mistakes / due), matching Learn's bar."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-19T22:10:00+01:00",
+      "date": "2026-10-19 22:10 BST",
+      "agent": "Claude",
+      "summary": "Home: lighter page behind black panels; centred titles on phones; icons in the top-left corner",
+      "detail": [
+        "Dark theme: the home page background is slightly lighter (#15171b) and the Learn/Practise panels are pure black, so the panels stand out.",
+        "Learn and Practise titles are centred on phones too; the folded row's numbers are centred under them.",
+        "The leaf and clock icons sit in each panel's top-left corner (desktop and phones); the fold arrow is in the top-right."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T17:35:00+01:00",
       "date": "2026-10-19 17:35 BST",
       "agent": "Claude",

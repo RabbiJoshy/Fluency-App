@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=415b3add';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=415b3add';
-import { readFastTrack } from './fast-track-preferences.js?v=415b3add';
-import './session-plan.js?v=415b3add';
+import './state.js?v=24a8e6de';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=24a8e6de';
+import { readFastTrack } from './fast-track-preferences.js?v=24a8e6de';
+import './session-plan.js?v=24a8e6de';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3060,8 +3060,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             </div>`;
         let body;
         if (globalTotal > 0) {
-            body = `<div class="home-practise-total"><strong>${globalTotal.toLocaleString()}</strong>
-                    <span>${globalTotal === 1 ? 'word' : 'words'} waiting, from all levels</span></div>
+            const peekBar = [['is-mistake', mistakes], ['is-due', dueCount]].filter(([, n]) => n > 0)
+                .map(([kind, n]) => `<span class="${kind}" style="flex-grow:${n}"></span>`).join('');
+            body = `<div class="home-practise-total"><p><strong>${globalTotal.toLocaleString()}</strong> ${globalTotal === 1 ? 'word' : 'words'} waiting <span>· all levels</span></p>
+                    <div class="home-practise-bar" aria-hidden="true">${peekBar}</div></div>
                 <div class="home-practise-rows">
                     ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
                     ${dueCount > 0 ? row('due', 'Due for review', dueCount) : ''}
@@ -3557,7 +3559,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=415b3add')
+        import('./spotify.js?v=24a8e6de')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

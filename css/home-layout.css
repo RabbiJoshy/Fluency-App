@@ -875,3 +875,180 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
     #setupPanel #step2 > .level-choosing,
     #setupPanel #reviewDeckSection > #reviewDeckBody { padding-top: 1.6vh; }
 }
+
+/* Home, dark theme: the page is a touch lighter than the black Learn and
+   Practise panels, so the panels stand out. */
+:root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden):not([style*="none"])) {
+    --bg-primary: #15171b;
+    background: #15171b;
+}
+:root:not([data-theme="light"]) #setupPanel .home-section { background: #000; border-color: #2a2d33; }
+
+/* Titles are centred on every screen; the section icon sits in the card's top
+   left and the fold arrow in its top right. */
+#setupPanel .home-section { position: relative; }
+#setupPanel .home-section-toggle { justify-content: center; text-align: center; }
+#setupPanel .home-section > .step-header { justify-content: center; }
+#setupPanel .home-section-toggle > .home-section-icon,
+#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    margin: 0;
+}
+#setupPanel .home-section-toggle-caret { position: absolute; top: 14px; right: 16px; margin: 0; line-height: 28px; }
+#setupPanel .home-section-toggle-meta { text-align: center; }
+#setupPanel .home-section-peek .home-level-stats,
+#setupPanel #practiseSectionPeek { justify-content: center; }
+@media (min-width: 1024px) {
+    #setupPanel .home-section-toggle > .home-section-icon,
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+        top: 1.6vh; left: 2vw; width: 28px; height: 28px;
+    }
+}
+
+/* --- Round of refinements: smaller titles, icon on the title's line, white ? */
+#setupPanel .home-section > .step-header > .step-title-trigger { font-size: 18px; }
+#setupPanel .home-section-toggle .home-section-name { font-size: 18px; }
+#setupPanel .home-section-toggle { padding-top: 14px; padding-bottom: 13px; }
+/* The icon is as big as the title's text and centred on the title's line. */
+#setupPanel .home-section-toggle > .home-section-icon,
+#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+    top: 26px; left: 16px; width: 20px; height: 20px;
+}
+#setupPanel .home-section-toggle-caret { top: 25px; line-height: 22px; }
+#setupPanel .home-section-help { stroke: var(--text-primary); }
+@media (min-width: 1024px) {
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(22px, 1.9vw, 30px); }
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+        top: calc(1.6vh + 8px); left: 2vw; width: 28px; height: 28px;
+    }
+}
+
+/* Practise's headline is a sentence with the same split bar Learn has, not a
+   giant number. */
+.home-practise-total { align-items: stretch; gap: 8px; padding: 4px 0 12px; }
+.home-practise-total > p { margin: 0; text-align: center; color: var(--text-secondary); font-size: var(--home-text); }
+.home-practise-total > p strong { color: var(--text-primary); font-weight: 700; }
+.home-practise-total > p span { color: var(--text-muted); }
+.home-practise-bar { display: flex; gap: 2px; height: 6px; border-radius: 3px; overflow: hidden; }
+.home-practise-bar span { display: block; height: 100%; min-width: 3px; }
+.home-practise-bar .is-mistake { background: #e5484d; }
+.home-practise-bar .is-due { background: var(--accent-blue); }
+@media (min-width: 1024px) {
+    .home-practise-total strong { font-size: inherit; }
+    .home-practise-total > p { font-size: calc(var(--home-text) * 1.15); }
+    .home-practise-bar { height: clamp(8px, 1.2vh, 14px); border-radius: 7px; }
+}
+.home-practise-total > p strong { font-size: inherit; }
+.home-practise-total.is-empty { align-items: center; text-align: center; }
+
+/* ===== Learn and Practise help sheets: full screen =========================
+   Phones: the whole screen, close button top right. Desktop: the whole
+   workspace beside the sidebar. Text is sized for reading, not for a pop-up. */
+#step2Tooltip.visible,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:not(.hidden) {
+    position: fixed !important;
+    inset: 0 !important;
+    width: calc(100vw / var(--ui-zoom, 1)) !important;
+    height: calc(100dvh / var(--ui-zoom, 1)) !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    background: var(--bg-primary) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+#step2Tooltip .step-info-tooltip-inner,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal > .modal-content {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: max(18px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom)) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    overflow-y: auto;
+    animation: none !important;
+}
+/* One reading column; the header spans the screen so the close sits at the corner. */
+#step2Tooltip .step-info-tooltip-inner > :not(.info-sheet-header),
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-body {
+    width: min(100%, 720px) !important;
+    margin-inline: auto !important;
+    box-sizing: border-box;
+}
+#step2Tooltip .info-sheet-header,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 56px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+}
+#step2Tooltip .info-sheet-header h3,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header h3 { margin: 0; font-size: 21px; line-height: 1.2; text-align: center; }
+#step2Tooltip .info-sheet-close,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-close {
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    width: 44px;
+    height: 44px;
+}
+/* Reading sizes (phones). */
+#step2Tooltip .info-sheet-lead { font-size: 17px; line-height: 1.55; }
+#step2Tooltip .level-help-note { font-size: 17px; }
+#step2Tooltip .level-help-subhead { font-size: 13px; margin-top: 8px; }
+#step2Tooltip .info-sheet-points p { font-size: 16.5px; line-height: 1.5; }
+#step2Tooltip .info-point-badge { height: 28px; min-width: 96px; font-size: 14px; }
+#step2Tooltip .level-estimate-modal-body strong { font-size: 17px; }
+#step2Tooltip .level-estimate-modal-btn { font-size: 16px; padding: 12px 16px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-lead { font-size: 17px; line-height: 1.55; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-status { font-size: 16.5px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps strong { font-size: 18px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps span { font-size: 16.5px; line-height: 1.5; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li { grid-template-columns: 32px 1fr; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li::before { width: 32px; height: 32px; font-size: 14px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-note { font-size: 16px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .review-home-link { font-size: 16px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .product-modal-eyebrow { display: none; }
+
+/* Desktop: the workspace beside the sidebar, larger type. */
+body.desktop-workspace #step2Tooltip.visible,
+body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:not(.hidden) {
+    left: var(--desktop-nav-width) !important;
+    width: calc((100vw / var(--ui-zoom, 1)) - var(--desktop-nav-width)) !important;
+}
+@media (min-width: 1024px) {
+    #step2Tooltip .step-info-tooltip-inner,
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal > .modal-content { padding: 28px 32px 48px !important; }
+    #step2Tooltip .step-info-tooltip-inner > :not(.info-sheet-header),
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-body { width: min(100%, 860px) !important; }
+    #step2Tooltip .info-sheet-header h3,
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header h3 { font-size: 34px; }
+    #step2Tooltip .info-sheet-lead,
+    #step2Tooltip .level-help-note { font-size: 22px; }
+    #step2Tooltip .level-help-subhead { font-size: 15px; }
+    #step2Tooltip .info-sheet-points > div { padding: 14px 0; gap: 16px; align-items: center; }
+    #step2Tooltip .info-sheet-points p { font-size: 20px; }
+    #step2Tooltip .info-point-badge { height: 34px; min-width: 124px; font-size: 16px; }
+    #step2Tooltip .level-estimate-modal-body strong { font-size: 21px; }
+    #step2Tooltip .level-estimate-modal-btn { font-size: 18px; padding: 14px 22px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-lead { font-size: 22px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-status { font-size: 20px; padding: 14px 18px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps strong { font-size: 22px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps span { font-size: 20px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li { grid-template-columns: 40px 1fr; margin-bottom: 20px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li::before { width: 40px; height: 40px; font-size: 17px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-note { font-size: 19px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .review-home-link { font-size: 19px; }
+}

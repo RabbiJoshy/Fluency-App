@@ -2,7 +2,7 @@
 // Parses .srt/.vtt/text, routes through the live no-WSD engine,
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
-import './state.js?v=415b3add';
+import './state.js?v=24a8e6de';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
@@ -75,7 +75,8 @@ export async function buildSeriesLiveDeck({
         playlist,
         language,
         records,
-        onProgress
+        onProgress,
+        skipWsd: true
     });
 
     if (!deck || !deck.matchedCount) {
@@ -97,13 +98,19 @@ export async function loadCasaDePapelPreset(onProgress = null) {
     }
 
     let dialogueData = null;
-    try {
-        const resp = await fetch('data/series/casa-de-papel.json');
-        if (resp.ok) {
-            dialogueData = await resp.json();
-        }
-    } catch (e) {
-        console.warn('Could not load casa-de-papel.json, using fallback lines:', e);
+    const paths = [
+        'data/series/casa-de-papel.json',
+        './data/series/casa-de-papel.json',
+        'app/data/series/casa-de-papel.json'
+    ];
+    for (const p of paths) {
+        try {
+            const resp = await fetch(p);
+            if (resp.ok) {
+                dialogueData = await resp.json();
+                break;
+            }
+        } catch (_) {}
     }
 
     const lines = dialogueData?.lines && dialogueData.lines.length
@@ -139,6 +146,17 @@ export async function loadCasaDePapelPreset(onProgress = null) {
     return deck;
 }
 
+function handoffLiveStudy(language = 'spanish') {
+    closeSubtitleImport();
+    window.dismissMusicWorkspace?.();
+    if (typeof window.activatePlaylistLiveStudy === 'function') {
+        window.activatePlaylistLiveStudy(language);
+    } else {
+        const routeCode = language === 'spanish' ? 'es' : language;
+        window.fluencyRoutes?.goToRoute?.({ kind: 'live', language: routeCode });
+    }
+}
+
 export function openSubtitleImport({ preselect = null, language = 'spanish' } = {}) {
     const modal = document.getElementById('subtitleImportModal');
     const status = document.getElementById('subtitleImportStatus');
@@ -149,18 +167,22 @@ export function openSubtitleImport({ preselect = null, language = 'spanish' } = 
     if (textArea) textArea.value = '';
 
     if (preselect === 'la-casa-de-papel') {
+        window.showAppLoading?.('Loading La Casa de Papel', 'Building study deck from dialogue…');
         if (modal) modal.classList.remove('hidden');
         if (status) status.textContent = 'Loading La Casa de Papel dialogue…';
         if (buildBtn) buildBtn.disabled = true;
 
         loadCasaDePapelPreset(({ message }) => {
+            window.showAppLoading?.('Loading La Casa de Papel', message);
             if (status) status.textContent = message;
         }).then(() => {
-            if (modal) modal.classList.add('hidden');
-            window.activatePlaylistLiveStudy?.(language);
+            handoffLiveStudy(language);
         }).catch(err => {
+            console.error('Failed to load La Casa de Papel:', err);
+            window.hideAppLoading?.();
             if (status) status.textContent = err?.message || 'Failed to load La Casa de Papel.';
             if (buildBtn) buildBtn.disabled = false;
+            alert(err?.message || 'Failed to load La Casa de Papel dialogue.');
         });
         return;
     }
@@ -171,6 +193,9 @@ export function openSubtitleImport({ preselect = null, language = 'spanish' } = 
 export function closeSubtitleImport() {
     const modal = document.getElementById('subtitleImportModal');
     if (modal) modal.classList.add('hidden');
+    if (window.musicWorkspaceStage?.() === 'subtitles') {
+        window.showMusicChoices?.();
+    }
 }
 
 export function initSubtitleImport() {
@@ -185,17 +210,21 @@ export function initSubtitleImport() {
     closeBtn?.addEventListener('click', closeSubtitleImport);
 
     loadPresetBtn?.addEventListener('click', async () => {
-        if (status) status.textContent = 'Building deck from La Casa de Papel dialogue…';
         loadPresetBtn.disabled = true;
         if (buildBtn) buildBtn.disabled = true;
+        window.showAppLoading?.('Loading La Casa de Papel', 'Building study deck from dialogue…');
+        if (status) status.textContent = 'Building deck from La Casa de Papel dialogue…';
         try {
             await loadCasaDePapelPreset(({ message }) => {
+                window.showAppLoading?.('Loading La Casa de Papel', message);
                 if (status) status.textContent = message;
             });
-            closeSubtitleImport();
-            window.activatePlaylistLiveStudy?.('spanish');
+            handoffLiveStudy('spanish');
         } catch (err) {
+            console.error('Failed to load preset:', err);
+            window.hideAppLoading?.();
             if (status) status.textContent = err?.message || 'Failed to load preset.';
+            alert(err?.message || 'Failed to load preset.');
         } finally {
             loadPresetBtn.disabled = false;
             if (buildBtn) buildBtn.disabled = false;
@@ -229,6 +258,7 @@ export function initSubtitleImport() {
             return;
         }
 
+        window.showAppLoading?.('Building deck from subtitles', `Parsed ${lines.length} lines. Matching vocabulary…`);
         if (status) status.textContent = `Parsed ${lines.length} lines. Matching vocabulary…`;
         buildBtn.disabled = true;
 
@@ -240,13 +270,16 @@ export function initSubtitleImport() {
                 lines,
                 language: window.selectedLanguage || 'spanish',
                 onProgress: ({ message }) => {
+                    window.showAppLoading?.('Building deck from subtitles', message);
                     if (status) status.textContent = message;
                 }
             });
-            closeSubtitleImport();
-            window.activatePlaylistLiveStudy?.(window.selectedLanguage || 'spanish');
+            handoffLiveStudy(window.selectedLanguage || 'spanish');
         } catch (err) {
+            console.error('Failed to build deck from subtitles:', err);
+            window.hideAppLoading?.();
             if (status) status.textContent = err?.message || 'Failed to build deck.';
+            alert(err?.message || 'Failed to build deck.');
         } finally {
             buildBtn.disabled = false;
         }
