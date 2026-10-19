@@ -20,17 +20,19 @@ const html=vm.runInContext("functionWordBlockHTML({word:'naquele'},'pt')",ctx);
 // Contraction parts share the heading line; no eyebrow above the patterns.
 assert.ok(html.includes('<span class="fw-heading-word">naquele</span><span class="fw-heading-parts">(em + aquele)</span>'));
 assert.ok(!html.includes('Example Patterns'));
-assert.ok(html.includes('class="fw-relation-meaning">In / on / at that<'));
+assert.ok(html.includes('class="fw-relation-meaning">in that, on that, at that<'));
 assert.ok(html.includes('data-pos="contraction"'));
 const nos=vm.runInContext("functionWordBlockHTML({word:'nos'},'pt')",ctx);
 assert.ok(nos.includes('<span class="fw-heading-parts is-dynamic" hidden></span>'));
 assert.ok(html.includes('rgb(74, 158, 255)'));
 assert.ok(html.includes('<b>tatoeba</b>'));
 const que=vm.runInContext("functionWordBlockHTML({word:'que'},'pt')",ctx);
-assert.ok(que.includes('color:rgb(0, 212, 170)">think / say / know / hope'));
+assert.ok(que.includes('color:rgb(0, 212, 170)">think / say'));
 // Typed slots are pills in the pattern row; untyped ones ("more, less or better") take no colour.
 assert.ok(que.includes('class="fw-token-v fw-slot-pill" data-pos="verb"'));
-assert.ok(que.includes('<span class="fw-token-v is-untyped">more, less or better'));
+assert.ok(que.includes('<span class="fw-token-v is-untyped">more / less'));
+// Meanings are English translations, not descriptions.
+assert.ok(que.includes('class="fw-relation-meaning">than<'));
 assert.ok(!que.includes('#8fb8d8') && !que.includes('#c3a6df'));
 const nodes={'.fw-sentence-target':{},'.fw-sentence-translation':{},'.fw-credit-start':{},'.fw-sentence-ticks-container':{}};
 ctx.document.querySelector=()=>({dataset:{word:'que',lang:'pt'},querySelectorAll:()=>[],querySelector:s=>nodes[s]});

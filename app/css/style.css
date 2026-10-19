@@ -26062,7 +26062,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
    pattern is a row with its plain meaning beneath; the active row has a
    neutral outline. The function word is white on a neutral highlight in the
    rows and the example. Only slots that name a word type take colour: a pill
-   in the row, coloured words in the example. */
+   in the row, coloured words in the example. Each pattern fits one line;
+   under it, the word's English meaning in grey (2026-10-19 copy pass). */
 .fw-deterministic-card,
 .fw-relation-box { font-family: var(--font-reading); }
 .fw-header { margin-bottom: 12px; }
@@ -26085,8 +26086,9 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   background: rgba(255, 255, 255, 0.07);
   box-shadow: none;
 }
-.fw-relation-formula { margin: 0; font: 600 17px/1.6 var(--font-reading); letter-spacing: 0; color: var(--text-primary); }
-.fw-relation-meaning { margin: 1px 0 0; font: 400 14px/1.35 var(--font-reading); color: var(--text-secondary); }
+.fw-relation-formula { margin: 0; font: 500 18px/1.6 var(--font-reading); letter-spacing: 0; color: var(--text-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fw-relation-meaning { margin: 1px 0 0; font: 400 15px/1.35 var(--font-reading); color: var(--text-secondary); }
 .fw-relation-formula .is-untyped { color: var(--text-secondary); font-weight: 400; }
 .fw-sentence-target .is-untyped { color: inherit; }
 .fw-slot-pill {
@@ -26094,8 +26096,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   padding: 0 9px;
   border-radius: 999px;
   background: rgba(var(--slot-rgb), 0.22);
-  font-size: 14.5px;
-  font-weight: 600;
+  font-size: 15.5px;
+  font-weight: 500;
   line-height: 1.6;
   vertical-align: 1px;
 }

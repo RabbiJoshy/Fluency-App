@@ -1,0 +1,124 @@
+# Function-word row copy, 2026-10-19. One row per pattern: lang, word, index, new pattern, new meaning.
+# Rule: the pattern fits one line with short slot names; the meaning is what the word means in English
+# there (a translation, not a description). [W:…] is the word, [V:…]/[C:…] keep each pattern's slot sides
+# unchanged so example highlighting still lines up. Anything not listed keeps its current copy.
+es	de	0	[V:verb] + [W:de]	of, about (after some verbs)
+es	de	1	[V:noun] + [W:de]	of, from
+es	que	0	[V:think / say] + [W:que]	that
+es	que	1	[V:noun] + [W:que]	that, who, which
+es	que	2	[V:more / less] + [W:que]	than
+es	a	0	[W:a] + [C:place]	to
+es	a	1	[W:a] + [C:person]	not translated: marks the person
+es	en	0	[W:en] + [C:place]	in, at, on
+es	en	1	[W:en] + [C:time]	in, on
+es	por	0	[W:por] + [C:reason]	because of, for
+es	por	1	[W:por] + [C:place]	through, around
+es	para	0	[W:para] + [C:verb]	to, in order to
+es	para	1	[W:para] + [C:person]	for
+es	con	0	[W:con] + [C:person]	with
+es	con	1	[W:con] + [C:thing]	with, using
+es	sin	0	[W:sin] + [C:thing]	without
+es	se	0	[W:se] + [V:verb]	himself, herself, themselves
+es	se	1	[W:se] + [V:verb]	people, one (no one in particular)
+es	me	0	[W:me] + [V:verb]	me, to me
+es	me	1	[W:me] + [V:verb]	myself
+es	te	0	[W:te] + [V:verb]	you, to you
+es	te	1	[W:te] + [V:verb]	yourself
+es	nos	0	[W:nos] + [V:verb]	us, to us
+es	nos	1	[W:nos] + [V:verb]	ourselves, each other
+es	le	0	[W:le] + [V:verb]	to him, to her, to you
+es	al	0	[W:al] + [C:place]	to the
+es	al	1	[W:al] + [V:verb]	when, on (doing)
+es	del	0	[W:del] + [C:noun]	of the, from the
+es	el	0	[W:el] + [C:masculine noun]	the
+es	la	0	[W:la] + [C:feminine noun]	the
+es	la	1	[W:la] + [V:verb]	her, it
+es	los	0	[W:los] + [C:masculine nouns]	the
+es	los	1	[W:los] + [V:verb]	them
+es	las	0	[W:las] + [C:feminine nouns]	the
+es	lo	0	[W:lo] + [C:adjective]	the … thing
+es	lo	1	[W:lo] + [V:verb]	him, it
+es	lo	2	[W:lo] [C:que …]	what, the thing that
+es	un	0	[W:un] + [C:masculine noun]	a, an
+es	una	0	[W:una] + [C:feminine noun]	a, an
+es	y	0	[V:…] [W:y] [C:…]	and
+es	pero	0	[W:pero] [C:…]	but
+es	si	0	[W:si] [V:…] , [C:…]	if
+es	como	0	[V:verb] + [W:como]	like, the way
+es	como	1	[W:como] + [C:role]	as
+es	mi	0	[W:mi] + [C:noun]	my
+es	su	0	[W:su] + [C:noun]	his, her, their, your
+es	tu	0	[W:tu] + [C:noun]	your
+es	yo	0	[W:yo] + [V:verb]	I
+es	tú	0	[W:tú] + [V:verb]	you
+es	eso	0	[W:eso] + [V:verb]	that
+es	esto	0	[W:esto] + [V:verb]	this
+es	todo	0	[W:todo] + [V:verb]	everything
+es	todo	1	[W:todo] + [C:el + noun]	all the
+es	algo	0	[V:verb] + [W:algo]	something
+es	porque	0	[W:porque] [C:…]	because
+es	cuando	0	[W:cuando] [V:…] , [C:…]	when
+pt	de	0	[V:verb] + [W:de]	of, about (after some verbs)
+pt	de	1	[V:noun] + [W:de]	of, from
+pt	que	0	[V:think / say] + [W:que]	that
+pt	que	1	[V:noun] + [W:que]	that, who, which
+pt	que	2	[V:more / less] + [W:que]	than
+pt	naquele	0	[W:naquele] + [C:noun]	in that, on that, at that
+pt	nos	0	[W:nos] + [V:verb]	us, to us
+pt	nos	1	[W:nos] + [C:masculine nouns]	in the, on the, at the
+pt	se	0	[W:se] [V:…] , [C:…]	if
+pt	se	1	[W:se] + [V:verb]	himself, herself, themselves
+pt	o	0	[W:o] + [C:masculine noun]	the
+pt	o	1	[W:o] + [V:verb]	him, it
+pt	em	0	[W:em] + [C:place]	in, at, on
+pt	em	1	[W:em] + [C:time]	in, on
+pt	para	0	[W:para] + [C:place]	to
+pt	para	1	[W:para] + [C:verb]	to, in order to
+pt	para	2	[W:para] + [C:person]	for
+pt	com	0	[W:com] + [C:person]	with
+pt	com	1	[W:com] + [C:thing]	with, using
+pt	por	0	[W:por] + [C:reason]	because of, for
+pt	por	1	[W:por] + [C:place]	through, around
+pt	no	0	[W:no] + [C:masculine noun]	in the, on the, at the
+pt	na	0	[W:na] + [C:feminine noun]	in the, on the, at the
+pt	do	0	[W:do] + [C:masculine noun]	of the, from the
+pt	da	0	[W:da] + [C:feminine noun]	of the, from the
+pt	como	0	[V:verb] + [W:como]	like, the way
+pt	como	1	[W:como] + [C:role]	as
+pt	mas	0	[W:mas] [C:…]	but
+pt	a	0	[W:a] + [C:place]	to
+pt	a	1	[W:a] + [C:feminine noun]	the
+pt	a	2	[V:verb] + [W:a]	her, it
+pt	e	0	[V:…] [W:e] [C:…]	and
+pt	eu	0	[W:eu] + [V:verb]	I
+pt	ele	0	[W:ele] + [V:verb]	he, it
+pt	ele	1	[V:preposition] + [W:ele]	him, it (after a preposition)
+pt	ela	0	[W:ela] + [V:verb]	she, it
+pt	um	0	[W:um] + [C:masculine noun]	a, an
+pt	uma	0	[W:uma] + [C:feminine noun]	a, an
+pt	os	0	[W:os] + [C:masculine nouns]	the
+pt	os	1	[W:os] + [V:verb]	them
+pt	as	0	[W:as] + [C:feminine nouns]	the
+pt	me	0	[W:me] + [V:verb]	me, to me
+pt	me	1	[V:verb] + [W:-me]	myself
+pt	te	0	[W:te] + [V:verb]	you, to you
+pt	lhe	0	[W:lhe] + [V:verb]	to him, to her, to you
+pt	ao	0	[W:ao] + [C:place / time]	to the, at the
+pt	ao	1	[W:ao] + [V:verb]	when, on (doing)
+pt	à	0	[W:à] + [C:place / time]	to the, at the
+pt	pelo	0	[W:pelo] + [C:route / reason]	through the, by the, for the
+pt	pela	0	[W:pela] + [C:route / reason]	through the, by the, for the
+pt	num	0	[W:num] + [C:masculine noun]	in a, on a, at a
+pt	numa	0	[W:numa] + [C:feminine noun]	in a, on a, at a
+pt	dele	0	[V:noun] + [W:dele]	his
+pt	dela	0	[V:noun] + [W:dela]	her, hers
+pt	sem	0	[W:sem] + [C:thing]	without
+pt	sobre	0	[W:sobre] + [C:topic]	about
+pt	sobre	1	[W:sobre] + [C:place]	on, above
+pt	até	0	[W:até] + [C:endpoint]	until, as far as
+pt	até	1	[W:até] + [C:…]	even
+pt	porque	0	[W:porque] [C:…]	because
+pt	quando	0	[W:quando] [V:…] , [C:…]	when
+pt	isso	0	[W:isso] + [V:verb]	that
+pt	isto	0	[W:isto] + [V:verb]	this
+pt	tudo	0	[W:tudo] + [V:verb]	everything

@@ -28,6 +28,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from assign_function_word_examples import parse_rows, build
 from syntax_assignment import assign_occurrences, VERSION
 
+# Longest example sentence, in characters: two lines on a phone card (2026-10-19; was 120).
+MAX_SENTENCE_CHARS = 70
+
 _WORDS = re.compile(r"[^\W\d_]+", re.UNICODE)
 
 
@@ -61,7 +64,7 @@ def harvest_speech_candidates(lang: str, words: set[str], max_per_word: int = 15
                 record = json.loads(line)
                 target = record.get("target", {}).get("text", "")
                 trans = record.get("translation", {}).get("text", "")
-                if not target or not trans or len(target) > 120 or len(target) < 10:
+                if not target or not trans or len(target) > MAX_SENTENCE_CHARS or len(target) < 10:
                     continue
                 if any(c in target for c in "[]{}()_~#"):
                     continue
@@ -148,7 +151,7 @@ def harvest_artist_candidates(lang: str, words: set[str], max_per_artist: int = 
                             sp = item.get("spanish", "").strip()
                             en = item.get("english", "").strip()
                             song = item.get("song_name", artist_name)
-                            if not sp or len(sp) > 120 or len(sp) < 10 or any(c in sp for c in "[]{}()_~#"):
+                            if not sp or len(sp) > MAX_SENTENCE_CHARS or len(sp) < 10 or any(c in sp for c in "[]{}()_~#"):
                                 continue
                             for w, pat in patterns.items():
                                 if len(artist_candidates[w][artist_name]) < max_per_artist and pat.search(sp):
@@ -193,7 +196,7 @@ def harvest_artist_candidates(lang: str, words: set[str], max_per_artist: int = 
                             en_text = (item.get("english") or item.get("translation") or "").strip()
                             song = item.get("song_name") or default_artist
                             artist = item.get("artist") or default_artist
-                            if not pt_text or len(pt_text) > 120 or len(pt_text) < 10 or any(c in pt_text for c in "[]{}()_~#"):
+                            if not pt_text or len(pt_text) > MAX_SENTENCE_CHARS or len(pt_text) < 10 or any(c in pt_text for c in "[]{}()_~#"):
                                 continue
                             for w, pat in patterns.items():
                                 if len(artist_candidates[w][artist]) < max_per_artist and pat.search(pt_text):
