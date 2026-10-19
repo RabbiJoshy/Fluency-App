@@ -9491,7 +9491,7 @@ function getCyclableExamples(card, currentMeaning) {
     }
 
     if (currentMeaning.allMWEs || currentMeaning.allClitics) return examples;
-    if (typeof activeArtist !== 'undefined' && activeArtist) {
+    if ((typeof activeArtist !== 'undefined' && activeArtist) || window.playlistLiveActive?.()) {
         const isCorpus = ex => ex && !ex.canonical && ex.evidence !== 'dictionary' && !ex.reference_example;
         const totalUses = (card?.meanings || []).reduce((sum, m) => {
             const exs = m.allExamples || m.examples || [];

@@ -3328,9 +3328,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     const cached = byId.get(item.id);
                     if (cached && cached.meanings && cached.meanings.length && (!item.meanings || !item.meanings.length || item.meanings[0].unassigned)) {
                         const existingExamples = item.meanings?.[0]?.examples || [];
-                        item.meanings = cached.meanings.map((m, idx) => ({
+                        item.meanings = cached.meanings.map(m => ({
                             ...m,
-                            examples: idx === 0 ? [...existingExamples, ...(m.examples || [])] : (m.examples || [])
+                            examples: [...existingExamples, ...(m.examples || [])]
                         }));
                         if (cached.pos && !item.pos) item.pos = cached.pos;
                     }

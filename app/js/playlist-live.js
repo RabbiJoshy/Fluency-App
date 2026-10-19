@@ -472,11 +472,9 @@ function applyPlaylistLiveVocabulary(items) {
             const kept = next.meanings.filter(keepCommonOrUncommon);
             const meanings = kept.length ? kept : next.meanings.slice(0, 4);
             if (meanings.length) {
-                next.meanings = meanings.map((m, idx) => ({
+                next.meanings = meanings.map(m => ({
                     ...m,
-                    examples: idx === 0
-                        ? [...lyricExamples, ...(m.examples || [])]
-                        : (m.examples || [])
+                    examples: [...lyricExamples, ...(m.examples || [])]
                 }));
             } else {
                 next.meanings = [{
