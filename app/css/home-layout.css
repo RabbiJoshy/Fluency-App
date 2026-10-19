@@ -1052,3 +1052,53 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-note { font-size: 19px; }
     body:has(#appContent.hidden) #spacedRepetitionInfoModal .review-home-link { font-size: 19px; }
 }
+
+/* ===== Wide desktop: Learn on the left, Practise on the right ===============
+   Both always visible, same height, each button pinned to its panel's bottom.
+   Below 1360px they stay stacked. Learn's picker and Practise's rows become one
+   column each, because a panel is now about half the width. */
+@media (min-width: 1360px) {
+    body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]) {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+        gap: 16px;
+        align-items: stretch;
+        max-width: 1500px;
+    }
+    body.desktop-workspace #setupPanel > * { grid-column: 1 / -1; }
+    body.desktop-workspace #setupPanel > #step2 { grid-column: 1; }
+    body.desktop-workspace #setupPanel > #reviewDeckSection { grid-column: 2; }
+    body.desktop-workspace #setupPanel:has(> #reviewDeckSection[hidden]) > #step2 { grid-column: 1 / -1; }
+
+    /* Learn: one column, centred. */
+    #setupPanel #step2 .level-choosing {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto auto 1fr;
+        row-gap: 16px;
+        align-items: start;
+        padding-top: 8px;
+    }
+    #setupPanel #step2 #homeLevelStepper { grid-column: 1; grid-row: 1; padding: 4px 0 0; }
+    #setupPanel #step2 #lswExamples { grid-column: 1; grid-row: 2; align-self: start; justify-content: center; align-items: center; margin: 0; padding: 0 2vw; text-align: center; }
+    #setupPanel #step2 #rangeSelector { grid-column: 1; grid-row: 3; }
+    #setupPanel #step2 .home-level-progress { padding: 0 2vw; }
+    #setupPanel #step2 .home-level-stats { justify-content: center; }
+    #setupPanel #step2 .home-section-footer { grid-column: 1; grid-row: 4; align-self: end; }
+
+    /* Practise: one column; the button stays at the bottom. */
+    #setupPanel #reviewDeckBody:not([style*="none"]) { flex: 1 1 auto; }
+    .home-practise {
+        flex: 1 1 auto;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        row-gap: 14px;
+        padding: 14px 2vw;
+    }
+    .home-practise-total, .home-practise-rows, .home-practise-browse { grid-column: 1; grid-row: auto; }
+    .home-practise-total.is-empty { grid-column: 1; }
+    .home-practise-total.is-empty + .home-practise-browse { grid-column: 1; justify-self: start; }
+    #setupPanel #reviewDeckSection .home-section-footer { margin-top: auto; flex-direction: column; align-items: stretch; }
+    #setupPanel .home-section-footer > .home-action-slot { flex: 1 1 auto; }
+    #setupPanel #step2 .home-section-footer { flex-direction: column; align-items: stretch; flex-wrap: nowrap; gap: 14px; }
+    #setupPanel #step2 .home-section-footer > #setupOptions { flex: none; width: 100%; }
+}
