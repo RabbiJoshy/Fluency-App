@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T17:10:00+01:00",
+      "date": "2026-10-19 17:10 BST",
+      "agent": "Claude",
+      "summary": "Learn sheet: same yellow as the progress bar; estimate box moved above the legend",
+      "detail": [
+        "Seen/Known/Estimated/Skipped colours are now defined once for the whole home screen, so the Learn sheet and the folded Learn row match the bar and the level-progress sheet.",
+        "\"Not sure where to start?\" now sits above \"Your progress bar\" in the Learn sheet."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T16:40:00+01:00",
       "date": "2026-10-19 16:40 BST",
       "agent": "Claude",

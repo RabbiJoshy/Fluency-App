@@ -8,6 +8,16 @@
 @media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 21px; } }
 @media (min-width: 1440px) { #setupPanel, #topBar { --home-text: 23px; } }
 
+/* One set of status colours for every bar and legend on this screen, folded
+   rows and info sheets included (the older rules only reached #step4). */
+#setupPanel {
+    --set-new: #ffffff;
+    --set-review: #ffcc00;
+    --set-known: #06a557;
+    --set-estimated: #9f7aea;
+    --set-skipped: #64748b;
+}
+
 /* One centred column everywhere: no sidebar column for Practise. */
 @media (min-width: 1024px) {
     #setupPanel.file-upload,
@@ -838,9 +848,9 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
 /* Learn's legend swatches are the progress bar's own fills (same fallbacks). */
 #step2Tooltip .info-point-badge { min-width: 88px; border: 1px solid var(--border-color); }
 #step2Tooltip .info-point-badge.is-new { background: var(--set-new, #fff); color: #17202a; }
-#step2Tooltip .info-point-badge.is-practice { background: var(--set-review, #896318); color: #fff; }
+#step2Tooltip .info-point-badge.is-practice { background: var(--set-review); color: #17202a; }
 #step2Tooltip .info-point-badge.is-done { background: var(--set-known, #16734b); color: #fff; }
-#step2Tooltip .info-point-badge.is-estimated { background: var(--set-estimated, #77669e); color: #fff; }
+#step2Tooltip .info-point-badge.is-estimated { background: var(--set-estimated); color: #17202a; }
 #step2Tooltip .info-point-badge.is-skip { background: var(--set-skipped, #566477); color: #fff; }
 
 /* The button is the main action: a larger action word, with the time limit and
@@ -851,3 +861,4 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
 .home-cta-length { font-weight: 500; }
 @media (min-width: 768px) { .home-cta { min-height: 56px; } }
 @media (min-width: 1024px) { .home-cta { min-height: 62px; } }
+#step2Tooltip .level-estimate-modal-callout { margin: 4px 0 18px; }
