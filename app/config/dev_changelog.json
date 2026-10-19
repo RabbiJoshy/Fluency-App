@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T11:40:00+01:00",
+      "date": "2026-10-20 11:40 BST",
+      "agent": "Claude",
+      "summary": "Bigger Smart Skip row and switch; phone bottom bar lifted off rounded corners",
+      "detail": [
+        "The Smart Skip row is taller (54px, 60px on desktop) and its switch is 54x32 instead of 40x24.",
+        "On phones the bottom bar (Smart Skip + Learn/Practise) has more padding underneath and at the sides so it clears rounded screen corners."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T11:00:00+01:00",
       "date": "2026-10-20 11:00 BST",
       "agent": "Claude",
