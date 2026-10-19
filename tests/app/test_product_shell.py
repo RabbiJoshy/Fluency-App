@@ -503,7 +503,7 @@ class ProductShellTests(unittest.TestCase):
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertNotIn('data-tooltip="step5Tooltip"', html)
-        self.assertIn('id="step5Description"', html)
+        self.assertIn('id="step2LevelDescription"', html)
         self.assertIn('class="step-title step-title-trigger" data-tooltip="step2Tooltip"', html)
         self.assertIn('id="fastTrackHubBtn"', html)
         self.assertIn(".sync-status.is-synced { display: none; }", css)

@@ -3,9 +3,10 @@
    rendered by ui.js (renderRangeSelector, the level stepper). */
 
 /* Dark-theme surfaces for this screen come from css/black-palette.css. One
-   text size (16px phones, 18px from 1024px). */
+   text size (16px phones, 21px from 1024px, 23px from 1440px). */
 #setupPanel, #topBar { --home-text: 16px; }
-@media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 18px; } }
+@media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 21px; } }
+@media (min-width: 1440px) { #setupPanel, #topBar { --home-text: 23px; } }
 
 /* One centred column everywhere: no sidebar column for Practise. */
 @media (min-width: 1024px) {
@@ -80,6 +81,32 @@
 #setupPanel .home-section-toggle strong { font-weight: 600; }
 #setupPanel .home-section-toggle-meta { color: var(--text-muted); font-size: var(--home-text); }
 #setupPanel .home-section-toggle-caret { margin-left: auto; color: var(--text-muted); }
+/* The folded row reads like the open header: icon, name and its info button on
+   the first line, the numbers underneath. */
+#setupPanel .home-section-toggle { padding: 14px 16px 13px; row-gap: 6px; }
+#setupPanel .home-section-toggle .home-section-icon { width: 22px; height: 22px; }
+#setupPanel .home-section-toggle .home-section-name {
+    font-family: var(--font-emphasis);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+}
+#setupPanel .home-section-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin: -6px 0 -6px -2px;
+    border-radius: 50%;
+}
+#setupPanel .home-section-info svg {
+    width: 20px; height: 20px; fill: none; stroke: var(--accent-primary);
+    stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+#setupPanel .home-section-toggle-meta { order: 1; flex: 0 0 100%; }
+#setupPanel .home-section-peek { order: 2; }
+#setupPanel .home-section-toggle-meta:empty { display: none; }
 /* The folded section's short version, on a line of its own under its name. */
 #setupPanel .home-section-toggle { flex-wrap: wrap; row-gap: 10px; }
 #setupPanel .home-section-peek { display: block; flex: 0 0 100%; min-width: 0; }
@@ -466,7 +493,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel #reviewDeckSection:not(.hidden):not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
     /* Desktop has the height to spare, so the two names read as titles. */
     #setupPanel .home-section > .step-header { padding: 2.4vh 2vw 0.6vh; }
-    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(24px, 2.1vw, 34px); letter-spacing: -0.01em; }
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(28px, 2.5vw, 42px); letter-spacing: -0.01em; }
     #setupPanel .home-section-footer { margin-top: 0; padding: 12px 2vw; }
     #setupPanel .home-section-toggle { padding: 1.6vh 2vw; font-size: var(--home-text); }
     #setupPanel .home-section-toggle-meta { font-size: var(--home-text); }
@@ -493,9 +520,9 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel #step2 .home-level-bar { height: clamp(8px, 1.2vh, 14px); border-radius: 7px; }
     #setupPanel #step2 .home-level-stats { margin-top: 1.6vh; font-size: var(--home-text); gap: 6px 1.4vw; }
     .home-level-stepper { max-width: none; gap: 2vw; }
-    .home-level-step { width: clamp(44px, 4vw, 64px); height: clamp(44px, 4vw, 64px); font-size: clamp(28px, 2.6vw, 42px); }
-    .home-level-eyebrow { font-size: clamp(12px, 1vw, 16px); }
-    .home-level-readout strong { font-size: clamp(38px, 3.6vw, 60px); }
+    .home-level-step { width: clamp(48px, 4.4vw, 70px); height: clamp(48px, 4.4vw, 70px); font-size: clamp(32px, 2.9vw, 46px); }
+    .home-level-eyebrow { font-size: clamp(15px, 1.2vw, 19px); }
+    .home-level-readout strong { font-size: clamp(44px, 4.2vw, 68px); }
     .home-level-words { font-size: var(--home-text); }
     #setupPanel #lswExamples,
     #setupPanel #lswExamples .lsw-egs,
@@ -512,7 +539,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
         padding: 10px 2vw 14px;
     }
     .home-practise-total { grid-column: 1; grid-row: 1 / span 2; padding: 0; }
-    .home-practise-total strong { font-size: clamp(38px, 3.6vw, 60px); }
+    .home-practise-total strong { font-size: clamp(44px, 4.2vw, 68px); }
     .home-practise-total span { font-size: var(--home-text); }
     .home-practise-row { padding: 8px 0; font-size: var(--home-text); }
     .home-practise-rows { grid-column: 2; grid-row: 1; }

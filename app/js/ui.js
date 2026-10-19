@@ -3294,6 +3294,7 @@ function applyHomeSection(mistakes) {
         panel.addEventListener('click', event => {
             const toggle = event.target.closest('.home-section-toggle');
             if (!toggle) return;
+            if (event.target.closest('.home-section-info')) return; // opens its info sheet instead
             _homeSectionChosen = toggle.dataset.homeSection;
             setHomeSectionOpen(panel, _homeSectionChosen);
         });
