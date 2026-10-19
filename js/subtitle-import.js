@@ -2,7 +2,7 @@
 // Parses .srt/.vtt/text, routes through the live no-WSD engine,
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
-import './state.js?v=9b696104';
+import './state.js?v=73cd8f6b';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
@@ -95,6 +95,30 @@ export async function buildSeriesLiveDeck({
 export async function loadCasaDePapelPreset(onProgress = null) {
     if (typeof onProgress === 'function') {
         onProgress({ stage: 'fetching', message: 'Loading La Casa de Papel dialogue…' });
+    }
+
+    // Fast path: load pre-solved series deck immediately
+    const deckPaths = [
+        'data/series/casa-de-papel-deck.json',
+        './data/series/casa-de-papel-deck.json',
+        'app/data/series/casa-de-papel-deck.json'
+    ];
+    for (const p of deckPaths) {
+        try {
+            const resp = await fetch(p);
+            if (resp.ok) {
+                const deck = await resp.json();
+                if (deck?.matchedCount) {
+                    if (typeof window.cacheLiveDeck === 'function') {
+                        await window.cacheLiveDeck(deck);
+                    }
+                    try {
+                        await window.savePlaylistLiveDeckToServer?.(deck);
+                    } catch (_) {}
+                    return deck;
+                }
+            }
+        } catch (_) {}
     }
 
     let dialogueData = null;
@@ -193,9 +217,6 @@ export function openSubtitleImport({ preselect = null, language = 'spanish' } = 
 export function closeSubtitleImport() {
     const modal = document.getElementById('subtitleImportModal');
     if (modal) modal.classList.add('hidden');
-    if (window.musicWorkspaceStage?.() === 'subtitles') {
-        window.showMusicChoices?.();
-    }
 }
 
 export function initSubtitleImport() {
@@ -207,7 +228,12 @@ export function initSubtitleImport() {
     const buildBtn = document.getElementById('buildSubtitleDeckBtn');
     const status = document.getElementById('subtitleImportStatus');
 
-    closeBtn?.addEventListener('click', closeSubtitleImport);
+    closeBtn?.addEventListener('click', () => {
+        closeSubtitleImport();
+        if (window.musicWorkspaceStage?.() === 'subtitles') {
+            window.showMusicChoices?.();
+        }
+    });
 
     loadPresetBtn?.addEventListener('click', async () => {
         loadPresetBtn.disabled = true;

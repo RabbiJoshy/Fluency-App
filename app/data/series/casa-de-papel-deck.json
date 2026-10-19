@@ -1,0 +1,5103 @@
+{
+  "id": "live",
+  "playlistId": "la-casa-de-papel",
+  "playlistName": "La Casa de Papel",
+  "language": "spanish",
+  "builtAt": "2026-10-19T18:35:50.485868+00:00",
+  "trackCount": 1,
+  "lyricsTrackCount": 1,
+  "tokenCount": 916,
+  "matchedCount": 400,
+  "surfaces": {
+    "me": {
+      "count": 9,
+      "lines": [
+        {
+          "text": "Me llamo Tokio.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero cuando empezó esta historia no me llamaba así.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Y me hizo una propuesta: un atraco histórico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "llamo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Me llamo Tokio.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "pero": {
+      "count": 5,
+      "lines": [
+        {
+          "text": "Pero cuando empezó esta historia no me llamaba así.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero cuando estás sola y acorralada, el mundo es negro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Era un suicidio, pero necesitaba despedirme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero para eso hay que aguantar once días dentro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cuando": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Pero cuando empezó esta historia no me llamaba así.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero cuando estás sola y acorralada, el mundo es negro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "empezó": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero cuando empezó esta historia no me llamaba así.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "esta": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Pero cuando empezó esta historia no me llamaba así.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Entregad todos los teléfonos móviles en esta bolsa ahora mismo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "historia": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero cuando empezó esta historia no me llamaba así.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "no": {
+      "count": 18,
+      "lines": [
+        {
+          "text": "Pero cuando empezó esta historia no me llamaba así.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Teníamos la costumbre de no mezclar trabajo y amor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No tenía antecedentes, ni ficha policial, ni multas de tráfico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No un banco, ni una joyería, ni un furgón blindado.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Helsinki y Oslo, la fuerza bruta, dos soldados que no hacían preguntas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "llamaba": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero cuando empezó esta historia no me llamaba así.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "así": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Pero cuando empezó esta historia no me llamaba así.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Así que pasé de ser ladrona a ser asesina.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Así la policía no sabrá quién es rehén y quién es atracador si deciden asaltar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "era": {
+      "count": 5,
+      "lines": [
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Era un suicidio, pero necesitaba despedirme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Ese hombre era el Profesor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Era un fantasma.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "La regla fundamental era una: ninguna gota de sangre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "yo": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Y yo, Tokio.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "y": {
+      "count": 27,
+      "lines": [
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Teníamos la costumbre de no mezclar trabajo y amor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Y desde entonces he estado huyendo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero cuando estás sola y acorralada, el mundo es negro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "este": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "el": {
+      "count": 26,
+      "lines": [
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero cuando estás sola y acorralada, el mundo es negro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "amor": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Teníamos la costumbre de no mezclar trabajo y amor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "de": {
+      "count": 47,
+      "lines": [
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Teníamos la costumbre de no mezclar trabajo y amor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Así que pasé de ser ladrona a ser asesina.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mi": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "vida": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Esta era yo. Y este, el amor de mi vida.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "la": {
+      "count": 25,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Teníamos la costumbre de no mezclar trabajo y amor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "última": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "vez": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "que": {
+      "count": 25,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Así que pasé de ser ladrona a ser asesina.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "lo": {
+      "count": 8,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A ver, señores, mucha atención a lo que voy a decir.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "¿Cómo lo veis?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A ti lo que te gusta es hablar demasiado, chaval.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Hay que tratarlos bien, que coman lo mismo que nosotros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "vi": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "dejé": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "en": {
+      "count": 14,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "En ese momento apareció un coche rojo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "un": {
+      "count": 19,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Era un suicidio, pero necesitaba despedirme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sangre": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "La regla fundamental era una: ninguna gota de sangre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No quiero ni una sola gota de sangre derramada.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "con": {
+      "count": 10,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Denver, su hijo, impulsivo y con un corazón enorme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "los": {
+      "count": 7,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Río, el joven genio de la informática y los sistemas de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Los rehenes son nuestra muralla defensiva.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Les pondremos los mismos monos rojos y las mismas caretas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ojos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "abiertos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "teníamos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Teníamos la costumbre de no mezclar trabajo y amor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "costumbre": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Teníamos la costumbre de no mezclar trabajo y amor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "trabajo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Teníamos la costumbre de no mezclar trabajo y amor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hicimos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "quince": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "limpios": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hasta": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "guardia": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "jurado": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "decidió": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hacerse": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "héroe": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "disparo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cuello": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "novio": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "todo": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Colaboren y todo saldrá bien.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "se": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "fue": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "a": {
+      "count": 18,
+      "lines": [
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Así que pasé de ser ladrona a ser asesina.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A ver, señores, mucha atención a lo que voy a decir.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mierda": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "pasé": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Así que pasé de ser ladrona a ser asesina.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ser": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "Así que pasé de ser ladrona a ser asesina.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No intentéis ser valientes, el heroísmo en estos casos suele acabar mal.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "asesina": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Así que pasé de ser ladrona a ser asesina.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "desde": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y desde entonces he estado huyendo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "entonces": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y desde entonces he estado huyendo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "he": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y desde entonces he estado huyendo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "estado": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y desde entonces he estado huyendo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "huyendo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y desde entonces he estado huyendo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "dicen": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "te": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A ti lo que te gusta es hablar demasiado, chaval.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hace": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ver": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A ver, señores, mucha atención a lo que voy a decir.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mundo": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero cuando estás sola y acorralada, el mundo es negro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "color": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "rosa": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Dicen que el amor te hace ver el mundo de color de rosa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "estás": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero cuando estás sola y acorralada, el mundo es negro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sola": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "Pero cuando estás sola y acorralada, el mundo es negro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No quiero ni una sola gota de sangre derramada.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "es": {
+      "count": 10,
+      "lines": [
+        {
+          "text": "Pero cuando estás sola y acorralada, el mundo es negro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A ti lo que te gusta es hablar demasiado, chaval.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El dinero es solo papel pintado con un número.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "La verdadera riqueza es el tiempo, la libertad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "negro": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero cuando estás sola y acorralada, el mundo es negro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "madre": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "vivía": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "barrio": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "humilde": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "las": {
+      "count": 5,
+      "lines": [
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Once días encerrados mientras las máquinas de imprimir no paran de funcionar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Las rotativas van a trabajar día y noche sin descanso.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Les pondremos los mismos monos rojos y las mismas caretas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "afueras": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "iba": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "verla": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "por": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "¿Por qué Tokio?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "su": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Denver, su hijo, impulsivo y con un corazón enorme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cumpleaños": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sabiendo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "policía": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "La policía rodeó el edificio de inmediato.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Así la policía no sabrá quién es rehén y quién es atracador si deciden asaltar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "estaría": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "vigilando": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "casa": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "suicidio": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Era un suicidio, pero necesitaba despedirme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "necesitaba": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Era un suicidio, pero necesitaba despedirme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "despedirme": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Era un suicidio, pero necesitaba despedirme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ese": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "En ese momento apareció un coche rojo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Ese hombre era el Profesor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "momento": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "En ese momento apareció un coche rojo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "apareció": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "En ese momento apareció un coche rojo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "coche": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "En ese momento apareció un coche rojo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "rojo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "En ese momento apareció un coche rojo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hombre": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Ese hombre era el Profesor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "gafas": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "bajó": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "dijo": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "disculpe": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tiene": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "minuto": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "profesor": {
+      "count": 5,
+      "lines": [
+        {
+          "text": "Ese hombre era el Profesor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Buenas tardes, inspectora. Puede llamarme el Profesor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "¿Qué es lo que quiere exactamente, Profesor?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tenía": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "No tenía antecedentes, ni ficha policial, ni multas de tráfico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Ninguno tenía nada que perder.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "antecedentes": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No tenía antecedentes, ni ficha policial, ni multas de tráfico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ni": {
+      "count": 6,
+      "lines": [
+        {
+          "text": "No tenía antecedentes, ni ficha policial, ni multas de tráfico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No un banco, ni una joyería, ni un furgón blindado.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No quiero ni una sola gota de sangre derramada.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No subestime nuestra paciencia, ni la suya.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ficha": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No tenía antecedentes, ni ficha policial, ni multas de tráfico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "policial": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No tenía antecedentes, ni ficha policial, ni multas de tráfico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tráfico": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No tenía antecedentes, ni ficha policial, ni multas de tráfico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "fantasma": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Era un fantasma.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sabía": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "estaba": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Entre ellos estaba la hija del embajador británico, Alison Parker.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "esperando": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hizo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y me hizo una propuesta: un atraco histórico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "una": {
+      "count": 13,
+      "lines": [
+        {
+          "text": "Y me hizo una propuesta: un atraco histórico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No un banco, ni una joyería, ni un furgón blindado.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El plan requería cinco meses de encierro en una finca de Toledo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Nairobi, una optimista nata encargada del control de calidad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "La regla fundamental era una: ninguna gota de sangre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "propuesta": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y me hizo una propuesta: un atraco histórico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "atraco": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y me hizo una propuesta: un atraco histórico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "histórico": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y me hizo una propuesta: un atraco histórico.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "banco": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No un banco, ni una joyería, ni un furgón blindado.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "fábrica": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "La Fábrica Nacional de Moneda y Timbre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Berlín, el jefe al mando dentro de la fábrica, narcisista y calculador.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nacional": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La Fábrica Nacional de Moneda y Timbre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "moneda": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La Fábrica Nacional de Moneda y Timbre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "timbre": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La Fábrica Nacional de Moneda y Timbre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nos": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "dentro": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Berlín, el jefe al mando dentro de la fábrica, narcisista y calculador.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero para eso hay que aguantar once días dentro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "durante": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "días": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero para eso hay que aguantar once días dentro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Once días encerrados mientras las máquinas de imprimir no paran de funcionar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "para": {
+      "count": 6,
+      "lines": [
+        {
+          "text": "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Para la gente seremos unos héroes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero para eso hay que aguantar once días dentro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nuestro": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Nuestro cordero de Pascua.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Porque vamos a fabricar nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "propio": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Porque vamos a fabricar nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "dinero": {
+      "count": 5,
+      "lines": [
+        {
+          "text": "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No vamos a robar el dinero de nadie.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Porque vamos a fabricar nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El dinero es solo papel pintado con un número.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "dos": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Dos mil cuatrocientos millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Helsinki y Oslo, la fuerza bruta, dos soldados que no hacían preguntas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mil": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Dos mil cuatrocientos millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "millones": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Dos mil cuatrocientos millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cada hora que pasa imprimimos ocho millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "euros": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Dos mil cuatrocientos millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cada hora que pasa imprimimos ocho millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "plan": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El plan requería cinco meses de encierro en una finca de Toledo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cinco": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "El plan requería cinco meses de encierro en una finca de Toledo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "meses": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "El plan requería cinco meses de encierro en una finca de Toledo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "estudiando": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cada": {
+      "count": 6,
+      "lines": [
+        {
+          "text": "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cada hora que pasa imprimimos ocho millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "paso": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "detalle": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "posible": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "error": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "éramos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Éramos ocho personas, elegidas meticulosamente.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ocho": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Éramos ocho personas, elegidas meticulosamente.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cada hora que pasa imprimimos ocho millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "personas": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Éramos ocho personas, elegidas meticulosamente.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ninguno": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Ninguno tenía nada que perder.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nada": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Ninguno tenía nada que perder.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Nada de preguntas personales, nada de relaciones.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "perder": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Ninguno tenía nada que perder.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "proteger": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nuestras": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "usar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nombres": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Elegimos nombres de ciudades.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "reales": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "preguntas": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Nada de preguntas personales, nada de relaciones.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Helsinki y Oslo, la fuerza bruta, dos soldados que no hacían preguntas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "personales": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Nada de preguntas personales, nada de relaciones.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "relaciones": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Nada de preguntas personales, nada de relaciones.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Aquí no hay amigos, no hay familia, no hay relaciones sentimentales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ciudades": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Elegimos nombres de ciudades.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "berlín": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Berlín, el jefe al mando dentro de la fábrica, narcisista y calculador.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A partir de ahora sois Berlín, Moscú, Denver, Río, Nairobi, Helsinki, Oslo y Tokio.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "jefe": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Berlín, el jefe al mando dentro de la fábrica, narcisista y calculador.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "al": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Berlín, el jefe al mando dentro de la fábrica, narcisista y calculador.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Inspectora Murillo al habla, ¿con quién tengo el placer?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mando": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Berlín, el jefe al mando dentro de la fábrica, narcisista y calculador.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "La inspectora Raquel Murillo tomó el mando del operativo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "moscú": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Moscú, el veterano minero capaz de abrir cualquier cerradura.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A partir de ahora sois Berlín, Moscú, Denver, Río, Nairobi, Helsinki, Oslo y Tokio.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "capaz": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Moscú, el veterano minero capaz de abrir cualquier cerradura.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "abrir": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Moscú, el veterano minero capaz de abrir cualquier cerradura.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cualquier": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Moscú, el veterano minero capaz de abrir cualquier cerradura.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cerradura": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Moscú, el veterano minero capaz de abrir cualquier cerradura.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hijo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Denver, su hijo, impulsivo y con un corazón enorme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "corazón": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Denver, su hijo, impulsivo y con un corazón enorme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "enorme": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Denver, su hijo, impulsivo y con un corazón enorme.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "río": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Río, el joven genio de la informática y los sistemas de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A partir de ahora sois Berlín, Moscú, Denver, Río, Nairobi, Helsinki, Oslo y Tokio.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pues a mí me gusta Río, me parece fresco.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "joven": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Río, el joven genio de la informática y los sistemas de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "genio": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Río, el joven genio de la informática y los sistemas de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sistemas": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Río, el joven genio de la informática y los sistemas de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "seguridad": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Río, el joven genio de la informática y los sistemas de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "optimista": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Nairobi, una optimista nata encargada del control de calidad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "del": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "Nairobi, una optimista nata encargada del control de calidad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Entre ellos estaba la hija del embajador británico, Alison Parker.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "La inspectora Raquel Murillo tomó el mando del operativo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "control": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Nairobi, una optimista nata encargada del control de calidad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "calidad": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Nairobi, una optimista nata encargada del control de calidad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "fuerza": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Helsinki y Oslo, la fuerza bruta, dos soldados que no hacían preguntas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "soldados": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Helsinki y Oslo, la fuerza bruta, dos soldados que no hacían preguntas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hacían": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Helsinki y Oslo, la fuerza bruta, dos soldados que no hacían preguntas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "regla": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La regla fundamental era una: ninguna gota de sangre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "fundamental": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "La regla fundamental era una: ninguna gota de sangre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ninguna": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La regla fundamental era una: ninguna gota de sangre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "gota": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "La regla fundamental era una: ninguna gota de sangre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No quiero ni una sola gota de sangre derramada.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "si": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Así la policía no sabrá quién es rehén y quién es atracador si deciden asaltar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hay": {
+      "count": 6,
+      "lines": [
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Aquí no hay amigos, no hay familia, no hay relaciones sentimentales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero para eso hay que aguantar once días dentro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Hay que tratarlos bien, que coman lo mismo que nosotros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "víctima": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "opinión": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "pública": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "pondrá": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nuestra": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Los rehenes son nuestra muralla defensiva.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No subestime nuestra paciencia, ni la suya.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "contra": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "somos": {
+      "count": 4,
+      "lines": [
+        {
+          "text": "No somos ladrones comunes, somos la resistencia.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Nosotros no somos terroristas, inspectora. Somos ladrones.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ladrones": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "No somos ladrones comunes, somos la resistencia.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Nosotros no somos terroristas, inspectora. Somos ladrones.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "comunes": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No somos ladrones comunes, somos la resistencia.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "resistencia": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "No somos ladrones comunes, somos la resistencia.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "día": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Las rotativas van a trabajar día y noche sin descanso.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "golpe": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "llegó": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "camión": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "papel": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "El dinero es solo papel pintado con un número.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "entramos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "armados": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "dientes": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "vestidos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "monos": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Les pondremos los mismos monos rojos y las mismas caretas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "rojos": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Les pondremos los mismos monos rojos y las mismas caretas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cuestión": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "En cuestión de minutos tomamos el edificio y sesenta y siete rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "minutos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "En cuestión de minutos tomamos el edificio y sesenta y siete rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tomamos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "En cuestión de minutos tomamos el edificio y sesenta y siete rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "edificio": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "En cuestión de minutos tomamos el edificio y sesenta y siete rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "La policía rodeó el edificio de inmediato.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sesenta": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "En cuestión de minutos tomamos el edificio y sesenta y siete rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "siete": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "En cuestión de minutos tomamos el edificio y sesenta y siete rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "rehenes": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "En cuestión de minutos tomamos el edificio y sesenta y siete rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Los rehenes son nuestra muralla defensiva.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "entre": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entre ellos estaba la hija del embajador británico, Alison Parker.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ellos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entre ellos estaba la hija del embajador británico, Alison Parker.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hija": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entre ellos estaba la hija del embajador británico, Alison Parker.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "embajador": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entre ellos estaba la hija del embajador británico, Alison Parker.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "británico": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entre ellos estaba la hija del embajador británico, Alison Parker.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cordero": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Nuestro cordero de Pascua.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "pascua": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Nuestro cordero de Pascua.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "inmediato": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "La policía rodeó el edificio de inmediato.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tomó": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La inspectora Raquel Murillo tomó el mando del operativo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "operativo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La inspectora Raquel Murillo tomó el mando del operativo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ya": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "había": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "previsto": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "uno": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sus": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "movimientos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "partida": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Espero que esté lista para una partida larga.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ajedrez": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "perfecta": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "juego": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El juego acababa de comenzar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "acababa": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El juego acababa de comenzar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "comenzar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El juego acababa de comenzar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "señores": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A ver, señores, mucha atención a lo que voy a decir.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mucha": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A ver, señores, mucha atención a lo que voy a decir.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "atención": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A ver, señores, mucha atención a lo que voy a decir.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "voy": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "A ver, señores, mucha atención a lo que voy a decir.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "No voy a negociar con terroristas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "decir": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A ver, señores, mucha atención a lo que voy a decir.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "vamos": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "No vamos a robar el dinero de nadie.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Porque vamos a fabricar nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "robar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No vamos a robar el dinero de nadie.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nadie": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "No vamos a robar el dinero de nadie.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "porque": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Porque vamos a fabricar nuestro propio dinero.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Porque me gusta el nombre y porque suena rápido.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "cómo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "¿Cómo lo veis?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "veis": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "¿Cómo lo veis?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "gente": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Para la gente seremos unos héroes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "seremos": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Para la gente seremos unos héroes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "unos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Para la gente seremos unos héroes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "héroes": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Para la gente seremos unos héroes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "eso": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pero para eso hay que aguantar once días dentro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tenemos": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Tenemos comida, agua, medicamentos y armamento suficiente.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tener": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "parte": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "quiero": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "No quiero ni una sola gota de sangre derramada.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Quiero que os olvidéis de vuestras vidas anteriores.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Quiero tiempo, inspectora. Solo tiempo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ha": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "¿Ha quedado claro?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "quedado": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "¿Ha quedado claro?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "claro": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "¿Ha quedado claro?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "haya": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "baja": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "dejamos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "monstruos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "aquí": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Aquí no hay amigos, no hay familia, no hay relaciones sentimentales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "amigos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Aquí no hay amigos, no hay familia, no hay relaciones sentimentales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "familia": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Aquí no hay amigos, no hay familia, no hay relaciones sentimentales.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "os": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Quiero que os olvidéis de vuestras vidas anteriores.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "vuestras": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Quiero que os olvidéis de vuestras vidas anteriores.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "vidas": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Quiero que os olvidéis de vuestras vidas anteriores.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "anteriores": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Quiero que os olvidéis de vuestras vidas anteriores.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "partir": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A partir de ahora sois Berlín, Moscú, Denver, Río, Nairobi, Helsinki, Oslo y Tokio.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ahora": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "A partir de ahora sois Berlín, Moscú, Denver, Río, Nairobi, Helsinki, Oslo y Tokio.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Entregad todos los teléfonos móviles en esta bolsa ahora mismo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sois": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A partir de ahora sois Berlín, Moscú, Denver, Río, Nairobi, Helsinki, Oslo y Tokio.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "qué": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "¿Por qué Tokio?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "¿Qué es lo que quiere exactamente, Profesor?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "gusta": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Porque me gusta el nombre y porque suena rápido.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Pues a mí me gusta Río, me parece fresco.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "A ti lo que te gusta es hablar demasiado, chaval.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nombre": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Porque me gusta el nombre y porque suena rápido.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "suena": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Porque me gusta el nombre y porque suena rápido.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "rápido": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Porque me gusta el nombre y porque suena rápido.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "pues": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pues a mí me gusta Río, me parece fresco.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mí": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pues a mí me gusta Río, me parece fresco.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "parece": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pues a mí me gusta Río, me parece fresco.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "fresco": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pues a mí me gusta Río, me parece fresco.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "ti": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A ti lo que te gusta es hablar demasiado, chaval.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hablar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A ti lo que te gusta es hablar demasiado, chaval.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "demasiado": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A ti lo que te gusta es hablar demasiado, chaval.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "chaval": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "A ti lo que te gusta es hablar demasiado, chaval.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "solo": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "El dinero es solo papel pintado con un número.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Quiero tiempo, inspectora. Solo tiempo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "pintado": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El dinero es solo papel pintado con un número.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "número": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "El dinero es solo papel pintado con un número.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "verdadera": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La verdadera riqueza es el tiempo, la libertad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "riqueza": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La verdadera riqueza es el tiempo, la libertad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tiempo": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "La verdadera riqueza es el tiempo, la libertad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Quiero tiempo, inspectora. Solo tiempo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "libertad": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La verdadera riqueza es el tiempo, la libertad.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "salgamos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "libres": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "siempre": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "aguantar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Pero para eso hay que aguantar once días dentro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "once": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Pero para eso hay que aguantar once días dentro.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Once días encerrados mientras las máquinas de imprimir no paran de funcionar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "encerrados": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Once días encerrados mientras las máquinas de imprimir no paran de funcionar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mientras": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Once días encerrados mientras las máquinas de imprimir no paran de funcionar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "máquinas": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Once días encerrados mientras las máquinas de imprimir no paran de funcionar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "funcionar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Once días encerrados mientras las máquinas de imprimir no paran de funcionar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "van": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Las rotativas van a trabajar día y noche sin descanso.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "trabajar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Las rotativas van a trabajar día y noche sin descanso.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "noche": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Las rotativas van a trabajar día y noche sin descanso.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sin": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Las rotativas van a trabajar día y noche sin descanso.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "descanso": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Las rotativas van a trabajar día y noche sin descanso.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hora": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cada hora que pasa imprimimos ocho millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "pasa": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cada hora que pasa imprimimos ocho millones de euros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "comida": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tenemos comida, agua, medicamentos y armamento suficiente.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "agua": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tenemos comida, agua, medicamentos y armamento suficiente.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "medicamentos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tenemos comida, agua, medicamentos y armamento suficiente.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "armamento": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tenemos comida, agua, medicamentos y armamento suficiente.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "suficiente": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tenemos comida, agua, medicamentos y armamento suficiente.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "son": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Los rehenes son nuestra muralla defensiva.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "bien": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Hay que tratarlos bien, que coman lo mismo que nosotros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Colaboren y todo saldrá bien.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "coman": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Hay que tratarlos bien, que coman lo mismo que nosotros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mismo": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Hay que tratarlos bien, que coman lo mismo que nosotros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Entregad todos los teléfonos móviles en esta bolsa ahora mismo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "nosotros": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Hay que tratarlos bien, que coman lo mismo que nosotros.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Nosotros no somos terroristas, inspectora. Somos ladrones.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "les": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Les pondremos los mismos monos rojos y las mismas caretas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "pondremos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Les pondremos los mismos monos rojos y las mismas caretas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mismos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Les pondremos los mismos monos rojos y las mismas caretas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mismas": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Les pondremos los mismos monos rojos y las mismas caretas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sabrá": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Así la policía no sabrá quién es rehén y quién es atracador si deciden asaltar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "quién": {
+      "count": 3,
+      "lines": [
+        {
+          "text": "Así la policía no sabrá quién es rehén y quién es atracador si deciden asaltar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Inspectora Murillo al habla, ¿con quién tengo el placer?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "rehén": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Así la policía no sabrá quién es rehén y quién es atracador si deciden asaltar.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "obra": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Es una obra de arte, un poema visual.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "arte": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Es una obra de arte, un poema visual.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "poema": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Es una obra de arte, un poema visual.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "visual": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Es una obra de arte, un poema visual.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tranquilos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "todos": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Entregad todos los teléfonos móviles en esta bolsa ahora mismo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "va": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hacer": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "daño": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "hacéis": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "exactamente": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "¿Qué es lo que quiere exactamente, Profesor?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "digamos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "saldrá": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Colaboren y todo saldrá bien.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "teléfonos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entregad todos los teléfonos móviles en esta bolsa ahora mismo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "bolsa": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Entregad todos los teléfonos móviles en esta bolsa ahora mismo.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "valientes": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No intentéis ser valientes, el heroísmo en estos casos suele acabar mal.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "estos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No intentéis ser valientes, el heroísmo en estos casos suele acabar mal.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "casos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No intentéis ser valientes, el heroísmo en estos casos suele acabar mal.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "suele": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No intentéis ser valientes, el heroísmo en estos casos suele acabar mal.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "acabar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No intentéis ser valientes, el heroísmo en estos casos suele acabar mal.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mal": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No intentéis ser valientes, el heroísmo en estos casos suele acabar mal.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "alguien": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "intenta": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "escapar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "o": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "esconder": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "teléfono": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "consecuencias": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "serán": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "habla": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Inspectora Murillo al habla, ¿con quién tengo el placer?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tengo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Inspectora Murillo al habla, ¿con quién tengo el placer?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "placer": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Inspectora Murillo al habla, ¿con quién tengo el placer?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "buenas": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Buenas tardes, inspectora. Puede llamarme el Profesor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tardes": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Buenas tardes, inspectora. Puede llamarme el Profesor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "puede": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Buenas tardes, inspectora. Puede llamarme el Profesor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "llamarme": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Buenas tardes, inspectora. Puede llamarme el Profesor.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "quiere": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "¿Qué es lo que quiere exactamente, Profesor?",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "sabe": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Usted es una mujer inteligente y sabe que podemos llegar a un entendimiento.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "perfectamente": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "poder": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "salir": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "paciencia": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No subestime nuestra paciencia, ni la suya.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "suya": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No subestime nuestra paciencia, ni la suya.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "le": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Le propongo mantener una línea abierta de comunicación directa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "propongo": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Le propongo mantener una línea abierta de comunicación directa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mantener": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Le propongo mantener una línea abierta de comunicación directa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "línea": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Le propongo mantener una línea abierta de comunicación directa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "abierta": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Le propongo mantener una línea abierta de comunicación directa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "comunicación": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Le propongo mantener una línea abierta de comunicación directa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "directa": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Le propongo mantener una línea abierta de comunicación directa.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "decisión": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tome": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "tendrá": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "impacto": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "esas": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "usted": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Usted es una mujer inteligente y sabe que podemos llegar a un entendimiento.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "mujer": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Usted es una mujer inteligente y sabe que podemos llegar a un entendimiento.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "inteligente": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Usted es una mujer inteligente y sabe que podemos llegar a un entendimiento.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "podemos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Usted es una mujer inteligente y sabe que podemos llegar a un entendimiento.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "llegar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Usted es una mujer inteligente y sabe que podemos llegar a un entendimiento.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "negociar": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "No voy a negociar con terroristas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "terroristas": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "No voy a negociar con terroristas.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Nosotros no somos terroristas, inspectora. Somos ladrones.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "buenos": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y de los buenos, créame.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "créame": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Y de los buenos, créame.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "será": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La negociación será larga, tensa y fascinante.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "larga": {
+      "count": 2,
+      "lines": [
+        {
+          "text": "La negociación será larga, tensa y fascinante.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        },
+        {
+          "text": "Espero que esté lista para una partida larga.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "fascinante": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "La negociación será larga, tensa y fascinante.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "espero": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Espero que esté lista para una partida larga.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "esté": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Espero que esté lista para una partida larga.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    },
+    "lista": {
+      "count": 1,
+      "lines": [
+        {
+          "text": "Espero que esté lista para una partida larga.",
+          "song": "S01E01 - Efectuar lo acordado",
+          "artist": "La Casa de Papel"
+        }
+      ]
+    }
+  }
+}
