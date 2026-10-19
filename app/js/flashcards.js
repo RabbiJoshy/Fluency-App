@@ -4130,15 +4130,6 @@ function getDisplayedTargetHeadword(card) {
     return card.displaySurface || card.targetWord;
 }
 
-function isTrivialPlural(surface, canonical) {
-    const form = foldSurfaceForm(surface);
-    const base = foldSurfaceForm(canonical);
-    if (!form || !base || form === base) return false;
-    return form === `${base}s`
-        || form === `${base}es`
-        || (base.endsWith('z') && form === `${base.slice(0, -1)}ces`);
-}
-
 function isTrivialElision(surface, canonical) {
     const rawSurface = String(surface || '').trim();
     if (!/[’']$/.test(rawSurface)) return false;
@@ -4150,11 +4141,6 @@ function isTrivialElision(surface, canonical) {
     return shortened.length > 0
         && full.startsWith(shortened)
         && full.length - shortened.length === 1;
-}
-
-function isTrivialCanonicalRelation(surface, canonical) {
-    return isTrivialPlural(surface, canonical)
-        || isTrivialElision(surface, canonical);
 }
 
 // Surface spellings belong in their example sentence, where the exact
@@ -7232,8 +7218,8 @@ function renderCardWikipediaBadge(card) {
                 }
                 const open = card._expandedPos.has(key);
                 // The surface form already identifies an identical lemma in
-                // the centred card header; repeat the lemma only when it adds
-                // information (for example, an inflected surface).
+                // the centred card header; repeat the lemma when the surface
+                // is inflected, plurals included (olas from ola).
                 // `se` (formerly on the back-title chip) joins the lemma it
                 // belongs to — "from irse", not "from ir se". Verbs only,
                 // unless the lemma already ends in se.
@@ -7243,7 +7229,7 @@ function renderCardWikipediaBadge(card) {
                 const rowLemma = showSe ? `${baseLemma}se` : baseLemma;
                 const lemmaDiffers = Boolean(rowLemma)
                     && foldSurfaceForm(rowLemma) !== foldSurfaceForm(backWordText)
-                    && !isTrivialCanonicalRelation(backWordText, rowLemma);
+                    && !isTrivialElision(backWordText, rowLemma);
                 const hw = lemmaDiffers
                     ? `<span class="pos-lemma-from">from</span><span class="pos-pill-lemma"${showSe ? ` title="${escapeCardText(formNote)}"` : ''}>${escapeCardText(rowLemma)}</span>`
                     : '';
