@@ -560,16 +560,16 @@
 }
 
 /* Each legend swatch uses the exact fill of its progress-bar segment. */
-#levelColoursTooltip .info-point-badge {
+#levelColoursTooltip .info-point-badge , #step2Tooltip .info-point-badge {
   min-width: 88px;
   border: 1px solid var(--border-color);
 }
-#levelColoursTooltip .info-point-badge.is-new { background: var(--set-new); color: #17202a; }
-#levelColoursTooltip .info-point-badge.is-practice { background: var(--set-review); color: #17202a; }
-#levelColoursTooltip .info-point-badge.is-done { background: var(--set-known); color: #fff; }
-#levelColoursTooltip .info-point-badge.is-estimated { background: var(--set-estimated); color: #17202a; }
-#levelColoursTooltip .info-point-badge.is-skip { background: var(--set-skipped); color: #fff; }
-#levelEstimatedLegend[hidden] { display: none; }
+#levelColoursTooltip .info-point-badge.is-new , #step2Tooltip .info-point-badge.is-new { background: var(--set-new); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-practice , #step2Tooltip .info-point-badge.is-practice { background: var(--set-review); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-done , #step2Tooltip .info-point-badge.is-done { background: var(--set-known); color: #fff; }
+#levelColoursTooltip .info-point-badge.is-estimated , #step2Tooltip .info-point-badge.is-estimated { background: var(--set-estimated); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-skip , #step2Tooltip .info-point-badge.is-skip { background: var(--set-skipped); color: #fff; }
+#levelEstimatedLegend[hidden], #step2EstimatedLegend[hidden] { display: none; }
 
 .smart-skip-browser-actions:has(> #smartSkipResultsCount:empty):has(> button[hidden]) { display: none; }
 

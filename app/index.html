@@ -540,7 +540,7 @@
             <div id="step2" class="setup-step home-section" style="display: none;">
                 <!-- Learn and Practise fold into each other: the closed one is this one row. -->
                 <button type="button" class="home-section-toggle" data-home-section="learn" aria-expanded="true">
-                    <svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"/><path d="M12 20l0 -10"/></svg><strong class="home-section-name">Learn</strong><span class="home-section-info step-help-btn" data-tooltip="step2Tooltip" role="button" aria-label="About levels and sessions"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span><span class="home-section-toggle-meta" id="learnSectionMeta"></span>
+                    <svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"/><path d="M12 20l0 -10"/></svg><strong class="home-section-name">Learn</strong><span class="home-section-info step-help-btn" data-tooltip="step2Tooltip" role="button" aria-label="About levels and sessions"><svg class="home-section-help" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2.9-1.2 1.8"></path><path d="M12 17h.01"></path></svg></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span><span class="home-section-toggle-meta" id="learnSectionMeta"></span>
                     <span class="home-section-peek" id="learnSectionPeek"></span>
                 </button>
                 <div id="step2Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="levelHelpTitle"><div class="step-info-tooltip-inner">
@@ -550,12 +550,14 @@
                     </div>
                     <p class="info-sheet-lead"><span id="step2LevelDescription">Words are ordered from most to least common.</span> Pick a level where the words look new, then press <strong>Learn</strong>.</p>
                     <p class="info-sheet-lead level-deck-total" id="step2DeckTotal" hidden></p>
+                    <p class="level-help-note"><strong>Smart Skip</strong> combines related forms and skips words you likely know, so you see fewer cards.</p>
+                    <p class="level-help-subhead">Your progress bar</p>
                     <div class="info-sheet-points level-help-legend">
-                        <div><span class="info-point-badge is-skip">Smart Skip</span><p>Combines related forms and skips words you likely know, so you see fewer cards.</p></div>
                         <div><span class="info-point-badge is-new">New</span><p>Not studied yet.</p></div>
                         <div><span class="info-point-badge is-practice">Seen</span><p>Studied, not known yet. These come back in Practise.</p></div>
                         <div><span class="info-point-badge is-done">Known</span><p>Answered correctly.</p></div>
-                        <div><span class="info-point-badge is-estimated">Estimated</span><p>Likely known, from your level estimate.</p></div>
+                        <div id="step2EstimatedLegend" hidden><span class="info-point-badge is-estimated">Estimated</span><p>Likely known, from your level estimate.</p></div>
+                        <div><span class="info-point-badge is-skip">Skipped</span><p>Set aside by Smart Skip.</p></div>
                     </div>
                     <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
                         <div class="level-estimate-modal-body">
@@ -566,7 +568,7 @@
                 </div></div>
                 <div class="step-header step-header-with-help">
                     <span class="step-number">2</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels and sessions"><svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"/><path d="M12 20l0 -10"/></svg>Learn <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels and sessions"><svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"/><path d="M12 20l0 -10"/></svg>Learn <svg class="home-section-help" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2.9-1.2 1.8"></path><path d="M12 17h.01"></path></svg></button>
                     <div class="step-header-actions">
                         <span id="levelInfoLine" class="level-info-line" style="display: none;"></span>
                         <button type="button" id="levelModeToggle" class="level-mode-btn" style="display: none;" aria-hidden="true" tabindex="-1">CEFR</button>
@@ -621,11 +623,11 @@
                  binds them; ui.js fills #reviewDeckBody. -->
             <div id="reviewDeckSection" class="setup-step review-deck-step home-section" hidden>
                 <button type="button" class="home-section-toggle" data-home-section="practise" aria-expanded="false">
-                    <svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg><strong class="home-section-name">Practise</strong><span class="home-section-info" data-practise-info role="button" aria-label="How Practise is scheduled"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span><span class="home-section-toggle-meta" id="practiseSectionMeta"></span>
+                    <svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg><strong class="home-section-name">Practise</strong><span class="home-section-info" data-practise-info role="button" aria-label="How Practise is scheduled"><svg class="home-section-help" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2.9-1.2 1.8"></path><path d="M12 17h.01"></path></svg></span><span class="home-section-toggle-caret" aria-hidden="true">⌄</span><span class="home-section-toggle-meta" id="practiseSectionMeta"></span>
                     <span class="home-section-peek" id="practiseSectionPeek"></span>
                 </button>
                 <div class="step-header step-header-with-help">
-                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-practise-info aria-haspopup="dialog" title="How Practise is scheduled"><svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg>Practise <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-practise-info aria-haspopup="dialog" title="How Practise is scheduled"><svg class="home-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg>Practise <svg class="home-section-help" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2.9-1.2 1.8"></path><path d="M12 17h.01"></path></svg></button>
 
                 </div>
                 <section id="reviewDeckBody" class="review-deck-section" aria-labelledby="reviewDeckTitle"></section>
@@ -2056,7 +2058,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <span class="product-modal-eyebrow">Practise</span>
                     <h3 id="spacedRepetitionInfoTitle">How Practise is scheduled</h3>
                 </div>
                 <button class="modal-close" id="closeSpacedRepetitionInfoModal" aria-label="Close">✕</button>
@@ -2081,7 +2082,6 @@
         <div class="modal-content review-home-content">
             <div class="modal-header">
                 <div>
-                    <span class="progress-modal-eyebrow">Known · Practice · New</span>
                     <h3 id="reviewHomeTitle">Practice</h3>
                 </div>
                 <button class="modal-close" id="closeReviewHomeModal" aria-label="Close Practice">✕</button>

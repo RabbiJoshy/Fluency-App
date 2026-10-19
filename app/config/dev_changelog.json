@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T16:05:00+01:00",
+      "date": "2026-10-19 16:05 BST",
+      "agent": "Claude",
+      "summary": "Practise sheets lose their double titles; ? icons; Learn sheet refreshed; bigger Practice page on desktop",
+      "detail": [
+        "Removed the extra \"Practise\" label above the scheduling sheet and \"Known · Practice · New\" above the Practice sheet.",
+        "The Practice sheet is much larger on desktop (rows, counts, word lists, titles).",
+        "Learn and Practise help buttons are now a question mark, the same size as the title.",
+        "Learn sheet: Smart Skip note, then a progress-bar legend using the bar's own colours; Estimated shows only once you have done a level estimate."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T15:20:00+01:00",
       "date": "2026-10-19 15:20 BST",
       "agent": "Claude",

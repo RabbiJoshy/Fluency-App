@@ -104,9 +104,10 @@
     height: 32px;
     margin: -6px;
 }
-#setupPanel .home-section-info svg {
-    width: 20px; height: 20px; fill: none; stroke: var(--accent-primary);
-    stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+#setupPanel .home-section-info { font-size: 20px; }
+#setupPanel .home-section-help {
+    width: 1.1em; height: 1.1em; flex: none; fill: none; stroke: var(--accent-primary);
+    stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
 }
 /* A quiet marker for the section you are in: an accent edge and tinted border. */
 body:not(.desktop-workspace) #setupPanel[data-home-open="learn"] #step2,
@@ -802,3 +803,42 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
 @media (min-width: 1024px) {
     :is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, #standardSourcePickerBtn) { padding: 26px !important; }
 }
+
+/* Learn's info sheet: one note and a legend that matches the progress bar. */
+#step2Tooltip .level-help-note { margin: 0 0 14px; color: var(--text-secondary); font-size: 15px; line-height: 1.5; }
+#step2Tooltip .level-help-note strong { color: var(--text-primary); }
+#step2Tooltip .level-help-subhead {
+    margin: 0 0 6px; color: var(--text-muted); font: 700 12px/1 var(--font-emphasis);
+    letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+/* Practise's detail sheet is a page on desktop: type sized for it. */
+@media (min-width: 1024px) {
+    #reviewHomeModal .modal-header h3 { font-size: 34px; }
+    #reviewHomeModal .review-home-section h4 { font-size: 15px; margin-bottom: 12px; }
+    #reviewHomeModal .review-home-row { padding: 18px 22px; margin-bottom: 10px; border-radius: 14px; }
+    #reviewHomeModal .review-home-row-copy { gap: 5px; }
+    #reviewHomeModal .review-home-row-copy strong { font-size: 21px; }
+    #reviewHomeModal .review-home-row-copy small { font-size: 16px; }
+    #reviewHomeModal .review-home-row-count { font-size: 28px; min-width: 48px; }
+    #reviewHomeModal .review-home-row-chevron { font-size: 32px; }
+    #reviewHomeModal .review-home-srs { padding: 16px 20px; margin-bottom: 26px; border-radius: 14px; }
+    #reviewHomeModal .review-home-srs-copy strong { font-size: 19px; }
+    #reviewHomeModal .review-home-srs-copy small { font-size: 16px; }
+    #reviewHomeModal .review-home-srs-info { width: 36px; height: 36px; font-size: 18px; }
+    #reviewHomeModal .review-home-back { font-size: 17px; min-height: 44px; padding: 8px 14px; }
+    #reviewHomeModal .review-home-detail-head > span { font-size: 16px; }
+    #reviewHomeModal .review-home-detail-title h4 { font-size: 32px; }
+    #reviewHomeModal .review-home-detail-title p { font-size: 17px; }
+    #reviewHomeModal .review-home-word-row { padding-block: 14px; }
+    #reviewHomeModal .review-home-word-row strong { font-size: 21px; }
+    #reviewHomeModal .review-home-word-row span { font-size: 16px; }
+}
+
+/* Learn's legend swatches are the progress bar's own fills (same fallbacks). */
+#step2Tooltip .info-point-badge { min-width: 88px; border: 1px solid var(--border-color); }
+#step2Tooltip .info-point-badge.is-new { background: var(--set-new, #fff); color: #17202a; }
+#step2Tooltip .info-point-badge.is-practice { background: var(--set-review, #896318); color: #fff; }
+#step2Tooltip .info-point-badge.is-done { background: var(--set-known, #16734b); color: #fff; }
+#step2Tooltip .info-point-badge.is-estimated { background: var(--set-estimated, #77669e); color: #fff; }
+#step2Tooltip .info-point-badge.is-skip { background: var(--set-skipped, #566477); color: #fff; }

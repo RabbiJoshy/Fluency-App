@@ -999,7 +999,7 @@ class ProductShellTests(unittest.TestCase):
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
 
         self.assertIn('<h3 id="reviewHomeTitle">Practice</h3>', html)
-        self.assertIn("Known · Practice · New", html)
+        self.assertNotIn("Known · Practice · New", html)  # one title, no eyebrow
         self.assertNotIn("Review home", ui)
         self.assertIn("cardsFor(summary, group).length", practice)
         self.assertIn("const LIST_PAGE_SIZE = 50", practice)

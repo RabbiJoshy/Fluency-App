@@ -1067,6 +1067,8 @@ function updateStep2Tooltip() {
     if (!tooltip) return;
     const description = document.getElementById('step2LevelDescription');
     const estimateCallout = document.getElementById('step2LevelEstimateCallout');
+    const estimatedRow = document.getElementById('step2EstimatedLegend');
+    if (estimatedRow) estimatedRow.hidden = !((levelEstimates[selectedLanguage] || 0) > 0);
     if (activeArtist) {
         const name = activeArtist.name;
         if (description) description.textContent = `Words from ${name}'s lyrics are ordered from most to least common.`;
@@ -2890,8 +2892,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
 
     const estimate = levelEstimates[selectedLanguage] || 0;
-    const estimatedLegend = document.getElementById('levelEstimatedLegend');
-    if (estimatedLegend) estimatedLegend.hidden = estimate <= 0;
+    for (const id of ['levelEstimatedLegend', 'step2EstimatedLegend']) {
+        const legend = document.getElementById(id);
+        if (legend) legend.hidden = estimate <= 0;
+    }
     const estimatedIds = activeArtist && currentUser && !currentUser.isGuest
         ? await buildEstimatedKnownIds(estimate)
         : null;
