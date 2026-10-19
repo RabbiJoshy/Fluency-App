@@ -91,11 +91,28 @@ def harvest_speech_candidates(lang: str, words: set[str], max_per_word: int = 15
                             "source": record.get("source", {"name": "opensubtitles", "source_record_id": record["sentence_id"]}),
                             "channel": "speech"
                         })
-                if all(len(candidates[w]) >= max_per_word for w in words):
+                # Sample "todo el + noun" for es:todo:1 ("all the"): the first
+                # fifteen todo sentences are nearly all "everything".
+                if lang == "es" and "todo" in words and len(candidates.get("todo_el", [])) < 8:
+                    if re.search(r"\btodo el\b", target, re.I) and not re.search(r"\btodo el mundo\b", target, re.I):
+                        candidates["todo_el"].append({
+                            "language": lang,
+                            "word": "todo",
+                            "example_id": f"speech_todo_el_{record['sentence_id']}",
+                            "sentence_id": record["sentence_id"],
+                            "sentence": target,
+                            "translation": trans,
+                            "source": record.get("source", {"name": "opensubtitles", "source_record_id": record["sentence_id"]}),
+                            "channel": "speech"
+                        })
+                todo_el_done = not (lang == "es" and "todo" in words) or len(candidates.get("todo_el", [])) >= 8
+                if all(len(candidates[w]) >= max_per_word for w in words) and todo_el_done:
                     break
 
     if "que_comp" in candidates:
         candidates["que"].extend(candidates["que_comp"])
+    if "todo_el" in candidates:
+        candidates["todo"].extend(candidates["todo_el"])
 
     out = []
     for w in words:
@@ -209,8 +226,10 @@ def get_pattern_pos(lang: str, word: str, idx: int, tag: str = "", formula: str 
     # Prepositional contractions
     if word in {'del', 'al', 'ao', 'à', 'do', 'da', 'no', 'na', 'pelo', 'pela', 'num', 'numa', 'naquele'}:
         return 'prep'
-    if word == 'nos' and idx == 1:
-        return 'prep'
+    if lang == 'pt' and word == 'nos' and idx == 1:
+        return 'prep'  # pt nos = em + os
+    if lang == 'es' and word == 'todo' and idx == 1:
+        return 'det'  # todo el día: "all the"
 
     # Prepositions
     if word in {'de', 'en', 'em', 'por', 'para', 'con', 'com', 'sin', 'sem', 'sobre'}:
@@ -247,14 +266,14 @@ def get_pattern_pos(lang: str, word: str, idx: int, tag: str = "", formula: str 
         return 'pron'
     if word in {'me', 'te', 'le', 'lhe'}:
         return 'pron'
-    if word == 'nos' and idx == 0:
+    if word == 'nos' and (idx == 0 or lang == 'es'):
         return 'pron'
     if word == 'se' and (lang == 'es' or idx == 1):
         return 'pron'
     if word == 'que' and idx == 1:
         return 'pron'  # relative pronoun
-    if word == 'lo' and idx == 1:
-        return 'pron'
+    if word == 'lo' and idx in {1, 2}:
+        return 'pron'  # object lo; lo que
     if word == 'a' and lang == 'pt' and idx == 2:
         return 'pron'  # object clitic
     if word == 'até' and idx == 1:
@@ -296,7 +315,7 @@ def main():
                     "existing_examples": base_examples
                 }
 
-    print(f"Loaded {len(all_patterns)} total patterns (ES: 51, PT: 64).", flush=True)
+    print(f"Loaded {len(all_patterns)} total patterns.", flush=True)
 
     # 1. Harvest candidates
     es_words = set(es_suite.keys())

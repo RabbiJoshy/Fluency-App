@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T22:37:45+01:00",
+      "date": "2026-10-19 22:37 BST",
+      "agent": "Claude",
+      "summary": "Spanish function words: three new patterns with matched examples",
+      "detail": [
+        "todo: new \"All the\" pattern (todo el tiempo = all the time); todo el mundo (everybody) is deliberately not used as an example.",
+        "me / te / nos: new \"Myself / Yourself / Ourselves\" patterns. Reflexive sentences such as \"Cada vez que me levanto\" no longer sit under \"me / to me\".",
+        "lo: new \"What / the thing that\" pattern for lo que (Oigo lo que dices = I hear what you're saying).",
+        "Examples are assigned automatically from the speech and lyric pools by the parser rules (matcher v1.2); other words' examples are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T21:52:36+01:00",
       "date": "2026-10-19 21:52 BST",
       "agent": "Claude",
@@ -331,17 +344,6 @@
       "detail": [
         "Phones and tablets: Learn is always the card open on arrival, with Practise folded under it. It used to open Practise first once 5 or more mistakes were waiting.",
         "Practise now lists the whole outlook under the next batch: \"Later this week\" and \"After this week\", as well as \"Coming back …\"."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T03:20:00+01:00",
-      "date": "2026-10-19 03:20 BST",
-      "agent": "Claude",
-      "summary": "Progress: Import known words and Export mistakes at the foot of the page",
-      "detail": [
-        "The same two actions as Settings → Your words, under the counts they affect. Import shows only when signed in and opens the import screen; Export downloads the CSV and reports here.",
-        "Side by side on wider screens, stacked rows on phones. Settings → Your words keeps them too."
       ],
       "commit": "pending"
     }

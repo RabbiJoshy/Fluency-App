@@ -3,7 +3,7 @@ Language adapters use explicit syntactic evidence; frozen bridges remain regress
 """
 from copy import deepcopy
 from syntax_bridge_v3 import decide as legacy, render
-VERSION='syntax-assignment/v1.1'
+VERSION='syntax-assignment/v1.2'  # v1.2 (2026-10-19): todo all-the, reflexive me/te/nos, lo que
 THOUGHT={'pt':{'achar','pensar','saber','dizer','esperar','crer','supor','lembrar','esquecer','acreditar','afirmar','contar'},
          'es':{'creer','pensar','saber','decir','esperar','suponer','recordar','olvidar','afirmar','contar'}}
 
@@ -96,7 +96,9 @@ def assign(row,obs):
     from syntax_assignment_es import decide_es
     from syntax_assignment_basic import decide_basic
     from syntax_assignment_shared import decide_shared
-    result=decide_basic(row,obs)
+    from syntax_assignment_es_additions import decide_es_additions
+    result=decide_es_additions(row,obs)
+    if result is None:result=decide_basic(row,obs)
     if result is None:result=(decide_pt if row['language']=='pt' else decide_es)(row,obs)
     if result is None:result=common(row,obs)
     if result is None:result=decide_shared(row,obs)
