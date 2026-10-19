@@ -875,3 +875,34 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
     #setupPanel #step2 > .level-choosing,
     #setupPanel #reviewDeckSection > #reviewDeckBody { padding-top: 1.6vh; }
 }
+
+/* Home, dark theme: the page is a touch lighter than the black Learn and
+   Practise panels, so the panels stand out. */
+:root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden):not([style*="none"])) {
+    --bg-primary: #15171b;
+    background: #15171b;
+}
+:root:not([data-theme="light"]) #setupPanel .home-section { background: #000; border-color: #2a2d33; }
+
+/* Titles are centred on every screen; the section icon sits in the card's top
+   left and the fold arrow in its top right. */
+#setupPanel .home-section { position: relative; }
+#setupPanel .home-section-toggle { justify-content: center; text-align: center; }
+#setupPanel .home-section > .step-header { justify-content: center; }
+#setupPanel .home-section-toggle > .home-section-icon,
+#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    margin: 0;
+}
+#setupPanel .home-section-toggle-caret { position: absolute; top: 14px; right: 16px; margin: 0; line-height: 28px; }
+#setupPanel .home-section-toggle-meta { text-align: center; }
+#setupPanel .home-section-peek .home-level-stats,
+#setupPanel #practiseSectionPeek { justify-content: center; }
+@media (min-width: 1024px) {
+    #setupPanel .home-section-toggle > .home-section-icon,
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+        top: 1.6vh; left: 2vw; width: 28px; height: 28px;
+    }
+}

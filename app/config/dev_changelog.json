@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T22:10:00+01:00",
+      "date": "2026-10-19 22:10 BST",
+      "agent": "Claude",
+      "summary": "Home: lighter page behind black panels; centred titles on phones; icons in the top-left corner",
+      "detail": [
+        "Dark theme: the home page background is slightly lighter (#15171b) and the Learn/Practise panels are pure black, so the panels stand out.",
+        "Learn and Practise titles are centred on phones too; the folded row's numbers are centred under them.",
+        "The leaf and clock icons sit in each panel's top-left corner (desktop and phones); the fold arrow is in the top-right."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T17:35:00+01:00",
       "date": "2026-10-19 17:35 BST",
       "agent": "Claude",
