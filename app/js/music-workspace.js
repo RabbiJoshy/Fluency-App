@@ -27,49 +27,26 @@ function init() {
     workspace.setAttribute('aria-labelledby', 'musicWorkspaceTitle');
     workspace.innerHTML = `
         <header class="music-workspace-header">
-            <button type="button" id="musicBackBtn" class="music-back" hidden>‹ Back</button>
-            <div class="music-workspace-title-group">
-                <small id="musicWorkspaceLanguage"></small>
-                <h1 id="musicWorkspaceTitle" tabindex="-1">Choose your music</h1>
+            <div class="music-workspace-titlebar">
+                <button type="button" id="musicBackBtn" class="music-back" hidden>‹ Back</button>
+                <h1 id="musicWorkspaceTitle" tabindex="-1">Music</h1>
             </div>
-            <nav class="music-workspace-nav" aria-label="Music source" hidden>
+            <nav class="music-workspace-nav" aria-label="Music source">
                 <button type="button" data-music-stage="artists">Artists</button>
                 <button type="button" data-music-stage="playlists">Spotify playlists</button>
+                <button type="button" data-music-stage="subtitles">Series &amp; subtitles</button>
                 <button type="button" data-music-stage="setup" id="musicSetupBtn" hidden aria-hidden="true" tabindex="-1">Study setup</button>
             </nav>
         </header>
         <div class="music-workspace-layout">
             <div class="music-workspace-main">
-                <div id="musicSourceChoices" class="music-source-choices">
-                    <p class="music-browser-intro">Pick how you want to learn from music.</p>
-                    <div class="music-source-grid">
-                        <button type="button" class="music-source-card" data-music-stage="artists">
-                            <span class="music-source-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18.5 14.5A6.5 6.5 0 0 1 21.5 20"></path></svg></span>
-                            <span class="music-source-card-copy">
-                                <strong>Artists</strong>
-                                <small id="musicArtistsChoiceDesc">Learn from catalog songs and popular artists</small>
-                            </span>
-                            <span class="music-source-card-arrow" aria-hidden="true">›</span>
-                        </button>
-                        <button type="button" class="music-source-card" data-music-stage="playlists">
-                            <span class="music-source-card-icon music-source-spotify" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z"/></svg></span>
-                            <span class="music-source-card-copy">
-                                <strong>Spotify playlists</strong>
-                                <small id="musicPlaylistsChoiceDesc">Build custom decks from your Spotify playlists</small>
-                            </span>
-                            <span class="music-source-card-arrow" aria-hidden="true">›</span>
-                        </button>
-                        <button type="button" class="music-source-card" data-music-stage="subtitles">
-                            <span class="music-source-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M7 15h4M15 15h2M7 11h2M13 11h4"></path></svg></span>
-                            <span class="music-source-card-copy">
-                                <strong>Series & Subtitles</strong>
-                                <small id="musicSubtitlesChoiceDesc">Study La Casa de Papel or upload .srt dialogue (no WSD)</small>
-                            </span>
-                            <span class="music-source-card-arrow" aria-hidden="true">›</span>
-                        </button>
+                <div id="musicArtistBrowser" hidden>
+                    <div class="music-artist-tools">
+                        <input type="search" id="musicArtistSearch" placeholder="Search artists" autocomplete="off" aria-label="Search artists">
+                        <button type="button" id="musicMixBtn" class="music-mix-btn" hidden>Mix several</button>
                     </div>
+                    <div id="musicArtistList"></div>
                 </div>
-                <div id="musicArtistBrowser" hidden><p class="music-browser-intro">Pick an artist, or mix songs from several artists.</p><div id="musicArtistList"></div></div>
                 <div id="musicPickerHost"></div>
                 <div id="musicStudySetup" hidden></div>
             </div>
@@ -128,9 +105,6 @@ function enter() {
         panel.setAttribute('role', 'region');
         panel.removeAttribute('aria-modal');
     }
-    const language = options.language || window.selectedLanguage;
-    const langDisplayName = options.languageName || (window._normalModeLangConfigs?.[language]?.name || window.config?.languages?.[language]?.name || language);
-    document.getElementById('musicWorkspaceLanguage').textContent = `${langDisplayName} · Music`;
     document.getElementById('musicSetupBtn').disabled = !hasDeck();
     updateMusicSelection();
     window.updateLearningContextUI?.();
@@ -139,8 +113,6 @@ function enter() {
 
 function showStage(next, { focus = true } = {}) {
     stage = next;
-    const choicesEl = document.getElementById('musicSourceChoices');
-    if (choicesEl) choicesEl.hidden = next !== 'choices';
     const artistBrowser = document.getElementById('musicArtistBrowser');
     if (artistBrowser) artistBrowser.hidden = next !== 'artists';
     const pickerHost = document.getElementById('musicPickerHost');
@@ -153,23 +125,18 @@ function showStage(next, { focus = true } = {}) {
         if (selected) button.setAttribute('aria-current', 'page');
         else button.removeAttribute('aria-current');
     });
+    const isPick = ['artists', 'playlists', 'subtitles'].includes(next);
     const backButton = document.getElementById('musicBackBtn');
     if (backButton) {
-        if (next === 'choices') {
-            backButton.hidden = true;
-        } else {
-            backButton.hidden = false;
-            backButton.textContent = '‹ Back';
-        }
+        // The pick screens are the top level: Back only appears to return to a deck.
+        backButton.hidden = isPick && !hasDeck();
+        backButton.textContent = isPick ? `‹ ${window.activeArtist?.name || window.playlistLiveDeck?.()?.playlistName || 'Back'}` : '‹ Back';
     }
+    const nav = workspace.querySelector('.music-workspace-nav');
+    if (nav) nav.hidden = !isPick;
     const title = document.getElementById('musicWorkspaceTitle');
     if (title) {
-        if (next === 'choices') title.textContent = 'Choose your music';
-        else if (next === 'artists') title.textContent = 'Choose an artist';
-        else if (next === 'playlists') title.textContent = 'Spotify playlists';
-        else if (next === 'subtitles') title.textContent = 'Series & Subtitles';
-        else if (next === 'songs') title.textContent = 'Choose songs';
-        else if (next === 'setup') title.textContent = 'Study setup';
+        title.textContent = next === 'songs' ? 'Choose songs' : next === 'setup' ? 'Study setup' : 'Music';
     }
     updateMusicSelection();
     window.refreshDesktopTrail?.();
@@ -182,10 +149,9 @@ function closePickers() {
     document.getElementById('songSetModal')?.classList.add('hidden');
 }
 
+// There is no separate chooser any more: the tabs on the pick screen are it.
 export function showChoices() {
-    enter();
-    closePickers();
-    showStage('choices');
+    showArtists();
 }
 
 export function showArtists() {
@@ -211,13 +177,16 @@ export function openSubtitles() {
 function back() {
     if (busy) return;
     if (stage === 'songs') {
+        const unfinishedMix = window.activeArtist?.customSongSource && !(window.selectedSongIds || []).length;
         if (playlistReturn) openPlaylists();
+        else if (hasDeck() && !unfinishedMix) window.dismissMusicWorkspace?.();
         else showArtists();
     } else if (stage === 'artists' || stage === 'playlists' || stage === 'subtitles') {
-        showChoices();
+        // Back from a pick screen returns to the deck you came from.
+        if (hasDeck()) window.dismissMusicWorkspace?.();
+        else showArtists();
     } else if (stage === 'setup') {
-        if (hasDeck()) window.showSongSetPicker?.();
-        else showChoices();
+        showArtists();
     }
 }
 
@@ -236,8 +205,21 @@ export function openMusicWorkspace(nextOptions = {}) {
             isSeries: true
         });
     }
-    for (const entry of entries) {
+    const mixEntry = entries.find(e => e.slug === '__custom__');
+    const mixBtn = document.getElementById('musicMixBtn');
+    mixBtn.hidden = !mixEntry;
+    mixBtn.onclick = () => { playlistReturn = false; options.onSelectArtist?.(mixEntry); };
+    const search = document.getElementById('musicArtistSearch');
+    search.value = '';
+    search.oninput = () => {
+        const query = search.value.trim().toLocaleLowerCase();
+        list.querySelectorAll('.music-artist-option').forEach(tile => {
+            tile.hidden = Boolean(query) && !tile.dataset.name.includes(query);
+        });
+    };
+    for (const entry of entries.filter(e => e.slug !== '__custom__')) {
         const button = document.createElement('button');
+        button.dataset.name = String(entry.name || '').toLocaleLowerCase();
         button.type = 'button';
         button.className = 'music-artist-option';
         const image = document.createElement('span');
@@ -252,7 +234,7 @@ export function openMusicWorkspace(nextOptions = {}) {
         const name = document.createElement('strong');
         name.textContent = entry.name;
         const description = document.createElement('small');
-        description.textContent = entry.description || 'Choose all their songs, or just a few.';
+        description.textContent = entry.description || '';
         copy.append(name, description);
         button.append(image, copy);
         button.addEventListener('click', () => {
@@ -275,22 +257,7 @@ export function openMusicWorkspace(nextOptions = {}) {
         empty.textContent = 'No artists are available for this language yet. You can build from a Spotify playlist.';
         list.appendChild(empty);
     }
-    const realArtists = entries.filter(e => e.slug !== '__custom__');
-    const artistDescEl = document.getElementById('musicArtistsChoiceDesc');
-    const playlistDescEl = document.getElementById('musicPlaylistsChoiceDesc');
-    const langName = options.languageName || (window._normalModeLangConfigs?.[options.language]?.name || window.config?.languages?.[options.language]?.name || options.language) || '';
-    if (artistDescEl) {
-        if (realArtists.length) {
-            const names = realArtists.slice(0, 3).map(a => a.name).join(', ');
-            artistDescEl.textContent = `Curated catalog: ${names}${realArtists.length > 3 ? '…' : ''} · Full lyrics & vocabulary`;
-        } else {
-            artistDescEl.textContent = `No curated catalog artists in ${langName} yet · Use Spotify instead`;
-        }
-    }
-    if (playlistDescEl) {
-        playlistDescEl.textContent = `Build custom decks from any ${langName} playlist, album, or track with Spotify`;
-    }
-    const requested = nextOptions.stage || (hasDeck() ? 'artists' : 'choices');
+    const requested = nextOptions.stage || 'artists';
     if (requested === 'setup') showMusicStudySetup();
     else if (requested === 'songs') window.showSongSetPicker?.();
     else if (requested === 'playlists') openPlaylists();

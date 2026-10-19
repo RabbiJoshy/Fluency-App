@@ -1,13 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=aa46d067';
-import { readJsonWithTimeout } from './read-request.js?v=aa46d067';
-import { validateVocabularyIndex } from './data-contracts.js?v=aa46d067';
-import { formatRoute } from './routes.js?v=aa46d067';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=aa46d067';
-import { releaseUrl } from './release-host.js?v=aa46d067';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=aa46d067';
+import './state.js?v=09c2f949';
+import { readJsonWithTimeout } from './read-request.js?v=09c2f949';
+import { validateVocabularyIndex } from './data-contracts.js?v=09c2f949';
+import { formatRoute } from './routes.js?v=09c2f949';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=09c2f949';
+import { releaseUrl } from './release-host.js?v=09c2f949';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=09c2f949';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -3734,11 +3734,16 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 // as the examples attached above. Raw token totals stay on
                 // item.lemma_total_count for diagnostics only.
                 corpusCountIsPooled: Boolean(activeArtist && !isArtistSupplementaryItem(item) && useLemmaMode && item.pooled_frequency != null),
-                corpusCount: artistVocabularyScope === 'extra' || (activeArtist && isArtistSupplementaryItem(item))
-                    ? (item.corpus_count || null)
-                    : (useLemmaMode
-                        ? (item.pooled_frequency ?? item.lemma_example_count ?? null)
-                        : (item.corpus_count || null)),
+                corpusCount: (window.playlistLiveActive?.() ? (item.playlist_count ?? item.corpusCount ?? item.corpus_count ?? null) : null)
+                    ?? (artistVocabularyScope === 'extra' || (activeArtist && isArtistSupplementaryItem(item))
+                        ? (item.corpus_count || null)
+                        : (useLemmaMode
+                            ? (item.pooled_frequency ?? item.lemma_example_count ?? item.corpus_count ?? item.corpusCount ?? item.playlist_count ?? null)
+                            : (item.corpus_count || item.corpusCount || item.playlist_count || null))),
+                playlist_count: item.playlist_count ?? item.corpusCount ?? item.corpus_count ?? null,
+                corpus_count: item.corpus_count ?? item.corpusCount ?? item.playlist_count ?? null,
+                playlistId: item.playlistId || null,
+                playlistName: item.playlistName || null,
                 meanings: meanings,
                 grammarPairs: item._grammarCard?.pairs || [],
                 // Function words are taught by construction and grammatical
