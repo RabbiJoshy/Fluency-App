@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=24a8e6de';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=24a8e6de';
-import { readFastTrack } from './fast-track-preferences.js?v=24a8e6de';
-import './session-plan.js?v=24a8e6de';
+import './state.js?v=9b696104';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=9b696104';
+import { readFastTrack } from './fast-track-preferences.js?v=9b696104';
+import './session-plan.js?v=9b696104';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -275,6 +275,36 @@ function setupGlobalStudyDefaults() {
 
 // Defaults must be present before either mode renders its first level.
 applyGlobalStudyDefaults();
+
+// A legend row that does not fit its line shrinks its text a little (down to
+// 11px) instead of wrapping; it wraps only if even that is not enough. It is
+// re-fitted when its width changes, e.g. when a folded section opens.
+function fitLegendFonts(root) {
+    root?.querySelectorAll?.('.home-level-stats').forEach(el => {
+        const fit = () => {
+            if (!el.clientWidth) return;
+            el.style.fontSize = '';
+            el.style.flexWrap = 'nowrap';
+            let size = parseFloat(getComputedStyle(el).fontSize) || 16;
+            while (el.scrollWidth > el.clientWidth + 1 && size > 11) {
+                size -= 0.5;
+                el.style.fontSize = size + 'px';
+            }
+            if (el.scrollWidth > el.clientWidth + 1) el.style.flexWrap = 'wrap';
+            // The estimate line beneath uses the same size, so the two read as one block.
+            const note = el.nextElementSibling;
+            if (note?.classList.contains('home-level-estimate')) note.style.fontSize = el.style.fontSize;
+        };
+        fit();
+        if (typeof ResizeObserver === 'function') {
+            let lastWidth = el.clientWidth;
+            new ResizeObserver(() => {
+                if (el.clientWidth !== lastWidth) { lastWidth = el.clientWidth; fit(); }
+            }).observe(el);
+        }
+    });
+}
+window.fitLegendFonts = fitLegendFonts;
 
 function setupTooltipHandlers() {
     // Step help tooltip handlers — open as modal
@@ -3137,13 +3167,19 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     ];
     const barHTML = segments.filter(([, , n]) => n > 0)
         .map(([kind, , n]) => `<span class="is-${kind}" style="flex-grow:${n}"></span>`).join('');
-    const statsHTML = segments.filter(([kind, , n]) => n > 0 || kind === 'new')
+    // Estimated words get a line of their own: with them the legend no longer fits a phone.
+    const statsHTML = segments.filter(([kind, , n]) => kind !== 'estimated' && (n > 0 || kind === 'new'))
         .map(([kind, label, n]) => `<span class="home-level-stat is-${kind}"><i aria-hidden="true"></i>${n.toLocaleString()} ${label}</span>`).join('');
+    const estimateHTML = levelEstimatedCount > 0
+        ? `<p class="home-level-estimate"><i aria-hidden="true"></i>${levelEstimatedCount.toLocaleString()} skipped by your level estimate</p>`
+        : '';
     container.innerHTML = `
         <div class="home-level-progress">
             <div class="home-level-bar step-help-btn" role="button" tabindex="0" data-tooltip="levelColoursTooltip" aria-label="Level progress: ${description}. Click for details" aria-haspopup="dialog" title="Level progress details">${barHTML}</div>
             <div class="home-level-stats">${statsHTML}</div>
+            ${estimateHTML}
         </div>`;
+    window.fitLegendFonts?.(container);
     const learnLabel = nextCount === 0
         ? 'No cards available'
         : `Learn${levelNewCount > 0 ? `<span class="home-cta-count"> · ${nextCount.toLocaleString()} new</span>` : ''}`;
@@ -3169,7 +3205,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     const learnPeek = document.getElementById('learnSectionPeek');
     if (learnPeek) {
         learnPeek.innerHTML = `<span class="home-level-bar is-peek" aria-hidden="true">${barHTML}</span>
-            <span class="home-level-stats">${statsHTML}</span>`;
+            <span class="home-level-stats">${statsHTML}</span>
+            ${estimateHTML}`;
+        window.fitLegendFonts?.(learnPeek);
     }
     const practiseMeta = document.getElementById('practiseSectionMeta');
     if (practiseMeta) {
@@ -3559,7 +3597,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=24a8e6de')
+        import('./spotify.js?v=9b696104')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

@@ -1236,10 +1236,5 @@
   #fastModeModal .smart-skip-panel .smart-skip-table { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 60px; }
 }
 
-/* "Bigger text" zooms the whole page by --ui-zoom, and style.css switches
-   that zoom off while Smart Skip is open on a desktop. The app's left nav
-   still divided its height by --ui-zoom, so on this page it stopped 13% short
-   of the bottom. Resetting the variable too keeps the two in step. */
-@media (min-width: 900px) {
-  html[data-text-size="large"]:has(#fastModeModal:not(.hidden)) { --ui-zoom: 1; }
-}
+/* Smart Skip no longer switches the "Bigger text" zoom off, so the left nav keeps
+   one size on every page. */

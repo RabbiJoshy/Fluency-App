@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=24a8e6de");
+@import url("./appearance.css?v=9b696104");
 
 
         * {
@@ -23705,11 +23705,9 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
    the "=" before an obvious look-alike's English is redundant in the table. */
 .smart-skip-table .cognate-pair-eq { display: none !important; }
 
-/* Smart Skip on desktop: larger, clearer type by default, and no "Bigger text"
-   zoom on top of it (that setting is one page-wide zoom, so it is switched
-   off for this page only). */
+/* Smart Skip on desktop: larger, clearer type by default. "Bigger text" still
+   applies, like every other page, so the left nav does not change size. */
 @media (min-width: 900px) {
-  html[data-text-size="large"] body:has(#fastModeModal:not(.hidden)) { zoom: 1; }
   #fastModeModal .smart-skip-body { max-width: 1240px; grid-template-columns: 400px minmax(0, 1fr); column-gap: 32px; }
   #fastModeModal .smart-skip-body h2 { font-size: 30px; }
   .smart-skip-shortcut-row { min-height: 56px; }
