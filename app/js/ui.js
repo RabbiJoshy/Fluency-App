@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=74368f95';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=74368f95';
-import { readFastTrack } from './fast-track-preferences.js?v=74368f95';
-import './session-plan.js?v=74368f95';
+import './state.js?v=d1edfdcc';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=d1edfdcc';
+import { readFastTrack } from './fast-track-preferences.js?v=d1edfdcc';
+import './session-plan.js?v=d1edfdcc';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -794,8 +794,7 @@ function learningModeCopy(language = selectedLanguage) {
     return {
         title: 'Choose what to learn from',
         intro: [
-            'We count how often each word appears in films and TV, or in songs, and give you flashcards in that order, most common first.',
-            'Your progress is shared between the two.'
+            'This app teaches the most common words first, counted from everyday speech, or from songs if you’d rather learn the vocabulary of the music you listen to. You can switch any time, and your progress is shared.'
         ],
         speech: {
             label: 'Speech',
@@ -3614,7 +3613,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=74368f95')
+        import('./spotify.js?v=d1edfdcc')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

@@ -9,7 +9,7 @@ const DEFAULT_SESSION_LENGTH = '5';
 const SESSION_LENGTHS = [
     { id: '5', minutes: 5, label: '5 min', spoken: '5 minutes' },
     { id: '10', minutes: 10, label: '10 min', spoken: '10 minutes' },
-    { id: 'all', minutes: null, label: 'No limit', spoken: 'no time limit' }
+    { id: 'all', minutes: null, label: 'All', spoken: 'no time limit' }
 ];
 // Assumed seconds per card. A new card is read, flipped and explored; a
 // practice card is usually recognised faster.

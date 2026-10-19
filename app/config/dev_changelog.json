@@ -2,6 +2,65 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T21:52:36+01:00",
+      "date": "2026-10-19 21:52 BST",
+      "agent": "Claude",
+      "summary": "Function-word backs: calmer colours, normal-card font and sizes",
+      "detail": [
+        "The function word is white on a neutral highlight in the rows and the example, and the active row has a neutral outline, so que no longer changes colour between rows.",
+        "Slots that name a word type (noun, verb, adjective) are pills in the pattern row and coloured words in the example; others (\"destination\", \"more, less or better\") take no colour.",
+        "Same font as ordinary card backs (DM Sans; the rows had fallen back to Arial); 48px headword, 17px patterns, 20px example.",
+        "Credit rows centre the dots only beside a source icon; a text credit such as \"Source not verified\" keeps its full width."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-19T21:43:10+01:00",
+      "date": "2026-10-19 21:43 BST",
+      "agent": "Claude",
+      "summary": "Film/TV examples show just the IMDb icon; dots centred; no line beside sense rows",
+      "detail": [
+        "Speech examples from film and TV show only the IMDb icon. The show is named when you tap it: \"Open Raees on IMDb\". Lyric credits are unchanged.",
+        "With only a source icon in the credit row, the example dots are centred (ordinary and function-word cards, and the tutorial replica).",
+        "The coloured vertical line joining subsense rows to their sense row is gone; the rows sit slightly indented instead."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-19T21:36:12+01:00",
+      "date": "2026-10-19 21:36 BST",
+      "agent": "Claude",
+      "summary": "Function-word card backs: simpler pattern rows, contraction on one line",
+      "detail": [
+        "Contractions read \"del (de + el)\" on one line, the parts smaller and centred on the word; the \"Function word · Example patterns\" label is gone.",
+        "Each pattern is one row: the pattern, with its plain meaning beneath (\"Of / from the\"). The active row is fully outlined in the word's colour.",
+        "The word is tinted the same colour in the pattern and the example sentence (contraction orange; otherwise its part of speech). The heading stays white."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-19T21:30:51+01:00",
+      "date": "2026-10-19 21:30 BST",
+      "agent": "Claude",
+      "summary": "Session length \"No limit\" is now \"All\"",
+      "detail": [
+        "The session-length chip on the Learn and Practise buttons reads 5 min, 10 min or All, so it fits on desktop. Screen readers still hear \"no time limit\"."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-19T21:24:59+01:00",
+      "date": "2026-10-19 21:24 BST",
+      "agent": "Claude",
+      "summary": "Choose what to learn from: one clear paragraph, centred title",
+      "detail": [
+        "The intro is now: \"This app teaches the most common words first, counted from everyday speech, or from songs if you’d rather learn the vocabulary of the music you listen to. You can switch any time, and your progress is shared.\" (also in the vocabulary switcher).",
+        "The separate \"You can switch between Speech and Music any time\" line under the cards is gone.",
+        "The \"Choose what to learn from\" title is centred."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T21:07:04+01:00",
       "date": "2026-10-19 21:07 BST",
       "agent": "Claude",
@@ -283,60 +342,6 @@
       "detail": [
         "The same two actions as Settings → Your words, under the counts they affect. Import shows only when signed in and opens the import screen; Export downloads the CSV and reports here.",
         "Side by side on wider screens, stacked rows on phones. Settings → Your words keeps them too."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T03:00:00+01:00",
-      "date": "2026-10-19 03:00 BST",
-      "agent": "Claude",
-      "summary": "Fix: Conjugations never loaded on the live site",
-      "detail": [
-        "The embedded verb drill loaded its scripts from the site root (/conjugation/…). Production lives under /Fluency-App/, so every script 404'd and the drill sat on \"0 cards\". Scripts now load from the app's own folder; staging was unaffected because it is served from the root.",
-        "The address the drill puts in the bar no longer has a double slash (/Fluency-App//conjugation), which also sent its data requests to the wrong place."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T02:30:00+01:00",
-      "date": "2026-10-19 02:30 BST",
-      "agent": "Claude",
-      "summary": "Desktop sidebar: a chip turns into its choices in place",
-      "detail": [
-        "Pressing Vocabulary, Music or Artist in the sidebar no longer keeps the chip and opens a menu repeating it underneath. The chip is replaced by the choices themselves, the current one ticked; clicking elsewhere or Escape brings the chip back.",
-        "The truncated one-line descriptions under Speech/Music and Artists/Spotify playlists are gone."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T02:05:00+01:00",
-      "date": "2026-10-19 02:05 BST",
-      "agent": "Claude",
-      "summary": "Choose what to learn from: two Best for points per card on phones",
-      "detail": [
-        "Phones drop \"Following films and TV\" (the intro names films and TV) and \"Studying your own playlists\" (the Spotify footer covers it). Tablet and desktop keep all three."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T01:50:00+01:00",
-      "date": "2026-10-19 01:50 BST",
-      "agent": "Claude",
-      "summary": "Music's Best for reads as activities, like Speech's",
-      "detail": [
-        "\"Songs by artists you love\" and \"Your own playlists\" become \"Understanding your favourite songs\" and \"Studying your own playlists\", matching \"Starting from scratch\" and \"Following films and TV\"."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T01:40:00+01:00",
-      "date": "2026-10-19 01:40 BST",
-      "agent": "Claude",
-      "summary": "Choose what to learn from: clearer intro, icons beside titles, fuller Best for, balanced cards",
-      "detail": [
-        "Title is now \"Choose what to learn from\". The intro says what happens: words are counted in films and TV or in songs and taught as flashcards, most common first; progress is shared between the two.",
-        "Each card has its icon beside its name and three Best for points; the one-line description inside the cards is gone (the intro covers it), as is the footnote under them.",
-        "Side by side (tablet and desktop), Speech has a footer, \"From real film and TV subtitles\" with a yellow film icon, to match Music's Spotify footer. Phones do not show it."
       ],
       "commit": "pending"
     }

@@ -591,8 +591,8 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
 :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-or { display: none !important; }
 :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice { margin: 0; padding: 0; border: 0; background: transparent; }
 :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro { margin: 0 0 16px; padding: 0; text-align: left; }
-:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-heading { margin: 0 0 6px; justify-content: flex-start; }
-:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { font-size: 24px; text-align: left; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-heading { margin: 0 0 6px; justify-content: center; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { font-size: 24px; text-align: center; }
 :is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets {
     margin: 0;
     padding: 0;

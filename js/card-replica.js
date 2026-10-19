@@ -1,4 +1,4 @@
-import { songCreditHTML } from './song-credit.js?v=74368f95';
+import { songCreditHTML } from './song-credit.js?v=d1edfdcc';
 // The replica card: real demo entries and the markup that draws them.
 //
 // Two features show a flashcard without the app having loaded a deck, and they
@@ -613,13 +613,14 @@ function replicaSourceChip(sourceLabel, titleId = '', sourceTitle = '') {
     else if (lower.includes('tatoeba')) domain = 'tatoeba.org';
     else if (lower.includes('imdb')) domain = 'imdb.com';
     else if (lower.includes('opensubtitles')) domain = 'opensubtitles.org';
+    // As on the live card: the IMDb icon alone, the show named only on hover.
     if (titleId) label = `IMDb · ${sourceTitle || `tt${String(titleId).padStart(7, '0')}`} · OpenSubtitles`;
     if (!domain) {
         return `<span class="example-song-credit" style="margin-right:auto;">${esc(raw)}</span>`;
     }
     const icon = { 'tatoeba.org': 'icons/tatoeba.svg', 'wiktionary.org': 'icons/wikipedia-w.svg' }[domain]
         || `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
-    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--${sourceTitle ? 'named' : 'icon'} dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon${domain === 'wiktionary.org' ? ' example-source-favicon--wikipedia' : ''}" src="${icon}" width="34" height="34" alt="" aria-hidden="true">${sourceTitle ? `<span class="example-source-text">${esc(sourceTitle)}</span>` : ''}</span></span>`;
+    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--icon dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon${domain === 'wiktionary.org' ? ' example-source-favicon--wikipedia' : ''}" src="${icon}" width="34" height="34" alt="" aria-hidden="true"></span></span>`;
 }
 
 function renderCredit(card, meaning, example, exampleIdx) {
@@ -643,7 +644,7 @@ function renderCredit(card, meaning, example, exampleIdx) {
     const ticks = replicaExampleTicks(exampleIdx, meaning.examples.length);
     if (!credit && !ticks) return '';
     return `
-        <div class="example-credit-row">
+        <div class="example-credit-row has-centred-ticks">
             <span class="example-credit-start">${credit}</span>
             <span class="example-credit-end">${ticks}</span>
         </div>`;

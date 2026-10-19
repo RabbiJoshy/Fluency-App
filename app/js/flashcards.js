@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=74368f95';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=74368f95';
-import { songCreditHTML } from './song-credit.js?v=74368f95';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=74368f95';
+import './state.js?v=d1edfdcc';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=d1edfdcc';
+import { songCreditHTML } from './song-credit.js?v=d1edfdcc';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=d1edfdcc';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=74368f95';
-import './speech.js?v=74368f95';
-import { goToRoute, routeCodeFor } from './routes.js?v=74368f95';
-import { memoryTipTileHTML } from './memory-tips.js?v=74368f95';
+import { fitSenseRowText } from './card-row-layout.js?v=d1edfdcc';
+import './speech.js?v=d1edfdcc';
+import { goToRoute, routeCodeFor } from './routes.js?v=d1edfdcc';
+import { memoryTipTileHTML } from './memory-tips.js?v=d1edfdcc';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=74368f95';
-import './side-dock.js?v=74368f95';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=74368f95';
+} from './function-word-card.js?v=d1edfdcc';
+import './side-dock.js?v=d1edfdcc';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=d1edfdcc';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=74368f95';
+} from './example-personalisation.js?v=d1edfdcc';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=74368f95';
+} from './spanishdict-usage.js?v=d1edfdcc';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=74368f95';
+} from './reverse-cues.js?v=d1edfdcc';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,7 +69,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=74368f95';
+} from './card-metadata-pills.js?v=d1edfdcc';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -4712,8 +4712,8 @@ function exampleLinkHTML(href, label) {
 
 const OUTBOUND_LEAVE_ICON = `<svg class="outbound-leave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`;
 
-function outboundLeaveButton(href, label, labeled = false, iconHTML = '') {
-    const visit = `Visit ${label}`;
+function outboundLeaveButton(href, label, labeled = false, iconHTML = '', detail = '') {
+    const visit = detail ? `Open ${detail} on ${label}` : `Visit ${label}`;
     const cls = [
         'outbound-leave-btn',
         labeled ? 'outbound-leave-btn--label' : '',
@@ -4723,7 +4723,7 @@ function outboundLeaveButton(href, label, labeled = false, iconHTML = '') {
     // "Open on …" and the external-link arrow, so it reads as a link the
     // learner chose to follow rather than a second decoration.
     const body = iconHTML
-        ? `<span class="outbound-visit-mark">${iconHTML}</span><span class="outbound-visit-label">Open on ${escapeCardText(label)}</span>${OUTBOUND_LEAVE_ICON}`
+        ? `<span class="outbound-visit-mark">${iconHTML}</span><span class="outbound-visit-label">${detail ? `Open <strong class="outbound-visit-detail">${escapeCardText(detail)}</strong> on ${escapeCardText(label)}` : `Open on ${escapeCardText(label)}`}</span>${OUTBOUND_LEAVE_ICON}`
         : (labeled ? `<span class="outbound-visit-label">${escapeCardText(visit)}</span>` : OUTBOUND_LEAVE_ICON);
     return `<button type="button" class="${cls}" hidden data-href="${escapeCardText(href)}" aria-label="${escapeCardText(visit)}" onclick="event.stopPropagation(); confirmOutboundLink(event);">${body}</button>`;
 }
@@ -4732,8 +4732,8 @@ function outboundLeaveButton(href, label, labeled = false, iconHTML = '') {
 // button lives inside it, and a <button> inside a <button> is invalid HTML —
 // the parser hoists the inner one out as a sibling, so tapping the chip found
 // nothing to reveal and did nothing at all.
-function outboundChipHTML(href, inner, label, attrs = '', labeled = false, iconHTML = '') {
-    return `<span role="button" tabindex="0" ${attrs} data-href="${escapeCardText(href)}" aria-expanded="false" onclick="event.stopPropagation(); armOutboundLink(event)" onkeydown="outboundChipKeydown(event)">${inner}${outboundLeaveButton(href, label, labeled, iconHTML)}</span>`;
+function outboundChipHTML(href, inner, label, attrs = '', labeled = false, iconHTML = '', detail = '') {
+    return `<span role="button" tabindex="0" ${attrs} data-href="${escapeCardText(href)}" aria-expanded="false" onclick="event.stopPropagation(); armOutboundLink(event)" onkeydown="outboundChipKeydown(event)">${inner}${outboundLeaveButton(href, label, labeled, iconHTML, detail)}</span>`;
 }
 
 function outboundChipKeydown(event) {
@@ -4797,7 +4797,9 @@ function exampleFaviconHTML(domain) {
     return `<img class="example-source-favicon dict-provenance-icon${className}" src="${src}" width="34" height="34" alt="" aria-hidden="true">`;
 }
 
-function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = '' }) {
+// `text` is printed beside the icon; `detail` (e.g. the show an IMDb line is
+// from) appears only in the tooltip and the "Open … on IMDb" prompt.
+function exampleSourceChipHTML({ href, label, domain, text = '', detail = '', extraClass = '' }) {
     const icon = domain ? exampleFaviconHTML(domain) : '';
     const named = Boolean(text);
     const classes = [
@@ -4805,14 +4807,15 @@ function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = ''
         named ? 'example-source-chip--named' : 'example-source-chip--icon',
         extraClass,
     ].filter(Boolean).join(' ');
-    const title = named ? `${text}` : label;
+    const title = named ? `${text}` : (detail ? `${detail} · ${label}` : label);
     // Icon first. The mark says where the line came from; the title is the
     // detail that follows it, and it is the part that gets truncated, so
     // putting the icon after it meant a long title pushed the icon off.
     const inner = `${icon}${named ? `<span class="example-source-text">${escapeCardText(text)}</span>` : ''}`;
-    const attrs = `class="${classes}" title="${escapeCardText(title)}" aria-label="${escapeCardText(named ? `${text} on ${label}` : label)}"`;
+    const spoken = named ? `${text} on ${label}` : (detail ? `${detail} on ${label}` : label);
+    const attrs = `class="${classes}" title="${escapeCardText(title)}" aria-label="${escapeCardText(spoken)}"`;
     if (!href) return `<span ${attrs}>${inner}</span>`;
-    return outboundChipHTML(href, inner, label, attrs, true, domain ? exampleFaviconHTML(domain) : '');
+    return outboundChipHTML(href, inner, label, attrs, true, domain ? exampleFaviconHTML(domain) : '', detail);
 }
 
 function dictionaryProviderCredit(name, href) {
@@ -4865,7 +4868,9 @@ function exampleProvenanceHTML(example) {
                 href: `https://www.imdb.com/title/${tt}/`,
                 label: 'IMDb',
                 domain: 'imdb.com',
-                text: title,
+                // The icon is the credit; the show is named when the learner
+                // taps it ("Open Scandal on IMDb"), not as text on the card.
+                detail: title,
             });
         }
         return exampleSourceChipHTML({
@@ -8694,8 +8699,10 @@ function renderCardWikipediaBadge(card) {
                     ? `<span class="example-song-credit">${exampleSourceLabel}</span>`
                     : '');
             const creditEnd = `${autoplayBtn}${spotifyBtn}`;
+            // With only a source icon on the left, the dots sit centred.
+            const centredTicks = !songName && !creditEnd;
             const songNameDisplay = (creditStart || creditEnd || exampleTicks) ? `
-                <div class="example-credit-row${songName ? ' is-lyric' : ''}">
+                <div class="example-credit-row${songName ? ' is-lyric' : ''}${centredTicks ? ' has-centred-ticks' : ''}">
                     <span class="example-credit-start">${creditStart}</span>
                     <span class="example-credit-end">${exampleTicks}${creditEnd}</span>
                 </div>
@@ -11053,8 +11060,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '74368f95';
-const MODALS_ASSET_VERSION = '74368f95';
+const ASSET_VERSION = 'd1edfdcc';
+const MODALS_ASSET_VERSION = 'd1edfdcc';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
