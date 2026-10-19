@@ -5,8 +5,12 @@ verification are in workspace `audits/upkeep-closeout-20261017/`.
 
 The live accounts are Joshua, Diego, Artis, SafariMS and JP; staging has joshua.
 Joshua, JP and Diego have their restored progress. SafariMS keeps full admin
-access and is the designated backup identity. Josh deferred its progress copy;
-its existing 13 test entries stay unchanged.
+access. On 18 October its learning state was replaced with a verified Joshua
+snapshot: 10,374 progress entries, matching settings and two saved song sets.
+Prior test state is archived; original live review events are retained. Detailed
+Joshua review history remains with Joshua and the archive, rather than being
+duplicated into SafariMS. Metadata records the imported counter baseline.
+Evidence: workspace `audits/safarims-copy-20261018/`.
 
 ## Supported state
 

@@ -12,8 +12,10 @@ Approved role mapping, 17 October 2026:
 `app/js/account-permissions.js` is the shared app/Worker policy. A staging
 identity uses the same Clerk subject with `stg_` storage prefix and the same role,
 while progress remains isolated. Display names, sign-in provider labels, old JST
-initials and copied progress do not grant privileges. SafariMS is also the designated backup identity; Josh explicitly deferred the
-Joshua progress copy on 17 October. Its admin access is already assigned. New or recreated Clerk
+initials and copied progress do not grant privileges. SafariMS is also the backup identity. Its Joshua learning-state copy completed
+on 18 October (10,374 progress entries, matching settings and two song sets).
+Detailed review history remains with Joshua and the saved archive. Admin access
+is unchanged. New or recreated Clerk
 subjects require an explicit role mapping; copying learning data alone never
 copies admin rights.
 

@@ -40,8 +40,11 @@ date. A second migration is refused when dates already exist.
 
 Completed 17 October: JP's historical progress was merged into the confirmed new
 JP login, and DRG's into Diego, preserving new answers and genuine evidence.
-SafariMS is the confirmed admin/backup identity. Josh explicitly deferred copying
-Joshua into SafariMS to another day; its present learning data stays unchanged.
+SafariMS is the confirmed admin/backup identity. After the 17 October deferral,
+its learning-state copy completed on 18 October: 10,374 states, twelve settings
+and two saved song sets. Detailed review history was not duplicated; it remains
+with Joshua and the full archived snapshot. SafariMS retains admin access and
+its own genuine review history. Copy provenance is stored in user_meta.
 When requested, a backup copy transfers learning state, not credentials or role
 ownership, and can then evolve independently. Check D1's current write allowance
 first: copying Joshua's state and complete event history in one day exceeds the

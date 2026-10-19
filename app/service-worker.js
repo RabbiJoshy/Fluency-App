@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v591';
+const CACHE_NAME = 'flashcards-v592';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -86,9 +86,9 @@ const urlsToCache = [
   '/js/knowledge.js?v=20261014clarity',
   `/js/progress-overview.js?v=${ASSET_VERSION}`,
   '/js/session-plan.js?v=1',
-  '/js/ui.js?v=20261013saved',
+  '/js/ui.js?v=20261019stg5',
   '/js/fast-track-preferences.js?v=20260920a',
-  '/js/vocab.js?v=20260927pa',
+  '/js/vocab.js?v=20261019stg5',
   '/js/grammar-cards.js?v=20260923gn',
   '/js/language-profile.js?v=1',
   '/js/bridge.js?v=1',
@@ -105,7 +105,8 @@ const urlsToCache = [
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
   '/js/song-sets.js?v=20261013music',
   '/js/spotify-playlist-import.js?v=20261013music',
-  '/js/playlist-live.js?v=20260923cj',
+  '/js/playlist-live.js?v=20261019stg5',
+  '/js/subtitle-import.js?v=20261019stg5',
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
   '/js/vocabulary-import.js?v=20260923bk',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
