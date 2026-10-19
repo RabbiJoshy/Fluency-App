@@ -475,4 +475,5 @@ window.playlistLiveDeck = playlistLiveDeck;
 window.playlistLiveActive = playlistLiveActive;
 window.applyPlaylistLiveVocabulary = applyPlaylistLiveVocabulary;
 window.clearPlaylistLiveSession = clearPlaylistLiveSession;
+window.cacheLiveDeck = cacheLiveDeck;
 window.FLUENCY_PLAYLIST_LIVE_DECK_ID = LIVE_DECK_ID;
