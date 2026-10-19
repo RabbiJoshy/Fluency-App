@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T12:30:00+01:00",
+      "date": "2026-10-20 12:30 BST",
+      "agent": "Claude",
+      "summary": "Level legend fits one line; level-estimate words get their own line",
+      "detail": [
+        "The New / Seen / Known / Skipped legend now shrinks its text (down to 11px) to stay on one line instead of wrapping or overflowing, and refits when a section opens or the window changes.",
+        "Words skipped by a level estimate are no longer a legend item; a line beneath reads \"N skipped by your level estimate\" with the purple dot. The purple segment stays in the bar."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T11:40:00+01:00",
       "date": "2026-10-20 11:40 BST",
       "agent": "Claude",

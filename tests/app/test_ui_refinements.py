@@ -165,7 +165,7 @@ class UiRefinementTests(unittest.TestCase):
     def test_level_progress_legend_omits_zero_counts(self):
         ui_js = (ROOT / 'app/js/ui.js').read_text(encoding='utf-8')
         # Stats are only included if > 0 (New always shows, even at 0)
-        self.assertIn("segments.filter(([kind, , n]) => n > 0 || kind === 'new')", ui_js)
+        self.assertIn("kind !== 'estimated' && (n > 0 || kind === 'new')", ui_js)
         self.assertIn("['seen', 'Seen', levelReviewCount]", ui_js)
         self.assertIn("['known', 'Known', levelKnownCount]", ui_js)
 
