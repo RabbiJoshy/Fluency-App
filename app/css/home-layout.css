@@ -942,3 +942,113 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
 }
 .home-practise-total > p strong { font-size: inherit; }
 .home-practise-total.is-empty { align-items: center; text-align: center; }
+
+/* ===== Learn and Practise help sheets: full screen =========================
+   Phones: the whole screen, close button top right. Desktop: the whole
+   workspace beside the sidebar. Text is sized for reading, not for a pop-up. */
+#step2Tooltip.visible,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:not(.hidden) {
+    position: fixed !important;
+    inset: 0 !important;
+    width: calc(100vw / var(--ui-zoom, 1)) !important;
+    height: calc(100dvh / var(--ui-zoom, 1)) !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    background: var(--bg-primary) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+#step2Tooltip .step-info-tooltip-inner,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal > .modal-content {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: max(18px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom)) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    overflow-y: auto;
+    animation: none !important;
+}
+/* One reading column; the header spans the screen so the close sits at the corner. */
+#step2Tooltip .step-info-tooltip-inner > :not(.info-sheet-header),
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-body {
+    width: min(100%, 720px) !important;
+    margin-inline: auto !important;
+    box-sizing: border-box;
+}
+#step2Tooltip .info-sheet-header,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 56px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+}
+#step2Tooltip .info-sheet-header h3,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header h3 { margin: 0; font-size: 21px; line-height: 1.2; text-align: center; }
+#step2Tooltip .info-sheet-close,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-close {
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    width: 44px;
+    height: 44px;
+}
+/* Reading sizes (phones). */
+#step2Tooltip .info-sheet-lead { font-size: 17px; line-height: 1.55; }
+#step2Tooltip .level-help-note { font-size: 17px; }
+#step2Tooltip .level-help-subhead { font-size: 13px; margin-top: 8px; }
+#step2Tooltip .info-sheet-points p { font-size: 16.5px; line-height: 1.5; }
+#step2Tooltip .info-point-badge { height: 28px; min-width: 96px; font-size: 14px; }
+#step2Tooltip .level-estimate-modal-body strong { font-size: 17px; }
+#step2Tooltip .level-estimate-modal-btn { font-size: 16px; padding: 12px 16px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-lead { font-size: 17px; line-height: 1.55; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-status { font-size: 16.5px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps strong { font-size: 18px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps span { font-size: 16.5px; line-height: 1.5; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li { grid-template-columns: 32px 1fr; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li::before { width: 32px; height: 32px; font-size: 14px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-note { font-size: 16px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .review-home-link { font-size: 16px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .product-modal-eyebrow { display: none; }
+
+/* Desktop: the workspace beside the sidebar, larger type. */
+body.desktop-workspace #step2Tooltip.visible,
+body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:not(.hidden) {
+    left: var(--desktop-nav-width) !important;
+    width: calc((100vw / var(--ui-zoom, 1)) - var(--desktop-nav-width)) !important;
+}
+@media (min-width: 1024px) {
+    #step2Tooltip .step-info-tooltip-inner,
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal > .modal-content { padding: 28px 32px 48px !important; }
+    #step2Tooltip .step-info-tooltip-inner > :not(.info-sheet-header),
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-body { width: min(100%, 860px) !important; }
+    #step2Tooltip .info-sheet-header h3,
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header h3 { font-size: 34px; }
+    #step2Tooltip .info-sheet-lead,
+    #step2Tooltip .level-help-note { font-size: 22px; }
+    #step2Tooltip .level-help-subhead { font-size: 15px; }
+    #step2Tooltip .info-sheet-points > div { padding: 14px 0; gap: 16px; align-items: center; }
+    #step2Tooltip .info-sheet-points p { font-size: 20px; }
+    #step2Tooltip .info-point-badge { height: 34px; min-width: 124px; font-size: 16px; }
+    #step2Tooltip .level-estimate-modal-body strong { font-size: 21px; }
+    #step2Tooltip .level-estimate-modal-btn { font-size: 18px; padding: 14px 22px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-lead { font-size: 22px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-status { font-size: 20px; padding: 14px 18px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps strong { font-size: 22px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps span { font-size: 20px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li { grid-template-columns: 40px 1fr; margin-bottom: 20px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li::before { width: 40px; height: 40px; font-size: 17px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-note { font-size: 19px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .review-home-link { font-size: 19px; }
+}

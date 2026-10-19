@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T09:30:00+01:00",
+      "date": "2026-10-20 09:30 BST",
+      "agent": "Claude",
+      "summary": "Learn and Practise help sheets are full screen with larger text",
+      "detail": [
+        "Phones: both sheets fill the screen with the close button at the top right and reading-size text.",
+        "Desktop: both fill the workspace beside the sidebar, with a centred reading column and much larger text."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T22:50:00+01:00",
       "date": "2026-10-19 22:50 BST",
       "agent": "Claude",
