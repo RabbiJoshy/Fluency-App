@@ -1,13 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=09c2f949';
-import { readJsonWithTimeout } from './read-request.js?v=09c2f949';
-import { validateVocabularyIndex } from './data-contracts.js?v=09c2f949';
-import { formatRoute } from './routes.js?v=09c2f949';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=09c2f949';
-import { releaseUrl } from './release-host.js?v=09c2f949';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=09c2f949';
+import './state.js?v=4f109842';
+import { readJsonWithTimeout } from './read-request.js?v=4f109842';
+import { validateVocabularyIndex } from './data-contracts.js?v=4f109842';
+import { formatRoute } from './routes.js?v=4f109842';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=4f109842';
+import { releaseUrl } from './release-host.js?v=4f109842';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=4f109842';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -3328,9 +3328,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     const cached = byId.get(item.id);
                     if (cached && cached.meanings && cached.meanings.length && (!item.meanings || !item.meanings.length || item.meanings[0].unassigned)) {
                         const existingExamples = item.meanings?.[0]?.examples || [];
-                        item.meanings = cached.meanings.map((m, idx) => ({
+                        item.meanings = cached.meanings.map(m => ({
                             ...m,
-                            examples: idx === 0 ? [...existingExamples, ...(m.examples || [])] : (m.examples || [])
+                            examples: [...existingExamples, ...(m.examples || [])]
                         }));
                         if (cached.pos && !item.pos) item.pos = cached.pos;
                     }

@@ -1,13 +1,13 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=09c2f949';
-import { accountPermissions } from './account-permissions.js?v=09c2f949';
-import { readJsonWithTimeout } from './read-request.js?v=09c2f949';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=09c2f949';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=09c2f949';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=09c2f949';
-import { dbGet, dbPut } from './offline-db.js?v=09c2f949';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=09c2f949';
+import './state.js?v=4f109842';
+import { accountPermissions } from './account-permissions.js?v=4f109842';
+import { readJsonWithTimeout } from './read-request.js?v=4f109842';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=4f109842';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=4f109842';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=4f109842';
+import { dbGet, dbPut } from './offline-db.js?v=4f109842';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=4f109842';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -16,9 +16,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=09c2f949';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=09c2f949';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=09c2f949';
+} from './sync-queue.js?v=4f109842';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=4f109842';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=4f109842';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {
