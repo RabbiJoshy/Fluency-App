@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T14:20:00+01:00",
+      "date": "2026-10-20 14:20 BST",
+      "agent": "Claude",
+      "summary": "Level switching no longer makes the Learn box bounce; centred button text; roomier Practise",
+      "detail": [
+        "Stepping through levels no longer grows and shrinks the Learn box: the example-words line now keeps its height (two lines reserved, never shrinks while you step).",
+        "On wide desktop the Learn and Practise button text is centred on the whole button, timer chip included.",
+        "The timer chip keeps its shape on every button, and the Practise column is wider (Learn 60% to 60/40 becomes 1.5 : 1)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T13:05:00+01:00",
       "date": "2026-10-20 13:05 BST",
       "agent": "Claude",

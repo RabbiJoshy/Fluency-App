@@ -1147,3 +1147,21 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     #setupPanel #step2 > .level-choosing { padding-top: 12px; }
     #setupPanel #reviewDeckSection > #reviewDeckBody { padding-top: 6px; }
 }
+
+/* Level changes must not make the Learn box grow and shrink: the example words
+   arrive after the coverage line, so two lines are reserved up front (and the
+   height only ratchets up, see renderLevelExamples). */
+#setupPanel #lswExamples { min-height: calc(var(--home-text) * 1.45 * 2); }
+
+/* The time chip never squashes, however narrow the button. */
+.home-cta-length { flex: none; }
+.home-cta-length::before { flex: none; }
+
+@media (min-width: 1360px) {
+    /* Wider Practise column, and the button text is centred on the whole button
+       (chip included), as it is on phones. */
+    body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]) { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+    .home-cta { position: relative; }
+    .home-cta-length { position: relative; z-index: 1; }
+    .home-cta-main { position: absolute; inset: 0; flex: none; padding: 0 1vw; }
+}

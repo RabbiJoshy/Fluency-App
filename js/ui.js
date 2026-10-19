@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=73cd8f6b';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=73cd8f6b';
-import { readFastTrack } from './fast-track-preferences.js?v=73cd8f6b';
-import './session-plan.js?v=73cd8f6b';
+import './state.js?v=8413bb92';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=8413bb92';
+import { readFastTrack } from './fast-track-preferences.js?v=8413bb92';
+import './session-plan.js?v=8413bb92';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2305,6 +2305,9 @@ function updateLevelSliderReadout(i) {
         const egHTML = (examplesText || covHTML)
             ? `<div class="lsw-egs">${examplesText || ''}${covHTML}</div>`
             : '';
+        // Never let the line get shorter while the learner steps through levels:
+        // the box would grow, shrink and grow again as each level's examples load.
+        exEl.style.minHeight = Math.max(parseFloat(exEl.style.minHeight) || 0, exEl.offsetHeight) + 'px';
         exEl.innerHTML = freqHTML + egHTML;
     };
     _renderLine('');
@@ -3597,7 +3600,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=73cd8f6b')
+        import('./spotify.js?v=8413bb92')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
