@@ -248,6 +248,22 @@ named examples he can look at, not a commit or a passing test on its own.
   `releases/` to the app's `gh-pages`. A new language needs a new repo (Josh
   creates it; the first publish turns its Pages on). Decision 0026 has the why.
   The old combined `Fluency-Releases` repo is retired; do not publish there.
+- **Getting past sign-in to look at the app.** Staging and production need a
+  real Clerk sign-in; agents never sign in. `enterGuestMode()` does nothing now
+  (`PASSWORDLESS_ENABLED` is true). Instead use the local dev server
+  (`fluency-dev` in `.claude/launch.json`, http://localhost:4173, which also
+  serves deck data; the plain :8912 server 404s on decks), then run in the page:
+  ```js
+  for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
+  for (const k of await caches.keys()) await caches.delete(k);
+  location.reload();
+  // after the reload:
+  window.markProgressLoaded?.(); window.hideAuthModal?.();
+  document.querySelectorAll('[class*=passwordless]').forEach(e => e.remove());
+  ```
+  You're now a fresh account with no progress, so some UI is hidden. For example,
+  Practise needs `document.getElementById('reviewDeckSection').hidden = false`.
+  Don't judge a layout until it matches what Josh sees.
 - **Don't rebuild what a pool already holds.** Named, described sentence pools
   live in `<workspace>/pools/<lang>/`; `fluency pools list` shows them.
 
