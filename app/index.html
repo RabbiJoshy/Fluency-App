@@ -2034,6 +2034,39 @@
         </div>
     </div>
 
+    <div id="subtitleImportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="subtitleImportTitle">
+        <div class="modal-content song-set-modal-content">
+            <div class="modal-header">
+                <div>
+                    <span class="progress-modal-eyebrow">Dialogue &amp; Subtitles</span>
+                    <h3 id="subtitleImportTitle">Upload series subtitles</h3>
+                </div>
+                <button type="button" class="modal-close" id="closeSubtitleImportModal" aria-label="Close subtitle import">✕</button>
+            </div>
+            <p id="subtitleImportIntro" class="settings-data-intro">Build a study deck from movie or series subtitles (e.g. La Casa de Papel). Dialogue lines are attached as examples with no WSD required.</p>
+            <div class="subtitle-import-body" style="display:flex;flex-direction:column;gap:12px;margin:12px 0;">
+                <div class="subtitle-preset-box" id="subtitlePresetBox">
+                    <button type="button" class="secondary-btn" id="loadCasaDePapelPresetBtn" style="width:100%;text-align:left;padding:12px;border:1px solid var(--border-color, #e0e0e0);border-radius:8px;background:var(--bg-secondary, #f8f9fa);cursor:pointer;">
+                        <strong style="display:block;font-size:1.05em;color:var(--text-primary, #111);">🎭 Load La Casa de Papel (S01 Dialogue)</strong>
+                        <small style="display:block;opacity:0.8;font-size:0.85em;margin-top:4px;color:var(--text-secondary, #555);">99 dialogue lines ready for immediate study · No WSD</small>
+                    </button>
+                </div>
+                <div class="subtitle-divider" style="text-align:center;font-size:0.8em;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted, #888);margin:4px 0;">— OR UPLOAD SUBTITLES —</div>
+                <div class="subtitle-upload-area">
+                    <label for="subtitleFileInput" class="subtitle-file-label" style="display:block;padding:14px;border:2px dashed var(--border-color, #ccc);border-radius:8px;text-align:center;cursor:pointer;margin-bottom:10px;background:var(--bg-primary, #fff);">
+                        <span>Choose an <strong>.srt</strong>, <strong>.vtt</strong>, or <strong>.txt</strong> file</span>
+                        <input type="file" id="subtitleFileInput" accept=".srt,.vtt,.txt,text/plain" style="display:none;">
+                    </label>
+                    <textarea id="subtitleTextInput" class="vocabulary-import-textarea" rows="4" placeholder="Or paste dialogue / subtitle text here..." style="width:100%;box-sizing:border-box;border-radius:8px;padding:10px;border:1px solid var(--border-color, #ccc);font-family:inherit;font-size:0.9em;resize:vertical;"></textarea>
+                </div>
+            </div>
+            <p id="subtitleImportStatus" class="vocabulary-import-status" role="status" aria-live="polite" style="min-height:1.2em;font-size:0.9em;"></p>
+            <div class="song-set-footer">
+                <button type="button" id="buildSubtitleDeckBtn" class="primary-btn">Build deck from subtitles ›</button>
+            </div>
+        </div>
+    </div>
+
     <!-- What spaced repetition is, in the words a learner would use. No
          intervals, no algorithm: the rule and the reason for it. -->
     <!-- SETWISE-2: what Go offers when a level has little or nothing new left.

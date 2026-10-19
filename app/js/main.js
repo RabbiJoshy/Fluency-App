@@ -36,6 +36,7 @@ import './review-home.js?v=20260927pa';
 import './song-sets.js?v=20261013music';
 import './playlist-live.js?v=20260923cj';
 import './spotify-playlist-import.js?v=20261013music';
+import './subtitle-import.js?v=20261019stg';
 import './vocabulary-import.js?v=20260923bk';
 import './flashcards.js?v=20261014clarity';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';

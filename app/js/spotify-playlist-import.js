@@ -951,5 +951,6 @@ setupSpotifyPlaylistImport();
 window.postPlaylistLive = postPlaylistLive;
 window.openSpotifyPlaylistImport = openSpotifyPlaylistImport;
 window.closeSpotifyPlaylistImport = closeSpotifyPlaylistImport;
+window.activatePlaylistLiveStudy = activatePlaylistLiveStudy;
 window.FLUENCY_PLAYLIST_LYRICS_DB = LYRICS_DB_NAME;
 window.FLUENCY_PLAYLIST_LYRICS_CONCURRENCY = LOOKUP_CONCURRENCY;
