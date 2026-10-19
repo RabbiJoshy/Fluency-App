@@ -1126,3 +1126,24 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 .home-level-estimate i { width: 8px; height: 8px; border-radius: 50%; background: var(--set-estimated); flex: none; }
 #setupPanel .home-section-peek .home-level-estimate { justify-content: center; margin-top: 6px; }
 @media (min-width: 1360px) { #setupPanel #step2 .home-level-estimate { justify-content: center; } }
+
+/* Legend and estimate line are centred. */
+.home-level-stats { justify-content: center; }
+.home-level-estimate { justify-content: center; }
+
+/* Phones and narrow windows: the title sits in its own band with a rule beneath,
+   as on desktop, so the corner icon is the same distance from the top and left
+   edges and the title centres in the band. */
+@media (max-width: 1023px) {
+    #setupPanel .home-section > .step-header { padding: 6px 16px; border-bottom: 1px solid var(--border-color); }
+    #setupPanel .home-section-toggle { padding: 6px 16px 14px; row-gap: 6px; }
+    #setupPanel .home-section-toggle::after {
+        content: ""; position: absolute; left: 0; right: 0; top: 56px; height: 1px; background: var(--border-color);
+    }
+    #setupPanel .home-section-toggle-meta { margin-top: 10px; }
+    #setupPanel .home-section-toggle > .home-section-icon,
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child { top: 18px; left: 16px; }
+    #setupPanel .home-section-toggle-caret { top: 17px; right: 16px; }
+    #setupPanel #step2 > .level-choosing { padding-top: 12px; }
+    #setupPanel #reviewDeckSection > #reviewDeckBody { padding-top: 6px; }
+}

@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T13:05:00+01:00",
+      "date": "2026-10-20 13:05 BST",
+      "agent": "Claude",
+      "summary": "Phones: title band with a rule under it; legend centred",
+      "detail": [
+        "Learn and Practise titles sit in their own band with a thin rule beneath, as on desktop, folded or open. The corner icon is centred in that band, so it is level with the title and the same distance from the top and left.",
+        "The level legend and the level-estimate line are centred."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T12:30:00+01:00",
       "date": "2026-10-20 12:30 BST",
       "agent": "Claude",
