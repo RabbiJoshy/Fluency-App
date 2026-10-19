@@ -2305,6 +2305,9 @@ function updateLevelSliderReadout(i) {
         const egHTML = (examplesText || covHTML)
             ? `<div class="lsw-egs">${examplesText || ''}${covHTML}</div>`
             : '';
+        // Never let the line get shorter while the learner steps through levels:
+        // the box would grow, shrink and grow again as each level's examples load.
+        exEl.style.minHeight = Math.max(parseFloat(exEl.style.minHeight) || 0, exEl.offsetHeight) + 'px';
         exEl.innerHTML = freqHTML + egHTML;
     };
     _renderLine('');
