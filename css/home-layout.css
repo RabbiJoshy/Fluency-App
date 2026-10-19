@@ -3,9 +3,20 @@
    rendered by ui.js (renderRangeSelector, the level stepper). */
 
 /* Dark-theme surfaces for this screen come from css/black-palette.css. One
-   text size (16px phones, 18px from 1024px). */
+   text size (16px phones, 21px from 1024px, 23px from 1440px). */
 #setupPanel, #topBar { --home-text: 16px; }
-@media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 18px; } }
+@media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 21px; } }
+@media (min-width: 1440px) { #setupPanel, #topBar { --home-text: 23px; } }
+
+/* One set of status colours for every bar and legend on this screen, folded
+   rows and info sheets included (the older rules only reached #step4). */
+#setupPanel {
+    --set-new: #ffffff;
+    --set-review: #ffcc00;
+    --set-known: #06a557;
+    --set-estimated: #9f7aea;
+    --set-skipped: #64748b;
+}
 
 /* One centred column everywhere: no sidebar column for Practise. */
 @media (min-width: 1024px) {
@@ -80,6 +91,43 @@
 #setupPanel .home-section-toggle strong { font-weight: 600; }
 #setupPanel .home-section-toggle-meta { color: var(--text-muted); font-size: var(--home-text); }
 #setupPanel .home-section-toggle-caret { margin-left: auto; color: var(--text-muted); }
+/* The folded row reads like the open header, and its icon and name sit exactly
+   where the open header puts them (16px card padding + 14px title padding,
+   a 44px title row) so nothing jumps when the sections swap. The numbers go
+   underneath. */
+#setupPanel .home-section-toggle { padding: 12px 16px 15px; gap: 8px; row-gap: 6px; }
+#setupPanel .home-section-toggle .home-section-icon { width: 22px; height: 22px; margin-left: 15px; }
+#setupPanel .home-section-toggle .home-section-name {
+    font-family: var(--font-emphasis);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 44px;
+}
+#setupPanel .home-section-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    margin: -6px;
+}
+#setupPanel .home-section-info { font-size: 20px; }
+#setupPanel .home-section-help {
+    width: 1.1em; height: 1.1em; flex: none; fill: none; stroke: var(--accent-primary);
+    stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
+}
+/* A quiet marker for the section you are in: an accent edge and tinted border. */
+body:not(.desktop-workspace) #setupPanel[data-home-open="learn"] #step2,
+body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckSection {
+    border-color: color-mix(in srgb, var(--accent-primary) 45%, var(--border-color));
+    box-shadow: inset 3px 0 0 var(--accent-primary);
+}
+#setupPanel .home-section-toggle-meta { order: 1; flex: 0 0 100%; }
+#setupPanel .home-section-peek { order: 2; }
+#setupPanel .home-section-toggle-meta:empty { display: none; }
 /* The folded section's short version, on a line of its own under its name. */
 #setupPanel .home-section-toggle { flex-wrap: wrap; row-gap: 10px; }
 #setupPanel .home-section-peek { display: block; flex: 0 0 100%; min-width: 0; }
@@ -466,7 +514,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel #reviewDeckSection:not(.hidden):not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
     /* Desktop has the height to spare, so the two names read as titles. */
     #setupPanel .home-section > .step-header { padding: 2.4vh 2vw 0.6vh; }
-    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(24px, 2.1vw, 34px); letter-spacing: -0.01em; }
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(28px, 2.5vw, 42px); letter-spacing: -0.01em; }
     #setupPanel .home-section-footer { margin-top: 0; padding: 12px 2vw; }
     #setupPanel .home-section-toggle { padding: 1.6vh 2vw; font-size: var(--home-text); }
     #setupPanel .home-section-toggle-meta { font-size: var(--home-text); }
@@ -493,9 +541,9 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel #step2 .home-level-bar { height: clamp(8px, 1.2vh, 14px); border-radius: 7px; }
     #setupPanel #step2 .home-level-stats { margin-top: 1.6vh; font-size: var(--home-text); gap: 6px 1.4vw; }
     .home-level-stepper { max-width: none; gap: 2vw; }
-    .home-level-step { width: clamp(44px, 4vw, 64px); height: clamp(44px, 4vw, 64px); font-size: clamp(28px, 2.6vw, 42px); }
-    .home-level-eyebrow { font-size: clamp(12px, 1vw, 16px); }
-    .home-level-readout strong { font-size: clamp(38px, 3.6vw, 60px); }
+    .home-level-step { width: clamp(48px, 4.4vw, 70px); height: clamp(48px, 4.4vw, 70px); font-size: clamp(32px, 2.9vw, 46px); }
+    .home-level-eyebrow { font-size: clamp(15px, 1.2vw, 19px); }
+    .home-level-readout strong { font-size: clamp(44px, 4.2vw, 68px); }
     .home-level-words { font-size: var(--home-text); }
     #setupPanel #lswExamples,
     #setupPanel #lswExamples .lsw-egs,
@@ -512,7 +560,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
         padding: 10px 2vw 14px;
     }
     .home-practise-total { grid-column: 1; grid-row: 1 / span 2; padding: 0; }
-    .home-practise-total strong { font-size: clamp(38px, 3.6vw, 60px); }
+    .home-practise-total strong { font-size: clamp(44px, 4.2vw, 68px); }
     .home-practise-total span { font-size: var(--home-text); }
     .home-practise-row { padding: 8px 0; font-size: var(--home-text); }
     .home-practise-rows { grid-column: 2; grid-row: 1; }
@@ -764,4 +812,66 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
 }
 @media (min-width: 1024px) {
     :is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, #standardSourcePickerBtn) { padding: 26px !important; }
+}
+
+/* Learn's info sheet: one note and a legend that matches the progress bar. */
+#step2Tooltip .level-help-note { margin: 0 0 14px; color: var(--text-secondary); font-size: 15px; line-height: 1.5; }
+#step2Tooltip .level-help-note strong { color: var(--text-primary); }
+#step2Tooltip .level-help-subhead {
+    margin: 0 0 6px; color: var(--text-muted); font: 700 12px/1 var(--font-emphasis);
+    letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+/* Practise's detail sheet is a page on desktop: type sized for it. */
+@media (min-width: 1024px) {
+    #reviewHomeModal .modal-header h3 { font-size: 34px; }
+    #reviewHomeModal .review-home-section h4 { font-size: 15px; margin-bottom: 12px; }
+    #reviewHomeModal .review-home-row { padding: 18px 22px; margin-bottom: 10px; border-radius: 14px; }
+    #reviewHomeModal .review-home-row-copy { gap: 5px; }
+    #reviewHomeModal .review-home-row-copy strong { font-size: 21px; }
+    #reviewHomeModal .review-home-row-copy small { font-size: 16px; }
+    #reviewHomeModal .review-home-row-count { font-size: 28px; min-width: 48px; }
+    #reviewHomeModal .review-home-row-chevron { font-size: 32px; }
+    #reviewHomeModal .review-home-srs { padding: 16px 20px; margin-bottom: 26px; border-radius: 14px; }
+    #reviewHomeModal .review-home-srs-copy strong { font-size: 19px; }
+    #reviewHomeModal .review-home-srs-copy small { font-size: 16px; }
+    #reviewHomeModal .review-home-srs-info { width: 36px; height: 36px; font-size: 18px; }
+    #reviewHomeModal .review-home-back { font-size: 17px; min-height: 44px; padding: 8px 14px; }
+    #reviewHomeModal .review-home-detail-head > span { font-size: 16px; }
+    #reviewHomeModal .review-home-detail-title h4 { font-size: 32px; }
+    #reviewHomeModal .review-home-detail-title p { font-size: 17px; }
+    #reviewHomeModal .review-home-word-row { padding-block: 14px; }
+    #reviewHomeModal .review-home-word-row strong { font-size: 21px; }
+    #reviewHomeModal .review-home-word-row span { font-size: 16px; }
+}
+
+/* Learn's legend swatches are the progress bar's own fills (same fallbacks). */
+#step2Tooltip .info-point-badge { min-width: 88px; border: 1px solid var(--border-color); }
+#step2Tooltip .info-point-badge.is-new { background: var(--set-new, #fff); color: #17202a; }
+#step2Tooltip .info-point-badge.is-practice { background: var(--set-review); color: #17202a; }
+#step2Tooltip .info-point-badge.is-done { background: var(--set-known, #16734b); color: #fff; }
+#step2Tooltip .info-point-badge.is-estimated { background: var(--set-estimated); color: #17202a; }
+#step2Tooltip .info-point-badge.is-skip { background: var(--set-skipped, #566477); color: #fff; }
+
+/* The button is the main action: a larger action word, with the time limit and
+   card count quieter (regular weight) beside it. */
+.home-cta { min-height: 56px; }
+.home-cta-main { font-size: calc(var(--home-text) * 1.2); }
+.home-cta-count { font-weight: 500; font-size: var(--home-text); opacity: .9; }
+.home-cta-length { font-weight: 500; }
+@media (min-width: 768px) { .home-cta { min-height: 56px; } }
+@media (min-width: 1024px) { .home-cta { min-height: 62px; } }
+#step2Tooltip .level-estimate-modal-callout { margin: 4px 0 18px; }
+
+/* Desktop: each section's title is a centred heading over its own rule, so
+   Learn and Practise read as two equal, separate panels. (Phones keep the
+   left-aligned row, which has to line up with the folded rows.) */
+@media (min-width: 1024px) {
+    #setupPanel .home-section > .step-header {
+        justify-content: center;
+        padding: 1.6vh 2vw;
+        border-bottom: 1px solid var(--border-color);
+    }
+    #setupPanel #step2 > .level-choosing,
+    #setupPanel #reviewDeckSection > #reviewDeckBody { padding-top: 1.6vh; }
 }

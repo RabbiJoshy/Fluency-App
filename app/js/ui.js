@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=57c26edf';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=57c26edf';
-import { readFastTrack } from './fast-track-preferences.js?v=57c26edf';
-import './session-plan.js?v=57c26edf';
+import './state.js?v=4c23a150';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=4c23a150';
+import { readFastTrack } from './fast-track-preferences.js?v=4c23a150';
+import './session-plan.js?v=4c23a150';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1067,6 +1067,8 @@ function updateStep2Tooltip() {
     if (!tooltip) return;
     const description = document.getElementById('step2LevelDescription');
     const estimateCallout = document.getElementById('step2LevelEstimateCallout');
+    const estimatedRow = document.getElementById('step2EstimatedLegend');
+    if (estimatedRow) estimatedRow.hidden = !((levelEstimates[selectedLanguage] || 0) > 0);
     if (activeArtist) {
         const name = activeArtist.name;
         if (description) description.textContent = `Words from ${name}'s lyrics are ordered from most to least common.`;
@@ -2890,8 +2892,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
 
     const estimate = levelEstimates[selectedLanguage] || 0;
-    const estimatedLegend = document.getElementById('levelEstimatedLegend');
-    if (estimatedLegend) estimatedLegend.hidden = estimate <= 0;
+    for (const id of ['levelEstimatedLegend', 'step2EstimatedLegend']) {
+        const legend = document.getElementById(id);
+        if (legend) legend.hidden = estimate <= 0;
+    }
     const estimatedIds = activeArtist && currentUser && !currentUser.isGuest
         ? await buildEstimatedKnownIds(estimate)
         : null;
@@ -3075,7 +3079,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             <div class="home-section-footer">
                 ${globalTotal > 0 ? '<p class="home-footer-hint">Mistakes first, then due words</p>' : ''}
                 ${homeCta(lengthChip(globalTotal, 'practice'), 'id="quickReviewBtn"',
-                    globalTotal > 0 ? `Practise · ${practiseCount.toLocaleString()}` : 'Practise', globalTotal === 0)}
+                    globalTotal > 0 ? `Practise<span class="home-cta-count"> · ${practiseCount.toLocaleString()}</span>` : 'Practise', globalTotal === 0)}
             </div>`;
     }
 
@@ -3140,7 +3144,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         </div>`;
     const learnLabel = nextCount === 0
         ? 'No cards available'
-        : `Learn${levelNewCount > 0 ? ` · ${nextCount.toLocaleString()} new` : ''}`;
+        : `Learn${levelNewCount > 0 ? `<span class="home-cta-count"> · ${nextCount.toLocaleString()} new</span>` : ''}`;
     const learnSlot = document.getElementById('learnActionSlot');
     if (learnSlot) {
         learnSlot.innerHTML = homeCta(levelNewCount > 0 && nextCount > 0 ? lengthChip(levelNewCount, 'new') : '',
@@ -3294,6 +3298,7 @@ function applyHomeSection(mistakes) {
         panel.addEventListener('click', event => {
             const toggle = event.target.closest('.home-section-toggle');
             if (!toggle) return;
+            if (event.target.closest('.home-section-info')) return; // opens its info sheet instead
             _homeSectionChosen = toggle.dataset.homeSection;
             setHomeSectionOpen(panel, _homeSectionChosen);
         });
@@ -3552,7 +3557,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=57c26edf')
+        import('./spotify.js?v=4c23a150')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

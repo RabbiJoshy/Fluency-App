@@ -2,7 +2,7 @@
 // The queue and its ordering still belong to progress.js. Opening a group
 // only explains the queue; it must never start a study session.
 
-import './state.js?v=57c26edf';
+import './state.js?v=4c23a150';
 
 const LIST_PAGE_SIZE = 50;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -174,6 +174,14 @@ function openSpacedRepetitionInfo({ fromSettings = false } = {}) {
     modal.classList.toggle('is-over-settings', fromSettings);
     const settingsLink = document.getElementById('spacedRepetitionSettingsBtn');
     if (settingsLink) settingsLink.hidden = fromSettings;
+    const status = document.getElementById('srsInfoStatus');
+    if (status) {
+        const on = globalThis.spacedRepetitionEnabled !== false;
+        status.classList.toggle('is-off', !on);
+        status.innerHTML = on
+            ? '<strong>Spaced repetition is on</strong> (the default). Turn it off in settings if you only want to see words you got wrong.'
+            : '<strong>Spaced repetition is off.</strong> Nothing comes back on a schedule: Practise holds only the words you got wrong.';
+    }
     modal.classList.remove('hidden');
 }
 
@@ -194,6 +202,10 @@ function closeReviewHome() {
 }
 
 function initReviewHome() {
+    // The (i) beside Practise on the home screen explains how it is scheduled.
+    document.addEventListener('click', event => {
+        if (event.target.closest?.('[data-practise-info]')) openSpacedRepetitionInfo();
+    });
     document.getElementById('closeReviewHomeModal')?.addEventListener('click', closeReviewHome);
     document.getElementById('reviewHomeModal')?.addEventListener('click', event => {
         if (event.target?.id === 'reviewHomeModal') closeReviewHome();

@@ -1,6 +1,6 @@
-import './state.js?v=57c26edf';
-import { releaseUrl } from './release-host.js?v=57c26edf';
-import { IS_STAGING, getCandidateDeckOverrides } from './env.js?v=57c26edf';
+import './state.js?v=4c23a150';
+import { releaseUrl } from './release-host.js?v=4c23a150';
+import { IS_STAGING, getCandidateDeckOverrides } from './env.js?v=4c23a150';
 
 async function loadConfig() {
     try {
