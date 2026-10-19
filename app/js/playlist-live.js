@@ -1,7 +1,7 @@
 // Naive live-playlist deck: tokenise lyrics in the browser, join them to the
 // speech inventory, and study those cards with unassigned song-line examples.
-import { clearRoute, parseRoute } from './routes.js?v=d1edfdcc';
-import { releaseUrl } from './release-host.js?v=d1edfdcc';
+import { clearRoute, parseRoute } from './routes.js?v=0ce14ab4';
+import { releaseUrl } from './release-host.js?v=0ce14ab4';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -348,7 +348,8 @@ async function preparePlaylistLiveSession(language) {
     try {
         const deck = await idbRequest(db.transaction(DECK_STORE, 'readonly').objectStore(DECK_STORE).get(LIVE_DECK_ID));
         if (deck && (!language || deck.language === language)) {
-            if (deck.playlistId === 'la-casa-de-papel' && deck.matchedCount < 400) {
+            const isCasaDePapel = deck.playlistId === 'la-casa-de-papel' || String(deck.playlistName || '').toLowerCase().includes('casa de papel');
+            if (isCasaDePapel && deck.matchedCount < 400) {
                 const appRoot = new URL('../', import.meta.url);
                 try {
                     const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
@@ -369,7 +370,8 @@ async function preparePlaylistLiveSession(language) {
     }
     const remote = await loadPlaylistLiveDeckFromServer(language);
     if (remote && (!language || remote.language === language) && remote.matchedCount) {
-        if (remote.playlistId === 'la-casa-de-papel' && remote.matchedCount < 400) {
+        const isCasaDePapel = remote.playlistId === 'la-casa-de-papel' || String(remote.playlistName || '').toLowerCase().includes('casa de papel');
+        if (isCasaDePapel && remote.matchedCount < 400) {
             const appRoot = new URL('../', import.meta.url);
             try {
                 const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
@@ -482,6 +484,9 @@ function applyPlaylistLiveVocabulary(items) {
         item.stableRank = rank;
         item.categoryRank = rank;
     });
+    if (_liveDeck && ranked.length) {
+        _liveDeck.matchedCount = ranked.length;
+    }
     return ranked;
 }
 

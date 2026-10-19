@@ -1,13 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=d1edfdcc';
-import { readJsonWithTimeout } from './read-request.js?v=d1edfdcc';
-import { validateVocabularyIndex } from './data-contracts.js?v=d1edfdcc';
-import { formatRoute } from './routes.js?v=d1edfdcc';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=d1edfdcc';
-import { releaseUrl } from './release-host.js?v=d1edfdcc';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=d1edfdcc';
+import './state.js?v=0ce14ab4';
+import { readJsonWithTimeout } from './read-request.js?v=0ce14ab4';
+import { validateVocabularyIndex } from './data-contracts.js?v=0ce14ab4';
+import { formatRoute } from './routes.js?v=0ce14ab4';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=0ce14ab4';
+import { releaseUrl } from './release-host.js?v=0ce14ab4';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=0ce14ab4';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -3121,7 +3121,15 @@ async function loadVocabularyData(rangeString, opts = {}) {
             item.rank = index + 1; // Use original position as the rank (unique identifier)
         });
 
-        const { vocab: _baseVocab, counts: exCounts } = buildFilteredVocab(vocabularyData);
+        let _baseVocab;
+        let exCounts = { english: 0, cognates: 0, singleOcc: 0, lemma: 0 };
+        if (window.playlistLiveActive?.()) {
+            _baseVocab = vocabularyData;
+        } else {
+            const built = buildFilteredVocab(vocabularyData);
+            _baseVocab = built.vocab;
+            exCounts = built.counts;
+        }
         let filteredData = window.applyPlaylistLiveVocabulary?.(_baseVocab) || _baseVocab;
         // This is the complete vocabulary after the active source + filter
         // configuration, before level, set, and mastery slicing. Card rank
@@ -3201,10 +3209,11 @@ async function loadVocabularyData(rangeString, opts = {}) {
             if (currentUser && !currentUser.isGuest && progressData) {
                 const beforeFiltered = filteredData.length;
                 const estimate = levelEstimates[selectedLanguage] || 0;
-                const estimatedIds = activeArtist && studyMode === 'new'
+                const isLive = Boolean(window.playlistLiveActive?.());
+                const estimatedIds = (activeArtist && !isLive) && studyMode === 'new'
                     ? await buildEstimatedKnownIds(estimate)
                     : null;
-                const seenLemmas = studyMode === 'new'
+                const seenLemmas = (studyMode === 'new' && !isLive)
                     ? await buildSeenLemmaSet(vocabularyData)
                     : new Set();
 
@@ -3219,7 +3228,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     if (studyMode === 'review') return relatedWordNeedsReview(itemId, item.word);
                     if (studyMode === 'all') return true;
 
-                    const coveredByEstimate = !hasRelatedProgress && (activeArtist
+                    const coveredByEstimate = !isLive && !hasRelatedProgress && (activeArtist
                         ? isCoveredByEstimatedIds(item, estimatedIds)
                         : item.rank <= estimate);
                     return !coveredByEstimate

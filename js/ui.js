@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=d1edfdcc';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=d1edfdcc';
-import { readFastTrack } from './fast-track-preferences.js?v=d1edfdcc';
-import './session-plan.js?v=d1edfdcc';
+import './state.js?v=0ce14ab4';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=0ce14ab4';
+import { readFastTrack } from './fast-track-preferences.js?v=0ce14ab4';
+import './session-plan.js?v=0ce14ab4';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1140,7 +1140,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
     const vocabularyData = await fetchActiveVocabularyData(langConfig);
     const filteredVocab = getPreparedSetupVocabulary(language, vocabularyData)?.vocab || [];
     const estimate = levelEstimates[language] || 0;
-    const estimatedIds = activeArtist && currentUser && !currentUser.isGuest
+    const estimatedIds = (activeArtist && !window.playlistLiveActive?.()) && currentUser && !currentUser.isGuest
         ? await buildEstimatedKnownIds(estimate)
         : null;
     const seenLemmas = await window.buildSeenLemmaSet?.(vocabularyData) || new Set();
@@ -1892,10 +1892,16 @@ function getPreparedSetupVocabulary(language, rawVocab) {
         && _preparedSetupVocabulary.examples === window._cachedExamplesData) {
         return _preparedSetupVocabulary.result;
     }
-    const result = buildFilteredVocab(rawVocab);
+    let result;
     if (window.playlistLiveActive?.()) {
-        result.vocab = window.applyPlaylistLiveVocabulary?.(result.vocab) || result.vocab;
-        result.stableBaseline = result.vocab;
+        const liveVocab = window.applyPlaylistLiveVocabulary?.(rawVocab) || rawVocab;
+        result = {
+            vocab: liveVocab,
+            stableBaseline: liveVocab,
+            counts: { english: 0, cognates: 0, singleOcc: 0, lemma: 0 }
+        };
+    } else {
+        result = buildFilteredVocab(rawVocab);
     }
     result.samples = result.vocab.map(item => ({
         rank: item.rank,
@@ -2782,6 +2788,10 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
         return { ...recordedState, seen: true, needsReview: false, learned: true, inheritedLemma: true };
     }
 
+    if (window.playlistLiveActive?.()) {
+        return recordedState;
+    }
+
     if (activeArtist) {
         if (window.isCoveredByEstimatedIds?.(item, estimatedIds)) {
             return { seen: true, needsReview: false, learned: true, estimated: true };
@@ -2942,7 +2952,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         const legend = document.getElementById(id);
         if (legend) legend.hidden = estimate <= 0;
     }
-    const estimatedIds = activeArtist && currentUser && !currentUser.isGuest
+    const estimatedIds = (activeArtist && !window.playlistLiveActive?.()) && currentUser && !currentUser.isGuest
         ? await buildEstimatedKnownIds(estimate)
         : null;
     const seenLemmas = await window.buildSeenLemmaSet?.(vocabularyData) || new Set();
@@ -3613,7 +3623,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=d1edfdcc')
+        import('./spotify.js?v=0ce14ab4')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
