@@ -6945,10 +6945,19 @@ function renderCardWikipediaBadge(card) {
         // beneath it. The number is what a learner reads, so it gets the
         // size; the wording, units and the total-vocabulary denominator are
         // context and stay muted.
-        const isLive = Boolean(window.playlistLiveActive?.());
+        const isLive = Boolean(window.playlistLiveActive?.() || card.playlist_count != null || card.playlistId || card.playlistName);
         const liveDeck = isLive ? window.playlistLiveDeck?.() : null;
-        const isSeries = Boolean(liveDeck?.playlistId === 'la-casa-de-papel' || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName)));
-        const countVal = card.corpusCount || card.playlist_count;
+        const isSeries = Boolean(
+            liveDeck?.playlistId === 'la-casa-de-papel'
+            || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName))
+            || card.playlistId === 'la-casa-de-papel'
+            || (card.playlistName && /casa de papel|series|show|tv/i.test(card.playlistName))
+        );
+        const liveEntry = isLive && liveDeck?.surfaces ? (
+            liveDeck.surfaces[String(card.targetWord || card.word || '').toLowerCase()]
+            || liveDeck.surfaces[String(card.lemma || '').toLowerCase()]
+        ) : null;
+        const countVal = card.corpusCount || card.playlist_count || card.corpus_count || liveEntry?.count;
 
         if ((activeArtist || isLive) && countVal) {
             const labelText = isSeries ? 'Series Lines' : (isLive ? 'Playlist Lines' : 'Song Lines');

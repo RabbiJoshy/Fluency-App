@@ -445,7 +445,16 @@ function applyPlaylistLiveVocabulary(items) {
         const entry = _liveDeck.surfaces[normalizeSurface(item.word)];
         if (!entry) continue;
         const lyricExamples = entry.lines.map(lyricExample);
-        const next = { ...item, sourceRank: item.sourceRank || item.rank, meanings: [...(item.meanings || [])], playlist_count: entry.count, corpusCount: entry.count };
+        const next = {
+            ...item,
+            sourceRank: item.sourceRank || item.rank,
+            meanings: [...(item.meanings || [])],
+            playlist_count: entry.count,
+            corpusCount: entry.count,
+            corpus_count: entry.count,
+            playlistId: _liveDeck?.playlistId || 'la-casa-de-papel',
+            playlistName: _liveDeck?.playlistName || 'La Casa de Papel'
+        };
 
         // For Turbo engine decks with disambiguated senses
         if (isTurbo && entry.turboCard?.meanings) {

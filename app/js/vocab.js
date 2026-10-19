@@ -3734,11 +3734,16 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 // as the examples attached above. Raw token totals stay on
                 // item.lemma_total_count for diagnostics only.
                 corpusCountIsPooled: Boolean(activeArtist && !isArtistSupplementaryItem(item) && useLemmaMode && item.pooled_frequency != null),
-                corpusCount: artistVocabularyScope === 'extra' || (activeArtist && isArtistSupplementaryItem(item))
-                    ? (item.corpus_count || null)
-                    : (useLemmaMode
-                        ? (item.pooled_frequency ?? item.lemma_example_count ?? null)
-                        : (item.corpus_count || null)),
+                corpusCount: (window.playlistLiveActive?.() ? (item.playlist_count ?? item.corpusCount ?? item.corpus_count ?? null) : null)
+                    ?? (artistVocabularyScope === 'extra' || (activeArtist && isArtistSupplementaryItem(item))
+                        ? (item.corpus_count || null)
+                        : (useLemmaMode
+                            ? (item.pooled_frequency ?? item.lemma_example_count ?? item.corpus_count ?? item.corpusCount ?? item.playlist_count ?? null)
+                            : (item.corpus_count || item.corpusCount || item.playlist_count || null))),
+                playlist_count: item.playlist_count ?? item.corpusCount ?? item.corpus_count ?? null,
+                corpus_count: item.corpus_count ?? item.corpusCount ?? item.playlist_count ?? null,
+                playlistId: item.playlistId || null,
+                playlistName: item.playlistName || null,
                 meanings: meanings,
                 grammarPairs: item._grammarCard?.pairs || [],
                 // Function words are taught by construction and grammatical
