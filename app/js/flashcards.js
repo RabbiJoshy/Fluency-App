@@ -8840,9 +8840,8 @@ function renderCardWikipediaBadge(card) {
 
     // Labelled tiles rather than a strip of near-identical circles — a name
     // under each icon reads faster. Fixed order left to right: rare uses,
-    // known, synonyms, conjugate. Look up is emitted last and pinned to the
-    // right edge (see .ref-lookup-wrap's auto margin), so its position never
-    // shifts with how many of the optional tiles a given card happens to have.
+    // pin meaning, synonyms, conjugate, then Dictionary (the outside-sites
+    // sheet). Tiles share the row equally, however many a card has.
     // The tile row is dropped entirely on small phones (see @media in
     // style.css); the handoff row / example already earn that vertical
     // space there.
@@ -8858,12 +8857,7 @@ function renderCardWikipediaBadge(card) {
         const detail = parts.join(' and ');
         backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
             <div class="ref-tile-icon-wrap">
-                <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="currentColor" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.28" stroke-width="0.5" aria-hidden="true">
-                    <rect x="3" y="14" width="4.5" height="6" rx="1.5"></rect>
-                    <rect x="3" y="17" width="4.5" height="3" rx="0.75" fill="#fff" fill-opacity="1" stroke="none"></rect>
-                    <rect x="10" y="9" width="4.5" height="11" rx="1.5"></rect>
-                    <rect x="17" y="4" width="4.5" height="16" rx="1.5"></rect>
-                </svg>
+                <span class="ref-tile-icon ref-tile-meter" aria-hidden="true"><i class="is-on"></i><i></i><i></i></span>
                 ${rareAndExprItems.length > 0 ? `<span class="ref-tile-count-badge">${rareAndExprItems.length}</span>` : ''}
             </div>
             <span class="ref-tile-label">Rare uses</span>
@@ -8902,28 +8896,23 @@ function renderCardWikipediaBadge(card) {
     const hasConjugationTable = Boolean(config.languages?.[selectedLanguage]?.conjugationsPath);
     if (isVerb && hasConjugationTable) {
         backHTML += `<button class="ref-tile ref-conj-btn" onclick="toggleConjugationTable()">
-            <svg class="ref-tile-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <g font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="9.4" text-anchor="middle" letter-spacing="0.3" fill="currentColor">
-                    <text x="16" y="10.5">-AR</text>
-                    <text x="16" y="20">-ER</text>
-                    <text x="16" y="29.5">-IR</text>
-                </g>
-            </svg>
+            <span class="ref-tile-icon ref-tile-endings" aria-hidden="true"><span>-ar</span><span>-er</span><span>-ir</span></span>
             <span class="ref-tile-label">Conjugate</span>
         </button>`;
     }
 
-    // Every external reference collapses into one "Look up" tile that opens
+    // Every external reference collapses into one "Dictionary" tile that opens
     // a small sheet — replaces the old per-favicon icon strip.
     const lookupLinks = Object.entries(card.links)
         .filter(([key]) => key !== 'wordReference' && key !== 'conjugation');
     if (lookupLinks.length > 0) {
-        backHTML += `<div class="ref-lookup-wrap"><button class="ref-tile ref-lookup-btn" onclick="event.stopPropagation(); toggleLookupSheet(event);">
-            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="7"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        backHTML += `<div class="ref-lookup-wrap"><button class="ref-tile ref-lookup-btn" aria-label="Dictionary" onclick="event.stopPropagation(); toggleLookupSheet(event);">
+            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M3 12h18"></path>
+                <path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path>
             </svg>
-            <span class="ref-tile-label">Look up</span>
+            <span class="ref-tile-label">Dictionary</span>
         </button>
         <div class="lookup-sheet" id="lookupSheet" hidden>
             ${lookupLinks.map(([key, url]) => outboundChipHTML(

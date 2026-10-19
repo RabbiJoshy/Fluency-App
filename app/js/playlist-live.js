@@ -410,7 +410,7 @@ function applyPlaylistLiveVocabulary(items) {
         const entry = _liveDeck.surfaces[normalizeSurface(item.word)];
         if (!entry) continue;
         const lyricExamples = entry.lines.map(lyricExample);
-        const next = { ...item, meanings: [...(item.meanings || [])], playlist_count: entry.count };
+        const next = { ...item, sourceRank: item.sourceRank || item.rank, meanings: [...(item.meanings || [])], playlist_count: entry.count };
 
         // For Turbo engine decks with disambiguated senses
         if (isTurbo && entry.turboCard?.meanings) {

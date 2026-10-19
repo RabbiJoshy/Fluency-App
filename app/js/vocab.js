@@ -1906,7 +1906,7 @@ async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
     }
 
     let data = null;
-    if (!activeArtist && !window.playlistLiveActive?.()) {
+    if (!activeArtist) {
         try {
             data = await loadColumnarIndex(effectiveConfig, indexPath);
         } catch (error) {
@@ -1956,10 +1956,18 @@ async function fetchDetachedIndex(langConfig) {
     if (!indexPath) throw new Error('No index path');
     const cacheKey = `${indexPath}:detached`;
     if (joinedIndexCacheByPath.has(cacheKey)) return joinedIndexCacheByPath.get(cacheKey);
-    const { response, data: responseData } = await readJsonWithTimeout(indexPath);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    trackDataFreshness(response);
-    const data = responseData;
+    let data = null;
+    try {
+        data = await loadColumnarIndex(langConfig, indexPath);
+    } catch (_) {
+        data = null;
+    }
+    if (!data) {
+        const { response, data: responseData } = await readJsonWithTimeout(indexPath);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        trackDataFreshness(response);
+        data = responseData;
+    }
     validateVocabularyIndex(data, { source: indexPath });
     joinedIndexCacheByPath.set(cacheKey, data);
     return data;
@@ -3302,9 +3310,23 @@ async function loadVocabularyData(rangeString, opts = {}) {
 
         // Fat index rows belong to the cards in this set, not the
         // language-pick payload. Examples stay on the same study-set shards.
-        const ranks = filteredData.map(item => Number(item.rank));
-        if (!window.playlistLiveActive?.() && !activeArtist) {
+        const ranks = filteredData.map(item => Number(item.sourceRank || item.rank));
+        if (!activeArtist) {
             await ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks);
+            if (window.playlistLiveActive?.() && window._cachedJoinedIndex) {
+                const byId = new Map(window._cachedJoinedIndex.map(c => [c.id, c]));
+                for (const item of filteredData) {
+                    const cached = byId.get(item.id);
+                    if (cached && cached.meanings && cached.meanings.length && (!item.meanings || !item.meanings.length || item.meanings[0].unassigned)) {
+                        const existingExamples = item.meanings?.[0]?.examples || [];
+                        item.meanings = cached.meanings.map((m, idx) => ({
+                            ...m,
+                            examples: idx === 0 ? [...existingExamples, ...(m.examples || [])] : (m.examples || [])
+                        }));
+                        if (cached.pos && !item.pos) item.pos = cached.pos;
+                    }
+                }
+            }
         }
         filteredData = filteredData.filter(item => {
             if (window.playlistLiveActive?.()) return true;
