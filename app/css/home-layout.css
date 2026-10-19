@@ -81,28 +81,38 @@
 #setupPanel .home-section-toggle strong { font-weight: 600; }
 #setupPanel .home-section-toggle-meta { color: var(--text-muted); font-size: var(--home-text); }
 #setupPanel .home-section-toggle-caret { margin-left: auto; color: var(--text-muted); }
-/* The folded row reads like the open header: icon, name and its info button on
-   the first line, the numbers underneath. */
-#setupPanel .home-section-toggle { padding: 14px 16px 13px; row-gap: 6px; }
-#setupPanel .home-section-toggle .home-section-icon { width: 22px; height: 22px; }
+/* The folded row reads like the open header, and its icon and name sit exactly
+   where the open header puts them (16px card padding + 14px title padding,
+   a 44px title row) so nothing jumps when the sections swap. The numbers go
+   underneath. */
+#setupPanel .home-section-toggle { padding: 12px 16px 15px; gap: 8px; row-gap: 6px; }
+#setupPanel .home-section-toggle .home-section-icon { width: 22px; height: 22px; margin-left: 15px; }
 #setupPanel .home-section-toggle .home-section-name {
     font-family: var(--font-emphasis);
     font-size: 20px;
     font-weight: 700;
     letter-spacing: -0.015em;
+    line-height: 44px;
 }
 #setupPanel .home-section-info {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex: none;
+    box-sizing: border-box;
     width: 32px;
     height: 32px;
-    margin: -6px 0 -6px -2px;
-    border-radius: 50%;
+    margin: -6px;
 }
 #setupPanel .home-section-info svg {
     width: 20px; height: 20px; fill: none; stroke: var(--accent-primary);
     stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+/* A quiet marker for the section you are in: an accent edge and tinted border. */
+body:not(.desktop-workspace) #setupPanel[data-home-open="learn"] #step2,
+body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckSection {
+    border-color: color-mix(in srgb, var(--accent-primary) 45%, var(--border-color));
+    box-shadow: inset 3px 0 0 var(--accent-primary);
 }
 #setupPanel .home-section-toggle-meta { order: 1; flex: 0 0 100%; }
 #setupPanel .home-section-peek { order: 2; }

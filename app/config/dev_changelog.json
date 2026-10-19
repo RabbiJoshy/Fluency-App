@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T14:40:00+01:00",
+      "date": "2026-10-19 14:40 BST",
+      "agent": "Claude",
+      "summary": "Phones: Learn and Practise titles stay put; the open section gets an accent edge",
+      "detail": [
+        "The icon and name of a folded Learn/Practise row now sit at exactly the same spot as in the open header, so nothing shifts when you swap sections.",
+        "The section you are in has a thin accent-coloured left edge and a tinted border."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T14:05:00+01:00",
       "date": "2026-10-19 14:05 BST",
       "agent": "Claude",
