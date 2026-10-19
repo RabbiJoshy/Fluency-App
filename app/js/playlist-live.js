@@ -1,7 +1,7 @@
 // Naive live-playlist deck: tokenise lyrics in the browser, join them to the
 // speech inventory, and study those cards with unassigned song-line examples.
-import { clearRoute, parseRoute } from './routes.js?v=9e3567a9';
-import { releaseUrl } from './release-host.js?v=9e3567a9';
+import { clearRoute, parseRoute } from './routes.js?v=aa46d067';
+import { releaseUrl } from './release-host.js?v=aa46d067';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -352,18 +352,24 @@ async function preparePlaylistLiveSession(language) {
             if (isCasaDePapel && deck.matchedCount < 1000) {
                 const appRoot = new URL('../', import.meta.url);
                 try {
-                    const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
+                    const resp = await fetch(new URL(`data/series/casa-de-papel-deck.json?t=${Date.now()}`, appRoot).href, { cache: 'no-store' });
                     if (resp.ok) {
                         const fresh = await resp.json();
-                        if (fresh?.matchedCount) {
+                        if (fresh?.matchedCount && fresh.matchedCount >= 1000) {
                             await cacheLiveDeck(fresh);
                             return _liveDeck;
                         }
                     }
                 } catch (_) {}
+                // If upgrade fetch fails, delete stale deck so old 4-level deck never lingers
+                try {
+                    const writeTx = db.transaction(DECK_STORE, 'readwrite');
+                    await idbRequest(writeTx.objectStore(DECK_STORE).delete(LIVE_DECK_ID));
+                } catch (_) {}
+            } else {
+                _liveDeck = deck;
+                return deck;
             }
-            _liveDeck = deck;
-            return deck;
         }
     } finally {
         db.close();
@@ -374,18 +380,19 @@ async function preparePlaylistLiveSession(language) {
         if (isCasaDePapel && remote.matchedCount < 1000) {
             const appRoot = new URL('../', import.meta.url);
             try {
-                const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
+                const resp = await fetch(new URL(`data/series/casa-de-papel-deck.json?t=${Date.now()}`, appRoot).href, { cache: 'no-store' });
                 if (resp.ok) {
                     const fresh = await resp.json();
-                    if (fresh?.matchedCount) {
+                    if (fresh?.matchedCount && fresh.matchedCount >= 1000) {
                         await cacheLiveDeck(fresh);
                         return _liveDeck;
                     }
                 }
             } catch (_) {}
+        } else {
+            await cacheLiveDeck(remote);
+            return _liveDeck;
         }
-        await cacheLiveDeck(remote);
-        return _liveDeck;
     }
     _liveDeck = null;
     return null;

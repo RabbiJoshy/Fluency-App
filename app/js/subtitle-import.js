@@ -2,7 +2,7 @@
 // Parses .srt/.vtt/text, routes through the live no-WSD engine,
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
-import './state.js?v=9e3567a9';
+import './state.js?v=aa46d067';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
@@ -109,21 +109,22 @@ export async function loadCasaDePapelPreset(onProgress = null) {
 
     // Fast path: load pre-solved series deck immediately
     const appRoot = new URL('../', import.meta.url);
-    const resolvedDeckUrl = new URL('data/series/casa-de-papel-deck.json', appRoot).href;
-    const resolvedDialogueUrl = new URL('data/series/casa-de-papel.json', appRoot).href;
+    const bust = `t=${Date.now()}`;
+    const resolvedDeckUrl = new URL(`data/series/casa-de-papel-deck.json?${bust}`, appRoot).href;
+    const resolvedDialogueUrl = new URL(`data/series/casa-de-papel.json?${bust}`, appRoot).href;
 
     const deckPaths = [
         resolvedDeckUrl,
-        'data/series/casa-de-papel-deck.json',
-        './data/series/casa-de-papel-deck.json',
-        'app/data/series/casa-de-papel-deck.json'
+        `data/series/casa-de-papel-deck.json?${bust}`,
+        `./data/series/casa-de-papel-deck.json?${bust}`,
+        `app/data/series/casa-de-papel-deck.json?${bust}`
     ];
     for (const p of deckPaths) {
         try {
-            const resp = await fetch(p);
+            const resp = await fetch(p, { cache: 'no-store' });
             if (resp.ok) {
                 const deck = await resp.json();
-                if (deck?.matchedCount) {
+                if (deck?.matchedCount && deck.matchedCount >= 1000) {
                     if (typeof window.cacheLiveDeck === 'function') {
                         await window.cacheLiveDeck(deck);
                     }
@@ -139,13 +140,13 @@ export async function loadCasaDePapelPreset(onProgress = null) {
     let dialogueData = null;
     const paths = [
         resolvedDialogueUrl,
-        'data/series/casa-de-papel.json',
-        './data/series/casa-de-papel.json',
-        'app/data/series/casa-de-papel.json'
+        `data/series/casa-de-papel.json?${bust}`,
+        `./data/series/casa-de-papel.json?${bust}`,
+        `app/data/series/casa-de-papel.json?${bust}`
     ];
     for (const p of paths) {
         try {
-            const resp = await fetch(p);
+            const resp = await fetch(p, { cache: 'no-store' });
             if (resp.ok) {
                 dialogueData = await resp.json();
                 break;
