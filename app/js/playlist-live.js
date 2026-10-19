@@ -352,18 +352,24 @@ async function preparePlaylistLiveSession(language) {
             if (isCasaDePapel && deck.matchedCount < 1000) {
                 const appRoot = new URL('../', import.meta.url);
                 try {
-                    const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
+                    const resp = await fetch(new URL(`data/series/casa-de-papel-deck.json?t=${Date.now()}`, appRoot).href, { cache: 'no-store' });
                     if (resp.ok) {
                         const fresh = await resp.json();
-                        if (fresh?.matchedCount) {
+                        if (fresh?.matchedCount && fresh.matchedCount >= 1000) {
                             await cacheLiveDeck(fresh);
                             return _liveDeck;
                         }
                     }
                 } catch (_) {}
+                // If upgrade fetch fails, delete stale deck so old 4-level deck never lingers
+                try {
+                    const writeTx = db.transaction(DECK_STORE, 'readwrite');
+                    await idbRequest(writeTx.objectStore(DECK_STORE).delete(LIVE_DECK_ID));
+                } catch (_) {}
+            } else {
+                _liveDeck = deck;
+                return deck;
             }
-            _liveDeck = deck;
-            return deck;
         }
     } finally {
         db.close();
@@ -374,18 +380,19 @@ async function preparePlaylistLiveSession(language) {
         if (isCasaDePapel && remote.matchedCount < 1000) {
             const appRoot = new URL('../', import.meta.url);
             try {
-                const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
+                const resp = await fetch(new URL(`data/series/casa-de-papel-deck.json?t=${Date.now()}`, appRoot).href, { cache: 'no-store' });
                 if (resp.ok) {
                     const fresh = await resp.json();
-                    if (fresh?.matchedCount) {
+                    if (fresh?.matchedCount && fresh.matchedCount >= 1000) {
                         await cacheLiveDeck(fresh);
                         return _liveDeck;
                     }
                 }
             } catch (_) {}
+        } else {
+            await cacheLiveDeck(remote);
+            return _liveDeck;
         }
-        await cacheLiveDeck(remote);
-        return _liveDeck;
     }
     _liveDeck = null;
     return null;

@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v593';
+const CACHE_NAME = 'flashcards-v594';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -32,8 +32,8 @@ const urlsToCache = [
   '/css/desktop-shell.css?v=1',
   '/css/black-palette.css?v=1',
   '/css/home-layout.css?v=1',
-  '/css/music-workspace.css?v=20261013music',
-  '/js/music-workspace.js?v=20261013music',
+  '/css/music-workspace.css?v=20261019stg7',
+  '/js/music-workspace.js?v=20261019stg7',
   '/js/saved-items.js?v=20261013saved',
   '/css/saved-items.css?v=20261013saved',
   '/js/desktop-shell.js?v=1',
@@ -86,7 +86,7 @@ const urlsToCache = [
   '/js/knowledge.js?v=20261014clarity',
   `/js/progress-overview.js?v=${ASSET_VERSION}`,
   '/js/session-plan.js?v=1',
-  '/js/ui.js?v=20261019stg6',
+  '/js/ui.js?v=20261019stg7',
   '/js/fast-track-preferences.js?v=20260920a',
   '/js/vocab.js?v=20261019stg5',
   '/js/grammar-cards.js?v=20260923gn',
@@ -105,15 +105,15 @@ const urlsToCache = [
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
   '/js/song-sets.js?v=20261013music',
   '/js/spotify-playlist-import.js?v=20261013music',
-  '/js/playlist-live.js?v=20261019stg6',
-  '/js/subtitle-import.js?v=20261019stg6',
+  '/js/playlist-live.js?v=20261019stg7',
+  '/js/subtitle-import.js?v=20261019stg7',
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
   '/js/vocabulary-import.js?v=20260923bk',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
   '/js/reverse-cues.js?v=20260927v24',
   '/js/flags.js?v=20260929flags',
   '/js/card-metadata-pills.js?v=20261013rows',
-  '/js/flashcards.js?v=20261019stg6',
+  '/js/flashcards.js?v=20261019stg7',
   '/js/card-row-layout.js?v=20261013rows',
   '/js/keyboard-guide.js?v=20261005kb',
   '/icons/tatoeba.svg',
@@ -254,6 +254,10 @@ self.addEventListener('fetch', event => {
     return;
   }
   if (appPathname.startsWith('/Artists/')) {
+    event.respondWith(fetch(request, { cache: 'no-store' }));
+    return;
+  }
+  if (appPathname.startsWith('/data/series/')) {
     event.respondWith(fetch(request, { cache: 'no-store' }));
     return;
   }

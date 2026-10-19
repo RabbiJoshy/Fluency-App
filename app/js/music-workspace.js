@@ -258,6 +258,10 @@ export function openMusicWorkspace(nextOptions = {}) {
         button.addEventListener('click', () => {
             playlistReturn = false;
             if (entry.isSeries) {
+                const live = window.playlistLiveDeck?.();
+                if (live && (live.playlistId === 'la-casa-de-papel' || /casa de papel/i.test(live.playlistName || '')) && (live.matchedCount || 0) < 1000) {
+                    window.clearPlaylistLiveSession?.();
+                }
                 window.showAppLoading?.('Loading La Casa de Papel', 'Building study deck from dialogue…');
                 window.openSubtitleImport?.({ preselect: entry.slug });
             } else {
