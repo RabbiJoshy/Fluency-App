@@ -100,7 +100,7 @@ const {createHarness} = require('./estimation_harness.cjs');
     const html=learn();
     assert.equal((html.match(/class="home-level-bar(?:\s+[^"]*)?"/g)||[]).length,1);
     assert.match(html,/class="is-new" style="flex-grow:50"><\/span><span class="is-seen" style="flex-grow:5"><\/span><span class="is-known" style="flex-grow:20"><\/span><span class="is-estimated" style="flex-grow:15"><\/span><span class="is-skipped" style="flex-grow:10">/);
-    assert.match(html,/>Learn · 20 new<\/button>/);
+    assert.match(html,/>Learn<span class="home-cta-count"> · 20 new<\/span><\/button>/);
     assert.match(html,/data-session-length-toggle[\s\S]*>5 min<\/button>/);
     assert.match(html,/data-level-state="new"/);
     assert.match(html,/15 Estimated/);
@@ -145,7 +145,7 @@ const {createHarness} = require('./estimation_harness.cjs');
     assert.match(practiceHtml, /<strong>8<\/strong>/);
     assert.equal(node('practiseSectionMeta').textContent, '8 waiting');
     assert.ok(!practiceHtml.includes('more'));
-    assert.match(practiceHtml, />Practise · 8<\/button>/);
+    assert.match(practiceHtml, />Practise<span class="home-cta-count"> · 8<\/span><\/button>/);
     assert(!practiceHtml.includes('data-session-length-toggle'));
     // When 0 waiting, upcoming tomorrow reviews are shown
     context.window.getGlobalDueReviewSummary = () => ({total:0});
