@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T20:23:46+01:00",
+      "date": "2026-10-19 20:23 BST",
+      "agent": "Claude",
+      "summary": "Desktop home: Learn and Practise sit in the middle of the screen",
+      "detail": [
+        "On desktop the Learn and Practise boxes are centred vertically instead of pinned to the top with an empty band below.",
+        "If the window is too short for them, they start at the top as before. Phones unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T20:02:31+01:00",
       "date": "2026-10-19 20:02 BST",
       "agent": "Claude",
@@ -324,17 +335,6 @@
       "detail": [
         "The Practise information sheet had a small \"Practice\" label above its \"Practise\" title; only the title is left.",
         "Due for review now reads \"Words recently correct, scheduled for spaced repetition.\""
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T00:10:00+01:00",
-      "date": "2026-10-19 00:10 BST",
-      "agent": "Claude",
-      "summary": "Home: the folded Learn or Practise card keeps a short version; desktop example words sit above the level bar",
-      "detail": [
-        "Phones and tablets: the closed card is no longer a single line. Folded Learn shows its level and words, the level bar and its counts; folded Practise shows the total and a line of mistakes, due and coming back. Tapping it opens it, and the button at the bottom follows whichever card is open.",
-        "Desktop: the level's example words moved from under the level number to the right-hand column, above the bar, which makes the Learn card shorter."
       ],
       "commit": "pending"
     }
