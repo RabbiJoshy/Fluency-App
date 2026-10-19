@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T21:30:51+01:00",
+      "date": "2026-10-19 21:30 BST",
+      "agent": "Claude",
+      "summary": "Session length \"No limit\" is now \"All\"",
+      "detail": [
+        "The session-length chip on the Learn and Practise buttons reads 5 min, 10 min or All, so it fits on desktop. Screen readers still hear \"no time limit\"."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T21:24:59+01:00",
       "date": "2026-10-19 21:24 BST",
       "agent": "Claude",
@@ -327,16 +337,6 @@
       "summary": "Choose what to learn from: two Best for points per card on phones",
       "detail": [
         "Phones drop \"Following films and TV\" (the intro names films and TV) and \"Studying your own playlists\" (the Spotify footer covers it). Tablet and desktop keep all three."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T01:50:00+01:00",
-      "date": "2026-10-19 01:50 BST",
-      "agent": "Claude",
-      "summary": "Music's Best for reads as activities, like Speech's",
-      "detail": [
-        "\"Songs by artists you love\" and \"Your own playlists\" become \"Understanding your favourite songs\" and \"Studying your own playlists\", matching \"Starting from scratch\" and \"Following films and TV\"."
       ],
       "commit": "pending"
     }

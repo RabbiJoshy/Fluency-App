@@ -136,7 +136,7 @@ const {createHarness} = require('./estimation_harness.cjs');
     stateOf=item=>item.rank>50?{seen:false}:{seen:true,needsReview:false};
     await context.renderRangeSelector();
     assert.match(learn(), /50 new<\/span><\/button>/);
-    assert.match(learn(), /No limit<\/button>/);
+    assert.match(learn(), />All<\/button>/);
     plan.setSessionLength('5');
     context.currentUser = {isGuest:false};
     context.window.getGlobalDueReviewSummary = () => ({total:8});
