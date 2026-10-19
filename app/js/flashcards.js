@@ -3748,6 +3748,10 @@ const COMPANION_SURFACE_VARIANTS = {
     },
 };
 
+// The text of an example-word-highlight span: plain text, or text holding
+// complete nested accent spans.
+const HIGHLIGHT_INNER_PATTERN = '(?:[^<]|<span[^>]*>[^<]*<\\/span>)+';
+
 function highlightUnifiedCompanionInSentence(sentenceHTML, meaning, card, language = 'spanish') {
     const comp = extractSenseCompanion(meaning);
     const spanishUsage = language === 'spanish' ? parseSpanishDictUsageContext(meaning?.context) : null;
@@ -3783,11 +3787,14 @@ function highlightUnifiedCompanionInSentence(sentenceHTML, meaning, card, langua
     if (!validForms.length) return { html, candidates: candidateForms };
 
     const termsPattern = validForms.map(f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    // A highlight may already hold a nested accent span (the orange `se` of
+    // "se acuerda"), so its text is not always tag-free.
+    const inner = HIGHLIGHT_INNER_PATTERN;
 
     // 1. Direct adjacency: target highlight span immediately followed by whitespace and companion
     // e.g. <span class="example-word-highlight">Tengo</span> que
     const adjacentAfterRegex = new RegExp(
-        `(<span class="example-word-highlight[^"]*"[^>]*>)([^<]+)(<\\/span>)(\\s+)(${termsPattern})(?![\\p{L}\\p{N}])`,
+        `(<span class="example-word-highlight[^"]*"[^>]*>)(${inner})(<\\/span>)(\\s+)(${termsPattern})(?![\\p{L}\\p{N}])`,
         'giu'
     );
     let matchedAdjacent = false;
@@ -3799,7 +3806,7 @@ function highlightUnifiedCompanionInSentence(sentenceHTML, meaning, card, langua
     // Also check companion immediately before target (e.g. "para mim", "se levantó")
     if (!matchedAdjacent) {
         const adjacentBeforeRegex = new RegExp(
-            `(?<![\\p{L}\\p{N}])(${termsPattern})(\\s+)(<span class="example-word-highlight[^"]*"[^>]*>)([^<]+)(<\\/span>)`,
+            `(?<![\\p{L}\\p{N}])(${termsPattern})(\\s+)(<span class="example-word-highlight[^"]*"[^>]*>)(${inner})(<\\/span>)`,
             'giu'
         );
         html = html.replace(adjacentBeforeRegex, (match, particle, space, openTag, text, closeTag) => {
@@ -3808,18 +3815,17 @@ function highlightUnifiedCompanionInSentence(sentenceHTML, meaning, card, langua
         });
     }
 
-    // 2. If no adjacent match was found, highlight the first matching separated companion
+    // 2. Otherwise allow one word between ("Tengo mucho que", "tuve yo
+    // que"). Further away, the same word is usually doing something else in
+    // the line ("No estoy de acuerdo con tus conclusiones" on estar + con),
+    // so nothing is highlighted rather than the wrong word.
     if (!matchedAdjacent) {
         const separatedRegex = _cachedRegex(
-            `(?<![\\p{L}\\p{N}])(${termsPattern})(?![\\p{L}\\p{N}])(?![^<]*>)`,
-            'giu'
+            `(<span class="example-word-highlight[^"]*"[^>]*>${inner}<\\/span>)(\\s+[\\p{L}\\p{N}'’]+\\s+)(${termsPattern})(?![\\p{L}\\p{N}])`,
+            'iu'
         );
-        let separatedMatched = false;
-        html = html.replace(separatedRegex, (match, particle) => {
-            if (separatedMatched) return match;
-            separatedMatched = true;
-            return `<span class="example-word-highlight example-companion-highlight" title="Collocation with this sense">${particle}</span>`;
-        });
+        html = html.replace(separatedRegex, (match, target, gap, particle) =>
+            `${target}${gap}<span class="example-word-highlight example-companion-highlight" title="Collocation with this sense">${particle}</span>`);
     }
 
     return { html, candidates: candidateForms };
@@ -3941,6 +3947,75 @@ function highlightPronominalCliticsInSentence(html, card) {
         const attached = word.slice(word.length - clitic.length);
         return `${open}${stem}<span class="example-clitic-highlight">${attached}</span>${close}`;
     });
+}
+
+// Senses that are one half of a two-word frame: haber + participle ("ha
+// pasado"), soler + infinitive ("suelo hablar"), estar + gerund ("estoy
+// aprendiendo"). The sense data names the frame and the conjugation tables
+// list every participle, gerund and infinitive, so the partner is a lookup.
+function senseComplementFrame(meaning) {
+    const features = meaning?.metadata?.sense_metadata?.features || [];
+    const declared = features
+        .filter(f => f?.kind === 'auxiliary_frame' || f?.kind === 'complement_form')
+        .map(f => String(f.value || '').toLowerCase());
+    const context = String(meaning?.context || '').toLowerCase();
+    const used = [...context.matchAll(/used (?:in|with)\b[^;]*/gu)].map(m => m[0]);
+    const text = [...declared, ...used].join('; ');
+    if (/compound tense|participle/.test(text)) return 'participle';
+    if (/infinitive/.test(text)) return 'infinitive';
+    if (/gerund|progressive/.test(text)) return 'gerund';
+    return '';
+}
+
+const _complementFormsCache = new WeakMap();
+
+function complementFormSets(conjData) {
+    if (!conjData || typeof conjData !== 'object') return null;
+    if (_complementFormsCache.has(conjData)) return _complementFormsCache.get(conjData);
+    const sets = { participle: new Set(), gerund: new Set(), infinitive: new Set() };
+    for (const [lemma, entry] of Object.entries(conjData)) {
+        sets.infinitive.add(foldSurfaceForm(lemma));
+        for (const gerund of [entry?.gerund].flat()) {
+            if (gerund) sets.gerund.add(foldSurfaceForm(String(gerund).split(/\s+/).pop()));
+        }
+        for (const participle of [entry?.past_participle].flat()) {
+            if (!participle) continue;
+            const folded = foldSurfaceForm(participle);
+            sets.participle.add(folded);
+            if (folded.endsWith('o')) {
+                for (const ending of ['a', 'os', 'as']) sets.participle.add(folded.slice(0, -1) + ending);
+            }
+        }
+    }
+    _complementFormsCache.set(conjData, sets);
+    return sets;
+}
+
+function isComplementForm(word, frame, sets) {
+    const forms = sets?.[frame];
+    if (!forms) return false;
+    if (forms.has(foldSurfaceForm(word))) return true;
+    // hacerlo, diciéndome: the verb form with a pronoun attached.
+    if (frame === 'participle') return false;
+    return encliticCandidates(word).some(stem => forms.has(foldSurfaceForm(stem)));
+}
+
+/**
+ * Join the participle, infinitive or gerund that completes this sense's
+ * frame into the highlight: "No sé qué le <hl>ha</hl> pasado" →
+ * "No sé qué le <hl>ha pasado</hl>". Only the word right after counts.
+ */
+function highlightComplementFrameInSentence(html, meaning, card) {
+    const frame = senseComplementFrame(meaning);
+    if (!html || !frame) return html;
+    const sets = complementFormSets(activeConjugationData(card));
+    if (!sets) return html;
+    const pattern = _cachedRegex(
+        `(<span class="example-word-highlight[^"]*"[^>]*>)(${HIGHLIGHT_INNER_PATTERN})(<\\/span>)(\\s+)(\\p{L}+)(?![\\p{L}\\p{N}])`,
+        'giu'
+    );
+    return String(html).replace(pattern, (match, open, text, close, gap, word) =>
+        isComplementForm(word, frame, sets) ? `${open}${text}${gap}${word}${close}` : match);
 }
 
 function getExampleProductionForm(card, meaning, example, targetSentence) {
@@ -8499,6 +8574,8 @@ function renderCardWikipediaBadge(card) {
                 const companionHighlight = highlightUnifiedCompanionInSentence(
                     displayTargetSentence, currentMeaning, card, selectedLanguage);
                 displayTargetSentence = companionHighlight.html;
+                displayTargetSentence = highlightComplementFrameInSentence(
+                    displayTargetSentence, currentMeaning, card);
             } else {
             // Truncate sentences longer than 20 words
             displayTargetSentence = truncateText(displayTargetSentence, 20);
@@ -8570,6 +8647,10 @@ function renderCardWikipediaBadge(card) {
             const companionHighlight = highlightUnifiedCompanionInSentence(
                 displayTargetSentence, currentMeaning, card, selectedLanguage);
             displayTargetSentence = companionHighlight.html;
+            // Then the participle / infinitive / gerund the sense's frame
+            // asks for ("ha pasado", "suelo hablar", "pongámonos a trabajar").
+            displayTargetSentence = highlightComplementFrameInSentence(
+                displayTargetSentence, currentMeaning, card);
 
             // Highlight the English translation in the English sentence for keyword-assigned examples
             const exampleMethod = currentExample && currentExample.assignment_method;
