@@ -8,6 +8,9 @@ body.desktop-workspace > .container {
     padding: 28px 32px;
 }
 body.desktop-workspace #setupPanel { width: 100%; max-width: 1140px; margin: 0 auto; }
+/* Learn + Practise sit in the middle of the screen, not pinned to the top
+   with an empty band below; a panel taller than the window still starts at the top. */
+body.desktop-workspace #setupPanel:has(> #step2:not([style*="none"])) { margin-block: auto; }
 body.desktop-workspace #topBar {
     position: fixed;
     inset: 0 auto 0 0;

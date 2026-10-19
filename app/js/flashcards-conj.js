@@ -16,7 +16,7 @@
 
 // Cells are matched to the card's word exactly as the sense-row English is,
 // so a -se table ("me siento") opens on the card's tense and marks its form.
-import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=736e9e74';
+import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=2447f18a';
 
 const CONJ_UI = {
     spanish: {

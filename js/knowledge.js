@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=736e9e74';
-import { sendOrQueue } from './sync-queue.js?v=736e9e74';
+import './state.js?v=2447f18a';
+import { sendOrQueue } from './sync-queue.js?v=2447f18a';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -830,14 +830,14 @@ function renderKnowledgeOverviewButton(card) {
     if (!getKnowledgeFocusItems(card).length) return '';
     const { flagged } = getKnowledgeOverviewFraction(card);
     const active = Boolean(card?._pinningMode);
-    const aria = flagged > 0 ? `Pin meaning(s), ${flagged} pinned` : 'Pin meaning(s)';
+    const aria = flagged > 0 ? `Pin meaning, ${flagged} pinned` : 'Pin meaning';
     // The number is blank until a meaning is pinned, then counts them.
     return `<button type="button" class="ref-tile knowledge-overview-trigger${active ? ' is-active' : ''}" aria-label="${aria}" aria-pressed="${active}" onclick="showKnowledgeOverview(event)">
         <div class="ref-tile-icon-wrap">
             <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg>
             ${flagged > 0 ? `<span class="ref-tile-count-badge" aria-hidden="true">${flagged}</span>` : ''}
         </div>
-        <span class="ref-tile-label">Pin meaning(s)</span>
+        <span class="ref-tile-label">Pin meaning</span>
     </button>`;
 }
 

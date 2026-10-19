@@ -1,4 +1,4 @@
-import { songCreditHTML } from './song-credit.js?v=736e9e74';
+import { songCreditHTML } from './song-credit.js?v=2447f18a';
 // The replica card: real demo entries and the markup that draws them.
 //
 // Two features show a flashcard without the app having loaded a deck, and they
@@ -656,7 +656,7 @@ function hasRareUses(card) {
     return !Array.isArray(card.rareUses) || card.rareUses.length > 0;
 }
 
-// The sites the live card's Look up sheet offers, as it builds them
+// The sites the live card's Dictionary sheet offers, as it builds them
 // (flashcards.js: every reference link but WordReference and conjugation).
 const LOOKUP_SITES = {
     spanishDict: { label: 'SpanishDict', domain: 'spanishdict.com' },
@@ -699,28 +699,24 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                 <div class="links-section" id="replicaLinksSection">
                     ${hasRareUses(card) ? `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses" title="Rare uses">
                         <div class="ref-tile-icon-wrap">
-                            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="currentColor" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.28" stroke-width="0.5" aria-hidden="true">
-                    <rect x="3" y="14" width="4.5" height="6" rx="1.5"></rect>
-                    <rect x="3" y="17" width="4.5" height="3" rx="0.75" fill="#fff" fill-opacity="1" stroke="none"></rect>
-                    <rect x="10" y="9" width="4.5" height="11" rx="1.5"></rect>
-                    <rect x="17" y="4" width="4.5" height="16" rx="1.5"></rect>
-                </svg>
+                            <span class="ref-tile-icon ref-tile-meter" aria-hidden="true"><i class="is-on"></i><i></i><i></i></span>
                             <span class="ref-tile-count-badge">${Array.isArray(card.rareUses) ? card.rareUses.length : 2}</span>
                         </div>
                         <span class="ref-tile-label">Rare uses</span>
                     </button>` : ''}
-                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Pin meaning(s)" aria-pressed="false">
+                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Pin meaning" aria-pressed="false">
                         <div class="ref-tile-icon-wrap">
                             <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg>
                         </div>
-                        <span class="ref-tile-label">Pin meaning(s)</span>
+                        <span class="ref-tile-label">Pin meaning</span>
                     </button>
-                    <div class="ref-lookup-wrap"><button type="button" class="ref-tile ref-lookup-btn" aria-label="Look up" title="Look up">
-                        <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="11" cy="11" r="7"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                        <span class="ref-tile-label">Look up</span>
+                    <div class="ref-lookup-wrap"><button type="button" class="ref-tile ref-lookup-btn" aria-label="Dictionary" title="Dictionary">
+                        <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M3 12h18"></path>
+                <path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path>
+            </svg>
+                        <span class="ref-tile-label">Dictionary</span>
                     </button>
                     ${lookupSheetHTML(card)}</div>
                 </div>

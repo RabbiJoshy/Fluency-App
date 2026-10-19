@@ -1,7 +1,7 @@
 // Naive live-playlist deck: tokenise lyrics in the browser, join them to the
 // speech inventory, and study those cards with unassigned song-line examples.
-import { clearRoute, parseRoute } from './routes.js?v=736e9e74';
-import { releaseUrl } from './release-host.js?v=736e9e74';
+import { clearRoute, parseRoute } from './routes.js?v=2447f18a';
+import { releaseUrl } from './release-host.js?v=2447f18a';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -410,7 +410,7 @@ function applyPlaylistLiveVocabulary(items) {
         const entry = _liveDeck.surfaces[normalizeSurface(item.word)];
         if (!entry) continue;
         const lyricExamples = entry.lines.map(lyricExample);
-        const next = { ...item, meanings: [...(item.meanings || [])], playlist_count: entry.count };
+        const next = { ...item, sourceRank: item.sourceRank || item.rank, meanings: [...(item.meanings || [])], playlist_count: entry.count };
 
         // For Turbo engine decks with disambiguated senses
         if (isTurbo && entry.turboCard?.meanings) {
