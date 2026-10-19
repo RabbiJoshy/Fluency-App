@@ -1168,3 +1168,5 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 
 /* Music closed for this language (ui.js musicOpenFor): no Spotify footer. */
 #standardSourceCard .standard-source-spotify[hidden] { display: none !important; }
+/* A closed option still says why: its line reads "Coming soon". */
+#step1 #standardSourceCard .choice-sheet-item:disabled .choice-sheet-copy small { display: block !important; grid-area: 2 / 1 / auto / -1; margin-top: 6px; text-align: left; color: var(--text-muted); }
