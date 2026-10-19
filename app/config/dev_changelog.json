@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T23:20:00+01:00",
+      "date": "2026-10-19 23:20 BST",
+      "agent": "Claude",
+      "summary": "Artist mode: pick an artist and go straight to their deck; choose songs or albums later",
+      "detail": [
+        "Music now opens on one screen: Artists, Spotify playlists and Series tabs, a search box and round artist tiles. The three-card chooser is gone.",
+        "Tapping an artist opens the whole deck. The forced song picker is gone; only 'Mix several' still asks for songs first.",
+        "The artist card is now: ‹ Music, the artist with a Read lyrics button, and two chips, 'Songs: all 295 ✎' and 'Albums ▾'. Change artist, Speech and the language button are removed from it.",
+        "The song picker has an album filter; Select all / Clear all act on whatever is showing.",
+        "Back on the pick screen only appears when a deck is open, and returns to it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T23:03:13+01:00",
       "date": "2026-10-19 23:03 BST",
       "agent": "Claude",
@@ -335,17 +349,6 @@
         "A card with every meaning marked after a miss now comes back whole, with no pins; pins and the pill appear once only some meanings are pinned.",
         "The front pill reads \"2 of 4 meanings to practise\" in larger, bolder text.",
         "A plural noun whose English gloss is already plural (plans, cops, mountains) is no longer pluralised again (\"planses\")."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T09:50:00+01:00",
-      "date": "2026-10-19 09:50 BST",
-      "agent": "Claude",
-      "summary": "Practise: what comes back later shows only once you're caught up",
-      "detail": [
-        "While words are waiting, Practise lists just Mistakes and Due for review; the \"Coming back …\" row (and the later-this-week rows added an hour earlier) are gone, as is \"back within …\" from the folded summary.",
-        "When nothing is waiting, \"All caught up\" still says what comes back next and how many more this week."
       ],
       "commit": "pending"
     }

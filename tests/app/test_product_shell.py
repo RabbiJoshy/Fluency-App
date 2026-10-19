@@ -1471,15 +1471,15 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("#artistSourceCard > .artist-source-language-btn", css)
         self.assertIn("display: none !important;", css)
 
-        # Main choice layout is a horizontal flex row with pill action buttons
-        self.assertIn(".artist-source-main-choice {", css)
-        self.assertIn(".artist-source-secondary-actions {", css)
-        self.assertIn("display: flex;", css)
-        self.assertIn("border-radius: 999px;", css)
-
-        # Button label is concise and non-clunky
-        self.assertIn("speechBtn.textContent = 'Speech ›';", main)
-        self.assertIn('id="artistSourceSpeechBtn" class="artist-source-action-btn">Speech ›</button>', html)
+        # The card is a crumb, a hero (with Read lyrics), then Songs / Albums chips.
+        # Speech is reached from the sidebar, not from this card.
+        for element_id in ("artistSourceArtistBtn", "artistSourceLyricsViewBtn",
+                           "artistSourcePickerBtn", "artistSourceAlbumsBtn"):
+            self.assertIn(f'id="{element_id}"', html)
+        self.assertIn('class="artist-source-chips"', html)
+        self.assertNotIn(">Change artist<", html)
+        self.assertNotIn("artist-source-secondary-actions", html)
+        self.assertIn("`Songs: ${summary", main)
         self.assertNotIn(">Switch to Speech<", html)
 
     def test_lyrics_mode_level_and_sets_generation_is_not_blocked_by_release_levels(self) -> None:

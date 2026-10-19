@@ -1188,15 +1188,29 @@ function renderArtistSourceSummary() {
     const art = artistPickerImage(activeArtist);
     const isCustom = activeArtist.customSongSource === true;
     name.textContent = artistName;
-    if (selectionLabel) selectionLabel.textContent = window.songSelectionSummary?.() || 'Choose songs';
+    if (selectionLabel) {
+        // "Songs: all 295" / "Songs: 3 of 295": the chip states what is being studied.
+        const summary = window.songSelectionSummary?.() || 'Choose songs';
+        selectionLabel.textContent = /^Choose/.test(summary)
+            ? summary
+            : `Songs: ${summary.replace(/ songs?$/, '').replace(/^All /, 'all ')}`;
+    }
+    const metaEl = document.getElementById('artistSourceMeta');
+    if (metaEl) {
+        const total = artistSongCatalog?.songs?.length;
+        metaEl.textContent = [langCfg.name || lang, total ? `${total.toLocaleString()} songs` : ''].filter(Boolean).join(' · ');
+    }
+    const albumsBtn = document.getElementById('artistSourceAlbumsBtn');
+    if (albumsBtn) {
+        albumsBtn.hidden = !(activeArtist.albumsDictionary && artistSongCatalog?.songs?.length);
+        albumsBtn.onclick = () => window.showSongSetPicker?.({ focusAlbums: true });
+    }
     image.innerHTML = isCustom ? customSongsIcon() : '';
     if (!art && !isCustom) image.textContent = artistInitials(artistName);
     image.classList.toggle('artist-source-image--fallback', !art && !isCustom);
     image.classList.toggle('artist-source-image--custom', isCustom);
     image.style.backgroundImage = art ? `url('${art}')` : '';
     image.style.backgroundColor = art || isCustom ? '' : (activeArtist.colorTheme?.primary || 'var(--accent-primary)');
-    artistBtn.textContent = isCustom ? 'Change songs' : 'Change artist';
-    speechBtn.textContent = 'Speech ›';
     step.style.display = 'block';
 
     window.mergeArtistProgressIntoSourceStep?.();
@@ -1766,15 +1780,22 @@ function musicArtistEntries(resolvedArtists) {
 }
 
 function selectMusicArtist(entry, language) {
-    if (entry.slug === window._urlArtistSlug && window.showSongSetPicker && artistSongCatalog?.songs?.length) {
-        window.showSongSetPicker();
+    const isMix = entry.slug === CUSTOM_ARTIST_SLUG;
+    if (entry.slug === window._urlArtistSlug && artistSongCatalog?.songs?.length) {
+        // Already loaded: go to the deck, or straight to the picker for the mix.
+        if (isMix) window.showSongSetPicker?.();
+        else {
+            window.dismissMusicWorkspace?.();
+            replaceRoute({ kind: 'artist', artist: entry.slug });
+        }
         return;
     }
     window.clearPlaylistLiveSession?.();
     showAppLoading(`Loading ${entry.name}`, 'Preparing your songs…', true);
-    navigateMusicWorkspace(entry.slug === CUSTOM_ARTIST_SLUG
+    // An artist opens on its whole deck; only the mix has to choose songs first.
+    navigateMusicWorkspace(isMix
         ? { kind: 'songs', language: routeCodeFor(language, config.languages) }
-        : { kind: 'artist', artist: entry.slug });
+        : { kind: 'artist', artist: entry.slug }, isMix ? 'songs' : 'deck');
 }
 
 function artistsIcon() {

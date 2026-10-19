@@ -10,6 +10,8 @@ import {
 
 const STORAGE_PREFIX = 'fluency_song_set_v1:';
 let draftSongIds = new Set();
+let albumOf = null;      // normalised song title -> album name
+let albumFilter = '';
 let remoteLoaded = false;
 let remoteLoading = false;
 
@@ -193,12 +195,47 @@ function updatePickerCount() {
     window.updateMusicSelection?.((artistSongCatalog?.songs || []).filter(song => draftSongIds.has(String(song.id))));
 }
 
+const titleKey = title => String(title || '').trim().toLocaleLowerCase();
+
+// albums.json maps album -> song titles; songs.json carries no album field.
+async function loadAlbums() {
+    albumOf = null;
+    const select = document.getElementById('songSetAlbum');
+    if (select) select.hidden = true;
+    if (!activeArtist?.albumsDictionary || activeArtist.customSongSource) return;
+    try {
+        const response = await fetch(activeArtist.albumsDictionary);
+        if (!response.ok) return;
+        const albums = await response.json();
+        const map = new Map();
+        const counts = new Map();
+        for (const [album, titles] of Object.entries(albums || {})) {
+            for (const title of titles) if (!map.has(titleKey(title))) map.set(titleKey(title), album);
+        }
+        for (const song of artistSongCatalog?.songs || []) {
+            const album = map.get(titleKey(song.title));
+            if (album) counts.set(album, (counts.get(album) || 0) + 1);
+        }
+        if (!counts.size || !select) return;
+        albumOf = map;
+        select.replaceChildren(new Option('All albums', ''));
+        for (const [album, count] of counts) select.appendChild(new Option(`${album} (${count})`, album));
+        select.value = albumFilter = '';
+        select.hidden = false;
+    } catch (_) { /* albums are a convenience; the list still works without them */ }
+}
+
+function visibleSongs() {
+    const query = String(document.getElementById('songSetSearch')?.value || '').trim().toLocaleLowerCase();
+    return (artistSongCatalog?.songs || []).filter(song =>
+        (!query || `${song.title} ${song.artist}`.toLocaleLowerCase().includes(query))
+        && (!albumFilter || albumOf?.get(titleKey(song.title)) === albumFilter));
+}
+
 function renderSongOptions() {
     const list = document.getElementById('songSetList');
     if (!list || !artistSongCatalog) return;
-    const query = String(document.getElementById('songSetSearch')?.value || '').trim().toLocaleLowerCase();
-    const songs = artistSongCatalog.songs.filter(song =>
-        !query || `${song.title} ${song.artist}`.toLocaleLowerCase().includes(query));
+    const songs = visibleSongs();
     list.replaceChildren();
     if (!songs.length) {
         const empty = document.createElement('p');
@@ -235,10 +272,10 @@ function renderSongOptions() {
     list.appendChild(fragment);
 }
 
-export function showSongSetPicker() {
+export function showSongSetPicker({ focusAlbums = false } = {}) {
     if (!artistSongCatalog?.songs?.length) return;
     if (!document.getElementById('appContent')?.classList.contains('hidden')) {
-        window.goBackToSetup?.().then(() => showSongSetPicker());
+        window.goBackToSetup?.().then(() => showSongSetPicker({ focusAlbums }));
         return;
     }
     draftSongIds = new Set(selectedSongIds.map(String));
@@ -251,14 +288,19 @@ export function showSongSetPicker() {
         : `Choose ${activeArtist?.name || 'Lyrics'} songs`;
     if (intro) intro.textContent = activeArtist?.customSongSource
         ? 'Pick songs from every available Lyrics source. Your deck and lyric examples update together, and this selection is remembered on this device.'
-        : 'Cards are limited by complete per-song membership; sampled lyric examples are limited to the selected songs too.';
+        : 'Cards and lyric examples come only from the songs you tick.';
     if (search) search.value = '';
     document.getElementById('songSetStatus').textContent = '';
+    albumFilter = '';
     renderSongOptions();
     window.showMusicSongPicker?.();
     updatePickerCount();
     modal?.classList.remove('hidden');
-    search?.focus();
+    loadAlbums().then(() => {
+        renderSongOptions();
+        if (focusAlbums && albumOf) document.getElementById('songSetAlbum')?.focus();
+    });
+    if (!focusAlbums) search?.focus();
 }
 
 function hideSongSetPicker() {
@@ -304,13 +346,18 @@ function setupSongSetPicker() {
     if (!modal || modal.dataset.listenersReady === '1') return;
     modal.dataset.listenersReady = '1';
     document.getElementById('songSetSearch')?.addEventListener('input', renderSongOptions);
+    document.getElementById('songSetAlbum')?.addEventListener('change', event => {
+        albumFilter = event.target.value;
+        renderSongOptions();
+    });
     document.getElementById('selectAllSongsBtn')?.addEventListener('click', () => {
-        draftSongIds = new Set((artistSongCatalog?.songs || []).map(song => String(song.id)));
+        // With an album or search showing, "all" means everything you can see.
+        for (const song of visibleSongs()) draftSongIds.add(String(song.id));
         renderSongOptions();
         updatePickerCount();
     });
     document.getElementById('clearAllSongsBtn')?.addEventListener('click', () => {
-        draftSongIds.clear();
+        for (const song of visibleSongs()) draftSongIds.delete(String(song.id));
         renderSongOptions();
         updatePickerCount();
     });

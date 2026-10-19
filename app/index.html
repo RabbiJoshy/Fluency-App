@@ -491,21 +491,22 @@
                         </span>
                         <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
                     </button>
-                    <div class="artist-source-main-choice">
-                        <button type="button" id="artistSourcePickerBtn" class="artist-source-picker" aria-haspopup="dialog">
-                            <span id="artistSourceImage" class="artist-source-image" aria-hidden="true"></span>
-                            <span class="artist-source-copy">
-                                <span id="artistSourceName" class="artist-source-name"></span>
-                                <span id="artistSourceSelectionLabel">Choose songs</span>
-                            </span>
-                            <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
-                        </button>
-                        <div class="artist-source-secondary-actions">
-                            <button type="button" id="artistSourceLyricsViewBtn" class="artist-source-action-btn">Song translation ›</button>
-                            <button type="button" id="artistSourceArtistBtn" class="artist-source-action-btn">Change artist</button>
-                            <button type="button" id="artistSourceSpeechBtn" class="artist-source-action-btn">Speech ›</button>
-                        </div>
+                    <button type="button" id="artistSourceArtistBtn" class="artist-source-back">&#8249; Music</button>
+                    <div class="artist-source-hero">
+                        <span id="artistSourceImage" class="artist-source-image" aria-hidden="true"></span>
+                        <span class="artist-source-copy">
+                            <span id="artistSourceName" class="artist-source-name"></span>
+                            <span id="artistSourceMeta" class="artist-source-meta"></span>
+                        </span>
+                        <button type="button" id="artistSourceLyricsViewBtn" class="artist-source-action-btn">&#9834; Read lyrics</button>
                     </div>
+                    <div class="artist-source-chips">
+                        <button type="button" id="artistSourcePickerBtn" class="artist-source-chip is-active" aria-haspopup="dialog">
+                            <span id="artistSourceSelectionLabel">Choose songs</span>
+                        </button>
+                        <button type="button" id="artistSourceAlbumsBtn" class="artist-source-chip" aria-haspopup="dialog" hidden>Albums &#9662;</button>
+                    </div>
+                    <button type="button" id="artistSourceSpeechBtn" hidden aria-hidden="true" tabindex="-1">Speech</button>
                     <div id="artistSourceProgress" class="standard-source-progress"></div>
                 </div>
             </div>
@@ -1988,6 +1989,7 @@
                 <span id="songSetCount" aria-live="polite"></span>
             </div>
             <div class="song-set-bulk-actions">
+                <select id="songSetAlbum" aria-label="Filter by album" hidden></select>
                 <button type="button" id="selectAllSongsBtn">Select all</button>
                 <button type="button" id="clearAllSongsBtn">Clear all</button>
             </div>

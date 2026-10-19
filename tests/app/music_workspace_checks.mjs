@@ -13,9 +13,7 @@ class Element {
     }
     set innerHTML(_html) {
         // The workspace template is static. Only these buttons need selectors.
-        for (const id of ['musicBackBtn', 'musicWorkspaceTitle', 'musicWorkspaceLanguage',
-            'musicSourceChoices', 'musicArtistsChoiceDesc', 'musicPlaylistsChoiceDesc',
-            'musicArtistBrowser', 'musicArtistList', 'musicPickerHost', 'musicStudySetup',
+        for (const id of ['musicBackBtn', 'musicWorkspaceTitle', 'musicArtistSearch', 'musicMixBtn', 'musicArtistBrowser', 'musicArtistList', 'musicPickerHost', 'musicStudySetup',
             'musicSelectionTitle', 'musicSelectionCount', 'musicSelectionPreview', 'musicEditSongsBtn']) {
             const element = new Element(id); elements.set(id, element); this.appendChild(element);
         }
@@ -31,6 +29,7 @@ class Element {
     click() { if (!this.disabled) (this.listeners.click || []).forEach(handler => handler()); }
     focus() { document.activeElement = this; }
     querySelectorAll() { return this.nav || []; }
+    querySelector() { return null; }
     appendChild(child) {
         if (child.parent) child.parent.children = child.parent.children.filter(element => element !== child);
         child.parent = this; this.children.push(child); return child;
@@ -108,14 +107,15 @@ window.activeArtist = null;
 module.openMusicWorkspace({ artists: [] });
 assert.equal(elements.get('musicSetupBtn').disabled, true, 'no study setup until music is selected');
 module.showChoices();
-assert.equal(elements.get('musicSourceChoices').hidden, false, 'choices screen shows guided options');
-assert.equal(elements.get('musicBackBtn').hidden, true, 'no back button on choices screen');
+assert.equal(elements.get('musicArtistBrowser').hidden, false, 'the pick screen is the artists tab: no separate chooser');
+assert.equal(elements.get('musicBackBtn').hidden, true, 'no back button on the pick screen when no deck is open');
+assert.equal(elements.get('musicWorkspaceTitle').textContent, 'Music');
 module.showArtists();
 assert.equal(elements.get('musicArtistBrowser').hidden, false);
-assert.equal(elements.get('musicBackBtn').hidden, false);
-assert.equal(elements.get('musicBackBtn').textContent, '‹ Back', 'back button is simple ‹ Back');
-elements.get('musicBackBtn').click();
-assert.equal(elements.get('musicSourceChoices').hidden, false, 'back returns from artists to guided choices');
+window.activeArtist = { name: 'Artist', language: 'spanish' };
+module.showArtists();
+assert.equal(elements.get('musicBackBtn').hidden, false, 'with a deck open, Back returns to it');
+assert.equal(elements.get('musicBackBtn').textContent, '‹ Artist');
 console.log('Music workspace navigation and ownership checks passed');
 
 // The playlist subset is chosen before looking up lyrics, persists by playlist
