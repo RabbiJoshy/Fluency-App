@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T17:35:00+01:00",
+      "date": "2026-10-19 17:35 BST",
+      "agent": "Claude",
+      "summary": "Desktop: Learn and Practise titles are centred headings over their own rule",
+      "detail": [
+        "On desktop each section's title is centred with a divider line beneath it, so the two panels read as equal and separate. Phones are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T17:10:00+01:00",
       "date": "2026-10-19 17:10 BST",
       "agent": "Claude",

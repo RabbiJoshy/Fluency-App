@@ -862,3 +862,16 @@ body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):
 @media (min-width: 768px) { .home-cta { min-height: 56px; } }
 @media (min-width: 1024px) { .home-cta { min-height: 62px; } }
 #step2Tooltip .level-estimate-modal-callout { margin: 4px 0 18px; }
+
+/* Desktop: each section's title is a centred heading over its own rule, so
+   Learn and Practise read as two equal, separate panels. (Phones keep the
+   left-aligned row, which has to line up with the folded rows.) */
+@media (min-width: 1024px) {
+    #setupPanel .home-section > .step-header {
+        justify-content: center;
+        padding: 1.6vh 2vw;
+        border-bottom: 1px solid var(--border-color);
+    }
+    #setupPanel #step2 > .level-choosing,
+    #setupPanel #reviewDeckSection > #reviewDeckBody { padding-top: 1.6vh; }
+}
