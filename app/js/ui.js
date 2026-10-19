@@ -794,8 +794,7 @@ function learningModeCopy(language = selectedLanguage) {
     return {
         title: 'Choose what to learn from',
         intro: [
-            'We count how often each word appears in films and TV, or in songs, and give you flashcards in that order, most common first.',
-            'Your progress is shared between the two.'
+            'This app teaches the most common words first, counted from everyday speech, or from songs if you’d rather learn the vocabulary of the music you listen to. You can switch any time, and your progress is shared.'
         ],
         speech: {
             label: 'Speech',

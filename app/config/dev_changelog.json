@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T21:24:59+01:00",
+      "date": "2026-10-19 21:24 BST",
+      "agent": "Claude",
+      "summary": "Choose what to learn from: one clear paragraph, centred title",
+      "detail": [
+        "The intro is now: \"This app teaches the most common words first, counted from everyday speech, or from songs if you’d rather learn the vocabulary of the music you listen to. You can switch any time, and your progress is shared.\" (also in the vocabulary switcher).",
+        "The separate \"You can switch between Speech and Music any time\" line under the cards is gone.",
+        "The \"Choose what to learn from\" title is centred."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T21:07:04+01:00",
       "date": "2026-10-19 21:07 BST",
       "agent": "Claude",
@@ -325,18 +337,6 @@
       "summary": "Music's Best for reads as activities, like Speech's",
       "detail": [
         "\"Songs by artists you love\" and \"Your own playlists\" become \"Understanding your favourite songs\" and \"Studying your own playlists\", matching \"Starting from scratch\" and \"Following films and TV\"."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T01:40:00+01:00",
-      "date": "2026-10-19 01:40 BST",
-      "agent": "Claude",
-      "summary": "Choose what to learn from: clearer intro, icons beside titles, fuller Best for, balanced cards",
-      "detail": [
-        "Title is now \"Choose what to learn from\". The intro says what happens: words are counted in films and TV or in songs and taught as flashcards, most common first; progress is shared between the two.",
-        "Each card has its icon beside its name and three Best for points; the one-line description inside the cards is gone (the intro covers it), as is the footnote under them.",
-        "Side by side (tablet and desktop), Speech has a footer, \"From real film and TV subtitles\" with a yellow film icon, to match Music's Spotify footer. Phones do not show it."
       ],
       "commit": "pending"
     }
