@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=0ce14ab4';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=0ce14ab4';
-import { songCreditHTML } from './song-credit.js?v=0ce14ab4';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=0ce14ab4';
+import './state.js?v=a7069df6';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=a7069df6';
+import { songCreditHTML } from './song-credit.js?v=a7069df6';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=a7069df6';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=0ce14ab4';
-import './speech.js?v=0ce14ab4';
-import { goToRoute, routeCodeFor } from './routes.js?v=0ce14ab4';
-import { memoryTipTileHTML } from './memory-tips.js?v=0ce14ab4';
+import { fitSenseRowText } from './card-row-layout.js?v=a7069df6';
+import './speech.js?v=a7069df6';
+import { goToRoute, routeCodeFor } from './routes.js?v=a7069df6';
+import { memoryTipTileHTML } from './memory-tips.js?v=a7069df6';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=0ce14ab4';
-import './side-dock.js?v=0ce14ab4';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=0ce14ab4';
+} from './function-word-card.js?v=a7069df6';
+import './side-dock.js?v=a7069df6';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=a7069df6';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=0ce14ab4';
+} from './example-personalisation.js?v=a7069df6';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=0ce14ab4';
+} from './spanishdict-usage.js?v=a7069df6';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=0ce14ab4';
+} from './reverse-cues.js?v=a7069df6';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,7 +69,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=0ce14ab4';
+} from './card-metadata-pills.js?v=a7069df6';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6945,9 +6945,16 @@ function renderCardWikipediaBadge(card) {
         // beneath it. The number is what a learner reads, so it gets the
         // size; the wording, units and the total-vocabulary denominator are
         // context and stay muted.
-        if (activeArtist && card.corpusCount) {
-            freqHtml = `<button type="button" class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-unit="song_lines" data-frequency-pooled="${card.corpusCountIsPooled ? '1' : '0'}" aria-label="Song line frequency information">`
-                + `<span class="card-stat-label">Song Lines</span><span class="card-stat-line"><strong class="card-stat-value">${Number(card.corpusCount).toLocaleString()}</strong></span></button>`;
+        const isLive = Boolean(window.playlistLiveActive?.());
+        const liveDeck = isLive ? window.playlistLiveDeck?.() : null;
+        const isSeries = Boolean(liveDeck?.playlistId === 'la-casa-de-papel' || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName)));
+        const countVal = card.corpusCount || card.playlist_count;
+
+        if ((activeArtist || isLive) && countVal) {
+            const labelText = isSeries ? 'Series Lines' : (isLive ? 'Playlist Lines' : 'Song Lines');
+            const unit = isSeries ? 'series_lines' : (isLive ? 'playlist_lines' : 'song_lines');
+            freqHtml = `<button type="button" class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-unit="${unit}" data-frequency-pooled="${card.corpusCountIsPooled ? '1' : '0'}" aria-label="${labelText} frequency information">`
+                + `<span class="card-stat-label">${labelText}</span><span class="card-stat-line"><strong class="card-stat-value">${Number(countVal).toLocaleString()}</strong></span></button>`;
         } else if (!activeArtist && Number(card.sourceFrequency) > 0) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
             const source = escapeCardText(card.sourceFrequencySource || 'Published frequency list');
@@ -10912,6 +10919,12 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
         tip.innerHTML = `Lines in your selected songs containing ${pooled ? 'one of the combined forms on this card' : 'this word'}. `
             + `${pooled ? 'Repeated copies of the same pooled example line count once. ' : ''}`
             + 'This is a word-level count, rather than the count for the selected meaning. Changing your songs can change this figure.';
+    } else if (button?.dataset.frequencyUnit === 'series_lines') {
+        tip.innerHTML = 'Lines in the series dialogue containing this word. '
+            + 'This is a word-level count of how often this word is spoken across the series episodes.';
+    } else if (button?.dataset.frequencyUnit === 'playlist_lines') {
+        tip.innerHTML = 'Lines in your playlist containing this word. '
+            + 'This is a word-level count of how often this word appears across your playlist tracks.';
     }
     tip.classList.toggle('freq-tooltip-wide', showList);
 
@@ -11060,8 +11073,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '0ce14ab4';
-const MODALS_ASSET_VERSION = '0ce14ab4';
+const ASSET_VERSION = 'a7069df6';
+const MODALS_ASSET_VERSION = 'a7069df6';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

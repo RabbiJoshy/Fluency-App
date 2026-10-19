@@ -53474,7 +53474,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53507,7 +53507,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53540,7 +53540,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53575,7 +53575,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53608,7 +53608,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53641,35 +53641,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
                     }
                 ],
                 "artist_examples": [
-                    {
-                        "sentence": "La nieve en la que me quiero hundir",
-                        "targetHTML": "La nieve en la que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">quiero</span> hundir",
-                        "translation": "The snow in which I want to sink",
-                        "source": "Rosalía · La Yugular",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · La Yugular",
-                                "source_record_id": "Rosalía:La Yugular:116690",
-                                "artist": "Rosalía",
-                                "song": "La Yugular"
-                            },
-                            "sentence_id": "artist_6762de1476d8",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun me governed by verb."
-                            }
-                        }
-                    },
                     {
                         "sentence": "Con esa boquita suena rico to' lo que tú me dice'",
                         "targetHTML": "Con esa boquita suena rico to&#x27; lo que tú <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dice</span>&#x27;",
@@ -53687,29 +53665,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun me governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Cada vez que me levanto",
-                        "targetHTML": "Cada vez que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">levanto</span>",
-                        "translation": "Every time I get up",
-                        "source": "Rosalía · Es Por Ti",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · Es Por Ti",
-                                "source_record_id": "Rosalía:Es Por Ti:0",
-                                "artist": "Rosalía",
-                                "song": "Es Por Ti"
-                            },
-                            "sentence_id": "artist_b4e9255cf5b3",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53731,7 +53687,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53753,8 +53709,328 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples_by_artist": {
+                    "Rosalía": [
+                        {
+                            "sentence": "Con esa boquita suena rico to' lo que tú me dice'",
+                            "targetHTML": "Con esa boquita suena rico to&#x27; lo que tú <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dice</span>&#x27;",
+                            "translation": "With that little mouth everything you tell me sounds delicious",
+                            "source": "Rosalía · LA NOCHE DE ANOCHE",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · LA NOCHE DE ANOCHE",
+                                    "source_record_id": "Rosalía:LA NOCHE DE ANOCHE:60590",
+                                    "artist": "Rosalía",
+                                    "song": "LA NOCHE DE ANOCHE"
+                                },
+                                "sentence_id": "artist_7b6e2d94447d",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:me:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun me governed by verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "El que me dejó a mí antes que dejar su botella",
+                            "targetHTML": "El que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dejó</span> a mí antes que dejar su botella",
+                            "translation": "The one who left me before leaving his bottle",
+                            "source": "Rosalía · La Rumba Del Perdón",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · La Rumba Del Perdón",
+                                    "source_record_id": "Rosalía:La Rumba Del Perdón:178510",
+                                    "artist": "Rosalía",
+                                    "song": "La Rumba Del Perdón"
+                                },
+                                "sentence_id": "artist_c807672516ae",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:me:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun me governed by verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Antes que quemen, me dejen salir",
+                            "targetHTML": "Antes que quemen, <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dejen</span> salir",
+                            "translation": "Before they burn, let me out",
+                            "source": "Rosalía · LAX",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · LAX",
+                                    "source_record_id": "Rosalía:LAX:69240",
+                                    "artist": "Rosalía",
+                                    "song": "LAX"
+                                },
+                                "sentence_id": "artist_60c81225b07a",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:me:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun me governed by verb."
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "tag": "Myself / part of a verb",
+                "formulaHTML": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">verb</span>",
+                "rule": "Can mean “myself”, or belong with a verb, such as acordarse (remember): me acuerdo = I remember.",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "v": "verb"
+                },
+                "pos": "pron",
+                "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">empiezo</span> a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                "translation": "I'm starting to wonder if I should be more afraid of getting them back.",
+                "examples": [
+                    {
+                        "sentence": "Me empiezo a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">empiezo</span> a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "translation": "I'm starting to wonder if I should be more afraid of getting them back.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 784261,
+                                    "line": "11",
+                                    "subtitle_id": "6631672",
+                                    "title_id": "4549128",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4549128:6631672:11:784261",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000472ef6fb1534060568af455c145f9",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Me olvidé mi tarjeta de crédito en casa.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">olvidé</span> mi tarjeta de crédito en casa.",
+                        "translation": "I forgot my credit card at home.",
+                        "source": "tatoeba",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "tatoeba-weekly/v1",
+                                "attribution": "Tatoeba sentence #1147628 by nancy; English translation #1147298 by Eldad",
+                                "license": "CC BY 2.0 FR",
+                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+                                "name": "tatoeba",
+                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+                                "source_record_id": "1147628:1147298",
+                                "translated_from_english": true,
+                                "url": "https://tatoeba.org/en/sentences/show/1147628"
+                            },
+                            "sentence_id": "sentence_0007f2d4c407aef6c3c428ae4204fe8a",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Debo decirte, no me siento bien con respecto a la otra noche.",
+                        "targetHTML": "Debo decirte, no <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">siento</span> bien con respecto a la otra noche.",
+                        "translation": "I have to tell you, I don't feel especially good about the other night.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2211795,
+                                    "line": "450",
+                                    "subtitle_id": "6713718",
+                                    "title_id": "5537910",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5537910:6713718:450:2211795",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00088e51afebfaf27a7eafaa708b53d7",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "Me empiezo a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">empiezo</span> a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "translation": "I'm starting to wonder if I should be more afraid of getting them back.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 784261,
+                                    "line": "11",
+                                    "subtitle_id": "6631672",
+                                    "title_id": "4549128",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4549128:6631672:11:784261",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000472ef6fb1534060568af455c145f9",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Me olvidé mi tarjeta de crédito en casa.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">olvidé</span> mi tarjeta de crédito en casa.",
+                        "translation": "I forgot my credit card at home.",
+                        "source": "tatoeba",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "tatoeba-weekly/v1",
+                                "attribution": "Tatoeba sentence #1147628 by nancy; English translation #1147298 by Eldad",
+                                "license": "CC BY 2.0 FR",
+                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+                                "name": "tatoeba",
+                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+                                "source_record_id": "1147628:1147298",
+                                "translated_from_english": true,
+                                "url": "https://tatoeba.org/en/sentences/show/1147628"
+                            },
+                            "sentence_id": "sentence_0007f2d4c407aef6c3c428ae4204fe8a",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Debo decirte, no me siento bien con respecto a la otra noche.",
+                        "targetHTML": "Debo decirte, no <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">siento</span> bien con respecto a la otra noche.",
+                        "translation": "I have to tell you, I don't feel especially good about the other night.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2211795,
+                                    "line": "450",
+                                    "subtitle_id": "6713718",
+                                    "title_id": "5537910",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5537910:6713718:450:2211795",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00088e51afebfaf27a7eafaa708b53d7",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [
+                    {
+                        "sentence": "La nieve en la que me quiero hundir",
+                        "targetHTML": "La nieve en la que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">quiero</span> hundir",
+                        "translation": "The snow in which I want to sink",
+                        "source": "Rosalía · La Yugular",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · La Yugular",
+                                "source_record_id": "Rosalía:La Yugular:116690",
+                                "artist": "Rosalía",
+                                "song": "La Yugular"
+                            },
+                            "sentence_id": "artist_6762de1476d8",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Cada vez que me levanto",
+                        "targetHTML": "Cada vez que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">levanto</span>",
+                        "translation": "Every time I get up",
+                        "source": "Rosalía · Es Por Ti",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Es Por Ti",
+                                "source_record_id": "Rosalía:Es Por Ti:0",
+                                "artist": "Rosalía",
+                                "song": "Es Por Ti"
+                            },
+                            "sentence_id": "artist_b4e9255cf5b3",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     },
@@ -53774,9 +54050,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "sentence_id": "artist_ed3de830908c",
                             "channel": "artist",
                             "automaticSyntax": {
-                                "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun me governed by verb."
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     }
@@ -53799,31 +54075,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "sentence_id": "artist_6762de1476d8",
                                 "channel": "artist",
                                 "automaticSyntax": {
-                                    "patternId": "es:me:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun me governed by verb."
-                                }
-                            }
-                        },
-                        {
-                            "sentence": "Con esa boquita suena rico to' lo que tú me dice'",
-                            "targetHTML": "Con esa boquita suena rico to&#x27; lo que tú <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dice</span>&#x27;",
-                            "translation": "With that little mouth everything you tell me sounds delicious",
-                            "source": "Rosalía · LA NOCHE DE ANOCHE",
-                            "channel": "artist",
-                            "metadata": {
-                                "source": {
-                                    "name": "Rosalía · LA NOCHE DE ANOCHE",
-                                    "source_record_id": "Rosalía:LA NOCHE DE ANOCHE:60590",
-                                    "artist": "Rosalía",
-                                    "song": "LA NOCHE DE ANOCHE"
-                                },
-                                "sentence_id": "artist_7b6e2d94447d",
-                                "channel": "artist",
-                                "automaticSyntax": {
-                                    "patternId": "es:me:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun me governed by verb."
+                                    "patternId": "es:me:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
                                 }
                             }
                         },
@@ -53843,14 +54097,37 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "sentence_id": "artist_b4e9255cf5b3",
                                 "channel": "artist",
                                 "automaticSyntax": {
-                                    "patternId": "es:me:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun me governed by verb."
+                                    "patternId": "es:me:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Algún que otro navajazo, me he llevado de la vida",
+                            "targetHTML": "Algún que otro navajazo, <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">he llevado</span> de la vida",
+                            "translation": "The occasional knife blow, I have taken from life",
+                            "source": "Rosalía · Magnolias",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · Magnolias",
+                                    "source_record_id": "Rosalía:Magnolias:153660",
+                                    "artist": "Rosalía",
+                                    "song": "Magnolias"
+                                },
+                                "sentence_id": "artist_ed3de830908c",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:me:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
                                 }
                             }
                         }
                     ]
-                }
+                },
+                "source": "opensubtitles"
             }
         ],
         "pos": "pron",
@@ -53892,7 +54169,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53925,7 +54202,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53958,7 +54235,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -53993,7 +54270,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -54026,7 +54303,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -54059,35 +54336,13 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
                     }
                 ],
                 "artist_examples": [
-                    {
-                        "sentence": "La nieve en la que me quiero hundir",
-                        "targetHTML": "La nieve en la que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">quiero</span> hundir",
-                        "translation": "The snow in which I want to sink",
-                        "source": "Rosalía · La Yugular",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · La Yugular",
-                                "source_record_id": "Rosalía:La Yugular:116690",
-                                "artist": "Rosalía",
-                                "song": "La Yugular"
-                            },
-                            "sentence_id": "artist_6762de1476d8",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun me governed by verb."
-                            }
-                        }
-                    },
                     {
                         "sentence": "Con esa boquita suena rico to' lo que tú me dice'",
                         "targetHTML": "Con esa boquita suena rico to&#x27; lo que tú <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dice</span>&#x27;",
@@ -54105,29 +54360,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun me governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Cada vez que me levanto",
-                        "targetHTML": "Cada vez que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">levanto</span>",
-                        "translation": "Every time I get up",
-                        "source": "Rosalía · Es Por Ti",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · Es Por Ti",
-                                "source_record_id": "Rosalía:Es Por Ti:0",
-                                "artist": "Rosalía",
-                                "song": "Es Por Ti"
-                            },
-                            "sentence_id": "artist_b4e9255cf5b3",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -54149,7 +54382,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
                             }
                         }
@@ -54171,8 +54404,328 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun me governed by verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples_by_artist": {
+                    "Rosalía": [
+                        {
+                            "sentence": "Con esa boquita suena rico to' lo que tú me dice'",
+                            "targetHTML": "Con esa boquita suena rico to&#x27; lo que tú <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dice</span>&#x27;",
+                            "translation": "With that little mouth everything you tell me sounds delicious",
+                            "source": "Rosalía · LA NOCHE DE ANOCHE",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · LA NOCHE DE ANOCHE",
+                                    "source_record_id": "Rosalía:LA NOCHE DE ANOCHE:60590",
+                                    "artist": "Rosalía",
+                                    "song": "LA NOCHE DE ANOCHE"
+                                },
+                                "sentence_id": "artist_7b6e2d94447d",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:me:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun me governed by verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "El que me dejó a mí antes que dejar su botella",
+                            "targetHTML": "El que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dejó</span> a mí antes que dejar su botella",
+                            "translation": "The one who left me before leaving his bottle",
+                            "source": "Rosalía · La Rumba Del Perdón",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · La Rumba Del Perdón",
+                                    "source_record_id": "Rosalía:La Rumba Del Perdón:178510",
+                                    "artist": "Rosalía",
+                                    "song": "La Rumba Del Perdón"
+                                },
+                                "sentence_id": "artist_c807672516ae",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:me:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun me governed by verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Antes que quemen, me dejen salir",
+                            "targetHTML": "Antes que quemen, <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dejen</span> salir",
+                            "translation": "Before they burn, let me out",
+                            "source": "Rosalía · LAX",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · LAX",
+                                    "source_record_id": "Rosalía:LAX:69240",
+                                    "artist": "Rosalía",
+                                    "song": "LAX"
+                                },
+                                "sentence_id": "artist_60c81225b07a",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:me:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun me governed by verb."
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "tag": "Myself / part of a verb",
+                "formulaHTML": "<span class=\"fw-token-connector\">me</span> + <span class=\"fw-token-v\">verb</span>",
+                "rule": "Can mean “myself”, or belong with a verb, such as acordarse (remember): me acuerdo = I remember.",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "v": "verb"
+                },
+                "pos": "pron",
+                "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">empiezo</span> a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                "translation": "I'm starting to wonder if I should be more afraid of getting them back.",
+                "examples": [
+                    {
+                        "sentence": "Me empiezo a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">empiezo</span> a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "translation": "I'm starting to wonder if I should be more afraid of getting them back.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 784261,
+                                    "line": "11",
+                                    "subtitle_id": "6631672",
+                                    "title_id": "4549128",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4549128:6631672:11:784261",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000472ef6fb1534060568af455c145f9",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Me olvidé mi tarjeta de crédito en casa.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">olvidé</span> mi tarjeta de crédito en casa.",
+                        "translation": "I forgot my credit card at home.",
+                        "source": "tatoeba",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "tatoeba-weekly/v1",
+                                "attribution": "Tatoeba sentence #1147628 by nancy; English translation #1147298 by Eldad",
+                                "license": "CC BY 2.0 FR",
+                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+                                "name": "tatoeba",
+                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+                                "source_record_id": "1147628:1147298",
+                                "translated_from_english": true,
+                                "url": "https://tatoeba.org/en/sentences/show/1147628"
+                            },
+                            "sentence_id": "sentence_0007f2d4c407aef6c3c428ae4204fe8a",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Debo decirte, no me siento bien con respecto a la otra noche.",
+                        "targetHTML": "Debo decirte, no <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">siento</span> bien con respecto a la otra noche.",
+                        "translation": "I have to tell you, I don't feel especially good about the other night.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2211795,
+                                    "line": "450",
+                                    "subtitle_id": "6713718",
+                                    "title_id": "5537910",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5537910:6713718:450:2211795",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00088e51afebfaf27a7eafaa708b53d7",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "Me empiezo a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">empiezo</span> a preguntar si debería tener más miedo de tenerlos de vuelta.",
+                        "translation": "I'm starting to wonder if I should be more afraid of getting them back.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 784261,
+                                    "line": "11",
+                                    "subtitle_id": "6631672",
+                                    "title_id": "4549128",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4549128:6631672:11:784261",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000472ef6fb1534060568af455c145f9",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Me olvidé mi tarjeta de crédito en casa.",
+                        "targetHTML": "<span class=\"fw-token-connector\">Me</span> <span class=\"fw-token-v\">olvidé</span> mi tarjeta de crédito en casa.",
+                        "translation": "I forgot my credit card at home.",
+                        "source": "tatoeba",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "tatoeba-weekly/v1",
+                                "attribution": "Tatoeba sentence #1147628 by nancy; English translation #1147298 by Eldad",
+                                "license": "CC BY 2.0 FR",
+                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+                                "name": "tatoeba",
+                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+                                "source_record_id": "1147628:1147298",
+                                "translated_from_english": true,
+                                "url": "https://tatoeba.org/en/sentences/show/1147628"
+                            },
+                            "sentence_id": "sentence_0007f2d4c407aef6c3c428ae4204fe8a",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Debo decirte, no me siento bien con respecto a la otra noche.",
+                        "targetHTML": "Debo decirte, no <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">siento</span> bien con respecto a la otra noche.",
+                        "translation": "I have to tell you, I don't feel especially good about the other night.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2211795,
+                                    "line": "450",
+                                    "subtitle_id": "6713718",
+                                    "title_id": "5537910",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5537910:6713718:450:2211795",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00088e51afebfaf27a7eafaa708b53d7",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [
+                    {
+                        "sentence": "La nieve en la que me quiero hundir",
+                        "targetHTML": "La nieve en la que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">quiero</span> hundir",
+                        "translation": "The snow in which I want to sink",
+                        "source": "Rosalía · La Yugular",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · La Yugular",
+                                "source_record_id": "Rosalía:La Yugular:116690",
+                                "artist": "Rosalía",
+                                "song": "La Yugular"
+                            },
+                            "sentence_id": "artist_6762de1476d8",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Cada vez que me levanto",
+                        "targetHTML": "Cada vez que <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">levanto</span>",
+                        "translation": "Every time I get up",
+                        "source": "Rosalía · Es Por Ti",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Es Por Ti",
+                                "source_record_id": "Rosalía:Es Por Ti:0",
+                                "artist": "Rosalía",
+                                "song": "Es Por Ti"
+                            },
+                            "sentence_id": "artist_b4e9255cf5b3",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     },
@@ -54192,9 +54745,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "sentence_id": "artist_ed3de830908c",
                             "channel": "artist",
                             "automaticSyntax": {
-                                "patternId": "es:me:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun me governed by verb."
+                                "patternId": "es:me:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     }
@@ -54217,31 +54770,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "sentence_id": "artist_6762de1476d8",
                                 "channel": "artist",
                                 "automaticSyntax": {
-                                    "patternId": "es:me:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun me governed by verb."
-                                }
-                            }
-                        },
-                        {
-                            "sentence": "Con esa boquita suena rico to' lo que tú me dice'",
-                            "targetHTML": "Con esa boquita suena rico to&#x27; lo que tú <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">dice</span>&#x27;",
-                            "translation": "With that little mouth everything you tell me sounds delicious",
-                            "source": "Rosalía · LA NOCHE DE ANOCHE",
-                            "channel": "artist",
-                            "metadata": {
-                                "source": {
-                                    "name": "Rosalía · LA NOCHE DE ANOCHE",
-                                    "source_record_id": "Rosalía:LA NOCHE DE ANOCHE:60590",
-                                    "artist": "Rosalía",
-                                    "song": "LA NOCHE DE ANOCHE"
-                                },
-                                "sentence_id": "artist_7b6e2d94447d",
-                                "channel": "artist",
-                                "automaticSyntax": {
-                                    "patternId": "es:me:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun me governed by verb."
+                                    "patternId": "es:me:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
                                 }
                             }
                         },
@@ -54261,14 +54792,37 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "sentence_id": "artist_b4e9255cf5b3",
                                 "channel": "artist",
                                 "automaticSyntax": {
-                                    "patternId": "es:me:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun me governed by verb."
+                                    "patternId": "es:me:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Algún que otro navajazo, me he llevado de la vida",
+                            "targetHTML": "Algún que otro navajazo, <span class=\"fw-token-connector\">me</span> <span class=\"fw-token-v\">he llevado</span> de la vida",
+                            "translation": "The occasional knife blow, I have taken from life",
+                            "source": "Rosalía · Magnolias",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · Magnolias",
+                                    "source_record_id": "Rosalía:Magnolias:153660",
+                                    "artist": "Rosalía",
+                                    "song": "Magnolias"
+                                },
+                                "sentence_id": "artist_ed3de830908c",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:me:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "me agrees with its verb's subject: reflexive or pronominal verb."
                                 }
                             }
                         }
                     ]
-                }
+                },
+                "source": "opensubtitles"
             }
         ]
     },
@@ -54320,7 +54874,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
@@ -54353,14 +54907,14 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
                     },
                     {
                         "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
-                        "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
+                        "targetHTML": "Mira, si te quieres ir, no <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">puedo detener</span> ni tampoco te culpo.",
                         "translation": "Look, if you want to leave, I can't stop you, and I don't blame you.",
                         "source": "opensubtitles",
                         "channel": "speech",
@@ -54386,7 +54940,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
@@ -54426,7 +54980,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
@@ -54459,11 +55013,218 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
                     },
+                    {
+                        "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
+                        "targetHTML": "Mira, si te quieres ir, no <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">puedo detener</span> ni tampoco te culpo.",
+                        "translation": "Look, if you want to leave, I can't stop you, and I don't blame you.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 738577,
+                                    "line": "318",
+                                    "subtitle_id": "6495534",
+                                    "title_id": "4477596",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4477596:6495534:318:738577",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0013fad9d02a437e01d363bbccfb7ac7",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [
+                    {
+                        "sentence": "Porque todos pueden ve' los hoyuelitos que te salen",
+                        "targetHTML": "Porque todos pueden ve&#x27; los hoyuelitos que <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">salen</span>",
+                        "translation": "Because everyone can see the dimples that appear on you",
+                        "source": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
+                                "source_record_id": "Rosalía:PIENSO EN TU MIRÁ (Cap.3: Celos):21720",
+                                "artist": "Rosalía",
+                                "song": "PIENSO EN TU MIRÁ (Cap.3: Celos)"
+                            },
+                            "sentence_id": "artist_d8c0c20014cb",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Y cada vez que yo te busco",
+                        "targetHTML": "Y cada vez que yo <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">busco</span>",
+                        "translation": "And every time I look for you",
+                        "source": "Rosalía · Es Por Ti",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Es Por Ti",
+                                "source_record_id": "Rosalía:Es Por Ti:0",
+                                "artist": "Rosalía",
+                                "song": "Es Por Ti"
+                            },
+                            "sentence_id": "artist_3654f55b0459",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Es demasia'o traicionera, y como ella viene, se te va",
+                        "targetHTML": "Es demasia&#x27;o traicionera, y como ella viene, se <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">va</span>",
+                        "translation": "She's too treacherous, and as she comes, she leaves",
+                        "source": "Rosalía · LA FAMA",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · LA FAMA",
+                                "source_record_id": "Rosalía:LA FAMA:58250",
+                                "artist": "Rosalía",
+                                "song": "LA FAMA"
+                            },
+                            "sentence_id": "artist_93c70c44200b",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Te distrae' y yo te adelanto por la derecha, uh",
+                        "targetHTML": "<span class=\"fw-token-connector\">Te</span> <span class=\"fw-token-v\">distrae</span>&#x27; y yo te adelanto por la derecha, uh",
+                        "translation": "It distracts you' and I overtake you on the right, uh",
+                        "source": "Rosalía · DESPECHÁ",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · DESPECHÁ",
+                                "source_record_id": "Rosalía:DESPECHÁ:114680",
+                                "artist": "Rosalía",
+                                "song": "DESPECHÁ"
+                            },
+                            "sentence_id": "artist_8aaf3122c69d",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples_by_artist": {
+                    "Rosalía": [
+                        {
+                            "sentence": "Porque todos pueden ve' los hoyuelitos que te salen",
+                            "targetHTML": "Porque todos pueden ve&#x27; los hoyuelitos que <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">salen</span>",
+                            "translation": "Because everyone can see the dimples that appear on you",
+                            "source": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
+                                    "source_record_id": "Rosalía:PIENSO EN TU MIRÁ (Cap.3: Celos):21720",
+                                    "artist": "Rosalía",
+                                    "song": "PIENSO EN TU MIRÁ (Cap.3: Celos)"
+                                },
+                                "sentence_id": "artist_d8c0c20014cb",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:te:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun te governed by verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Y cada vez que yo te busco",
+                            "targetHTML": "Y cada vez que yo <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">busco</span>",
+                            "translation": "And every time I look for you",
+                            "source": "Rosalía · Es Por Ti",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · Es Por Ti",
+                                    "source_record_id": "Rosalía:Es Por Ti:0",
+                                    "artist": "Rosalía",
+                                    "song": "Es Por Ti"
+                                },
+                                "sentence_id": "artist_3654f55b0459",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:te:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun te governed by verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Es demasia'o traicionera, y como ella viene, se te va",
+                            "targetHTML": "Es demasia&#x27;o traicionera, y como ella viene, se <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">va</span>",
+                            "translation": "She's too treacherous, and as she comes, she leaves",
+                            "source": "Rosalía · LA FAMA",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · LA FAMA",
+                                    "source_record_id": "Rosalía:LA FAMA:58250",
+                                    "artist": "Rosalía",
+                                    "song": "LA FAMA"
+                                },
+                                "sentence_id": "artist_93c70c44200b",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:te:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun te governed by verb."
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "tag": "Yourself / part of a verb",
+                "formulaHTML": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">verb</span>",
+                "rule": "Can mean “yourself”, or belong with a verb, such as acordarse (remember): ¿te acuerdas? = do you remember?",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "v": "verb"
+                },
+                "pos": "pron",
+                "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
+                "translation": "Look, if you want to leave, I can't stop you, and I don't blame you.",
+                "examples": [
                     {
                         "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
                         "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
@@ -54491,9 +55252,176 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "sentence_id": "sentence_0013fad9d02a437e01d363bbccfb7ac7",
                             "channel": "speech",
                             "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Pero no te cases.",
+                        "targetHTML": "Pero no <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">cases</span>.",
+                        "translation": "Just don't be married.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2048251,
+                                    "line": "495",
+                                    "subtitle_id": "6554328",
+                                    "title_id": "5444998",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5444998:6554328:495:2048251",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00324c84c21d1a2e46498c48b500f32d",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "¿Tal vez pueda pedirte un autógrafo cuando te vayas?",
+                        "targetHTML": "¿Tal vez pueda pedirte un autógrafo cuando <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">vayas</span>?",
+                        "translation": "Maybe I can get your autograph on the way out, hm?",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 916544,
+                                    "line": "695",
+                                    "subtitle_id": "6927588",
+                                    "title_id": "4666726",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4666726:6927588:695:916544",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0032d6c01f1173b67778cb12bd1953e2",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
+                        "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
+                        "translation": "Look, if you want to leave, I can't stop you, and I don't blame you.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 738577,
+                                    "line": "318",
+                                    "subtitle_id": "6495534",
+                                    "title_id": "4477596",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4477596:6495534:318:738577",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0013fad9d02a437e01d363bbccfb7ac7",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Pero no te cases.",
+                        "targetHTML": "Pero no <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">cases</span>.",
+                        "translation": "Just don't be married.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2048251,
+                                    "line": "495",
+                                    "subtitle_id": "6554328",
+                                    "title_id": "5444998",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5444998:6554328:495:2048251",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00324c84c21d1a2e46498c48b500f32d",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "¿Tal vez pueda pedirte un autógrafo cuando te vayas?",
+                        "targetHTML": "¿Tal vez pueda pedirte un autógrafo cuando <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">vayas</span>?",
+                        "translation": "Maybe I can get your autograph on the way out, hm?",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 916544,
+                                    "line": "695",
+                                    "subtitle_id": "6927588",
+                                    "title_id": "4666726",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4666726:6927588:695:916544",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0032d6c01f1173b67778cb12bd1953e2",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     }
@@ -54515,9 +55443,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "sentence_id": "artist_40e5c95fa2ef",
                             "channel": "artist",
                             "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     },
@@ -54537,97 +55465,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "sentence_id": "artist_4de2ca677d63",
                             "channel": "artist",
                             "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Porque todos pueden ve' los hoyuelitos que te salen",
-                        "targetHTML": "Porque todos pueden ve&#x27; los hoyuelitos que <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">salen</span>",
-                        "translation": "Because everyone can see the dimples that appear on you",
-                        "source": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
-                                "source_record_id": "Rosalía:PIENSO EN TU MIRÁ (Cap.3: Celos):21720",
-                                "artist": "Rosalía",
-                                "song": "PIENSO EN TU MIRÁ (Cap.3: Celos)"
-                            },
-                            "sentence_id": "artist_d8c0c20014cb",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Y cada vez que yo te busco",
-                        "targetHTML": "Y cada vez que yo <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">busco</span>",
-                        "translation": "And every time I look for you",
-                        "source": "Rosalía · Es Por Ti",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · Es Por Ti",
-                                "source_record_id": "Rosalía:Es Por Ti:0",
-                                "artist": "Rosalía",
-                                "song": "Es Por Ti"
-                            },
-                            "sentence_id": "artist_3654f55b0459",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Es demasia'o traicionera, y como ella viene, se te va",
-                        "targetHTML": "Es demasia&#x27;o traicionera, y como ella viene, se <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">va</span>",
-                        "translation": "She's too treacherous, and as she comes, she leaves",
-                        "source": "Rosalía · LA FAMA",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · LA FAMA",
-                                "source_record_id": "Rosalía:LA FAMA:58250",
-                                "artist": "Rosalía",
-                                "song": "LA FAMA"
-                            },
-                            "sentence_id": "artist_93c70c44200b",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Te distrae' y yo te adelanto por la derecha, uh",
-                        "targetHTML": "<span class=\"fw-token-connector\">Te</span> <span class=\"fw-token-v\">distrae</span>&#x27; y yo te adelanto por la derecha, uh",
-                        "translation": "It distracts you' and I overtake you on the right, uh",
-                        "source": "Rosalía · DESPECHÁ",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · DESPECHÁ",
-                                "source_record_id": "Rosalía:DESPECHÁ:114680",
-                                "artist": "Rosalía",
-                                "song": "DESPECHÁ"
-                            },
-                            "sentence_id": "artist_8aaf3122c69d",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     }
@@ -54650,9 +55490,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "sentence_id": "artist_40e5c95fa2ef",
                                 "channel": "artist",
                                 "automaticSyntax": {
-                                    "patternId": "es:te:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun te governed by verb."
+                                    "patternId": "es:te:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                                 }
                             }
                         },
@@ -54672,36 +55512,15 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "sentence_id": "artist_4de2ca677d63",
                                 "channel": "artist",
                                 "automaticSyntax": {
-                                    "patternId": "es:te:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun te governed by verb."
-                                }
-                            }
-                        },
-                        {
-                            "sentence": "Porque todos pueden ve' los hoyuelitos que te salen",
-                            "targetHTML": "Porque todos pueden ve&#x27; los hoyuelitos que <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">salen</span>",
-                            "translation": "Because everyone can see the dimples that appear on you",
-                            "source": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
-                            "channel": "artist",
-                            "metadata": {
-                                "source": {
-                                    "name": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
-                                    "source_record_id": "Rosalía:PIENSO EN TU MIRÁ (Cap.3: Celos):21720",
-                                    "artist": "Rosalía",
-                                    "song": "PIENSO EN TU MIRÁ (Cap.3: Celos)"
-                                },
-                                "sentence_id": "artist_d8c0c20014cb",
-                                "channel": "artist",
-                                "automaticSyntax": {
-                                    "patternId": "es:te:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun te governed by verb."
+                                    "patternId": "es:te:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                                 }
                             }
                         }
                     ]
-                }
+                },
+                "source": "opensubtitles"
             }
         ],
         "pos": "pron",
@@ -54748,7 +55567,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
@@ -54781,14 +55600,14 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
                     },
                     {
                         "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
-                        "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
+                        "targetHTML": "Mira, si te quieres ir, no <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">puedo detener</span> ni tampoco te culpo.",
                         "translation": "Look, if you want to leave, I can't stop you, and I don't blame you.",
                         "source": "opensubtitles",
                         "channel": "speech",
@@ -54814,7 +55633,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
@@ -54854,7 +55673,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
@@ -54887,11 +55706,218 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun te governed by verb."
                             }
                         }
                     },
+                    {
+                        "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
+                        "targetHTML": "Mira, si te quieres ir, no <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">puedo detener</span> ni tampoco te culpo.",
+                        "translation": "Look, if you want to leave, I can't stop you, and I don't blame you.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 738577,
+                                    "line": "318",
+                                    "subtitle_id": "6495534",
+                                    "title_id": "4477596",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4477596:6495534:318:738577",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0013fad9d02a437e01d363bbccfb7ac7",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [
+                    {
+                        "sentence": "Porque todos pueden ve' los hoyuelitos que te salen",
+                        "targetHTML": "Porque todos pueden ve&#x27; los hoyuelitos que <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">salen</span>",
+                        "translation": "Because everyone can see the dimples that appear on you",
+                        "source": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
+                                "source_record_id": "Rosalía:PIENSO EN TU MIRÁ (Cap.3: Celos):21720",
+                                "artist": "Rosalía",
+                                "song": "PIENSO EN TU MIRÁ (Cap.3: Celos)"
+                            },
+                            "sentence_id": "artist_d8c0c20014cb",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Y cada vez que yo te busco",
+                        "targetHTML": "Y cada vez que yo <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">busco</span>",
+                        "translation": "And every time I look for you",
+                        "source": "Rosalía · Es Por Ti",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Es Por Ti",
+                                "source_record_id": "Rosalía:Es Por Ti:0",
+                                "artist": "Rosalía",
+                                "song": "Es Por Ti"
+                            },
+                            "sentence_id": "artist_3654f55b0459",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Es demasia'o traicionera, y como ella viene, se te va",
+                        "targetHTML": "Es demasia&#x27;o traicionera, y como ella viene, se <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">va</span>",
+                        "translation": "She's too treacherous, and as she comes, she leaves",
+                        "source": "Rosalía · LA FAMA",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · LA FAMA",
+                                "source_record_id": "Rosalía:LA FAMA:58250",
+                                "artist": "Rosalía",
+                                "song": "LA FAMA"
+                            },
+                            "sentence_id": "artist_93c70c44200b",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Te distrae' y yo te adelanto por la derecha, uh",
+                        "targetHTML": "<span class=\"fw-token-connector\">Te</span> <span class=\"fw-token-v\">distrae</span>&#x27; y yo te adelanto por la derecha, uh",
+                        "translation": "It distracts you' and I overtake you on the right, uh",
+                        "source": "Rosalía · DESPECHÁ",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · DESPECHÁ",
+                                "source_record_id": "Rosalía:DESPECHÁ:114680",
+                                "artist": "Rosalía",
+                                "song": "DESPECHÁ"
+                            },
+                            "sentence_id": "artist_8aaf3122c69d",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:te:0",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "Clitic pronoun te governed by verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples_by_artist": {
+                    "Rosalía": [
+                        {
+                            "sentence": "Porque todos pueden ve' los hoyuelitos que te salen",
+                            "targetHTML": "Porque todos pueden ve&#x27; los hoyuelitos que <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">salen</span>",
+                            "translation": "Because everyone can see the dimples that appear on you",
+                            "source": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
+                                    "source_record_id": "Rosalía:PIENSO EN TU MIRÁ (Cap.3: Celos):21720",
+                                    "artist": "Rosalía",
+                                    "song": "PIENSO EN TU MIRÁ (Cap.3: Celos)"
+                                },
+                                "sentence_id": "artist_d8c0c20014cb",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:te:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun te governed by verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Y cada vez que yo te busco",
+                            "targetHTML": "Y cada vez que yo <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">busco</span>",
+                            "translation": "And every time I look for you",
+                            "source": "Rosalía · Es Por Ti",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · Es Por Ti",
+                                    "source_record_id": "Rosalía:Es Por Ti:0",
+                                    "artist": "Rosalía",
+                                    "song": "Es Por Ti"
+                                },
+                                "sentence_id": "artist_3654f55b0459",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:te:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun te governed by verb."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Es demasia'o traicionera, y como ella viene, se te va",
+                            "targetHTML": "Es demasia&#x27;o traicionera, y como ella viene, se <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">va</span>",
+                            "translation": "She's too treacherous, and as she comes, she leaves",
+                            "source": "Rosalía · LA FAMA",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · LA FAMA",
+                                    "source_record_id": "Rosalía:LA FAMA:58250",
+                                    "artist": "Rosalía",
+                                    "song": "LA FAMA"
+                                },
+                                "sentence_id": "artist_93c70c44200b",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:te:0",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "Clitic pronoun te governed by verb."
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "tag": "Yourself / part of a verb",
+                "formulaHTML": "<span class=\"fw-token-connector\">te</span> + <span class=\"fw-token-v\">verb</span>",
+                "rule": "Can mean “yourself”, or belong with a verb, such as acordarse (remember): ¿te acuerdas? = do you remember?",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "v": "verb"
+                },
+                "pos": "pron",
+                "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
+                "translation": "Look, if you want to leave, I can't stop you, and I don't blame you.",
+                "examples": [
                     {
                         "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
                         "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
@@ -54919,9 +55945,176 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "sentence_id": "sentence_0013fad9d02a437e01d363bbccfb7ac7",
                             "channel": "speech",
                             "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Pero no te cases.",
+                        "targetHTML": "Pero no <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">cases</span>.",
+                        "translation": "Just don't be married.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2048251,
+                                    "line": "495",
+                                    "subtitle_id": "6554328",
+                                    "title_id": "5444998",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5444998:6554328:495:2048251",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00324c84c21d1a2e46498c48b500f32d",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "¿Tal vez pueda pedirte un autógrafo cuando te vayas?",
+                        "targetHTML": "¿Tal vez pueda pedirte un autógrafo cuando <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">vayas</span>?",
+                        "translation": "Maybe I can get your autograph on the way out, hm?",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 916544,
+                                    "line": "695",
+                                    "subtitle_id": "6927588",
+                                    "title_id": "4666726",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4666726:6927588:695:916544",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0032d6c01f1173b67778cb12bd1953e2",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "Mira, si te quieres ir, no te puedo detener ni tampoco te culpo.",
+                        "targetHTML": "Mira, si <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">quieres</span> ir, no te puedo detener ni tampoco te culpo.",
+                        "translation": "Look, if you want to leave, I can't stop you, and I don't blame you.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 738577,
+                                    "line": "318",
+                                    "subtitle_id": "6495534",
+                                    "title_id": "4477596",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4477596:6495534:318:738577",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0013fad9d02a437e01d363bbccfb7ac7",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Pero no te cases.",
+                        "targetHTML": "Pero no <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">cases</span>.",
+                        "translation": "Just don't be married.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2048251,
+                                    "line": "495",
+                                    "subtitle_id": "6554328",
+                                    "title_id": "5444998",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5444998:6554328:495:2048251",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00324c84c21d1a2e46498c48b500f32d",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "¿Tal vez pueda pedirte un autógrafo cuando te vayas?",
+                        "targetHTML": "¿Tal vez pueda pedirte un autógrafo cuando <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">vayas</span>?",
+                        "translation": "Maybe I can get your autograph on the way out, hm?",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 916544,
+                                    "line": "695",
+                                    "subtitle_id": "6927588",
+                                    "title_id": "4666726",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4666726:6927588:695:916544",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0032d6c01f1173b67778cb12bd1953e2",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     }
@@ -54943,9 +56136,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "sentence_id": "artist_40e5c95fa2ef",
                             "channel": "artist",
                             "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     },
@@ -54965,97 +56158,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "sentence_id": "artist_4de2ca677d63",
                             "channel": "artist",
                             "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Porque todos pueden ve' los hoyuelitos que te salen",
-                        "targetHTML": "Porque todos pueden ve&#x27; los hoyuelitos que <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">salen</span>",
-                        "translation": "Because everyone can see the dimples that appear on you",
-                        "source": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
-                                "source_record_id": "Rosalía:PIENSO EN TU MIRÁ (Cap.3: Celos):21720",
-                                "artist": "Rosalía",
-                                "song": "PIENSO EN TU MIRÁ (Cap.3: Celos)"
-                            },
-                            "sentence_id": "artist_d8c0c20014cb",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Y cada vez que yo te busco",
-                        "targetHTML": "Y cada vez que yo <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">busco</span>",
-                        "translation": "And every time I look for you",
-                        "source": "Rosalía · Es Por Ti",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · Es Por Ti",
-                                "source_record_id": "Rosalía:Es Por Ti:0",
-                                "artist": "Rosalía",
-                                "song": "Es Por Ti"
-                            },
-                            "sentence_id": "artist_3654f55b0459",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Es demasia'o traicionera, y como ella viene, se te va",
-                        "targetHTML": "Es demasia&#x27;o traicionera, y como ella viene, se <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">va</span>",
-                        "translation": "She's too treacherous, and as she comes, she leaves",
-                        "source": "Rosalía · LA FAMA",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · LA FAMA",
-                                "source_record_id": "Rosalía:LA FAMA:58250",
-                                "artist": "Rosalía",
-                                "song": "LA FAMA"
-                            },
-                            "sentence_id": "artist_93c70c44200b",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
-                            }
-                        }
-                    },
-                    {
-                        "sentence": "Te distrae' y yo te adelanto por la derecha, uh",
-                        "targetHTML": "<span class=\"fw-token-connector\">Te</span> <span class=\"fw-token-v\">distrae</span>&#x27; y yo te adelanto por la derecha, uh",
-                        "translation": "It distracts you' and I overtake you on the right, uh",
-                        "source": "Rosalía · DESPECHÁ",
-                        "channel": "artist",
-                        "metadata": {
-                            "source": {
-                                "name": "Rosalía · DESPECHÁ",
-                                "source_record_id": "Rosalía:DESPECHÁ:114680",
-                                "artist": "Rosalía",
-                                "song": "DESPECHÁ"
-                            },
-                            "sentence_id": "artist_8aaf3122c69d",
-                            "channel": "artist",
-                            "automaticSyntax": {
-                                "patternId": "es:te:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
-                                "reason": "Clitic pronoun te governed by verb."
+                                "patternId": "es:te:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                             }
                         }
                     }
@@ -55078,9 +56183,9 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "sentence_id": "artist_40e5c95fa2ef",
                                 "channel": "artist",
                                 "automaticSyntax": {
-                                    "patternId": "es:te:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun te governed by verb."
+                                    "patternId": "es:te:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                                 }
                             }
                         },
@@ -55100,36 +56205,15 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "sentence_id": "artist_4de2ca677d63",
                                 "channel": "artist",
                                 "automaticSyntax": {
-                                    "patternId": "es:te:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun te governed by verb."
-                                }
-                            }
-                        },
-                        {
-                            "sentence": "Porque todos pueden ve' los hoyuelitos que te salen",
-                            "targetHTML": "Porque todos pueden ve&#x27; los hoyuelitos que <span class=\"fw-token-connector\">te</span> <span class=\"fw-token-v\">salen</span>",
-                            "translation": "Because everyone can see the dimples that appear on you",
-                            "source": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
-                            "channel": "artist",
-                            "metadata": {
-                                "source": {
-                                    "name": "Rosalía · PIENSO EN TU MIRÁ (Cap.3: Celos)",
-                                    "source_record_id": "Rosalía:PIENSO EN TU MIRÁ (Cap.3: Celos):21720",
-                                    "artist": "Rosalía",
-                                    "song": "PIENSO EN TU MIRÁ (Cap.3: Celos)"
-                                },
-                                "sentence_id": "artist_d8c0c20014cb",
-                                "channel": "artist",
-                                "automaticSyntax": {
-                                    "patternId": "es:te:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
-                                    "reason": "Clitic pronoun te governed by verb."
+                                    "patternId": "es:te:1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "te agrees with its verb's subject: reflexive or pronominal verb."
                                 }
                             }
                         }
                     ]
-                }
+                },
+                "source": "opensubtitles"
             }
         ]
     },
@@ -55646,7 +56730,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Object nos plus complete non-first-plural verb complex."
                             }
                         }
@@ -55668,7 +56752,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun nos governed by verb."
                             }
                         }
@@ -55690,7 +56774,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Object nos plus complete non-first-plural verb complex."
                             }
                         }
@@ -55712,7 +56796,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Object nos plus complete non-first-plural verb complex."
                             }
                         }
@@ -55734,7 +56818,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun nos governed by verb."
                             }
                         }
@@ -55759,7 +56843,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "es:nos:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
                                     "reason": "Object nos plus complete non-first-plural verb complex."
                                 }
                             }
@@ -55781,7 +56865,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "es:nos:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
                                     "reason": "Clitic pronoun nos governed by verb."
                                 }
                             }
@@ -55803,13 +56887,229 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "es:nos:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
                                     "reason": "Object nos plus complete non-first-plural verb complex."
                                 }
                             }
                         }
                     ]
                 }
+            },
+            {
+                "tag": "Ourselves / each other",
+                "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+                "rule": "Can mean “ourselves” or “each other”, or belong with a verb, such as irse (leave): nos vamos = we’re leaving.",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "v": "verb"
+                },
+                "pos": "pron",
+                "targetHTML": "",
+                "translation": "",
+                "examples": [
+                    {
+                        "sentence": "Ya nos hemos atrasado bastante.",
+                        "targetHTML": "Ya <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">hemos atrasado</span> bastante.",
+                        "translation": "We've delayed enough already.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2151070,
+                                    "line": "487",
+                                    "subtitle_id": "6597233",
+                                    "title_id": "5502700",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5502700:6597233:487:2151070",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000e04c131339b1966d338f6ab4a45bf",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Presiento que nos iremos esta noche. ¡Creo que nadie irá a pescar!",
+                        "targetHTML": "Presiento que <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">iremos</span> esta noche. ¡Creo que nadie irá a pescar!",
+                        "translation": "I got a feeling we're not getting off this well tonight I think nobody is going to be doing no fishing.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 81243,
+                                    "line": "508 509",
+                                    "subtitle_id": "6829522",
+                                    "title_id": "1860357",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "1860357:6829522:508 509:81243",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0019926ef45e2cd8c761e81adad0a9f2",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Así que nos pusimos a examinar nuestras vidas y dijimos: \"No está funcionando\".",
+                        "targetHTML": "Así que <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">pusimos</span> a examinar nuestras vidas y dijimos: &quot;No está funcionando&quot;.",
+                        "translation": "So, you know, we just took a long, hard look at our lives and said, \"It ain't working.\"",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1254311,
+                                    "line": "1845",
+                                    "subtitle_id": "6762902",
+                                    "title_id": "4936176",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4936176:6762902:1845:1254311",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_002cd5416ef7fce570bd225c2c7c0707",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "Ya nos hemos atrasado bastante.",
+                        "targetHTML": "Ya <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">hemos atrasado</span> bastante.",
+                        "translation": "We've delayed enough already.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2151070,
+                                    "line": "487",
+                                    "subtitle_id": "6597233",
+                                    "title_id": "5502700",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5502700:6597233:487:2151070",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000e04c131339b1966d338f6ab4a45bf",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Presiento que nos iremos esta noche. ¡Creo que nadie irá a pescar!",
+                        "targetHTML": "Presiento que <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">iremos</span> esta noche. ¡Creo que nadie irá a pescar!",
+                        "translation": "I got a feeling we're not getting off this well tonight I think nobody is going to be doing no fishing.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 81243,
+                                    "line": "508 509",
+                                    "subtitle_id": "6829522",
+                                    "title_id": "1860357",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "1860357:6829522:508 509:81243",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0019926ef45e2cd8c761e81adad0a9f2",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Así que nos pusimos a examinar nuestras vidas y dijimos: \"No está funcionando\".",
+                        "targetHTML": "Así que <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">pusimos</span> a examinar nuestras vidas y dijimos: &quot;No está funcionando&quot;.",
+                        "translation": "So, you know, we just took a long, hard look at our lives and said, \"It ain't working.\"",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1254311,
+                                    "line": "1845",
+                                    "subtitle_id": "6762902",
+                                    "title_id": "4936176",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4936176:6762902:1845:1254311",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_002cd5416ef7fce570bd225c2c7c0707",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [],
+                "artist_examples_by_artist": {}
             }
         ],
         "pos": "pron",
@@ -56321,7 +57621,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Object nos plus complete non-first-plural verb complex."
                             }
                         }
@@ -56343,7 +57643,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun nos governed by verb."
                             }
                         }
@@ -56365,7 +57665,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Object nos plus complete non-first-plural verb complex."
                             }
                         }
@@ -56387,7 +57687,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Object nos plus complete non-first-plural verb complex."
                             }
                         }
@@ -56409,7 +57709,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "es:nos:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Clitic pronoun nos governed by verb."
                             }
                         }
@@ -56434,7 +57734,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "es:nos:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
                                     "reason": "Object nos plus complete non-first-plural verb complex."
                                 }
                             }
@@ -56456,7 +57756,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "es:nos:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
                                     "reason": "Clitic pronoun nos governed by verb."
                                 }
                             }
@@ -56478,13 +57778,229 @@ export const SPANISH_GRAMMAR_WORDS = {
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "es:nos:0",
-                                    "matcherVersion": "syntax-assignment/v1.1",
+                                    "matcherVersion": "syntax-assignment/v1.2",
                                     "reason": "Object nos plus complete non-first-plural verb complex."
                                 }
                             }
                         }
                     ]
                 }
+            },
+            {
+                "tag": "Ourselves / each other",
+                "formulaHTML": "<span class=\"fw-token-connector\">nos</span> + <span class=\"fw-token-v\">verb</span>",
+                "rule": "Can mean “ourselves” or “each other”, or belong with a verb, such as irse (leave): nos vamos = we’re leaving.",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "v": "verb"
+                },
+                "pos": "pron",
+                "targetHTML": "",
+                "translation": "",
+                "examples": [
+                    {
+                        "sentence": "Ya nos hemos atrasado bastante.",
+                        "targetHTML": "Ya <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">hemos atrasado</span> bastante.",
+                        "translation": "We've delayed enough already.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2151070,
+                                    "line": "487",
+                                    "subtitle_id": "6597233",
+                                    "title_id": "5502700",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5502700:6597233:487:2151070",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000e04c131339b1966d338f6ab4a45bf",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Presiento que nos iremos esta noche. ¡Creo que nadie irá a pescar!",
+                        "targetHTML": "Presiento que <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">iremos</span> esta noche. ¡Creo que nadie irá a pescar!",
+                        "translation": "I got a feeling we're not getting off this well tonight I think nobody is going to be doing no fishing.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 81243,
+                                    "line": "508 509",
+                                    "subtitle_id": "6829522",
+                                    "title_id": "1860357",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "1860357:6829522:508 509:81243",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0019926ef45e2cd8c761e81adad0a9f2",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Así que nos pusimos a examinar nuestras vidas y dijimos: \"No está funcionando\".",
+                        "targetHTML": "Así que <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">pusimos</span> a examinar nuestras vidas y dijimos: &quot;No está funcionando&quot;.",
+                        "translation": "So, you know, we just took a long, hard look at our lives and said, \"It ain't working.\"",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1254311,
+                                    "line": "1845",
+                                    "subtitle_id": "6762902",
+                                    "title_id": "4936176",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4936176:6762902:1845:1254311",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_002cd5416ef7fce570bd225c2c7c0707",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "Ya nos hemos atrasado bastante.",
+                        "targetHTML": "Ya <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">hemos atrasado</span> bastante.",
+                        "translation": "We've delayed enough already.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 2151070,
+                                    "line": "487",
+                                    "subtitle_id": "6597233",
+                                    "title_id": "5502700",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5502700:6597233:487:2151070",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000e04c131339b1966d338f6ab4a45bf",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Presiento que nos iremos esta noche. ¡Creo que nadie irá a pescar!",
+                        "targetHTML": "Presiento que <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">iremos</span> esta noche. ¡Creo que nadie irá a pescar!",
+                        "translation": "I got a feeling we're not getting off this well tonight I think nobody is going to be doing no fishing.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 81243,
+                                    "line": "508 509",
+                                    "subtitle_id": "6829522",
+                                    "title_id": "1860357",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "1860357:6829522:508 509:81243",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0019926ef45e2cd8c761e81adad0a9f2",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Así que nos pusimos a examinar nuestras vidas y dijimos: \"No está funcionando\".",
+                        "targetHTML": "Así que <span class=\"fw-token-connector\">nos</span> <span class=\"fw-token-v\">pusimos</span> a examinar nuestras vidas y dijimos: &quot;No está funcionando&quot;.",
+                        "translation": "So, you know, we just took a long, hard look at our lives and said, \"It ain't working.\"",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1254311,
+                                    "line": "1845",
+                                    "subtitle_id": "6762902",
+                                    "title_id": "4936176",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4936176:6762902:1845:1254311",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_002cd5416ef7fce570bd225c2c7c0707",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:nos:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "nos agrees with its verb's subject: reflexive or pronominal verb."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [],
+                "artist_examples_by_artist": {}
             }
         ]
     },
@@ -63718,6 +65234,392 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "artist_examples": [],
                 "artist_examples_by_artist": {}
+            },
+            {
+                "tag": "What / the thing that",
+                "formulaHTML": "<span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que …</span>",
+                "rule": "With que, means “what” or “the thing that”: lo que quiero = what I want.",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "c": "clause"
+                },
+                "pos": "pron",
+                "targetHTML": "",
+                "translation": "",
+                "examples": [
+                    {
+                        "sentence": "Todo lo que haces es ponerme muy molesto.",
+                        "targetHTML": "Todo <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que haces</span> es ponerme muy molesto.",
+                        "translation": "All you do is make me really upset.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1514666,
+                                    "line": "169",
+                                    "subtitle_id": "6578265",
+                                    "title_id": "5147756",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5147756:6578265:169:1514666",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00007f58ddf55d92fec05b1eb9bcd59d",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Se quedó más tiempo de lo que pensábamos.",
+                        "targetHTML": "Se quedó más tiempo de <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que pensábamos</span>.",
+                        "translation": "He stayed longer than we thought.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 3241215,
+                                    "line": "445",
+                                    "subtitle_id": "6887980",
+                                    "title_id": "5529320",
+                                    "year": "2017"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5529320:6887980:445:3241215",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000339d2594144d13eb6eeca9fa32a8e",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Oigo lo que dices.",
+                        "targetHTML": "Oigo <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que dices</span>.",
+                        "translation": "I hear what you're saying.",
+                        "source": "tatoeba",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "tatoeba-weekly/v1",
+                                "attribution": "Tatoeba sentence #3302461 by cueyayotl; English translation #1516123 by CM",
+                                "license": "CC BY 2.0 FR",
+                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+                                "name": "tatoeba",
+                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+                                "source_record_id": "3302461:1516123",
+                                "translated_from_english": true,
+                                "url": "https://tatoeba.org/en/sentences/show/3302461"
+                            },
+                            "sentence_id": "sentence_001276e0ecd022aca858a69fd891b85c",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "Todo lo que haces es ponerme muy molesto.",
+                        "targetHTML": "Todo <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que haces</span> es ponerme muy molesto.",
+                        "translation": "All you do is make me really upset.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1514666,
+                                    "line": "169",
+                                    "subtitle_id": "6578265",
+                                    "title_id": "5147756",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5147756:6578265:169:1514666",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00007f58ddf55d92fec05b1eb9bcd59d",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Se quedó más tiempo de lo que pensábamos.",
+                        "targetHTML": "Se quedó más tiempo de <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que pensábamos</span>.",
+                        "translation": "He stayed longer than we thought.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 3241215,
+                                    "line": "445",
+                                    "subtitle_id": "6887980",
+                                    "title_id": "5529320",
+                                    "year": "2017"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5529320:6887980:445:3241215",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000339d2594144d13eb6eeca9fa32a8e",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Oigo lo que dices.",
+                        "targetHTML": "Oigo <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que dices</span>.",
+                        "translation": "I hear what you're saying.",
+                        "source": "tatoeba",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "tatoeba-weekly/v1",
+                                "attribution": "Tatoeba sentence #3302461 by cueyayotl; English translation #1516123 by CM",
+                                "license": "CC BY 2.0 FR",
+                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+                                "name": "tatoeba",
+                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+                                "source_record_id": "3302461:1516123",
+                                "translated_from_english": true,
+                                "url": "https://tatoeba.org/en/sentences/show/3302461"
+                            },
+                            "sentence_id": "sentence_001276e0ecd022aca858a69fd891b85c",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [
+                    {
+                        "sentence": "Por to' lo que soy, yo puedo frontear",
+                        "targetHTML": "Por to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que soy</span>, yo puedo frontear",
+                        "translation": "Because of everything I am, I can front",
+                        "source": "Rosalía · New Woman",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · New Woman",
+                                "source_record_id": "Rosalía:New Woman:85050",
+                                "artist": "Rosalía",
+                                "song": "New Woman"
+                            },
+                            "sentence_id": "artist_57593eef97c2",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Yo sé muy bien lo que soy",
+                        "targetHTML": "Yo sé muy bien <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que soy</span>",
+                        "translation": "I know very well what I am",
+                        "source": "Rosalía · Berghain",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Berghain",
+                                "source_record_id": "Rosalía:Berghain:54840",
+                                "artist": "Rosalía",
+                                "song": "Berghain"
+                            },
+                            "sentence_id": "artist_2bfce192030d",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Ya tengo to' lo que quiero",
+                        "targetHTML": "Ya tengo to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que quiero</span>",
+                        "translation": "I already have everything I want",
+                        "source": "Rosalía · Barefoot in the Park",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Barefoot in the Park",
+                                "source_record_id": "Rosalía:Barefoot in the Park:94940",
+                                "artist": "Rosalía",
+                                "song": "Barefoot in the Park"
+                            },
+                            "sentence_id": "artist_539b635db5e3",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Con esa boquita suena rico to' lo que tú me dice'",
+                        "targetHTML": "Con esa boquita suena rico to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que tú me dice</span>&#x27;",
+                        "translation": "With that little mouth everything you tell me sounds delicious",
+                        "source": "Rosalía · LA NOCHE DE ANOCHE",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · LA NOCHE DE ANOCHE",
+                                "source_record_id": "Rosalía:LA NOCHE DE ANOCHE:60590",
+                                "artist": "Rosalía",
+                                "song": "LA NOCHE DE ANOCHE"
+                            },
+                            "sentence_id": "artist_6839dafd0ba1",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Haz lo que te de la gana",
+                        "targetHTML": "Haz <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que te de la gana</span>",
+                        "translation": "Do what you want",
+                        "source": "Rosalía · Always On My Mind*",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Always On My Mind*",
+                                "source_record_id": "Rosalía:Always On My Mind*:0",
+                                "artist": "Rosalía",
+                                "song": "Always On My Mind*"
+                            },
+                            "sentence_id": "artist_6d38e6a1d8ad",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples_by_artist": {
+                    "Rosalía": [
+                        {
+                            "sentence": "Por to' lo que soy, yo puedo frontear",
+                            "targetHTML": "Por to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que soy</span>, yo puedo frontear",
+                            "translation": "Because of everything I am, I can front",
+                            "source": "Rosalía · New Woman",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · New Woman",
+                                    "source_record_id": "Rosalía:New Woman:85050",
+                                    "artist": "Rosalía",
+                                    "song": "New Woman"
+                                },
+                                "sentence_id": "artist_57593eef97c2",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:lo:2",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "lo + que + clause: \"what / the thing that\"."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Yo sé muy bien lo que soy",
+                            "targetHTML": "Yo sé muy bien <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que soy</span>",
+                            "translation": "I know very well what I am",
+                            "source": "Rosalía · Berghain",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · Berghain",
+                                    "source_record_id": "Rosalía:Berghain:54840",
+                                    "artist": "Rosalía",
+                                    "song": "Berghain"
+                                },
+                                "sentence_id": "artist_2bfce192030d",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:lo:2",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "lo + que + clause: \"what / the thing that\"."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Ya tengo to' lo que quiero",
+                            "targetHTML": "Ya tengo to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que quiero</span>",
+                            "translation": "I already have everything I want",
+                            "source": "Rosalía · Barefoot in the Park",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · Barefoot in the Park",
+                                    "source_record_id": "Rosalía:Barefoot in the Park:94940",
+                                    "artist": "Rosalía",
+                                    "song": "Barefoot in the Park"
+                                },
+                                "sentence_id": "artist_539b635db5e3",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:lo:2",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "lo + que + clause: \"what / the thing that\"."
+                                }
+                            }
+                        }
+                    ]
+                }
             }
         ],
         "pos": "det",
@@ -64683,6 +66585,392 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "artist_examples": [],
                 "artist_examples_by_artist": {}
+            },
+            {
+                "tag": "What / the thing that",
+                "formulaHTML": "<span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que …</span>",
+                "rule": "With que, means “what” or “the thing that”: lo que quiero = what I want.",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "c": "clause"
+                },
+                "pos": "pron",
+                "targetHTML": "",
+                "translation": "",
+                "examples": [
+                    {
+                        "sentence": "Todo lo que haces es ponerme muy molesto.",
+                        "targetHTML": "Todo <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que haces</span> es ponerme muy molesto.",
+                        "translation": "All you do is make me really upset.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1514666,
+                                    "line": "169",
+                                    "subtitle_id": "6578265",
+                                    "title_id": "5147756",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5147756:6578265:169:1514666",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00007f58ddf55d92fec05b1eb9bcd59d",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Se quedó más tiempo de lo que pensábamos.",
+                        "targetHTML": "Se quedó más tiempo de <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que pensábamos</span>.",
+                        "translation": "He stayed longer than we thought.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 3241215,
+                                    "line": "445",
+                                    "subtitle_id": "6887980",
+                                    "title_id": "5529320",
+                                    "year": "2017"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5529320:6887980:445:3241215",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000339d2594144d13eb6eeca9fa32a8e",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Oigo lo que dices.",
+                        "targetHTML": "Oigo <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que dices</span>.",
+                        "translation": "I hear what you're saying.",
+                        "source": "tatoeba",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "tatoeba-weekly/v1",
+                                "attribution": "Tatoeba sentence #3302461 by cueyayotl; English translation #1516123 by CM",
+                                "license": "CC BY 2.0 FR",
+                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+                                "name": "tatoeba",
+                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+                                "source_record_id": "3302461:1516123",
+                                "translated_from_english": true,
+                                "url": "https://tatoeba.org/en/sentences/show/3302461"
+                            },
+                            "sentence_id": "sentence_001276e0ecd022aca858a69fd891b85c",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "Todo lo que haces es ponerme muy molesto.",
+                        "targetHTML": "Todo <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que haces</span> es ponerme muy molesto.",
+                        "translation": "All you do is make me really upset.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1514666,
+                                    "line": "169",
+                                    "subtitle_id": "6578265",
+                                    "title_id": "5147756",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5147756:6578265:169:1514666",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00007f58ddf55d92fec05b1eb9bcd59d",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Se quedó más tiempo de lo que pensábamos.",
+                        "targetHTML": "Se quedó más tiempo de <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que pensábamos</span>.",
+                        "translation": "He stayed longer than we thought.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 3241215,
+                                    "line": "445",
+                                    "subtitle_id": "6887980",
+                                    "title_id": "5529320",
+                                    "year": "2017"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5529320:6887980:445:3241215",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_000339d2594144d13eb6eeca9fa32a8e",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Oigo lo que dices.",
+                        "targetHTML": "Oigo <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que dices</span>.",
+                        "translation": "I hear what you're saying.",
+                        "source": "tatoeba",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "tatoeba-weekly/v1",
+                                "attribution": "Tatoeba sentence #3302461 by cueyayotl; English translation #1516123 by CM",
+                                "license": "CC BY 2.0 FR",
+                                "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+                                "name": "tatoeba",
+                                "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+                                "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+                                "source_record_id": "3302461:1516123",
+                                "translated_from_english": true,
+                                "url": "https://tatoeba.org/en/sentences/show/3302461"
+                            },
+                            "sentence_id": "sentence_001276e0ecd022aca858a69fd891b85c",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [
+                    {
+                        "sentence": "Por to' lo que soy, yo puedo frontear",
+                        "targetHTML": "Por to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que soy</span>, yo puedo frontear",
+                        "translation": "Because of everything I am, I can front",
+                        "source": "Rosalía · New Woman",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · New Woman",
+                                "source_record_id": "Rosalía:New Woman:85050",
+                                "artist": "Rosalía",
+                                "song": "New Woman"
+                            },
+                            "sentence_id": "artist_57593eef97c2",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Yo sé muy bien lo que soy",
+                        "targetHTML": "Yo sé muy bien <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que soy</span>",
+                        "translation": "I know very well what I am",
+                        "source": "Rosalía · Berghain",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Berghain",
+                                "source_record_id": "Rosalía:Berghain:54840",
+                                "artist": "Rosalía",
+                                "song": "Berghain"
+                            },
+                            "sentence_id": "artist_2bfce192030d",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Ya tengo to' lo que quiero",
+                        "targetHTML": "Ya tengo to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que quiero</span>",
+                        "translation": "I already have everything I want",
+                        "source": "Rosalía · Barefoot in the Park",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Barefoot in the Park",
+                                "source_record_id": "Rosalía:Barefoot in the Park:94940",
+                                "artist": "Rosalía",
+                                "song": "Barefoot in the Park"
+                            },
+                            "sentence_id": "artist_539b635db5e3",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Con esa boquita suena rico to' lo que tú me dice'",
+                        "targetHTML": "Con esa boquita suena rico to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que tú me dice</span>&#x27;",
+                        "translation": "With that little mouth everything you tell me sounds delicious",
+                        "source": "Rosalía · LA NOCHE DE ANOCHE",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · LA NOCHE DE ANOCHE",
+                                "source_record_id": "Rosalía:LA NOCHE DE ANOCHE:60590",
+                                "artist": "Rosalía",
+                                "song": "LA NOCHE DE ANOCHE"
+                            },
+                            "sentence_id": "artist_6839dafd0ba1",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Haz lo que te de la gana",
+                        "targetHTML": "Haz <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que te de la gana</span>",
+                        "translation": "Do what you want",
+                        "source": "Rosalía · Always On My Mind*",
+                        "channel": "artist",
+                        "metadata": {
+                            "source": {
+                                "name": "Rosalía · Always On My Mind*",
+                                "source_record_id": "Rosalía:Always On My Mind*:0",
+                                "artist": "Rosalía",
+                                "song": "Always On My Mind*"
+                            },
+                            "sentence_id": "artist_6d38e6a1d8ad",
+                            "channel": "artist",
+                            "automaticSyntax": {
+                                "patternId": "es:lo:2",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "lo + que + clause: \"what / the thing that\"."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples_by_artist": {
+                    "Rosalía": [
+                        {
+                            "sentence": "Por to' lo que soy, yo puedo frontear",
+                            "targetHTML": "Por to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que soy</span>, yo puedo frontear",
+                            "translation": "Because of everything I am, I can front",
+                            "source": "Rosalía · New Woman",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · New Woman",
+                                    "source_record_id": "Rosalía:New Woman:85050",
+                                    "artist": "Rosalía",
+                                    "song": "New Woman"
+                                },
+                                "sentence_id": "artist_57593eef97c2",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:lo:2",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "lo + que + clause: \"what / the thing that\"."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Yo sé muy bien lo que soy",
+                            "targetHTML": "Yo sé muy bien <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que soy</span>",
+                            "translation": "I know very well what I am",
+                            "source": "Rosalía · Berghain",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · Berghain",
+                                    "source_record_id": "Rosalía:Berghain:54840",
+                                    "artist": "Rosalía",
+                                    "song": "Berghain"
+                                },
+                                "sentence_id": "artist_2bfce192030d",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:lo:2",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "lo + que + clause: \"what / the thing that\"."
+                                }
+                            }
+                        },
+                        {
+                            "sentence": "Ya tengo to' lo que quiero",
+                            "targetHTML": "Ya tengo to&#x27; <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que quiero</span>",
+                            "translation": "I already have everything I want",
+                            "source": "Rosalía · Barefoot in the Park",
+                            "channel": "artist",
+                            "metadata": {
+                                "source": {
+                                    "name": "Rosalía · Barefoot in the Park",
+                                    "source_record_id": "Rosalía:Barefoot in the Park:94940",
+                                    "artist": "Rosalía",
+                                    "song": "Barefoot in the Park"
+                                },
+                                "sentence_id": "artist_539b635db5e3",
+                                "channel": "artist",
+                                "automaticSyntax": {
+                                    "patternId": "es:lo:2",
+                                    "matcherVersion": "syntax-assignment/v1.2",
+                                    "reason": "lo + que + clause: \"what / the thing that\"."
+                                }
+                            }
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -74314,7 +76602,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74347,7 +76635,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74380,7 +76668,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74415,7 +76703,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74448,7 +76736,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74481,7 +76769,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74489,6 +76777,223 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "artist_examples": [],
                 "artist_examples_by_artist": {}
+            },
+            {
+                "tag": "All the",
+                "formulaHTML": "<span class=\"fw-token-connector\">todo</span> + <span class=\"fw-token-c\">el + noun</span>",
+                "rule": "Before el and a noun, means “all the” or “the whole”: todo el día = all day.",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "c": "noun"
+                },
+                "pos": "det",
+                "targetHTML": "O sea, los niños crean historias sobre sus maestros y directores <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span>.",
+                "translation": "I mean, kids make up stories about their teachers and their principals all the time.",
+                "examples": [
+                    {
+                        "sentence": "O sea, los niños crean historias sobre sus maestros y directores todo el tiempo.",
+                        "targetHTML": "O sea, los niños crean historias sobre sus maestros y directores <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span>.",
+                        "translation": "I mean, kids make up stories about their teachers and their principals all the time.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1560619,
+                                    "line": "391",
+                                    "subtitle_id": "6583449",
+                                    "title_id": "5174848",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5174848:6583449:391:1560619",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00706d7df775b1e70ca8dac075ff661f",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Si estás todo el tiempo con ellos... parece que no cambian demasiado.",
+                        "targetHTML": "Si estás <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span> con ellos... parece que no cambian demasiado.",
+                        "translation": "You know, when you're around them all the time, they don't really change that much.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1187299,
+                                    "line": "379",
+                                    "subtitle_id": "6815260",
+                                    "title_id": "4872078",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4872078:6815260:379:1187299",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0071d406d7569761d2c8f373128fa398",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Evacuar a todo el personal no esencial en las oficinas de Kobuleti.",
+                        "targetHTML": "Evacuar a <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el personal no esencial</span> en las oficinas de Kobuleti.",
+                        "translation": "Evacuate all non-essential personnel offices Kobuleti.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1449904,
+                                    "line": "865",
+                                    "subtitle_id": "6693365",
+                                    "title_id": "5090828",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5090828:6693365:865:1449904",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_003e2aebed4cdfadc4add28ef1f44d82",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "O sea, los niños crean historias sobre sus maestros y directores todo el tiempo.",
+                        "targetHTML": "O sea, los niños crean historias sobre sus maestros y directores <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span>.",
+                        "translation": "I mean, kids make up stories about their teachers and their principals all the time.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1560619,
+                                    "line": "391",
+                                    "subtitle_id": "6583449",
+                                    "title_id": "5174848",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5174848:6583449:391:1560619",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00706d7df775b1e70ca8dac075ff661f",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Si estás todo el tiempo con ellos... parece que no cambian demasiado.",
+                        "targetHTML": "Si estás <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span> con ellos... parece que no cambian demasiado.",
+                        "translation": "You know, when you're around them all the time, they don't really change that much.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1187299,
+                                    "line": "379",
+                                    "subtitle_id": "6815260",
+                                    "title_id": "4872078",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4872078:6815260:379:1187299",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0071d406d7569761d2c8f373128fa398",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Evacuar a todo el personal no esencial en las oficinas de Kobuleti.",
+                        "targetHTML": "Evacuar a <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el personal no esencial</span> en las oficinas de Kobuleti.",
+                        "translation": "Evacuate all non-essential personnel offices Kobuleti.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1449904,
+                                    "line": "865",
+                                    "subtitle_id": "6693365",
+                                    "title_id": "5090828",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5090828:6693365:865:1449904",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_003e2aebed4cdfadc4add28ef1f44d82",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [],
+                "artist_examples_by_artist": {},
+                "source": "opensubtitles"
             }
         ],
         "pos": "pron",
@@ -74530,7 +77035,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74563,7 +77068,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74596,7 +77101,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74631,7 +77136,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74664,7 +77169,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74697,7 +77202,7 @@ export const SPANISH_GRAMMAR_WORDS = {
                             "channel": "speech",
                             "automaticSyntax": {
                                 "patternId": "es:todo:0",
-                                "matcherVersion": "syntax-assignment/v1.1",
+                                "matcherVersion": "syntax-assignment/v1.2",
                                 "reason": "Demonstrative/indefinite subject todo attached to verb."
                             }
                         }
@@ -74705,6 +77210,223 @@ export const SPANISH_GRAMMAR_WORDS = {
                 ],
                 "artist_examples": [],
                 "artist_examples_by_artist": {}
+            },
+            {
+                "tag": "All the",
+                "formulaHTML": "<span class=\"fw-token-connector\">todo</span> + <span class=\"fw-token-c\">el + noun</span>",
+                "rule": "Before el and a noun, means “all the” or “the whole”: todo el día = all day.",
+                "allowed_lemmas": [],
+                "slotTypes": {
+                    "c": "noun"
+                },
+                "pos": "det",
+                "targetHTML": "O sea, los niños crean historias sobre sus maestros y directores <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span>.",
+                "translation": "I mean, kids make up stories about their teachers and their principals all the time.",
+                "examples": [
+                    {
+                        "sentence": "O sea, los niños crean historias sobre sus maestros y directores todo el tiempo.",
+                        "targetHTML": "O sea, los niños crean historias sobre sus maestros y directores <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span>.",
+                        "translation": "I mean, kids make up stories about their teachers and their principals all the time.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1560619,
+                                    "line": "391",
+                                    "subtitle_id": "6583449",
+                                    "title_id": "5174848",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5174848:6583449:391:1560619",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00706d7df775b1e70ca8dac075ff661f",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Si estás todo el tiempo con ellos... parece que no cambian demasiado.",
+                        "targetHTML": "Si estás <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span> con ellos... parece que no cambian demasiado.",
+                        "translation": "You know, when you're around them all the time, they don't really change that much.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1187299,
+                                    "line": "379",
+                                    "subtitle_id": "6815260",
+                                    "title_id": "4872078",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4872078:6815260:379:1187299",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0071d406d7569761d2c8f373128fa398",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Evacuar a todo el personal no esencial en las oficinas de Kobuleti.",
+                        "targetHTML": "Evacuar a <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el personal no esencial</span> en las oficinas de Kobuleti.",
+                        "translation": "Evacuate all non-essential personnel offices Kobuleti.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1449904,
+                                    "line": "865",
+                                    "subtitle_id": "6693365",
+                                    "title_id": "5090828",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5090828:6693365:865:1449904",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_003e2aebed4cdfadc4add28ef1f44d82",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    }
+                ],
+                "speech_examples": [
+                    {
+                        "sentence": "O sea, los niños crean historias sobre sus maestros y directores todo el tiempo.",
+                        "targetHTML": "O sea, los niños crean historias sobre sus maestros y directores <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span>.",
+                        "translation": "I mean, kids make up stories about their teachers and their principals all the time.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1560619,
+                                    "line": "391",
+                                    "subtitle_id": "6583449",
+                                    "title_id": "5174848",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5174848:6583449:391:1560619",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_00706d7df775b1e70ca8dac075ff661f",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Si estás todo el tiempo con ellos... parece que no cambian demasiado.",
+                        "targetHTML": "Si estás <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el tiempo</span> con ellos... parece que no cambian demasiado.",
+                        "translation": "You know, when you're around them all the time, they don't really change that much.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1187299,
+                                    "line": "379",
+                                    "subtitle_id": "6815260",
+                                    "title_id": "4872078",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "4872078:6815260:379:1187299",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_0071d406d7569761d2c8f373128fa398",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    },
+                    {
+                        "sentence": "Evacuar a todo el personal no esencial en las oficinas de Kobuleti.",
+                        "targetHTML": "Evacuar a <span class=\"fw-token-connector\">todo</span> <span class=\"fw-token-c\">el personal no esencial</span> en las oficinas de Kobuleti.",
+                        "translation": "Evacuate all non-essential personnel offices Kobuleti.",
+                        "source": "opensubtitles",
+                        "channel": "speech",
+                        "metadata": {
+                            "source": {
+                                "adapter": "opensubtitles-aligned/v1",
+                                "attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+                                "document": {
+                                    "aligned_row": 1449904,
+                                    "line": "865",
+                                    "subtitle_id": "6693365",
+                                    "title_id": "5090828",
+                                    "year": "2016"
+                                },
+                                "license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+                                "name": "opensubtitles",
+                                "snapshot_content_id": "sha256:62c57caa4649a54d7252ea963d4ed232a2837b385796fe6e759e41b2126a9e37",
+                                "snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+                                "source_record_id": "5090828:6693365:865:1449904",
+                                "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                            },
+                            "sentence_id": "sentence_003e2aebed4cdfadc4add28ef1f44d82",
+                            "channel": "speech",
+                            "automaticSyntax": {
+                                "patternId": "es:todo:1",
+                                "matcherVersion": "syntax-assignment/v1.2",
+                                "reason": "todo before el + noun: \"all the\"."
+                            }
+                        }
+                    }
+                ],
+                "artist_examples": [],
+                "artist_examples_by_artist": {},
+                "source": "opensubtitles"
             }
         ]
     },
@@ -77251,7 +79973,7 @@ const FW_SYNTAX_TRIAL = {
           },
           "automaticSyntax": {
             "patternId": "pt:o:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               41,
               42
@@ -77289,7 +80011,7 @@ const FW_SYNTAX_TRIAL = {
           },
           "automaticSyntax": {
             "patternId": "pt:naquele:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               14,
               21
@@ -77332,7 +80054,7 @@ const FW_SYNTAX_TRIAL = {
           },
           "automaticSyntax": {
             "patternId": "pt:um:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               32,
               34
@@ -77375,7 +80097,7 @@ const FW_SYNTAX_TRIAL = {
           },
           "automaticSyntax": {
             "patternId": "pt:uma:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               8,
               11
@@ -77413,7 +80135,7 @@ const FW_SYNTAX_TRIAL = {
           },
           "automaticSyntax": {
             "patternId": "pt:eu:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               0,
               2
@@ -77451,7 +80173,7 @@ const FW_SYNTAX_TRIAL = {
           },
           "automaticSyntax": {
             "patternId": "pt:ela:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               18,
               21
@@ -77932,6 +80654,42 @@ const FW_SYNTAX_TRIAL = {
           "example_id": "example_a2f5f8f06c4b08bfafa04966bdaf3145",
           "syntax_trial_review": "Object lo resumes the topicalised book; natural Spanish and accurate translation."
         }
+      ],
+      "2": [
+        {
+          "example_id": "fresh_sentence_b68fa2d4a12b5d1bf6bf9b22b001cc95",
+          "targetHTML": "Es más difícil de <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que pensaba</span>.",
+          "translation": "It's more difficult than I thought.",
+          "source": "tatoeba",
+          "metadata": {
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #3002049 by hayastan; English translation #7988179 by Darragh_jd",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+              "source_record_id": "3002049:7988179",
+              "translated_from_english": false,
+              "url": "https://tatoeba.org/en/sentences/show/3002049"
+            },
+            "sentence_id": "sentence_b68fa2d4a12b5d1bf6bf9b22b001cc95",
+            "target": {
+              "language": "es",
+              "text": "Es más difícil de lo que pensaba."
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "es:lo:2",
+            "matcherVersion": "syntax-assignment/v1.2",
+            "focusSpan": [
+              18,
+              20
+            ],
+            "reason": "lo + que + clause: \"what / the thing that\"."
+          }
+        }
       ]
     },
     "al": {
@@ -78049,7 +80807,7 @@ const FW_SYNTAX_TRIAL = {
           },
           "automaticSyntax": {
             "patternId": "es:nos:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               43,
               46
@@ -78087,7 +80845,7 @@ const FW_SYNTAX_TRIAL = {
           },
           "automaticSyntax": {
             "patternId": "es:el:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               11,
               13
@@ -78099,6 +80857,7 @@ const FW_SYNTAX_TRIAL = {
     }
   }
 };
+
 function syntaxTrialEnabled() {
     return typeof window !== 'undefined' && window.__FLUENCY_ENV__ === 'staging'
         && new URLSearchParams(window.location?.search || '').get('fwSyntaxTrial') === '1';

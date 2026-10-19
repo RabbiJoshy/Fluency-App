@@ -115,7 +115,7 @@
           },
           "automaticSyntax": {
             "patternId": "pt:o:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               41,
               42
@@ -153,7 +153,7 @@
           },
           "automaticSyntax": {
             "patternId": "pt:naquele:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               14,
               21
@@ -196,7 +196,7 @@
           },
           "automaticSyntax": {
             "patternId": "pt:um:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               32,
               34
@@ -239,7 +239,7 @@
           },
           "automaticSyntax": {
             "patternId": "pt:uma:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               8,
               11
@@ -277,7 +277,7 @@
           },
           "automaticSyntax": {
             "patternId": "pt:eu:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               0,
               2
@@ -315,7 +315,7 @@
           },
           "automaticSyntax": {
             "patternId": "pt:ela:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               18,
               21
@@ -796,6 +796,42 @@
           "example_id": "example_a2f5f8f06c4b08bfafa04966bdaf3145",
           "syntax_trial_review": "Object lo resumes the topicalised book; natural Spanish and accurate translation."
         }
+      ],
+      "2": [
+        {
+          "example_id": "fresh_sentence_b68fa2d4a12b5d1bf6bf9b22b001cc95",
+          "targetHTML": "Es más difícil de <span class=\"fw-token-connector\">lo</span> <span class=\"fw-token-c\">que pensaba</span>.",
+          "translation": "It's more difficult than I thought.",
+          "source": "tatoeba",
+          "metadata": {
+            "source": {
+              "adapter": "tatoeba-weekly/v1",
+              "attribution": "Tatoeba sentence #3002049 by hayastan; English translation #7988179 by Darragh_jd",
+              "license": "CC BY 2.0 FR",
+              "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+              "name": "tatoeba",
+              "snapshot_content_id": "sha256:3cec47f408ef1545b1f6170bfdb1a3469e9784e7f3fe6ffcf8d2f0a4d3ad87b1",
+              "snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+              "source_record_id": "3002049:7988179",
+              "translated_from_english": false,
+              "url": "https://tatoeba.org/en/sentences/show/3002049"
+            },
+            "sentence_id": "sentence_b68fa2d4a12b5d1bf6bf9b22b001cc95",
+            "target": {
+              "language": "es",
+              "text": "Es más difícil de lo que pensaba."
+            }
+          },
+          "automaticSyntax": {
+            "patternId": "es:lo:2",
+            "matcherVersion": "syntax-assignment/v1.2",
+            "focusSpan": [
+              18,
+              20
+            ],
+            "reason": "lo + que + clause: \"what / the thing that\"."
+          }
+        }
       ]
     },
     "al": {
@@ -913,7 +949,7 @@
           },
           "automaticSyntax": {
             "patternId": "es:nos:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               43,
               46
@@ -951,7 +987,7 @@
           },
           "automaticSyntax": {
             "patternId": "es:el:0",
-            "matcherVersion": "syntax-assignment/v1.1",
+            "matcherVersion": "syntax-assignment/v1.2",
             "focusSpan": [
               11,
               13

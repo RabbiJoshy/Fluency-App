@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=0ce14ab4';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=0ce14ab4';
-import { readFastTrack } from './fast-track-preferences.js?v=0ce14ab4';
-import './session-plan.js?v=0ce14ab4';
+import './state.js?v=a7069df6';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=a7069df6';
+import { readFastTrack } from './fast-track-preferences.js?v=a7069df6';
+import './session-plan.js?v=a7069df6';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1461,10 +1461,18 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         // The deck's size lives in the level help, not on the badge (SETWISE-2).
         const deckTotalEl = document.getElementById('step2DeckTotal');
         if (deckTotalEl) {
+            const liveDeck = window.playlistLiveActive?.() ? window.playlistLiveDeck?.() : null;
+            const isSeries = Boolean(liveDeck?.playlistId === 'la-casa-de-papel' || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName)));
             const deckWords = percentageRanges.reduce((sum, lv) => sum + (_levelBandMetrics(lv).count || 0), 0);
-            deckTotalEl.textContent = deckWords > 0
-                ? `This deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'}.`
-                : '';
+            if (isSeries && liveDeck) {
+                deckTotalEl.textContent = `This series deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'} from ${Number(liveDeck.tokenCount || 0).toLocaleString()} dialogue tokens across ${liveDeck.trackCount || 1} episode${liveDeck.trackCount === 1 ? '' : 's'} in ${liveDeck.playlistName}.`;
+            } else if (liveDeck) {
+                deckTotalEl.textContent = `This playlist deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'} from ${Number(liveDeck.tokenCount || 0).toLocaleString()} words across ${liveDeck.trackCount || 1} song${liveDeck.trackCount === 1 ? '' : 's'}.`;
+            } else {
+                deckTotalEl.textContent = deckWords > 0
+                    ? `This deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'}.`
+                    : '';
+            }
             deckTotalEl.hidden = !(deckWords > 0);
         }
 
@@ -3623,7 +3631,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=0ce14ab4')
+        import('./spotify.js?v=a7069df6')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

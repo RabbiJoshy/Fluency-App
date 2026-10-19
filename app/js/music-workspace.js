@@ -232,7 +232,7 @@ export function openMusicWorkspace(nextOptions = {}) {
             slug: 'la-casa-de-papel',
             name: 'La Casa de Papel',
             initials: 'LCDP',
-            description: 'Series dialogue · Fast no-WSD study deck',
+            description: 'Season 1 (Episodes 1–9) · 1,072 dialogue words · 11 levels',
             isSeries: true
         });
     }
@@ -314,10 +314,13 @@ export function updateMusicSelection(songs = null, sourceName = '') {
     const live = window.playlistLiveDeck?.();
     const selected = songs || (window.artistSongCatalog?.songs || []).filter(song =>
         (window.selectedSongIds || []).map(String).includes(String(song.id)));
+    const isSeries = Boolean(live?.playlistId === 'la-casa-de-papel' || (live?.playlistName && /casa de papel|series|show|tv/i.test(live.playlistName)));
+    const liveUnit = isSeries ? (live?.trackCount === 1 ? 'episode' : 'episodes') : (live?.trackCount === 1 ? 'song' : 'songs');
+    const tokenPart = live?.tokenCount ? `${Number(live.tokenCount).toLocaleString()} ${isSeries ? 'dialogue' : 'lyric'} words · ` : '';
     document.getElementById('musicSelectionTitle').textContent = sourceName || artist?.name || live?.playlistName || 'Choose some music';
     document.getElementById('musicSelectionCount').textContent = artist || songs
         ? `${selected.length} song${selected.length === 1 ? '' : 's'} selected`
-        : live ? `${live.trackCount || 0} songs · ${live.matchedCount} words ready to study` : 'Your songs will appear here.';
+        : live ? `${live.trackCount || 0} ${liveUnit} · ${tokenPart}${Number(live.matchedCount || 0).toLocaleString()} words ready to study` : 'Your songs will appear here.';
     const preview = document.getElementById('musicSelectionPreview');
     preview.replaceChildren();
     selected.slice(0, 5).forEach(song => {
