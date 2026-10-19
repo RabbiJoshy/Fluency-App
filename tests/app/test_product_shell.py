@@ -722,7 +722,12 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('class="pos-pill-pct sense-percentage"', flashcards)
         self.assertIn('class="sense-percentage sense-percentage-tail"', flashcards)
         self.assertIn(".sense-percentage", css)
-        self.assertIn("border-left: 2px solid rgb(var(--sense-match-rgb))", css)
+        # Subsense rows: a small indent, no coloured rail (2026-10-19).
+        self.assertNotIn("border-left: 2px solid rgb(var(--sense-match-rgb))", css)
+        # IMDb credits are the icon alone; the show is named in the tap prompt.
+        self.assertIn("detail: title,", flashcards)
+        self.assertNotIn("text: title,", flashcards)
+        self.assertIn("has-centred-ticks", flashcards)
         self.assertIn('class="pos-pill-lemma"', flashcards)
         self.assertNotIn("headword-group-label", flashcards)
 

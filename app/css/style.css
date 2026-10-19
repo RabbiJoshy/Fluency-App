@@ -3071,15 +3071,13 @@
         .pos-collapsible .meaning-pos-rows {
             display: none;
         }
+        /* Subsense rows sit a few pixels in from their sense row; colour
+           already says which word type they belong to, so there is no rail
+           (removed 2026-10-19). */
         .pos-collapsible.is-open .meaning-pos-rows {
             display: block;
-            margin: 5px 0 2px 3px;
-            padding-left: 4px;
-            border-left: 2px solid rgb(var(--sense-match-rgb));
-        }
-        /* A sense other than the active one keeps a slightly lighter rail. */
-        .pos-collapsible.is-open:not(:has(.meaning-row.is-current-sense)) .meaning-pos-rows {
-            border-left-width: 1.5px;
+            margin: 5px 0 2px 0;
+            padding-left: 6px;
         }
 
         /* A fixed grammar bay keeps one to four POS labels stable beside the
@@ -5480,6 +5478,34 @@
             overflow: hidden;
         }
         /* Play controls keep their size; the ticks are what gives way. */
+        /* Source icon only (no song, no Spotify): the dots sit centred and
+           the icon keeps the left edge. Equal side insets keep them centred. */
+        .example-credit-row.has-centred-ticks {
+            position: relative;
+            justify-content: center;
+            min-height: 34px;
+        }
+        .example-credit-row.has-centred-ticks > .example-credit-start {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            max-width: 48px;
+            overflow: visible;
+        }
+        .example-credit-row.has-centred-ticks > .example-credit-end {
+            flex: 0 1 auto;
+            max-width: calc(100% - 112px);
+            justify-content: center;
+        }
+        /* "Open <show> on IMDb": a long show name wraps instead of running
+           off the card. */
+        .example-source-chip .outbound-leave-btn--icon {
+            max-width: min(300px, calc(100vw - 56px));
+            white-space: normal;
+            text-align: left;
+        }
+        .outbound-visit-detail { font-weight: 800; }
         .example-credit-end > .spotify-btn,
         .example-credit-end > .example-autoplay-btn,
         .example-credit-end > a.spotify-btn { flex: 0 0 auto; }
@@ -26024,6 +26050,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-credit-start { overflow:visible; white-space:normal; min-width:0; max-width:75%; display:flex; align-items:center; }
 .fw-credit-start .example-source-chip { max-width:100%; }
 .fw-example-credit-row { min-height:42px; }
+/* As on ordinary cards: the source icon keeps the left edge, the dots centre. */
+.fw-example-credit-row { position:relative; justify-content:center; }
+.fw-example-credit-row > .fw-credit-start { position:absolute; left:0; top:50%; transform:translateY(-50%); max-width:48px; }
+.fw-example-credit-row > .fw-sentence-ticks-container { margin-left:0; max-width:calc(100% - 112px); }
 
 /* Function-word cards (2026-10-19): "del (de + el)" on one line, the parts
    smaller and centred on the word. Each pattern is a row with its plain

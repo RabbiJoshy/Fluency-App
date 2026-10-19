@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T21:43:10+01:00",
+      "date": "2026-10-19 21:43 BST",
+      "agent": "Claude",
+      "summary": "Film/TV examples show just the IMDb icon; dots centred; no line beside sense rows",
+      "detail": [
+        "Speech examples from film and TV show only the IMDb icon. The show is named when you tap it: \"Open Raees on IMDb\". Lyric credits are unchanged.",
+        "With only a source icon in the credit row, the example dots are centred (ordinary and function-word cards, and the tutorial replica).",
+        "The coloured vertical line joining subsense rows to their sense row is gone; the rows sit slightly indented instead."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T21:36:12+01:00",
       "date": "2026-10-19 21:36 BST",
       "agent": "Claude",
@@ -328,17 +340,6 @@
       "detail": [
         "The embedded verb drill loaded its scripts from the site root (/conjugation/…). Production lives under /Fluency-App/, so every script 404'd and the drill sat on \"0 cards\". Scripts now load from the app's own folder; staging was unaffected because it is served from the root.",
         "The address the drill puts in the bar no longer has a double slash (/Fluency-App//conjugation), which also sent its data requests to the wrong place."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T02:30:00+01:00",
-      "date": "2026-10-19 02:30 BST",
-      "agent": "Claude",
-      "summary": "Desktop sidebar: a chip turns into its choices in place",
-      "detail": [
-        "Pressing Vocabulary, Music or Artist in the sidebar no longer keeps the chip and opens a menu repeating it underneath. The chip is replaced by the choices themselves, the current one ticked; clicking elsewhere or Escape brings the chip back.",
-        "The truncated one-line descriptions under Speech/Music and Artists/Spotify playlists are gone."
       ],
       "commit": "pending"
     }
