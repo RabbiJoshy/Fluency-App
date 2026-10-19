@@ -1,9 +1,9 @@
 // Live playlist: look up lyrics on LRCLIB (six at a time), land each song in
 // the progress list, save tracks to Fluency, then build a study deck from
 // speech-inventory tokens plus unassigned song-line examples.
-import './state.js?v=4c23a150';
-import { combineSongCatalogs } from './song-sets-core.js?v=4c23a150';
-import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=4c23a150';
+import './state.js?v=415b3add';
+import { combineSongCatalogs } from './song-sets-core.js?v=415b3add';
+import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=415b3add';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
 const LYRICS_DB_NAME = 'fluency-playlist-lyrics';
@@ -14,7 +14,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=4c23a150';
+const SPOTIFY_MODULE = './spotify.js?v=415b3add';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
@@ -951,5 +951,6 @@ setupSpotifyPlaylistImport();
 window.postPlaylistLive = postPlaylistLive;
 window.openSpotifyPlaylistImport = openSpotifyPlaylistImport;
 window.closeSpotifyPlaylistImport = closeSpotifyPlaylistImport;
+window.activatePlaylistLiveStudy = activatePlaylistLiveStudy;
 window.FLUENCY_PLAYLIST_LYRICS_DB = LYRICS_DB_NAME;
 window.FLUENCY_PLAYLIST_LYRICS_CONCURRENCY = LOOKUP_CONCURRENCY;

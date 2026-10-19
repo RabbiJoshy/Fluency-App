@@ -128,12 +128,14 @@ export function selectReverseCueMeanings(meanings, options = {}) {
             const pos = String(meaning?.pos || '').toUpperCase();
             return cueText(meaning) && !SPECIAL_POS.has(pos);
         });
-    const compatible = available.filter(({ meaning }) => meaningMatchesSurfaceReading(card, meaning));
+    const nonNotes = available.filter(({ meaning }) => !isUsageNoteGloss(cueText(meaning)));
+    const usable = nonNotes.length ? nonNotes : available;
+    const compatible = usable.filter(({ meaning }) => meaningMatchesSurfaceReading(card, meaning));
     // Compatibility removes lemma-menu leakage such as the noun `power` from
     // finite `puedes`. Older/incomplete decks can lack a compatible gloss
     // entirely; retain their best packaged gloss rather than render a blank
     // English-first face.
-    const candidates = compatible.length ? compatible : available;
+    const candidates = compatible.length ? compatible : usable;
 
     const groups = new Map();
     for (const candidate of candidates) {
@@ -183,6 +185,18 @@ function isRegularSpanishPlural(surface, lemma) {
     if (!target || !base || target === base) return false;
     const candidates = new Set([`${base}s`, `${base}es`]);
     if (base.endsWith('z')) candidates.add(`${base.slice(0, -1)}ces`);
+    // Portuguese regular plurals
+    if (base.endsWith('m')) candidates.add(`${base.slice(0, -1)}ns`);
+    if (base.endsWith('ão')) {
+        candidates.add(`${base.slice(0, -2)}ões`);
+        candidates.add(`${base.slice(0, -2)}ãos`);
+        candidates.add(`${base.slice(0, -2)}ães`);
+    }
+    if (base.endsWith('l')) {
+        candidates.add(`${base.slice(0, -1)}is`);
+        candidates.add(`${base.slice(0, -2)}eis`);
+        candidates.add(`${base.slice(0, -2)}éis`);
+    }
     return candidates.has(target);
 }
 
@@ -220,7 +234,12 @@ function nounProductionCue(card, meaning, translation) {
     const surface = card?.productionAnswer || card?.displaySurface || card?.targetWord || '';
     const lemma = meaning?.headword || card?.lemma || '';
     if (!isRegularSpanishPlural(surface, lemma)) return null;
-    return pluralizeEnglishWord(translation);
+    const autoPlural = pluralizeEnglishWord(translation);
+    if (autoPlural) return autoPlural;
+    const clean = String(translation || '').trim();
+    if (!clean) return null;
+    if (/\(pl\.?\)$/iu.test(clean)) return clean;
+    return `${clean} (pl.)`;
 }
 
 // Accents tell verb forms apart (hablo / habló, está / esta): fold case and
@@ -625,13 +644,21 @@ function bareAlternateClause(core, anchor) {
  * trailing parenthetical is lifted into `tail`, written once after every
  * reading, so a pronoun or `!` never lands inside it.
  */
+const MODAL_ENGLISH_HEADS = new Set(['can', 'could', 'should', 'must', 'may', 'might', 'ought']);
+
 function inflectableGloss(translation, meaning) {
     const value = String(translation || '').trim().replace(/[.]+$/u, '');
-    if (!value.startsWith('to ')) return null;
+    const firstWord = value.split(/[\s;,.]+/u)[0]?.toLowerCase();
+    const isModal = MODAL_ENGLISH_HEADS.has(firstWord);
+    if (!value.startsWith('to ') && !isModal) return null;
     const dummyIt = isDummyItCopulaSense(meaning);
     // Clock/weather copulas keep only the copula: "to be; indicates a point
     // in time" is "it was", not "it was; indicates a point in time".
     if (dummyIt && /^to be\b/iu.test(value)) return { clauses: [{ head: 'be', rest: '' }], tail: '' };
+    if (isModal) {
+        const { paren } = peelTrailingParenthetical(value);
+        return { clauses: [{ lead: '', head: firstWord, rest: '', isModal: true }], tail: paren || '' };
+    }
 
     const clauses = [];
     let anchor = null;      // the latest "to" verb
@@ -762,17 +789,29 @@ function imperativeSubject(personIdx) {
 
 function finiteEnglishCue(kind, personIdx, gloss, meaning, options = {}) {
     if (kind === 'imperative' || kind === 'imperative_neg') {
-        if (personIdx === 0) return null;
+        if (personIdx === 0 || gloss.clauses[0]?.isModal) return null;
         const prefix = kind === 'imperative'
             ? (personIdx === 3 ? "let's " : '')
             : (personIdx === 3 ? "let's not " : "don't ");
         const subject = imperativeSubject(personIdx);
-        const body = renderGlossClauses(gloss.clauses,
+        let body = renderGlossClauses(gloss.clauses,
             (head, rest, first, lead) => `${lead}${eachVerb(head, lowerVerb)}${agreeReflexive(rest, subject)}`);
+        body = body.replace(/\s+(?:at|to|for)$/iu, '');
         return `${prefix}${body}!`;
     }
     const subject = personIdx === 2 ? thirdPersonSubject(meaning, gloss) : ENGLISH_PRONOUNS[personIdx];
     if (!subject) return null;
+    if (gloss.clauses[0]?.isModal) {
+        const head = gloss.clauses[0].head;
+        let modalWord = head;
+        if (['past', 'imperfect', 'subj_past', 'conditional'].includes(kind)) {
+            if (head === 'can') modalWord = 'could';
+            else if (head === 'may') modalWord = 'might';
+        } else if (kind === 'future') {
+            if (head === 'can') modalWord = 'will be able to';
+        }
+        return `${subject} ${modalWord}`;
+    }
     const body = renderGlossClauses(gloss.clauses, (head, rawRest, first, lead) => {
         const rest = agreeReflexive(rawRest, subject);
         const base = eachVerb(head, lowerVerb);
@@ -927,6 +966,12 @@ function conjugationTableCue(card, meaning, translation, conjugationData, option
     if (!entry || typeof entry !== 'object') return null;
     const gloss = inflectableGloss(translation, meaning);
     if (!gloss) return null;
+    if (gloss.clauses[0]?.isModal && (
+        (entry.gerund && gerundMatches(entry.gerund, surface)) ||
+        (entry.past_participle && foldCueForm(entry.past_participle) === foldCueForm(surface))
+    )) {
+        return null;
+    }
     if (entry.gerund && gerundMatches(entry.gerund, surface)) {
         return withGlossTail(renderGlossClauses(gloss.clauses,
             (head, rest, first, lead) => `${lead}${eachVerb(head, englishIng)}${rest}`), gloss);
@@ -969,8 +1014,9 @@ function conjugationTableCue(card, meaning, translation, conjugationData, option
     return withGlossTail(cue, rowGloss);
 }
 
-function isUsageNoteGloss(translation) {
-    return /^(?:see |used |indicates |forms? )/i.test(String(translation || '').trim());
+export function isUsageNoteGloss(translation) {
+    const text = String(translation || '').trim();
+    return /^(?:see\s|used\s|indicates?\s|forms?\s)/i.test(text);
 }
 
 /**

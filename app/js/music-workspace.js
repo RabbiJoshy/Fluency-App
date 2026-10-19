@@ -59,6 +59,14 @@ function init() {
                             </span>
                             <span class="music-source-card-arrow" aria-hidden="true">›</span>
                         </button>
+                        <button type="button" class="music-source-card" data-music-stage="subtitles">
+                            <span class="music-source-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M7 15h4M15 15h2M7 11h2M13 11h4"></path></svg></span>
+                            <span class="music-source-card-copy">
+                                <strong>Series & Subtitles</strong>
+                                <small id="musicSubtitlesChoiceDesc">Study La Casa de Papel or upload .srt dialogue (no WSD)</small>
+                            </span>
+                            <span class="music-source-card-arrow" aria-hidden="true">›</span>
+                        </button>
                     </div>
                 </div>
                 <div id="musicArtistBrowser" hidden><p class="music-browser-intro">Pick an artist, or mix songs from several artists.</p><div id="musicArtistList"></div></div>
@@ -79,6 +87,7 @@ function init() {
             if (busy) return;
             const next = button.dataset.musicStage;
             if (next === 'playlists') openPlaylists();
+            else if (next === 'subtitles') openSubtitles();
             else if (next === 'setup') showMusicStudySetup();
             else showArtists();
         });
@@ -110,7 +119,7 @@ function enter() {
         rememberHome(element);
         if (element) document.getElementById('musicStudySetup').appendChild(element);
     }
-    for (const id of ['songSetModal', 'spotifyPlaylistModal']) {
+    for (const id of ['songSetModal', 'spotifyPlaylistModal', 'subtitleImportModal']) {
         const panel = document.getElementById(id);
         rememberHome(panel);
         if (!panel) continue;
@@ -135,7 +144,7 @@ function showStage(next, { focus = true } = {}) {
     const artistBrowser = document.getElementById('musicArtistBrowser');
     if (artistBrowser) artistBrowser.hidden = next !== 'artists';
     const pickerHost = document.getElementById('musicPickerHost');
-    if (pickerHost) pickerHost.hidden = !['songs', 'playlists'].includes(next);
+    if (pickerHost) pickerHost.hidden = !['songs', 'playlists', 'subtitles'].includes(next);
     const studySetup = document.getElementById('musicStudySetup');
     if (studySetup) studySetup.hidden = next !== 'setup';
     workspace.dataset.stage = next;
@@ -158,6 +167,7 @@ function showStage(next, { focus = true } = {}) {
         if (next === 'choices') title.textContent = 'Choose your music';
         else if (next === 'artists') title.textContent = 'Choose an artist';
         else if (next === 'playlists') title.textContent = 'Spotify playlists';
+        else if (next === 'subtitles') title.textContent = 'Series & Subtitles';
         else if (next === 'songs') title.textContent = 'Choose songs';
         else if (next === 'setup') title.textContent = 'Study setup';
     }
@@ -168,6 +178,7 @@ function showStage(next, { focus = true } = {}) {
 
 function closePickers() {
     window.closeSpotifyPlaylistImport?.({ force: true });
+    window.closeSubtitleImport?.();
     document.getElementById('songSetModal')?.classList.add('hidden');
 }
 
@@ -190,12 +201,19 @@ export function openPlaylists() {
     options.onSelectPlaylist?.();
 }
 
+export function openSubtitles() {
+    enter();
+    closePickers();
+    showStage('subtitles');
+    window.openSubtitleImport?.();
+}
+
 function back() {
     if (busy) return;
     if (stage === 'songs') {
         if (playlistReturn) openPlaylists();
         else showArtists();
-    } else if (stage === 'artists' || stage === 'playlists') {
+    } else if (stage === 'artists' || stage === 'playlists' || stage === 'subtitles') {
         showChoices();
     } else if (stage === 'setup') {
         if (hasDeck()) window.showSongSetPicker?.();
@@ -208,7 +226,16 @@ export function openMusicWorkspace(nextOptions = {}) {
     enter();
     const list = document.getElementById('musicArtistList');
     list.replaceChildren();
-    const entries = options.artists || [];
+    const entries = [...(options.artists || [])];
+    if (options.language === 'spanish' && !entries.some(e => e.slug === 'la-casa-de-papel')) {
+        entries.unshift({
+            slug: 'la-casa-de-papel',
+            name: 'La Casa de Papel',
+            initials: 'LCDP',
+            description: 'Series dialogue · Fast no-WSD study deck',
+            isSeries: true
+        });
+    }
     for (const entry of entries) {
         const button = document.createElement('button');
         button.type = 'button';
@@ -230,7 +257,11 @@ export function openMusicWorkspace(nextOptions = {}) {
         button.append(image, copy);
         button.addEventListener('click', () => {
             playlistReturn = false;
-            options.onSelectArtist?.(entry);
+            if (entry.isSeries) {
+                window.openSubtitleImport?.({ preselect: entry.slug });
+            } else {
+                options.onSelectArtist?.(entry);
+            }
         });
         list.appendChild(button);
     }
