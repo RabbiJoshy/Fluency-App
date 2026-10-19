@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-19T14:05:00+01:00",
+      "date": "2026-10-19 14:05 BST",
+      "agent": "Claude",
+      "summary": "Sign-in page trimmed: no subtitle, no About link, iCloud warning only for iCloud addresses",
+      "detail": [
+        "Removed \"Sign in to save your learning across devices\".",
+        "Removed \"About this project\" from the sign-in/sign-up page (still in Settings).",
+        "The email-codes warning now appears only after typing an @icloud.com, @me.com or @mac.com address."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T13:30:00+01:00",
       "date": "2026-10-19 13:30 BST",
       "agent": "Claude",

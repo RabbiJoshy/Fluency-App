@@ -114,11 +114,6 @@ function mountSignInUI(container) {
     const modal = document.getElementById('authModal');
     const subtitle = modal?.querySelector('.auth-welcome-copy p');
     if (subtitle) subtitle.style.display = '';
-    const notice = document.getElementById('passwordlessEmailNotice');
-    if (notice) {
-        notice.classList.remove('hidden');
-        notice.style.display = '';
-    }
     container.replaceChildren();
     const returnUrl = window.location.origin + window.location.pathname + window.location.hash;
     const signupUrl = new URL(window.location.href);
@@ -160,13 +155,18 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
         const heading = modal.querySelector('.auth-welcome-copy h3');
         if (heading) heading.textContent = 'Fluency';
         const subtitle = modal.querySelector('.auth-welcome-copy p');
-        if (subtitle) subtitle.textContent = 'Sign in to save your learning across devices.';
         const notice = document.createElement('p');
         notice.id = 'passwordlessEmailNotice';
         notice.className = 'passwordless-email-notice';
         notice.setAttribute('role', 'note');
         notice.textContent = 'Email codes currently aren’t reaching iCloud or me.com addresses. Please use Google, Microsoft or another email address.';
+        notice.hidden = true;
         container.after(notice);
+        // Only warn the people it affects: an Apple address typed into the email field.
+        container.addEventListener('input', event => {
+            if (event.target?.tagName !== 'INPUT') return;
+            notice.hidden = !/@(icloud|me|mac)\.com\s*$/i.test(event.target.value || '');
+        });
         const stylesheet = document.createElement('link');
         stylesheet.rel = 'stylesheet';
         const stylesheetUrl = new URL('../css/passwordless-auth.css', import.meta.url);
@@ -176,10 +176,8 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
     }
     const modal = document.getElementById('authModal');
     const subtitle = modal?.querySelector('.auth-welcome-copy p');
-    const notice = document.getElementById('passwordlessEmailNotice');
     if (!mounted && !window.Clerk?.user) {
         if (subtitle) subtitle.style.display = 'none';
-        if (notice) notice.style.display = 'none';
         container.innerHTML = `
             <div class="passwordless-loading-container" role="status">
                 <div class="passwordless-spinner" aria-hidden="true"></div>
@@ -224,7 +222,6 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
             };
             window.Clerk.addListener(state => { handle(state).catch(error => {
                 if (subtitle) subtitle.style.display = 'none';
-                if (notice) notice.style.display = 'none';
                 container.replaceChildren();
                 const message = document.createElement('p'); message.textContent = error.message;
                 const retry = document.createElement('button'); retry.className = 'auth-submit-btn'; retry.textContent = 'Retry sign-in';
@@ -240,7 +237,6 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
         }
     } catch (error) {
         if (subtitle) subtitle.style.display = 'none';
-        if (notice) notice.style.display = 'none';
         container.replaceChildren();
         const message = document.createElement('p');
         message.textContent = error.message;
