@@ -348,6 +348,19 @@ async function preparePlaylistLiveSession(language) {
     try {
         const deck = await idbRequest(db.transaction(DECK_STORE, 'readonly').objectStore(DECK_STORE).get(LIVE_DECK_ID));
         if (deck && (!language || deck.language === language)) {
+            if (deck.playlistId === 'la-casa-de-papel' && deck.matchedCount < 400) {
+                const appRoot = new URL('../', import.meta.url);
+                try {
+                    const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
+                    if (resp.ok) {
+                        const fresh = await resp.json();
+                        if (fresh?.matchedCount) {
+                            await cacheLiveDeck(fresh);
+                            return _liveDeck;
+                        }
+                    }
+                } catch (_) {}
+            }
             _liveDeck = deck;
             return deck;
         }
@@ -356,6 +369,19 @@ async function preparePlaylistLiveSession(language) {
     }
     const remote = await loadPlaylistLiveDeckFromServer(language);
     if (remote && (!language || remote.language === language) && remote.matchedCount) {
+        if (remote.playlistId === 'la-casa-de-papel' && remote.matchedCount < 400) {
+            const appRoot = new URL('../', import.meta.url);
+            try {
+                const resp = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot).href);
+                if (resp.ok) {
+                    const fresh = await resp.json();
+                    if (fresh?.matchedCount) {
+                        await cacheLiveDeck(fresh);
+                        return _liveDeck;
+                    }
+                }
+            } catch (_) {}
+        }
         await cacheLiveDeck(remote);
         return _liveDeck;
     }
