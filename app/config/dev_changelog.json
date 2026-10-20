@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T14:22:43+01:00",
+      "date": "2026-10-20 14:22 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): each meaning reads as one left-aligned line, with shared words shown once on the word-type row",
+      "detail": [
+        "Gloss, context and grammar now run left to right on one line instead of sitting in centred boxes, so a long context wraps like a sentence (não: 'not; don't; haven't  negates the meaning of the verb or adverb').",
+        "The 'i' follows the last word of the row; no row keeps an empty column on the right for it. The left slot stays for the meter, pin or Known tag.",
+        "Words every row of a word type shares move onto that word type's row once: bom shows 'Adjective  good' and its three rows show only their contexts.",
+        "Grouped rows (tempo, dejar) lead with the shared gloss in bold, each sub-sense on its own lighter line underneath.",
+        "Grammar frames are shortened on the card: +inf, +ger, +adj, +subj, +pp. The note keeps the full wording.",
+        "Display only; no data changes. Trial switch: the inlineSenseRows call in flashcards.js and the .inline-sense-rows block at the end of style.css."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T23:20:00+01:00",
       "date": "2026-10-19 23:20 BST",
       "agent": "Claude",
@@ -337,18 +352,6 @@
       "detail": [
         "The top sense row of a plural noun (olas, casas) reads \"from ola\" / \"from casa\", as verbs already did (fue from ir).",
         "Dropped-letter forms such as vamo' still don't repeat the lemma."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T00:38:00+01:00",
-      "date": "2026-10-19 00:38 BST",
-      "agent": "Claude",
-      "summary": "Pins only show for some meanings; clearer practise pill; plural glosses no longer doubled",
-      "detail": [
-        "A card with every meaning marked after a miss now comes back whole, with no pins; pins and the pill appear once only some meanings are pinned.",
-        "The front pill reads \"2 of 4 meanings to practise\" in larger, bolder text.",
-        "A plural noun whose English gloss is already plural (plans, cops, mountains) is no longer pluralised again (\"planses\")."
       ],
       "commit": "pending"
     }
