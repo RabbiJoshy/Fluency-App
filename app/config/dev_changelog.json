@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T14:41:07+01:00",
+      "date": "2026-10-20 14:41 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): context stays beside its translation; a word type drawn as one group lifts its shared words too",
+      "detail": [
+        "Inactive rows no longer push the context onto a second line under the translation, which left blank space beside the word: cosa's second row is now 'thing  concern' on one line.",
+        "On cards with four or more rows, an inactive row is one line ending in '…'; the active row still shows everything.",
+        "When a word type is one grouped row, its shared words go up to the word-type row and each sub-sense becomes its own row: aún shows 'Adverb  time' over 'still' and 'yet'; así shows 'Adverb  in a certain way' over its four translations.",
+        "When the whole group is selected (examples from every sub-sense), all of those rows are outlined.",
+        "A shared context over several translations (cosa: object over thing, something, anything) is now muted, not bold."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T14:34:29+01:00",
       "date": "2026-10-20 14:34 BST",
       "agent": "Claude",
@@ -340,18 +354,6 @@
       "detail": [
         "The icon and name of a folded Learn/Practise row now sit at exactly the same spot as in the open header, so nothing shifts when you swap sections.",
         "The section you are in has a thin accent-coloured left edge and a tinted border."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T14:05:00+01:00",
-      "date": "2026-10-19 14:05 BST",
-      "agent": "Claude",
-      "summary": "Sign-in page trimmed: no subtitle, no About link, iCloud warning only for iCloud addresses",
-      "detail": [
-        "Removed \"Sign in to save your learning across devices\".",
-        "Removed \"About this project\" from the sign-in/sign-up page (still in Settings).",
-        "The email-codes warning now appears only after typing an @icloud.com, @me.com or @mac.com address."
       ],
       "commit": "pending"
     }

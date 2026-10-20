@@ -1115,10 +1115,26 @@ function hoistSharedRowText(scroll, card) {
     }).filter(Boolean));
     scroll.querySelectorAll('.pos-collapsible').forEach(section => {
         const rows = [...section.querySelectorAll(':scope > .meaning-pos-rows > .meaning-row')];
-        if (rows.length < 2 || !rows.every(row => row.matches('.meaning-row-regular'))) return;
         const head = section.querySelector(':scope > .pos-section-head');
         if (!head || head.querySelector('.pos-section-shared')) return;
         const pieces = [];
+        // A word type drawn as one grouped row (aún: "time" over still / yet;
+        // tempo: "time" over two contexts) shares that row's common words
+        // with every sub-sense, so they go up too and each sub-sense becomes
+        // a row of its own.
+        const lone = rows.length === 1 && rows[0].matches('.meaning-row-group') ? rows[0] : null;
+        const loneShared = lone?.querySelector('.group-card-shared');
+        if (loneShared?.textContent.trim() && lone.querySelectorAll('.group-card-varying-cell').length > 1) {
+            const text = loneShared.textContent.replace(/\s+/g, ' ').trim();
+            pieces.push({ text, isGloss: lone.dataset.axis === 'translation' || translations.has(fold(text)) });
+            lone.classList.add('has-hoisted-shared-cell');
+            // The shared note stays reachable: it follows the active sub-sense.
+            const info = loneShared.querySelector('.sense-inline-info');
+            const cell = lone.querySelector('.group-card-varying-cell.is-active-subsense')
+                || lone.querySelector('.group-card-varying-cell');
+            if (info && cell) (cell.querySelector('.meaning-context-cell') || cell).append(info);
+        }
+        if (!pieces.length && (rows.length < 2 || !rows.every(row => row.matches('.meaning-row-regular')))) return;
         const gloss = sharedRowText(rows, '.meaning-row-gloss');
         if (gloss) {
             rows.forEach(row => row.classList.add('has-hoisted-gloss'));
@@ -1170,6 +1186,15 @@ function inlineSenseRows(root, card) {
     if (!scroll) return;
     scroll.classList.add('inline-sense-rows');
     inlineRowInformation(scroll);
+    // One run of text per row. The two-line clamp on inactive rows turns the
+    // body's children into blocks; wrapped, gloss and context stay one line.
+    scroll.querySelectorAll('.meaning-row-regular > .meaning-row-body').forEach(body => {
+        if (body.querySelector(':scope > .sense-inline-line')) return;
+        const line = document.createElement('span');
+        line.className = 'sense-inline-line';
+        line.append(...body.childNodes);
+        body.append(line);
+    });
     hoistSharedRowText(scroll, card);
     abbreviateInlineFrames(scroll);
     fitHoistedShared(root);

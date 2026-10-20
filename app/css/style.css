@@ -26369,3 +26369,59 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group > .group-card-varying-cell { padding: 1px 8px !important; }
 /* The meter's bars stand on the gloss's baseline. */
 .meanings-scroll.inline-sense-rows .meaning-row-group > :is(.pct-column, .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag) { top: 5px !important; }
+/* A lone grouped row whose shared words went up to the word-type row: its
+   sub-senses become rows of their own, styled like any other meaning row. */
+.meanings-scroll.inline-sense-rows .pos-collapsible .meaning-row.meaning-row-group.has-hoisted-shared-cell:not(#_) {
+    padding: 0 !important;
+    min-height: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-shared { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group { gap: 4px !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell {
+    padding: 6px 12px !important;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--text-primary) 16%, transparent);
+    background: color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+    box-shadow: none !important;
+}
+/* The whole group selected (examples from every sub-sense): all are outlined. */
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)) .sense-cue-group > .group-card-varying-cell,
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense {
+    border: 2px solid rgb(var(--sense-match-rgb));
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context) {
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+}
+/* Shared context over translations (cosa: object / thing, something,
+   anything): the context is a muted lead, the translations are the lines. */
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="context"] .group-card-shared {
+    font-weight: 400 !important;
+    color: var(--text-secondary) !important;
+    font-size: 0.8em;
+}
+/* Earlier layouts force gloss and cue into separate blocks on busy cards
+   (has-compact-rows) and when a row measures as needing a stack. Here they
+   stay one run: inactive rows on a busy card are one line ending in "…". */
+.meanings-scroll.inline-sense-rows .meaning-row-regular :is(.meaning-row-gloss, .meaning-row-sub):not(#_) {
+    display: inline !important;
+    width: auto !important;
+    max-width: none !important;
+    overflow: visible !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.sense-row-needs-stack .meaning-row-body:not(#_) { display: block !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-regular:not(.is-current-sense) .meaning-row-body:not(#_) { display: -webkit-box !important; }
+.meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-regular:not(.selected):not(.is-current-sense) .meaning-row-body:not(#_) {
+    display: block !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="context"] .group-card-shared .meaning-context:not(#_) {
+    font-weight: 400 !important;
+    color: var(--text-secondary) !important;
+}
