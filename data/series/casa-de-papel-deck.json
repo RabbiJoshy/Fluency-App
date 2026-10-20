@@ -17213,5 +17213,7 @@
         }
       ]
     }
-  }
+  },
+  "presetRevision": "season1-sample-v2",
+  "sourceKind": "series"
 }

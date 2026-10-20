@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=be86c5bc';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=be86c5bc';
-import { readFastTrack } from './fast-track-preferences.js?v=be86c5bc';
-import './session-plan.js?v=be86c5bc';
+import './state.js?v=78967719';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=78967719';
+import { readFastTrack } from './fast-track-preferences.js?v=78967719';
+import './session-plan.js?v=78967719';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1321,8 +1321,8 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             description: level.label,
         }));
     } else if (window.playlistLiveActive?.()) {
-        const deck = window.playlistLiveDeck?.();
-        const totalCards = deck?.matchedCount || 0;
+        const samples = await _loadLevelSliderSamples(language);
+        const totalCards = samples?.length || 0;
         const targetPerLevel = STUDY_LEVEL_TARGET_CARDS;
         const levelCount = Math.max(1, Math.ceil(totalCards / targetPerLevel));
         _smartLevelRangesCache = [];
@@ -1436,6 +1436,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         container.classList.add('level-selector--slider');
         container.innerHTML = `
             <div class="level-slider-wrap">
+                <div class="home-level-tiles" id="homeLevelTiles" role="radiogroup" aria-label="Levels" hidden></div>
                 <div class="home-level-stepper" id="homeLevelStepper">
                     <button type="button" class="home-level-step" data-level-step="-1" aria-label="Previous level">‹</button>
                     <div class="home-level-readout" aria-live="polite">
@@ -1858,7 +1859,7 @@ function _setupVocabularySignature(language) {
         langConfig.indexPath || langConfig.dataPath || '',
         (window._selectedArtistSlugs || []).slice().sort().join(','),
         activeArtist ? artistVocabularyScope : (window.playlistLiveActive?.() ? 'playlist-live' : 'speech'),
-        window.playlistLiveActive?.() ? (window.playlistLiveDeck?.()?.playlistId || 'live') : 'none',
+        window.playlistLiveActive?.() ? `${window.playlistLiveDeck?.()?.playlistId}:${window.playlistLiveDeck?.()?.builtAt}` : 'none',
         percentageMode,
         useLemmaMode,
         excludeCognates,
@@ -2093,6 +2094,99 @@ function syncHomeLevelStepper(idx) {
     }
     stepper.querySelector('[data-level-step="-1"]').disabled = idx <= 0;
     stepper.querySelector('[data-level-step="1"]').disabled = idx >= ranges.length - 1;
+}
+
+// --- Home level tiles ------------------------------------------------------
+// Once the learner has started two levels, a row of tiles (each with its own
+// progress bar) replaces the stepper's arrows: the levels they have started,
+// the one after the furthest, and the selected one, at most eight at a time.
+// With one level started the row would say no more than ‹ 1 ›, so it stays hidden.
+const HOME_LEVEL_TILE_MIN_STARTED = 2;
+const HOME_LEVEL_TILE_MAX = 8;
+
+function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estimate, smartSkipOn }) {
+    const row = document.getElementById('homeLevelTiles');
+    const step2 = document.getElementById('step2');
+    if (!row) return;
+    const ranges = getActiveLevelRanges();
+    const hide = () => { row.hidden = true; row.innerHTML = ''; step2?.classList.remove('has-level-tiles'); };
+    if (ranges.length < 2 || ranges[0]?.rankBasis === 'category') return hide();
+
+    const rankOf = _levelRankAccessor(ranges[0].rankBasis);
+    const starts = ranges.map(lv => Number(lv.startRank));
+    const levelOf = rank => {
+        let lo = 0, hi = starts.length - 1, found = -1;
+        while (lo <= hi) {
+            const mid = (lo + hi) >> 1;
+            if (starts[mid] <= rank) { found = mid; lo = mid + 1; } else hi = mid - 1;
+        }
+        return found >= 0 && rank < Number(ranges[found].endRank) ? found : -1;
+    };
+    const counts = ranges.map(() => ({ cards: 0, seen: 0, review: 0, estimated: 0, baseline: 0 }));
+    for (const item of vocab) {
+        const i = levelOf(rankOf(item));
+        if (i < 0) continue;
+        const state = getSetupLearningState(item, { seenLemmas, estimatedIds, estimate });
+        const c = counts[i];
+        c.cards++;
+        if (state?.seen) c.seen++;
+        if (state?.needsReview) c.review++;
+        if (state?.estimated) c.estimated++;
+    }
+    if (smartSkipOn) {
+        for (const item of baseline) {
+            const i = levelOf(rankOf(item));
+            if (i >= 0) counts[i].baseline++;
+        }
+    }
+
+    const started = counts.map((c, i) => c.seen > 0 ? i : -1).filter(i => i >= 0);
+    if (started.length < HOME_LEVEL_TILE_MIN_STARTED) return hide();
+
+    const levelButtons = Array.from(document.querySelectorAll('.level-selector-buttons .level-btn'));
+    const selectedIdx = Math.max(0, levelButtons.findIndex(btn => btn.dataset.level === selectedLevel));
+    const shown = new Set(started);
+    const next = started[started.length - 1] + 1;
+    if (next < ranges.length) shown.add(next);
+    shown.add(selectedIdx);
+    let tiles = [...shown].sort((a, b) => a - b);
+    if (tiles.length > HOME_LEVEL_TILE_MAX) {
+        const pos = tiles.indexOf(selectedIdx);
+        const from = Math.max(0, Math.min(pos - Math.floor(HOME_LEVEL_TILE_MAX / 2), tiles.length - HOME_LEVEL_TILE_MAX));
+        tiles = tiles.slice(from, from + HOME_LEVEL_TILE_MAX);
+    }
+
+    const tileHTML = tiles.map(i => {
+        const c = counts[i];
+        const skipped = Math.max(0, c.baseline - c.cards);
+        const known = Math.max(0, c.seen - c.review - c.estimated);
+        const segments = [['known', known], ['seen', c.review], ['estimated', c.estimated], ['new', c.cards - c.seen], ['skipped', skipped]]
+            .filter(([, n]) => n > 0)
+            .map(([kind, n]) => `<span class="is-${kind}" style="flex-grow:${n}"></span>`).join('');
+        const metrics = _levelBandMetrics(ranges[i]);
+        return `<button type="button" class="home-level-tile${i === selectedIdx ? ' is-selected' : ''}" data-level-index="${i}" role="radio" aria-checked="${i === selectedIdx}" aria-label="Level ${i + 1}, words ${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}">
+                <span class="home-level-tile-num">${i + 1}</span>
+                <span class="home-level-tile-bar" aria-hidden="true">${segments}</span>
+            </button>`;
+    }).join('');
+    row.innerHTML = `<button type="button" class="home-level-step" data-tile-step="-1" aria-label="Previous level"${selectedIdx <= 0 ? ' disabled' : ''}>‹</button>
+        <div class="home-level-tile-list">${tileHTML}</div>
+        <button type="button" class="home-level-step" data-tile-step="1" aria-label="Next level"${selectedIdx >= ranges.length - 1 ? ' disabled' : ''}>›</button>`;
+    row.hidden = false;
+    step2?.classList.add('has-level-tiles');
+
+    const pick = idx => {
+        const btn = levelButtons[idx];
+        if (!btn) return;
+        _setupLevelSelectionWasManual = true;
+        btn.click();
+    };
+    row.querySelectorAll('[data-level-index]').forEach(tile => {
+        tile.addEventListener('click', () => pick(Number(tile.dataset.levelIndex)));
+    });
+    row.querySelectorAll('[data-tile-step]').forEach(button => {
+        button.addEventListener('click', () => pick(selectedIdx + Number(button.dataset.tileStep)));
+    });
 }
 
 function wireHomeLevelStepper(buttons) {
@@ -2967,6 +3061,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         ? await buildEstimatedKnownIds(estimate)
         : null;
     const seenLemmas = await window.buildSeenLemmaSet?.(vocabularyData) || new Set();
+    renderHomeLevelTiles({
+        vocab: filteredVocab, baseline: preparedVocabulary?.stableBaseline || [],
+        seenLemmas, estimatedIds, estimate, smartSkipOn: Boolean(window.isFastTrackOn?.())
+    });
 
     // Fixed rank regions retain estimation and legacy-session compatibility.
     // The visible progress bar aggregates the whole level by learning status.
@@ -3054,7 +3152,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     if (landingRowsChecked < 3 && ranges[initialIndex]?.unseenCount > 0
         && landingWords.some(item => item._indexRowsPending)) {
         const loaded = await window.ensureIndexRowsForRange?.(
-            langConfig, 0, 0, landingWords.map(item => item.rank)
+            langConfig, 0, 0, landingWords.map(item => item.sourceRank || item.rank)
         ).catch(() => false);
         if (loaded) {
             invalidatePreparedSetupVocabulary();
@@ -3632,7 +3730,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=be86c5bc')
+        import('./spotify.js?v=78967719')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

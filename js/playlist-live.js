@@ -1,7 +1,7 @@
 // Naive live-playlist deck: tokenise lyrics in the browser, join them to the
 // speech inventory, and study those cards with unassigned song-line examples.
-import { clearRoute, parseRoute } from './routes.js?v=be86c5bc';
-import { releaseUrl } from './release-host.js?v=be86c5bc';
+import { clearRoute, parseRoute } from './routes.js?v=78967719';
+import { releaseUrl } from './release-host.js?v=78967719';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -10,6 +10,24 @@ const LIVE_DECK_ID = 'live';
 const MAX_LINES_PER_SURFACE = 5;
 
 let _liveDeck = null;
+
+export const CASA_PRESET_REVISION = 'season1-sample-v2';
+
+export function validLiveDeck(deck) {
+    return Boolean(deck && deck.language && deck.playlistId
+        && deck.surfaces && !Array.isArray(deck.surfaces)
+        && Object.keys(deck.surfaces).length > 0
+        && Object.values(deck.surfaces).every(entry => Number(entry?.count) > 0
+            && Array.isArray(entry.lines) && entry.lines.length > 0
+            && entry.lines.every(line => typeof line?.text === 'string' && line.text.trim())));
+}
+
+function activateLiveDeck(deck) {
+    _liveDeck = { ...deck, id: LIVE_DECK_ID, matchedCount: Object.keys(deck.surfaces).length };
+    window.invalidateLyricsSourceCaches?.(deck.language);
+    window.invalidatePreparedSetupVocabulary?.();
+    return _liveDeck;
+}
 
 function normalizeSurface(value) {
     return String(value || '').normalize('NFC').toLowerCase().trim();
@@ -249,7 +267,10 @@ async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, 
         lyricsTrackCount += 1;
         const title = record.title || 'Unknown track';
         const artist = record.artist || '';
-        for (const line of lyricLines(lyrics)) {
+        const dialogue = Array.isArray(record.dialogueLines)
+            ? record.dialogueLines : lyricLines(lyrics).map(text => ({ text, english: '' }));
+        for (const dialogueLine of dialogue) {
+            const line = dialogueLine.text;
             const tokens = naiveLyricTokens(line);
             tokenCount += tokens.length;
             for (const token of tokens) {
@@ -262,7 +283,7 @@ async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, 
                 entry.count += 1;
                 if (entry.lines.length < MAX_LINES_PER_SURFACE
                     && !entry.lines.some(existing => existing.text === line)) {
-                    entry.lines.push({ text: line, song: title, artist });
+                    entry.lines.push({ text: line, english: dialogueLine.english || '', song: title, artist });
                 }
             }
         }
@@ -280,14 +301,14 @@ async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, 
         matchedCount: surfaces.size,
         surfaces: Object.fromEntries(surfaces)
     };
+    if (!validLiveDeck(deck)) throw new Error('None of the words matched the speech inventory.');
     const db = await openLiveDb();
     try {
         await idbRequest(db.transaction(DECK_STORE, 'readwrite').objectStore(DECK_STORE).put(deck));
     } finally {
         db.close();
     }
-    _liveDeck = deck;
-    return deck;
+    return activateLiveDeck(deck);
 }
 
 async function savePlaylistLiveDeckToServer(deck) {
@@ -330,7 +351,7 @@ async function loadPlaylistLiveDeckFromServer(language) {
 }
 
 async function cacheLiveDeck(deck) {
-    if (!deck) return;
+    if (!validLiveDeck(deck)) throw new Error('Invalid live deck.');
     const db = await openLiveDb();
     try {
         await idbRequest(db.transaction(DECK_STORE, 'readwrite').objectStore(DECK_STORE).put({
@@ -340,62 +361,34 @@ async function cacheLiveDeck(deck) {
     } finally {
         db.close();
     }
-    _liveDeck = { ...deck, id: LIVE_DECK_ID };
+    activateLiveDeck(deck);
 }
 
 async function preparePlaylistLiveSession(language) {
+    let deck = null;
     const db = await openLiveDb();
     try {
-        const deck = await idbRequest(db.transaction(DECK_STORE, 'readonly').objectStore(DECK_STORE).get(LIVE_DECK_ID));
-        if (deck && (!language || deck.language === language)) {
-            const isCasaDePapel = deck.playlistId === 'la-casa-de-papel' || String(deck.playlistName || '').toLowerCase().includes('casa de papel');
-            if (isCasaDePapel && deck.matchedCount < 1000) {
-                const appRoot = new URL('../', import.meta.url);
-                try {
-                    const resp = await fetch(new URL(`data/series/casa-de-papel-deck.json?t=${Date.now()}`, appRoot).href, { cache: 'no-store' });
-                    if (resp.ok) {
-                        const fresh = await resp.json();
-                        if (fresh?.matchedCount && fresh.matchedCount >= 1000) {
-                            await cacheLiveDeck(fresh);
-                            return _liveDeck;
-                        }
-                    }
-                } catch (_) {}
-                // If upgrade fetch fails, delete stale deck so old 4-level deck never lingers
-                try {
-                    const writeTx = db.transaction(DECK_STORE, 'readwrite');
-                    await idbRequest(writeTx.objectStore(DECK_STORE).delete(LIVE_DECK_ID));
-                } catch (_) {}
-            } else {
-                _liveDeck = deck;
-                return deck;
-            }
-        }
+        deck = await idbRequest(db.transaction(DECK_STORE, 'readonly').objectStore(DECK_STORE).get(LIVE_DECK_ID));
     } finally {
         db.close();
     }
-    const remote = await loadPlaylistLiveDeckFromServer(language);
-    if (remote && (!language || remote.language === language) && remote.matchedCount) {
-        const isCasaDePapel = remote.playlistId === 'la-casa-de-papel' || String(remote.playlistName || '').toLowerCase().includes('casa de papel');
-        if (isCasaDePapel && remote.matchedCount < 1000) {
-            const appRoot = new URL('../', import.meta.url);
-            try {
-                const resp = await fetch(new URL(`data/series/casa-de-papel-deck.json?t=${Date.now()}`, appRoot).href, { cache: 'no-store' });
-                if (resp.ok) {
-                    const fresh = await resp.json();
-                    if (fresh?.matchedCount && fresh.matchedCount >= 1000) {
-                        await cacheLiveDeck(fresh);
-                        return _liveDeck;
-                    }
-                }
-            } catch (_) {}
-        } else {
-            await cacheLiveDeck(remote);
-            return _liveDeck;
-        }
+    if (!validLiveDeck(deck) || (language && deck.language !== language)) {
+        deck = await loadPlaylistLiveDeckFromServer(language);
     }
-    _liveDeck = null;
-    return null;
+    if (!validLiveDeck(deck) || (language && deck.language !== language)) {
+        _liveDeck = null;
+        return null;
+    }
+    if (deck.playlistId === 'la-casa-de-papel' && deck.presetRevision !== CASA_PRESET_REVISION) {
+        try {
+            const response = await fetch(new URL('data/series/casa-de-papel-deck.json', new URL('../', import.meta.url)), { cache: 'no-store' });
+            const fresh = response.ok ? await response.json() : null;
+            if (validLiveDeck(fresh) && fresh.playlistId === deck.playlistId
+                && fresh.language === deck.language && fresh.presetRevision === CASA_PRESET_REVISION) deck = fresh;
+        } catch (_) { /* A usable cached deck survives an unavailable refresh. */ }
+    }
+    await cacheLiveDeck(deck);
+    return _liveDeck;
 }
 
 function playlistLiveDeck() {
@@ -436,59 +429,71 @@ function lyricExample(line) {
     };
 }
 
+function projectPlaylistLiveEntry(item) {
+    const entry = _liveDeck?.surfaces[normalizeSurface(item.word)];
+    if (!entry) return { ...item };
+    const isTurbo = Boolean(_liveDeck?.isTurboEngine);
+    const lyricExamples = entry.lines.map(lyricExample);
+    const next = {
+        ...item,
+        sourceRank: item.sourceRank || item.rank,
+        meanings: [...(item.meanings || [])],
+        playlist_count: entry.count,
+        corpusCount: entry.count,
+        corpus_count: entry.count,
+        playlistId: _liveDeck?.playlistId || 'la-casa-de-papel',
+        playlistName: _liveDeck?.playlistName || 'La Casa de Papel'
+    };
+
+    // For Turbo engine decks with disambiguated senses
+    if (isTurbo && entry.turboCard?.meanings) {
+        const turboMeanings = entry.turboCard.meanings;
+        // Match card's existing meanings with turbo meanings where possible
+        next.meanings = next.meanings.map((m, idx) => {
+            const tMeaning = turboMeanings[idx];
+            const matchingExamples = (tMeaning?.examples || []).map(lyricExample);
+            return {
+                ...m,
+                examples: matchingExamples.length ? matchingExamples : (idx === 0 ? lyricExamples : (m.examples || []))
+            };
+        });
+    } else {
+        const kept = next.meanings.filter(keepCommonOrUncommon);
+        const meanings = kept.length ? kept : next.meanings.slice(0, 4);
+        if (meanings.length) {
+            next.meanings = meanings.map(m => ({
+                ...m,
+                examples: [...lyricExamples, ...(m.examples || [])]
+            }));
+        } else {
+            next.meanings = [{
+                pos: '',
+                translation: '',
+                frequency: '0',
+                unassigned: true,
+                assignment_method: 'unassigned',
+                examples: lyricExamples
+            }];
+        }
+    }
+    return next;
+}
+
+// Row shards hydrate canonical Speech entries. Reapply the live projection only
+// after hydration, keeping study order separate from the source's shard rank.
+function refreshPlaylistLiveEntry(item) {
+    if (!playlistLiveActive()) return item;
+    const canonical = window._cachedJoinedIndex?.find(card => card.id === item.id) || item;
+    const next = projectPlaylistLiveEntry(canonical);
+    for (const key of ['rank', 'displayRank', 'stableRank', 'categoryRank']) next[key] = item[key];
+    next.sourceRank = item.sourceRank || canonical.sourceRank || canonical.rank;
+    return next;
+}
+
 function applyPlaylistLiveVocabulary(items) {
     if (!playlistLiveActive() || !Array.isArray(items)) return items;
-    const ranked = [];
-    const isTurbo = Boolean(_liveDeck?.isTurboEngine);
-
-    for (const item of items) {
-        const entry = _liveDeck.surfaces[normalizeSurface(item.word)];
-        if (!entry) continue;
-        const lyricExamples = entry.lines.map(lyricExample);
-        const next = {
-            ...item,
-            sourceRank: item.sourceRank || item.rank,
-            meanings: [...(item.meanings || [])],
-            playlist_count: entry.count,
-            corpusCount: entry.count,
-            corpus_count: entry.count,
-            playlistId: _liveDeck?.playlistId || 'la-casa-de-papel',
-            playlistName: _liveDeck?.playlistName || 'La Casa de Papel'
-        };
-
-        // For Turbo engine decks with disambiguated senses
-        if (isTurbo && entry.turboCard?.meanings) {
-            const turboMeanings = entry.turboCard.meanings;
-            // Match card's existing meanings with turbo meanings where possible
-            next.meanings = next.meanings.map((m, idx) => {
-                const tMeaning = turboMeanings[idx];
-                const matchingExamples = (tMeaning?.examples || []).map(lyricExample);
-                return {
-                    ...m,
-                    examples: matchingExamples.length ? matchingExamples : (idx === 0 ? lyricExamples : (m.examples || []))
-                };
-            });
-        } else {
-            const kept = next.meanings.filter(keepCommonOrUncommon);
-            const meanings = kept.length ? kept : next.meanings.slice(0, 4);
-            if (meanings.length) {
-                next.meanings = meanings.map(m => ({
-                    ...m,
-                    examples: [...lyricExamples, ...(m.examples || [])]
-                }));
-            } else {
-                next.meanings = [{
-                    pos: '',
-                    translation: '',
-                    frequency: '0',
-                    unassigned: true,
-                    assignment_method: 'unassigned',
-                    examples: lyricExamples
-                }];
-            }
-        }
-        ranked.push(next);
-    }
+    const ranked = items.filter(item => _liveDeck.surfaces[normalizeSurface(item.word)])
+        .map(projectPlaylistLiveEntry);
     ranked.sort((a, b) => (b.playlist_count || 0) - (a.playlist_count || 0)
         || String(a.word || '').localeCompare(String(b.word || '')));
     ranked.forEach((item, index) => {
@@ -498,9 +503,6 @@ function applyPlaylistLiveVocabulary(items) {
         item.stableRank = rank;
         item.categoryRank = rank;
     });
-    if (_liveDeck && ranked.length) {
-        _liveDeck.matchedCount = ranked.length;
-    }
     return ranked;
 }
 
@@ -522,3 +524,5 @@ window.applyPlaylistLiveVocabulary = applyPlaylistLiveVocabulary;
 window.clearPlaylistLiveSession = clearPlaylistLiveSession;
 window.cacheLiveDeck = cacheLiveDeck;
 window.FLUENCY_PLAYLIST_LIVE_DECK_ID = LIVE_DECK_ID;
+
+window.refreshPlaylistLiveEntry = refreshPlaylistLiveEntry;

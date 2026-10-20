@@ -2,7 +2,8 @@
 // Parses .srt/.vtt/text, routes through the live no-WSD engine,
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
-import './state.js?v=be86c5bc';
+import './state.js?v=78967719';
+import { CASA_PRESET_REVISION, validLiveDeck } from './playlist-live.js?v=78967719';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
@@ -47,25 +48,23 @@ export async function buildSeriesLiveDeck({
     lines = [],
     episodes = null,
     language = 'spanish',
-    onProgress = null
+    onProgress = null,
+    sourceId = 'subtitle-upload'
 } = {}) {
-    let records = [];
-    if (Array.isArray(episodes) && episodes.length) {
-        records = episodes.map(ep => ({
-            title: ep.title || ep.episode || 'Episode',
-            artist,
-            plainLyrics: Array.isArray(ep.lines) ? ep.lines.join('\n') : String(ep.plainLyrics || '')
-        }));
-    } else {
-        if (!lines || !lines.length) {
-            throw new Error('No dialogue lines to build deck from.');
-        }
-        records = [{
-            title: episode,
-            artist,
-            plainLyrics: lines.join('\n')
-        }];
-    }
+    const normalizeLines = values => (values || []).map(value => ({
+        text: typeof value === 'string' ? value.trim() : String(value?.spanish || value?.text || '').trim(),
+        english: typeof value === 'object' ? String(value?.english || '') : ''
+    })).filter(line => line.text);
+    const records = (Array.isArray(episodes) && episodes.length
+        ? episodes : [{ episode, lines }]).map(ep => {
+        const dialogueLines = normalizeLines(Array.isArray(ep.lines)
+            ? ep.lines : String(ep.plainLyrics || '').split(/\r?\n/));
+        return {
+            title: ep.title || ep.episode || 'Episode', artist, dialogueLines,
+            plainLyrics: dialogueLines.map(line => line.text).join('\n')
+        };
+    }).filter(record => record.dialogueLines.length);
+    if (!records.length) throw new Error('No dialogue lines to build deck from.');
 
     const totalLines = records.reduce((sum, r) => sum + r.plainLyrics.split('\n').filter(Boolean).length, 0);
     if (typeof onProgress === 'function') {
@@ -73,7 +72,7 @@ export async function buildSeriesLiveDeck({
     }
 
     const playlist = {
-        id: 'la-casa-de-papel',
+        id: sourceId,
         name: title
     };
 
@@ -93,182 +92,47 @@ export async function buildSeriesLiveDeck({
         throw new Error('None of the words in this dialogue matched the speech inventory.');
     }
 
-    try {
-        await window.savePlaylistLiveDeckToServer?.(deck);
-    } catch (e) {
-        console.warn('Could not save live series deck to server:', e);
-    }
-
+    deck.sourceKind = 'series';
+    if (sourceId === 'la-casa-de-papel') deck.presetRevision = CASA_PRESET_REVISION;
+    await window.cacheLiveDeck(deck);
+    saveSeriesInBackground(deck);
     return deck;
 }
 
+function saveSeriesInBackground(deck) {
+    Promise.resolve().then(() => window.savePlaylistLiveDeckToServer?.(deck))
+        .catch(error => console.warn('Could not save live series deck to server:', error));
+}
+
 export async function loadCasaDePapelPreset(onProgress = null) {
-    if (typeof onProgress === 'function') {
-        onProgress({ stage: 'fetching', message: 'Loading La Casa de Papel dialogue…' });
-    }
-
-    // Fast path: load pre-solved series deck immediately
+    onProgress?.({ stage: 'fetching', message: 'Loading La Casa de Papel dialogue sample…' });
     const appRoot = new URL('../', import.meta.url);
-    const bust = `t=${Date.now()}`;
-    const resolvedDeckUrl = new URL(`data/series/casa-de-papel-deck.json?${bust}`, appRoot).href;
-    const resolvedDialogueUrl = new URL(`data/series/casa-de-papel.json?${bust}`, appRoot).href;
-
-    const deckPaths = [
-        resolvedDeckUrl,
-        `data/series/casa-de-papel-deck.json?${bust}`,
-        `./data/series/casa-de-papel-deck.json?${bust}`,
-        `app/data/series/casa-de-papel-deck.json?${bust}`
-    ];
-    for (const p of deckPaths) {
-        try {
-            const resp = await fetch(p, { cache: 'no-store' });
-            if (resp.ok) {
-                const deck = await resp.json();
-                if (deck?.matchedCount && deck.matchedCount >= 1000) {
-                    if (typeof window.cacheLiveDeck === 'function') {
-                        await window.cacheLiveDeck(deck);
-                    }
-                    try {
-                        await window.savePlaylistLiveDeckToServer?.(deck);
-                    } catch (_) {}
-                    return deck;
-                }
-            }
-        } catch (_) {}
+    try {
+        const response = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot), { cache: 'no-store' });
+        const deck = response.ok ? await response.json() : null;
+        if (validLiveDeck(deck) && deck.playlistId === 'la-casa-de-papel'
+            && deck.language === 'spanish' && deck.presetRevision === CASA_PRESET_REVISION) {
+            await window.cacheLiveDeck(deck);
+            saveSeriesInBackground(deck);
+            return deck;
+        }
+    } catch (_) {}
+    try {
+        const response = await fetch(new URL('data/series/casa-de-papel.json', appRoot), { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Dialogue HTTP ${response.status}`);
+        const dialogue = await response.json();
+        const deck = await buildSeriesLiveDeck({
+            title: dialogue.title || 'La Casa de Papel', artist: 'La Casa de Papel',
+            episodes: dialogue.episodes, lines: dialogue.lines,
+            sourceId: 'la-casa-de-papel', language: 'spanish', onProgress
+        });
+        return deck;
+    } catch (error) {
+        await window.preparePlaylistLiveSession?.('spanish');
+        const cached = window.playlistLiveDeck?.();
+        if (validLiveDeck(cached) && cached.playlistId === 'la-casa-de-papel') return cached;
+        throw new Error(`Could not load the Casa de Papel sample. ${error.message}`);
     }
-
-    let dialogueData = null;
-    const paths = [
-        resolvedDialogueUrl,
-        `data/series/casa-de-papel.json?${bust}`,
-        `./data/series/casa-de-papel.json?${bust}`,
-        `app/data/series/casa-de-papel.json?${bust}`
-    ];
-    for (const p of paths) {
-        try {
-            const resp = await fetch(p, { cache: 'no-store' });
-            if (resp.ok) {
-                dialogueData = await resp.json();
-                break;
-            }
-        } catch (_) {}
-    }
-
-    const lines = dialogueData?.lines && dialogueData.lines.length
-        ? dialogueData.lines
-        : [
-            "Me llamo Tokio.",
-            "Pero cuando empezó esta historia no me llamaba así.",
-            "Esta era yo. Y este, el amor de mi vida.",
-            "La última vez que lo vi lo dejé en un charco de sangre con los ojos abiertos.",
-            "Teníamos la costumbre de no mezclar trabajo y amor.",
-            "Hicimos quince atracos limpios hasta que un guardia jurado decidió hacerse el héroe.",
-            "Un disparo en el cuello de mi novio y todo se fue a la mierda.",
-            "Así que pasé de ser ladrona a ser asesina.",
-            "Y desde entonces he estado huyendo.",
-            "Dicen que el amor te hace ver el mundo de color de rosa.",
-            "Pero cuando estás sola y acorralada, el mundo es negro.",
-            "Mi madre vivía en un barrio humilde a las afueras de Madrid.",
-            "Iba a verla por su cumpleaños, sabiendo que la policía estaría vigilando la casa.",
-            "Era un suicidio, pero necesitaba despedirme.",
-            "En ese momento apareció un coche rojo.",
-            "Un hombre con gafas se bajó y me dijo: Disculpe, ¿tiene un minuto?",
-            "Ese hombre era el Profesor.",
-            "No tenía antecedentes, ni ficha policial, ni multas de tráfico.",
-            "Era un fantasma.",
-            "Me dijo que sabía que la policía me estaba esperando en casa de mi madre.",
-            "Y me hizo una propuesta: un atraco histórico.",
-            "No un banco, ni una joyería, ni un furgón blindado.",
-            "La Fábrica Nacional de Moneda y Timbre.",
-            "Nos encerraríamos dentro durante días para imprimir nuestro propio dinero.",
-            "Dos mil cuatrocientos millones de euros.",
-            "El plan requería cinco meses de encierro en una finca de Toledo.",
-            "Cinco meses estudiando cada paso, cada detalle, cada posible error.",
-            "Éramos ocho personas, elegidas meticulosamente.",
-            "Ninguno tenía nada que perder.",
-            "Para proteger nuestras identidades, el Profesor nos prohibió usar nombres reales.",
-            "Nada de preguntas personales, nada de relaciones.",
-            "Elegimos nombres de ciudades.",
-            "Berlín, el jefe al mando dentro de la fábrica, narcisista y calculador.",
-            "Moscú, el veterano minero capaz de abrir cualquier cerradura.",
-            "Denver, su hijo, impulsivo y con un corazón enorme.",
-            "Río, el joven genio de la informática y los sistemas de seguridad.",
-            "Nairobi, una optimista nata encargada del control de calidad.",
-            "Helsinki y Oslo, la fuerza bruta, dos soldados que no hacían preguntas.",
-            "Y yo, Tokio.",
-            "La regla fundamental era una: ninguna gota de sangre.",
-            "Si hay una sola víctima, la opinión pública se pondrá en nuestra contra.",
-            "No somos ladrones comunes, somos la resistencia.",
-            "El día del golpe llegó en un camión con bobinas de papel de seguridad.",
-            "Entramos armados hasta los dientes, vestidos con monos rojos y caretas de Dalí.",
-            "En cuestión de minutos tomamos el edificio y sesenta y siete rehenes.",
-            "Entre ellos estaba la hija del embajador británico, Alison Parker.",
-            "Nuestro cordero de Pascua.",
-            "La policía rodeó el edificio de inmediato.",
-            "La inspectora Raquel Murillo tomó el mando del operativo.",
-            "Pero el Profesor ya había previsto cada uno de sus movimientos en una partida de ajedrez perfecta.",
-            "El juego acababa de comenzar.",
-            "A ver, señores, mucha atención a lo que voy a decir.",
-            "No vamos a robar el dinero de nadie.",
-            "Porque vamos a fabricar nuestro propio dinero.",
-            "¿Cómo lo veis?",
-            "Para la gente seremos unos héroes.",
-            "Eso es fundamental: tenemos que tener a la opinión pública de nuestra parte.",
-            "No quiero ni una sola gota de sangre derramada.",
-            "¿Ha quedado claro?",
-            "El día que haya una sola baja, dejamos de ser la resistencia y nos convertimos en monstruos.",
-            "Aquí no hay amigos, no hay familia, no hay relaciones sentimentales.",
-            "Quiero que os olvidéis de vuestras vidas anteriores.",
-            "A partir de ahora sois Berlín, Moscú, Denver, Río, Nairobi, Helsinki, Oslo y Tokio.",
-            "¿Por qué Tokio?",
-            "Porque me gusta el nombre y porque suena rápido.",
-            "Pues a mí me gusta Río, me parece fresco.",
-            "A ti lo que te gusta es hablar demasiado, chaval.",
-            "El dinero es solo papel pintado con un número.",
-            "La verdadera riqueza es el tiempo, la libertad.",
-            "Cuando salgamos de aquí con ese dinero seremos libres para siempre.",
-            "Pero para eso hay que aguantar once días dentro.",
-            "Once días encerrados mientras las máquinas de imprimir no paran de funcionar.",
-            "Las rotativas van a trabajar día y noche sin descanso.",
-            "Cada hora que pasa imprimimos ocho millones de euros.",
-            "Tenemos comida, agua, medicamentos y armamento suficiente.",
-            "Los rehenes son nuestra muralla defensiva.",
-            "Hay que tratarlos bien, que coman lo mismo que nosotros.",
-            "Les pondremos los mismos monos rojos y las mismas caretas.",
-            "Así la policía no sabrá quién es rehén y quién es atracador si deciden asaltar.",
-            "Es una obra de arte, un poema visual.",
-            "Tranquilos todos, nadie se va a hacer daño si hacéis exactamente lo que os digamos.",
-            "Colaboren y todo saldrá bien.",
-            "Entregad todos los teléfonos móviles en esta bolsa ahora mismo.",
-            "No intentéis ser valientes, el heroísmo en estos casos suele acabar mal.",
-            "Si alguien intenta escapar o esconder un teléfono, las consecuencias serán desagradables.",
-            "Inspectora Murillo al habla, ¿con quién tengo el placer?",
-            "Buenas tardes, inspectora. Puede llamarme el Profesor.",
-            "¿Qué es lo que quiere exactamente, Profesor?",
-            "Quiero tiempo, inspectora. Solo tiempo.",
-            "Sabe perfectamente que no van a poder salir de ese edificio con rehenes.",
-            "No subestime nuestra paciencia, ni la suya.",
-            "Le propongo mantener una línea abierta de comunicación directa.",
-            "Cada decisión que tome tendrá un impacto inmediato en la vida de esas personas.",
-            "Usted es una mujer inteligente y sabe que podemos llegar a un entendimiento.",
-            "No voy a negociar con terroristas.",
-            "Nosotros no somos terroristas, inspectora. Somos ladrones.",
-            "Y de los buenos, créame.",
-            "La negociación será larga, tensa y fascinante.",
-            "Espero que esté lista para una partida larga."
-        ];
-
-    const deck = await buildSeriesLiveDeck({
-        title: dialogueData?.title || 'La Casa de Papel',
-        artist: 'La Casa de Papel',
-        episode: dialogueData?.episode || 'S01E01 - Efectuar lo acordado',
-        lines,
-        episodes: dialogueData?.episodes || null,
-        language: 'spanish',
-        onProgress
-    });
-
-    return deck;
 }
 
 function handoffLiveStudy(language = 'spanish') {

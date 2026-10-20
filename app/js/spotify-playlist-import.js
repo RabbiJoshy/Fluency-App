@@ -1,9 +1,9 @@
 // Live playlist: look up lyrics on LRCLIB (six at a time), land each song in
 // the progress list, save tracks to Fluency, then build a study deck from
 // speech-inventory tokens plus unassigned song-line examples.
-import './state.js?v=be86c5bc';
-import { combineSongCatalogs } from './song-sets-core.js?v=be86c5bc';
-import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=be86c5bc';
+import './state.js?v=78967719';
+import { combineSongCatalogs } from './song-sets-core.js?v=78967719';
+import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=78967719';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
 const LYRICS_DB_NAME = 'fluency-playlist-lyrics';
@@ -14,7 +14,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=be86c5bc';
+const SPOTIFY_MODULE = './spotify.js?v=78967719';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
@@ -863,6 +863,13 @@ function activatePlaylistLiveStudy(language) {
     window.invalidatePreparedSetupVocabulary?.();
     window.invalidateLyricsSourceCaches?.(language);
     window.resetActiveArtist?.();
+    // Artist routes replace the language config at boot. Live decks use the
+    // Speech inventory, including its definition shards and reference links.
+    const speechConfig = window._normalModeLangConfigs?.[language];
+    if (speechConfig && typeof config !== 'undefined') {
+        config.languages[language] = { ...speechConfig };
+    }
+    window.clearActiveExamplesData?.();
     const liveTab = document.querySelector(`.lang-tab[data-lang="${CSS.escape(language)}"]`);
     if (liveTab && !liveTab.disabled) {
         liveTab.click();

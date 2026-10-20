@@ -3,8 +3,8 @@
 // vocabulary in the same browser, with no coverage gate or separate setup.
 // The filtered vocabulary snapshot supplies the active songs and original IDs.
 // Each supplementary word has one home even when it also resembles a cognate.
-import './state.js?v=be86c5bc';
-import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=be86c5bc';
+import './state.js?v=78967719';
+import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=78967719';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -681,7 +681,7 @@ function hydrateExtrasTranslations(listEl, entries) {
             const item = pending.get(row.getAttribute('data-extras-id') || '');
             if (!item) continue;
             pairs.push([row, item]);
-            const rank = Number(item.rank);
+            const rank = Number(item.sourceRank || item.rank);
             if (Number.isFinite(rank)) ranks.push(rank);
         }
         if (!ranks.length) return;
@@ -691,7 +691,8 @@ function hydrateExtrasTranslations(listEl, entries) {
             return;
         }
         for (const [row, item] of pairs) {
-            if (fill(row, item)) pending.delete(String(item.id));
+            const hydrated = g().playlistLiveActive?.() ? g().refreshPlaylistLiveEntry(item) : item;
+            if (fill(row, hydrated)) pending.delete(String(item.id));
         }
     };
 
@@ -1162,11 +1163,12 @@ function markWord(sentence, word) {
 // may need fetching. popupFoundWord reads the same two sources.
 async function previewExample(item) {
     const langConfig = { ...(g().config?.languages?.[g().selectedLanguage] || {}), ...(g().activeArtist || {}) };
-    const rank = Number(item.rank) || 1;
+    const rank = Number(item.sourceRank || item.rank) || 1;
     if (!firstTranslation(item) && g().ensureIndexRowsForRange) {
         try { await g().ensureIndexRowsForRange(langConfig, rank, rank + 1, [rank]); } catch (_) {}
     }
-    if (langConfig.examplesPath && g().ensureExamplesForRange) {
+    if (g().playlistLiveActive?.()) item = g().refreshPlaylistLiveEntry(item);
+    if (!g().playlistLiveActive?.() && langConfig.examplesPath && g().ensureExamplesForRange) {
         try { await g().ensureExamplesForRange(langConfig, rank, rank + 1); } catch (_) {}
     }
     const stored = g()._cachedExamplesData?.[item.id];

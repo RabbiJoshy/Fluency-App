@@ -1,13 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=be86c5bc';
-import { readJsonWithTimeout } from './read-request.js?v=be86c5bc';
-import { validateVocabularyIndex } from './data-contracts.js?v=be86c5bc';
-import { formatRoute } from './routes.js?v=be86c5bc';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=be86c5bc';
-import { releaseUrl } from './release-host.js?v=be86c5bc';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=be86c5bc';
+import './state.js?v=78967719';
+import { readJsonWithTimeout } from './read-request.js?v=78967719';
+import { validateVocabularyIndex } from './data-contracts.js?v=78967719';
+import { formatRoute } from './routes.js?v=78967719';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=78967719';
+import { releaseUrl } from './release-host.js?v=78967719';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=78967719';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -3322,19 +3322,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
         const ranks = filteredData.map(item => Number(item.sourceRank || item.rank));
         if (!activeArtist) {
             await ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks);
-            if (window.playlistLiveActive?.() && window._cachedJoinedIndex) {
-                const byId = new Map(window._cachedJoinedIndex.map(c => [c.id, c]));
-                for (const item of filteredData) {
-                    const cached = byId.get(item.id);
-                    if (cached && cached.meanings && cached.meanings.length && (!item.meanings || !item.meanings.length || item.meanings[0].unassigned)) {
-                        const existingExamples = item.meanings?.[0]?.examples || [];
-                        item.meanings = cached.meanings.map(m => ({
-                            ...m,
-                            examples: [...existingExamples, ...(m.examples || [])]
-                        }));
-                        if (cached.pos && !item.pos) item.pos = cached.pos;
-                    }
-                }
+            if (window.playlistLiveActive?.()) {
+                filteredData = filteredData.map(item => window.refreshPlaylistLiveEntry(item));
             }
         }
         filteredData = filteredData.filter(item => {

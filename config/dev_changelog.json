@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T22:09:02+01:00",
+      "date": "2026-10-20 22:09 BST",
+      "agent": "Claude",
+      "summary": "Home: level tiles once you've started two levels; desktop Learn/Practise start at the top; About in the sidebar; dictionary logos fill their circles",
+      "detail": [
+        "Learn: after you've started two levels, a row of tiles (levels started + the next one, up to 8, sliding) with a mini progress bar each replaces the ‹ › stepper arrows. One level started: unchanged stepper.",
+        "Desktop (1360px+): Learn keeps the level beside its examples and progress; the Learn/Practise pair is capped at 1140px and starts near the top instead of being centred in the window.",
+        "Desktop sidebar: new About item opens the About page.",
+        "Card back: the site logos in the Dictionary sheet fill their circle instead of sitting inside it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T21:20:07+01:00",
       "date": "2026-10-20 21:20 BST",
       "agent": "Claude",
@@ -353,19 +366,6 @@
         "For every language except Spanish, Music (artists, your songs, live playlists) is greyed out with \"Coming soon\", in the home cards, the vocabulary switcher, the desktop menu and Extra's lyrics card. The Spotify footer is hidden there too.",
         "The admin account (SafariMS) still sees Music in every language. Other accounts, Joshua and JP included, don't.",
         "The admin-only SpanishDict tile on the card back is now labelled Admin."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T20:59:05+01:00",
-      "date": "2026-10-19 20:59 BST",
-      "agent": "Claude",
-      "summary": "Card back: the bottom tool row is one tidy set of equal tiles",
-      "detail": [
-        "The tiles under the card back (Rare uses, Pin meaning, Synonyms, Conjugate, Dictionary) now share the row equally, with one icon size and line weight, and no separators.",
-        "Rare uses draws the same three-bar meter as the sense row, with one bar lit; its count is a small pill beside it.",
-        "Conjugate keeps its endings, restyled as -ar / -er / -ir.",
-        "Look up is now Dictionary, with a globe icon. Pin meaning(s) is now Pin meaning (tutorial updated to match)."
       ],
       "commit": "pending"
     }

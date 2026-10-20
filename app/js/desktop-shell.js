@@ -7,7 +7,7 @@ const PAGE_IDS = [
     'extraModal',
 ];
 const NAV_IDS = ['desktopStudyBtn', 'desktopExploreBtn', 'topBarProgressBtn',
-    'topBarGearBtn', 'topBarUserName', 'helpBtn'];
+    'topBarGearBtn', 'topBarUserName', 'helpBtn', 'desktopAboutBtn'];
 
 // The trail: language, then vocabulary, then (for Music) the artist or playlist,
 // stacked under one another in the sidebar. Each chip opens the choices at its
@@ -398,6 +398,9 @@ function initDesktopShell() {
     }
     document.getElementById('desktopStudyBtn')?.addEventListener('click', () => {
         refresh();
+    });
+    document.getElementById('desktopAboutBtn')?.addEventListener('click', () => {
+        window.openAboutProjectModal?.();
     });
     const observer = new MutationObserver(refresh);
     observer.observe(setup, { attributes: true, attributeFilter: ['class'] });

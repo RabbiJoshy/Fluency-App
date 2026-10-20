@@ -8,9 +8,9 @@ body.desktop-workspace > .container {
     padding: 28px 32px;
 }
 body.desktop-workspace #setupPanel { width: 100%; max-width: 1140px; margin: 0 auto; }
-/* Learn + Practise sit in the middle of the screen, not pinned to the top
-   with an empty band below; a panel taller than the window still starts at the top. */
-body.desktop-workspace #setupPanel:has(> #step2:not([style*="none"])) { margin-block: auto; }
+/* Learn + Practise start near the top like any page; centred in the window
+   they read as a dialog floating over an empty screen. */
+body.desktop-workspace #setupPanel:has(> #step2:not([style*="none"])) { margin-top: 4vh; }
 body.desktop-workspace #topBar {
     position: fixed;
     inset: 0 auto 0 0;
@@ -69,6 +69,7 @@ body.desktop-workspace #desktopStudyBtn { order: 1; }
 body.desktop-workspace #desktopExploreBtn { order: 2; }
 body.desktop-workspace #topBar #helpBtn { order: 3; }
 body.desktop-workspace #topBarProgressBtn { order: 4; }
+body.desktop-workspace #desktopAboutBtn { order: 4; }
 body.desktop-workspace #topBarGearBtn { order: 5; margin-top: auto; }
 body.desktop-workspace #topBar #topBarUserName { order: 6; border-top: 1px solid var(--border-color); border-radius: 0; padding-top: 16px; }
 body.desktop-workspace #topBarUserName.is-icon { width: 100%; justify-content: flex-start; padding: 12px; }
