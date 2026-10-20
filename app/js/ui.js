@@ -3247,7 +3247,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 <button class="home-practise-browse" type="button" id="openReviewHomeBtn">Browse all <span aria-hidden="true">›</span></button>
             </div>
             <div class="home-section-footer">
-                ${globalTotal > 0 ? '<p class="home-footer-hint">Mistakes first, then due words</p>' : ''}
+                ${globalTotal > 0 ? '<p class="home-footer-hint">Mistakes first, then words to review</p>' : ''}
                 ${homeCta(lengthChip(globalTotal, 'practice'), 'id="quickReviewBtn"',
                     globalTotal > 0 ? `Practise<span class="home-cta-count"> · ${practiseCount.toLocaleString()}</span>` : 'Practise', globalTotal === 0)}
             </div>`;

@@ -1281,4 +1281,22 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     #setupPanel #reviewDeckSection .home-section-footer { padding: 12px 3.5vw 5vh; }
     .home-practise { padding: 3vh 3vw; align-content: center; }
     #setupPanel #step2 .home-level-readout strong { font-size: clamp(72px, 6.5vw, 128px); }
+
+    /* Icon beside the title, the ? in the column's top-right corner, and no
+       rules: the columns themselves are the separation. */
+    #setupPanel .home-section > .step-header { border-bottom: 0; }
+    #setupPanel .home-section > .step-header .step-title-trigger { display: inline-flex; align-items: center; gap: 0.5em; }
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child { position: static; width: 0.85em; height: 0.85em; }
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-help { position: absolute; top: calc(4vh + 4px); right: 3vw; width: 30px; height: 30px; }
+    #setupPanel .home-section-footer { border-top: 0; }
+    .home-practise-rows { border-top: 0; }
+
+    /* The level reads without its plate; its words, coverage and bar get more
+       of the row and sit centred. */
+    #setupPanel #step2 .home-level-readout { background: transparent; padding: 0; }
+    #setupPanel #step2 .level-choosing { grid-template-columns: minmax(0, 1.3fr) minmax(0, 3fr); }
+    #setupPanel #step2 #lswExamples { justify-content: center; align-items: center; text-align: center; padding: 0 1vw; }
+    #setupPanel #step2 #lswExamples .lsw-egs .lsw-coverage-inline { white-space: normal; }
+    #setupPanel #step2 .home-level-progress { padding: 0 1vw; }
+    #setupPanel #step2 .home-level-stats { justify-content: center; }
 }
