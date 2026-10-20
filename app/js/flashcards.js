@@ -1056,27 +1056,77 @@ function abbreviateInlineFrames(root) {
     while (walker.nextNode()) {
         if (walker.currentNode.textContent.includes('+')) nodes.push(walker.currentNode);
     }
+    const any = new RegExp(INLINE_FRAME_ABBREVIATIONS.map(([pattern]) => pattern.source).join('|'), 'giu');
     nodes.forEach(node => {
-        let text = node.textContent;
-        INLINE_FRAME_ABBREVIATIONS.forEach(([pattern, short]) => { text = text.replace(pattern, short); });
-        if (text !== node.textContent) node.textContent = text;
+        const text = node.textContent;
+        if (!any.test(text)) return;
+        any.lastIndex = 0;
+        // Inside a grammar cue the whole cue is the tap target.
+        const inCue = node.parentElement?.closest('.sense-grammar-cue');
+        const parts = document.createDocumentFragment();
+        let at = 0;
+        for (const match of text.matchAll(any)) {
+            parts.append(text.slice(at, match.index));
+            const short = INLINE_FRAME_ABBREVIATIONS.find(([pattern]) => new RegExp(pattern.source, 'iu').test(match[0]))[1];
+            if (inCue) parts.append(short);
+            else {
+                const abbr = document.createElement('span');
+                abbr.className = 'sense-abbr';
+                abbr.dataset.full = match[0].replace(/\s+/g, ' ');
+                abbr.textContent = short;
+                parts.append(abbr);
+            }
+            at = match.index + match[0].length;
+        }
+        parts.append(text.slice(at));
+        node.replaceWith(parts);
+    });
+    // A grammar cue's own description is its full wording.
+    root.querySelectorAll('.sense-grammar-cue .sense-metadata-detail[title]').forEach(detail => {
+        detail.classList.add('sense-abbr');
+        detail.dataset.full = detail.title.replace(/^[a-z ]+:\s*/iu, '');
+        detail.removeAttribute('title');
     });
 }
+
+// On the active row an abbreviation shows what it stands for; on any other
+// row the tap selects the row as before.
+function showSenseAbbreviation(abbr) {
+    document.querySelector('.sense-abbr-tip')?.remove();
+    const tip = document.createElement('div');
+    tip.className = 'sense-abbr-tip';
+    const text = abbr.dataset.full || '';
+    tip.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
+    document.body.append(tip);
+    const at = abbr.getBoundingClientRect();
+    const width = tip.offsetWidth;
+    const left = Math.min(Math.max(8, at.left + at.width / 2 - width / 2), window.innerWidth - width - 8);
+    tip.style.left = `${left}px`;
+    tip.style.top = `${Math.max(8, at.top - tip.offsetHeight - 8)}px`;
+    const close = () => { tip.remove(); document.removeEventListener('pointerdown', close, true); window.removeEventListener('scroll', close, true); };
+    setTimeout(() => {
+        document.addEventListener('pointerdown', close, true);
+        window.addEventListener('scroll', close, true);
+    });
+}
+document.addEventListener('click', event => {
+    const abbr = event.target.closest?.('.inline-sense-rows .sense-abbr');
+    if (!abbr || !abbr.closest('.meaning-row:is(.selected, .is-current-sense)')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    showSenseAbbreviation(abbr);
+}, true);
 
 function inlineRowInformation(scroll) {
     scroll.querySelectorAll('.meaning-row').forEach(row => {
         const button = row.querySelector(':scope > .sense-note-trigger');
         if (button) {
             const template = button.nextElementSibling?.matches('.sense-note-template') ? button.nextElementSibling : null;
-            const host = row.querySelector(':scope > .meaning-row-body .group-card-shared')
-                || row.querySelector(':scope > .meaning-row-body');
-            if (host) {
-                const slot = document.createElement('span');
-                slot.className = 'sense-inline-info';
-                slot.append(button);
-                if (template) slot.append(template);
-                host.append(slot);
-            }
+            const slot = document.createElement('span');
+            slot.className = 'sense-inline-info';
+            slot.append(button);
+            if (template) slot.append(template);
+            row.append(slot);
         }
         // A sub-sense's own note follows that sub-sense's words.
         row.querySelectorAll(':scope > .sense-cell-information').forEach(info => {
@@ -1085,7 +1135,7 @@ function inlineRowInformation(scroll) {
             const slot = document.createElement('span');
             slot.className = 'sense-inline-info';
             slot.append(...info.childNodes);
-            (cell.querySelector('.meaning-context-cell') || cell).append(slot);
+            cell.append(slot);
             cell.classList.remove('has-cell-information');
             info.remove();
         });
@@ -1145,10 +1195,10 @@ function hoistSharedRowText(scroll, card) {
             });
             lone.classList.add('has-hoisted-shared-cell');
             // The shared note stays reachable: it follows the active sub-sense.
-            const info = loneShared.querySelector('.sense-inline-info');
+            const info = lone.querySelector(':scope > .sense-inline-info');
             const cell = lone.querySelector('.group-card-varying-cell.is-active-subsense')
                 || lone.querySelector('.group-card-varying-cell');
-            if (info && cell) (cell.querySelector('.meaning-context-cell') || cell).append(info);
+            if (info && cell && !cell.querySelector(':scope > .sense-inline-info')) cell.append(info);
         }
         if (!pieces.length && (rows.length < 2 || !rows.every(row => row.matches('.meaning-row-regular')))) return;
         const gloss = sharedRowText(rows, '.meaning-row-gloss');
@@ -1219,34 +1269,53 @@ function groupInlineTranslation(scroll) {
     });
 }
 
-// The "i" is glued to the last word before it, so it can never wrap onto a
-// line of its own.
-function glueInlineInfo(scroll) {
-    scroll.querySelectorAll('.sense-inline-info').forEach(slot => {
-        if (slot.parentElement?.classList.contains('sense-inline-tail')) return;
-        const box = slot.closest('.sense-inline-line, .meaning-context-cell, .group-card-shared, .group-card-varying-cell');
-        if (!box) return;
-        const row = box.closest('.meaning-row');
-        const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
-        let last = null;
-        while (walker.nextNode()) {
-            const node = walker.currentNode;
-            if (!node.textContent.trim() || slot.contains(node)) continue;
-            if (!(node.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING)) continue;
-            const parent = node.parentElement;
-            if (parent.closest('.is-hoisted, .sense-note-template')) continue;
-            if (row?.classList.contains('has-hoisted-gloss') && parent.closest('.meaning-row-gloss')) continue;
-            last = node;
+// Labels ("informal", a region, a field) are detail: they go into the row's
+// information note, creating one when the row has none, so the row shows only
+// its words.
+function moveLabelsIntoInformation(scroll) {
+    scroll.querySelectorAll('.meaning-row .sense-metadata-list').forEach(list => {
+        const target = list.closest('.group-card-varying-cell') || list.closest('.meaning-row');
+        const labels = [...list.querySelectorAll('.sense-metadata-detail')]
+            .map(el => el.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
+        list.remove();
+        if (!labels.length || !target) return;
+        let slot = target.querySelector(':scope > .sense-inline-info');
+        if (!slot) {
+            const words = target.querySelector('.meaning-row-gloss, .group-member-gloss, .meaning-context, .group-card-shared');
+            slot = document.createElement('span');
+            slot.className = 'sense-inline-info';
+            slot.innerHTML = '<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy"></div></template>';
+            const copy = slot.querySelector('template').content.querySelector('.sense-note-copy');
+            if (words) copy.dataset.senseNoteTitle = words.textContent.replace(/\s+/g, ' ').trim();
+            target.append(slot);
         }
-        if (!last) return;
-        const text = last.textContent.replace(/\s+$/u, '');
-        const cut = text.search(/\S+$/u);
-        const tail = document.createElement('span');
-        tail.className = 'sense-inline-tail';
-        tail.textContent = text.slice(cut);
-        tail.append(slot);
-        last.textContent = text.slice(0, cut);
-        last.after(tail);
+        const copy = slot.querySelector('template')?.content.querySelector('.sense-note-copy');
+        if (!copy) return;
+        const known = copy.textContent.toLocaleLowerCase('en');
+        const fresh = [...new Set(labels)].filter(label => !known.includes(label.toLocaleLowerCase('en')));
+        if (!fresh.length) return;
+        const section = document.createElement('section');
+        section.className = 'sense-note-section sense-note-section--labels';
+        const p = document.createElement('p');
+        const text = fresh.join(', ');
+        p.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
+        section.append(p);
+        copy.append(section);
+    });
+}
+
+// A region flag leads the translation itself, and is shown on the active row
+// only (CSS); the row no longer reserves a lead column for it.
+function inlineRowFlags(scroll) {
+    scroll.querySelectorAll('.meaning-row-regular > .row-lead-marks').forEach(lead => {
+        const row = lead.closest('.meaning-row');
+        const tr = row.querySelector('.sense-inline-tr');
+        if (!tr) return;
+        tr.prepend(...lead.childNodes);
+        lead.remove();
+        row.classList.remove('has-row-lead', 'has-row-lead-and-info');
+        row.style.removeProperty('padding-left');
+        row.style.removeProperty('padding-right');
     });
 }
 
@@ -1279,8 +1348,9 @@ function inlineSenseRows(root, card) {
     });
     hoistSharedRowText(scroll, card);
     abbreviateInlineFrames(scroll);
+    moveLabelsIntoInformation(scroll);
     groupInlineTranslation(scroll);
-    glueInlineInfo(scroll);
+    inlineRowFlags(scroll);
     fitHoistedShared(root);
     fitInlineRows(root);
 }

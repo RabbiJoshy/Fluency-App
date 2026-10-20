@@ -26534,7 +26534,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 /* Portuguese pass (2026-10-20, Josh). Rules, not per-word fixes:
    A. a row that does not fit on one line stacks: translation line, then
       context line, both centred (fitInlineRows sets .is-stacked-row);
-   B. the "i" is glued to the last word (.sense-inline-tail);
+   B. the "i" sits at the active row's right edge (see the block below);
    C. "+ com" and register labels follow the translation (.sense-inline-tr);
    D. the head's chevron sits at the right edge, not after the words;
    E. a sub-row holding a context is styled as a context. */
@@ -26546,8 +26546,6 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     text-wrap: balance;
 }
 .meanings-scroll.inline-sense-rows .meaning-row-regular.is-stacked-row .meaning-row-sub:not(.is-hoisted, #_) { margin-top: 2px !important; }
-.meanings-scroll.inline-sense-rows .sense-inline-tail { white-space: nowrap; }
-.meanings-scroll.inline-sense-rows .sense-inline-tail > .sense-inline-info:not(#_) { margin-left: 6px; }
 .meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { white-space: nowrap; margin: 0 !important; }
 .meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue) :not(.sense-inline-info, .sense-inline-info *, #_),
 .meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { font-size: 20px !important; line-height: 1.3 !important; }
@@ -26580,3 +26578,42 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     white-space: normal !important;
     overflow: visible !important;
 }
+
+/* Info, flags and abbreviations (2026-10-20, Josh). The "i" mirrors the
+   meter: right edge of the active row (or of a sub-row), vertically centred,
+   and absent on other rows, which reserve nothing for it. Labels live in the
+   note; a region flag leads the translation on the active row only. */
+.meanings-scroll.inline-sense-rows .meaning-row,
+.meanings-scroll.inline-sense-rows .group-card-varying-cell { position: relative; }
+.meanings-scroll.inline-sense-rows :is(.meaning-row, .group-card-varying-cell) > .sense-inline-info:not(#_) {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    display: inline-flex;
+    z-index: 1;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group > .sense-inline-info:not(#_) { top: 5px; transform: none; }
+.meanings-scroll.inline-sense-rows .meaning-row:not(.selected, .is-current-sense) .sense-inline-info:not(#_) { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row:is(.selected, .is-current-sense):has(> .sense-inline-info):not(.has-hoisted-shared-cell, #_) { padding-right: 36px !important; }
+.meanings-scroll.inline-sense-rows .meaning-row:is(.selected, .is-current-sense) .sense-cue-group > .group-card-varying-cell:has(> .sense-inline-info):not(#_) { padding-left: 34px !important; padding-right: 34px !important; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-region-flag { margin-right: 6px; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-region-flag .flag-img { height: 0.85em; width: auto; vertical-align: -0.05em; }
+.meanings-scroll.inline-sense-rows .meaning-row:not(.selected, .is-current-sense) .sense-region-flag { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row:is(.selected, .is-current-sense) .sense-abbr { cursor: pointer; }
+.sense-abbr-tip {
+    position: fixed;
+    z-index: 10000;
+    max-width: min(320px, calc(100vw - 16px));
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: var(--bg-card, #1a1e27);
+    color: var(--text-primary, #fff);
+    border: 1px solid color-mix(in srgb, var(--text-primary, #fff) 18%, transparent);
+    font-size: 15px;
+    line-height: 1.35;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+}
+

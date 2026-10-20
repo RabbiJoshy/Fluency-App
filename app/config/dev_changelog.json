@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T19:47:19+01:00",
+      "date": "2026-10-20 19:47 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): info icon at the active row's right edge; labels moved into the note; tappable abbreviations",
+      "detail": [
+        "The 'i' sits at the right edge of the active row, vertically centred, mirroring the meter; other rows show none and reserve no space (mal, não, conta).",
+        "Labels such as 'informal' leave the row and appear in its information note; a row with labels but no note gets one (cara).",
+        "Region flags lead the translation and show on the active row only (cara's Brazil flag).",
+        "Abbreviations are tappable on the active row, with no extra styling: tapping '+ger' on passar shows 'With direct object an amount of time and gerund doing something'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T19:35:14+01:00",
       "date": "2026-10-20 19:35 BST",
       "agent": "Claude",
@@ -347,17 +360,6 @@
       "summary": "Desktop: Learn and Practise titles are centred headings over their own rule",
       "detail": [
         "On desktop each section's title is centred with a divider line beneath it, so the two panels read as equal and separate. Phones are unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T17:10:00+01:00",
-      "date": "2026-10-19 17:10 BST",
-      "agent": "Claude",
-      "summary": "Learn sheet: same yellow as the progress bar; estimate box moved above the legend",
-      "detail": [
-        "Seen/Known/Estimated/Skipped colours are now defined once for the whole home screen, so the Learn sheet and the folded Learn row match the bar and the level-progress sheet.",
-        "\"Not sure where to start?\" now sits above \"Your progress bar\" in the Learn sheet."
       ],
       "commit": "pending"
     }
