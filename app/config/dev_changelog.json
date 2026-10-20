@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T20:57:03+01:00",
+      "date": "2026-10-20 20:57 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip row is now the same height as the Learn/Practise button",
+      "detail": [
+        "Smart Skip row: 56px on phones and 62px from 1024px wide, matching the button beside it (it was 54px and 60px)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T20:40:00+01:00",
       "date": "2026-10-20 20:40 BST",
       "agent": "Claude",
@@ -353,17 +363,6 @@
       "detail": [
         "Learn and Practise titles sit in their own band with a thin rule beneath, as on desktop, folded or open. The corner icon is centred in that band, so it is level with the title and the same distance from the top and left.",
         "The level legend and the level-estimate line are centred."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T12:30:00+01:00",
-      "date": "2026-10-20 12:30 BST",
-      "agent": "Claude",
-      "summary": "Level legend fits one line; level-estimate words get their own line",
-      "detail": [
-        "The New / Seen / Known / Skipped legend now shrinks its text (down to 11px) to stay on one line instead of wrapping or overflowing, and refits when a section opens or the window changes.",
-        "Words skipped by a level estimate are no longer a legend item; a line beneath reads \"N skipped by your level estimate\" with the purple dot. The purple segment stays in the bar."
       ],
       "commit": "pending"
     }

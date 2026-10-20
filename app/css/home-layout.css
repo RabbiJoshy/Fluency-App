@@ -1100,12 +1100,12 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     #setupPanel #step2 .home-section-footer > #setupOptions { flex: none; width: 100%; }
 }
 
-/* Smart Skip row: closer to the button's size, with a switch that is easy to hit. */
-.home-smart-skip { min-height: 54px; padding: 8px 10px 8px 14px; border-radius: 12px; gap: 10px; }
+/* Smart Skip row: the same height as the .home-cta button beside it (56px, 62px from 1024px), with a switch that is easy to hit. */
+.home-smart-skip { min-height: 56px; padding: 8px 10px 8px 14px; border-radius: 12px; gap: 10px; }
 .home-switch { width: 54px; height: 32px; border-radius: 16px; }
 .home-switch-knob { top: 3px; left: 3px; width: 26px; height: 26px; }
 .home-switch[aria-checked="true"] .home-switch-knob { transform: translateX(22px); }
-@media (min-width: 1024px) { .home-smart-skip { min-height: 60px; } }
+@media (min-width: 1024px) { .home-smart-skip { min-height: 62px; } }
 
 /* Phones: lift the bottom bar clear of rounded screen corners and the home bar. */
 @media (max-width: 767px) {
