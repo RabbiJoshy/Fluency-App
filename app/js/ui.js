@@ -3231,8 +3231,11 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     <div class="home-practise-bar" aria-hidden="true">${peekBar}</div></div>
                 <div class="home-practise-rows">
                     ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
-                    ${dueCount > 0 ? row('due', 'Due for review', dueCount) : ''}
+                    ${dueCount > 0 ? row('due', 'Time to review', dueCount) : ''}
                 </div>`;
+        } else if (typeof progressData === 'undefined' || !progressData || Object.keys(progressData).length === 0) {
+            // Nothing answered yet: "All caught up" would mean nothing to them.
+            body = `<div class="home-practise-total is-empty"><strong>Nothing to practise yet</strong><span>When you miss a word, it comes back here. Words you get right come back too, a few days later, so they stick.</span></div>`;
         } else {
             const empty = !srsOn
                 ? 'Review schedule paused: only mistakes come back.'

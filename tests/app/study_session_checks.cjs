@@ -87,6 +87,7 @@ const {createHarness} = require('./estimation_harness.cjs');
         _levelRankAccessor:()=>item=>item.stableRank,buildStableSetRanges:h.buildStableSetRanges,
         getSetupLearningState:item=>stateOf(item),
         renderHomeLevelTiles:()=>{},
+        progressData:{answered:{}},
         setActiveSetupStep(){},renderSetupExtrasSection(){},startSelectedStudySession(){},
     };
     // buildStableSetRanges is provided by ui.js, not the estimation harness's defaults.

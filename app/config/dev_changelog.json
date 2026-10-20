@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T22:38:04+01:00",
+      "date": "2026-10-20 22:38 BST",
+      "agent": "Claude",
+      "summary": "Desktop home fills the screen without boxes; clearer Practise wording for first-time users",
+      "detail": [
+        "Desktop (1360px+): Learn and Practise are two full-height columns beside the sidebar, split by one line (Practise on a slightly darker ground); title on top, content centred, buttons at the bottom; bigger level number.",
+        "Practise, nothing answered yet: 'Nothing to practise yet — When you miss a word, it comes back here. Words you get right come back too, a few days later, so they stick.' (was 'All caught up').",
+        "Practise row 'Due for review' is now 'Time to review'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T22:22:53+01:00",
       "date": "2026-10-20 22:22 BST",
       "agent": "Claude",
@@ -355,16 +367,6 @@
         "Contractions read \"del (de + el)\" on one line, the parts smaller and centred on the word; the \"Function word · Example patterns\" label is gone.",
         "Each pattern is one row: the pattern, with its plain meaning beneath (\"Of / from the\"). The active row is fully outlined in the word's colour.",
         "The word is tinted the same colour in the pattern and the example sentence (contraction orange; otherwise its part of speech). The heading stays white."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:30:51+01:00",
-      "date": "2026-10-19 21:30 BST",
-      "agent": "Claude",
-      "summary": "Session length \"No limit\" is now \"All\"",
-      "detail": [
-        "The session-length chip on the Learn and Practise buttons reads 5 min, 10 min or All, so it fits on desktop. Screen readers still hear \"no time limit\"."
       ],
       "commit": "pending"
     }
