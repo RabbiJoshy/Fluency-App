@@ -1673,6 +1673,7 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
     overlay.appendChild(panel);
     document.body.appendChild(overlay);
     if (dock) window.sideDock?.placeById?.(id);
+    if (variant === 'grid') fitChoiceSheetLabels(body);
     requestAnimationFrame(() => overlay.classList.add('is-open'));
 
     close.addEventListener('click', () => closeChoiceSheet(id));
@@ -1684,6 +1685,19 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
     };
     document.addEventListener('keydown', overlay._choiceSheetKeyHandler);
     requestAnimationFrame(() => body.querySelector('button:not(:disabled)')?.focus());
+}
+
+// A name in a grid tile (e.g. "Portuguese" on a phone) that does not fit its
+// tile shrinks, down to 10px, instead of breaking across two lines.
+function fitChoiceSheetLabels(body) {
+    body.querySelectorAll('.choice-sheet-copy strong').forEach(el => {
+        el.style.fontSize = '';
+        let size = parseFloat(getComputedStyle(el).fontSize) || 16;
+        while (el.scrollWidth > el.clientWidth + 1 && size > 10) {
+            size -= 0.5;
+            el.style.fontSize = size + 'px';
+        }
+    });
 }
 
 function closeChoiceSheet(id, immediate = false) {

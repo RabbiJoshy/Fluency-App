@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T20:40:00+01:00",
+      "date": "2026-10-20 20:40 BST",
+      "agent": "Claude",
+      "summary": "Level page type tidied; Learn/Practise button text centred in its own half; Portuguese fits the phone language picker",
+      "detail": [
+        "Learn/Practise card: title, level number, 'Level' and 'Words' lines now use one type scale derived from the page text size, with the emphasis font for the title and number; 'Words 101–200' no longer wraps.",
+        "Learn / Practise button: the label is centred in the half beside the time chip, not across the whole button (phones and wide screens).",
+        "Language picker: a name too long for its tile (Portuguese on a phone) shrinks to fit on one line."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T20:29:20+01:00",
       "date": "2026-10-20 20:29 BST",
       "agent": "Claude",
@@ -352,17 +364,6 @@
       "detail": [
         "The New / Seen / Known / Skipped legend now shrinks its text (down to 11px) to stay on one line instead of wrapping or overflowing, and refits when a section opens or the window changes.",
         "Words skipped by a level estimate are no longer a legend item; a line beneath reads \"N skipped by your level estimate\" with the purple dot. The purple segment stays in the bar."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T11:40:00+01:00",
-      "date": "2026-10-20 11:40 BST",
-      "agent": "Claude",
-      "summary": "Bigger Smart Skip row and switch; phone bottom bar lifted off rounded corners",
-      "detail": [
-        "The Smart Skip row is taller (54px, 60px on desktop) and its switch is 54x32 instead of 40x24.",
-        "On phones the bottom bar (Smart Skip + Learn/Practise) has more padding underneath and at the sides so it clears rounded screen corners."
       ],
       "commit": "pending"
     }

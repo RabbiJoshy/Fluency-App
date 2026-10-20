@@ -13809,6 +13809,10 @@
             gap: 8px;
             padding: 10px;
         }
+        .choice-sheet-grid .choice-sheet-copy strong {
+            overflow-wrap: normal;
+            white-space: nowrap;
+        }
         .choice-sheet-grid .choice-sheet-icon {
             width: 42px;
             height: 42px;

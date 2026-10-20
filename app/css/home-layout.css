@@ -5,6 +5,8 @@
 /* Dark-theme surfaces for this screen come from css/black-palette.css. One
    text size (16px phones, 21px from 1024px, 23px from 1440px). */
 #setupPanel, #topBar { --home-text: 16px; }
+/* Type scale for the level picker: every size is a multiple of --home-text. */
+#setupPanel { --home-text-small: calc(var(--home-text) * 0.85); --home-title: calc(var(--home-text) * 1.25); --home-number: calc(var(--home-text) * 2.4); }
 @media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 21px; } }
 @media (min-width: 1440px) { #setupPanel, #topBar { --home-text: 23px; } }
 
@@ -50,7 +52,8 @@
 #setupPanel .home-section > .step-header > .step-number { display: none; }
 #setupPanel .home-section > .step-header > .step-title-trigger {
     margin: 0;
-    font-size: 20px;
+    font-family: var(--font-emphasis);
+    font-size: var(--home-title);
     justify-self: start;
 }
 /* Learn (seedling) and Practise (history clock): white line icons by the
@@ -192,9 +195,9 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
     align-items: center;
     line-height: 1.15;
 }
-.home-level-eyebrow { color: var(--text-muted); font-size: var(--home-text); }
-.home-level-readout strong { font-size: 38px; font-weight: 700; color: var(--text-primary); }
-.home-level-words { color: var(--text-muted); font-size: var(--home-text); }
+.home-level-eyebrow { color: var(--text-muted); font-size: var(--home-text-small); }
+.home-level-readout strong { font-family: var(--font-emphasis); font-size: var(--home-number); font-weight: 700; color: var(--text-primary); }
+.home-level-words { color: var(--text-muted); font-size: var(--home-text-small); white-space: nowrap; }
 #setupPanel #lswExamples {
     margin: 8px 0 0;
     padding: 0;
@@ -436,9 +439,6 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
         background: var(--bg-primary);
         box-shadow: none;
     }
-    .home-cta { position: relative; }
-    .home-cta-length { position: relative; z-index: 1; }
-    .home-cta-main { position: absolute; inset: 0; padding: 0 16px; }
     /* Room so the last card never sits under the bar. */
     #setupPanel[data-home-open] { padding-bottom: calc(130px + env(safe-area-inset-bottom)); }
 }
@@ -542,9 +542,6 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel #step2 .home-level-stats { margin-top: 1.6vh; font-size: var(--home-text); gap: 6px 1.4vw; }
     .home-level-stepper { max-width: none; gap: 2vw; }
     .home-level-step { width: clamp(48px, 4.4vw, 70px); height: clamp(48px, 4.4vw, 70px); font-size: clamp(32px, 2.9vw, 46px); }
-    .home-level-eyebrow { font-size: clamp(15px, 1.2vw, 19px); }
-    .home-level-readout strong { font-size: clamp(44px, 4.2vw, 68px); }
-    .home-level-words { font-size: var(--home-text); }
     #setupPanel #lswExamples,
     #setupPanel #lswExamples .lsw-egs,
     #setupPanel #lswExamples .lsw-egs * { font-size: var(--home-text); }
@@ -1158,12 +1155,9 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 .home-cta-length::before { flex: none; }
 
 @media (min-width: 1360px) {
-    /* Wider Practise column, and the button text is centred on the whole button
-       (chip included), as it is on phones. */
+    /* Wider Practise column. The button text is centred in its own half, beside the time chip. */
     body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]) { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
-    .home-cta { position: relative; }
-    .home-cta-length { position: relative; z-index: 1; }
-    .home-cta-main { position: absolute; inset: 0; flex: none; padding: 0 1vw; }
+    .home-cta-main { flex: 1; padding: 0 1vw; }
 }
 
 /* Music closed for this language (ui.js musicOpenFor): no Spotify footer. */
