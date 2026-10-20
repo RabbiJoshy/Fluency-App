@@ -6,7 +6,7 @@
    text size (16px phones, 21px from 1024px, 23px from 1440px). */
 #setupPanel, #topBar { --home-text: 16px; }
 /* Type scale for the level picker: every size is a multiple of --home-text. */
-#setupPanel { --home-text-small: calc(var(--home-text) * 0.85); --home-title: calc(var(--home-text) * 1.25); --home-number: calc(var(--home-text) * 2.4); }
+#setupPanel { --home-text-small: calc(var(--home-text) * 0.85); --home-title: calc(var(--home-text) * 1.25); --home-number: calc(var(--home-text) * 3); }
 @media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 21px; } }
 @media (min-width: 1440px) { #setupPanel, #topBar { --home-text: 23px; } }
 
@@ -1166,6 +1166,16 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 #step1 #standardSourceCard .choice-sheet-item:disabled .choice-sheet-copy small { display: block !important; grid-area: 2 / 1 / auto / -1; margin-top: 6px; text-align: left; color: var(--text-muted); }
 
 /* The coverage figure beside the example words is for wider screens; on phones the line stays short. */
-@media (max-width: 767px) { #setupPanel .lsw-coverage-inline { display: none; } }
+@media (max-width: 767px) { #setupPanel #lswExamples .lsw-egs .lsw-coverage-inline { display: none; } }
 /* The coverage figure sits on its own line under the example words. */
-#setupPanel #lswExamples .lsw-egs .lsw-coverage-inline { display: block; }
+@media (min-width: 768px) { #setupPanel #lswExamples .lsw-egs .lsw-coverage-inline { display: block; } }
+
+/* The level is the point of this card: bigger arrows and number, on a shaded plate. */
+.home-level-readout {
+    padding: 8px 16px 10px;
+    border-radius: 16px;
+    background: var(--bg-tertiary);
+}
+.home-level-stepper { gap: 6px; justify-content: center; }
+.home-level-step { flex: none; width: 46px; height: 46px; font-size: 34px; color: var(--text-secondary); }
+@media (min-width: 1360px) { .home-level-step { width: 56px; height: 56px; font-size: 40px; } }

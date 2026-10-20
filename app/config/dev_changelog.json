@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T21:11:29+01:00",
+      "date": "2026-10-20 21:11 BST",
+      "agent": "Claude",
+      "summary": "Level picker: bigger arrows and level number on a shaded plate (trial); coverage line properly hidden on phones",
+      "detail": [
+        "Level picker: the level number is ~25% larger and sits on a shaded rounded plate, with larger arrows either side, so the level reads as the focus of the Learn card.",
+        "Fix: the coverage line ('Levels 1–2 make up …') was still showing on phones; it is now desktop-only as intended."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T21:08:14+01:00",
       "date": "2026-10-20 21:08 BST",
       "agent": "Claude",
@@ -352,18 +363,6 @@
       "summary": "Desktop loading screen is bigger: larger picture, spinner and text",
       "detail": [
         "On desktop the \"Preparing your…\" loading screen now uses a larger crest/flag, a larger spinner, and bigger title and sub-text (phones unchanged)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T14:20:00+01:00",
-      "date": "2026-10-20 14:20 BST",
-      "agent": "Claude",
-      "summary": "Level switching no longer makes the Learn box bounce; centred button text; roomier Practise",
-      "detail": [
-        "Stepping through levels no longer grows and shrinks the Learn box: the example-words line now keeps its height (two lines reserved, never shrinks while you step).",
-        "On wide desktop the Learn and Practise button text is centred on the whole button, timer chip included.",
-        "The timer chip keeps its shape on every button, and the Practise column is wider (Learn 60% to 60/40 becomes 1.5 : 1)."
       ],
       "commit": "pending"
     }
