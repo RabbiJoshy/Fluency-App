@@ -26388,8 +26388,6 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     background: color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
     box-shadow: none !important;
 }
-/* The whole group selected (examples from every sub-sense): all are outlined. */
-.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)) .sense-cue-group > .group-card-varying-cell,
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense {
     border: 2px solid rgb(var(--sense-match-rgb));
 }
@@ -26424,4 +26422,64 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="context"] .group-card-shared .meaning-context:not(#_) {
     font-weight: 400 !important;
     color: var(--text-secondary) !important;
+}
+/* Busy cards (has-compact-rows) lay an unselected group out side by side,
+   which overflowed left under the meter after switching senses (vamos:
+   "to go" under the meter once "to be" was chosen). Groups stay stacked. */
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-body:not(#_) {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared:not(#_) { align-self: stretch !important; }
+
+/* The whole group selected (examples from every sub-sense) with no single
+   sub-sense chosen: no row is outlined. When the card has other word types,
+   one outline goes round the group's rows so the example's word type shows. */
+.meanings-scroll.inline-sense-rows:has(.pos-collapsible ~ .pos-collapsible) .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)):not(#_) {
+    padding: 3px !important;
+    border-radius: 11px;
+    box-shadow: inset 0 0 0 2px rgb(var(--sense-match-rgb)) !important;
+}
+
+/* One size for every row: a row's line is 19px bold and the row is at least
+   44px tall, whether that line is a translation (to let, still) or a context
+   standing in for one (bom: desirable, positive, advantageous). Context that
+   follows a translation inside a row is 15px and muted. Layout, not type
+   size, tells them apart. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular:not(#_) {
+    min-height: 44px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    align-items: center;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-regular .meaning-row-gloss:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context):not(#_) {
+    font-size: 19px !important;
+    line-height: 1.3 !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-regular .meaning-row-sub:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-regular .meaning-row-sub *:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group:not(.has-hoisted-shared-cell) .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context, .sense-metadata-detail):not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="context"] .group-card-shared .meaning-context:not(#_) {
+    font-size: 15px !important;
+    line-height: 1.35 !important;
+}
+/* bom's rows are contexts standing in for the gloss: row size, not cue size. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular.has-hoisted-gloss .meaning-row-sub:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-regular.has-hoisted-gloss .meaning-row-sub *:not(#_) { font-size: 19px !important; line-height: 1.3 !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell:not(#_) {
+    display: flex !important;
+    align-items: center;
+    min-height: 44px !important;
+    padding: 6px 12px !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell:not(#_) { justify-content: flex-start !important; text-align: left !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-varying-cell :is(.meaning-context-cell, .meaning-context-cell *):not(.sense-inline-info, .sense-inline-info *, #_) {
+    font-size: 19px !important;
+    line-height: 1.3 !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
 }

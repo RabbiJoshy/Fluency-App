@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T14:54:33+01:00",
+      "date": "2026-10-20 14:54 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): rows all one size; no more outline on every sub-sense; translation no longer slides under the meter",
+      "detail": [
+        "Every row's main line is the same size (19px bold) and every row is at least 44px tall, whether it is a translation (to let, still) or a context standing in for one; context after a translation is 15px and muted (it was 12px).",
+        "Opening a card whose only word type is one group (ir: to go / indicates movement, to attend) no longer outlines every sub-sense. If the card has other word types, one outline goes round that group's rows instead.",
+        "Fixed: on cards with four or more rows, switching away from a group (vamos: choose 'to be') pushed 'to go' left under the commonness meter."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T14:41:07+01:00",
       "date": "2026-10-20 14:41 BST",
       "agent": "Claude",
@@ -343,17 +355,6 @@
       "detail": [
         "Pressing Continue with an @icloud.com, @me.com or @mac.com address stops and shows a dialog that must be dismissed (Use another email); nothing is sent.",
         "The (i) beside Practise on the home screen now opens the \"How Practise is scheduled\" sheet, which says whether spaced repetition is on or off. The old Practise info sheet is gone."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T14:40:00+01:00",
-      "date": "2026-10-19 14:40 BST",
-      "agent": "Claude",
-      "summary": "Phones: Learn and Practise titles stay put; the open section gets an accent edge",
-      "detail": [
-        "The icon and name of a folded Learn/Practise row now sit at exactly the same spot as in the open header, so nothing shifts when you swap sections.",
-        "The section you are in has a thin accent-coloured left edge and a tinted border."
       ],
       "commit": "pending"
     }
