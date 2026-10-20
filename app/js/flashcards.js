@@ -1243,7 +1243,9 @@ function fitHoistedShared(root) {
         const head = shared.closest('.pos-section-head');
         head.classList.remove('has-shared-below');
         const line = parseFloat(getComputedStyle(shared).lineHeight) || 20;
-        if (shared.getBoundingClientRect().height > line * 1.4) head.classList.add('has-shared-below');
+        // Layout height, not the on-screen box: a card still flipping is
+        // rotated in 3D, which distorts getBoundingClientRect.
+        if (shared.offsetHeight > line * 1.4) head.classList.add('has-shared-below');
     });
 }
 
@@ -1277,6 +1279,21 @@ function moveLabelsIntoInformation(scroll) {
         const target = list.closest('.group-card-varying-cell') || list.closest('.meaning-row');
         const labels = [...list.querySelectorAll('.sense-metadata-detail')]
             .map(el => el.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
+        // A row is never left blank: when its translation went up to the word
+        // type's row (cuerpo: "body" twice), a label such as "anatomy" is what
+        // tells it apart, so it stays on the row as its context.
+        const row = list.closest('.meaning-row');
+        const shows = el => !list.contains(el) && !el.closest('.is-hoisted')
+            && !(row?.classList.contains('has-hoisted-gloss') && el.closest('.meaning-row-gloss'))
+            && el.textContent.trim();
+        const blank = target && ![...target.querySelectorAll('.meaning-row-gloss, .meaning-context, .group-member-gloss, .row-adaptive-text, .sense-target-collocation, .sense-grammar-cue')].some(shows);
+        if (blank && labels.length) {
+            const keep = document.createElement('span');
+            keep.className = 'meaning-context sense-label-context';
+            keep.textContent = labels.join(', ');
+            list.replaceWith(keep);
+            return;
+        }
         list.remove();
         if (!labels.length || !target) return;
         let slot = target.querySelector(':scope > .sense-inline-info');
@@ -1304,6 +1321,31 @@ function moveLabelsIntoInformation(scroll) {
     });
 }
 
+// "often + a" is said with the translation, so it follows it — in a group's
+// sub-rows too ("to get · often + a", not "often + a to get"). When every
+// sub-row carries the same cue it is said once, on the shared line.
+function arrangeGroupCues(scroll) {
+    scroll.querySelectorAll('.meaning-row-group').forEach(row => {
+        const cells = [...row.querySelectorAll('.group-card-varying-cell')];
+        const cueOf = cell => cell.querySelector(':scope > .sense-target-collocation, :scope > .meaning-context-cell > .sense-target-collocation');
+        const cues = cells.map(cueOf);
+        const shared = row.querySelector('.group-card-shared');
+        const same = cells.length > 1 && cues.every(cue => cue && cue.textContent.trim() === cues[0].textContent.trim());
+        if (same && shared && !row.classList.contains('has-hoisted-shared-cell')) {
+            shared.append(' ', cues[0]);
+            cues.slice(1).forEach(cue => cue.remove());
+            return;
+        }
+        cells.forEach((cell, i) => {
+            const cue = cues[i];
+            if (!cue) return;
+            const words = [...cell.querySelectorAll(':scope > :is(.row-adaptive-text, .meaning-context-cell), :scope > .meaning-context-cell > :is(.meaning-context, .group-member-gloss)')]
+                .filter(el => el !== cue && !el.contains(cue) && el.textContent.trim()).pop();
+            if (words) words.after(' ', cue);
+        });
+    });
+}
+
 // A region flag leads the translation itself, and is shown on the active row
 // only (CSS); the row no longer reserves a lead column for it.
 function inlineRowFlags(scroll) {
@@ -1328,7 +1370,7 @@ function fitInlineRows(root) {
         if (!line.querySelector(':scope > .meaning-row-sub:not(.is-hoisted) .meaning-context:not(.is-hoisted)')) return;
         if (!line.getClientRects().length) return;
         const lineHeight = parseFloat(getComputedStyle(line).lineHeight) || 26;
-        if (line.getBoundingClientRect().height > lineHeight * 1.4) row.classList.add('is-stacked-row');
+        if (line.offsetHeight > lineHeight * 1.4) row.classList.add('is-stacked-row');
     });
 }
 
@@ -1350,9 +1392,15 @@ function inlineSenseRows(root, card) {
     abbreviateInlineFrames(scroll);
     moveLabelsIntoInformation(scroll);
     groupInlineTranslation(scroll);
+    arrangeGroupCues(scroll);
     inlineRowFlags(scroll);
     fitHoistedShared(root);
     fitInlineRows(root);
+    // Measured again once the card is laid out and its font has loaded: a
+    // first pass on a card still opening can see every line as wrapped.
+    const refit = () => { fitHoistedShared(root); fitInlineRows(root); };
+    requestAnimationFrame(refit);
+    document.fonts?.ready?.then(refit);
 }
 
 // A card with one sense that is not Dominant has its other uses in Rarer uses.

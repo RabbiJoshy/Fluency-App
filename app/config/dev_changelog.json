@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T20:29:20+01:00",
+      "date": "2026-10-20 20:29 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): 'often + a' aligned and set apart; no blank rows; word-type row measured after the flip",
+      "detail": [
+        "llegar: 'to come to · often + a' — the cue sits on the text's baseline, 'often' muted, with ' · ' before a cue that has a word in it (a bare '+ em' stays attached).",
+        "In a group the cue follows each translation; when every sub-row has the same cue it is shown once on the shared line ('to reach a place · often + a').",
+        "cuerpo: a row is never left blank — when its translation went up to the word-type row, its label ('anatomy') stays on the row as muted context instead of moving into the note.",
+        "The word-type row and stacked rows are measured by layout size, not the on-screen box, which the card's 3D flip distorted (cuerpo's 'body' had dropped under the pill)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T20:23:08+01:00",
       "date": "2026-10-20 20:23 BST",
       "agent": "Claude",
@@ -350,18 +363,6 @@
       "detail": [
         "The Smart Skip row is taller (54px, 60px on desktop) and its switch is 54x32 instead of 40x24.",
         "On phones the bottom bar (Smart Skip + Learn/Practise) has more padding underneath and at the sides so it clears rounded screen corners."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T11:00:00+01:00",
-      "date": "2026-10-20 11:00 BST",
-      "agent": "Claude",
-      "summary": "Wide desktop: Learn left, Practise right; larger sidebar; sidebar no longer shrinks on Smart Skip",
-      "detail": [
-        "From 1360px wide, Learn (about 60%) and Practise (about 40%) sit side by side at equal height with their buttons at the bottom. Narrower windows stay stacked.",
-        "The sidebar is wider (208 to 236px) with larger text and icons.",
-        "Smart Skip no longer switches off the page's Bigger text zoom, which is what made the sidebar shrink while it was open."
       ],
       "commit": "pending"
     }

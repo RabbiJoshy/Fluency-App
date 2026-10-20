@@ -26698,3 +26698,21 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .pos-section-head .pos-pill-lemma:not(#_) { font-weight: 600 !important; }
 /* "76% of uses of a": the word is bold, so a one-letter word reads as the word. */
 .split-usage-share .split-usage-word { font-weight: 700; color: var(--text-primary); }
+
+/* "often + a" (llegar): on the text's baseline, "often" muted. A cue with a
+   word in it is a phrase of its own, so " · " sets it apart from the
+   translation; a bare "+ em" stays attached to its verb. */
+.meanings-scroll.inline-sense-rows .sense-target-collocation:not(#_) { vertical-align: baseline !important; }
+.meanings-scroll.inline-sense-rows .sense-target-collocation .sense-collocation-qualifier:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; }
+.meanings-scroll.inline-sense-rows :is(.sense-inline-tr, .group-card-varying-cell, .meaning-context-cell) > * ~ .sense-target-collocation:has(.sense-collocation-qualifier)::before,
+.meanings-scroll.inline-sense-rows .group-card-shared > .sense-target-collocation:has(.sense-collocation-qualifier)::before {
+    content: '·';
+    margin-right: 6px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+/* A label kept on a row as its only words (cuerpo: "anatomy") reads as context. */
+.meanings-scroll.inline-sense-rows .meaning-row .sense-label-context:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell .meaning-context-cell .sense-label-context:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; }
+.meanings-scroll.inline-sense-rows .sense-target-collocation:has(.sense-collocation-qualifier)::before { margin-left: 2px; }
+.meanings-scroll.inline-sense-rows .sense-target-collocation .sense-collocation-particle:not(#_) { margin-left: 0 !important; }
