@@ -3,7 +3,7 @@
 const PAGE_IDS = [
     'settingsModal', 'totalStatsModal', 'reviewHomeModal', 'helpModal',
     'learningContextModal', 'extrasModal', 'cognateRulesModal',
-    'fastModeModal', 'vocabularyImportModal', 'aboutProjectModal',
+    'fastModeModal', 'vocabularyImportModal',
     'extraModal',
 ];
 const NAV_IDS = ['desktopStudyBtn', 'desktopExploreBtn', 'topBarProgressBtn',

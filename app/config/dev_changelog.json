@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T22:22:53+01:00",
+      "date": "2026-10-20 22:22 BST",
+      "agent": "Claude",
+      "summary": "#/about is a full-screen page again, and shareable: signed-out visitors no longer get sent to sign-in",
+      "detail": [
+        "Opening #/about while signed out shows the About page and never starts sign-in (it used to redirect straight to the sign-in screen).",
+        "Signed out: no 'Back to app' button, no sign-in buttons, Escape does nothing — About is the whole page.",
+        "About always covers the whole window, sidebar included, signed in or not."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T22:15:20+01:00",
       "date": "2026-10-20 22:15 BST",
       "agent": "Claude",
@@ -353,18 +365,6 @@
       "summary": "Session length \"No limit\" is now \"All\"",
       "detail": [
         "The session-length chip on the Learn and Practise buttons reads 5 min, 10 min or All, so it fits on desktop. Screen readers still hear \"no time limit\"."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:24:59+01:00",
-      "date": "2026-10-19 21:24 BST",
-      "agent": "Claude",
-      "summary": "Choose what to learn from: one clear paragraph, centred title",
-      "detail": [
-        "The intro is now: \"This app teaches the most common words first, counted from everyday speech, or from songs if you’d rather learn the vocabulary of the music you listen to. You can switch any time, and your progress is shared.\" (also in the vocabulary switcher).",
-        "The separate \"You can switch between Speech and Music any time\" line under the cards is gone.",
-        "The \"Choose what to learn from\" title is centred."
       ],
       "commit": "pending"
     }

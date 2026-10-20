@@ -148,6 +148,9 @@ function onPasswordlessSignedOut() {
     showAuthModal();
 }
 
+// Set when a signed-out visitor arrived on #/about and sign-in was held back.
+let _signInAfterAbout = false;
+
 function checkAuthentication() {
     if (PASSWORDLESS_ENABLED) {
         GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
@@ -166,6 +169,12 @@ function checkAuthentication() {
                     return;
                 }
             } catch (_) {}
+        }
+        // A shared #/about link is a page for people who have no account:
+        // show it, and start sign-in only when they leave it.
+        if (parseRoute(window.location.hash).kind === 'about') {
+            _signInAfterAbout = true;
+            return;
         }
         showAuthModal();
         startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
@@ -1507,6 +1516,8 @@ function _appendAboutFootnotes(body) {
 function _updateAboutCloseButton() {
     const btn = document.getElementById('closeAboutProjectModal');
     if (!btn) return;
+    // Signed out, "back" could only lead to sign-in: About is the whole page.
+    btn.hidden = PASSWORDLESS_ENABLED && !currentUser;
     const label = _aboutReturnTo ? 'Back to Settings' : 'Back to app';
     btn.textContent = `← ${label}`;
     btn.classList.add('about-close-as-pill');
@@ -1532,6 +1543,9 @@ function _appendAboutCTAs(body) {
         cta.appendChild(back);
         body.appendChild(cta);
         document.getElementById('aboutCTABack').addEventListener('click', hideAboutProjectModal);
+    } else if (PASSWORDLESS_ENABLED) {
+        // A visitor reading a shared About page is never shown sign-in.
+        return;
     } else {
         cta.innerHTML =
             '<div class="about-ctas-label">Ready to try it?</div>'
@@ -1595,6 +1609,11 @@ function hideAboutProjectModal() {
     modal.classList.add('hidden');
     modal.querySelectorAll('video').forEach(v => { try { v.pause(); } catch (_) {} });
     _setAboutURLParam(false);
+    if (_signInAfterAbout && !currentUser) {
+        _signInAfterAbout = false;
+        showAuthModal();
+        startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
+    }
     const returnTo = _aboutReturnTo;
     _aboutReturnTo = null;
     returnTo?.();
@@ -2014,7 +2033,7 @@ function setupAuthEventListeners() {
     document.getElementById('aboutProjectBtn').addEventListener('click', openAboutProjectModal);
     document.getElementById('closeAboutProjectModal').addEventListener('click', hideAboutProjectModal);
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !aboutModal.classList.contains('hidden')) {
+        if (e.key === 'Escape' && !aboutModal.classList.contains('hidden') && !_signInAfterAbout) {
             hideAboutProjectModal();
         }
     });
