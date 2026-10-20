@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T20:00:51+01:00",
+      "date": "2026-10-20 20:00 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): a grouped row's shared bracket sits on the heading line",
+      "detail": [
+        "daqui: 'of (in relation to)' shows as 'of  in relation to' on one line, muted, instead of 'in relation to' on its own line looking like a sub-row you could tap."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T19:47:19+01:00",
       "date": "2026-10-20 19:47 BST",
       "agent": "Claude",
@@ -350,16 +360,6 @@
         "Dark theme: the home page background is slightly lighter (#15171b) and the Learn/Practise panels are pure black, so the panels stand out.",
         "Learn and Practise titles are centred on phones too; the folded row's numbers are centred under them.",
         "The leaf and clock icons sit in each panel's top-left corner (desktop and phones); the fold arrow is in the top-right."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T17:35:00+01:00",
-      "date": "2026-10-19 17:35 BST",
-      "agent": "Claude",
-      "summary": "Desktop: Learn and Practise titles are centred headings over their own rule",
-      "detail": [
-        "On desktop each section's title is centred with a divider line beneath it, so the two panels read as equal and separate. Phones are unchanged."
       ],
       "commit": "pending"
     }

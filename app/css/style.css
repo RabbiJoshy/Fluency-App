@@ -26617,3 +26617,12 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     pointer-events: none;
 }
 
+/* A bracket every sub-sense shares (daqui: "of (in relation to)") is the
+   heading's own context, not a sub-row: it follows "of" on the same line,
+   muted like any context, so it never looks like a row you could tap. */
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared .group-shared-context:not(#_) {
+    display: inline !important;
+    margin: 0 0 0 6px !important;
+    font-weight: 400 !important;
+    color: var(--text-secondary) !important;
+}
