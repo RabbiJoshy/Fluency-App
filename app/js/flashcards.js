@@ -1125,8 +1125,24 @@ function hoistSharedRowText(scroll, card) {
         const lone = rows.length === 1 && rows[0].matches('.meaning-row-group') ? rows[0] : null;
         const loneShared = lone?.querySelector('.group-card-shared');
         if (loneShared?.textContent.trim() && lone.querySelectorAll('.group-card-varying-cell').length > 1) {
-            const text = loneShared.textContent.replace(/\s+/g, ' ').trim();
-            pieces.push({ text, isGloss: lone.dataset.axis === 'translation' || translations.has(fold(text)) });
+            // só: "only, just" is the translation and "preceding the verb"
+            // its context; they go up as two pieces, not one run of text.
+            const clean = text => text.replace(/\s+/g, ' ').trim();
+            const sharedContext = loneShared.querySelector('.group-shared-context');
+            const own = clean([...loneShared.childNodes]
+                .filter(node => node !== sharedContext && !node.classList?.contains('sense-inline-info'))
+                .map(node => node.textContent).join(''));
+            const ownContext = clean(sharedContext?.textContent || '');
+            if (own) pieces.push({ text: own, isGloss: lone.dataset.axis === 'translation' || translations.has(fold(own)) });
+            if (ownContext) pieces.push({ text: ownContext, isGloss: translations.has(fold(ownContext)) });
+            // Each sub-row is styled by what it holds: a translation is bold,
+            // a context is muted, whichever slot the app put it in.
+            lone.querySelectorAll('.group-card-varying-cell').forEach(cell => {
+                const words = clean(cell.textContent);
+                const isContext = cell.querySelector('.meaning-context') && !cell.querySelector('.group-member-gloss')
+                    && !translations.has(fold(words));
+                cell.classList.toggle('is-context-cell', Boolean(isContext));
+            });
             lone.classList.add('has-hoisted-shared-cell');
             // The shared note stays reachable: it follows the active sub-sense.
             const info = loneShared.querySelector('.sense-inline-info');
@@ -1181,6 +1197,72 @@ function fitHoistedShared(root) {
     });
 }
 
+// A row reads translation first, then its context. The word the sense is
+// used with ("+ com") and register labels ("informal") belong to the
+// translation, so they leave the context's slot and follow the gloss.
+function groupInlineTranslation(scroll) {
+    scroll.querySelectorAll('.meaning-row-regular .sense-inline-line').forEach(line => {
+        if (line.querySelector(':scope > .sense-inline-tr')) return;
+        const gloss = line.querySelector(':scope > .meaning-row-gloss');
+        const sub = line.querySelector(':scope > .meaning-row-sub');
+        const tr = document.createElement('span');
+        tr.className = 'sense-inline-tr';
+        line.insertBefore(tr, gloss || sub || line.firstChild);
+        if (gloss) tr.append(gloss);
+        if (!sub) return;
+        sub.querySelectorAll(':scope > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue, .sense-metadata-list):not(.is-hoisted)')
+            .forEach(el => { if (el.textContent.trim()) tr.append(' ', el); });
+        const visible = [...sub.childNodes].some(node => node.nodeType === Node.TEXT_NODE
+            ? node.textContent.trim()
+            : !node.classList?.contains('is-hoisted') && (node.textContent.trim() || node.querySelector?.('img')));
+        if (!visible) sub.classList.add('is-hoisted');
+    });
+}
+
+// The "i" is glued to the last word before it, so it can never wrap onto a
+// line of its own.
+function glueInlineInfo(scroll) {
+    scroll.querySelectorAll('.sense-inline-info').forEach(slot => {
+        if (slot.parentElement?.classList.contains('sense-inline-tail')) return;
+        const box = slot.closest('.sense-inline-line, .meaning-context-cell, .group-card-shared, .group-card-varying-cell');
+        if (!box) return;
+        const row = box.closest('.meaning-row');
+        const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+        let last = null;
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            if (!node.textContent.trim() || slot.contains(node)) continue;
+            if (!(node.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING)) continue;
+            const parent = node.parentElement;
+            if (parent.closest('.is-hoisted, .sense-note-template')) continue;
+            if (row?.classList.contains('has-hoisted-gloss') && parent.closest('.meaning-row-gloss')) continue;
+            last = node;
+        }
+        if (!last) return;
+        const text = last.textContent.replace(/\s+$/u, '');
+        const cut = text.search(/\S+$/u);
+        const tail = document.createElement('span');
+        tail.className = 'sense-inline-tail';
+        tail.textContent = text.slice(cut);
+        tail.append(slot);
+        last.textContent = text.slice(0, cut);
+        last.after(tail);
+    });
+}
+
+// A row that does not fit on one line stacks: translation on one centred
+// line, context on the next, rather than one paragraph wrapping between them.
+function fitInlineRows(root) {
+    root?.querySelectorAll('.inline-sense-rows .meaning-row-regular .sense-inline-line').forEach(line => {
+        const row = line.closest('.meaning-row');
+        row.classList.remove('is-stacked-row');
+        if (!line.querySelector(':scope > .meaning-row-sub:not(.is-hoisted) .meaning-context:not(.is-hoisted)')) return;
+        if (!line.getClientRects().length) return;
+        const lineHeight = parseFloat(getComputedStyle(line).lineHeight) || 26;
+        if (line.getBoundingClientRect().height > lineHeight * 1.4) row.classList.add('is-stacked-row');
+    });
+}
+
 function inlineSenseRows(root, card) {
     const scroll = root?.querySelector('.meanings-scroll');
     if (!scroll) return;
@@ -1197,7 +1279,10 @@ function inlineSenseRows(root, card) {
     });
     hoistSharedRowText(scroll, card);
     abbreviateInlineFrames(scroll);
+    groupInlineTranslation(scroll);
+    glueInlineInfo(scroll);
     fitHoistedShared(root);
+    fitInlineRows(root);
 }
 
 // A card with one sense that is not Dominant has its other uses in Rarer uses.
@@ -1257,6 +1342,7 @@ function fitSenseRowLayouts(root) {
     });
     fitRowInformationButtons(root);
     fitHoistedShared(root);
+    fitInlineRows(root);
 }
 
 let posSummaryResizeFrame = 0;

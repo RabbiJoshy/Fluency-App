@@ -26320,7 +26320,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .pos-section-shared {
     display: inline;
     min-width: 0;
-    flex: 0 1 auto;
+    flex: 1 1 0;
     text-align: left;
     line-height: 1.3;
 }
@@ -26508,7 +26508,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     width: fit-content;
     max-width: 100%;
     margin: 0 auto;
-    text-align: left;
+    text-align: center;
+    text-wrap: balance;
 }
 .meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-regular:not(.selected):not(.is-current-sense) .sense-inline-line:not(#_) {
     overflow: hidden;
@@ -26522,9 +26523,60 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     align-self: center !important;
     width: fit-content !important;
     max-width: 100%;
-    text-align: left !important;
+    text-align: center !important;
+    text-wrap: balance;
 }
 .meanings-scroll.inline-sense-rows .meaning-row-group .sense-cue-group > .group-card-varying-cell:not(#_) {
     justify-content: center !important;
 }
-.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-varying-cell > :is(.meaning-context-cell, .row-adaptive-text):not(#_) { text-align: left !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-varying-cell > :is(.meaning-context-cell, .row-adaptive-text):not(#_) { text-align: center !important; text-wrap: balance; }
+
+/* Portuguese pass (2026-10-20, Josh). Rules, not per-word fixes:
+   A. a row that does not fit on one line stacks: translation line, then
+      context line, both centred (fitInlineRows sets .is-stacked-row);
+   B. the "i" is glued to the last word (.sense-inline-tail);
+   C. "+ com" and register labels follow the translation (.sense-inline-tr);
+   D. the head's chevron sits at the right edge, not after the words;
+   E. a sub-row holding a context is styled as a context. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular.is-stacked-row .sense-inline-line:not(#_) { width: auto; text-align: center; }
+.meanings-scroll.inline-sense-rows .meaning-row-regular.is-stacked-row :is(.sense-inline-tr, .meaning-row-sub):not(.is-hoisted, #_) {
+    display: block !important;
+    margin: 0 !important;
+    text-align: center !important;
+    text-wrap: balance;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-regular.is-stacked-row .meaning-row-sub:not(.is-hoisted, #_) { margin-top: 2px !important; }
+.meanings-scroll.inline-sense-rows .sense-inline-tail { white-space: nowrap; }
+.meanings-scroll.inline-sense-rows .sense-inline-tail > .sense-inline-info:not(#_) { margin-left: 6px; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { white-space: nowrap; margin: 0 !important; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue) :not(.sense-inline-info, .sense-inline-info *, #_),
+.meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { font-size: 20px !important; line-height: 1.3 !important; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-metadata-list:not(#_) {
+    display: inline-flex !important;
+    vertical-align: middle;
+    margin: 0 !important;
+    white-space: nowrap;
+}
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-metadata-list :is(.sense-pill, .sense-pill *):not(#_) {
+    font-size: 13px !important;
+    line-height: 1.3 !important;
+    font-weight: 600 !important;
+}
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-metadata-list .sense-pill:not(#_) {
+    border: 1px solid currentColor;
+    border-radius: 5px;
+    padding: 0 5px !important;
+}
+.meanings-scroll.inline-sense-rows .pos-section-head:not(:has(> :is(.sense-prominence-badge, .sense-pin-btn, .pct-column, .known-sense-tag))) > .pos-section-chevron,
+.meanings-scroll.inline-sense-rows .pos-collapsible.is-open.rows-carry-meters > .pos-section-head:not(:has(> :is(.sense-pin-btn, .pct-column, .known-sense-tag))) > .pos-section-chevron { margin-left: auto; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-context-cell :is(.meaning-context-cell, .meaning-context-cell *):not(.sense-inline-info, .sense-inline-info *, #_) {
+    font-weight: 400 !important;
+    color: var(--text-secondary) !important;
+}
+/* With 4+ rows, sub-rows are clipped to one line; in the selected group they
+   wrap like any other row (passar: "to do something during a given time"). */
+.meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-group:is(.selected, .is-current-sense) .group-card-varying-cell:not(#_),
+.meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-group:is(.selected, .is-current-sense) .group-card-varying-cell *:not(#_) {
+    white-space: normal !important;
+    overflow: visible !important;
+}
