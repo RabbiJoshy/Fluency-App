@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T21:08:14+01:00",
+      "date": "2026-10-20 21:08 BST",
+      "agent": "Claude",
+      "summary": "Level picker: 'Levels 1–2 make up 52% of speech' under the example words (desktop)",
+      "detail": [
+        "Speech: shows what the levels up to this one make up of speech, as a whole number, e.g. 'Levels 1–3 make up 57% of speech'. Only languages that ship coverage shares show it (Czech today).",
+        "Artist Mode: same wording, 'make up 61% of lyric words', replacing '~61% lyrics comprehension'.",
+        "On its own line under the examples; hidden on phones."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T20:57:03+01:00",
       "date": "2026-10-20 20:57 BST",
       "agent": "Claude",
@@ -352,17 +364,6 @@
         "Stepping through levels no longer grows and shrinks the Learn box: the example-words line now keeps its height (two lines reserved, never shrinks while you step).",
         "On wide desktop the Learn and Practise button text is centred on the whole button, timer chip included.",
         "The timer chip keeps its shape on every button, and the Practise column is wider (Learn 60% to 60/40 becomes 1.5 : 1)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T13:05:00+01:00",
-      "date": "2026-10-20 13:05 BST",
-      "agent": "Claude",
-      "summary": "Phones: title band with a rule under it; legend centred",
-      "detail": [
-        "Learn and Practise titles sit in their own band with a thin rule beneath, as on desktop, folded or open. The corner icon is centred in that band, so it is level with the title and the same distance from the top and left.",
-        "The level legend and the level-estimate line are centred."
       ],
       "commit": "pending"
     }

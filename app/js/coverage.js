@@ -102,6 +102,14 @@ function levelCoverage(samples, startRank, endRank) {
     return remaining > 0 ? band / remaining : null;
 }
 
+// How much of speech the learner reaches by finishing this level: every level
+// up to and including it, not just its own band. Null when there is nothing to say.
+function cumulativeCoverage(samples, endRank) {
+    if (!shares) return null;
+    const total = sumBand(samples, 0, endRank);
+    return total > 0 ? total : null;
+}
+
 function coverageLabel() {
     // "of speech" rather than "of film and TV dialogue": the corpus is subtitle
     // text, but the longer phrase buys precision a learner cannot use.
@@ -153,6 +161,7 @@ globalThis.renderCoverageModeSwitch = renderCoverageModeSwitch;
 globalThis.loadCoverage = loadCoverage;
 globalThis.coverageAvailable = coverageAvailable;
 globalThis.levelCoverage = levelCoverage;
+globalThis.cumulativeCoverage = cumulativeCoverage;
 globalThis.coverageLabel = coverageLabel;
 globalThis.coverageMode = readMode;
 globalThis.setCoverageMode = setCoverageMode;

@@ -1164,3 +1164,8 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 #standardSourceCard .standard-source-spotify[hidden] { display: none !important; }
 /* A closed option still says why: its line reads "Coming soon". */
 #step1 #standardSourceCard .choice-sheet-item:disabled .choice-sheet-copy small { display: block !important; grid-area: 2 / 1 / auto / -1; margin-top: 6px; text-align: left; color: var(--text-muted); }
+
+/* The coverage figure beside the example words is for wider screens; on phones the line stays short. */
+@media (max-width: 767px) { #setupPanel .lsw-coverage-inline { display: none; } }
+/* The coverage figure sits on its own line under the example words. */
+#setupPanel #lswExamples .lsw-egs .lsw-coverage-inline { display: block; }

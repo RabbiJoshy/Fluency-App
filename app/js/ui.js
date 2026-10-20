@@ -2279,8 +2279,9 @@ function updateLevelSliderReadout(i) {
                 ? globalThis.coverageLabel()
                 : 'speech comprehension'));
 
+    // Cumulative: what finishing this level (and those before it) reaches.
     const shipped = lv.threshold == null
-        ? globalThis.levelCoverage?.(_syncSamples, lv.startRank, lv.endRank)
+        ? globalThis.cumulativeCoverage?.(_syncSamples, lv.endRank)
         : null;
     const coveragePct = lv.threshold != null
         ? `${(lv.threshold * 100).toFixed(1)}%`
@@ -2326,8 +2327,10 @@ function updateLevelSliderReadout(i) {
         const freqHTML = showLevelFrequency && freqValue !== null
             ? `<div class="lsw-freq-sentence"><strong>${wordLabel}</strong> appear${displayedWordCount === 1 ? 's' : ''} <strong>${freqValue.toLocaleString()}</strong> ${freqUnit}</div>`
             : '';
-        const covHTML = coveragePct
-            ? `<span class="lsw-coverage-inline"> · ~<strong>${coveragePct}</strong> ${coverageType}</span>`
+        const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
+        const levelsLabel = i === 0 ? 'Level 1 makes' : `Levels 1–${i + 1} make`;
+        const covHTML = coverageRounded
+            ? `<span class="lsw-coverage-inline">${levelsLabel} up <strong>${coverageRounded}</strong> of ${activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? 'playlist words' : 'speech')}</span>`
             : '';
         const egHTML = (examplesText || covHTML)
             ? `<div class="lsw-egs">${examplesText || ''}${covHTML}</div>`
