@@ -81513,6 +81513,29 @@ function fwAccentPos(relation) {
     if (relation.parts || relation._contraction) return 'contraction';
     return relation.pos || '';
 }
+// A partner slot names a word type (verb, noun…) or describes one. Those that
+// name a thing are noun phrases — "em + place" is em + casa — so they take the
+// noun colour; a clause ("…") or "more / less" names no word type.
+const FW_POS_SLOTS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det', 'conj', 'clitic', 'part'];
+const FW_NOMINAL_SLOTS = new Set(['place', 'person', 'thing', 'time', 'reason', 'role', 'topic', 'endpoint', 'place / time', 'route / reason']);
+function fwSlotType(relation, side) {
+    const type = relation?.slotTypes?.[side];
+    if (FW_POS_SLOTS.includes(type)) return type;
+    const label = String(relation?.formulaHTML || '').match(new RegExp(`fw-token-${side}['"]>([^<]*)<`))?.[1];
+    return label && FW_NOMINAL_SLOTS.has(label.trim().toLowerCase()) ? 'noun' : '';
+}
+// A pattern row's colour is its partner's word type; with no typed partner,
+// the function word's own colour. No active row is left white.
+function fwRowRgb(relation, fallbackPos) {
+    const formula = String(relation?.formulaHTML || '');
+    for (const side of ['v', 'c']) {
+        if (!new RegExp(`fw-token-${side}['"]`).test(formula)) continue;
+        const type = fwSlotType(relation, side);
+        const rgb = type ? fwPresentation.posRgb?.(type) : null;
+        if (rgb) return rgb;
+    }
+    return fwPresentation.posRgb?.(fwAccentPos(relation) || fallbackPos) || '';
+}
 function fwPartsHTML(parts) {
     return parts && parts.length === 2 ? `(${esc(parts[0])} + ${esc(parts[1])})` : '';
 }
@@ -81526,9 +81549,8 @@ function fwSlotHTML(html, relation, inPattern = false) {
     const formula = relation?.formulaHTML;
     let out = String(html || '').replace(/<span class=['"]fw-token-([vc])['"]>/g, (tag, side) => {
         if (formula && !new RegExp(`fw-token-${side}['"]`).test(formula)) return '<span>';
-        const type = relation?.slotTypes?.[side];
-        const isPOS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det', 'conj', 'clitic', 'part'].includes(type);
-        const rgb = isPOS ? fwPresentation.posRgb?.(type) : null;
+        const type = fwSlotType(relation, side);
+        const rgb = type ? fwPresentation.posRgb?.(type) : null;
         if (!rgb) return `<span class="fw-token-${side} is-untyped">`;
         const pill = inPattern ? ' fw-slot-pill' : '';
         return `<span class="fw-token-${side}${pill}" data-pos="${type}" style="--slot-rgb: ${rgb}; color:rgb(${rgb})">`;
@@ -82048,8 +82070,9 @@ export function functionWordBlockHTML(card, lang) {
             const isSelected = i === _activeRelIndex;
             const meaning = rel.tag || '';
             const rule = rel.rule || rel.description || '';
+            const rowRgb = fwRowRgb(rel, card?.pos || card?.meanings?.[0]?.pos);
             return `
-                <button type="button" class="fw-relation-box${isSelected ? ' is-selected' : ''}" data-pos="${esc(rel.pos || '')}" aria-pressed="${isSelected}"${rule ? ` title="${esc(rule)}"` : ''} onclick="event.stopPropagation(); window.selectFunctionWordRelation(${i})">
+                <button type="button" class="fw-relation-box${isSelected ? ' is-selected' : ''}" data-pos="${esc(rel.pos || '')}" aria-pressed="${isSelected}"${rowRgb ? ` style="--fw-row-rgb: ${rowRgb}"` : ''}${rule ? ` title="${esc(rule)}"` : ''} onclick="event.stopPropagation(); window.selectFunctionWordRelation(${i})">
                     <div class="fw-relation-formula">${fwSlotHTML(rel.formulaHTML || esc(rel.formula || ''), rel, true)}</div>
                     ${meaning ? `<p class="fw-relation-meaning">${esc(meaning)}</p>` : ''}
                 </button>`;
@@ -82083,6 +82106,7 @@ export function functionWordBlockHTML(card, lang) {
                 <div class="fw-header">
                     <h2 class="fw-heading"><span class="fw-heading-word">${esc(wordKey)}</span>${partsHTML}</h2>
                     ${fwData.syntaxTrial ? '<div class="fw-section-header">Reviewed example trial</div>' : ''}
+                    <div class="fw-patterns-label">Example patterns</div>
                 </div>
                 <div class="fw-relations-list">
                     ${relationsHTML}

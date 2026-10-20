@@ -26626,3 +26626,26 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     font-weight: 400 !important;
     color: var(--text-secondary) !important;
 }
+
+/* Function-word backs in the content cards' style (layout B, Josh
+   2026-10-20): every pattern is an outlined box like a sense row; the active
+   one is outlined in its partner's colour (verb + de green, noun + que blue,
+   em + place blue as a noun), else the word's own colour, never white. A
+   small "Example patterns" label in the headword's font says the list is
+   usage patterns, not every meaning. */
+.fw-patterns-label { margin: 6px 0 0; text-align: center; font: 500 14px/1.3 var(--font-reading); color: var(--text-muted); }
+.fw-relation-box {
+  border: 1px solid color-mix(in srgb, var(--text-primary) 16%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  min-height: 44px;
+  padding: 7px 12px;
+}
+.fw-relation-box:hover { background: color-mix(in srgb, var(--text-primary) 4%, transparent); }
+.fw-relation-box.is-selected,
+.fw-relation-box[aria-pressed="true"] {
+  border: 2px solid rgb(var(--fw-row-rgb, var(--sense-match-rgb)));
+  background: rgba(var(--fw-row-rgb, var(--sense-match-rgb)), 0.08);
+  padding: 6px 11px;
+}
+.fw-relation-meaning { font-size: 18px; margin-top: 2px; }
