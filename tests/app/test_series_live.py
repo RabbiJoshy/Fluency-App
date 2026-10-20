@@ -66,7 +66,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     // A server that never settles cannot hold the local preset or rebuild open.
     let deck = await context.loadCasaDePapelPreset();
     assert.equal(deck.matchedCount, 1072);
-    assert.equal(stored.presetRevision, 'season1-sample-v2');
+    assert.equal(stored.presetRevision, 'season1-sample-v3');
     route = 'rebuild';
     w.config = {languages: {spanish: {indexPath: 'wrong-artist/vocabulary.index.json'}}};
     deck = await context.loadCasaDePapelPreset();
@@ -99,6 +99,47 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     w.applyPlaylistLiveVocabulary([original]);
     assert.equal(w.playlistLiveDeck().matchedCount, 1072);
     assert.equal(original.meanings[0].examples, undefined);
+
+    // An artist's partial song selection can remain in memory when the
+    // series is opened. Exercise the real shared index loader and song filter.
+    load('app/js/song-sets-core.js');
+    const songSets = read('app/js/song-sets.js');
+    vm.runInContext(songSets.slice(songSets.indexOf('export function filterActiveSongVocabulary('),
+        songSets.indexOf('export function clearActiveExamplesData(')).replace(/^export /gm, ''), context);
+    const vocabSource = read('app/js/vocab.js');
+    Object.assign(context, {
+        activeArtist: null, selectedLanguage: 'spanish',
+        artistSongCatalog: { songs: [{id: 'selected', cardIds: [canonical[0].id]}, {id: 'other', cardIds: [canonical[1].id]}] },
+        selectedSongIds: ['selected'],
+        fetchAndJoinIndex: async () => canonical,
+        config: {languages: {spanish: {}}},
+        validateExamplesSplit() {}
+    });
+    w.filterActiveSongVocabulary = context.filterActiveSongVocabulary;
+    vm.runInContext(vocabSource.slice(vocabSource.indexOf('async function fetchActiveVocabularyIndex('),
+        vocabSource.indexOf('async function ensureLemmaPoolingData(')), context);
+    const untrimmed = await context.fetchActiveVocabularyIndex({indexPath: 'speech/vocabulary.index.json'});
+    assert.equal(untrimmed.length, canonical.length);
+    assert.equal(w.applyPlaylistLiveVocabulary(untrimmed).length, 1072);
+    const dialogueExample = { [original.id]: {m: [[{spanish: 'El profesor.', english: 'The teacher.', song: 'S01E01'}]]} };
+    assert.equal(context.setActiveExamplesData(dialogueExample), dialogueExample);
+    // Choosing a song still filters an ordinary artist deck.
+    const savedActive = w.playlistLiveActive;
+    w.playlistLiveActive = () => false;
+    context.activeArtist = {slug: 'previous-artist'};
+    assert.equal(context.filterActiveSongVocabulary(canonical).length, 1);
+    context.activeArtist = null;
+    assert.equal(context.filterActiveSongVocabulary(canonical).length, canonical.length);
+    w.playlistLiveActive = savedActive;
+
+    // The function-word renderer must not replace a live card's own examples
+    // or suppress its ordinary example panel with fixed Speech constructions.
+    load('app/js/function-word-card.js');
+    assert.equal(context.getGrammarWordDefinition({targetWord: 'y'}, 'spanish') !== null, true);
+    const liveFunctionWord = {targetWord: 'y', playlistId: 'la-casa-de-papel', functionWord: {uses: []}};
+    assert.equal(context.getGrammarWordDefinition(liveFunctionWord, 'spanish'), null);
+    assert.equal(context.isFunctionWordCard(liveFunctionWord, 'spanish'), false);
+    assert.equal(context.functionWordBlockHTML(liveFunctionWord, 'spanish'), '');
 
     // Render the actual level selector against matched vocabulary, even if
     // older metadata claims there are only 900 words (nine levels).
@@ -201,7 +242,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(deck.matchedCount, 1072);
     const before = fetches.length;
     await w.preparePlaylistLiveSession('spanish');
-    assert.equal(fetches.length, before);
+    assert.equal(fetches.length, before + 1);
 
     // Custom text remains its own source, even with fewer than 1,000 words.
     deck = await context.buildSeriesLiveDeck({ title: 'Custom Subtitles', lines: ['El profesor.', {spanish: 'La casa.', english: 'The house.'}] });

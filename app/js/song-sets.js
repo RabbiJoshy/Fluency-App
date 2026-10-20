@@ -146,6 +146,7 @@ async function reconcileRemoteSongSet() {
 }
 
 export function filterActiveSongVocabulary(vocabulary) {
+    if (!activeArtist || window.playlistLiveActive?.()) return vocabulary;
     return filterVocabularyForSongs(vocabulary, artistSongCatalog, selectedSongIds);
 }
 
@@ -156,7 +157,8 @@ export function setActiveExamplesData(examples, sourcePath = null) {
         || 'examples split';
     validateExamplesSplit(examples, { source: resolvedSource });
     window._cachedExamplesDataRaw = examples;
-    window._cachedExamplesData = filterExamplesForSongs(examples, artistSongCatalog, selectedSongIds);
+    window._cachedExamplesData = activeArtist && !window.playlistLiveActive?.()
+        ? filterExamplesForSongs(examples, artistSongCatalog, selectedSongIds) : examples;
     window._cachedExamplesDataPath = resolvedSource;
     return window._cachedExamplesData;
 }

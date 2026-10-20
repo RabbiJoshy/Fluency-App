@@ -937,6 +937,8 @@ function navigateToVocabCard(tokenIndex) {
 
     const tempCard = splitAwareTempCard(vocabEntry, {
         targetWord: vocabEntry.word,
+        playlistId: vocabEntry.playlistId || null,
+        playlistName: vocabEntry.playlistName || null,
         lemma: vocabEntry.lemma || '',
         ...(window.buildCardFormModel?.(vocabEntry, meanings) || {}),
         id: vocabEntry.id || '0000',
@@ -1178,6 +1180,8 @@ async function popupFoundWord(entry, opts) {
 
         const opened = splitAwareTempCard(vocabEntry, {
             targetWord: vocabEntry.word,
+            playlistId: vocabEntry.playlistId || null,
+            playlistName: vocabEntry.playlistName || null,
             lemma: vocabEntry.lemma || '',
             ...(window.buildCardFormModel?.(vocabEntry, meanings) || {}),
             id: vocabEntry.id || '0000',
@@ -1379,6 +1383,8 @@ function peekHomograph(siblingId) {
 
     const tempCard = splitAwareTempCard(vocabEntry, {
         targetWord: vocabEntry.word,
+        playlistId: vocabEntry.playlistId || null,
+        playlistName: vocabEntry.playlistName || null,
         lemma: vocabEntry.lemma || '',
         ...(window.buildCardFormModel?.(vocabEntry, meanings) || {}),
         id: vocabEntry.id || '0000',

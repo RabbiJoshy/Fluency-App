@@ -108,7 +108,7 @@ export async function loadCasaDePapelPreset(onProgress = null) {
     onProgress?.({ stage: 'fetching', message: 'Loading La Casa de Papel dialogue sample…' });
     const appRoot = new URL('../', import.meta.url);
     try {
-        const response = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot), { cache: 'no-store' });
+        const response = await fetch(new URL(`data/series/casa-de-papel-deck.json?preset=${CASA_PRESET_REVISION}`, appRoot), { cache: 'no-store' });
         const deck = response.ok ? await response.json() : null;
         if (validLiveDeck(deck) && deck.playlistId === 'la-casa-de-papel'
             && deck.language === 'spanish' && deck.presetRevision === CASA_PRESET_REVISION) {
