@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T20:16:50+01:00",
+      "date": "2026-10-20 20:16 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): light wash on the open word type and active meaning; ' · ' between translation and context",
+      "detail": [
+        "The active word type's row and the active meaning take a faint wash of its colour (9% and 7%, over the neutral grey; the old fill was 10%), so on cara the Noun row reads as open and Adjective as closed.",
+        "A lone group's sub-rows: the active one is washed, or all of them when the whole group is selected.",
+        "Translation and context on one line are joined by a muted ' · ' (quanto: 'how · to what degree'; daqui: 'of · in relation to'). Stacked rows need none."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T20:13:25+01:00",
       "date": "2026-10-20 20:13 BST",
       "agent": "Claude",
@@ -349,18 +361,6 @@
       "detail": [
         "Phones: both sheets fill the screen with the close button at the top right and reading-size text.",
         "Desktop: both fill the workspace beside the sidebar, with a centred reading column and much larger text."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T22:50:00+01:00",
-      "date": "2026-10-19 22:50 BST",
-      "agent": "Claude",
-      "summary": "Home: smaller titles, icons level with them, white ? icons, calmer Practise headline",
-      "detail": [
-        "Learn/Practise titles are smaller (18px on phones; about 22-30px on desktop). The leaf and clock sit in the corner on the title's own line and are about the title's size.",
-        "The ? help icons are white instead of the accent colour.",
-        "Practise no longer opens with a giant number: it reads \"42 words waiting · all levels\" over a red/blue bar (mistakes / due), matching Learn's bar."
       ],
       "commit": "pending"
     }
