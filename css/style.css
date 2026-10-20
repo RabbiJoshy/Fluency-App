@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=78967719");
+@import url("./appearance.css?v=5c00cdb8");
 
 
         * {
@@ -24485,7 +24485,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 @media (min-width: 1181px) {
     #cardTutorialBody { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; overflow: hidden; }
     #cardTutorialBody .card-tutorial-columns { min-height: 0; height: 100%; }
-    #cardTutorialBody .card-tutorial-notes { max-height: 100%; overflow-y: auto; }
+    /* Fixed width, so the columns do not shift as notes open and close. */
+    #cardTutorialBody .card-tutorial-notes { width: min(100%, 420px); max-height: 100%; overflow-y: auto; }
 }
 
 /* Main page: let the chosen language, learner and level lead the panels. */
@@ -24647,58 +24648,14 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     text-transform: uppercase;
 }
 
-.tutorial-page-switch-row {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 14px 16px;
-    border: 1px solid var(--border-light);
+.tutorial-page-switch-row.home-smart-skip {
+    padding: 8px 8px 8px 12px;
     border-radius: 12px;
-    background: var(--bg-secondary);
+    font: 500 15px/1.3 var(--font-reading);
 }
-.tutorial-page-ss-top,
-.tutorial-page-ss-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-.tutorial-page-switch-row .smart-skip-hub-label {
-    color: var(--text-primary);
-    font: 700 16px/1.2 var(--font-emphasis);
-}
-.tutorial-page-switch-row .smart-skip-choice {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    gap: 2px;
-}
-.tutorial-page-switch-row .smart-skip-choice-btn {
-    min-width: 48px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    color: var(--text-secondary);
-    font: 700 12px/1.1 var(--font-emphasis);
-    text-align: center;
-}
-.tutorial-page-switch-row .smart-skip-choice-btn.is-selected {
-    background: var(--accent-primary);
-    color: var(--accent-primary-text, #10151c);
-}
-.tutorial-page-switch-row .smart-skip-hub-summary {
-    color: var(--text-secondary);
-    font: 500 13px/1.3 var(--font-reading);
-}
-.tutorial-page-switch-row .smart-skip-details-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    color: var(--text-secondary);
-    font: 600 12.5px/1.2 var(--font-reading);
-}
+.tutorial-page-switch-row .home-smart-skip-copy { cursor: default; font-size: 15px; }
+.tutorial-page-switch-row .tutorial-page-ss-summary { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.tutorial-page-switch-row .home-switch { cursor: default; }
 .tutorial-page-example { display: grid; gap: 10px; padding: 4px; }
 .tutorial-page-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .tutorial-page-words { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
@@ -24726,8 +24683,9 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .tutorial-page-topbar {
     align-self: flex-start;
     display: inline-flex;
-    align-items: center;
-    gap: 9px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
     padding: 9px 14px;
     border: 1px solid color-mix(in srgb, var(--accent-primary) 50%, var(--border-light));
     border-radius: 12px;
@@ -24735,6 +24693,9 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     font: 700 16px/1.2 var(--font-emphasis);
 }
 .tutorial-page-chevron { color: var(--text-muted); }
+.tutorial-page-topbar-row { display: inline-flex; align-items: center; gap: 9px; }
+.tutorial-page-topbar-mode { gap: 6px; font-size: 14px; }
+.tutorial-page-topbar-mode small { color: var(--text-muted); font: 600 11px/1.2 var(--font-data); letter-spacing: 0.06em; text-transform: uppercase; }
 .tutorial-page-sources { display: grid; gap: 8px; padding: 4px; }
 .tutorial-page-source {
     display: grid;
@@ -26178,6 +26139,28 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .ref-tile-meter i:nth-child(1) { height: 8px; }
 .ref-tile-meter i:nth-child(2) { height: 15px; }
 .ref-tile-meter i:nth-child(3) { height: 24px; }
+/* The card-back tools were half the size of the meanings above them
+   (2026-10-20): larger icons and labels, a little larger again on desktop. */
+.links-section .ref-tile-icon,
+.links-section:has(> :nth-child(5)) .ref-tile-icon { width: 32px; height: 32px; }
+.links-section .ref-tile-label,
+.links-section:has(> :nth-child(5)) .ref-tile-label { font-size: 14px; }
+.links-section .ref-tile-meter i { width: 7px; }
+.links-section .ref-tile-meter i:nth-child(1) { height: 9px; }
+.links-section .ref-tile-meter i:nth-child(2) { height: 17px; }
+.links-section .ref-tile-meter i:nth-child(3) { height: 27px; }
+@media (min-width: 1024px) {
+    .links-section .ref-tile,
+    .links-section:has(> :nth-child(5)) .ref-tile { min-height: 72px; gap: 8px; }
+    .links-section .ref-tile-icon,
+    .links-section:has(> :nth-child(5)) .ref-tile-icon { width: 36px; height: 36px; }
+    .links-section .ref-tile-label,
+    .links-section:has(> :nth-child(5)) .ref-tile-label { font-size: 16px; }
+    .links-section .ref-tile-meter i { width: 8px; }
+    .links-section .ref-tile-meter i:nth-child(1) { height: 10px; }
+    .links-section .ref-tile-meter i:nth-child(2) { height: 19px; }
+    .links-section .ref-tile-meter i:nth-child(3) { height: 30px; }
+}
 .ref-tile-endings {
     display: inline-flex;
     flex-direction: column;

@@ -2,8 +2,8 @@
 // Parses .srt/.vtt/text, routes through the live no-WSD engine,
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
-import './state.js?v=78967719';
-import { CASA_PRESET_REVISION, validLiveDeck } from './playlist-live.js?v=78967719';
+import './state.js?v=5c00cdb8';
+import { CASA_PRESET_REVISION, validLiveDeck } from './playlist-live.js?v=5c00cdb8';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
@@ -108,7 +108,7 @@ export async function loadCasaDePapelPreset(onProgress = null) {
     onProgress?.({ stage: 'fetching', message: 'Loading La Casa de Papel dialogue sample…' });
     const appRoot = new URL('../', import.meta.url);
     try {
-        const response = await fetch(new URL('data/series/casa-de-papel-deck.json', appRoot), { cache: 'no-store' });
+        const response = await fetch(new URL(`data/series/casa-de-papel-deck.json?preset=${CASA_PRESET_REVISION}`, appRoot), { cache: 'no-store' });
         const deck = response.ok ? await response.json() : null;
         if (validLiveDeck(deck) && deck.playlistId === 'la-casa-de-papel'
             && deck.language === 'spanish' && deck.presetRevision === CASA_PRESET_REVISION) {

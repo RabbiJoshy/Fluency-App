@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=78967719';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=78967719';
-import { readFastTrack } from './fast-track-preferences.js?v=78967719';
-import './session-plan.js?v=78967719';
+import './state.js?v=5c00cdb8';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=5c00cdb8';
+import { readFastTrack } from './fast-track-preferences.js?v=5c00cdb8';
+import './session-plan.js?v=5c00cdb8';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3231,8 +3231,11 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     <div class="home-practise-bar" aria-hidden="true">${peekBar}</div></div>
                 <div class="home-practise-rows">
                     ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
-                    ${dueCount > 0 ? row('due', 'Due for review', dueCount) : ''}
+                    ${dueCount > 0 ? row('due', 'Time to review', dueCount) : ''}
                 </div>`;
+        } else if (typeof progressData === 'undefined' || !progressData || Object.keys(progressData).length === 0) {
+            // Nothing answered yet: "All caught up" would mean nothing to them.
+            body = `<div class="home-practise-total is-empty"><strong>Nothing to practise yet</strong><span>When you miss a word, it comes back here. Words you get right come back too, a few days later, so they stick.</span></div>`;
         } else {
             const empty = !srsOn
                 ? 'Review schedule paused: only mistakes come back.'
@@ -3244,7 +3247,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 <button class="home-practise-browse" type="button" id="openReviewHomeBtn">Browse all <span aria-hidden="true">›</span></button>
             </div>
             <div class="home-section-footer">
-                ${globalTotal > 0 ? '<p class="home-footer-hint">Mistakes first, then due words</p>' : ''}
+                ${globalTotal > 0 ? '<p class="home-footer-hint">Mistakes first, then words to review</p>' : ''}
                 ${homeCta(lengthChip(globalTotal, 'practice'), 'id="quickReviewBtn"',
                     globalTotal > 0 ? `Practise<span class="home-cta-count"> · ${practiseCount.toLocaleString()}</span>` : 'Practise', globalTotal === 0)}
             </div>`;
@@ -3730,7 +3733,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=78967719')
+        import('./spotify.js?v=5c00cdb8')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

@@ -6,7 +6,7 @@
 // directly. State (flashcards, currentIndex, currentUser, etc.) and helpers
 // like flagWord and getPosColorClass come through the globalThis proxy
 // installed by state.js / auth.js / flashcards.js.
-import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=78967719';
+import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=5c00cdb8';
 
 // ---------------------------------------------------------------------------
 // Part-of-speech popup
@@ -937,6 +937,8 @@ function navigateToVocabCard(tokenIndex) {
 
     const tempCard = splitAwareTempCard(vocabEntry, {
         targetWord: vocabEntry.word,
+        playlistId: vocabEntry.playlistId || null,
+        playlistName: vocabEntry.playlistName || null,
         lemma: vocabEntry.lemma || '',
         ...(window.buildCardFormModel?.(vocabEntry, meanings) || {}),
         id: vocabEntry.id || '0000',
@@ -1178,6 +1180,8 @@ async function popupFoundWord(entry, opts) {
 
         const opened = splitAwareTempCard(vocabEntry, {
             targetWord: vocabEntry.word,
+            playlistId: vocabEntry.playlistId || null,
+            playlistName: vocabEntry.playlistName || null,
             lemma: vocabEntry.lemma || '',
             ...(window.buildCardFormModel?.(vocabEntry, meanings) || {}),
             id: vocabEntry.id || '0000',
@@ -1379,6 +1383,8 @@ function peekHomograph(siblingId) {
 
     const tempCard = splitAwareTempCard(vocabEntry, {
         targetWord: vocabEntry.word,
+        playlistId: vocabEntry.playlistId || null,
+        playlistName: vocabEntry.playlistName || null,
         lemma: vocabEntry.lemma || '',
         ...(window.buildCardFormModel?.(vocabEntry, meanings) || {}),
         id: vocabEntry.id || '0000',

@@ -1,12 +1,12 @@
-import './state.js?v=78967719';
-import { sendOrQueue } from './sync-queue.js?v=78967719';
-import { validateExamplesSplit } from './data-contracts.js?v=78967719';
+import './state.js?v=5c00cdb8';
+import { sendOrQueue } from './sync-queue.js?v=5c00cdb8';
+import { validateExamplesSplit } from './data-contracts.js?v=5c00cdb8';
 import {
     combineSongCatalogs,
     filterExamplesForSongs,
     filterVocabularyForSongs,
     selectedSongIdSet
-} from './song-sets-core.js?v=78967719';
+} from './song-sets-core.js?v=5c00cdb8';
 
 const STORAGE_PREFIX = 'fluency_song_set_v1:';
 let draftSongIds = new Set();
@@ -146,6 +146,7 @@ async function reconcileRemoteSongSet() {
 }
 
 export function filterActiveSongVocabulary(vocabulary) {
+    if (!activeArtist || window.playlistLiveActive?.()) return vocabulary;
     return filterVocabularyForSongs(vocabulary, artistSongCatalog, selectedSongIds);
 }
 
@@ -156,7 +157,8 @@ export function setActiveExamplesData(examples, sourcePath = null) {
         || 'examples split';
     validateExamplesSplit(examples, { source: resolvedSource });
     window._cachedExamplesDataRaw = examples;
-    window._cachedExamplesData = filterExamplesForSongs(examples, artistSongCatalog, selectedSongIds);
+    window._cachedExamplesData = activeArtist && !window.playlistLiveActive?.()
+        ? filterExamplesForSongs(examples, artistSongCatalog, selectedSongIds) : examples;
     window._cachedExamplesDataPath = resolvedSource;
     return window._cachedExamplesData;
 }

@@ -1,7 +1,7 @@
 // Naive live-playlist deck: tokenise lyrics in the browser, join them to the
 // speech inventory, and study those cards with unassigned song-line examples.
-import { clearRoute, parseRoute } from './routes.js?v=78967719';
-import { releaseUrl } from './release-host.js?v=78967719';
+import { clearRoute, parseRoute } from './routes.js?v=5c00cdb8';
+import { releaseUrl } from './release-host.js?v=5c00cdb8';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -11,7 +11,7 @@ const MAX_LINES_PER_SURFACE = 5;
 
 let _liveDeck = null;
 
-export const CASA_PRESET_REVISION = 'season1-sample-v2';
+export const CASA_PRESET_REVISION = 'season1-sample-v3';
 
 export function validLiveDeck(deck) {
     return Boolean(deck && deck.language && deck.playlistId
@@ -379,13 +379,21 @@ async function preparePlaylistLiveSession(language) {
         _liveDeck = null;
         return null;
     }
-    if (deck.playlistId === 'la-casa-de-papel' && deck.presetRevision !== CASA_PRESET_REVISION) {
+    // The named sample is authoritative online; cached experiments may have
+    // been saved under the same id before all episodes were included.
+    if (deck.playlistId === 'la-casa-de-papel') {
         try {
-            const response = await fetch(new URL('data/series/casa-de-papel-deck.json', new URL('../', import.meta.url)), { cache: 'no-store' });
+            const response = await fetch(new URL(`data/series/casa-de-papel-deck.json?preset=${CASA_PRESET_REVISION}`, new URL('../', import.meta.url)), { cache: 'no-store' });
             const fresh = response.ok ? await response.json() : null;
             if (validLiveDeck(fresh) && fresh.playlistId === deck.playlistId
-                && fresh.language === deck.language && fresh.presetRevision === CASA_PRESET_REVISION) deck = fresh;
-        } catch (_) { /* A usable cached deck survives an unavailable refresh. */ }
+                && fresh.language === deck.language && fresh.presetRevision === CASA_PRESET_REVISION) {
+                deck = fresh;
+            } else {
+                throw new Error('The published Casa sample is unavailable or has an unexpected revision.');
+            }
+        } catch (error) {
+            console.warn('Could not refresh Casa sample; keeping cached dialogue:', error);
+        }
     }
     await cacheLiveDeck(deck);
     return _liveDeck;

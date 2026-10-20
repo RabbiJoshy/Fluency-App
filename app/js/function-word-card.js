@@ -81589,7 +81589,7 @@ function meaningOf(obj) {
 
 /** Lookup a deterministic grammar-word definition for a card in the given language. */
 export function getGrammarWordDefinition(cardOrWord, lang) {
-    if (!cardOrWord) return null;
+    if (!cardOrWord || (typeof cardOrWord === 'object' && cardOrWord.playlistId)) return null;
     const wordKey = typeof cardOrWord === 'string'
         ? cardOrWord.trim().toLowerCase()
         : (cardOrWord.targetWord || cardOrWord.word || '').trim().toLowerCase();
@@ -81620,7 +81620,7 @@ export function getPortugueseGrammarDefinition(cardOrWord, lang) {
 
 /** Determine if a card is a function word. */
 export function isFunctionWordCard(card, lang) {
-    if (!card) return false;
+    if (!card || card.playlistId) return false;
     if (card.partOfSpeech === 'FW' || card.pos === 'FW' || card.functionWord) return true;
     return Boolean(getGrammarWordDefinition(card, lang));
 }
@@ -82043,6 +82043,10 @@ export function functionWordLabelText(label) {
 
 /** Card-back block replacing the sense list: what the word does, and its constructions. */
 export function functionWordBlockHTML(card, lang) {
+    // Live source examples have no assigned grammatical construction. Keep
+    // their dialogue/song lines on the ordinary card instead of replacing
+    // them with the Speech deck's fixed dictionary illustrations.
+    if (card?.playlistId) return '';
     const fwData = getGrammarWordDefinition(card, lang) || (card?.functionWord?.uses ? card.functionWord : null);
 
     // 1. Deterministic layout for Portuguese and Spanish focus grammar words

@@ -1,13 +1,13 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=78967719';
-import { accountPermissions } from './account-permissions.js?v=78967719';
-import { readJsonWithTimeout } from './read-request.js?v=78967719';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=78967719';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=78967719';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=78967719';
-import { dbGet, dbPut } from './offline-db.js?v=78967719';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=78967719';
+import './state.js?v=5c00cdb8';
+import { accountPermissions } from './account-permissions.js?v=5c00cdb8';
+import { readJsonWithTimeout } from './read-request.js?v=5c00cdb8';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=5c00cdb8';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=5c00cdb8';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=5c00cdb8';
+import { dbGet, dbPut } from './offline-db.js?v=5c00cdb8';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=5c00cdb8';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -16,9 +16,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=78967719';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=78967719';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=78967719';
+} from './sync-queue.js?v=5c00cdb8';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=5c00cdb8';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=5c00cdb8';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {
@@ -148,6 +148,9 @@ function onPasswordlessSignedOut() {
     showAuthModal();
 }
 
+// Set when a signed-out visitor arrived on #/about and sign-in was held back.
+let _signInAfterAbout = false;
+
 function checkAuthentication() {
     if (PASSWORDLESS_ENABLED) {
         GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
@@ -166,6 +169,12 @@ function checkAuthentication() {
                     return;
                 }
             } catch (_) {}
+        }
+        // A shared #/about link is a page for people who have no account:
+        // show it, and start sign-in only when they leave it.
+        if (parseRoute(window.location.hash).kind === 'about') {
+            _signInAfterAbout = true;
+            return;
         }
         showAuthModal();
         startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
@@ -1507,6 +1516,8 @@ function _appendAboutFootnotes(body) {
 function _updateAboutCloseButton() {
     const btn = document.getElementById('closeAboutProjectModal');
     if (!btn) return;
+    // Signed out, "back" could only lead to sign-in: About is the whole page.
+    btn.hidden = PASSWORDLESS_ENABLED && !currentUser;
     const label = _aboutReturnTo ? 'Back to Settings' : 'Back to app';
     btn.textContent = `← ${label}`;
     btn.classList.add('about-close-as-pill');
@@ -1532,6 +1543,9 @@ function _appendAboutCTAs(body) {
         cta.appendChild(back);
         body.appendChild(cta);
         document.getElementById('aboutCTABack').addEventListener('click', hideAboutProjectModal);
+    } else if (PASSWORDLESS_ENABLED) {
+        // A visitor reading a shared About page is never shown sign-in.
+        return;
     } else {
         cta.innerHTML =
             '<div class="about-ctas-label">Ready to try it?</div>'
@@ -1595,6 +1609,11 @@ function hideAboutProjectModal() {
     modal.classList.add('hidden');
     modal.querySelectorAll('video').forEach(v => { try { v.pause(); } catch (_) {} });
     _setAboutURLParam(false);
+    if (_signInAfterAbout && !currentUser) {
+        _signInAfterAbout = false;
+        showAuthModal();
+        startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
+    }
     const returnTo = _aboutReturnTo;
     _aboutReturnTo = null;
     returnTo?.();
@@ -2014,7 +2033,7 @@ function setupAuthEventListeners() {
     document.getElementById('aboutProjectBtn').addEventListener('click', openAboutProjectModal);
     document.getElementById('closeAboutProjectModal').addEventListener('click', hideAboutProjectModal);
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !aboutModal.classList.contains('hidden')) {
+        if (e.key === 'Escape' && !aboutModal.classList.contains('hidden') && !_signInAfterAbout) {
             hideAboutProjectModal();
         }
     });

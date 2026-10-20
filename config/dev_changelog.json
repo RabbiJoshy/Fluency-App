@@ -2,6 +2,70 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T22:50:14+01:00",
+      "date": "2026-10-20 22:50 BST",
+      "agent": "Claude",
+      "summary": "Desktop home polish: icons beside the titles, ? in the corner, no divider lines, level without its plate",
+      "detail": [
+        "Desktop (1360px+): the leaf and clock icons sit beside 'Learn' and 'Practise'; the ? moves to each column's top-right corner.",
+        "Desktop (1360px+): the lines under the titles, above the buttons and above Practise's rows are gone; the shaded plate behind the level number is gone.",
+        "Desktop (1360px+): the example words, coverage line and progress bar get a wider share of the row and are centred.",
+        "Practise hint (everywhere): 'Mistakes first, then due words' is now 'Mistakes first, then words to review'."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T22:43:42+01:00",
+      "date": "2026-10-20 22:43 BST",
+      "agent": "Claude",
+      "summary": "Tutorial updated for phone and desktop: current Smart Skip switch, Conjugate button, right grading and switching instructions per device",
+      "detail": [
+        "Desktop: the note column scrolls to the note being read, so the last notes (Grade your answer) no longer fall off a laptop screen; columns keep one width.",
+        "Grading: phones say swipe; computers say Enter / X and point to the keyboard button on the left. Keyboard tips no longer appear on phones.",
+        "Speech or music: desktop says Vocabulary in the sidebar; phones say tap the language at the top, then Vocabulary.",
+        "Smart Skip page shows the current row with its switch (not Off/On + Details).",
+        "Verb cards in the tutorial and walkthrough show the Conjugate button, with a note.",
+        "Rare uses: wording mentions the speech-bubble example button; the demo opens a group and shows one example.",
+        "Music note says Coming soon in languages without Music."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T22:38:04+01:00",
+      "date": "2026-10-20 22:38 BST",
+      "agent": "Claude",
+      "summary": "Desktop home fills the screen without boxes; clearer Practise wording for first-time users",
+      "detail": [
+        "Desktop (1360px+): Learn and Practise are two full-height columns beside the sidebar, split by one line (Practise on a slightly darker ground); title on top, content centred, buttons at the bottom; bigger level number.",
+        "Practise, nothing answered yet: 'Nothing to practise yet — When you miss a word, it comes back here. Words you get right come back too, a few days later, so they stick.' (was 'All caught up').",
+        "Practise row 'Due for review' is now 'Time to review'."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T22:22:53+01:00",
+      "date": "2026-10-20 22:22 BST",
+      "agent": "Claude",
+      "summary": "#/about is a full-screen page again, and shareable: signed-out visitors no longer get sent to sign-in",
+      "detail": [
+        "Opening #/about while signed out shows the About page and never starts sign-in (it used to redirect straight to the sign-in screen).",
+        "Signed out: no 'Back to app' button, no sign-in buttons, Escape does nothing — About is the whole page.",
+        "About always covers the whole window, sidebar included, signed in or not."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T22:15:20+01:00",
+      "date": "2026-10-20 22:15 BST",
+      "agent": "Claude",
+      "summary": "Desktop home uses the window's height; bigger tool buttons on the card back",
+      "detail": [
+        "Desktop (1360px+): Learn and Practise are at least 70% of the window tall (max 720px); tiles at the top, the level with its words and bar centred, Learn button at the bottom.",
+        "Card back tool row (Rare uses, Dictionary, …): icons 28→32px and labels 12→14px on phones; 36px and 16px on desktop."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T22:09:02+01:00",
       "date": "2026-10-20 22:09 BST",
       "agent": "Claude",
@@ -308,64 +372,6 @@
         "Slots that name a word type (noun, verb, adjective) are pills in the pattern row and coloured words in the example; others (\"destination\", \"more, less or better\") take no colour.",
         "Same font as ordinary card backs (DM Sans; the rows had fallen back to Arial); 48px headword, 17px patterns, 20px example.",
         "Credit rows centre the dots only beside a source icon; a text credit such as \"Source not verified\" keeps its full width."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:43:10+01:00",
-      "date": "2026-10-19 21:43 BST",
-      "agent": "Claude",
-      "summary": "Film/TV examples show just the IMDb icon; dots centred; no line beside sense rows",
-      "detail": [
-        "Speech examples from film and TV show only the IMDb icon. The show is named when you tap it: \"Open Raees on IMDb\". Lyric credits are unchanged.",
-        "With only a source icon in the credit row, the example dots are centred (ordinary and function-word cards, and the tutorial replica).",
-        "The coloured vertical line joining subsense rows to their sense row is gone; the rows sit slightly indented instead."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:36:12+01:00",
-      "date": "2026-10-19 21:36 BST",
-      "agent": "Claude",
-      "summary": "Function-word card backs: simpler pattern rows, contraction on one line",
-      "detail": [
-        "Contractions read \"del (de + el)\" on one line, the parts smaller and centred on the word; the \"Function word · Example patterns\" label is gone.",
-        "Each pattern is one row: the pattern, with its plain meaning beneath (\"Of / from the\"). The active row is fully outlined in the word's colour.",
-        "The word is tinted the same colour in the pattern and the example sentence (contraction orange; otherwise its part of speech). The heading stays white."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:30:51+01:00",
-      "date": "2026-10-19 21:30 BST",
-      "agent": "Claude",
-      "summary": "Session length \"No limit\" is now \"All\"",
-      "detail": [
-        "The session-length chip on the Learn and Practise buttons reads 5 min, 10 min or All, so it fits on desktop. Screen readers still hear \"no time limit\"."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:24:59+01:00",
-      "date": "2026-10-19 21:24 BST",
-      "agent": "Claude",
-      "summary": "Choose what to learn from: one clear paragraph, centred title",
-      "detail": [
-        "The intro is now: \"This app teaches the most common words first, counted from everyday speech, or from songs if you’d rather learn the vocabulary of the music you listen to. You can switch any time, and your progress is shared.\" (also in the vocabulary switcher).",
-        "The separate \"You can switch between Speech and Music any time\" line under the cards is gone.",
-        "The \"Choose what to learn from\" title is centred."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:07:04+01:00",
-      "date": "2026-10-19 21:07 BST",
-      "agent": "Claude",
-      "summary": "Music is open in Spanish only; other languages show it as Coming soon",
-      "detail": [
-        "For every language except Spanish, Music (artists, your songs, live playlists) is greyed out with \"Coming soon\", in the home cards, the vocabulary switcher, the desktop menu and Extra's lyrics card. The Spotify footer is hidden there too.",
-        "The admin account (SafariMS) still sees Music in every language. Other accounts, Joshua and JP included, don't.",
-        "The admin-only SpanishDict tile on the card back is now labelled Admin."
       ],
       "commit": "pending"
     }
