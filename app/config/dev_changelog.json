@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T14:34:29+01:00",
+      "date": "2026-10-20 14:34 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): grouped rows sit tighter; the meter stands on the shared gloss's line",
+      "detail": [
+        "In a grouped row (dejar: to leave / to put, to forget, to bequeath) the sub-lines start right under the shared gloss; the empty band between them is gone (row 140px to 123px on a phone).",
+        "The commonness meter's bars now stand on the shared gloss's baseline instead of hanging below it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T14:26:32+01:00",
       "date": "2026-10-20 14:26 BST",
       "agent": "Claude",
@@ -341,18 +352,6 @@
         "Removed \"Sign in to save your learning across devices\".",
         "Removed \"About this project\" from the sign-in/sign-up page (still in Settings).",
         "The email-codes warning now appears only after typing an @icloud.com, @me.com or @mac.com address."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T13:30:00+01:00",
-      "date": "2026-10-19 13:30 BST",
-      "agent": "Claude",
-      "summary": "Home: folded Learn/Practise rows match the open headers; bigger text on desktop; new Learn info sheet",
-      "detail": [
-        "Phones: the folded section shows its icon, name and (i) button like the open header, with its numbers underneath. The (i) opens the info sheet without unfolding.",
-        "Desktop: home text 18px to 21px (23px from 1440px wide); section titles and level numbers scaled up to match.",
-        "The level info sheet is now titled Learn: pick a level, Smart Skip, and what New / Seen / Known / Estimated mean."
       ],
       "commit": "pending"
     }
