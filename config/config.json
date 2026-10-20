@@ -90,7 +90,7 @@
       "cognatesPath": "cognates/es/cognates-literal-ground-r6-fw1.json",
       "mergeExceptionsPath": "data/merge-exceptions/es-literal-ground-r6-seam-v1-fw1.json",
       "bridgePath": "data/bridge/es-fw1-ds25.json",
-      "coveragePath": null,
+      "coveragePath": "coverage/es/coverage.json",
       "dictionaryExamplesPath": "data/dictionary-examples/es-es-speech-v25-literal-ground-r6-10000x30-slim-v1-fw1.json"
     },
     "swedish": {
@@ -296,7 +296,7 @@
       "conjugationsPath": null,
       "cognatesPath": "cognates/fi/cognates.json",
       "mergeExceptionsPath": "data/merge-exceptions/fi.json",
-      "coveragePath": null,
+      "coveragePath": "coverage/fi/coverage.json",
       "exampleTargetField": "example_finnish",
       "exampleEnglishField": "example_english",
       "colorTheme": {"primary": "#003580", "secondary": "#FFFFFF"},
@@ -394,7 +394,7 @@
       "cognatesPath": "cognates/fr/cognates.json",
       "mergeExceptionsPath": "data/merge-exceptions/fr.json",
       "bridgePath": "data/bridge/fr-fw1-ds25.json",
-      "coveragePath": null
+      "coveragePath": "coverage/fr/coverage.json"
     },
     "russian": {
       "name": "Russian",
@@ -590,7 +590,7 @@
       "cognatesPath": "cognates/pt/cognates-literal-ground-r4-fw1-ds25.json",
       "mergeExceptionsPath": "data/merge-exceptions/pt-literal-ground-r4-seam-v1-fw1-ds25.json",
       "bridgePath": "data/bridge/pt-fw1-ds25.json",
-      "coveragePath": null,
+      "coveragePath": "coverage/pt/coverage.json",
       "dictionaryExamplesPath": "data/dictionary-examples/pt-pt-speech-v25-literal-ground-r4-10000x30-slim-v1-fw1-ds25.json"
     },
     "portuguese_brazilian": {

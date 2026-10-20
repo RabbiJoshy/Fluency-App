@@ -5,6 +5,8 @@
 /* Dark-theme surfaces for this screen come from css/black-palette.css. One
    text size (16px phones, 21px from 1024px, 23px from 1440px). */
 #setupPanel, #topBar { --home-text: 16px; }
+/* Type scale for the level picker: every size is a multiple of --home-text. */
+#setupPanel { --home-text-small: calc(var(--home-text) * 0.85); --home-title: calc(var(--home-text) * 1.25); --home-number: calc(var(--home-text) * 3); }
 @media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 21px; } }
 @media (min-width: 1440px) { #setupPanel, #topBar { --home-text: 23px; } }
 
@@ -50,7 +52,8 @@
 #setupPanel .home-section > .step-header > .step-number { display: none; }
 #setupPanel .home-section > .step-header > .step-title-trigger {
     margin: 0;
-    font-size: 20px;
+    font-family: var(--font-emphasis);
+    font-size: var(--home-title);
     justify-self: start;
 }
 /* Learn (seedling) and Practise (history clock): white line icons by the
@@ -122,8 +125,9 @@
 /* A quiet marker for the section you are in: an accent edge and tinted border. */
 body:not(.desktop-workspace) #setupPanel[data-home-open="learn"] #step2,
 body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckSection {
-    border-color: color-mix(in srgb, var(--accent-primary) 45%, var(--border-color));
-    box-shadow: inset 3px 0 0 var(--accent-primary);
+    /* One even outline: the 1px border plus a 1px inner ring, all the way round. */
+    border-color: color-mix(in srgb, var(--accent-primary) 70%, var(--border-color));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-primary) 70%, var(--border-color));
 }
 #setupPanel .home-section-toggle-meta { order: 1; flex: 0 0 100%; }
 #setupPanel .home-section-peek { order: 2; }
@@ -192,9 +196,9 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
     align-items: center;
     line-height: 1.15;
 }
-.home-level-eyebrow { color: var(--text-muted); font-size: var(--home-text); }
-.home-level-readout strong { font-size: 38px; font-weight: 700; color: var(--text-primary); }
-.home-level-words { color: var(--text-muted); font-size: var(--home-text); }
+.home-level-eyebrow { color: var(--text-muted); font-size: var(--home-text-small); }
+.home-level-readout strong { font-family: var(--font-emphasis); font-size: var(--home-number); font-weight: 700; color: var(--text-primary); }
+.home-level-words { color: var(--text-muted); font-size: var(--home-text-small); white-space: nowrap; }
 #setupPanel #lswExamples {
     margin: 8px 0 0;
     padding: 0;
@@ -436,9 +440,6 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
         background: var(--bg-primary);
         box-shadow: none;
     }
-    .home-cta { position: relative; }
-    .home-cta-length { position: relative; z-index: 1; }
-    .home-cta-main { position: absolute; inset: 0; padding: 0 16px; }
     /* Room so the last card never sits under the bar. */
     #setupPanel[data-home-open] { padding-bottom: calc(130px + env(safe-area-inset-bottom)); }
 }
@@ -459,7 +460,8 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
    its own styling. */
 body:not(.desktop-workspace) #topBar {
     margin-bottom: 12px;
-    padding: 8px 4px 10px;
+    /* Equal air above the name and icons and below them, down to the line. */
+    padding: 0 4px 18px;
     border: 0;
     border-radius: 0;
     background: color-mix(in srgb, var(--bg-primary) 90%, transparent);
@@ -470,7 +472,9 @@ body:not(.desktop-workspace) #topBar::before {
     height: 2px;
     padding: 0;
     border-radius: 1px;
-    opacity: .6;
+    /* One colour, the language's light one, not the flag's two. */
+    background: var(--accent-primary);
+    opacity: .85;
     -webkit-mask: none;
     mask: none;
 }
@@ -481,17 +485,18 @@ body:not(.desktop-workspace) #topBar .learning-context-chip {
     border-radius: 10px;
     background: transparent;
 }
-body:not(.desktop-workspace) #topBar .learning-context-flag { font-size: 20px; }
-body:not(.desktop-workspace) #topBar .learning-context-chip-copy strong { font-size: 15px; }
+body:not(.desktop-workspace) #topBar .learning-context-flag { font-size: 25px; }
+body:not(.desktop-workspace) #topBar .learning-context-chip-copy strong { font-size: 16px; }
 body:not(.desktop-workspace) #topBar .top-bar-icon-btn,
 body:not(.desktop-workspace) #topBar .gear-btn {
-    width: 40px;
+    width: 36px;
     height: 40px;
-    flex: 0 0 40px;
+    flex: 0 0 36px;
     background: transparent;
 }
+body:not(.desktop-workspace) #topBar .top-bar-right-controls { gap: 0; }
 body:not(.desktop-workspace) #topBar .top-bar-icon-btn svg,
-body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; }
+body:not(.desktop-workspace) #topBar .gear-btn svg { width: 26px; height: 26px; }
 
 /* --- Wide screens: fill the window -------------------------------------
    Nothing here scrolls, so nothing is capped in pixels: the column takes the
@@ -542,9 +547,6 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; 
     #setupPanel #step2 .home-level-stats { margin-top: 1.6vh; font-size: var(--home-text); gap: 6px 1.4vw; }
     .home-level-stepper { max-width: none; gap: 2vw; }
     .home-level-step { width: clamp(48px, 4.4vw, 70px); height: clamp(48px, 4.4vw, 70px); font-size: clamp(32px, 2.9vw, 46px); }
-    .home-level-eyebrow { font-size: clamp(15px, 1.2vw, 19px); }
-    .home-level-readout strong { font-size: clamp(44px, 4.2vw, 68px); }
-    .home-level-words { font-size: var(--home-text); }
     #setupPanel #lswExamples,
     #setupPanel #lswExamples .lsw-egs,
     #setupPanel #lswExamples .lsw-egs * { font-size: var(--home-text); }
@@ -1103,12 +1105,12 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     #setupPanel #step2 .home-section-footer > #setupOptions { flex: none; width: 100%; }
 }
 
-/* Smart Skip row: closer to the button's size, with a switch that is easy to hit. */
-.home-smart-skip { min-height: 54px; padding: 8px 10px 8px 14px; border-radius: 12px; gap: 10px; }
+/* Smart Skip row: the same height as the .home-cta button beside it (56px, 62px from 1024px), with a switch that is easy to hit. */
+.home-smart-skip { min-height: 56px; padding: 8px 10px 8px 14px; border-radius: 12px; gap: 10px; }
 .home-switch { width: 54px; height: 32px; border-radius: 16px; }
 .home-switch-knob { top: 3px; left: 3px; width: 26px; height: 26px; }
 .home-switch[aria-checked="true"] .home-switch-knob { transform: translateX(22px); }
-@media (min-width: 1024px) { .home-smart-skip { min-height: 60px; } }
+@media (min-width: 1024px) { .home-smart-skip { min-height: 62px; } }
 
 /* Phones: lift the bottom bar clear of rounded screen corners and the home bar. */
 @media (max-width: 767px) {
@@ -1158,15 +1160,25 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 .home-cta-length::before { flex: none; }
 
 @media (min-width: 1360px) {
-    /* Wider Practise column, and the button text is centred on the whole button
-       (chip included), as it is on phones. */
+    /* Wider Practise column. The button text is centred in its own half, beside the time chip. */
     body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]) { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
-    .home-cta { position: relative; }
-    .home-cta-length { position: relative; z-index: 1; }
-    .home-cta-main { position: absolute; inset: 0; flex: none; padding: 0 1vw; }
+    .home-cta-main { flex: 1; padding: 0 1vw; }
 }
 
 /* Music closed for this language (ui.js musicOpenFor): no Spotify footer. */
 #standardSourceCard .standard-source-spotify[hidden] { display: none !important; }
 /* A closed option still says why: its line reads "Coming soon". */
 #step1 #standardSourceCard .choice-sheet-item:disabled .choice-sheet-copy small { display: block !important; grid-area: 2 / 1 / auto / -1; margin-top: 6px; text-align: left; color: var(--text-muted); }
+
+/* The coverage figure sits on its own line under the example words. */
+#setupPanel #lswExamples .lsw-egs .lsw-coverage-inline { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* The level is the point of this card: bigger arrows and number, on a shaded plate. */
+.home-level-readout {
+    padding: 8px 16px 10px;
+    border-radius: 16px;
+    background: var(--bg-tertiary);
+}
+.home-level-stepper { gap: 6px; justify-content: center; }
+.home-level-step { flex: none; width: 46px; height: 46px; font-size: 34px; color: var(--text-secondary); }
+@media (min-width: 1360px) { .home-level-step { width: 56px; height: 56px; font-size: 40px; } }

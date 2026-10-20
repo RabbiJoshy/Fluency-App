@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=4f109842");
+@import url("./appearance.css?v=be86c5bc");
 
 
         * {
@@ -13809,6 +13809,10 @@
             gap: 8px;
             padding: 10px;
         }
+        .choice-sheet-grid .choice-sheet-copy strong {
+            overflow-wrap: normal;
+            white-space: nowrap;
+        }
         .choice-sheet-grid .choice-sheet-icon {
             width: 42px;
             height: 42px;
@@ -26194,3 +26198,525 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     background: #e6eaef;
     color: var(--text-primary);
 }
+
+/* ===== Inline sense rows (staging trial, 2026-10-20) =====
+   Each sense is one left-aligned line: gloss, context, grammar, then the
+   "i" after the last word (inlineSenseRows in flashcards.js moves it there).
+   Centred text in boxes wrapped into narrow towers; left-aligned text wraps
+   like a sentence. The left slot is kept only for the row's meter, pin or
+   Known tag; nothing is mirrored on the right. Scoped to .inline-sense-rows
+   so removing that class restores the previous layout. */
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-regular,
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group {
+    padding: 5px 10px 5px 12px !important;
+    min-height: 40px;
+}
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group):has(> :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail)) {
+    padding-left: 36px !important;
+}
+.meanings-scroll.inline-sense-rows .pos-collapsible.is-single-sense .meaning-row:is(.meaning-row-regular, .meaning-row-group):not(:has(> :is(.sense-pin-btn, .known-sense-tag, .pct-column :is(.sense-pin-btn, .known-sense-tag)))) {
+    padding-left: 12px !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group):has(.sense-pin-btn) { padding-left: 46px !important; padding-right: 10px !important; }
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group):has(.known-sense-tag) { padding-left: 62px !important; padding-right: 10px !important; }
+
+/* Regular rows: one run of text. */
+.meanings-scroll.inline-sense-rows .meaning-row .meaning-row-body {
+    display: block !important;
+    width: 100%;
+    padding: 0 !important;
+    text-align: left;
+    line-height: 1.35;
+}
+.meanings-scroll.inline-sense-rows .meaning-row .meaning-row-gloss {
+    display: inline !important;
+    text-align: left !important;
+    width: auto !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row .meaning-row-sub {
+    display: inline !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 0 0 6px;
+    padding: 0 !important;
+    background: none !important;
+    text-align: left !important;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+.meanings-scroll.inline-sense-rows .meaning-row .meaning-row-sub > * { display: inline !important; margin: 0 4px 0 0 !important; }
+.meanings-scroll.inline-sense-rows .meaning-row .meaning-row-sub .meaning-context { font-weight: 400 !important; color: var(--text-secondary) !important; }
+.meanings-scroll.inline-sense-rows .meaning-row.is-current-sense .meaning-row-sub .meaning-context { color: var(--text-primary) !important; }
+.meanings-scroll.inline-sense-rows .meaning-row .sense-metadata-list { display: inline !important; }
+.meanings-scroll.inline-sense-rows .meaning-row :is(.meaning-row-sub, .meaning-context).is-hoisted,
+.meanings-scroll.inline-sense-rows .meaning-row .sense-grammar-cue.is-hoisted { display: none !important; }
+/* Every row shares its gloss: the row is its context, read as the main text. */
+.meanings-scroll.inline-sense-rows .meaning-row.has-hoisted-gloss .meaning-row-gloss { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row.has-hoisted-gloss .meaning-row-sub { margin-left: 0; }
+/* Inactive rows keep to two lines; the active one shows everything. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular:not(.is-current-sense) .meaning-row-body {
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+/* Grouped rows: the shared words lead, each sub-sense is its own line. */
+.meanings-scroll.inline-sense-rows .meaning-row .group-card-body {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 2px;
+    padding: 0 !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row .group-card-shared {
+    order: 0;
+    flex: none !important;
+    align-self: stretch !important;
+    width: auto !important;
+    text-align: left !important;
+    padding: 0 !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group {
+    order: 1;
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 2px;
+    max-width: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    background: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group > .group-card-varying-cell {
+    display: block !important;
+    min-height: 0 !important;
+    padding: 3px 8px !important;
+    text-align: left !important;
+    border-radius: 6px;
+}
+.meanings-scroll.inline-sense-rows .meaning-row .group-card-varying-cell > :is(.meaning-context-cell, .row-adaptive-text) {
+    display: inline !important;
+    text-align: left !important;
+}
+
+/* The "i" follows the last word. */
+.meanings-scroll.inline-sense-rows .sense-inline-info {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+.meanings-scroll.inline-sense-rows .sense-inline-info > .sense-note-trigger {
+    position: static !important;
+    transform: none !important;
+    width: 26px;
+    min-width: 26px;
+    height: 24px;
+    min-height: 24px;
+    font-size: 19px;
+}
+
+/* Word type row: shared gloss bold, shared context muted, after the headword;
+   it drops under the line when it would wrap beside the meter. */
+.pos-collapsible .pos-section-head { flex-wrap: wrap; }
+.pos-collapsible:not(.is-open) .pos-section-shared { display: none; }
+.pos-section-shared {
+    display: inline;
+    min-width: 0;
+    flex: 1 1 0;
+    text-align: left;
+    line-height: 1.3;
+}
+.pos-section-shared > span + span::before { content: ' · '; color: var(--text-secondary); font-weight: 400; }
+.pos-section-shared .pos-shared-gloss { font-weight: 700; color: var(--text-primary); }
+.pos-section-shared .pos-shared-context { font-weight: 400; color: var(--text-secondary); }
+.pos-section-head.has-shared-below .pos-section-shared {
+    order: 9;
+    flex: 1 0 100%;
+    padding: 0 0 3px 6px;
+}
+.meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group > .group-card-varying-cell:not(.is-active-subsense) { background: transparent !important; }
+/* In a group the shared words are the gloss (bold); sub-senses read as context. */
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .group-card-shared { font-weight: 700 !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context) {
+    font-weight: 400 !important;
+    color: var(--text-secondary) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .group-card-varying-cell.is-active-subsense :is(.meaning-context-cell, .row-adaptive-text, .meaning-context) { color: var(--text-primary) !important; }
+.meanings-scroll.inline-sense-rows .meaning-row :is(.meaning-row-sub, .group-card-varying-cell) :is(.sense-grammar-cue, .sense-metadata-list, .sense-metadata-tier) {
+    display: inline !important;
+    width: auto !important;
+    margin: 0 4px 0 0 !important;
+    text-align: left !important;
+}
+/* The word-type row's pill and left edge already carry the colour, so rows
+   are neutral: no POS-tinted fill. The word-type row is square, which sets
+   it apart from the rounded meaning rows under it. The active row keeps its
+   coloured outline; the active sub-sense keeps its highlight. */
+.meanings-scroll.inline-sense-rows .pos-collapsible .pos-section-head {
+    background: color-mix(in srgb, var(--text-primary) 5%, transparent) !important;
+    border-radius: 0 !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group) {
+    background: color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+}
+/* A group's meter belongs to its shared gloss, so it sits on that line. */
+.meanings-scroll.inline-sense-rows .meaning-row-group > :is(.pct-column, .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag) {
+    top: 9px !important;
+    transform: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .group-card-shared { line-height: 1.15 !important; }
+/* Sub-lines sit close under the shared gloss. */
+.meanings-scroll.inline-sense-rows .meaning-row .group-card-body { gap: 0 !important; }
+.meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group { gap: 0 !important; flex: none !important; justify-content: center !important; }
+.meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group > .group-card-varying-cell { padding: 1px 8px !important; }
+/* The meter's bars stand on the gloss's baseline. */
+.meanings-scroll.inline-sense-rows .meaning-row-group > :is(.pct-column, .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag) { top: 5px !important; }
+/* A lone grouped row whose shared words went up to the word-type row: its
+   sub-senses become rows of their own, styled like any other meaning row. */
+.meanings-scroll.inline-sense-rows .pos-collapsible .meaning-row.meaning-row-group.has-hoisted-shared-cell:not(#_) {
+    padding: 0 !important;
+    min-height: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-shared { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group { gap: 4px !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell {
+    padding: 6px 12px !important;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--text-primary) 16%, transparent);
+    background: color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+    box-shadow: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense {
+    border: 2px solid rgb(var(--sense-match-rgb));
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context) {
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+}
+/* Shared context over translations (cosa: object / thing, something,
+   anything): the context is a muted lead, the translations are the lines. */
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="context"] .group-card-shared {
+    font-weight: 400 !important;
+    color: var(--text-secondary) !important;
+}
+/* Earlier layouts force gloss and cue into separate blocks on busy cards
+   (has-compact-rows) and when a row measures as needing a stack. Here they
+   stay one run: inactive rows on a busy card are one line ending in "…". */
+.meanings-scroll.inline-sense-rows .meaning-row-regular :is(.meaning-row-gloss, .meaning-row-sub):not(#_) {
+    display: inline !important;
+    width: auto !important;
+    max-width: none !important;
+    overflow: visible !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.sense-row-needs-stack .meaning-row-body:not(#_) { display: block !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-regular:not(.is-current-sense) .meaning-row-body:not(#_) { display: -webkit-box !important; }
+.meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-regular:not(.selected):not(.is-current-sense) .meaning-row-body:not(#_) {
+    display: block !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="context"] .group-card-shared .meaning-context:not(#_) {
+    font-weight: 400 !important;
+    color: var(--text-secondary) !important;
+}
+/* Busy cards (has-compact-rows) lay an unselected group out side by side,
+   which overflowed left under the meter after switching senses (vamos:
+   "to go" under the meter once "to be" was chosen). Groups stay stacked. */
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-body:not(#_) {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared:not(#_) { align-self: stretch !important; }
+
+/* The whole group selected (examples from every sub-sense) with no single
+   sub-sense chosen: no row is outlined. When the card has other word types,
+   one outline goes round the group's rows so the example's word type shows. */
+.meanings-scroll.inline-sense-rows:has(.pos-collapsible ~ .pos-collapsible) .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)):not(#_) {
+    padding: 3px !important;
+    border-radius: 11px;
+    box-shadow: inset 0 0 0 2px rgb(var(--sense-match-rgb)) !important;
+}
+
+/* One size for every row: text is 20px and a row is at least 44px tall,
+   whether its line is a translation (to let, still) or a context standing in
+   for one (bom: desirable, positive, advantageous). Context that follows a
+   translation is the same size, regular weight and muted. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular:not(#_) {
+    min-height: 44px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    align-items: center;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-regular .meaning-row-gloss:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context):not(#_) {
+    font-size: 20px !important;
+    line-height: 1.3 !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-regular .meaning-row-sub:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-regular .meaning-row-sub *:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group:not(.has-hoisted-shared-cell) .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context, .sense-metadata-detail):not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="context"] .group-card-shared .meaning-context:not(#_) {
+    font-size: 20px !important;
+    line-height: 1.35 !important;
+}
+/* bom's rows are contexts standing in for the gloss: row size, not cue size. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular.has-hoisted-gloss .meaning-row-sub:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-regular.has-hoisted-gloss .meaning-row-sub *:not(#_) { font-size: 20px !important; line-height: 1.3 !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell:not(#_) {
+    display: flex !important;
+    align-items: center;
+    min-height: 44px !important;
+    padding: 6px 12px !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell:not(#_) { justify-content: center !important; text-align: left !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-varying-cell :is(.meaning-context-cell, .meaning-context-cell *):not(.sense-inline-info, .sense-inline-info *, #_) {
+    font-size: 20px !important;
+    line-height: 1.3 !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+}
+/* One text size for the whole menu (2026-10-20, Josh): translation and
+   context are both 20px; weight and colour tell them apart. Every sub-row
+   in a group is a full-height tap target like any other row. */
+.meanings-scroll.inline-sense-rows .meaning-row :is(.meaning-row-gloss, .meaning-row-sub, .meaning-row-sub *, .group-card-shared, .group-card-shared *, .group-card-varying-cell, .group-card-varying-cell *):not(.sense-inline-info, .sense-inline-info *, .sense-prominence-badge, .sense-prominence-badge *, #_) {
+    font-size: 20px !important;
+    line-height: 1.3 !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group:not(.has-hoisted-shared-cell) .sense-cue-group > .group-card-varying-cell:not(#_) {
+    display: flex !important;
+    align-items: center;
+    justify-content: center !important;
+    text-align: left !important;
+    min-height: 40px !important;
+    padding: 4px 8px !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="context"] .group-card-shared .meaning-context:not(#_) { font-size: 20px !important; }
+
+/* Centred rows (option D, Josh 2026-10-20). Each row's text is a block
+   centred in the row; lines inside it stay left-aligned, so a one-line row
+   is centred and a long one wraps like a sentence instead of a tower. The
+   right padding offsets part of the meter's slot so text sits near centre. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular .meaning-row-body:not(#_) { text-align: center !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-regular .sense-inline-line:not(#_) {
+    display: block !important;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    text-wrap: balance;
+}
+.meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-regular:not(.selected):not(.is-current-sense) .sense-inline-line:not(#_) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group):has(> :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail)):not(.has-hoisted-shared-cell, #_) {
+    padding-right: 22px !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared:not(#_) {
+    align-self: center !important;
+    width: fit-content !important;
+    max-width: 100%;
+    text-align: center !important;
+    text-wrap: balance;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group .sense-cue-group > .group-card-varying-cell:not(#_) {
+    justify-content: center !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-varying-cell > :is(.meaning-context-cell, .row-adaptive-text):not(#_) { text-align: center !important; text-wrap: balance; }
+
+/* Portuguese pass (2026-10-20, Josh). Rules, not per-word fixes:
+   A. a row that does not fit on one line stacks: translation line, then
+      context line, both centred (fitInlineRows sets .is-stacked-row);
+   B. the "i" sits at the active row's right edge (see the block below);
+   C. "+ com" and register labels follow the translation (.sense-inline-tr);
+   D. the head's chevron sits at the right edge, not after the words;
+   E. a sub-row holding a context is styled as a context. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular.is-stacked-row .sense-inline-line:not(#_) { width: auto; text-align: center; }
+.meanings-scroll.inline-sense-rows .meaning-row-regular.is-stacked-row :is(.sense-inline-tr, .meaning-row-sub):not(.is-hoisted, #_) {
+    display: block !important;
+    margin: 0 !important;
+    text-align: center !important;
+    text-wrap: balance;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-regular.is-stacked-row .meaning-row-sub:not(.is-hoisted, #_) { margin-top: 2px !important; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { white-space: nowrap; margin: 0 !important; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue) :not(.sense-inline-info, .sense-inline-info *, #_),
+.meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { font-size: 20px !important; line-height: 1.3 !important; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-metadata-list:not(#_) {
+    display: inline-flex !important;
+    vertical-align: middle;
+    margin: 0 !important;
+    white-space: nowrap;
+}
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-metadata-list :is(.sense-pill, .sense-pill *):not(#_) {
+    font-size: 13px !important;
+    line-height: 1.3 !important;
+    font-weight: 600 !important;
+}
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-metadata-list .sense-pill:not(#_) {
+    border: 1px solid currentColor;
+    border-radius: 5px;
+    padding: 0 5px !important;
+}
+.meanings-scroll.inline-sense-rows .pos-section-head:not(:has(> :is(.sense-prominence-badge, .sense-pin-btn, .pct-column, .known-sense-tag))) > .pos-section-chevron,
+.meanings-scroll.inline-sense-rows .pos-collapsible.is-open.rows-carry-meters > .pos-section-head:not(:has(> :is(.sense-pin-btn, .pct-column, .known-sense-tag))) > .pos-section-chevron { margin-left: auto; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-context-cell :is(.meaning-context-cell, .meaning-context-cell *):not(.sense-inline-info, .sense-inline-info *, #_) {
+    font-weight: 400 !important;
+    color: var(--text-secondary) !important;
+}
+/* With 4+ rows, sub-rows are clipped to one line; in the selected group they
+   wrap like any other row (passar: "to do something during a given time"). */
+.meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-group:is(.selected, .is-current-sense) .group-card-varying-cell:not(#_),
+.meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-group:is(.selected, .is-current-sense) .group-card-varying-cell *:not(#_) {
+    white-space: normal !important;
+    overflow: visible !important;
+}
+
+/* Info, flags and abbreviations (2026-10-20, Josh). The "i" mirrors the
+   meter: right edge of the active row (or of a sub-row), vertically centred,
+   and absent on other rows, which reserve nothing for it. Labels live in the
+   note; a region flag leads the translation on the active row only. */
+.meanings-scroll.inline-sense-rows .meaning-row,
+.meanings-scroll.inline-sense-rows .group-card-varying-cell { position: relative; }
+.meanings-scroll.inline-sense-rows :is(.meaning-row, .group-card-varying-cell) > .sense-inline-info:not(#_) {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    display: inline-flex;
+    z-index: 1;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group > .sense-inline-info:not(#_) { top: 5px; transform: none; }
+.meanings-scroll.inline-sense-rows .meaning-row:not(.selected, .is-current-sense) .sense-inline-info:not(#_) { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row:is(.selected, .is-current-sense):has(> .sense-inline-info):not(.has-hoisted-shared-cell, #_) { padding-right: 36px !important; }
+.meanings-scroll.inline-sense-rows .meaning-row:is(.selected, .is-current-sense) .sense-cue-group > .group-card-varying-cell:has(> .sense-inline-info):not(#_) { padding-left: 34px !important; padding-right: 34px !important; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-region-flag { margin-right: 6px; }
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-region-flag .flag-img { height: 0.85em; width: auto; vertical-align: -0.05em; }
+.meanings-scroll.inline-sense-rows .meaning-row:not(.selected, .is-current-sense) .sense-region-flag { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row:is(.selected, .is-current-sense) .sense-abbr { cursor: pointer; }
+.sense-abbr-tip {
+    position: fixed;
+    z-index: 10000;
+    max-width: min(320px, calc(100vw - 16px));
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: var(--bg-card, #1a1e27);
+    color: var(--text-primary, #fff);
+    border: 1px solid color-mix(in srgb, var(--text-primary, #fff) 18%, transparent);
+    font-size: 15px;
+    line-height: 1.35;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+}
+
+/* A bracket every sub-sense shares (daqui: "of (in relation to)") is the
+   heading's own context, not a sub-row: it follows "of" on the same line,
+   muted like any context, so it never looks like a row you could tap. */
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared .group-shared-context:not(#_) {
+    display: inline !important;
+    margin: 0 0 0 6px !important;
+    font-weight: 400 !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Function-word backs in the content cards' style (layout B, Josh
+   2026-10-20): every pattern is an outlined box like a sense row; the active
+   one is outlined in its partner's colour (verb + de green, noun + que blue,
+   em + place blue as a noun), else the word's own colour, never white. A
+   small "Example patterns" label in the headword's font says the list is
+   usage patterns, not every meaning. */
+.fw-patterns-label { margin: 6px 0 0; text-align: center; font: 500 14px/1.3 var(--font-reading); color: var(--text-muted); }
+.fw-relation-box {
+  border: 1px solid color-mix(in srgb, var(--text-primary) 16%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  min-height: 44px;
+  padding: 7px 12px;
+}
+.fw-relation-box:hover { background: color-mix(in srgb, var(--text-primary) 4%, transparent); }
+.fw-relation-box.is-selected,
+.fw-relation-box[aria-pressed="true"] {
+  border: 2px solid rgb(var(--fw-row-rgb, var(--sense-match-rgb)));
+  background: rgba(var(--fw-row-rgb, var(--sense-match-rgb)), 0.08);
+  padding: 6px 11px;
+}
+.fw-relation-meaning { font-size: 18px; margin-top: 2px; }
+
+/* Where am I (Josh 2026-10-20): the active word type's row and the active
+   meaning take a very light wash of its colour, lighter than the old 10%
+   fill, so a card with several word types shows which one is open. A lone
+   group's sub-rows: the active one, or all of them when the whole group is
+   selected. */
+.meanings-scroll.inline-sense-rows .pos-collapsible:has(.meaning-row:is(.selected, .is-current-sense)) > .pos-section-head:not(#_) {
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.09), rgba(var(--sense-match-rgb), 0.09)), color-mix(in srgb, var(--text-primary) 5%, transparent) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group):is(.selected, .is-current-sense):not(.has-hoisted-shared-cell, #_) {
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.07), rgba(var(--sense-match-rgb), 0.07)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell:is(.selected, .is-current-sense) .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell:is(.selected, .is-current-sense):not(:has(.is-active-subsense)) .sense-cue-group > .group-card-varying-cell:not(#_) {
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.07), rgba(var(--sense-match-rgb), 0.07)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+}
+/* Translation and context on one line are joined by a muted " · " — the
+   same joiner as the word-type row — so "how · to what degree" reads as two
+   things. A stacked row needs none: the line break separates them. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular:not(.has-hoisted-gloss, .is-stacked-row) .sense-inline-line > .meaning-row-sub:not(.is-hoisted):has(.meaning-context:not(.is-hoisted))::before,
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared .group-shared-context::before {
+    content: '·';
+    margin-right: 6px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Quieter word-type row (Josh 2026-10-20). The pill names the word type,
+   which the left edge's colour already hints at, so it is smaller and tinted
+   rather than a solid fill. "from caro" shares the pill's size and baseline:
+   "from" muted, the lemma in the word type's colour, one space apart. */
+.meanings-scroll.inline-sense-rows .pos-section-head .pos-section-label:not(#_) {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    padding: 2px 9px !important;
+    background: rgba(var(--sense-match-rgb), 0.16) !important;
+    color: color-mix(in srgb, rgb(var(--sense-match-rgb)) 55%, var(--text-primary)) !important;
+}
+.meanings-scroll.inline-sense-rows .pos-section-head :is(.pos-lemma-from, .pos-pill-lemma):not(#_) {
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    align-self: center !important;
+    padding: 0 !important;
+}
+.meanings-scroll.inline-sense-rows .pos-section-head .pos-lemma-from:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; margin-right: -3px; }
+.meanings-scroll.inline-sense-rows .pos-section-head .pos-pill-lemma:not(#_) { font-weight: 600 !important; }
+/* "76% of uses of a": the word is bold, so a one-letter word reads as the word. */
+.split-usage-share .split-usage-word { font-weight: 700; color: var(--text-primary); }
+
+/* "often + a" (llegar): on the text's baseline, "often" muted. A cue with a
+   word in it is a phrase of its own, so " · " sets it apart from the
+   translation; a bare "+ em" stays attached to its verb. */
+.meanings-scroll.inline-sense-rows .sense-target-collocation:not(#_) { vertical-align: baseline !important; }
+.meanings-scroll.inline-sense-rows .sense-target-collocation .sense-collocation-qualifier:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; }
+.meanings-scroll.inline-sense-rows :is(.sense-inline-tr, .group-card-varying-cell, .meaning-context-cell) > * ~ .sense-target-collocation:has(.sense-collocation-qualifier)::before,
+.meanings-scroll.inline-sense-rows .group-card-shared > .sense-target-collocation:has(.sense-collocation-qualifier)::before {
+    content: '·';
+    margin-right: 6px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+/* A label kept on a row as its only words (cuerpo: "anatomy") reads as context. */
+.meanings-scroll.inline-sense-rows .meaning-row .sense-label-context:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell .meaning-context-cell .sense-label-context:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; }
+.meanings-scroll.inline-sense-rows .sense-target-collocation:has(.sense-collocation-qualifier)::before { margin-left: 2px; }
+.meanings-scroll.inline-sense-rows .sense-target-collocation .sense-collocation-particle:not(#_) { margin-left: 0 !important; }

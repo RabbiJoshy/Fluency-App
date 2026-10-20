@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=4f109842';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=4f109842';
-import { readFastTrack } from './fast-track-preferences.js?v=4f109842';
-import './session-plan.js?v=4f109842';
+import './state.js?v=be86c5bc';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=be86c5bc';
+import { readFastTrack } from './fast-track-preferences.js?v=be86c5bc';
+import './session-plan.js?v=be86c5bc';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2279,8 +2279,9 @@ function updateLevelSliderReadout(i) {
                 ? globalThis.coverageLabel()
                 : 'speech comprehension'));
 
+    // Cumulative: what finishing this level (and those before it) reaches.
     const shipped = lv.threshold == null
-        ? globalThis.levelCoverage?.(_syncSamples, lv.startRank, lv.endRank)
+        ? globalThis.cumulativeCoverage?.(_syncSamples, lv.endRank)
         : null;
     const coveragePct = lv.threshold != null
         ? `${(lv.threshold * 100).toFixed(1)}%`
@@ -2326,8 +2327,10 @@ function updateLevelSliderReadout(i) {
         const freqHTML = showLevelFrequency && freqValue !== null
             ? `<div class="lsw-freq-sentence"><strong>${wordLabel}</strong> appear${displayedWordCount === 1 ? 's' : ''} <strong>${freqValue.toLocaleString()}</strong> ${freqUnit}</div>`
             : '';
-        const covHTML = coveragePct
-            ? `<span class="lsw-coverage-inline"> · ~<strong>${coveragePct}</strong> ${coverageType}</span>`
+        const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
+        const levelsLabel = i === 0 ? 'Level 1 makes' : `Levels 1–${i + 1} make`;
+        const covHTML = coverageRounded
+            ? `<span class="lsw-coverage-inline">${levelsLabel} up <strong>${coverageRounded}</strong> of ${activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? 'playlist words' : 'speech')}</span>`
             : '';
         const egHTML = (examplesText || covHTML)
             ? `<div class="lsw-egs">${examplesText || ''}${covHTML}</div>`
@@ -3249,11 +3252,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
     const practisePeek = document.getElementById('practiseSectionPeek');
     if (practisePeek) {
-        const peekItem = (tone, text) => `<span class="home-peek-item is-${tone}"><i aria-hidden="true"></i>${text}</span>`;
-        practisePeek.innerHTML = [
-            practiseMistakes > 0 ? peekItem('mistake', `${practiseMistakes.toLocaleString()} ${practiseMistakes === 1 ? 'mistake' : 'mistakes'}`) : '',
-            practiseDue > 0 ? peekItem('due', `${practiseDue.toLocaleString()} due`) : '',
-        ].join('');
+        // Folded, Practise says only how many are waiting (in the meta line above);
+        // the mistakes / due breakdown is for the open section.
+        practisePeek.innerHTML = '';
         practisePeek.hidden = !practisePeek.innerHTML;
     }
     applyHomeSection(reviewHTML ? practiseMistakes : -1);
@@ -3631,7 +3632,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=4f109842')
+        import('./spotify.js?v=be86c5bc')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

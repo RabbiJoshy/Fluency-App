@@ -2,6 +2,250 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T21:20:07+01:00",
+      "date": "2026-10-20 21:20 BST",
+      "agent": "Claude",
+      "summary": "Phone top bar: bigger flag and icons, tighter spacing; folded Practise shows only the number waiting",
+      "detail": [
+        "Phone top bar: flag 20→25px, icons 22→26px, language name 15→16px, with the icons closer together.",
+        "Folded Practise card: just 'N waiting'; the mistakes / due breakdown no longer appears under it."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T21:16:58+01:00",
+      "date": "2026-10-20 21:16 BST",
+      "agent": "Claude",
+      "summary": "Coverage line now for Spanish, Portuguese, French, Finnish; phone top bar and card outline tidied",
+      "detail": [
+        "Coverage shares added for es, pt, fi (OpenSubtitles 2018 lists) and fr (Lexique 4 FreqOrtho), so 'Levels 1–2 make up N% of speech' shows for them. The French deck is only 200 words today.",
+        "Phone: the coverage line is back, on its own line under the example words, kept to one line.",
+        "Phone top bar: equal space above and below the name and icons; the line beneath is the language's light colour, not the two-colour gradient.",
+        "Phone: the open Learn/Practise card has an even outline all the way round (it was thicker on the left)."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T21:11:29+01:00",
+      "date": "2026-10-20 21:11 BST",
+      "agent": "Claude",
+      "summary": "Level picker: bigger arrows and level number on a shaded plate (trial); coverage line properly hidden on phones",
+      "detail": [
+        "Level picker: the level number is ~25% larger and sits on a shaded rounded plate, with larger arrows either side, so the level reads as the focus of the Learn card.",
+        "Fix: the coverage line ('Levels 1–2 make up …') was still showing on phones; it is now desktop-only as intended."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T21:08:14+01:00",
+      "date": "2026-10-20 21:08 BST",
+      "agent": "Claude",
+      "summary": "Level picker: 'Levels 1–2 make up 52% of speech' under the example words (desktop)",
+      "detail": [
+        "Speech: shows what the levels up to this one make up of speech, as a whole number, e.g. 'Levels 1–3 make up 57% of speech'. Only languages that ship coverage shares show it (Czech today).",
+        "Artist Mode: same wording, 'make up 61% of lyric words', replacing '~61% lyrics comprehension'.",
+        "On its own line under the examples; hidden on phones."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T20:57:03+01:00",
+      "date": "2026-10-20 20:57 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip row is now the same height as the Learn/Practise button",
+      "detail": [
+        "Smart Skip row: 56px on phones and 62px from 1024px wide, matching the button beside it (it was 54px and 60px)."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T20:40:00+01:00",
+      "date": "2026-10-20 20:40 BST",
+      "agent": "Claude",
+      "summary": "Level page type tidied; Learn/Practise button text centred in its own half; Portuguese fits the phone language picker",
+      "detail": [
+        "Learn/Practise card: title, level number, 'Level' and 'Words' lines now use one type scale derived from the page text size, with the emphasis font for the title and number; 'Words 101–200' no longer wraps.",
+        "Learn / Practise button: the label is centred in the half beside the time chip, not across the whole button (phones and wide screens).",
+        "Language picker: a name too long for its tile (Portuguese on a phone) shrinks to fit on one line."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T20:29:20+01:00",
+      "date": "2026-10-20 20:29 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): 'often + a' aligned and set apart; no blank rows; word-type row measured after the flip",
+      "detail": [
+        "llegar: 'to come to · often + a' — the cue sits on the text's baseline, 'often' muted, with ' · ' before a cue that has a word in it (a bare '+ em' stays attached).",
+        "In a group the cue follows each translation; when every sub-row has the same cue it is shown once on the shared line ('to reach a place · often + a').",
+        "cuerpo: a row is never left blank — when its translation went up to the word-type row, its label ('anatomy') stays on the row as muted context instead of moving into the note.",
+        "The word-type row and stacked rows are measured by layout size, not the on-screen box, which the card's 3D flip distorted (cuerpo's 'body' had dropped under the pill)."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T20:23:08+01:00",
+      "date": "2026-10-20 20:23 BST",
+      "agent": "Claude",
+      "summary": "Card back: quieter word-type pills, aligned 'from caro'; companion cards say '76% of uses of a'",
+      "detail": [
+        "Word-type pills are 14px and tinted (16% fill, coloured text) instead of a solid fill at 19px.",
+        "'from caro' matches the pill's size and baseline: 'from' muted, the lemma in the word type's colour.",
+        "Companion card fronts read 'Card 1 of 2 · 76% of uses of a', with the word in bold."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T20:16:50+01:00",
+      "date": "2026-10-20 20:16 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): light wash on the open word type and active meaning; ' · ' between translation and context",
+      "detail": [
+        "The active word type's row and the active meaning take a faint wash of its colour (9% and 7%, over the neutral grey; the old fill was 10%), so on cara the Noun row reads as open and Adjective as closed.",
+        "A lone group's sub-rows: the active one is washed, or all of them when the whole group is selected.",
+        "Translation and context on one line are joined by a muted ' · ' (quanto: 'how · to what degree'; daqui: 'of · in relation to'). Stacked rows need none."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T20:13:25+01:00",
+      "date": "2026-10-20 20:13 BST",
+      "agent": "Claude",
+      "summary": "Function-word backs: pattern rows in the content-card style, active row outlined in its partner's colour",
+      "detail": [
+        "Each pattern is an outlined box like a sense row, meaning beneath at 18px; 'Example patterns' sits under the word in the headword's font.",
+        "The active pattern is outlined in its partner's colour instead of white: think / say + que green (verb), noun + que blue.",
+        "Partners that name a thing (place, person, thing, time, reason, role, topic, endpoint) count as nouns: em + place shows a blue pill and 'maio' turns blue in the example.",
+        "Patterns with no word-type partner (se … , …, more / less + que) use the function word's own colour."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T20:00:51+01:00",
+      "date": "2026-10-20 20:00 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): a grouped row's shared bracket sits on the heading line",
+      "detail": [
+        "daqui: 'of (in relation to)' shows as 'of  in relation to' on one line, muted, instead of 'in relation to' on its own line looking like a sub-row you could tap."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T19:47:19+01:00",
+      "date": "2026-10-20 19:47 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): info icon at the active row's right edge; labels moved into the note; tappable abbreviations",
+      "detail": [
+        "The 'i' sits at the right edge of the active row, vertically centred, mirroring the meter; other rows show none and reserve no space (mal, não, conta).",
+        "Labels such as 'informal' leave the row and appear in its information note; a row with labels but no note gets one (cara).",
+        "Region flags lead the translation and show on the active row only (cara's Brazil flag).",
+        "Abbreviations are tappable on the active row, with no extra styling: tapping '+ger' on passar shows 'With direct object an amount of time and gerund doing something'."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T19:35:14+01:00",
+      "date": "2026-10-20 19:35 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): Portuguese pass — long rows stack as translation over context, both centred",
+      "detail": [
+        "A row that doesn't fit on one line becomes two centred lines, translation then context (mal: 'unfavourably' / 'in an unfavourable manner'). Rows that fit stay on one line.",
+        "The info icon is glued to the last word, so it never wraps onto its own line (mal, conta, não).",
+        "'+ com', '+ de' and register labels follow the translation, not the context (acabar, sair; cara's 'informal' is a small tag).",
+        "The word-type chevron sits at the right edge (bom no longer reads 'good ·'); só's head shows 'only, just · preceding the verb' and wraps under the pill rather than pushing the meter down.",
+        "A sub-row holding a context is muted like a context (só: 'indicates that no other action…').",
+        "In a selected group on a 4+ row card, sub-rows wrap instead of being clipped (passar)."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T15:12:57+01:00",
+      "date": "2026-10-20 15:12 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): row text centred again, but a row that wraps reads left to right",
+      "detail": [
+        "Each row's text is centred in its box (option D): vamos shows 'to be', 'let's go let's move', 'come on' centred, meter on the left.",
+        "A row too long for one line keeps its lines left-aligned inside the centred block, so it reads like a sentence rather than a centred tower (não's 'not; don't; haven't negates the meaning of the verb or adverb').",
+        "Group headings and sub-rows are centred the same way (cosa: object / thing, something, anything)."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T15:03:07+01:00",
+      "date": "2026-10-20 15:03 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): one text size for translations and contexts (20px); sub-rows are full-height tap targets",
+      "detail": [
+        "Translation and context are now the same size, 20px; the translation is bold, the context regular and muted (vamos: 'let's go let's move').",
+        "Each sub-row in a group (dejar: to put, to forget, to bequeath) is at least 40px tall, left-aligned, at the same 20px size."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T14:54:33+01:00",
+      "date": "2026-10-20 14:54 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): rows all one size; no more outline on every sub-sense; translation no longer slides under the meter",
+      "detail": [
+        "Every row's main line is the same size (19px bold) and every row is at least 44px tall, whether it is a translation (to let, still) or a context standing in for one; context after a translation is 15px and muted (it was 12px).",
+        "Opening a card whose only word type is one group (ir: to go / indicates movement, to attend) no longer outlines every sub-sense. If the card has other word types, one outline goes round that group's rows instead.",
+        "Fixed: on cards with four or more rows, switching away from a group (vamos: choose 'to be') pushed 'to go' left under the commonness meter."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T14:41:07+01:00",
+      "date": "2026-10-20 14:41 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): context stays beside its translation; a word type drawn as one group lifts its shared words too",
+      "detail": [
+        "Inactive rows no longer push the context onto a second line under the translation, which left blank space beside the word: cosa's second row is now 'thing  concern' on one line.",
+        "On cards with four or more rows, an inactive row is one line ending in '…'; the active row still shows everything.",
+        "When a word type is one grouped row, its shared words go up to the word-type row and each sub-sense becomes its own row: aún shows 'Adverb  time' over 'still' and 'yet'; así shows 'Adverb  in a certain way' over its four translations.",
+        "When the whole group is selected (examples from every sub-sense), all of those rows are outlined.",
+        "A shared context over several translations (cosa: object over thing, something, anything) is now muted, not bold."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T14:34:29+01:00",
+      "date": "2026-10-20 14:34 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): grouped rows sit tighter; the meter stands on the shared gloss's line",
+      "detail": [
+        "In a grouped row (dejar: to leave / to put, to forget, to bequeath) the sub-lines start right under the shared gloss; the empty band between them is gone (row 140px to 123px on a phone).",
+        "The commonness meter's bars now stand on the shared gloss's baseline instead of hanging below it."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T14:26:32+01:00",
+      "date": "2026-10-20 14:26 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): rows lose the word-type colour wash; word-type row is square; a group's meter sits on its shared gloss",
+      "detail": [
+        "Meaning rows and the word-type row no longer have a POS-coloured fill; the pill and the left edge carry the colour. The active row keeps its coloured outline.",
+        "The word-type row has square corners, setting it apart from the rounded meaning rows under it.",
+        "In a grouped row (dejar: to leave / to put, to forget, to bequeath) the commonness meter sits level with the shared gloss, not centred across all four lines."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-20T14:22:43+01:00",
+      "date": "2026-10-20 14:22 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): each meaning reads as one left-aligned line, with shared words shown once on the word-type row",
+      "detail": [
+        "Gloss, context and grammar now run left to right on one line instead of sitting in centred boxes, so a long context wraps like a sentence (não: 'not; don't; haven't  negates the meaning of the verb or adverb').",
+        "The 'i' follows the last word of the row; no row keeps an empty column on the right for it. The left slot stays for the meter, pin or Known tag.",
+        "Words every row of a word type shares move onto that word type's row once: bom shows 'Adjective  good' and its three rows show only their contexts.",
+        "Grouped rows (tempo, dejar) lead with the shared gloss in bold, each sub-sense on its own lighter line underneath.",
+        "Grammar frames are shortened on the card: +inf, +ger, +adj, +subj, +pp. The note keeps the full wording.",
+        "Display only; no data changes. Trial switch: the inlineSenseRows call in flashcards.js and the .inline-sense-rows block at the end of style.css."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-19T23:20:00+01:00",
       "date": "2026-10-19 23:20 BST",
       "agent": "Claude",
@@ -122,233 +366,6 @@
         "Rare uses draws the same three-bar meter as the sense row, with one bar lit; its count is a small pill beside it.",
         "Conjugate keeps its endings, restyled as -ar / -er / -ir.",
         "Look up is now Dictionary, with a globe icon. Pin meaning(s) is now Pin meaning (tutorial updated to match)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T20:23:46+01:00",
-      "date": "2026-10-19 20:23 BST",
-      "agent": "Claude",
-      "summary": "Desktop home: Learn and Practise sit in the middle of the screen",
-      "detail": [
-        "On desktop the Learn and Practise boxes are centred vertically instead of pinned to the top with an empty band below.",
-        "If the window is too short for them, they start at the top as before. Phones unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T20:02:31+01:00",
-      "date": "2026-10-19 20:02 BST",
-      "agent": "Claude",
-      "summary": "Desktop loading screen is bigger: larger picture, spinner and text",
-      "detail": [
-        "On desktop the \"Preparing your…\" loading screen now uses a larger crest/flag, a larger spinner, and bigger title and sub-text (phones unchanged)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T14:20:00+01:00",
-      "date": "2026-10-20 14:20 BST",
-      "agent": "Claude",
-      "summary": "Level switching no longer makes the Learn box bounce; centred button text; roomier Practise",
-      "detail": [
-        "Stepping through levels no longer grows and shrinks the Learn box: the example-words line now keeps its height (two lines reserved, never shrinks while you step).",
-        "On wide desktop the Learn and Practise button text is centred on the whole button, timer chip included.",
-        "The timer chip keeps its shape on every button, and the Practise column is wider (Learn 60% to 60/40 becomes 1.5 : 1)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T13:05:00+01:00",
-      "date": "2026-10-20 13:05 BST",
-      "agent": "Claude",
-      "summary": "Phones: title band with a rule under it; legend centred",
-      "detail": [
-        "Learn and Practise titles sit in their own band with a thin rule beneath, as on desktop, folded or open. The corner icon is centred in that band, so it is level with the title and the same distance from the top and left.",
-        "The level legend and the level-estimate line are centred."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T12:30:00+01:00",
-      "date": "2026-10-20 12:30 BST",
-      "agent": "Claude",
-      "summary": "Level legend fits one line; level-estimate words get their own line",
-      "detail": [
-        "The New / Seen / Known / Skipped legend now shrinks its text (down to 11px) to stay on one line instead of wrapping or overflowing, and refits when a section opens or the window changes.",
-        "Words skipped by a level estimate are no longer a legend item; a line beneath reads \"N skipped by your level estimate\" with the purple dot. The purple segment stays in the bar."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T11:40:00+01:00",
-      "date": "2026-10-20 11:40 BST",
-      "agent": "Claude",
-      "summary": "Bigger Smart Skip row and switch; phone bottom bar lifted off rounded corners",
-      "detail": [
-        "The Smart Skip row is taller (54px, 60px on desktop) and its switch is 54x32 instead of 40x24.",
-        "On phones the bottom bar (Smart Skip + Learn/Practise) has more padding underneath and at the sides so it clears rounded screen corners."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T11:00:00+01:00",
-      "date": "2026-10-20 11:00 BST",
-      "agent": "Claude",
-      "summary": "Wide desktop: Learn left, Practise right; larger sidebar; sidebar no longer shrinks on Smart Skip",
-      "detail": [
-        "From 1360px wide, Learn (about 60%) and Practise (about 40%) sit side by side at equal height with their buttons at the bottom. Narrower windows stay stacked.",
-        "The sidebar is wider (208 to 236px) with larger text and icons.",
-        "Smart Skip no longer switches off the page's Bigger text zoom, which is what made the sidebar shrink while it was open."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T09:30:00+01:00",
-      "date": "2026-10-20 09:30 BST",
-      "agent": "Claude",
-      "summary": "Learn and Practise help sheets are full screen with larger text",
-      "detail": [
-        "Phones: both sheets fill the screen with the close button at the top right and reading-size text.",
-        "Desktop: both fill the workspace beside the sidebar, with a centred reading column and much larger text."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T22:50:00+01:00",
-      "date": "2026-10-19 22:50 BST",
-      "agent": "Claude",
-      "summary": "Home: smaller titles, icons level with them, white ? icons, calmer Practise headline",
-      "detail": [
-        "Learn/Practise titles are smaller (18px on phones; about 22-30px on desktop). The leaf and clock sit in the corner on the title's own line and are about the title's size.",
-        "The ? help icons are white instead of the accent colour.",
-        "Practise no longer opens with a giant number: it reads \"42 words waiting · all levels\" over a red/blue bar (mistakes / due), matching Learn's bar."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T22:10:00+01:00",
-      "date": "2026-10-19 22:10 BST",
-      "agent": "Claude",
-      "summary": "Home: lighter page behind black panels; centred titles on phones; icons in the top-left corner",
-      "detail": [
-        "Dark theme: the home page background is slightly lighter (#15171b) and the Learn/Practise panels are pure black, so the panels stand out.",
-        "Learn and Practise titles are centred on phones too; the folded row's numbers are centred under them.",
-        "The leaf and clock icons sit in each panel's top-left corner (desktop and phones); the fold arrow is in the top-right."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T17:35:00+01:00",
-      "date": "2026-10-19 17:35 BST",
-      "agent": "Claude",
-      "summary": "Desktop: Learn and Practise titles are centred headings over their own rule",
-      "detail": [
-        "On desktop each section's title is centred with a divider line beneath it, so the two panels read as equal and separate. Phones are unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T17:10:00+01:00",
-      "date": "2026-10-19 17:10 BST",
-      "agent": "Claude",
-      "summary": "Learn sheet: same yellow as the progress bar; estimate box moved above the legend",
-      "detail": [
-        "Seen/Known/Estimated/Skipped colours are now defined once for the whole home screen, so the Learn sheet and the folded Learn row match the bar and the level-progress sheet.",
-        "\"Not sure where to start?\" now sits above \"Your progress bar\" in the Learn sheet."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T16:40:00+01:00",
-      "date": "2026-10-19 16:40 BST",
-      "agent": "Claude",
-      "summary": "Learn and Practise buttons: bigger action word, quieter time limit and count",
-      "detail": [
-        "The action word on the Learn and Practise buttons is 20% larger and the buttons are taller.",
-        "The time limit chip and the card count (e.g. \"20 new\") are regular weight rather than bold."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T16:05:00+01:00",
-      "date": "2026-10-19 16:05 BST",
-      "agent": "Claude",
-      "summary": "Practise sheets lose their double titles; ? icons; Learn sheet refreshed; bigger Practice page on desktop",
-      "detail": [
-        "Removed the extra \"Practise\" label above the scheduling sheet and \"Known · Practice · New\" above the Practice sheet.",
-        "The Practice sheet is much larger on desktop (rows, counts, word lists, titles).",
-        "Learn and Practise help buttons are now a question mark, the same size as the title.",
-        "Learn sheet: Smart Skip note, then a progress-bar legend using the bar's own colours; Estimated shows only once you have done a level estimate."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T15:20:00+01:00",
-      "date": "2026-10-19 15:20 BST",
-      "agent": "Claude",
-      "summary": "iCloud email warning is now a blocking dialog; Practise (i) opens the spaced-repetition explainer",
-      "detail": [
-        "Pressing Continue with an @icloud.com, @me.com or @mac.com address stops and shows a dialog that must be dismissed (Use another email); nothing is sent.",
-        "The (i) beside Practise on the home screen now opens the \"How Practise is scheduled\" sheet, which says whether spaced repetition is on or off. The old Practise info sheet is gone."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T14:40:00+01:00",
-      "date": "2026-10-19 14:40 BST",
-      "agent": "Claude",
-      "summary": "Phones: Learn and Practise titles stay put; the open section gets an accent edge",
-      "detail": [
-        "The icon and name of a folded Learn/Practise row now sit at exactly the same spot as in the open header, so nothing shifts when you swap sections.",
-        "The section you are in has a thin accent-coloured left edge and a tinted border."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T14:05:00+01:00",
-      "date": "2026-10-19 14:05 BST",
-      "agent": "Claude",
-      "summary": "Sign-in page trimmed: no subtitle, no About link, iCloud warning only for iCloud addresses",
-      "detail": [
-        "Removed \"Sign in to save your learning across devices\".",
-        "Removed \"About this project\" from the sign-in/sign-up page (still in Settings).",
-        "The email-codes warning now appears only after typing an @icloud.com, @me.com or @mac.com address."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T13:30:00+01:00",
-      "date": "2026-10-19 13:30 BST",
-      "agent": "Claude",
-      "summary": "Home: folded Learn/Practise rows match the open headers; bigger text on desktop; new Learn info sheet",
-      "detail": [
-        "Phones: the folded section shows its icon, name and (i) button like the open header, with its numbers underneath. The (i) opens the info sheet without unfolding.",
-        "Desktop: home text 18px to 21px (23px from 1440px wide); section titles and level numbers scaled up to match.",
-        "The level info sheet is now titled Learn: pick a level, Smart Skip, and what New / Seen / Known / Estimated mean."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T00:55:00+01:00",
-      "date": "2026-10-19 00:55 BST",
-      "agent": "Claude",
-      "summary": "Plural nouns now say \"from\" their singular on the back of the card",
-      "detail": [
-        "The top sense row of a plural noun (olas, casas) reads \"from ola\" / \"from casa\", as verbs already did (fue from ir).",
-        "Dropped-letter forms such as vamo' still don't repeat the lemma."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T00:38:00+01:00",
-      "date": "2026-10-19 00:38 BST",
-      "agent": "Claude",
-      "summary": "Pins only show for some meanings; clearer practise pill; plural glosses no longer doubled",
-      "detail": [
-        "A card with every meaning marked after a miss now comes back whole, with no pins; pins and the pill appear once only some meanings are pinned.",
-        "The front pill reads \"2 of 4 meanings to practise\" in larger, bolder text.",
-        "A plural noun whose English gloss is already plural (plans, cops, mountains) is no longer pluralised again (\"planses\")."
       ],
       "commit": "pending"
     }

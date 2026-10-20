@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=4f109842';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=4f109842';
-import { songCreditHTML } from './song-credit.js?v=4f109842';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=4f109842';
+import './state.js?v=be86c5bc';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=be86c5bc';
+import { songCreditHTML } from './song-credit.js?v=be86c5bc';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=be86c5bc';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=4f109842';
-import './speech.js?v=4f109842';
-import { goToRoute, routeCodeFor } from './routes.js?v=4f109842';
-import { memoryTipTileHTML } from './memory-tips.js?v=4f109842';
+import { fitSenseRowText } from './card-row-layout.js?v=be86c5bc';
+import './speech.js?v=be86c5bc';
+import { goToRoute, routeCodeFor } from './routes.js?v=be86c5bc';
+import { memoryTipTileHTML } from './memory-tips.js?v=be86c5bc';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=4f109842';
-import './side-dock.js?v=4f109842';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=4f109842';
+} from './function-word-card.js?v=be86c5bc';
+import './side-dock.js?v=be86c5bc';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=be86c5bc';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=4f109842';
+} from './example-personalisation.js?v=be86c5bc';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=4f109842';
+} from './spanishdict-usage.js?v=be86c5bc';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=4f109842';
+} from './reverse-cues.js?v=be86c5bc';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,7 +69,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=4f109842';
+} from './card-metadata-pills.js?v=be86c5bc';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1030,6 +1030,379 @@ function markSingleSenseSections(root) {
     });
 }
 
+// Inline sense rows (staging trial, 2026-10-20). Each sense reads as one
+// left-aligned line: gloss, then context, then grammar, then the "i". The
+// layout lives in the `.inline-sense-rows` block at the end of style.css;
+// this pass does the parts CSS cannot:
+//   - moves each row's "i" (with its note template) to the end of the text,
+//     so no row keeps an empty column on the right for it;
+//   - lifts a gloss, context or grammar cue that every row of a word type
+//     shares onto that word type's row, shown once;
+//   - shortens grammar frames ("+ infinitive" -> "+inf"); the note keeps
+//     the full wording.
+// Display only: the data and the note contents are unchanged. Removing the
+// call in renderBack's post-render chain restores the previous layout.
+const INLINE_FRAME_ABBREVIATIONS = [
+    [/\+\s*infinitive\b/giu, '+inf'],
+    [/\+\s*gerund\b/giu, '+ger'],
+    [/\+\s*adjective\b/giu, '+adj'],
+    [/\+\s*subjunctive\b/giu, '+subj'],
+    [/\+\s*past participle\b/giu, '+pp'],
+];
+
+function abbreviateInlineFrames(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) {
+        if (walker.currentNode.textContent.includes('+')) nodes.push(walker.currentNode);
+    }
+    const any = new RegExp(INLINE_FRAME_ABBREVIATIONS.map(([pattern]) => pattern.source).join('|'), 'giu');
+    nodes.forEach(node => {
+        const text = node.textContent;
+        if (!any.test(text)) return;
+        any.lastIndex = 0;
+        // Inside a grammar cue the whole cue is the tap target.
+        const inCue = node.parentElement?.closest('.sense-grammar-cue');
+        const parts = document.createDocumentFragment();
+        let at = 0;
+        for (const match of text.matchAll(any)) {
+            parts.append(text.slice(at, match.index));
+            const short = INLINE_FRAME_ABBREVIATIONS.find(([pattern]) => new RegExp(pattern.source, 'iu').test(match[0]))[1];
+            if (inCue) parts.append(short);
+            else {
+                const abbr = document.createElement('span');
+                abbr.className = 'sense-abbr';
+                abbr.dataset.full = match[0].replace(/\s+/g, ' ');
+                abbr.textContent = short;
+                parts.append(abbr);
+            }
+            at = match.index + match[0].length;
+        }
+        parts.append(text.slice(at));
+        node.replaceWith(parts);
+    });
+    // A grammar cue's own description is its full wording.
+    root.querySelectorAll('.sense-grammar-cue .sense-metadata-detail[title]').forEach(detail => {
+        detail.classList.add('sense-abbr');
+        detail.dataset.full = detail.title.replace(/^[a-z ]+:\s*/iu, '');
+        detail.removeAttribute('title');
+    });
+}
+
+// On the active row an abbreviation shows what it stands for; on any other
+// row the tap selects the row as before.
+function showSenseAbbreviation(abbr) {
+    document.querySelector('.sense-abbr-tip')?.remove();
+    const tip = document.createElement('div');
+    tip.className = 'sense-abbr-tip';
+    const text = abbr.dataset.full || '';
+    tip.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
+    document.body.append(tip);
+    const at = abbr.getBoundingClientRect();
+    const width = tip.offsetWidth;
+    const left = Math.min(Math.max(8, at.left + at.width / 2 - width / 2), window.innerWidth - width - 8);
+    tip.style.left = `${left}px`;
+    tip.style.top = `${Math.max(8, at.top - tip.offsetHeight - 8)}px`;
+    const close = () => { tip.remove(); document.removeEventListener('pointerdown', close, true); window.removeEventListener('scroll', close, true); };
+    setTimeout(() => {
+        document.addEventListener('pointerdown', close, true);
+        window.addEventListener('scroll', close, true);
+    });
+}
+document.addEventListener('click', event => {
+    const abbr = event.target.closest?.('.inline-sense-rows .sense-abbr');
+    if (!abbr || !abbr.closest('.meaning-row:is(.selected, .is-current-sense)')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    showSenseAbbreviation(abbr);
+}, true);
+
+function inlineRowInformation(scroll) {
+    scroll.querySelectorAll('.meaning-row').forEach(row => {
+        const button = row.querySelector(':scope > .sense-note-trigger');
+        if (button) {
+            const template = button.nextElementSibling?.matches('.sense-note-template') ? button.nextElementSibling : null;
+            const slot = document.createElement('span');
+            slot.className = 'sense-inline-info';
+            slot.append(button);
+            if (template) slot.append(template);
+            row.append(slot);
+        }
+        // A sub-sense's own note follows that sub-sense's words.
+        row.querySelectorAll(':scope > .sense-cell-information').forEach(info => {
+            const cell = info._senseContextCell;
+            if (!cell) return;
+            const slot = document.createElement('span');
+            slot.className = 'sense-inline-info';
+            slot.append(...info.childNodes);
+            cell.append(slot);
+            cell.classList.remove('has-cell-information');
+            info.remove();
+        });
+        row.classList.remove('has-row-information', 'has-shared-and-cell-information');
+        // placeRowLeadMarks mirrors the lead width onto the right; keep the left.
+        row.style.removeProperty('padding-right');
+    });
+}
+
+function sharedRowText(rows, selector) {
+    const texts = rows.map(row => {
+        const els = row.querySelectorAll(selector);
+        return els.length === 1 ? els[0].textContent.replace(/\s+/g, ' ').trim() : '';
+    });
+    return texts.every(text => text && text === texts[0]) ? texts[0] : '';
+}
+
+function hoistSharedRowText(scroll, card) {
+    // A gloss is the meaning's own text, or a context slot holding the
+    // translation: bom's three Wiktionary senses all translate "good", so the
+    // app shows their provider contexts as the line and "good" under it.
+    const fold = text => String(text || '').trim().toLocaleLowerCase('en');
+    const translations = new Set((card?.meanings || []).flatMap(m => {
+        const providerContext = m?.metadata?.sense_provider_metadata?.context;
+        const swapped = providerContext && fold(providerContext) !== fold(m?.context);
+        return [m?.translation, m?.meaning, swapped ? m?.context : ''].map(fold);
+    }).filter(Boolean));
+    scroll.querySelectorAll('.pos-collapsible').forEach(section => {
+        const rows = [...section.querySelectorAll(':scope > .meaning-pos-rows > .meaning-row')];
+        const head = section.querySelector(':scope > .pos-section-head');
+        if (!head || head.querySelector('.pos-section-shared')) return;
+        const pieces = [];
+        // A word type drawn as one grouped row (aún: "time" over still / yet;
+        // tempo: "time" over two contexts) shares that row's common words
+        // with every sub-sense, so they go up too and each sub-sense becomes
+        // a row of its own.
+        const lone = rows.length === 1 && rows[0].matches('.meaning-row-group') ? rows[0] : null;
+        const loneShared = lone?.querySelector('.group-card-shared');
+        if (loneShared?.textContent.trim() && lone.querySelectorAll('.group-card-varying-cell').length > 1) {
+            // só: "only, just" is the translation and "preceding the verb"
+            // its context; they go up as two pieces, not one run of text.
+            const clean = text => text.replace(/\s+/g, ' ').trim();
+            const sharedContext = loneShared.querySelector('.group-shared-context');
+            const own = clean([...loneShared.childNodes]
+                .filter(node => node !== sharedContext && !node.classList?.contains('sense-inline-info'))
+                .map(node => node.textContent).join(''));
+            const ownContext = clean(sharedContext?.textContent || '');
+            if (own) pieces.push({ text: own, isGloss: lone.dataset.axis === 'translation' || translations.has(fold(own)) });
+            if (ownContext) pieces.push({ text: ownContext, isGloss: translations.has(fold(ownContext)) });
+            // Each sub-row is styled by what it holds: a translation is bold,
+            // a context is muted, whichever slot the app put it in.
+            lone.querySelectorAll('.group-card-varying-cell').forEach(cell => {
+                const words = clean(cell.textContent);
+                const isContext = cell.querySelector('.meaning-context') && !cell.querySelector('.group-member-gloss')
+                    && !translations.has(fold(words));
+                cell.classList.toggle('is-context-cell', Boolean(isContext));
+            });
+            lone.classList.add('has-hoisted-shared-cell');
+            // The shared note stays reachable: it follows the active sub-sense.
+            const info = lone.querySelector(':scope > .sense-inline-info');
+            const cell = lone.querySelector('.group-card-varying-cell.is-active-subsense')
+                || lone.querySelector('.group-card-varying-cell');
+            if (info && cell && !cell.querySelector(':scope > .sense-inline-info')) cell.append(info);
+        }
+        if (!pieces.length && (rows.length < 2 || !rows.every(row => row.matches('.meaning-row-regular')))) return;
+        const gloss = sharedRowText(rows, '.meaning-row-gloss');
+        if (gloss) {
+            rows.forEach(row => row.classList.add('has-hoisted-gloss'));
+            pieces.push({ text: gloss, isGloss: true });
+        }
+        for (const selector of ['.meaning-row-sub .meaning-context', '.meaning-row-sub .sense-grammar-cue']) {
+            const text = sharedRowText(rows, selector);
+            if (!text) continue;
+            rows.forEach(row => row.querySelector(selector).classList.add('is-hoisted'));
+            // learnerRowPresentation can put the translation in the context
+            // slot ("good" under three contexts of bom); it is still a gloss.
+            pieces.push({ text, isGloss: translations.has(fold(text)) });
+        }
+        if (!pieces.length) return;
+        rows.forEach(row => {
+            const sub = row.querySelector('.meaning-row-sub');
+            if (sub && ![...sub.childNodes].some(node => node.nodeType === Node.TEXT_NODE
+                ? node.textContent.trim() : !node.classList?.contains('is-hoisted') && node.textContent.trim())) {
+                sub.classList.add('is-hoisted');
+            }
+        });
+        const shared = document.createElement('span');
+        shared.className = 'pos-section-shared';
+        pieces.forEach(piece => {
+            const span = document.createElement('span');
+            span.className = piece.isGloss ? 'pos-shared-gloss' : 'pos-shared-context';
+            span.textContent = piece.text;
+            shared.append(span);
+        });
+        const anchor = head.querySelector('.pos-pill-lemma') || head.querySelector('.pos-section-label');
+        anchor?.after(shared);
+        section.classList.add('has-hoisted-shared');
+    });
+}
+
+// The shared words take the rest of the word type's line; when they would
+// wrap there, they move to a line of their own under it instead.
+function fitHoistedShared(root) {
+    root?.querySelectorAll('.pos-section-shared').forEach(shared => {
+        const head = shared.closest('.pos-section-head');
+        head.classList.remove('has-shared-below');
+        const line = parseFloat(getComputedStyle(shared).lineHeight) || 20;
+        // Layout height, not the on-screen box: a card still flipping is
+        // rotated in 3D, which distorts getBoundingClientRect.
+        if (shared.offsetHeight > line * 1.4) head.classList.add('has-shared-below');
+    });
+}
+
+// A row reads translation first, then its context. The word the sense is
+// used with ("+ com") and register labels ("informal") belong to the
+// translation, so they leave the context's slot and follow the gloss.
+function groupInlineTranslation(scroll) {
+    scroll.querySelectorAll('.meaning-row-regular .sense-inline-line').forEach(line => {
+        if (line.querySelector(':scope > .sense-inline-tr')) return;
+        const gloss = line.querySelector(':scope > .meaning-row-gloss');
+        const sub = line.querySelector(':scope > .meaning-row-sub');
+        const tr = document.createElement('span');
+        tr.className = 'sense-inline-tr';
+        line.insertBefore(tr, gloss || sub || line.firstChild);
+        if (gloss) tr.append(gloss);
+        if (!sub) return;
+        sub.querySelectorAll(':scope > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue, .sense-metadata-list):not(.is-hoisted)')
+            .forEach(el => { if (el.textContent.trim()) tr.append(' ', el); });
+        const visible = [...sub.childNodes].some(node => node.nodeType === Node.TEXT_NODE
+            ? node.textContent.trim()
+            : !node.classList?.contains('is-hoisted') && (node.textContent.trim() || node.querySelector?.('img')));
+        if (!visible) sub.classList.add('is-hoisted');
+    });
+}
+
+// Labels ("informal", a region, a field) are detail: they go into the row's
+// information note, creating one when the row has none, so the row shows only
+// its words.
+function moveLabelsIntoInformation(scroll) {
+    scroll.querySelectorAll('.meaning-row .sense-metadata-list').forEach(list => {
+        const target = list.closest('.group-card-varying-cell') || list.closest('.meaning-row');
+        const labels = [...list.querySelectorAll('.sense-metadata-detail')]
+            .map(el => el.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
+        // A row is never left blank: when its translation went up to the word
+        // type's row (cuerpo: "body" twice), a label such as "anatomy" is what
+        // tells it apart, so it stays on the row as its context.
+        const row = list.closest('.meaning-row');
+        const shows = el => !list.contains(el) && !el.closest('.is-hoisted')
+            && !(row?.classList.contains('has-hoisted-gloss') && el.closest('.meaning-row-gloss'))
+            && el.textContent.trim();
+        const blank = target && ![...target.querySelectorAll('.meaning-row-gloss, .meaning-context, .group-member-gloss, .row-adaptive-text, .sense-target-collocation, .sense-grammar-cue')].some(shows);
+        if (blank && labels.length) {
+            const keep = document.createElement('span');
+            keep.className = 'meaning-context sense-label-context';
+            keep.textContent = labels.join(', ');
+            list.replaceWith(keep);
+            return;
+        }
+        list.remove();
+        if (!labels.length || !target) return;
+        let slot = target.querySelector(':scope > .sense-inline-info');
+        if (!slot) {
+            const words = target.querySelector('.meaning-row-gloss, .group-member-gloss, .meaning-context, .group-card-shared');
+            slot = document.createElement('span');
+            slot.className = 'sense-inline-info';
+            slot.innerHTML = '<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy"></div></template>';
+            const copy = slot.querySelector('template').content.querySelector('.sense-note-copy');
+            if (words) copy.dataset.senseNoteTitle = words.textContent.replace(/\s+/g, ' ').trim();
+            target.append(slot);
+        }
+        const copy = slot.querySelector('template')?.content.querySelector('.sense-note-copy');
+        if (!copy) return;
+        const known = copy.textContent.toLocaleLowerCase('en');
+        const fresh = [...new Set(labels)].filter(label => !known.includes(label.toLocaleLowerCase('en')));
+        if (!fresh.length) return;
+        const section = document.createElement('section');
+        section.className = 'sense-note-section sense-note-section--labels';
+        const p = document.createElement('p');
+        const text = fresh.join(', ');
+        p.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
+        section.append(p);
+        copy.append(section);
+    });
+}
+
+// "often + a" is said with the translation, so it follows it — in a group's
+// sub-rows too ("to get · often + a", not "often + a to get"). When every
+// sub-row carries the same cue it is said once, on the shared line.
+function arrangeGroupCues(scroll) {
+    scroll.querySelectorAll('.meaning-row-group').forEach(row => {
+        const cells = [...row.querySelectorAll('.group-card-varying-cell')];
+        const cueOf = cell => cell.querySelector(':scope > .sense-target-collocation, :scope > .meaning-context-cell > .sense-target-collocation');
+        const cues = cells.map(cueOf);
+        const shared = row.querySelector('.group-card-shared');
+        const same = cells.length > 1 && cues.every(cue => cue && cue.textContent.trim() === cues[0].textContent.trim());
+        if (same && shared && !row.classList.contains('has-hoisted-shared-cell')) {
+            shared.append(' ', cues[0]);
+            cues.slice(1).forEach(cue => cue.remove());
+            return;
+        }
+        cells.forEach((cell, i) => {
+            const cue = cues[i];
+            if (!cue) return;
+            const words = [...cell.querySelectorAll(':scope > :is(.row-adaptive-text, .meaning-context-cell), :scope > .meaning-context-cell > :is(.meaning-context, .group-member-gloss)')]
+                .filter(el => el !== cue && !el.contains(cue) && el.textContent.trim()).pop();
+            if (words) words.after(' ', cue);
+        });
+    });
+}
+
+// A region flag leads the translation itself, and is shown on the active row
+// only (CSS); the row no longer reserves a lead column for it.
+function inlineRowFlags(scroll) {
+    scroll.querySelectorAll('.meaning-row-regular > .row-lead-marks').forEach(lead => {
+        const row = lead.closest('.meaning-row');
+        const tr = row.querySelector('.sense-inline-tr');
+        if (!tr) return;
+        tr.prepend(...lead.childNodes);
+        lead.remove();
+        row.classList.remove('has-row-lead', 'has-row-lead-and-info');
+        row.style.removeProperty('padding-left');
+        row.style.removeProperty('padding-right');
+    });
+}
+
+// A row that does not fit on one line stacks: translation on one centred
+// line, context on the next, rather than one paragraph wrapping between them.
+function fitInlineRows(root) {
+    root?.querySelectorAll('.inline-sense-rows .meaning-row-regular .sense-inline-line').forEach(line => {
+        const row = line.closest('.meaning-row');
+        row.classList.remove('is-stacked-row');
+        if (!line.querySelector(':scope > .meaning-row-sub:not(.is-hoisted) .meaning-context:not(.is-hoisted)')) return;
+        if (!line.getClientRects().length) return;
+        const lineHeight = parseFloat(getComputedStyle(line).lineHeight) || 26;
+        if (line.offsetHeight > lineHeight * 1.4) row.classList.add('is-stacked-row');
+    });
+}
+
+function inlineSenseRows(root, card) {
+    const scroll = root?.querySelector('.meanings-scroll');
+    if (!scroll) return;
+    scroll.classList.add('inline-sense-rows');
+    inlineRowInformation(scroll);
+    // One run of text per row. The two-line clamp on inactive rows turns the
+    // body's children into blocks; wrapped, gloss and context stay one line.
+    scroll.querySelectorAll('.meaning-row-regular > .meaning-row-body').forEach(body => {
+        if (body.querySelector(':scope > .sense-inline-line')) return;
+        const line = document.createElement('span');
+        line.className = 'sense-inline-line';
+        line.append(...body.childNodes);
+        body.append(line);
+    });
+    hoistSharedRowText(scroll, card);
+    abbreviateInlineFrames(scroll);
+    moveLabelsIntoInformation(scroll);
+    groupInlineTranslation(scroll);
+    arrangeGroupCues(scroll);
+    inlineRowFlags(scroll);
+    fitHoistedShared(root);
+    fitInlineRows(root);
+    // Measured again once the card is laid out and its font has loaded: a
+    // first pass on a card still opening can see every line as wrapped.
+    const refit = () => { fitHoistedShared(root); fitInlineRows(root); };
+    requestAnimationFrame(refit);
+    document.fonts?.ready?.then(refit);
+}
+
 // A card with one sense that is not Dominant has its other uses in Rarer uses.
 // Say so in the list, so the one label does
 // not look wrong on its own. Tapping it opens Rarer uses.
@@ -1086,6 +1459,8 @@ function fitSenseRowLayouts(root) {
         }
     });
     fitRowInformationButtons(root);
+    fitHoistedShared(root);
+    fitInlineRows(root);
 }
 
 let posSummaryResizeFrame = 0;
@@ -2862,7 +3237,7 @@ function splitUsageShareHTML(card) {
     const share = card?.splitInfo?.share;
     if (typeof share !== 'number' || !Number.isFinite(share) || share < 0 || share > 1) return '';
     const detail = `${card.splitInfo.headword}: ${Math.round(share * 100)}% of assigned uses of ${card.targetWord}`;
-    return `<span class="split-usage-share" title="${escapeCardText(detail)}" tabindex="0" aria-label="${escapeCardText(detail)}">${Math.round(share * 100)}% of uses</span>`;
+    return `<span class="split-usage-share" title="${escapeCardText(detail)}" tabindex="0" aria-label="${escapeCardText(detail)}">${Math.round(share * 100)}% of uses of <span class="split-usage-word">${escapeCardText(card.targetWord)}</span></span>`;
 }
 
 function currentStudyLevelLabel() {
@@ -9025,6 +9400,7 @@ function renderCardWikipediaBadge(card) {
             arrangeSenseCueAreas(renderedBack);
             markCompactInactiveRows(renderedBack);
             markSingleSenseSections(renderedBack);
+            inlineSenseRows(renderedBack, card);
             addRarerSensesRow(renderedBack, card);
             renderedBack._fluencyRenderedHTML = backHTML;
             bindGrammarPairChips(renderedBack);
@@ -11082,8 +11458,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '4f109842';
-const MODALS_ASSET_VERSION = '4f109842';
+const ASSET_VERSION = 'be86c5bc';
+const MODALS_ASSET_VERSION = 'be86c5bc';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

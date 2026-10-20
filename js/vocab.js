@@ -1,13 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=4f109842';
-import { readJsonWithTimeout } from './read-request.js?v=4f109842';
-import { validateVocabularyIndex } from './data-contracts.js?v=4f109842';
-import { formatRoute } from './routes.js?v=4f109842';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=4f109842';
-import { releaseUrl } from './release-host.js?v=4f109842';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=4f109842';
+import './state.js?v=be86c5bc';
+import { readJsonWithTimeout } from './read-request.js?v=be86c5bc';
+import { validateVocabularyIndex } from './data-contracts.js?v=be86c5bc';
+import { formatRoute } from './routes.js?v=be86c5bc';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=be86c5bc';
+import { releaseUrl } from './release-host.js?v=be86c5bc';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=be86c5bc';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
