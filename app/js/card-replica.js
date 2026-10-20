@@ -653,6 +653,13 @@ function renderCredit(card, meaning, example, exampleIdx) {
 // A card with no `rareUses` list keeps the tile (the walkthrough's cards
 // predate the list); an explicit empty list means the word has none, and the
 // live card then draws no tile at all.
+// Verb cards carry Conjugate, as in the live card (flashcards.js), which
+// shows it whenever the language has a conjugation table. Every replica verb
+// is in such a language.
+export function hasConjugateTile(card) {
+    return String(card?.pos || '').toUpperCase() === 'VERB';
+}
+
 function hasRareUses(card) {
     return !Array.isArray(card.rareUses) || card.rareUses.length > 0;
 }
@@ -711,6 +718,10 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                         </div>
                         <span class="ref-tile-label">Pin meaning</span>
                     </button>
+                    ${hasConjugateTile(card) ? `<button type="button" class="ref-tile ref-conj-btn" aria-label="Conjugate">
+                        <span class="ref-tile-icon ref-tile-endings" aria-hidden="true"><span>-ar</span><span>-er</span><span>-ir</span></span>
+                        <span class="ref-tile-label">Conjugate</span>
+                    </button>` : ''}
                     <div class="ref-lookup-wrap"><button type="button" class="ref-tile ref-lookup-btn" aria-label="Dictionary" title="Dictionary">
                         <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="12" cy="12" r="9"></circle>

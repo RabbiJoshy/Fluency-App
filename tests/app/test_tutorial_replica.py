@@ -99,9 +99,9 @@ assert(!deck.faces.back.notes.some(note => note.title === 'Where the example is 
             input=r'''import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import { REPLICA_CARDS, esc } from './app/js/card-replica.js';
+import { REPLICA_CARDS, esc, hasConjugateTile } from './app/js/card-replica.js';
 const source = fs.readFileSync('./app/js/tutorial.js', 'utf8').replace(/import \{[\s\S]*?\} from '[^']+';/, '');
-const context = vm.createContext({assert, REPLICA_CARDS, esc,
+const context = vm.createContext({assert, REPLICA_CARDS, esc, hasConjugateTile,
   window: {}, document: {readyState: 'loading', addEventListener() {}, querySelector() {return null;}, getElementById() {return null;}},
   localStorage: {getItem() {return null;}}});
 vm.runInContext(source + `
@@ -146,13 +146,13 @@ state.meaningIndex = 0;
 assert.equal(tutorialCardHeight(), 342);
 document.querySelector = () => null;
 // Progress counts the chapter on show: the card's two faces.
-assert.equal(tutorialStepPosition().total, 19);
+assert.equal(tutorialStepPosition().total, 20);
 const front = stepNotes(tutorialSteps()[0]);
 assert.deepEqual(front.map(note => note.title), ['The word', 'Vocabulary rank', 'How often it is said', 'Kind of word', 'The dictionary form']);
 const back = stepNotes(tutorialSteps()[1]);
 // One note per meaning row (parece has two), then the card's other parts.
 // parece's opening meaning has no usage line or grammar, so no "Usage notes" note.
-assert.deepEqual(back.map(note => note.title), ['The kind of word', 'The most common meaning', 'The next meaning', 'How common each meaning is', 'A real example', 'The sentence in English', 'Where it comes from', 'Change the meaning', 'Cycle through the examples', 'Rare uses', 'Pin meaning', 'Dictionary', 'Open a dictionary', 'Grade your answer']);
+assert.deepEqual(back.map(note => note.title), ['The kind of word', 'The most common meaning', 'The next meaning', 'How common each meaning is', 'A real example', 'The sentence in English', 'Where it comes from', 'Change the meaning', 'Cycle through the examples', 'Rare uses', 'Pin meaning', 'Conjugate', 'Dictionary', 'Open a dictionary', 'Grade your answer']);
 // Notes explain; none sets a task that holds Next back.
 for (const step of tutorialSteps()) for (const note of stepNotes(step)) {
   assert.equal(note.practice, undefined);
@@ -160,7 +160,7 @@ for (const step of tutorialSteps()) for (const note of stepNotes(step)) {
 }
 // Smart Skip and the vocabulary source are pages, each in the language taught.
 const skip = stepNotes(tutorialSteps()[2]);
-assert.deepEqual(skip.map(note => note.title), ['Turn it on', 'Look-alikes are skipped', 'Word forms share a card', 'Singular and plural share a card']);
+assert.deepEqual(skip.map(note => note.title), ['Turn it on or off', 'Look-alikes are skipped', 'Word forms share a card', 'Singular and plural share a card']);
 assert(tutorialText(skip[2].text).startsWith('“falo”, “falou” and “falar”'));
 assert(TUTORIAL_PAGES.smartSkip.html(tutorialAdapter()).includes('falou'));
 // Portuguese has no music catalogue, so the artist/playlist note is absent.

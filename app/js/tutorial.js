@@ -12,7 +12,7 @@
 // The card itself is drawn by card-replica.js, which both features share.
 
 import {
-    REPLICA_CARDS, esc, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
+    REPLICA_CARDS, esc, hasConjugateTile, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
 } from './card-replica.js?v=20260929sense6';
 
 
@@ -77,7 +77,7 @@ function tutorialText(value) {
         .replaceAll('{lemmaExample}', ({ portuguese: '“tenho” (I have) comes from “ter” (to have)', spanish: '“tengo” (I have) comes from “tener” (to have)', czech: '“jsem” (I am) comes from “být” (to be)', french: '“ai” (I have) comes from “avoir” (to have)' })[tutorialLanguageKey()] || '')
         .replaceAll('{smartSkipForms}', listPhrase(adapter.smartSkip.forms.map(form => `“${form}”`)))
         .replaceAll('{smartSkipLookalike}', `“${adapter.smartSkip.lookalike}”`)
-        .replace(/\bTap\b/g, isMobileTutorial() ? 'Tap' : 'Click');
+        .replace(/\bTap\b/g, isTouchTutorial() ? 'Tap' : 'Click');
 }
 
 function listPhrase(items) {
@@ -227,7 +227,7 @@ const TUTORIAL_DECKS = [
                         when: card => Boolean(card?.rareUses?.length),
                         anchor: '.ref-rare-uses-btn',
                         title: 'Rare uses',
-                        text: 'Opens the word’s less common meanings, each with an example under “Examples”. They are for browsing, not tested in daily reviews. Tap × to close.',
+                        text: 'Opens the word’s less common meanings; tap the speech bubble beside one for its example. They are for browsing, not tested in daily reviews. Tap × to close.',
                     },
                     {
                         side: 'right',
@@ -235,6 +235,13 @@ const TUTORIAL_DECKS = [
                         anchor: '.knowledge-overview-trigger',
                         title: 'Pin meaning',
                         text: 'Know the word, but not every meaning? Tap to show pins on each row; pin the ones to practice and future reviews put them at the top.',
+                    },
+                    {
+                        side: 'right',
+                        anchor: '.ref-conj-btn',
+                        when: card => hasConjugateTile(card),
+                        title: 'Conjugate',
+                        text: 'On verbs: opens a table of every form of “{demoLemma}”, by tense and person.',
                     },
                     {
                         side: 'right',
@@ -257,7 +264,8 @@ const TUTORIAL_DECKS = [
                         anchor: '.card-back',
                         closing: true,
                         title: 'Grade your answer',
-                        text: 'Swipe right if you knew it, left if you need more practice. On a computer, press Enter for Got it or X for Needs practice.',
+                        text: 'Press Enter if you knew it, X if you need more practice. The keyboard button at the left of the screen lists every shortcut.',
+                        touchText: 'Swipe the card right if you knew it, left if you need more practice.',
                     },
                 ],
             },
@@ -270,7 +278,8 @@ const TUTORIAL_DECKS = [
                         side: 'left',
                         anchor: '.card-word',
                         title: 'The word',
-                        text: 'Try to recall what it means, then tap the card to flip it. On a computer, press Space.',
+                        text: 'Try to recall what it means, then click the card or press Space to flip it.',
+                        touchText: 'Try to recall what it means, then tap the card to flip it.',
                     },
                     {
                         side: 'left',
@@ -315,14 +324,14 @@ const TUTORIAL_PAGES = {
             {
                 side: 'left',
                 anchor: '.tutorial-page-switch-row',
-                title: 'Turn it on',
-                text: 'Smart Skip sits under Choose a level with Off and On choices. Turn it on or off at any time, or tap Details to fine-tune.',
+                title: 'Turn it on or off',
+                text: 'Smart Skip sits next to the Learn button. Flip the switch at any time; tap its name to see what it skips and fine-tune it.',
             },
             {
                 side: 'left',
                 anchor: '.tutorial-page-lookalike',
                 title: 'Look-alikes are skipped',
-                text: 'Words that look and mean the same as in a language you know, like {smartSkipLookalike} in English. Tap Details to browse them; you can still study any.',
+                text: 'Words that look and mean the same as in a language you know, like {smartSkipLookalike} in English. Tap Smart Skip’s name to browse them; you can still study any.',
             },
             {
                 side: 'right',
@@ -355,6 +364,7 @@ const TUTORIAL_PAGES = {
                 anchor: '.tutorial-page-source:nth-of-type(2)',
                 title: 'Music',
                 text: 'You pick the songs. Words are ranked by how often they appear in those lyrics, and each example is a real line you can play in Spotify.',
+                noLyricsText: 'Words ranked by the songs you pick, with real lyrics as the examples. Coming soon for {language}.',
             },
             {
                 side: 'right',
@@ -367,7 +377,8 @@ const TUTORIAL_PAGES = {
                 side: 'right',
                 anchor: '.tutorial-page-topbar',
                 title: 'Switch at any time',
-                text: 'Switch whenever you like from the language header at the top. Progress comes with you: a word learned in one is already known in the other.',
+                text: 'Switch whenever you like from Vocabulary, under the language in the sidebar. Progress comes with you: a word learned in one is already known in the other.',
+                compactText: 'Switch whenever you like: tap the language at the top, then Vocabulary. Progress comes with you: a word learned in one is already known in the other.',
             },
         ],
         html: modesPageHTML,
@@ -379,18 +390,10 @@ function smartSkipPageHTML(adapter) {
     const word = value => `<span class="tutorial-page-word">${esc(value)}</span>`;
     return `
         <div class="tutorial-page" aria-label="Example of Smart Skip">
-            <div class="tutorial-page-switch-row">
-                <div class="tutorial-page-ss-top">
-                    <strong class="smart-skip-hub-label">Smart Skip</strong>
-                    <div class="smart-skip-choice" aria-hidden="true">
-                        <span class="smart-skip-choice-btn">Off</span>
-                        <span class="smart-skip-choice-btn is-selected">On</span>
-                    </div>
-                </div>
-                <div class="tutorial-page-ss-bottom">
-                    <small class="smart-skip-hub-summary">Fewer cards, less repetition</small>
-                    <span class="smart-skip-details-btn" aria-hidden="true"><span>Details</span><span class="smart-skip-details-chevron">›</span></span>
-                </div>
+            <div class="tutorial-page-switch-row home-smart-skip is-on">
+                <svg class="home-smart-skip-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 6 6 6-6 6"></path><path d="m13 6 6 6-6 6"></path></svg>
+                <span class="home-smart-skip-copy"><strong>Smart Skip</strong><span class="home-smart-skip-dot" aria-hidden="true">·</span><span class="tutorial-page-ss-summary">fewer cards</span><span class="home-smart-skip-details" aria-hidden="true">›</span></span>
+                <span class="home-switch" aria-checked="true" aria-hidden="true"><span class="home-switch-knob"></span></span>
             </div>
             <div class="tutorial-page-example tutorial-page-lookalike">
                 <span class="tutorial-page-label">Skip look-alikes</span>
@@ -438,9 +441,14 @@ function modesPageHTML(adapter) {
     return `
         <div class="tutorial-page" aria-label="Example of switching vocabulary">
             <div class="tutorial-page-topbar">
-                <span class="tutorial-page-flag" aria-hidden="true">${adapter.flag}</span>
-                <strong>${esc(adapter.language)}</strong>
-                <span class="tutorial-page-chevron" aria-hidden="true">›</span>
+                <span class="tutorial-page-topbar-row">
+                    <span class="tutorial-page-flag" aria-hidden="true">${adapter.flag}</span>
+                    <strong>${esc(adapter.language)}</strong>
+                </span>
+                <span class="tutorial-page-topbar-row tutorial-page-topbar-mode">
+                    <small>Vocabulary</small><strong>${esc(copy[current].label)}</strong>
+                    <span class="tutorial-page-chevron" aria-hidden="true">›</span>
+                </span>
             </div>
             <div class="tutorial-page-sources">
                 <span class="tutorial-page-label">Vocabulary</span>
@@ -514,6 +522,30 @@ const MOBILE_TUTORIAL_QUERY = '(max-width: 1180px)';
 
 function isMobileTutorial() {
     return window.matchMedia?.(MOBILE_TUTORIAL_QUERY).matches === true;
+}
+
+// Layout width and input are separate questions: a narrow laptop window gets
+// the phone-style coach but still has a keyboard and no swipe. Wording about
+// tapping, swiping or keys follows the input; wording about where a control
+// sits follows the app's own layout (desktop-shell.js: the sidebar from 1024px).
+function isTouchTutorial() {
+    return window.matchMedia?.('(hover: none) and (pointer: coarse)').matches === true;
+}
+
+function hasSidebarLayout() {
+    const zoom = (document.body && parseFloat(getComputedStyle(document.body).zoom)) || 1;
+    return window.innerWidth >= 1024 && window.innerWidth / zoom >= 1024;
+}
+
+// Pick the wording for this device: `touchText` on touch screens,
+// `compactText` without the desktop sidebar, `noLyricsText` where Music is
+// not open for the language yet.
+function noteForDevice(note) {
+    const text = (!tutorialAdapter().lyrics && note.noLyricsText)
+        || (isTouchTutorial() && note.touchText)
+        || (!hasSidebarLayout() && note.compactText)
+        || note.text;
+    return text === note.text ? note : { ...note, text };
 }
 
 // The speech deck carries no card of its own: which one it shows depends on
@@ -604,7 +636,8 @@ function stepNotes(step) {
     const notes = face.notes
         .flatMap(note => (note.rows ? meaningRowNotes(card, note.side) : [note]))
         .filter(note => !note.requires || tutorialAdapter()[note.requires])
-        .filter(note => !note.when || note.when(card));
+        .filter(note => !note.when || note.when(card))
+        .map(noteForDevice);
     const body = notes.filter(n => !n.closing);
     return [...body.filter(n => n.side !== 'right'), ...body.filter(n => n.side === 'right'),
         ...notes.filter(n => n.closing)];
@@ -1050,6 +1083,16 @@ function setActiveNote(index) {
     root.querySelectorAll('.card-tutorial-note').forEach((n) => {
         n.classList.toggle('is-active', Number(n.dataset.note) === index);
     });
+    // A face with many notes outgrows its column on a laptop screen; the
+    // column scrolls, so keep the note being read inside it.
+    const activeNote = root.querySelector('.card-tutorial-note.is-active');
+    const column = activeNote?.closest('.card-tutorial-notes');
+    if (column && column.scrollHeight > column.clientHeight + 1) {
+        const view = column.getBoundingClientRect();
+        const box = activeNote.getBoundingClientRect();
+        if (box.top < view.top) column.scrollTop -= view.top - box.top + 4;
+        else if (box.bottom > view.bottom) column.scrollTop += box.bottom - view.bottom + 4;
+    }
     let active = null;
     root.querySelectorAll('.card-tutorial-anchored').forEach((el) => {
         const on = el.dataset.cardTutorialNote.split(',').map(Number).includes(index);
@@ -1383,9 +1426,14 @@ function enterNoteDemo(index) {
         }
         case 'openRare':
             later(700, () => openDemoSheet('rare'));
-            later(2100, () => {
-                const details = document.querySelector('#cardTutorialStage .tutorial-demo-sheet details');
-                if (details) details.open = true;
+            // Open the first group, then the first example in it.
+            later(1800, () => {
+                const sheet = document.querySelector('#cardTutorialStage .tutorial-demo-sheet');
+                const section = sheet?.querySelector('.uses-section-rows:not([hidden])')?.closest('.uses-section')
+                    || sheet?.querySelector('.uses-section');
+                const toggle = section?.querySelector('.uses-section-toggle[aria-expanded="false"]');
+                if (toggle) toggle.click();
+                section?.querySelector('.rare-ex-btn[aria-expanded="false"]')?.click();
             });
             break;
         case 'openReview':

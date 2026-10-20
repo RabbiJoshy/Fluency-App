@@ -2,6 +2,22 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T22:43:42+01:00",
+      "date": "2026-10-20 22:43 BST",
+      "agent": "Claude",
+      "summary": "Tutorial updated for phone and desktop: current Smart Skip switch, Conjugate button, right grading and switching instructions per device",
+      "detail": [
+        "Desktop: the note column scrolls to the note being read, so the last notes (Grade your answer) no longer fall off a laptop screen; columns keep one width.",
+        "Grading: phones say swipe; computers say Enter / X and point to the keyboard button on the left. Keyboard tips no longer appear on phones.",
+        "Speech or music: desktop says Vocabulary in the sidebar; phones say tap the language at the top, then Vocabulary.",
+        "Smart Skip page shows the current row with its switch (not Off/On + Details).",
+        "Verb cards in the tutorial and walkthrough show the Conjugate button, with a note.",
+        "Rare uses: wording mentions the speech-bubble example button; the demo opens a group and shows one example.",
+        "Music note says Coming soon in languages without Music."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T22:38:04+01:00",
       "date": "2026-10-20 22:38 BST",
       "agent": "Claude",
@@ -355,18 +371,6 @@
         "Speech examples from film and TV show only the IMDb icon. The show is named when you tap it: \"Open Raees on IMDb\". Lyric credits are unchanged.",
         "With only a source icon in the credit row, the example dots are centred (ordinary and function-word cards, and the tutorial replica).",
         "The coloured vertical line joining subsense rows to their sense row is gone; the rows sit slightly indented instead."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:36:12+01:00",
-      "date": "2026-10-19 21:36 BST",
-      "agent": "Claude",
-      "summary": "Function-word card backs: simpler pattern rows, contraction on one line",
-      "detail": [
-        "Contractions read \"del (de + el)\" on one line, the parts smaller and centred on the word; the \"Function word · Example patterns\" label is gone.",
-        "Each pattern is one row: the pattern, with its plain meaning beneath (\"Of / from the\"). The active row is fully outlined in the word's colour.",
-        "The word is tinted the same colour in the pattern and the example sentence (contraction orange; otherwise its part of speech). The heading stays white."
       ],
       "commit": "pending"
     }

@@ -17,11 +17,11 @@ class ShowcaseMobileTests(unittest.TestCase):
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import { REPLICA_CARDS, esc } from './app/js/card-replica.js';
+import { REPLICA_CARDS, esc, hasConjugateTile } from './app/js/card-replica.js';
 
 const source = fs.readFileSync('./app/js/tutorial.js', 'utf8').replace(/import \{[\s\S]*?\} from '[^']+';/, '');
 const context = vm.createContext({
-  assert, REPLICA_CARDS, esc,
+  assert, REPLICA_CARDS, esc, hasConjugateTile,
   window: {}, document: {
     readyState: 'loading', addEventListener() {}, querySelector() { return null; }, getElementById() { return null; }
   },
@@ -83,7 +83,7 @@ for (const lang of languages) {
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import { REPLICA_CARDS, esc, renderFront, replicaCardHTML } from './app/js/card-replica.js';
+import { REPLICA_CARDS, esc, hasConjugateTile, renderFront, replicaCardHTML } from './app/js/card-replica.js';
 globalThis.window = {};
 
 const quieroFront = renderFront(REPLICA_CARDS.quieroSpeech);
@@ -100,7 +100,7 @@ assert(cardHtml.includes('--card-ambient-glow: radial-gradient('));
 
 const source = fs.readFileSync('./app/js/tutorial.js', 'utf8').replace(/import \{[\s\S]*?\} from '[^']+';/, '');
 const context = vm.createContext({
-  assert, REPLICA_CARDS, esc,
+  assert, REPLICA_CARDS, esc, hasConjugateTile,
   window: {}, document: {
     readyState: 'loading', addEventListener() {}, querySelector() { return null; }, getElementById() { return null; }
   },
@@ -108,9 +108,10 @@ const context = vm.createContext({
 });
 vm.runInContext(source + `
 const skipHtml = TUTORIAL_PAGES.smartSkip.html(tutorialAdapter('spanish'));
-assert(skipHtml.includes('smart-skip-choice-btn'));
-assert(skipHtml.includes('Fewer cards, less repetition'));
-assert(skipHtml.includes('Details'));
+// The home screen's row: name, summary and a switch (no Off/On pills).
+assert(skipHtml.includes('home-smart-skip'));
+assert(skipHtml.includes('home-switch'));
+assert(!skipHtml.includes('smart-skip-choice-btn'));
 assert(!skipHtml.includes('streamline-rec-badge'));
 `, context);
 ''', capture_output=True,
