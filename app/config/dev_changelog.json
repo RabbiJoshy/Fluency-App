@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T15:03:07+01:00",
+      "date": "2026-10-20 15:03 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): one text size for translations and contexts (20px); sub-rows are full-height tap targets",
+      "detail": [
+        "Translation and context are now the same size, 20px; the translation is bold, the context regular and muted (vamos: 'let's go let's move').",
+        "Each sub-row in a group (dejar: to put, to forget, to bequeath) is at least 40px tall, left-aligned, at the same 20px size."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T14:54:33+01:00",
       "date": "2026-10-20 14:54 BST",
       "agent": "Claude",
@@ -344,17 +355,6 @@
         "The Practice sheet is much larger on desktop (rows, counts, word lists, titles).",
         "Learn and Practise help buttons are now a question mark, the same size as the title.",
         "Learn sheet: Smart Skip note, then a progress-bar legend using the bar's own colours; Estimated shows only once you have done a level estimate."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T15:20:00+01:00",
-      "date": "2026-10-19 15:20 BST",
-      "agent": "Claude",
-      "summary": "iCloud email warning is now a blocking dialog; Practise (i) opens the spaced-repetition explainer",
-      "detail": [
-        "Pressing Continue with an @icloud.com, @me.com or @mac.com address stops and shows a dialog that must be dismissed (Use another email); nothing is sent.",
-        "The (i) beside Practise on the home screen now opens the \"How Practise is scheduled\" sheet, which says whether spaced repetition is on or off. The old Practise info sheet is gone."
       ],
       "commit": "pending"
     }
