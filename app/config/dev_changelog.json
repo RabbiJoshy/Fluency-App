@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T14:26:32+01:00",
+      "date": "2026-10-20 14:26 BST",
+      "agent": "Claude",
+      "summary": "Card back (trial): rows lose the word-type colour wash; word-type row is square; a group's meter sits on its shared gloss",
+      "detail": [
+        "Meaning rows and the word-type row no longer have a POS-coloured fill; the pill and the left edge carry the colour. The active row keeps its coloured outline.",
+        "The word-type row has square corners, setting it apart from the rounded meaning rows under it.",
+        "In a grouped row (dejar: to leave / to put, to forget, to bequeath) the commonness meter sits level with the shared gloss, not centred across all four lines."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T14:22:43+01:00",
       "date": "2026-10-20 14:22 BST",
       "agent": "Claude",
@@ -341,17 +353,6 @@
         "Phones: the folded section shows its icon, name and (i) button like the open header, with its numbers underneath. The (i) opens the info sheet without unfolding.",
         "Desktop: home text 18px to 21px (23px from 1440px wide); section titles and level numbers scaled up to match.",
         "The level info sheet is now titled Learn: pick a level, Smart Skip, and what New / Seen / Known / Estimated mean."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T00:55:00+01:00",
-      "date": "2026-10-19 00:55 BST",
-      "agent": "Claude",
-      "summary": "Plural nouns now say \"from\" their singular on the back of the card",
-      "detail": [
-        "The top sense row of a plural noun (olas, casas) reads \"from ola\" / \"from casa\", as verbs already did (fue from ir).",
-        "Dropped-letter forms such as vamo' still don't repeat the lemma."
       ],
       "commit": "pending"
     }

@@ -26346,3 +26346,19 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     margin: 0 4px 0 0 !important;
     text-align: left !important;
 }
+/* The word-type row's pill and left edge already carry the colour, so rows
+   are neutral: no POS-tinted fill. The word-type row is square, which sets
+   it apart from the rounded meaning rows under it. The active row keeps its
+   coloured outline; the active sub-sense keeps its highlight. */
+.meanings-scroll.inline-sense-rows .pos-collapsible .pos-section-head {
+    background: color-mix(in srgb, var(--text-primary) 5%, transparent) !important;
+    border-radius: 0 !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group) {
+    background: color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+}
+/* A group's meter belongs to its shared gloss, so it sits on that line. */
+.meanings-scroll.inline-sense-rows .meaning-row-group > :is(.pct-column, .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag) {
+    top: 9px !important;
+    transform: none !important;
+}
