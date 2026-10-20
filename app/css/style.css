@@ -26675,3 +26675,26 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     color: var(--text-secondary);
     font-weight: 400;
 }
+
+/* Quieter word-type row (Josh 2026-10-20). The pill names the word type,
+   which the left edge's colour already hints at, so it is smaller and tinted
+   rather than a solid fill. "from caro" shares the pill's size and baseline:
+   "from" muted, the lemma in the word type's colour, one space apart. */
+.meanings-scroll.inline-sense-rows .pos-section-head .pos-section-label:not(#_) {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    padding: 2px 9px !important;
+    background: rgba(var(--sense-match-rgb), 0.16) !important;
+    color: color-mix(in srgb, rgb(var(--sense-match-rgb)) 55%, var(--text-primary)) !important;
+}
+.meanings-scroll.inline-sense-rows .pos-section-head :is(.pos-lemma-from, .pos-pill-lemma):not(#_) {
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    align-self: center !important;
+    padding: 0 !important;
+}
+.meanings-scroll.inline-sense-rows .pos-section-head .pos-lemma-from:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; margin-right: -3px; }
+.meanings-scroll.inline-sense-rows .pos-section-head .pos-pill-lemma:not(#_) { font-weight: 600 !important; }
+/* "76% of uses of a": the word is bold, so a one-letter word reads as the word. */
+.split-usage-share .split-usage-word { font-weight: 700; color: var(--text-primary); }

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T20:23:08+01:00",
+      "date": "2026-10-20 20:23 BST",
+      "agent": "Claude",
+      "summary": "Card back: quieter word-type pills, aligned 'from caro'; companion cards say '76% of uses of a'",
+      "detail": [
+        "Word-type pills are 14px and tinted (16% fill, coloured text) instead of a solid fill at 19px.",
+        "'from caro' matches the pill's size and baseline: 'from' muted, the lemma in the word type's colour.",
+        "Companion card fronts read 'Card 1 of 2 · 76% of uses of a', with the word in bold."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T20:16:50+01:00",
       "date": "2026-10-20 20:16 BST",
       "agent": "Claude",
@@ -350,17 +362,6 @@
         "From 1360px wide, Learn (about 60%) and Practise (about 40%) sit side by side at equal height with their buttons at the bottom. Narrower windows stay stacked.",
         "The sidebar is wider (208 to 236px) with larger text and icons.",
         "Smart Skip no longer switches off the page's Bigger text zoom, which is what made the sidebar shrink while it was open."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T09:30:00+01:00",
-      "date": "2026-10-20 09:30 BST",
-      "agent": "Claude",
-      "summary": "Learn and Practise help sheets are full screen with larger text",
-      "detail": [
-        "Phones: both sheets fill the screen with the close button at the top right and reading-size text.",
-        "Desktop: both fill the workspace beside the sidebar, with a centred reading column and much larger text."
       ],
       "commit": "pending"
     }

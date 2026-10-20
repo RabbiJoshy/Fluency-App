@@ -3189,7 +3189,7 @@ function splitUsageShareHTML(card) {
     const share = card?.splitInfo?.share;
     if (typeof share !== 'number' || !Number.isFinite(share) || share < 0 || share > 1) return '';
     const detail = `${card.splitInfo.headword}: ${Math.round(share * 100)}% of assigned uses of ${card.targetWord}`;
-    return `<span class="split-usage-share" title="${escapeCardText(detail)}" tabindex="0" aria-label="${escapeCardText(detail)}">${Math.round(share * 100)}% of uses</span>`;
+    return `<span class="split-usage-share" title="${escapeCardText(detail)}" tabindex="0" aria-label="${escapeCardText(detail)}">${Math.round(share * 100)}% of uses of <span class="split-usage-word">${escapeCardText(card.targetWord)}</span></span>`;
 }
 
 function currentStudyLevelLabel() {
