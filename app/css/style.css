@@ -26365,7 +26365,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .group-card-shared { line-height: 1.15 !important; }
 /* Sub-lines sit close under the shared gloss. */
 .meanings-scroll.inline-sense-rows .meaning-row .group-card-body { gap: 0 !important; }
-.meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group { gap: 0 !important; flex: none !important; justify-content: flex-start !important; }
+.meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group { gap: 0 !important; flex: none !important; justify-content: center !important; }
 .meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group > .group-card-varying-cell { padding: 1px 8px !important; }
 /* The meter's bars stand on the gloss's baseline. */
 .meanings-scroll.inline-sense-rows .meaning-row-group > :is(.pct-column, .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag) { top: 5px !important; }
@@ -26474,7 +26474,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     min-height: 44px !important;
     padding: 6px 12px !important;
 }
-.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell:not(#_) { justify-content: flex-start !important; text-align: left !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell:not(#_) { justify-content: center !important; text-align: left !important; }
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-varying-cell :is(.meaning-context-cell, .meaning-context-cell *):not(.sense-inline-info, .sense-inline-info *, #_) {
     font-size: 20px !important;
     line-height: 1.3 !important;
@@ -26491,9 +26491,40 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row-group:not(.has-hoisted-shared-cell) .sense-cue-group > .group-card-varying-cell:not(#_) {
     display: flex !important;
     align-items: center;
-    justify-content: flex-start !important;
+    justify-content: center !important;
     text-align: left !important;
     min-height: 40px !important;
     padding: 4px 8px !important;
 }
 .meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="context"] .group-card-shared .meaning-context:not(#_) { font-size: 20px !important; }
+
+/* Centred rows (option D, Josh 2026-10-20). Each row's text is a block
+   centred in the row; lines inside it stay left-aligned, so a one-line row
+   is centred and a long one wraps like a sentence instead of a tower. The
+   right padding offsets part of the meter's slot so text sits near centre. */
+.meanings-scroll.inline-sense-rows .meaning-row-regular .meaning-row-body:not(#_) { text-align: center !important; }
+.meanings-scroll.inline-sense-rows .meaning-row-regular .sense-inline-line:not(#_) {
+    display: block !important;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: left;
+}
+.meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-regular:not(.selected):not(.is-current-sense) .sense-inline-line:not(#_) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group):has(> :is(.pct-column:not(:empty), .sense-prominence-badge, .sense-percentage-tail)):not(.has-hoisted-shared-cell, #_) {
+    padding-right: 22px !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared:not(#_) {
+    align-self: center !important;
+    width: fit-content !important;
+    max-width: 100%;
+    text-align: left !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group .sense-cue-group > .group-card-varying-cell:not(#_) {
+    justify-content: center !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-varying-cell > :is(.meaning-context-cell, .row-adaptive-text):not(#_) { text-align: left !important; }
