@@ -863,6 +863,13 @@ function activatePlaylistLiveStudy(language) {
     window.invalidatePreparedSetupVocabulary?.();
     window.invalidateLyricsSourceCaches?.(language);
     window.resetActiveArtist?.();
+    // Artist routes replace the language config at boot. Live decks use the
+    // Speech inventory, including its definition shards and reference links.
+    const speechConfig = window._normalModeLangConfigs?.[language];
+    if (speechConfig && typeof config !== 'undefined') {
+        config.languages[language] = { ...speechConfig };
+    }
+    window.clearActiveExamplesData?.();
     const liveTab = document.querySelector(`.lang-tab[data-lang="${CSS.escape(language)}"]`);
     if (liveTab && !liveTab.disabled) {
         liveTab.click();

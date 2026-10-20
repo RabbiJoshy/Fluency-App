@@ -480,6 +480,8 @@ def build_dataset_and_deck() -> None:
 
     deck = {
         "id": "live",
+        "presetRevision": "season1-sample-v2",
+        "sourceKind": "series",
         "playlistId": "la-casa-de-papel",
         "playlistName": "La Casa de Papel",
         "language": "spanish",

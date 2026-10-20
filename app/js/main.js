@@ -2116,6 +2116,7 @@ function findWordCacheKey() {
     return [
         selectedLanguage || '',
         slugs,
+        window.playlistLiveActive?.() ? `${window.playlistLiveDeck()?.playlistId}:${window.playlistLiveDeck()?.builtAt}` : 'speech',
         useLemmaMode ? '1' : '0',
         excludeCognates ? '1' : '0',
         activeArtist ? artistVocabularyScope : (hideSingleOccurrence ? '1' : '0'),
@@ -2148,7 +2149,10 @@ async function buildFindWordIndex() {
         ...item,
         meanings: Array.isArray(item.meanings) ? [...item.meanings] : []
     }));
-    const { vocab: filtered } = window.buildFilteredVocab(filterInput);
+    const filtered = window.playlistLiveActive?.()
+        ? window.applyPlaylistLiveVocabulary(filterInput)
+        : window.buildFilteredVocab(filterInput).vocab;
+    if (window.playlistLiveActive?.()) vocabularyData = filtered;
     const byRank = new Map();
     filtered.forEach(it => byRank.set(it.rank, it.displayRank));
     const idx = vocabularyData.map(item => {

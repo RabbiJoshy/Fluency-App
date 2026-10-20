@@ -1321,8 +1321,8 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             description: level.label,
         }));
     } else if (window.playlistLiveActive?.()) {
-        const deck = window.playlistLiveDeck?.();
-        const totalCards = deck?.matchedCount || 0;
+        const samples = await _loadLevelSliderSamples(language);
+        const totalCards = samples?.length || 0;
         const targetPerLevel = STUDY_LEVEL_TARGET_CARDS;
         const levelCount = Math.max(1, Math.ceil(totalCards / targetPerLevel));
         _smartLevelRangesCache = [];
@@ -1858,7 +1858,7 @@ function _setupVocabularySignature(language) {
         langConfig.indexPath || langConfig.dataPath || '',
         (window._selectedArtistSlugs || []).slice().sort().join(','),
         activeArtist ? artistVocabularyScope : (window.playlistLiveActive?.() ? 'playlist-live' : 'speech'),
-        window.playlistLiveActive?.() ? (window.playlistLiveDeck?.()?.playlistId || 'live') : 'none',
+        window.playlistLiveActive?.() ? `${window.playlistLiveDeck?.()?.playlistId}:${window.playlistLiveDeck?.()?.builtAt}` : 'none',
         percentageMode,
         useLemmaMode,
         excludeCognates,
@@ -3054,7 +3054,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     if (landingRowsChecked < 3 && ranges[initialIndex]?.unseenCount > 0
         && landingWords.some(item => item._indexRowsPending)) {
         const loaded = await window.ensureIndexRowsForRange?.(
-            langConfig, 0, 0, landingWords.map(item => item.rank)
+            langConfig, 0, 0, landingWords.map(item => item.sourceRank || item.rank)
         ).catch(() => false);
         if (loaded) {
             invalidatePreparedSetupVocabulary();

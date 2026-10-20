@@ -201,7 +201,7 @@ export function openMusicWorkspace(nextOptions = {}) {
             slug: 'la-casa-de-papel',
             name: 'La Casa de Papel',
             initials: 'LCDP',
-            description: 'Season 1 (Episodes 1–9) · 1,072 dialogue words · 11 levels',
+            description: 'Season 1 dialogue sample · Episodes 1–9 · Vocabulary study levels',
             isSeries: true
         });
     }
@@ -240,10 +240,6 @@ export function openMusicWorkspace(nextOptions = {}) {
         button.addEventListener('click', () => {
             playlistReturn = false;
             if (entry.isSeries) {
-                const live = window.playlistLiveDeck?.();
-                if (live && (live.playlistId === 'la-casa-de-papel' || /casa de papel/i.test(live.playlistName || '')) && (live.matchedCount || 0) < 1000) {
-                    window.clearPlaylistLiveSession?.();
-                }
                 window.showAppLoading?.('Loading La Casa de Papel', 'Building study deck from dialogue…');
                 window.openSubtitleImport?.({ preselect: entry.slug });
             } else {

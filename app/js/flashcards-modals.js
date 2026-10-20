@@ -416,7 +416,7 @@ async function hydrateBreakdownEntries(results) {
     if (typeof window.ensureIndexRowsForRange !== 'function') return false;
     const ranks = results
         .filter(r => r.source === 'vocab' && r.entry?._indexRowsPending)
-        .map(r => Number(r.entry.rank))
+        .map(r => Number(r.entry.sourceRank || r.entry.rank))
         .filter(Number.isFinite);
     if (!ranks.length) return false;
     const langConfig = config?.languages?.[selectedLanguage] || {};
@@ -883,7 +883,8 @@ function navigateToVocabCard(tokenIndex) {
     const result = currentBreakdownResults[tokenIndex];
     if (!result || !result.entry) return;
 
-    const vocabEntry = result.entry;
+    const vocabEntry = window.playlistLiveActive?.()
+        ? window.refreshPlaylistLiveEntry(result.entry) : result.entry;
 
     // Build a temporary flashcard object from the vocab entry
     const langConfig = config.languages[selectedLanguage] || {};
@@ -892,7 +893,7 @@ function navigateToVocabCard(tokenIndex) {
 
     // Merge cached examples (sense, MWE, sense-cycle) before synthesis so
     // the MWE pill has lyric lines to render.
-    const examplesData = window._cachedExamplesData;
+    const examplesData = window.playlistLiveActive?.() ? null : window._cachedExamplesData;
     if (examplesData && examplesData[vocabEntry.id]) {
         const cached = examplesData[vocabEntry.id];
         if (cached.m && Array.isArray(vocabEntry.meanings)) {
@@ -1010,14 +1011,14 @@ async function popupFoundWord(entry, opts) {
         const vocabSource = (activeArtist && window._cachedMergedIndex)
             ? window._cachedMergedIndex
             : window._cachedJoinedIndex;
-        const vocabEntry = entry.sourceEntry
+        let vocabEntry = entry.sourceEntry
             || (vocabSource && vocabSource.find(it => it.id === entry.id));
         if (!vocabEntry) {
             throw new Error(`Search entry ${entry.id} is no longer available in the active vocabulary`);
         }
 
         const langConfig = (config && config.languages && config.languages[selectedLanguage]) || {};
-        const rank = Number(vocabEntry.rank) || 1;
+        const rank = Number(vocabEntry.sourceRank || vocabEntry.rank) || 1;
         if (window.ensureIndexRowsForRange && (!Array.isArray(vocabEntry.meanings) || vocabEntry.meanings.length === 0 || vocabEntry._indexRowsPending)) {
             try {
                 await window.ensureIndexRowsForRange(langConfig, rank, rank + 1, [rank]);
@@ -1026,14 +1027,18 @@ async function popupFoundWord(entry, opts) {
             }
         }
 
-        // Lazy-load examples file if needed and merge into the entry's meanings.
-        if (langConfig.examplesPath && (
+        if (window.playlistLiveActive?.()) {
+            vocabEntry = window.refreshPlaylistLiveEntry(vocabEntry);
+        }
+
+        // Live dialogue already supplies its own unassigned examples.
+        if (!window.playlistLiveActive?.() && langConfig.examplesPath && (
             !window._cachedExamplesData
             || window._cachedExamplesDataPath !== langConfig.examplesPath
             || (window.exampleShardsActive?.() && !window._cachedExamplesData[vocabEntry.id])
         )) {
             try {
-                const rank = Number(vocabEntry.rank) || 1;
+                const rank = Number(vocabEntry.sourceRank || vocabEntry.rank) || 1;
                 if (window.ensureExamplesForRange) {
                     await window.ensureExamplesForRange(langConfig, rank, rank + 1);
                 } else {
@@ -1048,7 +1053,7 @@ async function popupFoundWord(entry, opts) {
                 console.warn('popupFoundWord: failed to fetch examples', e);
             }
         }
-        const examplesData = window._cachedExamplesData;
+        const examplesData = window.playlistLiveActive?.() ? null : window._cachedExamplesData;
         if (examplesData && examplesData[vocabEntry.id]) {
             const ex = examplesData[vocabEntry.id];
             if (ex.m && Array.isArray(vocabEntry.meanings)) {

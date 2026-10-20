@@ -3322,19 +3322,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
         const ranks = filteredData.map(item => Number(item.sourceRank || item.rank));
         if (!activeArtist) {
             await ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks);
-            if (window.playlistLiveActive?.() && window._cachedJoinedIndex) {
-                const byId = new Map(window._cachedJoinedIndex.map(c => [c.id, c]));
-                for (const item of filteredData) {
-                    const cached = byId.get(item.id);
-                    if (cached && cached.meanings && cached.meanings.length && (!item.meanings || !item.meanings.length || item.meanings[0].unassigned)) {
-                        const existingExamples = item.meanings?.[0]?.examples || [];
-                        item.meanings = cached.meanings.map(m => ({
-                            ...m,
-                            examples: [...existingExamples, ...(m.examples || [])]
-                        }));
-                        if (cached.pos && !item.pos) item.pos = cached.pos;
-                    }
-                }
+            if (window.playlistLiveActive?.()) {
+                filteredData = filteredData.map(item => window.refreshPlaylistLiveEntry(item));
             }
         }
         filteredData = filteredData.filter(item => {
