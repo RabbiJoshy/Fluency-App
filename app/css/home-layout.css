@@ -1074,9 +1074,21 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 
     /* Learn keeps the level beside its words and progress (the 1024px grid);
        the footer row takes the spare height so both buttons share one line. */
-    #setupPanel #step2 .level-choosing { grid-template-rows: auto auto 1fr; padding-top: 8px; }
-    #setupPanel #step2 .home-section-footer { align-self: end; }
-    #setupPanel #step2.has-level-tiles .level-choosing { grid-template-rows: auto auto auto 1fr; }
+    /* Both panels take most of the window's height; Learn spreads its rows
+       over it instead of packing them under the title. */
+    body.desktop-workspace #setupPanel > :is(#step2, #reviewDeckSection) { min-height: min(70vh, 720px); }
+    /* Rows: tiles, space, [level | examples + bar], space, footer. The level
+       and its words stay one block, centred in the height left over. */
+    #setupPanel #step2 .level-choosing,
+    #setupPanel #step2.has-level-tiles .level-choosing { grid-template-rows: auto 1fr auto auto 1fr auto; padding-top: 3vh; }
+    #setupPanel #step2 #homeLevelStepper,
+    #setupPanel #step2.has-level-tiles #homeLevelStepper { grid-row: 3 / span 2; }
+    #setupPanel #step2 #lswExamples,
+    #setupPanel #step2.has-level-tiles #lswExamples { grid-row: 3; }
+    #setupPanel #step2 #rangeSelector,
+    #setupPanel #step2.has-level-tiles #rangeSelector { grid-row: 4; }
+    #setupPanel #step2 .home-section-footer,
+    #setupPanel #step2.has-level-tiles .home-section-footer { grid-row: 6; }
     /* The right-hand column is narrower in a side-by-side panel: let the
        coverage line wrap rather than run past the edge. */
     #setupPanel #step2 #lswExamples { padding-right: 1.5vw; white-space: normal; }
@@ -1221,12 +1233,14 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 .home-level-tile-bar .is-skipped { background: var(--set-skipped, #566477); }
 #step2.has-level-tiles #homeLevelStepper > .home-level-step { display: none; }
 #step2.has-level-tiles #homeLevelStepper { justify-content: center; }
-@media (min-width: 1024px) {
-    #setupPanel #step2 #homeLevelTiles { grid-column: 1 / -1; grid-row: 1; padding: 0 1vw; }
+@media (min-width: 1024px) and (max-width: 1359px) {
     #setupPanel #step2.has-level-tiles #homeLevelStepper { grid-row: 2 / span 2; }
     #setupPanel #step2.has-level-tiles #lswExamples { grid-row: 2; }
     #setupPanel #step2.has-level-tiles #rangeSelector { grid-row: 3; }
     #setupPanel #step2.has-level-tiles .home-section-footer { grid-row: 4; }
+}
+@media (min-width: 1024px) {
+    #setupPanel #step2 #homeLevelTiles { grid-column: 1 / -1; grid-row: 1; padding: 0 1vw; }
     .home-level-tiles { --tile: clamp(60px, 5.2vw, 84px); }
     .home-level-tile { padding: 1.1vh 6px 1vh; gap: 0.9vh; }
     .home-level-tile-bar { height: 5px; }

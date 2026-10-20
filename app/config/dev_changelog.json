@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T22:15:20+01:00",
+      "date": "2026-10-20 22:15 BST",
+      "agent": "Claude",
+      "summary": "Desktop home uses the window's height; bigger tool buttons on the card back",
+      "detail": [
+        "Desktop (1360px+): Learn and Practise are at least 70% of the window tall (max 720px); tiles at the top, the level with its words and bar centred, Learn button at the bottom.",
+        "Card back tool row (Rare uses, Dictionary, …): icons 28→32px and labels 12→14px on phones; 36px and 16px on desktop."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T22:09:02+01:00",
       "date": "2026-10-20 22:09 BST",
       "agent": "Claude",
@@ -354,18 +365,6 @@
         "The intro is now: \"This app teaches the most common words first, counted from everyday speech, or from songs if you’d rather learn the vocabulary of the music you listen to. You can switch any time, and your progress is shared.\" (also in the vocabulary switcher).",
         "The separate \"You can switch between Speech and Music any time\" line under the cards is gone.",
         "The \"Choose what to learn from\" title is centred."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:07:04+01:00",
-      "date": "2026-10-19 21:07 BST",
-      "agent": "Claude",
-      "summary": "Music is open in Spanish only; other languages show it as Coming soon",
-      "detail": [
-        "For every language except Spanish, Music (artists, your songs, live playlists) is greyed out with \"Coming soon\", in the home cards, the vocabulary switcher, the desktop menu and Extra's lyrics card. The Spotify footer is hidden there too.",
-        "The admin account (SafariMS) still sees Music in every language. Other accounts, Joshua and JP included, don't.",
-        "The admin-only SpanishDict tile on the card back is now labelled Admin."
       ],
       "commit": "pending"
     }

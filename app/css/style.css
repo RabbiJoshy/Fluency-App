@@ -26178,6 +26178,28 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .ref-tile-meter i:nth-child(1) { height: 8px; }
 .ref-tile-meter i:nth-child(2) { height: 15px; }
 .ref-tile-meter i:nth-child(3) { height: 24px; }
+/* The card-back tools were half the size of the meanings above them
+   (2026-10-20): larger icons and labels, a little larger again on desktop. */
+.links-section .ref-tile-icon,
+.links-section:has(> :nth-child(5)) .ref-tile-icon { width: 32px; height: 32px; }
+.links-section .ref-tile-label,
+.links-section:has(> :nth-child(5)) .ref-tile-label { font-size: 14px; }
+.links-section .ref-tile-meter i { width: 7px; }
+.links-section .ref-tile-meter i:nth-child(1) { height: 9px; }
+.links-section .ref-tile-meter i:nth-child(2) { height: 17px; }
+.links-section .ref-tile-meter i:nth-child(3) { height: 27px; }
+@media (min-width: 1024px) {
+    .links-section .ref-tile,
+    .links-section:has(> :nth-child(5)) .ref-tile { min-height: 72px; gap: 8px; }
+    .links-section .ref-tile-icon,
+    .links-section:has(> :nth-child(5)) .ref-tile-icon { width: 36px; height: 36px; }
+    .links-section .ref-tile-label,
+    .links-section:has(> :nth-child(5)) .ref-tile-label { font-size: 16px; }
+    .links-section .ref-tile-meter i { width: 8px; }
+    .links-section .ref-tile-meter i:nth-child(1) { height: 10px; }
+    .links-section .ref-tile-meter i:nth-child(2) { height: 19px; }
+    .links-section .ref-tile-meter i:nth-child(3) { height: 30px; }
+}
 .ref-tile-endings {
     display: inline-flex;
     flex-direction: column;
