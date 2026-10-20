@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T21:16:58+01:00",
+      "date": "2026-10-20 21:16 BST",
+      "agent": "Claude",
+      "summary": "Coverage line now for Spanish, Portuguese, French, Finnish; phone top bar and card outline tidied",
+      "detail": [
+        "Coverage shares added for es, pt, fi (OpenSubtitles 2018 lists) and fr (Lexique 4 FreqOrtho), so 'Levels 1–2 make up N% of speech' shows for them. The French deck is only 200 words today.",
+        "Phone: the coverage line is back, on its own line under the example words, kept to one line.",
+        "Phone top bar: equal space above and below the name and icons; the line beneath is the language's light colour, not the two-colour gradient.",
+        "Phone: the open Learn/Practise card has an even outline all the way round (it was thicker on the left)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T21:11:29+01:00",
       "date": "2026-10-20 21:11 BST",
       "agent": "Claude",
@@ -353,16 +366,6 @@
       "detail": [
         "On desktop the Learn and Practise boxes are centred vertically instead of pinned to the top with an empty band below.",
         "If the window is too short for them, they start at the top as before. Phones unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T20:02:31+01:00",
-      "date": "2026-10-19 20:02 BST",
-      "agent": "Claude",
-      "summary": "Desktop loading screen is bigger: larger picture, spinner and text",
-      "detail": [
-        "On desktop the \"Preparing your…\" loading screen now uses a larger crest/flag, a larger spinner, and bigger title and sub-text (phones unchanged)."
       ],
       "commit": "pending"
     }
