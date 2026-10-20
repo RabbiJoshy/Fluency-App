@@ -3252,11 +3252,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
     const practisePeek = document.getElementById('practiseSectionPeek');
     if (practisePeek) {
-        const peekItem = (tone, text) => `<span class="home-peek-item is-${tone}"><i aria-hidden="true"></i>${text}</span>`;
-        practisePeek.innerHTML = [
-            practiseMistakes > 0 ? peekItem('mistake', `${practiseMistakes.toLocaleString()} ${practiseMistakes === 1 ? 'mistake' : 'mistakes'}`) : '',
-            practiseDue > 0 ? peekItem('due', `${practiseDue.toLocaleString()} due`) : '',
-        ].join('');
+        // Folded, Practise says only how many are waiting (in the meta line above);
+        // the mistakes / due breakdown is for the open section.
+        practisePeek.innerHTML = '';
         practisePeek.hidden = !practisePeek.innerHTML;
     }
     applyHomeSection(reviewHTML ? practiseMistakes : -1);

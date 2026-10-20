@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-20T21:20:07+01:00",
+      "date": "2026-10-20 21:20 BST",
+      "agent": "Claude",
+      "summary": "Phone top bar: bigger flag and icons, tighter spacing; folded Practise shows only the number waiting",
+      "detail": [
+        "Phone top bar: flag 20→25px, icons 22→26px, language name 15→16px, with the icons closer together.",
+        "Folded Practise card: just 'N waiting'; the mistakes / due breakdown no longer appears under it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T21:16:58+01:00",
       "date": "2026-10-20 21:16 BST",
       "agent": "Claude",
@@ -355,17 +366,6 @@
         "Rare uses draws the same three-bar meter as the sense row, with one bar lit; its count is a small pill beside it.",
         "Conjugate keeps its endings, restyled as -ar / -er / -ir.",
         "Look up is now Dictionary, with a globe icon. Pin meaning(s) is now Pin meaning (tutorial updated to match)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T20:23:46+01:00",
-      "date": "2026-10-19 20:23 BST",
-      "agent": "Claude",
-      "summary": "Desktop home: Learn and Practise sit in the middle of the screen",
-      "detail": [
-        "On desktop the Learn and Practise boxes are centred vertically instead of pinned to the top with an empty band below.",
-        "If the window is too short for them, they start at the top as before. Phones unchanged."
       ],
       "commit": "pending"
     }

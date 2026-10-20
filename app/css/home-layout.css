@@ -485,17 +485,18 @@ body:not(.desktop-workspace) #topBar .learning-context-chip {
     border-radius: 10px;
     background: transparent;
 }
-body:not(.desktop-workspace) #topBar .learning-context-flag { font-size: 20px; }
-body:not(.desktop-workspace) #topBar .learning-context-chip-copy strong { font-size: 15px; }
+body:not(.desktop-workspace) #topBar .learning-context-flag { font-size: 25px; }
+body:not(.desktop-workspace) #topBar .learning-context-chip-copy strong { font-size: 16px; }
 body:not(.desktop-workspace) #topBar .top-bar-icon-btn,
 body:not(.desktop-workspace) #topBar .gear-btn {
-    width: 40px;
+    width: 36px;
     height: 40px;
-    flex: 0 0 40px;
+    flex: 0 0 36px;
     background: transparent;
 }
+body:not(.desktop-workspace) #topBar .top-bar-right-controls { gap: 0; }
 body:not(.desktop-workspace) #topBar .top-bar-icon-btn svg,
-body:not(.desktop-workspace) #topBar .gear-btn svg { width: 22px; height: 22px; }
+body:not(.desktop-workspace) #topBar .gear-btn svg { width: 26px; height: 26px; }
 
 /* --- Wide screens: fill the window -------------------------------------
    Nothing here scrolls, so nothing is capped in pixels: the column takes the
