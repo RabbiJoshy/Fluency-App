@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=5c00cdb8';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=5c00cdb8';
-import { readFastTrack } from './fast-track-preferences.js?v=5c00cdb8';
-import './session-plan.js?v=5c00cdb8';
+import './state.js?v=6d83e6f4';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=6d83e6f4';
+import { readFastTrack } from './fast-track-preferences.js?v=6d83e6f4';
+import './session-plan.js?v=6d83e6f4';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2098,11 +2098,13 @@ function syncHomeLevelStepper(idx) {
 
 // --- Home level tiles ------------------------------------------------------
 // Once the learner has started two levels, a row of tiles (each with its own
-// progress bar) replaces the stepper's arrows: the levels they have started,
-// the one after the furthest, and the selected one, at most eight at a time.
+// progress bar) sits above the stepper: the levels they have started, the one
+// after the furthest, and the selected one, at most eight at a time. The ‹ ›
+// arrows stay beside the level number, the easier target.
 // With one level started the row would say no more than ‹ 1 ›, so it stays hidden.
 const HOME_LEVEL_TILE_MIN_STARTED = 2;
 const HOME_LEVEL_TILE_MAX = 8;
+const HOME_LEVEL_TILE_MAX_PHONE = 6;
 
 function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estimate, smartSkipOn }) {
     const row = document.getElementById('homeLevelTiles');
@@ -2150,10 +2152,11 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
     if (next < ranges.length) shown.add(next);
     shown.add(selectedIdx);
     let tiles = [...shown].sort((a, b) => a - b);
-    if (tiles.length > HOME_LEVEL_TILE_MAX) {
+    const maxTiles = window.matchMedia?.('(max-width: 1023px)').matches ? HOME_LEVEL_TILE_MAX_PHONE : HOME_LEVEL_TILE_MAX;
+    if (tiles.length > maxTiles) {
         const pos = tiles.indexOf(selectedIdx);
-        const from = Math.max(0, Math.min(pos - Math.floor(HOME_LEVEL_TILE_MAX / 2), tiles.length - HOME_LEVEL_TILE_MAX));
-        tiles = tiles.slice(from, from + HOME_LEVEL_TILE_MAX);
+        const from = Math.max(0, Math.min(pos - Math.floor(maxTiles / 2), tiles.length - maxTiles));
+        tiles = tiles.slice(from, from + maxTiles);
     }
 
     const tileHTML = tiles.map(i => {
@@ -2169,9 +2172,7 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
                 <span class="home-level-tile-bar" aria-hidden="true">${segments}</span>
             </button>`;
     }).join('');
-    row.innerHTML = `<button type="button" class="home-level-step" data-tile-step="-1" aria-label="Previous level"${selectedIdx <= 0 ? ' disabled' : ''}>‹</button>
-        <div class="home-level-tile-list">${tileHTML}</div>
-        <button type="button" class="home-level-step" data-tile-step="1" aria-label="Next level"${selectedIdx >= ranges.length - 1 ? ' disabled' : ''}>›</button>`;
+    row.innerHTML = `<div class="home-level-tile-list">${tileHTML}</div>`;
     row.hidden = false;
     step2?.classList.add('has-level-tiles');
 
@@ -2183,9 +2184,6 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
     };
     row.querySelectorAll('[data-level-index]').forEach(tile => {
         tile.addEventListener('click', () => pick(Number(tile.dataset.levelIndex)));
-    });
-    row.querySelectorAll('[data-tile-step]').forEach(button => {
-        button.addEventListener('click', () => pick(selectedIdx + Number(button.dataset.tileStep)));
     });
 }
 
@@ -3733,7 +3731,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=5c00cdb8')
+        import('./spotify.js?v=6d83e6f4')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

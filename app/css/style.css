@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=5c00cdb8");
+@import url("./appearance.css?v=6d83e6f4");
 
 
         * {
@@ -3213,13 +3213,13 @@
         }
 
         .meaning-row.is-current-sense {
-            /* Same flat fill as every other row and as the POS header above
-               them. There used to be three different fills — 0.10 on the
-               header, 0.08 unselected, 0.18 selected — so an unselected
-               sub-row read as a third kind of thing rather than a sibling.
-               The 2px outline below is what marks the active row. */
-            background: rgba(var(--sense-match-rgb), 0.10) !important;
-            border: 2px solid rgb(var(--sense-match-rgb));
+            /* The active row is marked by a stronger fill and a 4px bar on its
+               left edge, in the POS section's colour. It used to be a 2px
+               outline on a 0.10 fill, which was hard to read; the outline is
+               kept as a transparent border so the row's size does not move. */
+            background: rgba(var(--sense-match-rgb), 0.28) !important;
+            border: 2px solid transparent;
+            border-left: 4px solid rgb(var(--sense-match-rgb));
             box-shadow: none;
             transform: none;
             opacity: 1 !important;
@@ -5295,14 +5295,12 @@
             box-shadow: inset 0 -1px 0 rgba(var(--sense-match-rgb), 0.38);
         }
 
-        /* Attached clitic pronoun within a highlighted verb form.
-           Uses the orange clitic accent directly so the pronoun portion
-           is visually distinct from the host verb stem. */
+        /* Attached clitic pronoun within a highlighted verb form. It takes the
+           host verb's colour (the highlight's own, light and dark), so
+           "se abre" reads as one verb-coloured unit. The class stays on the
+           span so the clitic remains addressable. */
         .example-clitic-highlight {
-            color: color-mix(in srgb, rgb(249, 115, 22) 60%, white);
-            text-decoration: underline;
-            text-decoration-color: rgba(249, 115, 22, 0.6);
-            text-underline-offset: 3px;
+            color: inherit;
         }
 
         @media (max-width: 767px) {
@@ -26378,7 +26376,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     box-shadow: none !important;
 }
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense {
-    border: 2px solid rgb(var(--sense-match-rgb));
+    border: 2px solid transparent;
+    border-left: 4px solid rgb(var(--sense-match-rgb));
 }
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context) {
     font-weight: 700 !important;
@@ -26428,7 +26427,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows:has(.pos-collapsible ~ .pos-collapsible) .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)):not(#_) {
     padding: 3px !important;
     border-radius: 11px;
-    box-shadow: inset 0 0 0 2px rgb(var(--sense-match-rgb)) !important;
+    box-shadow: inset 4px 0 0 rgb(var(--sense-match-rgb)) !important;
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.24), rgba(var(--sense-match-rgb), 0.24)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
 }
 
 /* One size for every row: text is 20px and a row is at least 44px tall,
@@ -26639,20 +26639,21 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .fw-relation-meaning { font-size: 18px; margin-top: 2px; }
 
-/* Where am I (Josh 2026-10-20): the active word type's row and the active
-   meaning take a very light wash of its colour, lighter than the old 10%
-   fill, so a card with several word types shows which one is open. A lone
+/* Where am I (Josh 2026-10-20, revised 2026-10-21): the active word type's
+   row takes a very light wash of its colour; the active meaning takes a
+   stronger 0.24 fill and a 4px bar on its left edge (no outline, which was
+   hard to read), so a card with several word types shows which one is open. A lone
    group's sub-rows: the active one, or all of them when the whole group is
    selected. */
 .meanings-scroll.inline-sense-rows .pos-collapsible:has(.meaning-row:is(.selected, .is-current-sense)) > .pos-section-head:not(#_) {
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.09), rgba(var(--sense-match-rgb), 0.09)), color-mix(in srgb, var(--text-primary) 5%, transparent) !important;
 }
 .meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group):is(.selected, .is-current-sense):not(.has-hoisted-shared-cell, #_) {
-    background: linear-gradient(rgba(var(--sense-match-rgb), 0.07), rgba(var(--sense-match-rgb), 0.07)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.24), rgba(var(--sense-match-rgb), 0.24)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
 }
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell:is(.selected, .is-current-sense) .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_),
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell:is(.selected, .is-current-sense):not(:has(.is-active-subsense)) .sense-cue-group > .group-card-varying-cell:not(#_) {
-    background: linear-gradient(rgba(var(--sense-match-rgb), 0.07), rgba(var(--sense-match-rgb), 0.07)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.24), rgba(var(--sense-match-rgb), 0.24)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
 }
 /* Translation and context on one line are joined by a muted " · " — the
    same joiner as the word-type row — so "how · to what degree" reads as two

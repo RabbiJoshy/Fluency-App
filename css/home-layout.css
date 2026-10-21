@@ -1195,13 +1195,11 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 @media (min-width: 1360px) { .home-level-step { width: 56px; height: 56px; font-size: 40px; } }
 
 /* --- Learn: level tiles ---------------------------------------------------
-   Shown once two levels are started (renderHomeLevelTiles in ui.js). The row
-   carries the ‹ › arrows then, so the stepper keeps only its readout. Tiles
-   keep one size and the row centres, so the arrows sit beside the tiles;
-   eight tiles shrink to fit a phone. */
+   Shown once two levels are started (renderHomeLevelTiles in ui.js), above
+   the stepper, which keeps its ‹ › arrows. Tiles keep one size and the row
+   centres; eight tiles shrink to fit a phone. */
 .home-level-tiles { --tile: 60px; display: flex; align-items: center; justify-content: center; gap: 4px; margin: 4px 0 12px; }
 .home-level-tiles[hidden] { display: none !important; }
-.home-level-tiles > .home-level-step { flex: none; }
 .home-level-tile-list { flex: 0 1 auto; min-width: 0; display: flex; gap: 6px; }
 .home-level-tile {
     display: flex;
@@ -1223,7 +1221,7 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     cursor: pointer;
 }
 .home-level-tile:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-.home-level-tile.is-selected { border-color: var(--accent-primary); color: var(--text-primary); background: color-mix(in srgb, var(--accent-primary) 16%, transparent); }
+.home-level-tile.is-selected { border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color)); color: var(--text-primary); background: color-mix(in srgb, var(--accent-primary) 7%, transparent); }
 .home-level-tile-bar { display: flex; gap: 1px; height: 4px; border-radius: 2px; overflow: hidden; background: var(--border-color); }
 .home-level-tile-bar span { display: block; min-width: 2px; }
 .home-level-tile-bar .is-new { background: var(--set-new, #fff); }
@@ -1231,8 +1229,6 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 .home-level-tile-bar .is-known { background: var(--set-known, #16734b); }
 .home-level-tile-bar .is-estimated { background: var(--set-estimated, #77669e); }
 .home-level-tile-bar .is-skipped { background: var(--set-skipped, #566477); }
-#step2.has-level-tiles #homeLevelStepper > .home-level-step { display: none; }
-#step2.has-level-tiles #homeLevelStepper { justify-content: center; }
 @media (min-width: 1024px) and (max-width: 1359px) {
     #setupPanel #step2.has-level-tiles #homeLevelStepper { grid-row: 2 / span 2; }
     #setupPanel #step2.has-level-tiles #lswExamples { grid-row: 2; }
@@ -1246,8 +1242,6 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     .home-level-tile-bar { height: 5px; }
 }
 @media (max-width: 1023px) {
-    .home-level-tiles { gap: 2px; margin-inline: -8px; }
-    .home-level-tiles > .home-level-step { width: 28px; height: 36px; font-size: 24px; }
     .home-level-tile-list { gap: 4px; }
     .home-level-tile { padding: 8px 3px 7px; gap: 6px; border-radius: 8px; }
 }
@@ -1294,9 +1288,23 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     /* The level reads without its plate; its words, coverage and bar get more
        of the row and sit centred. */
     #setupPanel #step2 .home-level-readout { background: transparent; padding: 0; }
-    #setupPanel #step2 .level-choosing { grid-template-columns: minmax(0, 1.3fr) minmax(0, 3fr); }
+    #setupPanel #step2 .level-choosing { grid-template-columns: auto minmax(0, 1fr); column-gap: 2vw; }
     #setupPanel #step2 #lswExamples { justify-content: center; align-items: center; text-align: center; padding: 0 1vw; }
     #setupPanel #step2 #lswExamples .lsw-egs .lsw-coverage-inline { white-space: normal; }
     #setupPanel #step2 .home-level-progress { padding: 0 1vw; }
     #setupPanel #step2 .home-level-stats { justify-content: center; }
+}
+
+/* The level readout is the first thing to read: a touch larger number, and
+   the word range in body text rather than muted small print. The selected
+   tile above it stays quiet so it does not compete. */
+#setupPanel #homeLevelStepper .home-level-readout strong { font-size: calc(var(--home-number) * 1.12); }
+#setupPanel #homeLevelStepper .home-level-eyebrow { font-size: var(--home-text); color: var(--text-secondary); }
+/* Chevrons close to the number: narrower buttons (same height to tap), no gap. */
+#setupPanel #homeLevelStepper { gap: 0; }
+#setupPanel #homeLevelStepper .home-level-step { width: 38px; }
+@media (min-width: 1360px) { #setupPanel #homeLevelStepper .home-level-step { width: 44px; } }
+#setupPanel #homeLevelStepper .home-level-words { font-size: var(--home-text); color: var(--text-secondary); }
+@media (min-width: 1360px) {
+    #setupPanel #step2 .home-level-readout strong { font-size: clamp(80px, 7.2vw, 140px); }
 }

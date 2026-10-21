@@ -2,6 +2,73 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T15:01:30+01:00",
+      "date": "2026-10-21 15:01 BST",
+      "agent": "Claude",
+      "summary": "Card back: the active sense is marked by a stronger fill and a left bar instead of an outline",
+      "detail": [
+        "The active sense row (and the active sub-meaning inside a grouped sense) now has a 0.24 fill and a 4px bar on its left edge in its word type's colour; the 2px outline is gone.",
+        "Applies to single rows, grouped rows, and the group that is lit when several word types are on the card; dark and light theme.",
+        "Inactive rows and the word-type rows are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-21T14:56:52+01:00",
+      "date": "2026-10-21 14:56 BST",
+      "agent": "Claude",
+      "summary": "'Level' in the same lighter grey as 'Words 1–100'; level chevrons tight to the number",
+      "detail": [
+        "'Level' label uses the same brighter grey as the word range.",
+        "‹ › buttons are narrower (38px phones, 44px wide desktop; same tap height) with no gap, so they sit beside the number's plate."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-21T14:38:05+01:00",
+      "date": "2026-10-21 14:38 BST",
+      "agent": "Claude",
+      "summary": "Quieter selected level tile; the Level / Words readout a touch more prominent",
+      "detail": [
+        "Selected tile: softer red outline and a faint tint instead of a full red outline and fill.",
+        "Level readout: number about 12% larger; 'Level' and 'Words 1–100' one size up, in brighter grey."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-21T14:36:16+01:00",
+      "date": "2026-10-21 14:36 BST",
+      "agent": "Claude",
+      "summary": "Phones show at most 6 level tiles (desktop keeps 8)",
+      "detail": [
+        "Below 1024px the level tile row holds at most 6 tiles, sliding to keep the selected level in view; each tile is about 52px wide instead of 38px."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-21T14:33:21+01:00",
+      "date": "2026-10-21 14:33 BST",
+      "agent": "Claude",
+      "summary": "Example sentences: the pronoun in a pronominal verb (se abre) now takes the verb colour",
+      "detail": [
+        "The reflexive pronoun inside the highlighted verb in an example sentence was orange and underlined; it now uses the same colour as the verb, so 'se abre' reads as one unit.",
+        "Sense rows, 'used with' text and chips are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-21T14:29:29+01:00",
+      "date": "2026-10-21 14:29 BST",
+      "agent": "Claude",
+      "summary": "Level arrows back beside the level number (phone and desktop), not on the tile row",
+      "detail": [
+        "With level tiles showing, the ‹ › arrows stay beside 'Level N' — the bigger, easier target — instead of moving to the ends of the tile row.",
+        "Phone: the tile row has the full width, so tiles are 38px instead of 33px.",
+        "Desktop (1360px+): the level column is as wide as the stepper needs, so › no longer crowds the example words."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-20T22:50:14+01:00",
       "date": "2026-10-20 22:50 BST",
       "agent": "Claude",
@@ -292,86 +359,6 @@
       "detail": [
         "In a grouped row (dejar: to leave / to put, to forget, to bequeath) the sub-lines start right under the shared gloss; the empty band between them is gone (row 140px to 123px on a phone).",
         "The commonness meter's bars now stand on the shared gloss's baseline instead of hanging below it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T14:26:32+01:00",
-      "date": "2026-10-20 14:26 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): rows lose the word-type colour wash; word-type row is square; a group's meter sits on its shared gloss",
-      "detail": [
-        "Meaning rows and the word-type row no longer have a POS-coloured fill; the pill and the left edge carry the colour. The active row keeps its coloured outline.",
-        "The word-type row has square corners, setting it apart from the rounded meaning rows under it.",
-        "In a grouped row (dejar: to leave / to put, to forget, to bequeath) the commonness meter sits level with the shared gloss, not centred across all four lines."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T14:22:43+01:00",
-      "date": "2026-10-20 14:22 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): each meaning reads as one left-aligned line, with shared words shown once on the word-type row",
-      "detail": [
-        "Gloss, context and grammar now run left to right on one line instead of sitting in centred boxes, so a long context wraps like a sentence (não: 'not; don't; haven't  negates the meaning of the verb or adverb').",
-        "The 'i' follows the last word of the row; no row keeps an empty column on the right for it. The left slot stays for the meter, pin or Known tag.",
-        "Words every row of a word type shares move onto that word type's row once: bom shows 'Adjective  good' and its three rows show only their contexts.",
-        "Grouped rows (tempo, dejar) lead with the shared gloss in bold, each sub-sense on its own lighter line underneath.",
-        "Grammar frames are shortened on the card: +inf, +ger, +adj, +subj, +pp. The note keeps the full wording.",
-        "Display only; no data changes. Trial switch: the inlineSenseRows call in flashcards.js and the .inline-sense-rows block at the end of style.css."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T23:20:00+01:00",
-      "date": "2026-10-19 23:20 BST",
-      "agent": "Claude",
-      "summary": "Artist mode: pick an artist and go straight to their deck; choose songs or albums later",
-      "detail": [
-        "Music now opens on one screen: Artists, Spotify playlists and Series tabs, a search box and round artist tiles. The three-card chooser is gone.",
-        "Tapping an artist opens the whole deck. The forced song picker is gone; only 'Mix several' still asks for songs first.",
-        "The artist card is now: ‹ Music, the artist with a Read lyrics button, and two chips, 'Songs: all 295 ✎' and 'Albums ▾'. Change artist, Speech and the language button are removed from it.",
-        "The song picker has an album filter; Select all / Clear all act on whatever is showing.",
-        "Back on the pick screen only appears when a deck is open, and returns to it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T23:03:13+01:00",
-      "date": "2026-10-19 23:03 BST",
-      "agent": "Claude",
-      "summary": "Function-word rows: one-line patterns with plain English meanings; shorter examples",
-      "detail": [
-        "All 120 Spanish and Portuguese pattern rows rewritten: the pattern fits one line with short slot names (con + person), and under it the English meaning in grey (with) instead of a description (Who with).",
-        "Rows are larger: 18px pattern, 15px meaning.",
-        "Example sentences are capped at 70 characters (two lines on a phone); over-long ones were replaced from the speech and lyric pools.",
-        "Previous wording is kept on each row; the full before/after list is docs/audits/function-word-copy/rewrite_2026-10-19.tsv."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T22:37:45+01:00",
-      "date": "2026-10-19 22:37 BST",
-      "agent": "Claude",
-      "summary": "Spanish function words: three new patterns with matched examples",
-      "detail": [
-        "todo: new \"All the\" pattern (todo el tiempo = all the time); todo el mundo (everybody) is deliberately not used as an example.",
-        "me / te / nos: new \"Myself / Yourself / Ourselves\" patterns. Reflexive sentences such as \"Cada vez que me levanto\" no longer sit under \"me / to me\".",
-        "lo: new \"What / the thing that\" pattern for lo que (Oigo lo que dices = I hear what you're saying).",
-        "Examples are assigned automatically from the speech and lyric pools by the parser rules (matcher v1.2); other words' examples are unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T21:52:36+01:00",
-      "date": "2026-10-19 21:52 BST",
-      "agent": "Claude",
-      "summary": "Function-word backs: calmer colours, normal-card font and sizes",
-      "detail": [
-        "The function word is white on a neutral highlight in the rows and the example, and the active row has a neutral outline, so que no longer changes colour between rows.",
-        "Slots that name a word type (noun, verb, adjective) are pills in the pattern row and coloured words in the example; others (\"destination\", \"more, less or better\") take no colour.",
-        "Same font as ordinary card backs (DM Sans; the rows had fallen back to Arial); 48px headword, 17px patterns, 20px example.",
-        "Credit rows centre the dots only beside a source icon; a text credit such as \"Source not verified\" keeps its full width."
       ],
       "commit": "pending"
     }
