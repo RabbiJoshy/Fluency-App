@@ -26913,3 +26913,20 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .pos-collapsible:not(:has(.meaning-row:is(.selected, .is-current-sense))) > .pos-section-head:not(#_) {
     border-left-color: transparent !important;
 }
+
+/* Contexts under a shared translation each take the bullet that stands
+   between translation and context on every other row ("to give · …"), so a
+   family reads in the same grammar. The wrapped line hangs under the text. */
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell:not(:has(.group-member-gloss)) .meaning-context-cell:not(#_) {
+    display: block;
+    padding-left: 14px;
+    text-indent: -14px;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell:not(:has(.group-member-gloss)) .meaning-context-cell::before {
+    content: '·';
+    display: inline-block;
+    width: 14px;
+    text-indent: 0;
+    color: var(--text-secondary);
+    font-weight: 700;
+}

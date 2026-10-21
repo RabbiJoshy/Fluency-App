@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T22:55:33+01:00",
+      "date": "2026-10-21 22:55 BST",
+      "agent": "Claude",
+      "summary": "Card back: a card opens with only the word type in use expanded; contexts under a shared translation take a bullet",
+      "detail": [
+        "The other word types open as their word-type row (translation beside the pill), the same way they look after you tap a sub-meaning, instead of opening fully expanded and then folding on the first tap.",
+        "Each context row under a shared translation starts with the same dot that sits between translation and context elsewhere; a wrapped line hangs under the text.",
+        "A shared grammar frame ('+ a / para' on deu) stays beside the heading rather than repeating on every row.",
+        "Checked in the app on merda, sé, una, daqui and deu (dark mode). Light mode and phone width not checked."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T22:48:51+01:00",
       "date": "2026-10-21 22:48 BST",
       "agent": "Claude",
@@ -333,17 +346,6 @@
         "Opening #/about while signed out shows the About page and never starts sign-in (it used to redirect straight to the sign-in screen).",
         "Signed out: no 'Back to app' button, no sign-in buttons, Escape does nothing — About is the whole page.",
         "About always covers the whole window, sidebar included, signed in or not."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T22:15:20+01:00",
-      "date": "2026-10-20 22:15 BST",
-      "agent": "Claude",
-      "summary": "Desktop home uses the window's height; bigger tool buttons on the card back",
-      "detail": [
-        "Desktop (1360px+): Learn and Practise are at least 70% of the window tall (max 720px); tiles at the top, the level with its words and bar centred, Learn button at the bottom.",
-        "Card back tool row (Rare uses, Dictionary, …): icons 28→32px and labels 12→14px on phones; 36px and 16px on desktop."
       ],
       "commit": "pending"
     }

@@ -8533,12 +8533,19 @@ function renderCardWikipediaBadge(card) {
                     }
                     // Put the shared context back on each row (daqui: "of" over
                     // "in relation to · introduces the name of a place" and
-                    // "in relation to", not over a leftover reading "general use").
-                    if (sharedContextParts.length) {
+                    // "in relation to", not over a leftover reading "general
+                    // use"). A shared grammar frame ("+ a / para") is the
+                    // exception: repeated on every row it is only noise, so it
+                    // stays beside the heading.
+                    const isFrameText = part => part.trim().startsWith('+');
+                    const sharedWords = sharedContextParts.filter(part => !isFrameText(part));
+                    if (sharedWords.length) {
                         for (const parts of memberParts.values()) {
-                            parts.context = [...sharedContextParts, parts.context].filter(Boolean).join(' · ');
+                            parts.context = [...sharedWords, parts.context].filter(Boolean).join(' · ');
                         }
+                        const frames = sharedContextParts.filter(isFrameText);
                         sharedContextParts.length = 0;
+                        sharedContextParts.push(...frames);
                     }
                     for (const memberIdx of orderedMembers) {
                         const { extra, context } = memberParts.get(memberIdx);
@@ -8890,23 +8897,13 @@ function renderCardWikipediaBadge(card) {
                 }
             }
         });
-        const renderedSectionRowCount = Array.from(scrollSections).reduce(
-            (total, [key, rows]) => total + rows.reduce((rowTotal, rowHTML) => {
-                const groupedSubsenses = rowHTML.match(/class="group-card-varying-cell/g)?.length || 0;
-                return rowTotal + Math.max(1, groupedSubsenses);
-            }, 0) + (groupInfo.has(key) ? 1 : 0),
-            0
-        );
-        const allSectionsFitInline = renderedSectionRowCount <= autoOpenSectionRowLimit();
-        // Every section opens unless that would push a sense row below the
-        // example sentence. The post-render pass measures it and, when the
-        // open menu would have to scroll, sets _sectionsCollapsedToFit so
-        // only the active section stays open. A heading the learner taps
-        // overrides both.
+        // A card opens with only the word type in use expanded; the others
+        // show as their word-type row (translation beside the pill). Choosing
+        // a row or a word type changes which one is open, so the card looks
+        // the same on opening as after you tap, and a heading you tap
+        // overrides it.
         if (!card._backSectionsManuallySet) {
-            card._expandedPos = allSectionsFitInline && !card._sectionsCollapsedToFit
-                ? new Set(Array.from(scrollSections.keys()).filter(key => groupInfo.has(key)))
-                : new Set(activeLemmaPosKey ? [activeLemmaPosKey] : []);
+            card._expandedPos = new Set(activeLemmaPosKey ? [activeLemmaPosKey] : []);
         }
         // Emit the scroll region first, then the pinned tray underneath
         // (MWE/CLITIC rows that stay visible when the user scrolls).
