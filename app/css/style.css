@@ -22490,14 +22490,12 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     text-align: center;
     justify-content: center !important;
 }
+/* A frame belongs to the words before it ("know + que"), so it flows inline
+   with them (2026-10-21). It was a full-width flex block from the older
+   layout that put the frame on its own line, which broke the line after a
+   short gloss wherever a wrapper had not overridden it. */
 .meaning-row .sense-grammar-cue {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 3px 8px;
-    width: 100%;
-    margin-top: 3px;
+    display: inline;
     color: var(--text-secondary);
     font-size: var(--sense-reading-size);
     line-height: 1.4;
@@ -22774,9 +22772,18 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     .meaning-row .group-card-shared { flex-basis: auto; width: auto !important; }
 }
 .meaning-row .group-member-gloss {
-    display: block;
+    display: inline;
     font-weight: 700;
     color: var(--text-primary);
+}
+/* A sub-row's own gloss and its context read as one line, joined by the same
+   muted dot as everywhere else ("warfare · the waging of war"); it was a
+   block, which forced the context onto a second line even when both fit. */
+.meaning-row .group-member-gloss + .meaning-context::before {
+    content: '·';
+    margin: 0 6px;
+    color: var(--text-secondary);
+    font-weight: 400;
 }
 
 /* A family sub-row's partner word ("+de") leads that sub-row. */

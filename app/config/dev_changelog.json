@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T20:04:25+01:00",
+      "date": "2026-10-21 20:04 BST",
+      "agent": "Claude",
+      "summary": "Card back: grammar frames are inline everywhere; a sub-row's gloss and context share a line (guerra: warfare · the waging of war)",
+      "detail": [
+        "The base grammar-frame rule was a full-width flex block from the older layout; it is now inline, so no wrapper can reintroduce a line break after a short gloss.",
+        "A sub-row's own gloss ('warfare') was a block that pushed its context ('the waging of war') onto a second line even when both fit; they now read 'warfare · the waging of war' on one line."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T19:53:58+01:00",
       "date": "2026-10-21 19:53 BST",
       "agent": "Claude",
@@ -339,16 +350,6 @@
         "The active pattern is outlined in its partner's colour instead of white: think / say + que green (verb), noun + que blue.",
         "Partners that name a thing (place, person, thing, time, reason, role, topic, endpoint) count as nouns: em + place shows a blue pill and 'maio' turns blue in the example.",
         "Patterns with no word-type partner (se … , …, more / less + que) use the function word's own colour."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T20:00:51+01:00",
-      "date": "2026-10-20 20:00 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): a grouped row's shared bracket sits on the heading line",
-      "detail": [
-        "daqui: 'of (in relation to)' shows as 'of  in relation to' on one line, muted, instead of 'in relation to' on its own line looking like a sub-row you could tap."
       ],
       "commit": "pending"
     }
