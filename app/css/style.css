@@ -26231,8 +26231,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row .meaning-row-sub .meaning-context { font-weight: 400 !important; color: var(--text-secondary) !important; }
 .meanings-scroll.inline-sense-rows .meaning-row.is-current-sense .meaning-row-sub .meaning-context { color: var(--text-primary) !important; }
 .meanings-scroll.inline-sense-rows .meaning-row .sense-metadata-list { display: inline !important; }
-.meanings-scroll.inline-sense-rows .meaning-row :is(.meaning-row-sub, .meaning-context).is-hoisted,
-.meanings-scroll.inline-sense-rows .meaning-row .sense-grammar-cue.is-hoisted { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row :is(.meaning-row-sub, .meaning-context).is-hoisted:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row .sense-grammar-cue.is-hoisted:not(#_) { display: none !important; }
 /* Every row shares its gloss: the row is its context, read as the main text. */
 .meanings-scroll.inline-sense-rows .meaning-row.has-hoisted-gloss .meaning-row-gloss { display: none !important; }
 .meanings-scroll.inline-sense-rows .meaning-row.has-hoisted-gloss .meaning-row-sub { margin-left: 0; }

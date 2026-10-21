@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T19:45:47+01:00",
+      "date": "2026-10-21 19:45 BST",
+      "agent": "Claude",
+      "summary": "Card back: removed the stray empty line under rows that have only a gloss and a grammar cue (e.g. Portuguese sabes)",
+      "detail": [
+        "An empty, already-hoisted context span was still being drawn as an inline block and wrapped onto its own blank line; the rule that hides it now wins over the rule that showed it.",
+        "Affects any single-gloss row whose context was hoisted away; sabes rows shrink from about 94px to 68px."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T19:20:35+01:00",
       "date": "2026-10-21 19:20 BST",
       "agent": "Claude",
@@ -341,21 +352,6 @@
         "Labels such as 'informal' leave the row and appear in its information note; a row with labels but no note gets one (cara).",
         "Region flags lead the translation and show on the active row only (cara's Brazil flag).",
         "Abbreviations are tappable on the active row, with no extra styling: tapping '+ger' on passar shows 'With direct object an amount of time and gerund doing something'."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T19:35:14+01:00",
-      "date": "2026-10-20 19:35 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): Portuguese pass — long rows stack as translation over context, both centred",
-      "detail": [
-        "A row that doesn't fit on one line becomes two centred lines, translation then context (mal: 'unfavourably' / 'in an unfavourable manner'). Rows that fit stay on one line.",
-        "The info icon is glued to the last word, so it never wraps onto its own line (mal, conta, não).",
-        "'+ com', '+ de' and register labels follow the translation, not the context (acabar, sair; cara's 'informal' is a small tag).",
-        "The word-type chevron sits at the right edge (bom no longer reads 'good ·'); só's head shows 'only, just · preceding the verb' and wraps under the pill rather than pushing the meter down.",
-        "A sub-row holding a context is muted like a context (só: 'indicates that no other action…').",
-        "In a selected group on a 4+ row card, sub-rows wrap instead of being clipped (passar)."
       ],
       "commit": "pending"
     }
