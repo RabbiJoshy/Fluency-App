@@ -8,6 +8,7 @@ import { formatRoute } from './routes.js?v=20261013music';
 import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260923gn';
 import { releaseUrl } from './release-host.js?v=20260921rh';
 import { promoteSubglossTranslations } from './sense-gloss.js?v=1';
+import { getGrammarWordDefinition } from './function-word-card.js?v=20261016slots';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1199,6 +1200,8 @@ function detectSplitCardTuples(item, lang = 'es') {
 // Shared by study sets, search, word links and vocabulary estimation. Keep
 // every represented sense on exactly one card, including low-share senses.
 function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
+    // A function word's back already lists every construction; companions would repeat it.
+    if (typeof getGrammarWordDefinition === 'function' && getGrammarWordDefinition(item?.word || item?.targetWord, lang)) return null;
     const split = detectSplitCardTuples(item, lang);
     if (!split) return null;
     const tuples = split.tuples;

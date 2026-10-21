@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T00:55:28:z",
+      "date": "2026-10-22 00:55 BST",
+      "agent": "Claude",
+      "summary": "Function words no longer split into companion cards (a, se, os, as, nos, pela): one card per word",
+      "detail": [
+        "A function word's back lists every construction already, so its companion cards showed the same rows twice.",
+        "Portuguese: 619 -> 612 cards; each of those words is now one card with its word-type pills on the front, like que.",
+        "Spanish function words not checked."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T00:53:58+01:00",
       "date": "2026-10-22 00:53 BST",
       "agent": "Claude",
@@ -332,18 +344,6 @@
       "detail": [
         "The reflexive pronoun inside the highlighted verb in an example sentence was orange and underlined; it now uses the same colour as the verb, so 'se abre' reads as one unit.",
         "Sense rows, 'used with' text and chips are unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T14:29:29+01:00",
-      "date": "2026-10-21 14:29 BST",
-      "agent": "Claude",
-      "summary": "Level arrows back beside the level number (phone and desktop), not on the tile row",
-      "detail": [
-        "With level tiles showing, the ‹ › arrows stay beside 'Level N' — the bigger, easier target — instead of moving to the ends of the tile row.",
-        "Phone: the tile row has the full width, so tiles are 38px instead of 33px.",
-        "Desktop (1360px+): the level column is as wide as the stepper needs, so › no longer crowds the example words."
       ],
       "commit": "pending"
     }
