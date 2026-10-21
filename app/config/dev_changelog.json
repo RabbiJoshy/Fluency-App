@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T21:30:20+01:00",
+      "date": "2026-10-21 21:30 BST",
+      "agent": "Claude",
+      "summary": "Card back: shared context moves into the rows when it fits (up · higher); translations beside a shared heading are inflected too (I think)",
+      "detail": [
+        "A group that shares a context over two or more translations (arriba: higher over up, above) shows 'up · higher' and 'above · higher' when each fits on one line, instead of a caption line plus one line each. If any would wrap, the caption stays.",
+        "acredito: the heading read 'I believe' but the translation beside it read 'to think'. Translations next to a shared heading now take the same form, so it reads 'I think'.",
+        "Only Spanish cards have shared-context groups (none in the first 619 Portuguese cards), so the first change was checked on a hand-built row, not on the real arriba card."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T21:10:17+01:00",
       "date": "2026-10-21 21:10 BST",
       "agent": "Claude",
@@ -333,19 +345,6 @@
         "Learn/Practise card: title, level number, 'Level' and 'Words' lines now use one type scale derived from the page text size, with the emphasis font for the title and number; 'Words 101–200' no longer wraps.",
         "Learn / Practise button: the label is centred in the half beside the time chip, not across the whole button (phones and wide screens).",
         "Language picker: a name too long for its tile (Portuguese on a phone) shrinks to fit on one line."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T20:29:20+01:00",
-      "date": "2026-10-20 20:29 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): 'often + a' aligned and set apart; no blank rows; word-type row measured after the flip",
-      "detail": [
-        "llegar: 'to come to · often + a' — the cue sits on the text's baseline, 'often' muted, with ' · ' before a cue that has a word in it (a bare '+ em' stays attached).",
-        "In a group the cue follows each translation; when every sub-row has the same cue it is shown once on the shared line ('to reach a place · often + a').",
-        "cuerpo: a row is never left blank — when its translation went up to the word-type row, its label ('anatomy') stays on the row as muted context instead of moving into the note.",
-        "The word-type row and stacked rows are measured by layout size, not the on-screen box, which the card's 3D flip distorted (cuerpo's 'body' had dropped under the pill)."
       ],
       "commit": "pending"
     }

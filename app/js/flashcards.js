@@ -1236,6 +1236,31 @@ function hoistSharedRowText(scroll, card) {
     });
 }
 
+// A shared context over two or three translations costs a line of its own
+// ("(higher)" over "up" and "above"). When each translation fits on one line
+// with the context beside it ("up · higher"), the context moves into the rows.
+function fitSharedContextInline(root) {
+    root?.querySelectorAll('.meaning-row-group[data-axis="context"]:not(.has-hoisted-shared-cell)').forEach(group => {
+        const text = group.querySelector('.group-card-shared')?.textContent.replace(/\s+/g, ' ').trim();
+        const cells = [...group.querySelectorAll('.group-card-varying-cell')];
+        if (!text || cells.length < 2) return;
+        cells.forEach(cell => {
+            if (cell.querySelector('.group-inline-context')) return;
+            const span = document.createElement('span');
+            span.className = 'group-inline-context';
+            span.textContent = text;
+            (cell.querySelector('.meaning-context-cell') || cell).append(span);
+        });
+        group.classList.add('shared-context-inline');
+        const wraps = cells.some(cell => {
+            const range = document.createRange();
+            range.selectNodeContents(cell.querySelector('.meaning-context-cell') || cell);
+            return new Set([...range.getClientRects()].map(rect => Math.round(rect.top / 4))).size > 1;
+        });
+        if (wraps) group.classList.remove('shared-context-inline');
+    });
+}
+
 // The shared words take the rest of the word type's line; when they would
 // wrap there, they move to a line of their own under it instead.
 function fitHoistedShared(root) {
@@ -1395,10 +1420,11 @@ function inlineSenseRows(root, card) {
     arrangeGroupCues(scroll);
     inlineRowFlags(scroll);
     fitHoistedShared(root);
+    fitSharedContextInline(root);
     fitInlineRows(root);
     // Measured again once the card is laid out and its font has loaded: a
     // first pass on a card still opening can see every line as wrapped.
-    const refit = () => { fitHoistedShared(root); fitInlineRows(root); };
+    const refit = () => { fitHoistedShared(root); fitSharedContextInline(root); fitInlineRows(root); };
     requestAnimationFrame(refit);
     document.fonts?.ready?.then(refit);
 }
@@ -1460,6 +1486,7 @@ function fitSenseRowLayouts(root) {
     });
     fitRowInformationButtons(root);
     fitHoistedShared(root);
+    fitSharedContextInline(root);
     fitInlineRows(root);
 }
 
@@ -8313,6 +8340,10 @@ function renderCardWikipediaBadge(card) {
                             extraSeen.add(key);
                             return true;
                         })
+                        // The heading is already in the form on the card
+                        // ("I believe" for acredito), so the translations that
+                        // sit beside it are too, not "to think".
+                        .map(piece => getProductionEnglishCue(card, { ...card.meanings[mi], meaning: piece, translation: piece }) || piece)
                         .join(', ');
                     const sharedPlainText = sharedPieces.join(', ') || groupingGlossByMeaning.get(idx)?.gloss || '';
                     const sharedFullText = isTransAxis

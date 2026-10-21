@@ -26852,3 +26852,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
         background: rgba(var(--sense-match-rgb), 0.07) !important;
     }
 }
+
+/* A shared context moved into the rows: "up · higher" instead of "(higher)"
+   over "up" and "above" (2026-10-21). */
+.meaning-row-group .group-inline-context { display: none; }
+.meaning-row-group.shared-context-inline .group-inline-context { display: inline; color: var(--text-secondary); font-weight: 400; }
+.meaning-row-group.shared-context-inline .group-inline-context::before { content: '·'; margin: 0 6px; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.shared-context-inline .group-card-shared:not(#_) { display: none !important; }
