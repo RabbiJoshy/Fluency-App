@@ -26549,6 +26549,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .meanings-scroll.inline-sense-rows .meaning-row-regular.is-stacked-row .meaning-row-sub:not(.is-hoisted, #_) { margin-top: 2px !important; }
 .meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { white-space: nowrap; margin: 0 !important; }
+/* The frame that follows the translation ("you know +inf") stays on the
+   translation's line. The base cue is a full-width flex box, which broke the
+   line after the gloss and left a second line for two words. */
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-grammar-cue:not(#_) { display: inline !important; width: auto !important; }
 .meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue) :not(.sense-inline-info, .sense-inline-info *, #_),
 .meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { font-size: 20px !important; line-height: 1.3 !important; }
 .meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-metadata-list:not(#_) {

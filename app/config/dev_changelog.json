@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T19:53:58+01:00",
+      "date": "2026-10-21 19:53 BST",
+      "agent": "Claude",
+      "summary": "Card back: a grammar frame after a translation (you know +inf) stays on the translation's line",
+      "detail": [
+        "The frame was drawn as a full-width block under the gloss, so a short gloss and a short frame used two lines. It is now inline, so 'you know +inf' is one line; longer ones still wrap."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T19:45:47+01:00",
       "date": "2026-10-21 19:45 BST",
       "agent": "Claude",
@@ -339,19 +349,6 @@
       "summary": "Card back (trial): a grouped row's shared bracket sits on the heading line",
       "detail": [
         "daqui: 'of (in relation to)' shows as 'of  in relation to' on one line, muted, instead of 'in relation to' on its own line looking like a sub-row you could tap."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T19:47:19+01:00",
-      "date": "2026-10-20 19:47 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): info icon at the active row's right edge; labels moved into the note; tappable abbreviations",
-      "detail": [
-        "The 'i' sits at the right edge of the active row, vertically centred, mirroring the meter; other rows show none and reserve no space (mal, não, conta).",
-        "Labels such as 'informal' leave the row and appear in its information note; a row with labels but no note gets one (cara).",
-        "Region flags lead the translation and show on the active row only (cara's Brazil flag).",
-        "Abbreviations are tappable on the active row, with no extra styling: tapping '+ger' on passar shows 'With direct object an amount of time and gerund doing something'."
       ],
       "commit": "pending"
     }
