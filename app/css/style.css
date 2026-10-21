@@ -26722,3 +26722,61 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell .meaning-context-cell .sense-label-context:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; }
 .meanings-scroll.inline-sense-rows .sense-target-collocation:has(.sense-collocation-qualifier)::before { margin-left: 2px; }
 .meanings-scroll.inline-sense-rows .sense-target-collocation .sense-collocation-particle:not(#_) { margin-left: 0 !important; }
+
+/* Sub-meaning rows of a word type's lone group (2026-10-21).
+   The active sub-meaning is marked by the same rounded rectangle as a sense
+   row (fill + 4px left edge that follows the corner), sized to its own text
+   and not to the widest row. The header and the rows never share an
+   alignment:
+   - shared translation (rows are contexts): header text centred across the
+     whole row; contexts a left-aligned column; the rectangle sits just left
+     of the column so the text does not move.
+   - shared context (rows are translations): the shared context is a bracketed
+     caption beside the word type; the translations are centred, the
+     rectangle hugs the active word. */
+.pos-section-shared .pos-shared-context::before { content: '('; }
+.pos-section-shared .pos-shared-context::after { content: ')'; }
+.pos-collapsible .pos-section-head:has(.pos-shared-gloss) { position: relative; }
+.pos-collapsible .pos-section-head .pos-section-shared:has(.pos-shared-gloss):not(#_) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    flex: none;
+    max-width: calc(100% - 190px);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
+    order: 0;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="translation"] .sense-cue-group > .group-card-varying-cell:not(#_) {
+    padding: 3px 8px 3px 24px !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    border: 0;
+    background: transparent !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="context"] .sense-cue-group > .group-card-varying-cell:not(#_) {
+    padding: 3px 8px !important;
+    text-align: center !important;
+    justify-content: center !important;
+    border: 0;
+    background: transparent !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
+    border: 0;
+    background: transparent !important;
+    background-image: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
+    display: inline-block !important;
+    padding: 2px 12px 2px 10px;
+    border-left: 4px solid rgb(var(--sense-match-rgb));
+    border-radius: 8px;
+    background: rgba(var(--sense-match-rgb), 0.30);
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
+    margin-left: -14px;
+}

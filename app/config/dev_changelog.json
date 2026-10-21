@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T19:09:29+01:00",
+      "date": "2026-10-21 19:09 BST",
+      "agent": "Claude",
+      "summary": "Card back: active sub-meaning is a rounded rectangle sized to its text; shared-text header and sub-rows never share an alignment",
+      "detail": [
+        "Active sub-meaning (aún: still / yet) now uses the same rounded fill + left-edge rectangle as a sense row, sized to its own text, instead of a ring around the whole row.",
+        "Shared context is a bracketed caption beside the word type, with the translations centred below it.",
+        "Shared translation is centred across the whole word-type row, with its contexts in a left-aligned column and the marker just left of the active line.",
+        "Inactive sub-rows lose their boxes inside this layout."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T18:37:55+01:00",
       "date": "2026-10-21 18:37 BST",
       "agent": "Claude",
@@ -343,18 +356,6 @@
       "detail": [
         "Translation and context are now the same size, 20px; the translation is bold, the context regular and muted (vamos: 'let's go let's move').",
         "Each sub-row in a group (dejar: to put, to forget, to bequeath) is at least 40px tall, left-aligned, at the same 20px size."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T14:54:33+01:00",
-      "date": "2026-10-20 14:54 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): rows all one size; no more outline on every sub-sense; translation no longer slides under the meter",
-      "detail": [
-        "Every row's main line is the same size (19px bold) and every row is at least 44px tall, whether it is a translation (to let, still) or a context standing in for one; context after a translation is 15px and muted (it was 12px).",
-        "Opening a card whose only word type is one group (ir: to go / indicates movement, to attend) no longer outlines every sub-sense. If the card has other word types, one outline goes round that group's rows instead.",
-        "Fixed: on cards with four or more rows, switching away from a group (vamos: choose 'to be') pushed 'to go' left under the commonness meter."
       ],
       "commit": "pending"
     }
