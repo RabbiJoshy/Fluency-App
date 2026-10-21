@@ -398,12 +398,13 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn('compact-example-counter-label', flashcards)
 
-    def test_small_cards_open_every_meaning_group(self) -> None:
+    def test_cards_open_only_the_active_word_type(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT_PHONE = 6", flashcards)
         self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT_DESKTOP = 8", flashcards)
-        self.assertIn("renderedSectionRowCount <= autoOpenSectionRowLimit()", flashcards)
-        self.assertIn("new Set(Array.from(scrollSections.keys()).filter", flashcards)
+        # Only the word type in use opens; the rest show as their word-type row.
+        self.assertIn("card._expandedPos = new Set(activeLemmaPosKey ? [activeLemmaPosKey] : [])", flashcards)
+        self.assertNotIn("renderedSectionRowCount", flashcards)
         self.assertIn("roomForInlineDetails", flashcards)
         self.assertIn("function learnerGroupingGloss(card, meaning)", flashcards)
         self.assertIn("withoutGrammarLabels(presentation.key.text) || withoutGrammarLabels(groupingGloss.key.text) || metadataLabel", flashcards)
