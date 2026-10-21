@@ -26865,3 +26865,22 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context):not(#_) {
     text-align: left !important;
 }
+
+/* Grammar frames show only on the row in use, as a pill holding the phrase
+   ("contar que"); other rows drop them unless the frame is all they say. */
+.meanings-scroll.inline-sense-rows .sense-target-collocation.is-frame-hidden:not(#_) { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row .sense-target-collocation.is-frame-pill:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row .sense-inline-tr > .sense-target-collocation.is-frame-pill:not(#_) {
+    display: inline-block !important;
+    margin: 0 0 0 8px !important;
+    padding: 1px 9px !important;
+    border-radius: 999px !important;
+    background: color-mix(in srgb, var(--text-primary) 14%, transparent) !important;
+    color: var(--text-primary) !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    font-style: normal !important;
+    line-height: 1.5 !important;
+    white-space: nowrap;
+    vertical-align: 1px;
+}

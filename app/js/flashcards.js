@@ -1153,6 +1153,35 @@ function sharedRowText(rows, selector) {
     return texts.every(text => text && text === texts[0]) ? texts[0] : '';
 }
 
+// A grammar frame ("+ que") is only the row in use's to show, as the phrase
+// itself in a pill ("contar que"). Other rows keep their words and drop it.
+// A row that is only a frame (estar: "+ em", "+ adj") is left as it is.
+function framesOnActiveRow(scroll) {
+    scroll.querySelectorAll('.sense-target-collocation').forEach(frame => {
+        const holder = frame.closest('.group-card-varying-cell, .meaning-row');
+        if (!holder) return;
+        const group = holder.closest('.meaning-row-group');
+        const active = holder.matches('.group-card-varying-cell')
+            ? holder.classList.contains('is-active-subsense')
+                || Boolean(group?.classList.contains('selected') && !group.querySelector('.is-active-subsense'))
+            : holder.classList.contains('is-current-sense');
+        const clone = holder.cloneNode(true);
+        clone.querySelectorAll('.sense-target-collocation, .sense-inline-info, .pct-column, .sense-prominence-badge, .meaning-row-check, .sense-note-template, .row-lead-marks').forEach(el => el.remove());
+        const hasOtherWords = clone.textContent.replace(/\s+/g, '').length > 0;
+        const phrase = (frame.getAttribute('aria-label') || '').replace(/^Used with:\s*/, '').trim();
+        if (active && phrase && hasOtherWords) {
+            frame.classList.add('is-frame-pill');
+            frame.textContent = phrase;
+            // After the row's words, not between its translation and context.
+            const context = holder.querySelector('.meaning-context');
+            if (context) context.after(frame);
+            else holder.querySelector('.sense-inline-line, .meaning-context-cell')?.append(frame);
+        } else if (hasOtherWords) {
+            frame.classList.add('is-frame-hidden');
+        }
+    });
+}
+
 function hoistSharedRowText(scroll, card) {
     // A gloss is the meaning's own text, or a context slot holding the
     // translation: bom's three Wiktionary senses all translate "good", so the
@@ -1424,6 +1453,7 @@ function inlineSenseRows(root, card) {
     moveLabelsIntoInformation(scroll);
     groupInlineTranslation(scroll);
     arrangeGroupCues(scroll);
+    framesOnActiveRow(scroll);
     inlineRowFlags(scroll);
     fitHoistedShared(root);
     fitSharedContextInline(root);

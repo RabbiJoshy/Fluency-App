@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T22:35:55+01:00",
+      "date": "2026-10-21 22:35 BST",
+      "agent": "Claude",
+      "summary": "Card back: the grammar frame (+ que, + com) shows only on the row in use, as a pill with the phrase (contar que)",
+      "detail": [
+        "The frame sits at the end of the row in use's context line, as a quiet pill holding the whole phrase ('contar que', 'acreditar em'). Other rows drop it, so they take no extra width.",
+        "A row that is only a frame (estar: '+ em', '+ adj') is left as it was.",
+        "Checked in the app on contar, acredito and estar (dark mode). Not checked: light mode, phone width, grouped rows (there are no longer any with frames in the Portuguese cards I scanned)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T22:09:27+01:00",
       "date": "2026-10-21 22:09 BST",
       "agent": "Claude",
@@ -334,17 +346,6 @@
         "Phone: the coverage line is back, on its own line under the example words, kept to one line.",
         "Phone top bar: equal space above and below the name and icons; the line beneath is the language's light colour, not the two-colour gradient.",
         "Phone: the open Learn/Practise card has an even outline all the way round (it was thicker on the left)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T21:11:29+01:00",
-      "date": "2026-10-20 21:11 BST",
-      "agent": "Claude",
-      "summary": "Level picker: bigger arrows and level number on a shaded plate (trial); coverage line properly hidden on phones",
-      "detail": [
-        "Level picker: the level number is ~25% larger and sits on a shaded rounded plate, with larger arrows either side, so the level reads as the focus of the Learn card.",
-        "Fix: the coverage line ('Levels 1–2 make up …') was still showing on phones; it is now desktop-only as intended."
       ],
       "commit": "pending"
     }
