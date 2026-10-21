@@ -11,7 +11,7 @@ const MAX_LINES_PER_SURFACE = 5;
 
 let _liveDeck = null;
 
-export const CASA_PRESET_REVISION = 'season1-sample-v3';
+export const CASA_PRESET_REVISION = 'offline-30-episodes-v1';
 
 export function validLiveDeck(deck) {
     return Boolean(deck && deck.language && deck.playlistId

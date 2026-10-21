@@ -65,15 +65,17 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
 (async () => {
     // A server that never settles cannot hold the local preset or rebuild open.
     let deck = await context.loadCasaDePapelPreset();
-    assert.equal(deck.matchedCount, 1072);
-    assert.equal(stored.presetRevision, 'season1-sample-v3');
+    assert.equal(deck.matchedCount, 6102);
+    assert.equal(stored.presetRevision, 'offline-30-episodes-v1');
     route = 'rebuild';
     w.config = {languages: {spanish: {indexPath: 'wrong-artist/vocabulary.index.json'}}};
     deck = await context.loadCasaDePapelPreset();
-    assert.equal(deck.trackCount, 9);
-    assert.equal(deck.matchedCount, 1072);
+    assert.equal(deck.trackCount, 30);
+    assert.equal(deck.matchedCount, 6102);
+    assert.equal(deck.coverage.complete, false);
+    assert.equal(deck.coverage.missing.length, 11);
     assert.equal(deck.isTurboEngine, undefined);
-    assert.equal(deck.surfaces.profesor.lines[0].english.length > 0, true);
+    assert.equal(deck.surfaces.profesor.lines[0].text.length > 0, true);
     assert.equal(deck.surfaces.profesor.lines[0].song.startsWith('S01E'), true);
     assert.equal(JSON.stringify(deck).includes('[object Object]'), false);
     assert.equal(invalidations > 0, true);
@@ -82,7 +84,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     const canonical = inventory.map((word, i) => ({ id: String(i), word, rank: i + 1, meanings: [], _indexRowsPending: true }));
     w._cachedJoinedIndex = canonical;
     const ranked = w.applyPlaylistLiveVocabulary(canonical);
-    assert.equal(ranked.length, 1072);
+    assert.equal(ranked.length, 6102);
     const professor = ranked.find(card => card.word === 'profesor');
     const original = canonical.find(card => card.word === 'profesor');
     assert.equal(professor.sourceRank, original.rank);
@@ -95,9 +97,9 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(refreshed.meanings.length, 1);
     assert.equal(refreshed.meanings[0].translation, 'teacher');
     assert.equal(refreshed.meanings[0].examples[0].unassigned, true);
-    assert.equal(refreshed.meanings[0].examples[0].english.length > 0, true);
+    assert.equal(refreshed.meanings[0].examples[0].spanish.length > 0, true);
     w.applyPlaylistLiveVocabulary([original]);
-    assert.equal(w.playlistLiveDeck().matchedCount, 1072);
+    assert.equal(w.playlistLiveDeck().matchedCount, 6102);
     assert.equal(original.meanings[0].examples, undefined);
 
     // An artist's partial song selection can remain in memory when the
@@ -120,7 +122,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
         vocabSource.indexOf('async function ensureLemmaPoolingData(')), context);
     const untrimmed = await context.fetchActiveVocabularyIndex({indexPath: 'speech/vocabulary.index.json'});
     assert.equal(untrimmed.length, canonical.length);
-    assert.equal(w.applyPlaylistLiveVocabulary(untrimmed).length, 1072);
+    assert.equal(w.applyPlaylistLiveVocabulary(untrimmed).length, 6102);
     const dialogueExample = { [original.id]: {m: [[{spanish: 'El profesor.', english: 'The teacher.', song: 'S01E01'}]]} };
     assert.equal(context.setActiveExamplesData(dialogueExample), dialogueExample);
     // Choosing a song still filters an ordinary artist deck.
@@ -162,12 +164,12 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     vm.runInContext(ui.slice(ui.indexOf('async function renderLevelSelector('), ui.indexOf('function _escapeAttr(')), context);
     w.playlistLiveDeck().matchedCount = 900;
     await context.renderLevelSelector('spanish');
-    assert.equal(context._smartLevelRangesCache.length, 11);
-    assert.equal(selector.innerHTML.includes('data-level="11"'), true);
-    assert.equal(total.textContent.includes('1,072 words across 11 levels'), true);
-    for (const level of context._smartLevelRangesCache.slice(9)) {
+    assert.equal(context._smartLevelRangesCache.length, 62);
+    assert.equal(selector.innerHTML.includes('data-level="62"'), true);
+    assert.equal(total.textContent.includes('6,102 words across 62 levels'), true);
+    for (const level of context._smartLevelRangesCache.slice(60)) {
         const cards = ranked.filter(card => card.rank >= level.startRank && card.rank < level.endRank);
-        assert.equal(cards.length, level.level === 10 ? 100 : 72);
+        assert.equal(cards.length, level.level === 61 ? 100 : 2);
         for (const card of cards) {
             const row = canonical.find(item => item.id === card.id);
             row.meanings = [{translation: 'loaded definition', frequency: 1}];
@@ -179,7 +181,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
         }
     }
     await w.cacheLiveDeck(preset);
-    assert.equal(w.playlistLiveDeck().matchedCount, 1072);
+    assert.equal(w.playlistLiveDeck().matchedCount, 6102);
 
     // Search stays in the live source and popup hydration requests Speech
     // ranks, then renders a projected card with the series examples.
@@ -195,7 +197,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     w.buildFilteredVocab = () => { throw new Error('Live search must not use Speech filters'); };
     vm.runInContext(main.slice(main.indexOf('function findWordCacheKey('), main.indexOf("let _findWordFilter =")), context);
     const search = await context.buildFindWordIndex();
-    assert.equal(search.length, 1072);
+    assert.equal(search.length, 6102);
     const found = search.find(item => item.targetWord === 'profesor');
     assert.equal(found.sourceEntry.sourceRank, original.rank);
     original.meanings = [];
@@ -225,7 +227,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(requests[0][0], original.rank);
     assert.equal(context.flashcards[0].meanings[0].meaning, 'teacher');
     assert.equal(context.flashcards[0].meanings[0].allExamples[0].unassigned, true);
-    assert.equal(context.flashcards[0].meanings[0].allExamples[0].english.length > 0, true);
+    assert.equal(context.flashcards[0].meanings[0].allExamples[0].spanish.length > 0, true);
     assert.equal(context.flashcards[0].rank, found.rank);
 
     // Reopen and failed revision refresh preserve a genuinely small deck.
@@ -239,7 +241,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(stored.surfaces.profesor.count, preset.surfaces.profesor.count);
     route = 'preset';
     deck = await w.preparePlaylistLiveSession('spanish');
-    assert.equal(deck.matchedCount, 1072);
+    assert.equal(deck.matchedCount, 6102);
     const before = fetches.length;
     await w.preparePlaylistLiveSession('spanish');
     assert.equal(fetches.length, before + 1);
@@ -279,7 +281,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(stored.playlistId, 'subtitle-upload');
     route = 'preset';
     w.savePlaylistLiveDeckToServer = async () => { throw new Error('Server unavailable'); };
-    assert.equal((await context.loadCasaDePapelPreset()).matchedCount, 1072);
+    assert.equal((await context.loadCasaDePapelPreset()).matchedCount, 6102);
     console.log('Series build, cache recovery, rank hydration, and nonblocking save passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });
 """
