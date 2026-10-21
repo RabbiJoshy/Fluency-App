@@ -2098,8 +2098,9 @@ function syncHomeLevelStepper(idx) {
 
 // --- Home level tiles ------------------------------------------------------
 // Once the learner has started two levels, a row of tiles (each with its own
-// progress bar) replaces the stepper's arrows: the levels they have started,
-// the one after the furthest, and the selected one, at most eight at a time.
+// progress bar) sits above the stepper: the levels they have started, the one
+// after the furthest, and the selected one, at most eight at a time. The ‹ ›
+// arrows stay beside the level number, the easier target.
 // With one level started the row would say no more than ‹ 1 ›, so it stays hidden.
 const HOME_LEVEL_TILE_MIN_STARTED = 2;
 const HOME_LEVEL_TILE_MAX = 8;
@@ -2169,9 +2170,7 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
                 <span class="home-level-tile-bar" aria-hidden="true">${segments}</span>
             </button>`;
     }).join('');
-    row.innerHTML = `<button type="button" class="home-level-step" data-tile-step="-1" aria-label="Previous level"${selectedIdx <= 0 ? ' disabled' : ''}>‹</button>
-        <div class="home-level-tile-list">${tileHTML}</div>
-        <button type="button" class="home-level-step" data-tile-step="1" aria-label="Next level"${selectedIdx >= ranges.length - 1 ? ' disabled' : ''}>›</button>`;
+    row.innerHTML = `<div class="home-level-tile-list">${tileHTML}</div>`;
     row.hidden = false;
     step2?.classList.add('has-level-tiles');
 
@@ -2183,9 +2182,6 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
     };
     row.querySelectorAll('[data-level-index]').forEach(tile => {
         tile.addEventListener('click', () => pick(Number(tile.dataset.levelIndex)));
-    });
-    row.querySelectorAll('[data-tile-step]').forEach(button => {
-        button.addEventListener('click', () => pick(selectedIdx + Number(button.dataset.tileStep)));
     });
 }
 
