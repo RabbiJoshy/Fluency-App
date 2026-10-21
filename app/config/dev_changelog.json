@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T20:36:52+01:00",
+      "date": "2026-10-21 20:36 BST",
+      "agent": "Claude",
+      "summary": "Card back: the chosen sub-meaning's whole row is washed in the one-grouped-row layout too (água, aún)",
+      "detail": [
+        "The wash across the chosen sub-meaning's row only worked for groups whose shared text stays in the group row (dejar); in the layout where the shared text moves up to the word-type row (água, aún, realmente) a higher-priority rule kept the row transparent, so only the text was highlighted. Both layouts now wash the row."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T20:04:25+01:00",
       "date": "2026-10-21 20:04 BST",
       "agent": "Claude",
@@ -337,19 +347,6 @@
         "The active word type's row and the active meaning take a faint wash of its colour (9% and 7%, over the neutral grey; the old fill was 10%), so on cara the Noun row reads as open and Adjective as closed.",
         "A lone group's sub-rows: the active one is washed, or all of them when the whole group is selected.",
         "Translation and context on one line are joined by a muted ' · ' (quanto: 'how · to what degree'; daqui: 'of · in relation to'). Stacked rows need none."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T20:13:25+01:00",
-      "date": "2026-10-20 20:13 BST",
-      "agent": "Claude",
-      "summary": "Function-word backs: pattern rows in the content-card style, active row outlined in its partner's colour",
-      "detail": [
-        "Each pattern is an outlined box like a sense row, meaning beneath at 18px; 'Example patterns' sits under the word in the headword's font.",
-        "The active pattern is outlined in its partner's colour instead of white: think / say + que green (verb), noun + que blue.",
-        "Partners that name a thing (place, person, thing, time, reason, role, topic, endpoint) count as nouns: em + place shows a blue pill and 'maio' turns blue in the example.",
-        "Patterns with no word-type partner (se … , …, more / less + que) use the function word's own colour."
       ],
       "commit": "pending"
     }

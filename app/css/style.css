@@ -26778,8 +26778,9 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
     border: 0;
-    background: transparent !important;
+    background: rgba(var(--sense-match-rgb), 0.14) !important;
     background-image: none !important;
+    border-radius: 8px;
 }
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
     display: inline-block !important;
