@@ -2,6 +2,7 @@
 // speech inventory, and study those cards with unassigned song-line examples.
 import { clearRoute, parseRoute } from './routes.js?v=20261013music';
 import { releaseUrl } from './release-host.js?v=20260921rh';
+import { enrichOfflineDeck } from './offline-intake.js?v=20261022';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -11,7 +12,7 @@ const MAX_LINES_PER_SURFACE = 5;
 
 let _liveDeck = null;
 
-export const CASA_PRESET_REVISION = 'offline-30-episodes-v1';
+export const CASA_PRESET_REVISION = 'offline-30-episodes-v2-recognition';
 
 export function validLiveDeck(deck) {
     return Boolean(deck && deck.language && deck.playlistId
@@ -151,10 +152,10 @@ async function runTurboWorkerIntake(songs, onProgress = null) {
     });
 }
 
-async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, skipWsd = false }) {
+async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, skipWsd = true }) {
     const isSpanish = (language === 'spanish' || language === 'es');
 
-    // For Spanish, run fast background TURBO worker pipeline unless skipWsd is requested
+    // Shared live imports default to no WSD. Turbo callers must opt in explicitly.
     if (!skipWsd && isSpanish && typeof Worker !== 'undefined') {
         try {
             if (typeof onProgress === 'function') {
@@ -258,6 +259,7 @@ async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, 
     const surfaces = new Map();
     let tokenCount = 0;
     let lyricsTrackCount = 0;
+    const intakeRecords = [];
 
     for (const record of records || []) {
         const lyrics = (record.plainLyrics || record.syncedLyrics || '').trim();
@@ -269,6 +271,7 @@ async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, 
         const artist = record.artist || '';
         const dialogue = Array.isArray(record.dialogueLines)
             ? record.dialogueLines : lyricLines(lyrics).map(text => ({ text, english: '' }));
+        intakeRecords.push({ ...record, dialogueLines: dialogue });
         for (const dialogueLine of dialogue) {
             const line = dialogueLine.text;
             const tokens = naiveLyricTokens(line);
@@ -302,6 +305,13 @@ async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, 
         surfaces: Object.fromEntries(surfaces)
     };
     if (!validLiveDeck(deck)) throw new Error('None of the words matched the speech inventory.');
+    try {
+        onProgress?.({ stage: 'recognition', message: 'Checking vocabulary and names…' });
+        await enrichOfflineDeck(deck, intakeRecords, speechSurfaces);
+    } catch (error) {
+        // Optional local metadata must not destroy an otherwise usable deck.
+        console.warn('Offline recognition assets unavailable; keeping study deck:', error);
+    }
     const db = await openLiveDb();
     try {
         await idbRequest(db.transaction(DECK_STORE, 'readwrite').objectStore(DECK_STORE).put(deck));
@@ -444,6 +454,7 @@ function projectPlaylistLiveEntry(item) {
     const lyricExamples = entry.lines.map(lyricExample);
     const next = {
         ...item,
+        offlineRecognition: _liveDeck?.intake?.surfaces[normalizeSurface(item.word)] || null,
         sourceRank: item.sourceRank || item.rank,
         meanings: [...(item.meanings || [])],
         playlist_count: entry.count,

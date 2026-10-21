@@ -14,7 +14,7 @@ const read = path => fs.readFileSync(path, 'utf8');
 const preset = JSON.parse(read('app/data/series/casa-de-papel-deck.json'));
 const dialogue = JSON.parse(read('app/data/series/casa-de-papel.json'));
 const inventory = Object.keys(JSON.parse(read('app/data/speech-frequency/es-literal-ground-r6-fw1.json')).values);
-let stored = null, fetches = [], invalidations = 0, saves = 0;
+let stored = null, fetches = [], invalidations = 0, saves = 0, workerStarts = 0;
 const request = result => {
     const req = {};
     queueMicrotask(() => { req.result = result; req.onsuccess?.(); });
@@ -31,7 +31,7 @@ const db = {
 let route = 'preset';
 const context = {
     console, URL, AbortController, setTimeout, clearTimeout, queueMicrotask,
-    Worker: function() { throw new Error('Series must never start WSD'); },
+    Worker: function() { workerStarts++; throw new Error('Offline imports must never start WSD'); },
     window: {
         _normalModeLangConfigs: { spanish: { indexPath: 'speech/vocabulary.index.json' } },
         location: { hash: '#/es/live' },
@@ -45,6 +45,7 @@ const context = {
         if (path.includes('speech/vocabulary.index.manifest.json')) return { ok: true, json: async () => ({columns: 'columns.json'}) };
         if (path.includes('speech/columns.json')) return { ok: true, json: async () => ({ word: inventory }) };
         if (route === 'offline') throw new Error('Offline');
+        if (path.includes('/turbo/')) return {ok: true, json: async () => JSON.parse(read('app/turbo/' + path.split('/').at(-1)))};
         if (path.includes('casa-de-papel-deck.json')) return {ok: route === 'preset', json: async () => structuredClone(preset)};
         if (path.includes('casa-de-papel.json')) return {ok: true, json: async () => structuredClone(dialogue)};
         throw new Error('Unexpected fetch: ' + path);
@@ -58,6 +59,7 @@ function load(path) {
         .replaceAll('import.meta.url', JSON.stringify('http://localhost/js/' + path.split('/').at(-1)));
     vm.runInContext(source, context);
 }
+load('app/js/offline-intake.js');
 load('app/js/playlist-live.js');
 load('app/js/subtitle-import.js');
 const w = context.window;
@@ -66,7 +68,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     // A server that never settles cannot hold the local preset or rebuild open.
     let deck = await context.loadCasaDePapelPreset();
     assert.equal(deck.matchedCount, 6102);
-    assert.equal(stored.presetRevision, 'offline-30-episodes-v1');
+    assert.equal(stored.presetRevision, 'offline-30-episodes-v2-recognition');
     route = 'rebuild';
     w.config = {languages: {spanish: {indexPath: 'wrong-artist/vocabulary.index.json'}}};
     deck = await context.loadCasaDePapelPreset();
@@ -75,6 +77,12 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(deck.coverage.complete, false);
     assert.equal(deck.coverage.missing.length, 11);
     assert.equal(deck.isTurboEngine, undefined);
+    assert.equal(deck.intake.mode, 'no-wsd');
+    assert.equal(deck.intake.surfaces.inspectora.frequencyRank, 14086);
+    assert.equal(deck.intake.surfaces.atracadores.frequencyRank, 38609);
+    assert.equal(deck.intake.surfaces.inspectora.inStudyInventory, false);
+    assert.equal(deck.intake.surfaces.profesor.count, deck.surfaces.profesor.count);
+    assert.equal(JSON.stringify(deck.intake.summary), JSON.stringify(preset.intake.summary));
     assert.equal(deck.surfaces.profesor.lines[0].text.length > 0, true);
     assert.equal(deck.surfaces.profesor.lines[0].song.startsWith('S01E'), true);
     assert.equal(JSON.stringify(deck).includes('[object Object]'), false);
@@ -88,6 +96,8 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     const professor = ranked.find(card => card.word === 'profesor');
     const original = canonical.find(card => card.word === 'profesor');
     assert.equal(professor.sourceRank, original.rank);
+    assert.equal(professor.offlineRecognition.frequencyRank, 852);
+    assert.equal(professor.offlineRecognition.unassigned, true);
     assert.notEqual(professor.rank, original.rank);
     original.meanings = [{translation: 'teacher', frequency: 0.8}, {translation: 'rare', frequency: 0.01}];
     original._indexRowsPending = false;
@@ -282,6 +292,11 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     route = 'preset';
     w.savePlaylistLiveDeckToServer = async () => { throw new Error('Server unavailable'); };
     assert.equal((await context.loadCasaDePapelPreset()).matchedCount, 6102);
+    const plain = await w.buildPlaylistLiveDeck({ playlist: {id:'plain-offline',name:'Plain'},
+        language:'spanish', records:[{title:'Example',plainLyrics:'El profesor.'}] });
+    assert.equal(plain.isTurboEngine, undefined);
+    assert.equal(plain.intake.mode, 'no-wsd');
+    assert.equal(workerStarts, 0);
     console.log('Series build, cache recovery, rank hydration, and nonblocking save passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });
 """

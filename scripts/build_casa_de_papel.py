@@ -13,6 +13,7 @@ import hashlib
 import html
 import json
 import re
+import subprocess
 import zipfile
 from collections import Counter
 from pathlib import Path
@@ -22,7 +23,7 @@ EXPECTED = {(season, episode) for season, count in enumerate((9, 6, 8, 8, 10), 1
             for episode in range(1, count + 1)}
 TIME = re.compile(r"(\d\d):(\d\d):(\d\d)[,.](\d{3})")
 TOKEN = re.compile(r"[^\W_]+(?:['’\-][^\W_]+)*", re.UNICODE)
-REVISION = "offline-30-episodes-v1"
+REVISION = "offline-30-episodes-v2-recognition"
 
 
 def milliseconds(value):
@@ -148,6 +149,12 @@ def main():
     episodes = load_episodes(manifest, args.raw_root, args.allow_partial)
     inventory = json.loads((ROOT / "app/data/speech-frequency/es-literal-ground-r6-fw1.json").read_text())["values"]
     dialogue, deck = build(episodes, inventory, manifest)
+    records = [{"title": ep["episode"], "artist": "La Casa de Papel",
+                "dialogueLines": [{"text": line["spanish"]} for line in ep["lines"]]} for ep in episodes]
+    annotation = subprocess.run(["node", str(ROOT / "scripts/annotate_offline_intake.mjs")],
+                                input=json.dumps({"records": records, "speechSurfaces": list(inventory)}),
+                                text=True, capture_output=True, check=True)
+    deck["intake"] = json.loads(annotation.stdout)
     for name, value in [("casa-de-papel.json", dialogue), ("casa-de-papel-deck.json", deck)]:
         (ROOT / "app/data/series" / name).write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n")
     print(f"{len(episodes)} episodes, {dialogue['total_lines_count']} cues, {deck['matchedCount']} words, {(deck['matchedCount'] + 99) // 100} levels")

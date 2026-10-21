@@ -50,5 +50,10 @@ class CasaSubtitleBuildTests(unittest.TestCase):
         self.assertEqual(len(deck["coverage"]["missing"]), 11)
         self.assertEqual(deck["coverage"]["exampleTranslations"], "unavailable")
         self.assertEqual(deck["surfaces"]["profesor"]["count"], 299)
+        self.assertEqual(deck["intake"]["mode"], "no-wsd")
+        self.assertEqual(deck["intake"]["grouping"], "original-surface")
+        self.assertEqual(deck["intake"]["summary"]["frequencyRecognized"], 10335)
+        self.assertEqual(deck["intake"]["summary"]["additionalFrequencySurfaces"], 4233)
+        self.assertEqual(deck["intake"]["summary"]["entityCandidates"], 13)
         self.assertEqual({e["song"][:3] for e in deck["surfaces"]["profesor"]["lines"]},
                          {"S01", "S02", "S03", "S04"})

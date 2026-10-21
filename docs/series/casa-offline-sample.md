@@ -16,6 +16,24 @@ seasons. Definitions still use canonical Speech ranks. Dialogue examples remain
 unassigned, and no sentence translations are invented: the downloaded sources
 have Spanish only. Dictionary definitions continue to provide English meanings.
 
+The shared offline importer now annotates every observed form with Turbo's local
+50k rank, exact dictionary membership, lemma suggestion, and any curated entity
+candidate. The Casa build runs the same JavaScript recognizer through a local
+Node adapter. It recognises 10,335 forms on the frequency list, including 4,233
+outside the current study inventory, and finds 13 curated entity candidates.
+All 12,706 observed forms remain in `deck.intake.surfaces`, including unknowns;
+each retains a count and up to three examples with original character offsets.
+
+This is recognition, not a new source of definitions or a grouping policy.
+Lemma hints do not merge forms, especially attached clitics/pronominal verbs.
+The 6,102-card study inventory is unchanged while the separate clitic work is
+in progress. Missing definitions never become blank study cards. Entity tagging
+uses Turbo's local curated registry only; it makes no Wikipedia requests and
+does not claim ambiguous names are sense-resolved. Older cached playlists must
+be rebuilt from their original lyrics to recover words filtered out previously.
+Unsupported languages or unavailable local recognition assets leave existing
+study imports usable; a later build retries failed asset loading.
+
 Source URLs, local filenames, archive members, and SHA-256 hashes are recorded
 in `app/data/series/casa-de-papel-sources.json`. Raw sources remain outside Git.
 Seasons 1, 2, and 4 came from SubDL packs; season 3 came from WatchSoMuch.
@@ -23,7 +41,7 @@ These files are separate from the original local OPUS v2018 bilingual store,
 whose full 61,434,251-row Spanish/English ID file had no Casa series/episode ID
 matches when checked on 2026-10-21.
 
-Rebuild from the repository root, with the local raw sources available:
+Rebuild from the repository root, with Node.js and the local raw sources available:
 
 ```sh
 python3 scripts/build_casa_de_papel.py \
