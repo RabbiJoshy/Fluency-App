@@ -201,7 +201,7 @@ export function openMusicWorkspace(nextOptions = {}) {
             slug: 'la-casa-de-papel',
             name: 'La Casa de Papel',
             initials: 'LCDP',
-            description: 'Season 1 dialogue sample · Episodes 1–9 · Vocabulary study levels',
+            description: '30 episodes · Seasons 1–4 sample · Spanish dialogue',
             isSeries: true
         });
     }

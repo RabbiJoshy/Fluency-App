@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=6d83e6f4");
+@import url("./appearance.css?v=6db54830");
 
 
         * {
@@ -22490,14 +22490,12 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     text-align: center;
     justify-content: center !important;
 }
+/* A frame belongs to the words before it ("know + que"), so it flows inline
+   with them (2026-10-21). It was a full-width flex block from the older
+   layout that put the frame on its own line, which broke the line after a
+   short gloss wherever a wrapper had not overridden it. */
 .meaning-row .sense-grammar-cue {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 3px 8px;
-    width: 100%;
-    margin-top: 3px;
+    display: inline;
     color: var(--text-secondary);
     font-size: var(--sense-reading-size);
     line-height: 1.4;
@@ -22774,9 +22772,18 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     .meaning-row .group-card-shared { flex-basis: auto; width: auto !important; }
 }
 .meaning-row .group-member-gloss {
-    display: block;
+    display: inline;
     font-weight: 700;
     color: var(--text-primary);
+}
+/* A sub-row's own gloss and its context read as one line, joined by the same
+   muted dot as everywhere else ("warfare · the waging of war"); it was a
+   block, which forced the context onto a second line even when both fit. */
+.meaning-row .group-member-gloss + .meaning-context::before {
+    content: '·';
+    margin: 0 6px;
+    color: var(--text-secondary);
+    font-weight: 400;
 }
 
 /* A family sub-row's partner word ("+de") leads that sub-row. */
@@ -26231,8 +26238,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row .meaning-row-sub .meaning-context { font-weight: 400 !important; color: var(--text-secondary) !important; }
 .meanings-scroll.inline-sense-rows .meaning-row.is-current-sense .meaning-row-sub .meaning-context { color: var(--text-primary) !important; }
 .meanings-scroll.inline-sense-rows .meaning-row .sense-metadata-list { display: inline !important; }
-.meanings-scroll.inline-sense-rows .meaning-row :is(.meaning-row-sub, .meaning-context).is-hoisted,
-.meanings-scroll.inline-sense-rows .meaning-row .sense-grammar-cue.is-hoisted { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row :is(.meaning-row-sub, .meaning-context).is-hoisted:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row .sense-grammar-cue.is-hoisted:not(#_) { display: none !important; }
 /* Every row shares its gloss: the row is its context, read as the main text. */
 .meanings-scroll.inline-sense-rows .meaning-row.has-hoisted-gloss .meaning-row-gloss { display: none !important; }
 .meanings-scroll.inline-sense-rows .meaning-row.has-hoisted-gloss .meaning-row-sub { margin-left: 0; }
@@ -26422,13 +26429,26 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared:not(#_) { align-self: stretch !important; }
 
 /* The whole group selected (examples from every sub-sense) with no single
-   sub-sense chosen: no row is outlined. When the card has other word types,
-   one outline goes round the group's rows so the example's word type shows. */
-.meanings-scroll.inline-sense-rows:has(.pos-collapsible ~ .pos-collapsible) .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)):not(#_) {
-    padding: 3px !important;
-    border-radius: 11px;
+   sub-sense chosen (2026-10-21): the rows read as one block, because the one
+   example belongs to all of them. One fill and one 4px bar in the word type's
+   colour go round the group, with hairlines between its rows. Choosing a
+   single sub-sense returns to the row-by-row marker. */
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)):not(#_) {
+    padding: 0 !important;
+    border-radius: 8px;
+    overflow: hidden;
     box-shadow: inset 4px 0 0 rgb(var(--sense-match-rgb)) !important;
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.24), rgba(var(--sense-match-rgb), 0.24)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)) .sense-cue-group { gap: 0 !important; }
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)) .sense-cue-group > .group-card-varying-cell:not(#_) {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0;
+    border-radius: 0;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)) .sense-cue-group > .group-card-varying-cell + .group-card-varying-cell:not(#_) {
+    border-top: 1px solid rgba(var(--sense-match-rgb), 0.35);
 }
 
 /* One size for every row: text is 20px and a row is at least 44px tall,
@@ -26536,6 +26556,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .meanings-scroll.inline-sense-rows .meaning-row-regular.is-stacked-row .meaning-row-sub:not(.is-hoisted, #_) { margin-top: 2px !important; }
 .meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { white-space: nowrap; margin: 0 !important; }
+/* The frame that follows the translation ("you know +inf") stays on the
+   translation's line. The base cue is a full-width flex box, which broke the
+   line after the gloss and left a second line for two words. */
+.meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-grammar-cue:not(#_) { display: inline !important; width: auto !important; }
 .meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue) :not(.sense-inline-info, .sense-inline-info *, #_),
 .meanings-scroll.inline-sense-rows .sense-inline-tr > :is(.sense-target-collocation, .sense-companion-lead, .sense-grammar-cue):not(#_) { font-size: 20px !important; line-height: 1.3 !important; }
 .meanings-scroll.inline-sense-rows .sense-inline-tr > .sense-metadata-list:not(#_) {
@@ -26633,8 +26657,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-relation-box:hover { background: color-mix(in srgb, var(--text-primary) 4%, transparent); }
 .fw-relation-box.is-selected,
 .fw-relation-box[aria-pressed="true"] {
-  border: 2px solid rgb(var(--fw-row-rgb, var(--sense-match-rgb)));
-  background: rgba(var(--fw-row-rgb, var(--sense-match-rgb)), 0.08);
+  /* Same marker as an ordinary sense row (2026-10-21): stronger fill and a
+     4px bar on the left in the partner's colour, no outline. */
+  border: 2px solid transparent;
+  border-left: 4px solid rgb(var(--fw-row-rgb, var(--sense-match-rgb)));
+  background: rgba(var(--fw-row-rgb, var(--sense-match-rgb)), 0.24);
   padding: 6px 11px;
 }
 .fw-relation-meaning { font-size: 18px; margin-top: 2px; }
@@ -26706,3 +26733,200 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell .meaning-context-cell .sense-label-context:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; }
 .meanings-scroll.inline-sense-rows .sense-target-collocation:has(.sense-collocation-qualifier)::before { margin-left: 2px; }
 .meanings-scroll.inline-sense-rows .sense-target-collocation .sense-collocation-particle:not(#_) { margin-left: 0 !important; }
+
+/* Sub-meaning rows of a word type's lone group (2026-10-21).
+   The active sub-meaning is marked by the same rounded rectangle as a sense
+   row (fill + 4px left edge that follows the corner), sized to its own text
+   and not to the widest row. The header and the rows never share an
+   alignment:
+   - shared translation (rows are contexts): header text centred across the
+     whole row; contexts a left-aligned column; the rectangle sits just left
+     of the column so the text does not move.
+   - shared context (rows are translations): the shared context is a bracketed
+     caption beside the word type; the translations are centred, the
+     rectangle hugs the active word. */
+.pos-section-shared .pos-shared-context::before { content: '('; }
+.pos-section-shared .pos-shared-context::after { content: ')'; }
+.pos-collapsible .pos-section-head:has(.pos-shared-gloss) { position: relative; }
+.pos-collapsible .pos-section-head .pos-section-shared:has(.pos-shared-gloss):not(#_) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    flex: none;
+    max-width: calc(100% - 190px);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
+    order: 0;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="translation"] .sense-cue-group > .group-card-varying-cell:not(#_) {
+    padding: 3px 8px 3px 24px !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    border: 0;
+    background: transparent !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="context"] .sense-cue-group > .group-card-varying-cell:not(#_) {
+    padding: 3px 8px !important;
+    text-align: center !important;
+    justify-content: center !important;
+    border: 0;
+    background: transparent !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
+    border: 0;
+    border-left: 4px solid rgb(var(--sense-match-rgb));
+    background: rgba(var(--sense-match-rgb), 0.24) !important;
+    background-image: none !important;
+    border-radius: 8px;
+}
+
+/* A word-type row is the height of a row only when it holds the shared
+   translation; empty it goes back to its smaller size (2026-10-21; it had been
+   made bigger everywhere, but an empty one is not worth the room). */
+.pos-collapsible .pos-section-head:has(.pos-section-shared) { min-height: 44px; font-size: 20px; }
+.pos-collapsible .pos-section-shared { font-size: 20px; }
+
+/* The same treatment for a group whose shared text stays in the group's own
+   row (a word type with other rows besides the group, e.g. dejar: "to leave"
+   over to put / to forget / to bequeath). The sub-meanings are a left-aligned
+   column, the active one a rounded rectangle just left of it; with a
+   sub-meaning chosen the group falls back to a light wash so the rectangle
+   is the marker. */
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell) .sense-cue-group > .group-card-varying-cell:not(#_) {
+    border: 0;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="translation"] .sense-cue-group > .group-card-varying-cell:not(#_) {
+    padding: 3px 8px 3px 24px !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .sense-cue-group > .group-card-varying-cell:not(#_) {
+    padding: 3px 8px !important;
+    text-align: center !important;
+    justify-content: center !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.is-current-sense:not(.has-hoisted-shared-cell):has(.is-active-subsense):not(#_) {
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.07), rgba(var(--sense-match-rgb), 0.07)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+    border-left-color: color-mix(in srgb, var(--text-primary) 16%, transparent);
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared:not(#_) {
+    text-align: left;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared::before { content: '('; }
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared::after { content: ')'; }
+
+/* The active sub-meaning is its whole row, drawn as the same rounded
+   rectangle as a sense row: a 0.24 fill and a 4px left edge, text unchanged
+   (2026-10-21; it was a row wash plus a chip round the text). The left padding
+   gives back the 4px the edge takes, so the text stays on its column. */
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
+    background: rgba(var(--sense-match-rgb), 0.24) !important;
+    border-left: 4px solid rgb(var(--sense-match-rgb));
+    border-radius: 8px;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
+    padding-left: 20px !important;
+}
+
+/* No outlines on rows that aren't chosen (2026-10-21): a resting sense row has
+   no border and no tint, and the chosen one is the fill plus left edge. A faint
+   wash on hover keeps it readable as something to press. */
+.meanings-scroll.inline-sense-rows .meaning-pos-section .meaning-row:not(.is-current-sense):not(.meaning-row-group):not(#_) {
+    background: transparent !important;
+    border: 2px solid transparent;
+    border-left: 4px solid transparent;
+}
+.meanings-scroll.inline-sense-rows .meaning-pos-section .meaning-row.meaning-row-group:not(.selected):not(.is-current-sense):not(#_) {
+    background: transparent !important;
+    border-color: transparent;
+}
+@media (hover: hover) {
+    .meanings-scroll.inline-sense-rows .meaning-pos-section .meaning-row:not(.is-current-sense):not(.selected):hover:not(#_) {
+        background: rgba(var(--sense-match-rgb), 0.07) !important;
+    }
+}
+
+/* A shared context moved into the rows: "up · higher" instead of "(higher)"
+   over "up" and "above" (2026-10-21). */
+.meaning-row-group .group-inline-context { display: none; }
+.meaning-row-group.shared-context-inline .group-inline-context { display: inline; color: var(--text-secondary); font-weight: 400; }
+.meaning-row-group.shared-context-inline .group-inline-context::before { content: '·'; margin: 0 6px; }
+.meanings-scroll.inline-sense-rows .meaning-row-group.shared-context-inline .group-card-shared:not(#_) { display: none !important; }
+
+/* Sub-rows under a shared translation read left-aligned on every line; a
+   sub-row that wraps was centring its second line (deu, 2026-10-21). */
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context):not(#_) {
+    text-align: left !important;
+}
+
+/* Grammar frames show only on the row in use, as a pill holding the phrase
+   ("contar que"); other rows drop them unless the frame is all they say. */
+.meanings-scroll.inline-sense-rows .sense-target-collocation.is-frame-hidden:not(#_) { display: none !important; }
+.meanings-scroll.inline-sense-rows .meaning-row .sense-target-collocation.is-frame-pill:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row .sense-inline-tr > .sense-target-collocation.is-frame-pill:not(#_) {
+    display: inline-block !important;
+    margin: 0 0 0 8px !important;
+    padding: 1px 9px !important;
+    border-radius: 999px !important;
+    background: color-mix(in srgb, var(--text-primary) 14%, transparent) !important;
+    color: var(--text-primary) !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    font-style: normal !important;
+    line-height: 1.5 !important;
+    white-space: nowrap;
+    vertical-align: 1px;
+}
+
+/* A shared translation shows alone until it is the one in use; its contexts
+   open when it is chosen, so the translations can be read at a glance
+   (2026-10-21; this was already how other word types folded). */
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group[data-axis="translation"]:not(.selected):not(.is-current-sense) .sense-cue-group:not(#_) {
+    display: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="translation"]:not(.selected):not(.is-current-sense):not(#_) {
+    display: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="translation"]:not(.selected):not(.is-current-sense) .group-card-body:not(#_) {
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="translation"]:not(.selected):not(.is-current-sense) .group-card-shared:not(#_) {
+    grid-column: 1 !important;
+    text-align: center;
+}
+
+/* A word-type row you are not on has no tint: the faint grey band made it
+   look like something was marked (2026-10-21). The one in use keeps its wash. */
+.meanings-scroll.inline-sense-rows .pos-collapsible:not(:has(.meaning-row:is(.selected, .is-current-sense))) > .pos-section-head:not(#_) {
+    background: transparent !important;
+}
+
+/* The coloured left edge belongs to the word type in use; on the others it
+   read as marked, so it is kept as space but not drawn. */
+.meanings-scroll.inline-sense-rows .pos-collapsible:not(:has(.meaning-row:is(.selected, .is-current-sense))) > .pos-section-head:not(#_) {
+    border-left-color: transparent !important;
+}
+
+/* Contexts under a shared translation each take the bullet that stands
+   between translation and context on every other row ("to give · …"), so a
+   family reads in the same grammar. The wrapped line hangs under the text. */
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell:not(:has(.group-member-gloss)) .meaning-context-cell:not(#_) {
+    display: block;
+    padding-left: 14px;
+    text-indent: -14px;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell:not(:has(.group-member-gloss)) .meaning-context-cell::before {
+    content: '·';
+    display: inline-block;
+    width: 14px;
+    text-indent: 0;
+    color: var(--text-secondary);
+    font-weight: 700;
+}

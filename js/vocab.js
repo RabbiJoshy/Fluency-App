@@ -1,13 +1,13 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=6d83e6f4';
-import { readJsonWithTimeout } from './read-request.js?v=6d83e6f4';
-import { validateVocabularyIndex } from './data-contracts.js?v=6d83e6f4';
-import { formatRoute } from './routes.js?v=6d83e6f4';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=6d83e6f4';
-import { releaseUrl } from './release-host.js?v=6d83e6f4';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=6d83e6f4';
+import './state.js?v=6db54830';
+import { readJsonWithTimeout } from './read-request.js?v=6db54830';
+import { validateVocabularyIndex } from './data-contracts.js?v=6db54830';
+import { formatRoute } from './routes.js?v=6db54830';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=6db54830';
+import { releaseUrl } from './release-host.js?v=6db54830';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=6db54830';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -4663,8 +4663,41 @@ function finishCardMeanings(item, meanings) {
         }
     }
     const shares = stampShownShares(item, normalizeMeaningShares(activeMeanings));
-    const { meanings: kept, rare } = splitLowShareMeanings(shares);
+    const split = splitLowShareMeanings(shares);
+    const { meanings: kept, rare } = promoteLowShareSenses(item, shares, split.meanings, split.rare);
     return { meanings: kept, unusedMenuSenses: [...rare, ...unusedMenuSensesOf(item)] };
+}
+
+// A card whose one visible sense covers only part of the word (novo: "new" is
+// 31% of what it does, so it reads Common beside a "6 rarer senses" line) shows
+// more of its senses instead: the next most used, biggest first, until what is
+// shown covers PROMOTE_TARGET_SHARE of the word's sense usage. Each must carry
+// at least PROMOTE_MIN_SHARE of that usage and have an example, and at most
+// PROMOTE_MAX_EXTRA are added. A broad word (30 senses of 3% each) adds none.
+const PROMOTE_TARGET_SHARE = 0.60;
+const PROMOTE_MIN_SHARE = 0.10;
+const PROMOTE_MAX_EXTRA = 3;
+function promoteLowShareSenses(item, shares, kept, rare) {
+    const shown = kept.filter(m => isShownSense(m, item));
+    let covered = shown.reduce((sum, m) => sum + (Number(m.shownShare) || 0), 0);
+    if (!shown.length || covered >= PROMOTE_TARGET_SHARE - 1e-9) return { meanings: kept, rare };
+    const lowList = shares.filter(m => !kept.includes(m));
+    const hasExample = m => (m.allExamples || m.examples || []).length > 0 || Boolean(m.canonicalExample);
+    const candidates = lowList
+        .filter(m => isShownSense(m, item) && (Number(m.shownShare) || 0) >= PROMOTE_MIN_SHARE - 1e-9 && hasExample(m))
+        .sort((a, b) => (Number(b.shownShare) || 0) - (Number(a.shownShare) || 0));
+    const picked = new Set();
+    for (const m of candidates) {
+        if (picked.size >= PROMOTE_MAX_EXTRA || covered >= PROMOTE_TARGET_SHARE - 1e-9) break;
+        picked.add(m);
+        covered += Number(m.shownShare) || 0;
+    }
+    if (!picked.size) return { meanings: kept, rare };
+    picked.forEach(m => { m.promotedFromRare = true; });
+    return {
+        meanings: shares.filter(m => kept.includes(m) || picked.has(m)),
+        rare: rare.filter((_, i) => !picked.has(lowList[i])),
+    };
 }
 // /low-share-pure
 window.finishCardMeanings = finishCardMeanings;

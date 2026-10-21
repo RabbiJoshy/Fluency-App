@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=6d83e6f4';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=6d83e6f4';
-import { songCreditHTML } from './song-credit.js?v=6d83e6f4';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=6d83e6f4';
+import './state.js?v=6db54830';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=6db54830';
+import { songCreditHTML } from './song-credit.js?v=6db54830';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=6db54830';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=6d83e6f4';
-import './speech.js?v=6d83e6f4';
-import { goToRoute, routeCodeFor } from './routes.js?v=6d83e6f4';
-import { memoryTipTileHTML } from './memory-tips.js?v=6d83e6f4';
+import { fitSenseRowText } from './card-row-layout.js?v=6db54830';
+import './speech.js?v=6db54830';
+import { goToRoute, routeCodeFor } from './routes.js?v=6db54830';
+import { memoryTipTileHTML } from './memory-tips.js?v=6db54830';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=6d83e6f4';
-import './side-dock.js?v=6d83e6f4';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=6d83e6f4';
+} from './function-word-card.js?v=6db54830';
+import './side-dock.js?v=6db54830';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=6db54830';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=6d83e6f4';
+} from './example-personalisation.js?v=6db54830';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=6d83e6f4';
+} from './spanishdict-usage.js?v=6db54830';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=6d83e6f4';
+} from './reverse-cues.js?v=6db54830';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,7 +69,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=6d83e6f4';
+} from './card-metadata-pills.js?v=6db54830';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1153,6 +1153,35 @@ function sharedRowText(rows, selector) {
     return texts.every(text => text && text === texts[0]) ? texts[0] : '';
 }
 
+// A grammar frame ("+ que") is only the row in use's to show, as the phrase
+// itself in a pill ("contar que"). Other rows keep their words and drop it.
+// A row that is only a frame (estar: "+ em", "+ adj") is left as it is.
+function framesOnActiveRow(scroll) {
+    scroll.querySelectorAll('.sense-target-collocation').forEach(frame => {
+        const holder = frame.closest('.group-card-varying-cell, .meaning-row');
+        if (!holder) return;
+        const group = holder.closest('.meaning-row-group');
+        const active = holder.matches('.group-card-varying-cell')
+            ? holder.classList.contains('is-active-subsense')
+                || Boolean(group?.classList.contains('selected') && !group.querySelector('.is-active-subsense'))
+            : holder.classList.contains('is-current-sense');
+        const clone = holder.cloneNode(true);
+        clone.querySelectorAll('.sense-target-collocation, .sense-inline-info, .pct-column, .sense-prominence-badge, .meaning-row-check, .sense-note-template, .row-lead-marks').forEach(el => el.remove());
+        const hasOtherWords = clone.textContent.replace(/\s+/g, '').length > 0;
+        const phrase = (frame.getAttribute('aria-label') || '').replace(/^Used with:\s*/, '').trim();
+        if (active && phrase && hasOtherWords) {
+            frame.classList.add('is-frame-pill');
+            frame.textContent = phrase;
+            // After the row's words, not between its translation and context.
+            const context = holder.querySelector('.meaning-context');
+            if (context) context.after(frame);
+            else holder.querySelector('.sense-inline-line, .meaning-context-cell')?.append(frame);
+        } else if (hasOtherWords) {
+            frame.classList.add('is-frame-hidden');
+        }
+    });
+}
+
 function hoistSharedRowText(scroll, card) {
     // A gloss is the meaning's own text, or a context slot holding the
     // translation: bom's three Wiktionary senses all translate "good", so the
@@ -1168,6 +1197,10 @@ function hoistSharedRowText(scroll, card) {
         const head = section.querySelector(':scope > .pos-section-head');
         if (!head || head.querySelector('.pos-section-shared')) return;
         const pieces = [];
+        // Shared translations go up to the word-type row wherever there is
+        // room, to be seen at a glance. Shared contexts and frames only go up
+        // for the word type in use; elsewhere they stay in the rows.
+        const active = Boolean(section.querySelector('.selected, .is-current-sense, .is-active-subsense'));
         // A word type drawn as one grouped row (aún: "time" over still / yet;
         // tempo: "time" over two contexts) shares that row's common words
         // with every sub-sense, so they go up too and each sub-sense becomes
@@ -1185,6 +1218,7 @@ function hoistSharedRowText(scroll, card) {
             const ownContext = clean(sharedContext?.textContent || '');
             if (own) pieces.push({ text: own, isGloss: lone.dataset.axis === 'translation' || translations.has(fold(own)) });
             if (ownContext) pieces.push({ text: ownContext, isGloss: translations.has(fold(ownContext)) });
+            if (!active && pieces.some(piece => !piece.isGloss)) return;
             // Each sub-row is styled by what it holds: a translation is bold,
             // a context is muted, whichever slot the app put it in.
             lone.querySelectorAll('.group-card-varying-cell').forEach(cell => {
@@ -1209,6 +1243,7 @@ function hoistSharedRowText(scroll, card) {
         for (const selector of ['.meaning-row-sub .meaning-context', '.meaning-row-sub .sense-grammar-cue']) {
             const text = sharedRowText(rows, selector);
             if (!text) continue;
+            if (!active && !translations.has(fold(text))) continue;
             rows.forEach(row => row.querySelector(selector).classList.add('is-hoisted'));
             // learnerRowPresentation can put the translation in the context
             // slot ("good" under three contexts of bom); it is still a gloss.
@@ -1233,6 +1268,31 @@ function hoistSharedRowText(scroll, card) {
         const anchor = head.querySelector('.pos-pill-lemma') || head.querySelector('.pos-section-label');
         anchor?.after(shared);
         section.classList.add('has-hoisted-shared');
+    });
+}
+
+// A shared context over two or three translations costs a line of its own
+// ("(higher)" over "up" and "above"). When each translation fits on one line
+// with the context beside it ("up · higher"), the context moves into the rows.
+function fitSharedContextInline(root) {
+    root?.querySelectorAll('.meaning-row-group[data-axis="context"]:not(.has-hoisted-shared-cell)').forEach(group => {
+        const text = group.querySelector('.group-card-shared')?.textContent.replace(/\s+/g, ' ').trim();
+        const cells = [...group.querySelectorAll('.group-card-varying-cell')];
+        if (!text || cells.length < 2) return;
+        cells.forEach(cell => {
+            if (cell.querySelector('.group-inline-context')) return;
+            const span = document.createElement('span');
+            span.className = 'group-inline-context';
+            span.textContent = text;
+            (cell.querySelector('.meaning-context-cell') || cell).append(span);
+        });
+        group.classList.add('shared-context-inline');
+        const wraps = cells.some(cell => {
+            const range = document.createRange();
+            range.selectNodeContents(cell.querySelector('.meaning-context-cell') || cell);
+            return new Set([...range.getClientRects()].map(rect => Math.round(rect.top / 4))).size > 1;
+        });
+        if (wraps) group.classList.remove('shared-context-inline');
     });
 }
 
@@ -1393,12 +1453,14 @@ function inlineSenseRows(root, card) {
     moveLabelsIntoInformation(scroll);
     groupInlineTranslation(scroll);
     arrangeGroupCues(scroll);
+    framesOnActiveRow(scroll);
     inlineRowFlags(scroll);
     fitHoistedShared(root);
+    fitSharedContextInline(root);
     fitInlineRows(root);
     // Measured again once the card is laid out and its font has loaded: a
     // first pass on a card still opening can see every line as wrapped.
-    const refit = () => { fitHoistedShared(root); fitInlineRows(root); };
+    const refit = () => { fitHoistedShared(root); fitSharedContextInline(root); fitInlineRows(root); };
     requestAnimationFrame(refit);
     document.fonts?.ready?.then(refit);
 }
@@ -1460,6 +1522,7 @@ function fitSenseRowLayouts(root) {
     });
     fitRowInformationButtons(root);
     fitHoistedShared(root);
+    fitSharedContextInline(root);
     fitInlineRows(root);
 }
 
@@ -3778,11 +3841,10 @@ function learnerGroupingGloss(card, meaning) {
     const presentation = learnerSensePresentation(meaning, false, {
         gloss: projected,
         senseCount: card?.meanings?.length || 1,
-        // Each sense is read alone here. Senses whose rows lead with the
-        // same translation ("if, whether" and "if (introduces a relevance
-        // conditional)") form one family; what tells them apart — the rest
-        // of the gloss, the context, the bracket that was cut — becomes the
-        // sub-row.
+        // Each sense is read alone here. Senses with the same translations
+        // ("if" and "if (introduces a relevance conditional)") form one
+        // family; what tells them apart — the context, the bracket that was
+        // cut — becomes the sub-row.
         cardMeanings: [meaning],
         ignoreBudget: true,
         peerMeanings: [],
@@ -3790,7 +3852,10 @@ function learnerGroupingGloss(card, meaning) {
     });
     const visibleGloss = presentation.gloss || projected;
     const pieces = glossPieces(visibleGloss);
-    const groupingKey = glossPieceKey(pieces[0] || visibleGloss);
+    // The whole list of translations, not its first word: "to tell; to narrate"
+    // is one sense with two words and does not join a sense that is only
+    // "to tell". Senses group when they read the same.
+    const groupingKey = pieces.length ? pieces.map(glossPieceKey).join('|') : glossPieceKey(visibleGloss);
     return { ...presentation, visibleGloss, pieces, groupingKey };
 }
 
@@ -4984,8 +5049,17 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
     const meaning = card?.meanings?.[meaningIndex];
     if (!card || !meaning) return;
     const real = String(key).replace(/~~/g, '\u0000');
-    const alreadyActive = lemmaPosGroupKeyForMeaning(card.meanings[currentMeaningIndex]) === real
-        && !currentGroupSelection;
+    const inSection = lemmaPosGroupKeyForMeaning(card.meanings[currentMeaningIndex]) === real;
+    // A word-type row that carries the shared words of its one group stands
+    // for that group: pressing it goes back from a single sub-meaning to all.
+    const section = event?.currentTarget?.closest?.('.meaning-pos-section');
+    const lone = section?.querySelector('.pos-section-shared')
+        ? section.querySelector('.meaning-row-group[data-anchor-idx]') : null;
+    if (lone && !(inSection && currentGroupSelection)) {
+        selectGroup(lone.dataset.axis, Number(lone.dataset.anchorIdx));
+        if (currentGroupSelection) return;
+    }
+    const alreadyActive = inSection && (!currentGroupSelection || !!lone);
     // Choosing another group moves the active sense; which sections stay
     // open is still decided by whether they fit above the sentence.
     if (alreadyActive) {
@@ -8304,6 +8378,10 @@ function renderCardWikipediaBadge(card) {
                             extraSeen.add(key);
                             return true;
                         })
+                        // The heading is already in the form on the card
+                        // ("I believe" for acredito), so the translations that
+                        // sit beside it are too, not "to think".
+                        .map(piece => getProductionEnglishCue(card, { ...card.meanings[mi], meaning: piece, translation: piece }) || piece)
                         .join(', ');
                     const sharedPlainText = sharedPieces.join(', ') || groupingGlossByMeaning.get(idx)?.gloss || '';
                     const sharedFullText = isTransAxis
@@ -8393,8 +8471,10 @@ function renderCardWikipediaBadge(card) {
                             : '',
                     }]));
                     // A context every sub-row carries ("preceding the verb"
-                    // on both of só's) describes the family: it moves up
-                    // beside the heading and leaves the sub-rows.
+                    // on both of só's) is worked out first, so each sub-row can
+                    // be told apart by what is left; it is put back on every
+                    // row below, because a family shows a shared translation or
+                    // a shared context, not both.
                     const contextParts = text => String(text || '').split(/\s+·\s+|;\s*/).map(part => part.trim()).filter(Boolean);
                     const sharedContextParts = isTransAxis && orderedMembers.length > 1
                         ? contextParts(memberParts.get(orderedMembers[0]).context).filter(part => orderedMembers
@@ -8450,6 +8530,24 @@ function renderCardWikipediaBadge(card) {
                                 ? parts.cut
                                 : [parts.context, parts.cut].filter(Boolean).join(' · ');
                         }
+                    }
+                    // The shared context is not repeated in the rows (daqui: "of"
+                    // over "introduces the name of a place…" and "in relation
+                    // to"); a row left with nothing reads the shared words
+                    // instead of "general use". A shared grammar frame ("+ a / para") is the
+                    // exception: repeated on every row it is only noise, so it
+                    // stays beside the heading.
+                    const isFrameText = part => part.trim().startsWith('+');
+                    const sharedWords = sharedContextParts.filter(part => !isFrameText(part));
+                    if (sharedWords.length) {
+                        for (const parts of memberParts.values()) {
+                            // A row with something of its own reads just that; one with
+                            // nothing left reads the shared words, so none is empty.
+                            parts.context = parts.context || sharedWords.join(' · ');
+                        }
+                        const frames = sharedContextParts.filter(isFrameText);
+                        sharedContextParts.length = 0;
+                        sharedContextParts.push(...frames);
                     }
                     for (const memberIdx of orderedMembers) {
                         const { extra, context } = memberParts.get(memberIdx);
@@ -8561,8 +8659,7 @@ function renderCardWikipediaBadge(card) {
                                     sharedText,
                                     meaning => contextLabelByMeaning.get(card.meanings.indexOf(meaning)) || ''
                                 );
-                                const diffRepeatsHeading = diff && sharedContextParts
-                                    .some(shared => glossPieceKey(shared) === glossPieceKey(diff.label));
+                                const diffRepeatsHeading = diff && sharedContextKeys.has(glossPieceKey(diff.label));
                                 // A word-class label ("auxiliary") tells a
                                 // learner nothing; the clause the gloss lost
                                 // ("forms the progressive aspect") does.
@@ -8701,7 +8798,7 @@ function renderCardWikipediaBadge(card) {
                     const outerGridCols = '1fr auto';
 
                     target.push(`
-                    <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}${groupKnown ? ' meaning-row-known' : ''}" data-axis="${axis}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
+                    <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}${groupKnown ? ' meaning-row-known' : ''}" data-axis="${axis}" data-anchor-idx="${idx}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
                         ${renderRowCheckSlot(groupIsCurrent)}
                         <div class="meaning-row-body group-card-body${sharedCleanLength > 48 ? ' has-long-shared' : ''}${maxMemberLength > 80 ? ' has-long-context' : ''}" style="display: grid; grid-template-columns: ${gridCols}; align-items: center; gap: 3px 6px; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; padding: 4px 8px; background: ${sharedBg}; ${sharedBorder} border-radius: 6px; justify-self: center;">
                             ${memberCells}
@@ -8802,23 +8899,13 @@ function renderCardWikipediaBadge(card) {
                 }
             }
         });
-        const renderedSectionRowCount = Array.from(scrollSections).reduce(
-            (total, [key, rows]) => total + rows.reduce((rowTotal, rowHTML) => {
-                const groupedSubsenses = rowHTML.match(/class="group-card-varying-cell/g)?.length || 0;
-                return rowTotal + Math.max(1, groupedSubsenses);
-            }, 0) + (groupInfo.has(key) ? 1 : 0),
-            0
-        );
-        const allSectionsFitInline = renderedSectionRowCount <= autoOpenSectionRowLimit();
-        // Every section opens unless that would push a sense row below the
-        // example sentence. The post-render pass measures it and, when the
-        // open menu would have to scroll, sets _sectionsCollapsedToFit so
-        // only the active section stays open. A heading the learner taps
-        // overrides both.
+        // A card opens with only the word type in use expanded; the others
+        // show as their word-type row (translation beside the pill). Choosing
+        // a row or a word type changes which one is open, so the card looks
+        // the same on opening as after you tap, and a heading you tap
+        // overrides it.
         if (!card._backSectionsManuallySet) {
-            card._expandedPos = allSectionsFitInline && !card._sectionsCollapsedToFit
-                ? new Set(Array.from(scrollSections.keys()).filter(key => groupInfo.has(key)))
-                : new Set(activeLemmaPosKey ? [activeLemmaPosKey] : []);
+            card._expandedPos = new Set(activeLemmaPosKey ? [activeLemmaPosKey] : []);
         }
         // Emit the scroll region first, then the pinned tray underneath
         // (MWE/CLITIC rows that stay visible when the user scrolls).
@@ -11458,8 +11545,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '6d83e6f4';
-const MODALS_ASSET_VERSION = '6d83e6f4';
+const ASSET_VERSION = '6db54830';
+const MODALS_ASSET_VERSION = '6db54830';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

@@ -2,8 +2,8 @@
 // Parses .srt/.vtt/text, routes through the live no-WSD engine,
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
-import './state.js?v=6d83e6f4';
-import { CASA_PRESET_REVISION, validLiveDeck } from './playlist-live.js?v=6d83e6f4';
+import './state.js?v=6db54830';
+import { CASA_PRESET_REVISION, validLiveDeck } from './playlist-live.js?v=6db54830';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
@@ -49,7 +49,8 @@ export async function buildSeriesLiveDeck({
     episodes = null,
     language = 'spanish',
     onProgress = null,
-    sourceId = 'subtitle-upload'
+    sourceId = 'subtitle-upload',
+    coverage = null
 } = {}) {
     const normalizeLines = values => (values || []).map(value => ({
         text: typeof value === 'string' ? value.trim() : String(value?.spanish || value?.text || '').trim(),
@@ -93,6 +94,7 @@ export async function buildSeriesLiveDeck({
     }
 
     deck.sourceKind = 'series';
+    if (coverage) deck.coverage = coverage;
     if (sourceId === 'la-casa-de-papel') deck.presetRevision = CASA_PRESET_REVISION;
     await window.cacheLiveDeck(deck);
     saveSeriesInBackground(deck);
@@ -124,7 +126,8 @@ export async function loadCasaDePapelPreset(onProgress = null) {
         const deck = await buildSeriesLiveDeck({
             title: dialogue.title || 'La Casa de Papel', artist: 'La Casa de Papel',
             episodes: dialogue.episodes, lines: dialogue.lines,
-            sourceId: 'la-casa-de-papel', language: 'spanish', onProgress
+            sourceId: 'la-casa-de-papel', language: 'spanish', onProgress,
+            coverage: dialogue.coverage
         });
         return deck;
     } catch (error) {

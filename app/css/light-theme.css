@@ -1322,3 +1322,8 @@
     --set-skipped: #64748b;
     --set-estimated: #9f7aea;
 }
+
+:root[data-theme="light"] .meanings-scroll.inline-sense-rows .meaning-pos-section .meaning-row:not(.is-current-sense):not(.selected):not(:hover):not(#_) {
+    background: transparent !important;
+    border-color: transparent;
+}
