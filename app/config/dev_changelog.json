@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T14:36:16+01:00",
+      "date": "2026-10-21 14:36 BST",
+      "agent": "Claude",
+      "summary": "Phones show at most 6 level tiles (desktop keeps 8)",
+      "detail": [
+        "Below 1024px the level tile row holds at most 6 tiles, sliding to keep the selected level in view; each tile is about 52px wide instead of 38px."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T14:33:21+01:00",
       "date": "2026-10-21 14:33 BST",
       "agent": "Claude",
@@ -356,19 +366,6 @@
         "The artist card is now: ‹ Music, the artist with a Read lyrics button, and two chips, 'Songs: all 295 ✎' and 'Albums ▾'. Change artist, Speech and the language button are removed from it.",
         "The song picker has an album filter; Select all / Clear all act on whatever is showing.",
         "Back on the pick screen only appears when a deck is open, and returns to it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T23:03:13+01:00",
-      "date": "2026-10-19 23:03 BST",
-      "agent": "Claude",
-      "summary": "Function-word rows: one-line patterns with plain English meanings; shorter examples",
-      "detail": [
-        "All 120 Spanish and Portuguese pattern rows rewritten: the pattern fits one line with short slot names (con + person), and under it the English meaning in grey (with) instead of a description (Who with).",
-        "Rows are larger: 18px pattern, 15px meaning.",
-        "Example sentences are capped at 70 characters (two lines on a phone); over-long ones were replaced from the speech and lyric pools.",
-        "Previous wording is kept on each row; the full before/after list is docs/audits/function-word-copy/rewrite_2026-10-19.tsv."
       ],
       "commit": "pending"
     }

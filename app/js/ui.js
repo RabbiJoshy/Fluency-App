@@ -2104,6 +2104,7 @@ function syncHomeLevelStepper(idx) {
 // With one level started the row would say no more than ‹ 1 ›, so it stays hidden.
 const HOME_LEVEL_TILE_MIN_STARTED = 2;
 const HOME_LEVEL_TILE_MAX = 8;
+const HOME_LEVEL_TILE_MAX_PHONE = 6;
 
 function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estimate, smartSkipOn }) {
     const row = document.getElementById('homeLevelTiles');
@@ -2151,10 +2152,11 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
     if (next < ranges.length) shown.add(next);
     shown.add(selectedIdx);
     let tiles = [...shown].sort((a, b) => a - b);
-    if (tiles.length > HOME_LEVEL_TILE_MAX) {
+    const maxTiles = window.matchMedia?.('(max-width: 1023px)').matches ? HOME_LEVEL_TILE_MAX_PHONE : HOME_LEVEL_TILE_MAX;
+    if (tiles.length > maxTiles) {
         const pos = tiles.indexOf(selectedIdx);
-        const from = Math.max(0, Math.min(pos - Math.floor(HOME_LEVEL_TILE_MAX / 2), tiles.length - HOME_LEVEL_TILE_MAX));
-        tiles = tiles.slice(from, from + HOME_LEVEL_TILE_MAX);
+        const from = Math.max(0, Math.min(pos - Math.floor(maxTiles / 2), tiles.length - maxTiles));
+        tiles = tiles.slice(from, from + maxTiles);
     }
 
     const tileHTML = tiles.map(i => {
