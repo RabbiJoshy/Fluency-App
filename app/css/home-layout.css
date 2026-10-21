@@ -1221,7 +1221,7 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     cursor: pointer;
 }
 .home-level-tile:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-.home-level-tile.is-selected { border-color: var(--accent-primary); color: var(--text-primary); background: color-mix(in srgb, var(--accent-primary) 16%, transparent); }
+.home-level-tile.is-selected { border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color)); color: var(--text-primary); background: color-mix(in srgb, var(--accent-primary) 7%, transparent); }
 .home-level-tile-bar { display: flex; gap: 1px; height: 4px; border-radius: 2px; overflow: hidden; background: var(--border-color); }
 .home-level-tile-bar span { display: block; min-width: 2px; }
 .home-level-tile-bar .is-new { background: var(--set-new, #fff); }
@@ -1293,4 +1293,14 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     #setupPanel #step2 #lswExamples .lsw-egs .lsw-coverage-inline { white-space: normal; }
     #setupPanel #step2 .home-level-progress { padding: 0 1vw; }
     #setupPanel #step2 .home-level-stats { justify-content: center; }
+}
+
+/* The level readout is the first thing to read: a touch larger number, and
+   the word range in body text rather than muted small print. The selected
+   tile above it stays quiet so it does not compete. */
+#setupPanel #homeLevelStepper .home-level-readout strong { font-size: calc(var(--home-number) * 1.12); }
+#setupPanel #homeLevelStepper .home-level-eyebrow { font-size: var(--home-text); }
+#setupPanel #homeLevelStepper .home-level-words { font-size: var(--home-text); color: var(--text-secondary); }
+@media (min-width: 1360px) {
+    #setupPanel #step2 .home-level-readout strong { font-size: clamp(80px, 7.2vw, 140px); }
 }

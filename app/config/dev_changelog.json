@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T14:38:05+01:00",
+      "date": "2026-10-21 14:38 BST",
+      "agent": "Claude",
+      "summary": "Quieter selected level tile; the Level / Words readout a touch more prominent",
+      "detail": [
+        "Selected tile: softer red outline and a faint tint instead of a full red outline and fill.",
+        "Level readout: number about 12% larger; 'Level' and 'Words 1–100' one size up, in brighter grey."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T14:36:16+01:00",
       "date": "2026-10-21 14:36 BST",
       "agent": "Claude",
@@ -352,20 +363,6 @@
         "Grouped rows (tempo, dejar) lead with the shared gloss in bold, each sub-sense on its own lighter line underneath.",
         "Grammar frames are shortened on the card: +inf, +ger, +adj, +subj, +pp. The note keeps the full wording.",
         "Display only; no data changes. Trial switch: the inlineSenseRows call in flashcards.js and the .inline-sense-rows block at the end of style.css."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T23:20:00+01:00",
-      "date": "2026-10-19 23:20 BST",
-      "agent": "Claude",
-      "summary": "Artist mode: pick an artist and go straight to their deck; choose songs or albums later",
-      "detail": [
-        "Music now opens on one screen: Artists, Spotify playlists and Series tabs, a search box and round artist tiles. The three-card chooser is gone.",
-        "Tapping an artist opens the whole deck. The forced song picker is gone; only 'Mix several' still asks for songs first.",
-        "The artist card is now: ‹ Music, the artist with a Read lyrics button, and two chips, 'Songs: all 295 ✎' and 'Albums ▾'. Change artist, Speech and the language button are removed from it.",
-        "The song picker has an album filter; Select all / Clear all act on whatever is showing.",
-        "Back on the pick screen only appears when a deck is open, and returns to it."
       ],
       "commit": "pending"
     }
