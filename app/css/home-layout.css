@@ -459,9 +459,11 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
    thin line beneath it. The desktop sidebar (body.desktop-workspace) keeps
    its own styling. */
 body:not(.desktop-workspace) #topBar {
+    /* Close to the top of the screen (the phone keeps the page below its
+       status bar and corners), and the line close under the icons. */
+    margin-top: -8px;
     margin-bottom: 12px;
-    /* Equal air above the name and icons and below them, down to the line. */
-    padding: 0 4px 18px;
+    padding: 0 4px 6px;
     border: 0;
     border-radius: 0;
     background: color-mix(in srgb, var(--bg-primary) 90%, transparent);
@@ -485,18 +487,18 @@ body:not(.desktop-workspace) #topBar .learning-context-chip {
     border-radius: 10px;
     background: transparent;
 }
-body:not(.desktop-workspace) #topBar .learning-context-flag { font-size: 25px; }
-body:not(.desktop-workspace) #topBar .learning-context-chip-copy strong { font-size: 16px; }
+body:not(.desktop-workspace) #topBar .learning-context-flag { font-size: 29px; }
+body:not(.desktop-workspace) #topBar .learning-context-chip-copy strong { font-size: 18px; }
 body:not(.desktop-workspace) #topBar .top-bar-icon-btn,
 body:not(.desktop-workspace) #topBar .gear-btn {
-    width: 36px;
-    height: 40px;
-    flex: 0 0 36px;
+    width: 40px;
+    height: 44px;
+    flex: 0 0 40px;
     background: transparent;
 }
 body:not(.desktop-workspace) #topBar .top-bar-right-controls { gap: 0; }
 body:not(.desktop-workspace) #topBar .top-bar-icon-btn svg,
-body:not(.desktop-workspace) #topBar .gear-btn svg { width: 26px; height: 26px; }
+body:not(.desktop-workspace) #topBar .gear-btn svg { width: 29px; height: 29px; }
 
 /* --- Wide screens: fill the window -------------------------------------
    Nothing here scrolls, so nothing is capped in pixels: the column takes the
@@ -1281,7 +1283,7 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     #setupPanel .home-section > .step-header { border-bottom: 0; }
     #setupPanel .home-section > .step-header .step-title-trigger { display: inline-flex; align-items: center; gap: 0.5em; }
     #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child { position: static; width: 0.85em; height: 0.85em; }
-    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-help { position: absolute; top: calc(4vh + 4px); right: 3vw; width: 30px; height: 30px; }
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-help { position: absolute; top: calc(4vh - 2px); right: 3vw; width: 44px; height: 44px; }
     #setupPanel .home-section-footer { border-top: 0; }
     .home-practise-rows { border-top: 0; }
 
@@ -1307,4 +1309,22 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 #setupPanel #homeLevelStepper .home-level-words { font-size: var(--home-text); color: var(--text-secondary); }
 @media (min-width: 1360px) {
     #setupPanel #step2 .home-level-readout strong { font-size: clamp(80px, 7.2vw, 140px); }
+}
+
+/* Section help is a plain ? (no circle) on every screen. On phones the leaf
+   and clock sit beside the title, the ? rides small and high after it, and
+   only the open section shows it. */
+#setupPanel .home-section-help circle { display: none; }
+@media (max-width: 1023px) {
+    #setupPanel .home-section-toggle > .home-section-icon,
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+        position: static; width: 22px; height: 22px; margin: 0 8px 0 0;
+    }
+    #setupPanel .home-section > .step-header .step-title-trigger { display: inline-flex; align-items: center; }
+    #setupPanel .home-section-toggle .home-section-info { display: none; }
+    #setupPanel .home-section > .step-header .home-section-help {
+        /* The ? glyph fills ~40% of its 24-unit box, hence the size and the
+           negative margins that pull it in beside the title. */
+        width: 30px; height: 30px; margin: -9px -8px 0 -7px; align-self: flex-start;
+    }
 }

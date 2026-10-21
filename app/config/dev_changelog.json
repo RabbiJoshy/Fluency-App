@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T00:53:58+01:00",
+      "date": "2026-10-22 00:53 BST",
+      "agent": "Claude",
+      "summary": "Phone top bar tighter and larger; folded Learn shows only its level; plain ? help; 'Mistakes first' hint",
+      "detail": [
+        "Phone top bar: about 8px higher, the line 6px under the icons (was 18px); flag 25→29px, language name 16→18px, icons 26→29px.",
+        "Phone: with Practise open, folded Learn shows only 'Level N · Words X–Y' (no bar or counts).",
+        "Phone: leaf and clock icons sit beside 'Learn' and 'Practise'; the ? is small and raised after the title, and only on the open section.",
+        "Everywhere: the section help is a plain ? (no circle).",
+        "Practise hint: 'Mistakes first', shown only when there are both mistakes and words to review."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T00:39:36+01:00",
       "date": "2026-10-22 00:39 BST",
       "agent": "Claude",
@@ -330,19 +344,6 @@
         "With level tiles showing, the ‹ › arrows stay beside 'Level N' — the bigger, easier target — instead of moving to the ends of the tile row.",
         "Phone: the tile row has the full width, so tiles are 38px instead of 33px.",
         "Desktop (1360px+): the level column is as wide as the stepper needs, so › no longer crowds the example words."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T22:50:14+01:00",
-      "date": "2026-10-20 22:50 BST",
-      "agent": "Claude",
-      "summary": "Desktop home polish: icons beside the titles, ? in the corner, no divider lines, level without its plate",
-      "detail": [
-        "Desktop (1360px+): the leaf and clock icons sit beside 'Learn' and 'Practise'; the ? moves to each column's top-right corner.",
-        "Desktop (1360px+): the lines under the titles, above the buttons and above Practise's rows are gone; the shaded plate behind the level number is gone.",
-        "Desktop (1360px+): the example words, coverage line and progress bar get a wider share of the row and are centred.",
-        "Practise hint (everywhere): 'Mistakes first, then due words' is now 'Mistakes first, then words to review'."
       ],
       "commit": "pending"
     }

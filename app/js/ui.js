@@ -3245,7 +3245,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 <button class="home-practise-browse" type="button" id="openReviewHomeBtn">Browse all <span aria-hidden="true">›</span></button>
             </div>
             <div class="home-section-footer">
-                ${globalTotal > 0 ? '<p class="home-footer-hint">Mistakes first, then words to review</p>' : ''}
+                ${mistakes > 0 && dueCount > 0 ? '<p class="home-footer-hint">Mistakes first</p>' : ''}
                 ${homeCta(lengthChip(globalTotal, 'practice'), 'id="quickReviewBtn"',
                     globalTotal > 0 ? `Practise<span class="home-cta-count"> · ${practiseCount.toLocaleString()}</span>` : 'Practise', globalTotal === 0)}
             </div>`;
@@ -3331,8 +3331,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         if (reviewBody) reviewBody.innerHTML = reviewHTML;
         reviewSection.hidden = !reviewHTML;
     }
-    // The folded section keeps a short version of itself: Learn its level,
-    // bar and counts; Practise its total and what makes it up.
+    // The folded section keeps a one-line version of itself: Learn its level
+    // and words, Practise how many are waiting.
     const learnMeta = document.getElementById('learnSectionMeta');
     if (learnMeta) {
         const wordsText = document.getElementById('homeLevelWords')?.textContent || '';
@@ -3340,10 +3340,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
     const learnPeek = document.getElementById('learnSectionPeek');
     if (learnPeek) {
-        learnPeek.innerHTML = `<span class="home-level-bar is-peek" aria-hidden="true">${barHTML}</span>
-            <span class="home-level-stats">${statsHTML}</span>
-            ${estimateHTML}`;
-        window.fitLegendFonts?.(learnPeek);
+        // Folded (Practise open), Learn says only its level and words (the meta
+        // line above), so the open Practise has the attention.
+        learnPeek.innerHTML = '';
+        learnPeek.hidden = true;
     }
     const practiseMeta = document.getElementById('practiseSectionMeta');
     if (practiseMeta) {
