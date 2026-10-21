@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T00:39:36+01:00",
+      "date": "2026-10-22 00:39 BST",
+      "agent": "Claude",
+      "summary": "Function-word cards: pattern and meaning read left to right on one row, and the function word is just bold (no grey highlight)",
+      "detail": [
+        "Each pattern row is left-aligned: the pattern (e.g. 'verb + de') on the left, its meaning ('of, about') on the right of the same row.",
+        "When a pattern and its meaning don't fit on one line, the meaning drops beneath, left-aligned. If any row on a card needs that, all rows on that card do, so the card stays uniform.",
+        "The grey wash behind the function word in the pattern rows and the example sentence is gone; it is bold white only."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T23:39:10+01:00",
       "date": "2026-10-21 23:39 BST",
       "agent": "Claude",
@@ -331,22 +343,6 @@
         "Desktop (1360px+): the lines under the titles, above the buttons and above Practise's rows are gone; the shaded plate behind the level number is gone.",
         "Desktop (1360px+): the example words, coverage line and progress bar get a wider share of the row and are centred.",
         "Practise hint (everywhere): 'Mistakes first, then due words' is now 'Mistakes first, then words to review'."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T22:43:42+01:00",
-      "date": "2026-10-20 22:43 BST",
-      "agent": "Claude",
-      "summary": "Tutorial updated for phone and desktop: current Smart Skip switch, Conjugate button, right grading and switching instructions per device",
-      "detail": [
-        "Desktop: the note column scrolls to the note being read, so the last notes (Grade your answer) no longer fall off a laptop screen; columns keep one width.",
-        "Grading: phones say swipe; computers say Enter / X and point to the keyboard button on the left. Keyboard tips no longer appear on phones.",
-        "Speech or music: desktop says Vocabulary in the sidebar; phones say tap the language at the top, then Vocabulary.",
-        "Smart Skip page shows the current row with its switch (not Off/On + Details).",
-        "Verb cards in the tutorial and walkthrough show the Conjugate button, with a note.",
-        "Rare uses: wording mentions the speech-bubble example button; the demo opens a group and shows one example.",
-        "Music note says Coming soon in languages without Music."
       ],
       "commit": "pending"
     }
