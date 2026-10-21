@@ -4984,8 +4984,17 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
     const meaning = card?.meanings?.[meaningIndex];
     if (!card || !meaning) return;
     const real = String(key).replace(/~~/g, '\u0000');
-    const alreadyActive = lemmaPosGroupKeyForMeaning(card.meanings[currentMeaningIndex]) === real
-        && !currentGroupSelection;
+    const inSection = lemmaPosGroupKeyForMeaning(card.meanings[currentMeaningIndex]) === real;
+    // A word-type row that carries the shared words of its one group stands
+    // for that group: pressing it goes back from a single sub-meaning to all.
+    const section = event?.currentTarget?.closest?.('.meaning-pos-section');
+    const lone = section?.querySelector('.pos-section-shared')
+        ? section.querySelector('.meaning-row-group[data-anchor-idx]') : null;
+    if (lone && !(inSection && currentGroupSelection)) {
+        selectGroup(lone.dataset.axis, Number(lone.dataset.anchorIdx));
+        if (currentGroupSelection) return;
+    }
+    const alreadyActive = inSection && (!currentGroupSelection || !!lone);
     // Choosing another group moves the active sense; which sections stay
     // open is still decided by whether they fit above the sentence.
     if (alreadyActive) {
@@ -8701,7 +8710,7 @@ function renderCardWikipediaBadge(card) {
                     const outerGridCols = '1fr auto';
 
                     target.push(`
-                    <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}${groupKnown ? ' meaning-row-known' : ''}" data-axis="${axis}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
+                    <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}${groupKnown ? ' meaning-row-known' : ''}" data-axis="${axis}" data-anchor-idx="${idx}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
                         ${renderRowCheckSlot(groupIsCurrent)}
                         <div class="meaning-row-body group-card-body${sharedCleanLength > 48 ? ' has-long-shared' : ''}${maxMemberLength > 80 ? ' has-long-context' : ''}" style="display: grid; grid-template-columns: ${gridCols}; align-items: center; gap: 3px 6px; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; padding: 4px 8px; background: ${sharedBg}; ${sharedBorder} border-radius: 6px; justify-self: center;">
                             ${memberCells}

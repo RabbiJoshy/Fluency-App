@@ -26834,3 +26834,21 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
     padding-left: 20px !important;
 }
+
+/* No outlines on rows that aren't chosen (2026-10-21): a resting sense row has
+   no border and no tint, and the chosen one is the fill plus left edge. A faint
+   wash on hover keeps it readable as something to press. */
+.meanings-scroll.inline-sense-rows .meaning-pos-section .meaning-row:not(.is-current-sense):not(.meaning-row-group):not(#_) {
+    background: transparent !important;
+    border: 2px solid transparent;
+    border-left: 4px solid transparent;
+}
+.meanings-scroll.inline-sense-rows .meaning-pos-section .meaning-row.meaning-row-group:not(.selected):not(.is-current-sense):not(#_) {
+    background: transparent !important;
+    border-color: transparent;
+}
+@media (hover: hover) {
+    .meanings-scroll.inline-sense-rows .meaning-pos-section .meaning-row:not(.is-current-sense):not(.selected):hover:not(#_) {
+        background: rgba(var(--sense-match-rgb), 0.07) !important;
+    }
+}

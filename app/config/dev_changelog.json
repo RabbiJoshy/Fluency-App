@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T21:10:17+01:00",
+      "date": "2026-10-21 21:10 BST",
+      "agent": "Claude",
+      "summary": "Card back: no outlines on sense and sub-meaning rows that aren't chosen; pressing the word-type row selects the whole group again",
+      "detail": [
+        "Resting rows have no border and no tint; the chosen row is the fill plus left edge. A faint wash shows on hover.",
+        "When a word type carries its group's shared words (estar: to be), pressing that row selects every sub-meaning at once, so you can go from one sub-meaning back to all. Pressing it again folds the section as before.",
+        "Grouped rows with the shared text inside the group already did this; unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T20:52:23+01:00",
       "date": "2026-10-21 20:52 BST",
       "agent": "Claude",
@@ -334,18 +346,6 @@
         "In a group the cue follows each translation; when every sub-row has the same cue it is shown once on the shared line ('to reach a place · often + a').",
         "cuerpo: a row is never left blank — when its translation went up to the word-type row, its label ('anatomy') stays on the row as muted context instead of moving into the note.",
         "The word-type row and stacked rows are measured by layout size, not the on-screen box, which the card's 3D flip distorted (cuerpo's 'body' had dropped under the pill)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T20:23:08+01:00",
-      "date": "2026-10-20 20:23 BST",
-      "agent": "Claude",
-      "summary": "Card back: quieter word-type pills, aligned 'from caro'; companion cards say '76% of uses of a'",
-      "detail": [
-        "Word-type pills are 14px and tinted (16% fill, coloured text) instead of a solid fill at 19px.",
-        "'from caro' matches the pill's size and baseline: 'from' muted, the lemma in the word type's colour.",
-        "Companion card fronts read 'Card 1 of 2 · 76% of uses of a', with the word in bold."
       ],
       "commit": "pending"
     }
