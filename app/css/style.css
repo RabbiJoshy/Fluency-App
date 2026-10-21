@@ -26782,9 +26782,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 
 /* Word-type row sized like the rows under it (2026-10-21): it often holds the
-   main translation now, so it takes the 20px size and 44px height of a row. */
-.pos-collapsible.has-hoisted-shared .pos-section-head { min-height: 44px; font-size: 20px; }
-.pos-collapsible.has-hoisted-shared .pos-section-shared { font-size: 20px; }
+   main translation, so every word-type row takes the 20px size and 44px
+   height of a row, whether or not it holds shared text. */
+.pos-collapsible .pos-section-head { min-height: 44px; font-size: 20px; }
+.pos-collapsible .pos-section-shared { font-size: 20px; }
 
 /* The same treatment for a group whose shared text stays in the group's own
    row (a word type with other rows besides the group, e.g. dejar: "to leave"
@@ -26827,3 +26828,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared::before { content: '('; }
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared::after { content: ')'; }
+
+/* The active sub-meaning keeps a light wash over its whole row as well as the
+   rounded highlight on its text (2026-10-21). */
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
+    background: rgba(var(--sense-match-rgb), 0.14) !important;
+    border-radius: 8px;
+}

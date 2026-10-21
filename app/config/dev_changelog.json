@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T19:20:35+01:00",
+      "date": "2026-10-21 19:20 BST",
+      "agent": "Claude",
+      "summary": "Card back: word-type rows are always larger; the chosen sub-meaning keeps a light wash over its whole row",
+      "detail": [
+        "Every word-type row (Verb, Noun...) is now 20px text and 44px high, like a sense row, whether or not it holds shared text.",
+        "The active sub-meaning keeps a light wash across its whole row as well as the rounded highlight on its text."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T19:16:20+01:00",
       "date": "2026-10-21 19:16 BST",
       "agent": "Claude",
@@ -345,18 +356,6 @@
         "The word-type chevron sits at the right edge (bom no longer reads 'good ·'); só's head shows 'only, just · preceding the verb' and wraps under the pill rather than pushing the meter down.",
         "A sub-row holding a context is muted like a context (só: 'indicates that no other action…').",
         "In a selected group on a 4+ row card, sub-rows wrap instead of being clipped (passar)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T15:12:57+01:00",
-      "date": "2026-10-20 15:12 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): row text centred again, but a row that wraps reads left to right",
-      "detail": [
-        "Each row's text is centred in its box (option D): vamos shows 'to be', 'let's go let's move', 'come on' centred, meter on the left.",
-        "A row too long for one line keeps its lines left-aligned inside the centred block, so it reads like a sentence rather than a centred tower (não's 'not; don't; haven't negates the meaning of the verb or adverb').",
-        "Group headings and sub-rows are centred the same way (cosa: object / thing, something, anything)."
       ],
       "commit": "pending"
     }
