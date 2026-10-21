@@ -26778,19 +26778,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
     border: 0;
-    background: rgba(var(--sense-match-rgb), 0.14) !important;
+    border-left: 4px solid rgb(var(--sense-match-rgb));
+    background: rgba(var(--sense-match-rgb), 0.24) !important;
     background-image: none !important;
     border-radius: 8px;
-}
-.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
-    display: inline-block !important;
-    padding: 2px 12px 2px 10px;
-    border-left: 4px solid rgb(var(--sense-match-rgb));
-    border-radius: 8px;
-    background: rgba(var(--sense-match-rgb), 0.30);
-}
-.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
-    margin-left: -14px;
 }
 
 /* Word-type row sized like the rows under it (2026-10-21): it often holds the
@@ -26821,16 +26812,6 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     text-align: center !important;
     justify-content: center !important;
 }
-.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell) .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
-    display: inline-block !important;
-    padding: 2px 12px 2px 10px;
-    border-left: 4px solid rgb(var(--sense-match-rgb));
-    border-radius: 8px;
-    background: rgba(var(--sense-match-rgb), 0.30);
-}
-.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
-    margin-left: -14px;
-}
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.is-current-sense:not(.has-hoisted-shared-cell):has(.is-active-subsense):not(#_) {
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.07), rgba(var(--sense-match-rgb), 0.07)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
     border-left-color: color-mix(in srgb, var(--text-primary) 16%, transparent);
@@ -26841,9 +26822,15 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared::before { content: '('; }
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared::after { content: ')'; }
 
-/* The active sub-meaning keeps a light wash over its whole row as well as the
-   rounded highlight on its text (2026-10-21). */
+/* The active sub-meaning is its whole row, drawn as the same rounded
+   rectangle as a sense row: a 0.24 fill and a 4px left edge, text unchanged
+   (2026-10-21; it was a row wash plus a chip round the text). The left padding
+   gives back the 4px the edge takes, so the text stays on its column. */
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
-    background: rgba(var(--sense-match-rgb), 0.14) !important;
+    background: rgba(var(--sense-match-rgb), 0.24) !important;
+    border-left: 4px solid rgb(var(--sense-match-rgb));
     border-radius: 8px;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
+    padding-left: 20px !important;
 }

@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T20:52:23+01:00",
+      "date": "2026-10-21 20:52 BST",
+      "agent": "Claude",
+      "summary": "Card back: the chosen sub-meaning is one marker, its whole row as a rounded rectangle with a left edge (no chip round the text)",
+      "detail": [
+        "Replaces the row wash plus text chip: the active sub-meaning row now has a 0.24 fill and the 4px left edge of a sense row, with the text unchanged and still on its column.",
+        "Both layouts: shared text in the word-type row (água, aún) and shared text in the group row (dejar, passar)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T20:36:52+01:00",
       "date": "2026-10-21 20:36 BST",
       "agent": "Claude",
@@ -335,18 +346,6 @@
         "Word-type pills are 14px and tinted (16% fill, coloured text) instead of a solid fill at 19px.",
         "'from caro' matches the pill's size and baseline: 'from' muted, the lemma in the word type's colour.",
         "Companion card fronts read 'Card 1 of 2 · 76% of uses of a', with the word in bold."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T20:16:50+01:00",
-      "date": "2026-10-20 20:16 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): light wash on the open word type and active meaning; ' · ' between translation and context",
-      "detail": [
-        "The active word type's row and the active meaning take a faint wash of its colour (9% and 7%, over the neutral grey; the old fill was 10%), so on cara the Noun row reads as open and Adjective as closed.",
-        "A lone group's sub-rows: the active one is washed, or all of them when the whole group is selected.",
-        "Translation and context on one line are joined by a muted ' · ' (quanto: 'how · to what degree'; daqui: 'of · in relation to'). Stacked rows need none."
       ],
       "commit": "pending"
     }
