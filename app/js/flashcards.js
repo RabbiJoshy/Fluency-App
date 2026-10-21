@@ -1168,6 +1168,10 @@ function hoistSharedRowText(scroll, card) {
         const head = section.querySelector(':scope > .pos-section-head');
         if (!head || head.querySelector('.pos-section-shared')) return;
         const pieces = [];
+        // Shared translations go up to the word-type row wherever there is
+        // room, to be seen at a glance. Shared contexts and frames only go up
+        // for the word type in use; elsewhere they stay in the rows.
+        const active = Boolean(section.querySelector('.selected, .is-current-sense, .is-active-subsense'));
         // A word type drawn as one grouped row (aún: "time" over still / yet;
         // tempo: "time" over two contexts) shares that row's common words
         // with every sub-sense, so they go up too and each sub-sense becomes
@@ -1185,6 +1189,7 @@ function hoistSharedRowText(scroll, card) {
             const ownContext = clean(sharedContext?.textContent || '');
             if (own) pieces.push({ text: own, isGloss: lone.dataset.axis === 'translation' || translations.has(fold(own)) });
             if (ownContext) pieces.push({ text: ownContext, isGloss: translations.has(fold(ownContext)) });
+            if (!active && pieces.some(piece => !piece.isGloss)) return;
             // Each sub-row is styled by what it holds: a translation is bold,
             // a context is muted, whichever slot the app put it in.
             lone.querySelectorAll('.group-card-varying-cell').forEach(cell => {
@@ -1209,6 +1214,7 @@ function hoistSharedRowText(scroll, card) {
         for (const selector of ['.meaning-row-sub .meaning-context', '.meaning-row-sub .sense-grammar-cue']) {
             const text = sharedRowText(rows, selector);
             if (!text) continue;
+            if (!active && !translations.has(fold(text))) continue;
             rows.forEach(row => row.querySelector(selector).classList.add('is-hoisted'));
             // learnerRowPresentation can put the translation in the context
             // slot ("good" under three contexts of bom); it is still a gloss.

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T21:59:59+01:00",
+      "date": "2026-10-21 21:59 BST",
+      "agent": "Claude",
+      "summary": "Card back: shared contexts and frames only move up into the word-type row for the word type in use; shared translations still do wherever there's room",
+      "detail": [
+        "On a word type you aren't on, a shared context (or grammar frame) stays in its rows instead of taking up the word-type row. Shared translations still go up so you can see them at a glance.",
+        "A word type whose group shares both a translation and a context stays as it was (nothing moves up) until you are on it.",
+        "Checked on the Portuguese cards: inactive word types with a shared translation still show it in the header (merda, sé, poder). No Portuguese card has an inactive word type with a shared context, so that branch was not seen on a real card."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T21:44:38+01:00",
       "date": "2026-10-21 21:44 BST",
       "agent": "Claude",
@@ -333,16 +345,6 @@
         "Speech: shows what the levels up to this one make up of speech, as a whole number, e.g. 'Levels 1–3 make up 57% of speech'. Only languages that ship coverage shares show it (Czech today).",
         "Artist Mode: same wording, 'make up 61% of lyric words', replacing '~61% lyrics comprehension'.",
         "On its own line under the examples; hidden on phones."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T20:57:03+01:00",
-      "date": "2026-10-20 20:57 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip row is now the same height as the Learn/Practise button",
-      "detail": [
-        "Smart Skip row: 56px on phones and 62px from 1024px wide, matching the button beside it (it was 54px and 60px)."
       ],
       "commit": "pending"
     }
