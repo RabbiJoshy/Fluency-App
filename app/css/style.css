@@ -26859,3 +26859,9 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meaning-row-group.shared-context-inline .group-inline-context { display: inline; color: var(--text-secondary); font-weight: 400; }
 .meaning-row-group.shared-context-inline .group-inline-context::before { content: '·'; margin: 0 6px; }
 .meanings-scroll.inline-sense-rows .meaning-row-group.shared-context-inline .group-card-shared:not(#_) { display: none !important; }
+
+/* Sub-rows under a shared translation read left-aligned on every line; a
+   sub-row that wraps was centring its second line (deu, 2026-10-21). */
+.meanings-scroll.inline-sense-rows .meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell :is(.meaning-context-cell, .row-adaptive-text, .meaning-context):not(#_) {
+    text-align: left !important;
+}

@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T21:44:38+01:00",
+      "date": "2026-10-21 21:44 BST",
+      "agent": "Claude",
+      "summary": "Card back: a sub-row under a shared translation stays left-aligned when it wraps (deu)",
+      "detail": [
+        "A long sub-row (deu: 'to transfer one's possession of something to someone...') centred its wrapped lines while the short ones sat left. All lines are now left-aligned under a shared translation."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T21:30:20+01:00",
       "date": "2026-10-21 21:30 BST",
       "agent": "Claude",
@@ -333,18 +343,6 @@
       "summary": "Smart Skip row is now the same height as the Learn/Practise button",
       "detail": [
         "Smart Skip row: 56px on phones and 62px from 1024px wide, matching the button beside it (it was 54px and 60px)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T20:40:00+01:00",
-      "date": "2026-10-20 20:40 BST",
-      "agent": "Claude",
-      "summary": "Level page type tidied; Learn/Practise button text centred in its own half; Portuguese fits the phone language picker",
-      "detail": [
-        "Learn/Practise card: title, level number, 'Level' and 'Words' lines now use one type scale derived from the page text size, with the emphasis font for the title and number; 'Words 101–200' no longer wraps.",
-        "Learn / Practise button: the label is centred in the half beside the time chip, not across the whole button (phones and wide screens).",
-        "Language picker: a name too long for its tile (Portuguese on a phone) shrinks to fit on one line."
       ],
       "commit": "pending"
     }
