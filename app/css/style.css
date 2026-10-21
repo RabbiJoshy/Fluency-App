@@ -26884,3 +26884,20 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     white-space: nowrap;
     vertical-align: 1px;
 }
+
+/* A shared translation shows alone until it is the one in use; its contexts
+   open when it is chosen, so the translations can be read at a glance
+   (2026-10-21; this was already how other word types folded). */
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group[data-axis="translation"]:not(.selected):not(.is-current-sense) .sense-cue-group:not(#_) {
+    display: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="translation"]:not(.selected):not(.is-current-sense):not(#_) {
+    display: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="translation"]:not(.selected):not(.is-current-sense) .group-card-body:not(#_) {
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="translation"]:not(.selected):not(.is-current-sense) .group-card-shared:not(#_) {
+    grid-column: 1 !important;
+    text-align: center;
+}

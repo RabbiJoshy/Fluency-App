@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T22:40:58+01:00",
+      "date": "2026-10-21 22:40 BST",
+      "agent": "Claude",
+      "summary": "Card back: a shared translation shows alone until it is chosen; a family shares a translation or a context, not both",
+      "detail": [
+        "An unchosen shared translation (daqui: 'of') is one line; its contexts open when you choose it. This applies within one word type too, not only between word types.",
+        "When sub-rows shared a translation and also a context (daqui: 'of' and 'in relation to'), the context is no longer lifted into the heading. Each row keeps it: 'in relation to · introduces the name of a place…' and 'in relation to', instead of a leftover reading 'general use'.",
+        "Checked in the app on daqui (dark mode). Not checked: light mode, phone width, the Spanish shared-context groups, or cards with several shared translations in one word type."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T22:35:55+01:00",
       "date": "2026-10-21 22:35 BST",
       "agent": "Claude",
@@ -333,19 +345,6 @@
       "detail": [
         "Phone top bar: flag 20→25px, icons 22→26px, language name 15→16px, with the icons closer together.",
         "Folded Practise card: just 'N waiting'; the mistakes / due breakdown no longer appears under it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T21:16:58+01:00",
-      "date": "2026-10-20 21:16 BST",
-      "agent": "Claude",
-      "summary": "Coverage line now for Spanish, Portuguese, French, Finnish; phone top bar and card outline tidied",
-      "detail": [
-        "Coverage shares added for es, pt, fi (OpenSubtitles 2018 lists) and fr (Lexique 4 FreqOrtho), so 'Levels 1–2 make up N% of speech' shows for them. The French deck is only 200 words today.",
-        "Phone: the coverage line is back, on its own line under the example words, kept to one line.",
-        "Phone top bar: equal space above and below the name and icons; the line beneath is the language's light colour, not the two-colour gradient.",
-        "Phone: the open Learn/Practise card has an even outline all the way round (it was thicker on the left)."
       ],
       "commit": "pending"
     }

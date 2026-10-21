@@ -8471,8 +8471,10 @@ function renderCardWikipediaBadge(card) {
                             : '',
                     }]));
                     // A context every sub-row carries ("preceding the verb"
-                    // on both of só's) describes the family: it moves up
-                    // beside the heading and leaves the sub-rows.
+                    // on both of só's) is worked out first, so each sub-row can
+                    // be told apart by what is left; it is put back on every
+                    // row below, because a family shows a shared translation or
+                    // a shared context, not both.
                     const contextParts = text => String(text || '').split(/\s+·\s+|;\s*/).map(part => part.trim()).filter(Boolean);
                     const sharedContextParts = isTransAxis && orderedMembers.length > 1
                         ? contextParts(memberParts.get(orderedMembers[0]).context).filter(part => orderedMembers
@@ -8528,6 +8530,15 @@ function renderCardWikipediaBadge(card) {
                                 ? parts.cut
                                 : [parts.context, parts.cut].filter(Boolean).join(' · ');
                         }
+                    }
+                    // Put the shared context back on each row (daqui: "of" over
+                    // "in relation to · introduces the name of a place" and
+                    // "in relation to", not over a leftover reading "general use").
+                    if (sharedContextParts.length) {
+                        for (const parts of memberParts.values()) {
+                            parts.context = [...sharedContextParts, parts.context].filter(Boolean).join(' · ');
+                        }
+                        sharedContextParts.length = 0;
                     }
                     for (const memberIdx of orderedMembers) {
                         const { extra, context } = memberParts.get(memberIdx);
@@ -8639,8 +8650,7 @@ function renderCardWikipediaBadge(card) {
                                     sharedText,
                                     meaning => contextLabelByMeaning.get(card.meanings.indexOf(meaning)) || ''
                                 );
-                                const diffRepeatsHeading = diff && sharedContextParts
-                                    .some(shared => glossPieceKey(shared) === glossPieceKey(diff.label));
+                                const diffRepeatsHeading = diff && sharedContextKeys.has(glossPieceKey(diff.label));
                                 // A word-class label ("auxiliary") tells a
                                 // learner nothing; the clause the gloss lost
                                 // ("forms the progressive aspect") does.
