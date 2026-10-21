@@ -114,6 +114,7 @@ class CardBackArtistSynonymsTests(unittest.TestCase):
             activeArtist: { slug: 'bad-bunny', name: 'Bad Bunny' },
             isCorpusDisplayExample: ex => Boolean(ex && !ex.canonical && ex.evidence !== 'dictionary' && !ex.reference_example),
             stampShownShares: (item, meanings) => meanings,
+            isShownSense: () => true,
             normalizeMeaningShares: meanings => meanings,
             splitLowShareMeanings: meanings => ({ meanings, rare: [] }),
             unusedMenuSensesOf: () => []
