@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T22:42:34+01:00",
+      "date": "2026-10-21 22:42 BST",
+      "agent": "Claude",
+      "summary": "Card back: the word-type row you are not on has no grey tint",
+      "detail": [
+        "The faint grey band on a word-type row (Adjective on una while you are on the verb) is gone, so only the word type in use looks marked. Its coloured left edge and pill stay.",
+        "Checked in the app on una (dark mode). Light mode and phone width not checked."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T22:40:58+01:00",
       "date": "2026-10-21 22:40 BST",
       "agent": "Claude",
@@ -334,17 +345,6 @@
         "Desktop (1360px+): Learn keeps the level beside its examples and progress; the Learn/Practise pair is capped at 1140px and starts near the top instead of being centred in the window.",
         "Desktop sidebar: new About item opens the About page.",
         "Card back: the site logos in the Dictionary sheet fill their circle instead of sitting inside it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T21:20:07+01:00",
-      "date": "2026-10-20 21:20 BST",
-      "agent": "Claude",
-      "summary": "Phone top bar: bigger flag and icons, tighter spacing; folded Practise shows only the number waiting",
-      "detail": [
-        "Phone top bar: flag 20→25px, icons 22→26px, language name 15→16px, with the icons closer together.",
-        "Folded Practise card: just 'N waiting'; the mistakes / due breakdown no longer appears under it."
       ],
       "commit": "pending"
     }

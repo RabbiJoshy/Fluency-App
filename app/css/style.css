@@ -26901,3 +26901,9 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     grid-column: 1 !important;
     text-align: center;
 }
+
+/* A word-type row you are not on has no tint: the faint grey band made it
+   look like something was marked (2026-10-21). The one in use keeps its wash. */
+.meanings-scroll.inline-sense-rows .pos-collapsible:not(:has(.meaning-row:is(.selected, .is-current-sense))) > .pos-section-head:not(#_) {
+    background: transparent !important;
+}
