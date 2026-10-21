@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T18:27:31+01:00",
+      "date": "2026-10-21 18:27 BST",
+      "agent": "Claude",
+      "summary": "Function-word cards: the active pattern uses the same fill-and-left-bar marker as other senses",
+      "detail": [
+        "The selected pattern box on function-word backs (de, que, em...) now has a 0.24 fill and a 4px left bar in its partner's colour instead of a 2px outline."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T15:01:30+01:00",
       "date": "2026-10-21 15:01 BST",
       "agent": "Claude",
@@ -348,17 +358,6 @@
         "When a word type is one grouped row, its shared words go up to the word-type row and each sub-sense becomes its own row: aún shows 'Adverb  time' over 'still' and 'yet'; así shows 'Adverb  in a certain way' over its four translations.",
         "When the whole group is selected (examples from every sub-sense), all of those rows are outlined.",
         "A shared context over several translations (cosa: object over thing, something, anything) is now muted, not bold."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T14:34:29+01:00",
-      "date": "2026-10-20 14:34 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): grouped rows sit tighter; the meter stands on the shared gloss's line",
-      "detail": [
-        "In a grouped row (dejar: to leave / to put, to forget, to bequeath) the sub-lines start right under the shared gloss; the empty band between them is gone (row 140px to 123px on a phone).",
-        "The commonness meter's bars now stand on the shared gloss's baseline instead of hanging below it."
       ],
       "commit": "pending"
     }

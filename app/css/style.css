@@ -26633,8 +26633,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-relation-box:hover { background: color-mix(in srgb, var(--text-primary) 4%, transparent); }
 .fw-relation-box.is-selected,
 .fw-relation-box[aria-pressed="true"] {
-  border: 2px solid rgb(var(--fw-row-rgb, var(--sense-match-rgb)));
-  background: rgba(var(--fw-row-rgb, var(--sense-match-rgb)), 0.08);
+  /* Same marker as an ordinary sense row (2026-10-21): stronger fill and a
+     4px bar on the left in the partner's colour, no outline. */
+  border: 2px solid transparent;
+  border-left: 4px solid rgb(var(--fw-row-rgb, var(--sense-match-rgb)));
+  background: rgba(var(--fw-row-rgb, var(--sense-match-rgb)), 0.24);
   padding: 6px 11px;
 }
 .fw-relation-meaning { font-size: 18px; margin-top: 2px; }
