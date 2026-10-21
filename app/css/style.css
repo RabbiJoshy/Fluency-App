@@ -26784,10 +26784,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     border-radius: 8px;
 }
 
-/* Word-type row sized like the rows under it (2026-10-21): it often holds the
-   main translation, so every word-type row takes the 20px size and 44px
-   height of a row, whether or not it holds shared text. */
-.pos-collapsible .pos-section-head { min-height: 44px; font-size: 20px; }
+/* A word-type row is the height of a row only when it holds the shared
+   translation; empty it goes back to its smaller size (2026-10-21; it had been
+   made bigger everywhere, but an empty one is not worth the room). */
+.pos-collapsible .pos-section-head:has(.pos-section-shared) { min-height: 44px; font-size: 20px; }
 .pos-collapsible .pos-section-shared { font-size: 20px; }
 
 /* The same treatment for a group whose shared text stays in the group's own
@@ -26906,4 +26906,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
    look like something was marked (2026-10-21). The one in use keeps its wash. */
 .meanings-scroll.inline-sense-rows .pos-collapsible:not(:has(.meaning-row:is(.selected, .is-current-sense))) > .pos-section-head:not(#_) {
     background: transparent !important;
+}
+
+/* The coloured left edge belongs to the word type in use; on the others it
+   read as marked, so it is kept as space but not drawn. */
+.meanings-scroll.inline-sense-rows .pos-collapsible:not(:has(.meaning-row:is(.selected, .is-current-sense))) > .pos-section-head:not(#_) {
+    border-left-color: transparent !important;
 }

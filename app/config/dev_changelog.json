@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T22:48:51+01:00",
+      "date": "2026-10-21 22:48 BST",
+      "agent": "Claude",
+      "summary": "Card back: an empty word-type row is small again; the coloured edge shows only on the word type in use",
+      "detail": [
+        "A word-type row is the taller, larger-text size only when it holds the shared translation; otherwise it is back to its 36px size.",
+        "The coloured left edge on a word-type row you are not on is no longer drawn.",
+        "Checked in the app on una (dark mode): 36px rows, edge only on the verb. The taller size on a row with a shared translation was not re-checked."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T22:42:34+01:00",
       "date": "2026-10-21 22:42 BST",
       "agent": "Claude",
@@ -332,19 +344,6 @@
       "detail": [
         "Desktop (1360px+): Learn and Practise are at least 70% of the window tall (max 720px); tiles at the top, the level with its words and bar centred, Learn button at the bottom.",
         "Card back tool row (Rare uses, Dictionary, …): icons 28→32px and labels 12→14px on phones; 36px and 16px on desktop."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T22:09:02+01:00",
-      "date": "2026-10-20 22:09 BST",
-      "agent": "Claude",
-      "summary": "Home: level tiles once you've started two levels; desktop Learn/Practise start at the top; About in the sidebar; dictionary logos fill their circles",
-      "detail": [
-        "Learn: after you've started two levels, a row of tiles (levels started + the next one, up to 8, sliding) with a mini progress bar each replaces the ‹ › stepper arrows. One level started: unchanged stepper.",
-        "Desktop (1360px+): Learn keeps the level beside its examples and progress; the Learn/Practise pair is capped at 1140px and starts near the top instead of being centred in the window.",
-        "Desktop sidebar: new About item opens the About page.",
-        "Card back: the site logos in the Dictionary sheet fill their circle instead of sitting inside it."
       ],
       "commit": "pending"
     }
