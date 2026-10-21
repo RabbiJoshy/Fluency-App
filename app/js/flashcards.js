@@ -8531,17 +8531,19 @@ function renderCardWikipediaBadge(card) {
                                 : [parts.context, parts.cut].filter(Boolean).join(' · ');
                         }
                     }
-                    // Put the shared context back on each row (daqui: "of" over
-                    // "in relation to · introduces the name of a place" and
-                    // "in relation to", not over a leftover reading "general
-                    // use"). A shared grammar frame ("+ a / para") is the
+                    // The shared context is not repeated in the rows (daqui: "of"
+                    // over "introduces the name of a place…" and "in relation
+                    // to"); a row left with nothing reads the shared words
+                    // instead of "general use". A shared grammar frame ("+ a / para") is the
                     // exception: repeated on every row it is only noise, so it
                     // stays beside the heading.
                     const isFrameText = part => part.trim().startsWith('+');
                     const sharedWords = sharedContextParts.filter(part => !isFrameText(part));
                     if (sharedWords.length) {
                         for (const parts of memberParts.values()) {
-                            parts.context = [...sharedWords, parts.context].filter(Boolean).join(' · ');
+                            // A row with something of its own reads just that; one with
+                            // nothing left reads the shared words, so none is empty.
+                            parts.context = parts.context || sharedWords.join(' · ');
                         }
                         const frames = sharedContextParts.filter(isFrameText);
                         sharedContextParts.length = 0;
