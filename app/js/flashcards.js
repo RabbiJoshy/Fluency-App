@@ -3811,11 +3811,10 @@ function learnerGroupingGloss(card, meaning) {
     const presentation = learnerSensePresentation(meaning, false, {
         gloss: projected,
         senseCount: card?.meanings?.length || 1,
-        // Each sense is read alone here. Senses whose rows lead with the
-        // same translation ("if, whether" and "if (introduces a relevance
-        // conditional)") form one family; what tells them apart — the rest
-        // of the gloss, the context, the bracket that was cut — becomes the
-        // sub-row.
+        // Each sense is read alone here. Senses with the same translations
+        // ("if" and "if (introduces a relevance conditional)") form one
+        // family; what tells them apart — the context, the bracket that was
+        // cut — becomes the sub-row.
         cardMeanings: [meaning],
         ignoreBudget: true,
         peerMeanings: [],
@@ -3823,7 +3822,10 @@ function learnerGroupingGloss(card, meaning) {
     });
     const visibleGloss = presentation.gloss || projected;
     const pieces = glossPieces(visibleGloss);
-    const groupingKey = glossPieceKey(pieces[0] || visibleGloss);
+    // The whole list of translations, not its first word: "to tell; to narrate"
+    // is one sense with two words and does not join a sense that is only
+    // "to tell". Senses group when they read the same.
+    const groupingKey = pieces.length ? pieces.map(glossPieceKey).join('|') : glossPieceKey(visibleGloss);
     return { ...presentation, visibleGloss, pieces, groupingKey };
 }
 
