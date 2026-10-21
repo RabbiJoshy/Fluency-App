@@ -26780,3 +26780,50 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
     margin-left: -14px;
 }
+
+/* Word-type row sized like the rows under it (2026-10-21): it often holds the
+   main translation now, so it takes the 20px size and 44px height of a row. */
+.pos-collapsible.has-hoisted-shared .pos-section-head { min-height: 44px; font-size: 20px; }
+.pos-collapsible.has-hoisted-shared .pos-section-shared { font-size: 20px; }
+
+/* The same treatment for a group whose shared text stays in the group's own
+   row (a word type with other rows besides the group, e.g. dejar: "to leave"
+   over to put / to forget / to bequeath). The sub-meanings are a left-aligned
+   column, the active one a rounded rectangle just left of it; with a
+   sub-meaning chosen the group falls back to a light wash so the rectangle
+   is the marker. */
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell) .sense-cue-group > .group-card-varying-cell:not(#_) {
+    border: 0;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="translation"] .sense-cue-group > .group-card-varying-cell:not(#_) {
+    padding: 3px 8px 3px 24px !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .sense-cue-group > .group-card-varying-cell:not(#_) {
+    padding: 3px 8px !important;
+    text-align: center !important;
+    justify-content: center !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell) .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
+    display: inline-block !important;
+    padding: 2px 12px 2px 10px;
+    border-left: 4px solid rgb(var(--sense-match-rgb));
+    border-radius: 8px;
+    background: rgba(var(--sense-match-rgb), 0.30);
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense > :is(.row-adaptive-text, .meaning-context-cell):not(#_) {
+    margin-left: -14px;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.is-current-sense:not(.has-hoisted-shared-cell):has(.is-active-subsense):not(#_) {
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.07), rgba(var(--sense-match-rgb), 0.07)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+    border-left-color: color-mix(in srgb, var(--text-primary) 16%, transparent);
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared:not(#_) {
+    text-align: left;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared::before { content: '('; }
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell)[data-axis="context"] .group-card-shared::after { content: ')'; }

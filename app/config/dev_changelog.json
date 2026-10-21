@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T19:16:20+01:00",
+      "date": "2026-10-21 19:16 BST",
+      "agent": "Claude",
+      "summary": "Card back: grouped senses whose shared text stays in the group row (dejar) get the same left column and rounded active marker; word-type row is larger",
+      "detail": [
+        "dejar: 'to leave' stays centred over a left-aligned column of to put / to forget / to bequeath; the chosen one is a rounded rectangle just left of the column and the group drops to a light wash.",
+        "Shared-context groups (eh) get a bracketed left-aligned caption over centred translations.",
+        "The word-type row, when it holds the shared translation, is now 20px and 44px high like a sense row."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T19:09:29+01:00",
       "date": "2026-10-21 19:09 BST",
       "agent": "Claude",
@@ -345,17 +357,6 @@
         "Each row's text is centred in its box (option D): vamos shows 'to be', 'let's go let's move', 'come on' centred, meter on the left.",
         "A row too long for one line keeps its lines left-aligned inside the centred block, so it reads like a sentence rather than a centred tower (não's 'not; don't; haven't negates the meaning of the verb or adverb').",
         "Group headings and sub-rows are centred the same way (cosa: object / thing, something, anything)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T15:03:07+01:00",
-      "date": "2026-10-20 15:03 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): one text size for translations and contexts (20px); sub-rows are full-height tap targets",
-      "detail": [
-        "Translation and context are now the same size, 20px; the translation is bold, the context regular and muted (vamos: 'let's go let's move').",
-        "Each sub-row in a group (dejar: to put, to forget, to bequeath) is at least 40px tall, left-aligned, at the same 20px size."
       ],
       "commit": "pending"
     }
