@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T15:01:30+01:00",
+      "date": "2026-10-21 15:01 BST",
+      "agent": "Claude",
+      "summary": "Card back: the active sense is marked by a stronger fill and a left bar instead of an outline",
+      "detail": [
+        "The active sense row (and the active sub-meaning inside a grouped sense) now has a 0.24 fill and a 4px bar on its left edge in its word type's colour; the 2px outline is gone.",
+        "Applies to single rows, grouped rows, and the group that is lit when several word types are on the card; dark and light theme.",
+        "Inactive rows and the word-type rows are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T14:56:52+01:00",
       "date": "2026-10-21 14:56 BST",
       "agent": "Claude",
@@ -347,18 +359,6 @@
       "detail": [
         "In a grouped row (dejar: to leave / to put, to forget, to bequeath) the sub-lines start right under the shared gloss; the empty band between them is gone (row 140px to 123px on a phone).",
         "The commonness meter's bars now stand on the shared gloss's baseline instead of hanging below it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T14:26:32+01:00",
-      "date": "2026-10-20 14:26 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): rows lose the word-type colour wash; word-type row is square; a group's meter sits on its shared gloss",
-      "detail": [
-        "Meaning rows and the word-type row no longer have a POS-coloured fill; the pill and the left edge carry the colour. The active row keeps its coloured outline.",
-        "The word-type row has square corners, setting it apart from the rounded meaning rows under it.",
-        "In a grouped row (dejar: to leave / to put, to forget, to bequeath) the commonness meter sits level with the shared gloss, not centred across all four lines."
       ],
       "commit": "pending"
     }

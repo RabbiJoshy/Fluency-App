@@ -256,7 +256,7 @@
 }
 
 :root[data-theme="light"] .meaning-row.is-current-sense {
-    background: rgba(var(--sense-match-rgb), 0.11) !important;
+    background: rgba(var(--sense-match-rgb), 0.24) !important;
 }
 
 :root[data-theme="light"] .sense-prominence-badge.prominence-dominant,
@@ -299,6 +299,10 @@
 }
 :root[data-theme="light"] .meaning-row-sub {
     color: #596779;
+}
+:root[data-theme="light"] .meaning-pos-section .meaning-row.is-current-sense {
+    border-color: transparent;
+    border-left-color: rgb(var(--sense-match-rgb));
 }
 :root[data-theme="light"] .meaning-row.is-current-sense .meaning-row-sub {
     color: #2b394a;
