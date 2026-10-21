@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T18:37:55+01:00",
+      "date": "2026-10-21 18:37 BST",
+      "agent": "Claude",
+      "summary": "Card back: when a whole group of meanings is selected, its rows read as one block",
+      "detail": [
+        "With a shared translation or context over several sub-meanings (aún: time over still / yet) and none chosen, the rows now share one fill and one left bar, with hairlines between them, instead of looking like separate selected rows.",
+        "Tapping a single sub-meaning returns to the row-by-row marker."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T18:27:31+01:00",
       "date": "2026-10-21 18:27 BST",
       "agent": "Claude",
@@ -344,20 +355,6 @@
         "Every row's main line is the same size (19px bold) and every row is at least 44px tall, whether it is a translation (to let, still) or a context standing in for one; context after a translation is 15px and muted (it was 12px).",
         "Opening a card whose only word type is one group (ir: to go / indicates movement, to attend) no longer outlines every sub-sense. If the card has other word types, one outline goes round that group's rows instead.",
         "Fixed: on cards with four or more rows, switching away from a group (vamos: choose 'to be') pushed 'to go' left under the commonness meter."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-20T14:41:07+01:00",
-      "date": "2026-10-20 14:41 BST",
-      "agent": "Claude",
-      "summary": "Card back (trial): context stays beside its translation; a word type drawn as one group lifts its shared words too",
-      "detail": [
-        "Inactive rows no longer push the context onto a second line under the translation, which left blank space beside the word: cosa's second row is now 'thing  concern' on one line.",
-        "On cards with four or more rows, an inactive row is one line ending in '…'; the active row still shows everything.",
-        "When a word type is one grouped row, its shared words go up to the word-type row and each sub-sense becomes its own row: aún shows 'Adverb  time' over 'still' and 'yet'; así shows 'Adverb  in a certain way' over its four translations.",
-        "When the whole group is selected (examples from every sub-sense), all of those rows are outlined.",
-        "A shared context over several translations (cosa: object over thing, something, anything) is now muted, not bold."
       ],
       "commit": "pending"
     }

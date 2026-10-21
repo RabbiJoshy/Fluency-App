@@ -26422,13 +26422,26 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .meaning-row-group .group-card-shared:not(#_) { align-self: stretch !important; }
 
 /* The whole group selected (examples from every sub-sense) with no single
-   sub-sense chosen: no row is outlined. When the card has other word types,
-   one outline goes round the group's rows so the example's word type shows. */
-.meanings-scroll.inline-sense-rows:has(.pos-collapsible ~ .pos-collapsible) .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)):not(#_) {
-    padding: 3px !important;
-    border-radius: 11px;
+   sub-sense chosen (2026-10-21): the rows read as one block, because the one
+   example belongs to all of them. One fill and one 4px bar in the word type's
+   colour go round the group, with hairlines between its rows. Choosing a
+   single sub-sense returns to the row-by-row marker. */
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)):not(#_) {
+    padding: 0 !important;
+    border-radius: 8px;
+    overflow: hidden;
     box-shadow: inset 4px 0 0 rgb(var(--sense-match-rgb)) !important;
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.24), rgba(var(--sense-match-rgb), 0.24)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)) .sense-cue-group { gap: 0 !important; }
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)) .sense-cue-group > .group-card-varying-cell:not(#_) {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0;
+    border-radius: 0;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell.selected:not(:has(.is-active-subsense)) .sense-cue-group > .group-card-varying-cell + .group-card-varying-cell:not(#_) {
+    border-top: 1px solid rgba(var(--sense-match-rgb), 0.35);
 }
 
 /* One size for every row: text is 20px and a row is at least 44px tall,
