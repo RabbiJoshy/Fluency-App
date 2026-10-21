@@ -164,3 +164,7 @@ body.desktop-workspace .desktop-trail[hidden] { display: none; }
 .desktop-trail-level:has(> .desktop-trail-chip[aria-expanded="true"]) > .desktop-trail-chip { display: none; }
 .desktop-trail-level > .desktop-trail-menu { margin: 0; }
 .desktop-trail-level > .desktop-trail-menu .desktop-trail-option { min-height: 44px; }
+/* Tutorial and About read as a plain ? and i, like the section help on the
+   home screen: no circle, the glyph scaled up to fill the icon's box. */
+body.desktop-workspace #topBar :is(#helpBtn, #desktopAboutBtn) svg circle { display: none; }
+body.desktop-workspace #topBar :is(#helpBtn, #desktopAboutBtn) svg { transform: scale(1.75); stroke-width: 1.9; }

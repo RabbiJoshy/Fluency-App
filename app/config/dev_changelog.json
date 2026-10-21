@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T00:58:03+01:00",
+      "date": "2026-10-22 00:58 BST",
+      "agent": "Claude",
+      "summary": "Desktop sidebar: Tutorial and About icons are a plain ? and i (no circle)",
+      "detail": [
+        "Desktop sidebar only; the phone top bar keeps its circled ? beside the other line icons."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T00:55:28:z",
       "date": "2026-10-22 00:55 BST",
       "agent": "Claude",
@@ -333,17 +343,6 @@
       "summary": "Phones show at most 6 level tiles (desktop keeps 8)",
       "detail": [
         "Below 1024px the level tile row holds at most 6 tiles, sliding to keep the selected level in view; each tile is about 52px wide instead of 38px."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T14:33:21+01:00",
-      "date": "2026-10-21 14:33 BST",
-      "agent": "Claude",
-      "summary": "Example sentences: the pronoun in a pronominal verb (se abre) now takes the verb colour",
-      "detail": [
-        "The reflexive pronoun inside the highlighted verb in an example sentence was orange and underlined; it now uses the same colour as the verb, so 'se abre' reads as one unit.",
-        "Sense rows, 'used with' text and chips are unchanged."
       ],
       "commit": "pending"
     }
