@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-21T14:33:21+01:00",
+      "date": "2026-10-21 14:33 BST",
+      "agent": "Claude",
+      "summary": "Example sentences: the pronoun in a pronominal verb (se abre) now takes the verb colour",
+      "detail": [
+        "The reflexive pronoun inside the highlighted verb in an example sentence was orange and underlined; it now uses the same colour as the verb, so 'se abre' reads as one unit.",
+        "Sense rows, 'used with' text and chips are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-21T14:29:29+01:00",
       "date": "2026-10-21 14:29 BST",
       "agent": "Claude",
@@ -358,19 +369,6 @@
         "Rows are larger: 18px pattern, 15px meaning.",
         "Example sentences are capped at 70 characters (two lines on a phone); over-long ones were replaced from the speech and lyric pools.",
         "Previous wording is kept on each row; the full before/after list is docs/audits/function-word-copy/rewrite_2026-10-19.tsv."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-19T22:37:45+01:00",
-      "date": "2026-10-19 22:37 BST",
-      "agent": "Claude",
-      "summary": "Spanish function words: three new patterns with matched examples",
-      "detail": [
-        "todo: new \"All the\" pattern (todo el tiempo = all the time); todo el mundo (everybody) is deliberately not used as an example.",
-        "me / te / nos: new \"Myself / Yourself / Ourselves\" patterns. Reflexive sentences such as \"Cada vez que me levanto\" no longer sit under \"me / to me\".",
-        "lo: new \"What / the thing that\" pattern for lo que (Oigo lo que dices = I hear what you're saying).",
-        "Examples are assigned automatically from the speech and lyric pools by the parser rules (matcher v1.2); other words' examples are unchanged."
       ],
       "commit": "pending"
     }
