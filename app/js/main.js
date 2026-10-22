@@ -17,7 +17,6 @@ import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260929sense6';
 import './tutorial.js?v=20260929sense6';
-import './walkthrough.js?v=20260929sense6';
 import './estimation.js?v=20261010pool';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260927pa';
@@ -984,9 +983,9 @@ loadConfig().then(async () => {
 
     // Shareable page links open on top of whatever state the app lands in.
     const pageRoute = window.fluencyRoute?.kind;
-    if (pageRoute === 'about') window.openAboutProjectModal?.();
-    else if (pageRoute === 'tutorial') openTutorialIntroduction();
-    else if (pageRoute === 'walkthrough') window.openWalkthrough?.();
+    // (#/about and #/walkthrough never get here: index.html forwards them
+    // to the standalone about.html before the app loads.)
+    if (pageRoute === 'tutorial') openTutorialIntroduction();
 
 
     perfMark('after sync setup phase');

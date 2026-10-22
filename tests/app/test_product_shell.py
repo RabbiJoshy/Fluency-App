@@ -21,7 +21,7 @@ class ProductShellTests(unittest.TestCase):
         config = json.loads((APP_ROOT / "config" / "config.json").read_text(encoding="utf-8"))
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
         vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         # Every speech deck shows one phrase, "Frequency … per million", so every
         # file must already be per million — a raw count list is converted with
         # --per-million-from-list-total when the snapshot is built.
@@ -86,7 +86,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("loadCSVFiles", combined)
 
     def test_card_data_is_available_without_owner_login(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         self.assertIn("label: 'Card data'", flashcards)
         self.assertNotIn("if (!isJstOwner()) return null", flashcards)
         self.assertIn('class="prov-ex-item"', flashcards)
@@ -96,7 +96,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("prov-release-tag", flashcards)
 
     def test_spanishdict_inspector_is_audit_only(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         self.assertIn("function canInspectSpanishDictData()", flashcards)
         self.assertIn("canInspectSpanishDictData()", flashcards)
         self.assertIn("window.isAuditAccount?.()", flashcards)
@@ -104,7 +104,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("if (!canInspectSpanishDictData()) return;", flashcards)
 
     def test_synonym_jump_uses_the_language_lookup_not_spanishdict(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         self.assertIn("function synonymExternalLookup(word)", flashcards)
         self.assertIn("function confirmLeaveForSynonymLookup(word, lookup)", flashcards)
         self.assertIn("['wordReference', 'WordReference']", flashcards)
@@ -225,7 +225,7 @@ class ProductShellTests(unittest.TestCase):
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         progress = (APP_ROOT / "js" / "progress.js").read_text(encoding="utf-8")
         modals = (APP_ROOT / "js" / "flashcards-modals.js").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
 
         for required_id in (
             "learningContextBtn",
@@ -305,7 +305,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Keep the explanation and its control visible", ui)
 
     def test_card_back_omits_only_redundant_single_pos_legend(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         self.assertIn("const hideRedundantSingleBackPos", flashcards)
         self.assertIn("posItems.length === 1", flashcards)
         self.assertIn("!onlyPosHasAction", flashcards)
@@ -371,7 +371,7 @@ class ProductShellTests(unittest.TestCase):
 
     def test_speech_cards_keep_dictionary_examples_separate_from_usage_share(self) -> None:
         vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         self.assertNotIn("examples: mergeReferenceExamples(m.examples || [], m)", vocab)
         self.assertIn("if (m.canonical_example) meaning.canonicalExample = m.canonical_example;", vocab)
         self.assertIn("item._indexRowsPending === true", vocab)
@@ -399,7 +399,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn('compact-example-counter-label', flashcards)
 
     def test_cards_open_only_the_active_word_type(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT_PHONE = 6", flashcards)
         self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT_DESKTOP = 8", flashcards)
         # Only the word type in use opens; the rest show as their word-type row.
@@ -419,7 +419,7 @@ class ProductShellTests(unittest.TestCase):
     def test_first_run_tutorial_is_once_only_and_replayable(self) -> None:
         auth = (APP_ROOT / "js" / "auth.js").read_text(encoding="utf-8")
         tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
         self.assertIn("window.openFirstRunCardTutorial?.()", auth)
         # Guest and sign-in both offer it; a linked word defers it to a later visit.
@@ -448,7 +448,9 @@ class ProductShellTests(unittest.TestCase):
         # links the walkthrough; it must not open or contain the tutorial.
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         about = (APP_ROOT / "content" / "about.md").read_text(encoding="utf-8")
-        auth = (APP_ROOT / "js" / "auth.js").read_text(encoding="utf-8")
+        # About is its own page (about.html + about-page.js), not part of the app.
+        auth = (APP_ROOT / "js" / "about-page.js").read_text(encoding="utf-8")
+        about_html = (APP_ROOT / "about.html").read_text(encoding="utf-8")
         self.assertIn('id="helpBtn" class="top-bar-icon-btn"', html)
         self.assertIn('aria-label="Open tutorial"', html)
         # The demo cards are the way in: tapping one opens the walkthrough on
@@ -469,14 +471,17 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("#walkthroughModal {\n    z-index: 30003;", styles)
         self.assertIn("#authModal {\n            z-index: 30001;", styles)
         # The walkthrough is layered after About in the DOM, over it.
-        self.assertLess(html.index('id="aboutProjectModal"'), html.index('id="walkthroughModal"'))
+        self.assertLess(about_html.index('id="aboutProjectModal"'), about_html.index('id="walkthroughModal"'))
+        self.assertNotIn('id="aboutProjectModal"', html)
 
     def test_walkthrough_is_a_short_whole_face_demo_for_visitors(self) -> None:
         walkthrough = (APP_ROOT / "js" / "walkthrough.js").read_text(encoding="utf-8")
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
         # Shares the replica card with the tutorial rather than a copy of it.
         self.assertIn("from './card-replica.js?v=", walkthrough)
-        self.assertIn("import './walkthrough.js?v=", main)
+        # Loaded only by the standalone About page, never by the app.
+        self.assertIn("import './walkthrough.js?v=", (APP_ROOT / "js" / "about-page.js").read_text(encoding="utf-8"))
+        self.assertNotIn("import './walkthrough.js?v=", main)
         # Two screens where two cards fit side by side, three on a phone.
         self.assertIn("function buildScreens(pair)", walkthrough)
         self.assertIn("id: 'card'", walkthrough)
@@ -534,7 +539,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Tap them to read Dominant, Common, Uncommon, or Rare", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
 
     def test_sense_frequency_uses_readable_labels_not_mystery_dots(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
         self.assertIn("function prominenceBadgeHTML(promInfo, extraStyle = '')", flashcards)
         self.assertIn("function toggleProminenceBadge(event, button)", flashcards)
@@ -680,7 +685,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("target.searchParams.set('wsdPublication', projection)", vocab)
 
     def test_active_set_keeps_existing_interaction_model(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
         for behavior in (
             "flipCard",
@@ -695,7 +700,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("buildKnowledgeAwareCard", vocab)
 
     def test_unassigned_dictionary_menu_does_not_claim_wsd_confidence(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn("if (!m.unassigned)", flashcards)
         self.assertIn("hasAssignedEvidence", flashcards)
@@ -705,7 +710,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("sense-cycle-notes", flashcards)
 
     def test_collapsed_sense_group_uses_measured_overflow_and_clear_hierarchy(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn("function fitPosSectionSummaries(root)", flashcards)
         self.assertIn("summary.scrollWidth > summary.clientWidth + 1", flashcards)
@@ -761,7 +766,7 @@ class ProductShellTests(unittest.TestCase):
 
     def test_growing_language_and_study_lists_use_stable_choice_sheets(self) -> None:
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn("function showChoiceSheet", main)
         self.assertIn("id: 'languageChoiceSheet'", main)
@@ -826,7 +831,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("flex-start", mobile)
 
     def test_multi_pos_controls_use_bounded_grid_without_reordering_senses(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn("pos-count-${Math.min(pairs.length, 4)}", flashcards)
         self.assertIn("pos-count-${Math.min(posItems.length, 4)}", flashcards)
@@ -840,13 +845,13 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("pos-peek-stack", css)
 
     def test_optional_conjugations_join_by_dictionary_headword_not_identity_lemma(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         self.assertIn("currentMeaning?.headword", flashcards)
         self.assertIn("conjugationLookupSurface(card)", flashcards)
         self.assertIn("currentMeaning.cycle_pos", flashcards)
 
     def test_approved_numbered_scrubber_animation_is_retained(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn("Numbered active-set scrubber", flashcards)
         self.assertIn("deck-scrubber-lens", css)
@@ -1161,7 +1166,7 @@ class ProductShellTests(unittest.TestCase):
     def test_language_switch_clears_source_scoped_runtime_data(self) -> None:
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         song_sets = (APP_ROOT / "js" / "song-sets.js").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
         self.assertIn("window.clearActiveExamplesData?.()", ui)
         self.assertIn("window.resetLanguageOptionalData?.()", ui)
@@ -1191,7 +1196,7 @@ class ProductShellTests(unittest.TestCase):
                     self.assertTrue(resolved.is_file())
 
     def test_every_example_names_its_corpus(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         config = json.loads((APP_ROOT / "config" / "config.json").read_text(encoding="utf-8"))
         titles = APP_ROOT / "data" / "source_titles.json"
 
@@ -1488,7 +1493,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
         vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
         cfg = (APP_ROOT / "js" / "config.js").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
 
         # In main.js, activeArtist must NOT be declared as a module-local let, so it updates globalThis.activeArtist from state.js
         self.assertNotIn("let activeArtist", main)
@@ -1545,7 +1550,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
     def test_sense_prominence_mode_supports_labels_and_percentages(self) -> None:
         state = (APP_ROOT / "js" / "state.js").read_text(encoding="utf-8")
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
 
         self.assertIn("senseProminenceMode: 'labels',", state)
@@ -1558,7 +1563,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn(".sense-prominence-badge.prominence-rare", css)
 
     def test_rare_dictionary_senses_expansion_and_canonical_examples(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
 
         self.assertIn("function extractCanonicalDictionaryExamples(meaning, card = null)", flashcards)
         self.assertIn("function canonicalExampleHTML(meaning)", flashcards)
@@ -1579,7 +1584,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertNotIn("rare-senses-toggle-btn", flashcards)
 
     def test_rare_senses_dictionary_provenance_and_accordion(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         light = (APP_ROOT / "css" / "light-theme.css").read_text(encoding="utf-8")
 
@@ -1648,7 +1653,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertNotIn("const useProminenceLabels = state.senseProminenceMode", flashcards_js)
 
     def test_sense_display_and_rare_sense_attribution(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         self.assertIn("isRareSense: true", flashcards)
         self.assertIn("prominenceLabel: 'Rare'", flashcards)
         self.assertIn("hasOnlyRareSenses: true", flashcards)
@@ -1678,7 +1683,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
 
     def test_keyboard_shortcuts_cheat_sheet_modal(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn('id="keyboardShortcutsModal"', html)
         self.assertIn('id="closeKeyboardShortcutsModal"', html)
@@ -1692,7 +1697,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
     def test_find_word_filter_chips_and_prominence_badges(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         dock = (APP_ROOT / "js" / "side-dock.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn('id="findWordFilters"', html)
@@ -1711,7 +1716,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertNotIn("label: 'Find a word'", flashcards)
 
     def test_back_of_card_sense_deduplication_and_2line_presentation(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         light = (APP_ROOT / "css" / "light-theme.css").read_text(encoding="utf-8")
 
@@ -1726,7 +1731,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("#backContent > .meanings-scroll::-webkit-scrollbar-thumb", light)
 
     def test_back_of_card_declutter_prominence_and_lexicographic_extraction(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
 
@@ -1744,7 +1749,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("padding-right: 28px !important;", css)
 
     def test_pos_summary_strict_set_and_differential_metadata_folding(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
 
         # 4-tier metadata scoring and differentiator resolution

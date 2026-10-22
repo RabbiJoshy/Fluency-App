@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0e14">
+    <title>About Fluency</title>
+    <meta name="description" content="Fluency turns film and TV dialogue and song lyrics into flashcards, most common words first.">
+    <link rel="icon" type="image/png" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <!-- About is its own page, not part of the app: no sign-in, no language,
+         no deck. It shares the app's stylesheets so the demo cards and the
+         walkthrough look exactly like the real card. -->
+    <script>
+        // Apply appearance before the stylesheets paint. Dark remains the
+        // backward-compatible default; System is only followed after a user
+        // explicitly chooses it in Settings.
+        (function() {
+            var key = 'fluency_theme_preference_v1';
+            var preference = 'dark';
+            try {
+                var saved = localStorage.getItem(key);
+                if (saved === 'dark' || saved === 'light' || saved === 'system') preference = saved;
+            } catch (_) {}
+            var theme = preference === 'system'
+                ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+                : preference;
+            var root = document.documentElement;
+            root.dataset.themePreference = preference;
+            root.dataset.theme = theme;
+            root.style.colorScheme = theme;
+            document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
+            var textSize = 'normal';
+            try {
+                var savedSize = localStorage.getItem('fluency_text_size_v1');
+                if (savedSize === 'large' || savedSize === 'normal') textSize = savedSize;
+            } catch (_) {}
+            root.dataset.textSize = textSize;
+        })();
+    </script>
+    <link rel="stylesheet" href="css/style.css?v=20261014clarity">
+    <link rel="stylesheet" href="css/light-theme.css?v=20261011style">
+    <link rel="stylesheet" href="css/ui-refinements.css?v=20261014clarity">
+    <link rel="stylesheet" href="css/black-palette.css?v=1">
+</head>
+<body class="about-standalone">
+    <div id="aboutProjectModal" class="modal about-standalone-page">
+        <div class="modal-content fullscreen-modal about-project-modal">
+            <div id="aboutProjectBody" class="about-project-body">
+                <div class="about-loading">Loading…</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The walkthrough: a two-screen look at a card for VISITORS (employers,
+         anyone being shown the app). Opened from this page, layered over it,
+         and closes back into it. Rendered by js/walkthrough.js; the cards are
+         drawn by js/card-replica.js, shared with the learner tutorial in the app. -->
+    <div id="walkthroughModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="walkthroughTitle">
+        <div class="modal-content fullscreen-modal walkthrough-modal">
+            <header class="walkthrough-head">
+                <div class="walkthrough-dots" id="walkthroughDots" aria-hidden="true"></div>
+                <div class="walkthrough-copy">
+                    <h2 class="walkthrough-title" id="walkthroughTitle"></h2>
+                    <p class="walkthrough-lead" id="walkthroughLead"></p>
+                </div>
+                <button class="modal-close walkthrough-close" id="closeWalkthroughModal" aria-label="Back to About" title="Back to About">&#10005;</button>
+            </header>
+            <div class="walkthrough-body" id="walkthroughBody">
+                <div class="walkthrough-stage" id="walkthroughStage"></div>
+            </div>
+            <footer class="walkthrough-foot">
+                <button type="button" class="walkthrough-back" id="walkthroughBack" hidden>&larr; Back</button>
+                <span class="walkthrough-count" id="walkthroughCount" aria-live="polite"></span>
+                <button type="button" class="walkthrough-next" id="walkthroughNext">Next &rarr;</button>
+            </footer>
+        </div>
+    </div>
+
+    <script type="module" src="js/about-page.js?v=1"></script>
+</body>
+</html>

@@ -21,6 +21,17 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <title>Fluency</title>
     <script>
+        // About is its own page (about.html), not part of the app. Old shared
+        // links (#/about, #/walkthrough, ?about=) are forwarded before any app
+        // code loads, so they never touch sign-in or a language.
+        (function() {
+            var hash = location.hash;
+            var about = /^#\/about(?:[/?]|$)/.test(hash) || new URLSearchParams(location.search).has('about');
+            var walkthrough = /^#\/walkthrough(?:[/?]|$)/.test(hash);
+            if (about || walkthrough) location.replace('about.html' + (walkthrough ? '#walkthrough' : ''));
+        })();
+    </script>
+    <script>
         // Apply appearance before the stylesheets paint. Dark remains the
         // backward-compatible default; System is only followed after a user
         // explicitly chooses it in Settings.
@@ -1375,40 +1386,6 @@
             <div class="admin-update-modal-footer">
                 <button type="button" class="admin-update-dismiss-btn" id="dismissAdminUpdateBtn">Got it</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Portfolio/CV About page; deliberately separate from the learner intro. -->
-    <div id="aboutProjectModal" class="modal hidden">
-        <div class="modal-content fullscreen-modal about-project-modal">
-            <div id="aboutProjectBody" class="about-project-body">
-                <div class="about-loading">Loading…</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- The walkthrough: a two-screen look at a card for VISITORS (employers,
-         anyone being shown the app). Opened only from About, layered over it,
-         and closes back into it. Rendered by js/walkthrough.js; the cards are
-         drawn by js/card-replica.js, shared with the learner tutorial below. -->
-    <div id="walkthroughModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="walkthroughTitle">
-        <div class="modal-content fullscreen-modal walkthrough-modal">
-            <header class="walkthrough-head">
-                <div class="walkthrough-dots" id="walkthroughDots" aria-hidden="true"></div>
-                <div class="walkthrough-copy">
-                    <h2 class="walkthrough-title" id="walkthroughTitle"></h2>
-                    <p class="walkthrough-lead" id="walkthroughLead"></p>
-                </div>
-                <button class="modal-close walkthrough-close" id="closeWalkthroughModal" aria-label="Back to About" title="Back to About">&#10005;</button>
-            </header>
-            <div class="walkthrough-body" id="walkthroughBody">
-                <div class="walkthrough-stage" id="walkthroughStage"></div>
-            </div>
-            <footer class="walkthrough-foot">
-                <button type="button" class="walkthrough-back" id="walkthroughBack" hidden>&larr; Back</button>
-                <span class="walkthrough-count" id="walkthroughCount" aria-live="polite"></span>
-                <button type="button" class="walkthrough-next" id="walkthroughNext">Next &rarr;</button>
-            </footer>
         </div>
     </div>
 

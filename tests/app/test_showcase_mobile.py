@@ -52,7 +52,7 @@ for (const lang of languages) {
 
     def test_about_modal_walkthrough_hint(self):
         """About project walkthrough button hint accurately reflects both phone and desktop views."""
-        auth_js = (ROOT / 'app' / 'js' / 'auth.js').read_text(encoding='utf-8')
+        auth_js = (ROOT / 'app' / 'js' / 'about-page.js').read_text(encoding='utf-8')
         self.assertIn('A quick look at a card · about 30 seconds', auth_js)
         self.assertNotIn('Two screens · about 30 seconds', auth_js)
 
@@ -117,7 +117,7 @@ assert(!skipHtml.includes('streamline-rec-badge'));
 ''', capture_output=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
-        auth_js = (ROOT / 'app' / 'js' / 'auth.js').read_text(encoding='utf-8')
+        auth_js = (ROOT / 'app' / 'js' / 'about-page.js').read_text(encoding='utf-8')
         self.assertNotIn('<div class="about-demo-pos-legend">', auth_js)
         self.assertIn("posEl.style.setProperty('--front-pos-rgb'", auth_js)
 

@@ -291,18 +291,20 @@ self.addEventListener('fetch', event => {
   // Pay one small HTML request while online, cache it for offline fallback,
   // and keep every heavier asset on the fast path below.
   if (request.mode === 'navigate') {
+    // Only the app's own page is the offline shell. The standalone About page
+    // (about.html) is cached under its own address, never as index.html.
+    const isAppShell = !new URL(request.url).pathname.endsWith('/about.html');
     event.respondWith(
       fetch(request).then(response => {
         if (response && response.status === 200 && response.type === 'basic') {
           return caches.open(CACHE_NAME)
-            .then(cache => cache.put(scopedPath('/index.html'), response.clone()))
+            .then(cache => cache.put(isAppShell ? scopedPath('/index.html') : request, response.clone()))
             .then(() => response);
         }
         return response;
       }).catch(() => caches.open(CACHE_NAME).then(cache =>
         cache.match(request).then(cached => cached
-          || cache.match(scopedPath('/index.html'))
-          || cache.match(scopedPath('/')))
+          || (isAppShell ? cache.match(scopedPath('/index.html')) : Response.error()))
       ))
     );
     return;
