@@ -14,7 +14,7 @@ class Element {
     set innerHTML(_html) {
         // The workspace template is static. Only these buttons need selectors.
         for (const id of ['musicBackBtn', 'musicWorkspaceTitle', 'musicArtistSearch', 'musicMixBtn', 'musicArtistBrowser', 'musicArtistList', 'musicPickerHost', 'musicStudySetup',
-            'musicSelectionTitle', 'musicSelectionCount', 'musicSelectionPreview', 'musicEditSongsBtn']) {
+            'seriesBrowser', 'casaSeriesBtn', 'musicSelectionTitle', 'musicSelectionCount', 'musicSelectionPreview', 'musicEditSongsBtn']) {
             const element = new Element(id); elements.set(id, element); this.appendChild(element);
         }
         this.nav = ['artists', 'playlists', 'setup'].map(next => {
@@ -116,7 +116,42 @@ window.activeArtist = { name: 'Artist', language: 'spanish' };
 module.showArtists();
 assert.equal(elements.get('musicBackBtn').hidden, false, 'with a deck open, Back returns to it');
 assert.equal(elements.get('musicBackBtn').textContent, '‹ Artist');
-console.log('Music workspace navigation and ownership checks passed');
+// TV Series is a separate Spanish-only picker and uses the existing deck engine.
+assert.equal(window.seriesOpenFor('spanish'), true);
+assert.equal(window.seriesOpenFor('french'), false);
+module.showSeriesChoices('spanish');
+assert.equal(window.seriesWorkspaceActive(), true);
+assert.equal(elements.get('musicWorkspaceTitle').textContent, 'TV Series');
+assert.equal(elements.get('seriesBrowser').hidden, false);
+assert.equal(elements.get('musicArtistBrowser').hidden, true);
+assert.equal(elements.get('musicPickerHost').hidden, true);
+assert.equal(elements.get('musicEditSongsBtn').hidden, true);
+module.showSeriesChoices('french');
+assert.equal(window.seriesWorkspaceActive(), true, 'an unsupported language cannot replace the picker');
+let casaLoads = 0, activations = 0;
+window.loadCasaDePapelPreset = async () => { casaLoads++; };
+window.activatePlaylistLiveStudy = language => { assert.equal(language, 'spanish'); activations++; };
+await elements.get('casaSeriesBtn').listeners.click[0]();
+assert.equal(casaLoads, 1);
+assert.equal(activations, 1);
+assert.equal(window.musicWorkspaceActive(), false);
+window.activeArtist = null;
+window.playlistLiveActive = () => true;
+window.playlistLiveDeck = () => ({ playlistId: 'la-casa-de-papel', playlistName: 'La Casa de Papel' });
+assert.equal(window.isSeriesStudy(), true);
+module.showMusicStudySetup();
+assert.equal(window.seriesWorkspaceActive(), true, 'Casa returns to TV Series setup');
+assert.equal(elements.get('musicStudySetup').hidden, false);
+assert.equal(elements.get('musicEditSongsBtn').hidden, true);
+window.playlistLiveDeck = () => ({ playlistId: 'spotify-playlist' });
+assert.equal(window.isSeriesStudy(), false, 'ordinary playlists remain Music');
+module.openMusicWorkspace({ language: 'spanish', artists: [{ name: 'Artist', slug: 'artist' },
+    { name: 'La Casa de Papel', slug: 'la-casa-de-papel', isSeries: true }] });
+assert.equal(window.seriesWorkspaceActive(), false);
+assert.equal(elements.get('seriesBrowser').hidden, true);
+assert.equal(elements.get('musicArtistList').children.length, 1, 'Music does not list TV series');
+assert.equal(source.includes('Series &amp; subtitles'), false);
+console.log('Music and TV Series navigation and ownership checks passed');
 
 // The playlist subset is chosen before looking up lyrics, persists by playlist
 // and language, and cancellation releases the pending choice.

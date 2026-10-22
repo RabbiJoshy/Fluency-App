@@ -788,7 +788,7 @@ loadConfig().then(async () => {
     // A language or word link names the language outright and becomes the
     // saved preference, as choosing it on the picker would.
     const bootRoute = window.fluencyRoute || { kind: 'home' };
-    const routeLanguage = ['language', 'word', 'live', 'music'].includes(bootRoute.kind)
+    const routeLanguage = ['language', 'word', 'live', 'music', 'series'].includes(bootRoute.kind)
         ? languageKeyFor(bootRoute.language, config.languages)
         : null;
     if (routeLanguage && config.languages[routeLanguage].hasData !== false) {
@@ -1088,7 +1088,10 @@ loadConfig().then(async () => {
         const pendingTab = pendingSpeechLanguage
             ? document.querySelector(`.lang-tab[data-lang="${pendingSpeechLanguage}"]`)
             : null;
-        if (bootRoute.kind === 'music') {
+        if (bootRoute.kind === 'series' && selectedLanguage === 'spanish') {
+            await chooseSeriesVocabulary(selectedLanguage);
+            hideAppLoading();
+        } else if (bootRoute.kind === 'music') {
             await showArtistPicker(null, null, selectedLanguage);
             hideAppLoading();
         } else if (wordRoute) {
@@ -1889,6 +1892,16 @@ function chooseSpeechVocabulary(language) {
     }
 }
 
+async function chooseSeriesVocabulary(language = selectedLanguage) {
+    if (!window.seriesOpenFor?.(language)) return;
+    if (!document.getElementById('appContent')?.classList.contains('hidden')) await window.goBackToSetup?.();
+    window.closeChoiceSheet?.('learningSourceChoiceSheet', true);
+    document.getElementById('step1').style.display = 'none';
+    replaceRoute({ kind: 'series', language: routeCodeFor(language, config.languages) });
+    window.showSeriesChoices?.(language);
+}
+window.openSeriesMode = chooseSeriesVocabulary;
+
 // What the desktop sidebar trail (desktop-shell.js) calls. Each chip in the
 // trail switches its own level in place, so none of these start from the
 // beginning: they are the same handlers the modal pickers use.
@@ -1898,6 +1911,7 @@ window.desktopTrailActions = {
         else window.reopenLanguagePicker?.();
     },
     chooseSpeech(language) { chooseSpeechVocabulary(language); },
+    chooseSeries(language) { return chooseSeriesVocabulary(language); },
     chooseMusic(language, stage = 'choices') { return showArtistPicker(null, null, language, { stage }); },
     chooseArtists(language) { return showArtistPicker(null, null, language, { stage: 'artists' }); },
     openPlaylists(language) { return showArtistPicker(null, null, language, { stage: 'playlists' }); },
@@ -1948,7 +1962,11 @@ function openLearningSourcePicker() {
                 onSelect: () => {
                     showArtistPicker(null, null, language);
                 }
-            }
+            },
+            ...(window.seriesOpenFor?.(language) ? [{
+                ...copy.series, selected: current === 'series',
+                onSelect: () => chooseSeriesVocabulary(language)
+            }] : [])
         ]
     });
 }

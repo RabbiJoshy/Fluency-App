@@ -148,6 +148,10 @@ function initDesktopTrail(closePages) {
                 icon: copy.lyrics.iconHTML, selected: inMusic, disabled: !musicAvailable,
                 onSelect: () => window.desktopTrailActions?.chooseMusic(lang),
             }),
+            ...(window.seriesOpenFor?.(lang) ? [option(copy.series.label, {
+                icon: copy.series.iconHTML, selected: mode === 'series',
+                onSelect: () => window.desktopTrailActions?.chooseSeries(lang),
+            })] : []),
         );
     }
 
@@ -156,7 +160,7 @@ function initDesktopTrail(closePages) {
         menu.replaceChildren();
         const copy = window.learningModeCopy?.(lang);
         const stage = window.musicWorkspaceStage?.() || '';
-        const isLive = Boolean(window.playlistLiveDeck?.() && !window.activeArtist) || stage === 'playlists';
+        const isLive = Boolean(window.playlistLiveDeck?.() && !window.activeArtist && !window.isSeriesStudy?.()) || stage === 'playlists';
         const spotifyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
         menu.append(
             option('Artists', {
@@ -173,6 +177,10 @@ function initDesktopTrail(closePages) {
     async function renderSourceMenu({ language: lang }) {
         const menu = levels.source.querySelector('.desktop-trail-menu');
         const token = ++renderToken;
+        if (window.currentLearningMode?.() === 'series') {
+            menu.replaceChildren(option('Choose a TV series…', { onSelect: () => window.desktopTrailActions?.chooseSeries(lang) }));
+            return;
+        }
         if (sourceEntriesLanguage !== lang || !sourceEntries) {
             menu.replaceChildren(Object.assign(document.createElement('p'), {
                 className: 'desktop-trail-note', textContent: 'Loading artists…',
@@ -221,6 +229,7 @@ function initDesktopTrail(closePages) {
         }
         const current = state();
         const copy = window.learningModeCopy?.(lang);
+        const inSeries = current.mode === 'series';
         const inMusic = current.mode === 'lyrics' || current.mode === 'live';
         const live = window.playlistLiveDeck?.();
         const artist = window.activeArtist;
@@ -230,17 +239,17 @@ function initDesktopTrail(closePages) {
         const modeChip = levels.mode.querySelector('.desktop-trail-chip');
         const modeIcon = modeChip.querySelector('.desktop-trail-icon');
         modeChip.querySelector('strong').textContent = current.mode === 'speech' ? 'Speech'
-            : inMusic ? 'Music' : 'Choose…';
+            : inSeries ? 'TV Series' : inMusic ? 'Music' : 'Choose…';
         modeChip.querySelector('small').textContent = 'Vocabulary';
         modeIcon.innerHTML = current.mode === 'speech' ? (copy?.speech.iconHTML || '')
-            : inMusic ? (copy?.lyrics.iconHTML || '') : '';
+            : inSeries ? (copy?.series.iconHTML || '') : inMusic ? (copy?.lyrics.iconHTML || '') : '';
         levels.mode.dataset.state = current.mode || 'empty';
         if (levels.mode.querySelector('.desktop-trail-menu').hidden) renderModeMenu(current);
 
         // Level 2: Music option subrow (Artists vs Spotify playlists)
         levels.music.hidden = !inMusic;
         if (inMusic) {
-            const isLive = Boolean(live && !artist);
+            const isLive = Boolean(live && !artist && (inSeries || !window.isSeriesStudy?.()));
             const stage = window.musicWorkspaceStage?.() || (isLive ? 'playlists' : (artist ? 'artists' : 'choices'));
             const inChoices = stage === 'choices' && !artist && !live;
             const musicChip = levels.music.querySelector('.desktop-trail-chip');
@@ -257,18 +266,18 @@ function initDesktopTrail(closePages) {
         }
 
         // Level 3: Source (Artist name or Playlist name)
-        const hasSource = Boolean(artist || live);
-        levels.source.hidden = !inMusic || !hasSource;
-        if (inMusic && hasSource) {
-            const isLive = Boolean(live && !artist);
+        const hasSource = Boolean(artist || live) && !(inMusic && window.isSeriesStudy?.());
+        levels.source.hidden = (!inMusic && !inSeries) || !hasSource || (inSeries && !window.isSeriesStudy?.());
+        if ((inMusic || inSeries) && hasSource) {
+            const isLive = Boolean(live && !artist && (inSeries || !window.isSeriesStudy?.()));
             const sourceChip = levels.source.querySelector('.desktop-trail-chip');
             const label = isLive ? (live.playlistName || 'Spotify playlist')
                 : artist ? (artist.name || 'Artist') : 'Choose artist';
             sourceChip.querySelector('strong').textContent = label;
-            sourceChip.querySelector('small').textContent = isLive ? 'Playlist' : 'Artist';
+            sourceChip.querySelector('small').textContent = inSeries ? 'Series' : isLive ? 'Playlist' : 'Artist';
             const photo = sourceChip.querySelector('.desktop-trail-icon');
             if (artist) paintChipPhoto(photo, artist);
-            else { photo.replaceChildren(); photo.style.backgroundImage = ''; photo.innerHTML = spotifyIcon; }
+            else { photo.replaceChildren(); photo.style.backgroundImage = ''; photo.innerHTML = inSeries ? (copy?.series.iconHTML || '') : spotifyIcon; }
             levels.source.dataset.state = 'chosen';
         } else {
             const menu = levels.source.querySelector('.desktop-trail-menu');

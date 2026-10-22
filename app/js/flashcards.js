@@ -2367,7 +2367,7 @@ function initializeApp() {
         // Set progress and Saved words are not offered mid-set: progress adds
         // little here, and saved words lives in Settings → Words & data.
         const entries = [
-            { label: activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
+            { label: window.isSeriesStudy?.() ? 'TV Series setup' : activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
             { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
             { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
             { ...darkModeRow(), keepOpen: true, tail: '', refresh: darkModeRow, onSelect: () => window.applyThemePreference?.(
@@ -3447,7 +3447,7 @@ async function goBackToSetup() {
     // other transition in the app announces itself. Without this the tap read
     // as the app stalling rather than working — the same overlay Learn New and
     // Review already use.
-    window.showAppLoading?.(activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', 'Updating your levels…');
+    window.showAppLoading?.(window.isSeriesStudy?.() ? 'TV Series setup' : activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', 'Updating your levels…');
     stopExampleAutoplay(true);
     // Hide app content, show setup
     const appContent = document.getElementById('appContent');
