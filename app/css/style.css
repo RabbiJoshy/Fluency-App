@@ -14563,7 +14563,7 @@
             /* Scroll lives on the parent .about-project-modal so the
                scrollbar sits at the viewport's right edge. The body just
                flows naturally inside, capped at a readable width. */
-            padding: 44px 48px 80px;
+            padding: 32px 48px 80px;
             color: var(--text-secondary);
             font-family: var(--font-reading);
             font-size: 16px;
@@ -14594,30 +14594,28 @@
             letter-spacing: -0.3px;
         }
 
-        .about-project-body h2:first-child {
-            margin-top: 0;
-            display: table;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-        }
-
         .about-standalone-header {
-            max-width: 880px;
-            margin: 0 auto;
-            padding: 24px 48px 0;
+            position: relative;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin: 0 0 24px;
             box-sizing: border-box;
         }
 
-        .about-standalone-brand {
-            font-family: var(--font-emphasis);
-            font-weight: 700;
-            font-size: 16px;
-            letter-spacing: -0.2px;
-            color: var(--text-primary);
+        .about-standalone-header h2 {
+            margin: 0;
+            text-align: center;
+            display: inline-block;
+            max-width: calc(100% - 240px);
+        }
+
+        .about-standalone-header .about-standalone-app-link {
+            position: absolute;
+            right: 0;
+            top: 2px;
+            white-space: nowrap;
         }
 
         .about-standalone-app-link {
@@ -21595,8 +21593,29 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
         border-radius: 0;
     }
 
+    .about-project-body {
+        padding: 20px 18px 60px;
+    }
+
     .about-standalone-header {
-        padding: 18px 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding: 0;
+    }
+
+    .about-standalone-header h2 {
+        max-width: 100%;
+        font-size: 22px;
+    }
+
+    .about-standalone-header .about-standalone-app-link {
+        position: static;
+        transform: none;
+        align-self: flex-end;
+        order: -1;
     }
 
     .walkthrough-head {

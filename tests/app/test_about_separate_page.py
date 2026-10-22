@@ -69,6 +69,16 @@ class AboutSeparatePageTests(unittest.TestCase):
         self.assertIn('*rehenes* (hostages)', md)
         self.assertNotIn('Bad Bunny, say', md)
 
+    def test_about_header_treatment(self):
+        page = (APP / 'about.html').read_text()
+        about = (APP / 'js' / 'about-page.js').read_text()
+        css = (APP / 'css' / 'style.css').read_text()
+        self.assertNotIn('about-standalone-brand', page)
+        self.assertNotIn('about-standalone-brand', about)
+        self.assertIn('_setupAboutHeader', about)
+        self.assertIn('.about-standalone-header {', css)
+        self.assertIn('.about-standalone-header .about-standalone-app-link {', css)
+
 
 if __name__ == '__main__':
     unittest.main()
