@@ -188,7 +188,8 @@ function getLastStudySession() {
 }
 
 function renderResumeLastSetCard() {
-    if (window.fluencyRoute?.kind === 'tutorial'
+    // The About page is its own tab and never a study session.
+    if (['tutorial', 'about'].includes(window.fluencyRoute?.kind)
         || document.querySelector('#tutorialIntroModal:not(.hidden), #cardTutorialModal:not(.hidden)')) {
         document.getElementById('resumeLastSetCard')?.remove();
         return;

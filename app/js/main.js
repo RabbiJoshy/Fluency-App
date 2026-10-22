@@ -962,7 +962,7 @@ loadConfig().then(async () => {
     if (helpMoreInfoBtn) {
         helpMoreInfoBtn.addEventListener('click', () => {
             document.getElementById('helpModal').classList.add('hidden');
-            if (window.openAboutProjectModal) window.openAboutProjectModal();
+            window.openAboutPage?.();
         });
     }
     const helpStudyContent = document.querySelector('#helpStudyTabContent .help-content');

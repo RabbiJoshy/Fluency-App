@@ -3868,12 +3868,8 @@ function setupSettingsOverview() {
     });
     go('settingsAccountBtn', 'account');
     go('settingsAdminBtn', 'appData');
-    // About is a full page that replaces Settings; its back button returns
-    // to the Settings tab it was opened from.
-    document.getElementById('settingsAboutBtn')?.addEventListener('click', () => {
-        hideSettingsModal();
-        window.openAboutProjectModal?.({ returnTo: () => showSettingsModalWithTab('study') });
-    });
+    // About opens in its own tab, leaving Settings as it was.
+    document.getElementById('settingsAboutBtn')?.addEventListener('click', () => window.openAboutPage?.());
     const runImport = () => {
         if (!currentUser || currentUser.isGuest) return;
         window.openVocabularyImportModal?.();

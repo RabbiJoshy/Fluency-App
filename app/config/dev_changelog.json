@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T01:02:28+01:00",
+      "date": "2026-10-22 01:02 BST",
+      "agent": "Claude",
+      "summary": "About is its own page: opens in a new tab, looks the same for everyone, never touches sign-in",
+      "detail": [
+        "Sidebar About, Settings → About and Help → More about this project open #/about in a new tab instead of over the app.",
+        "#/about never reads your account or starts sign-in, so it looks the same signed in or not.",
+        "Removed 'Back to the app (name)', the 'Back to app' pill, and the × that showed for visitors even though it did nothing.",
+        "The 'Welcome back / Continue session' box is no longer built on the About page."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T01:00:55+01:00",
       "date": "2026-10-22 01:00 BST",
       "agent": "Claude",
@@ -334,17 +347,6 @@
       "detail": [
         "'Level' label uses the same brighter grey as the word range.",
         "‹ › buttons are narrower (38px phones, 44px wide desktop; same tap height) with no gap, so they sit beside the number's plate."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T14:38:05+01:00",
-      "date": "2026-10-21 14:38 BST",
-      "agent": "Claude",
-      "summary": "Quieter selected level tile; the Level / Words readout a touch more prominent",
-      "detail": [
-        "Selected tile: softer red outline and a faint tint instead of a full red outline and fill.",
-        "Level readout: number about 12% larger; 'Level' and 'Words 1–100' one size up, in brighter grey."
       ],
       "commit": "pending"
     }
