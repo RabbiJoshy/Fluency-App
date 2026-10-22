@@ -64,7 +64,7 @@ for (const lang of languages) {
         # Full-bleed mobile modal
         self.assertIn('#cardTutorialModal.modal { padding: 0 !important; }', css)
         # About demo card 3-column grid override against global meaning-row rule
-        self.assertIn('.about-demo-card-inner .meaning-row-regular {', css)
+        self.assertIn('.about-demo-card-inner .meaning-row.meaning-row-regular {', css)
         self.assertIn('grid-template-columns: 22px minmax(0, 1fr) 30px !important;', css)
 
     def test_walkthrough_mobile_pin_positioning_contracts(self):

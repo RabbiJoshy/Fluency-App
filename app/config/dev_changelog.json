@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T12:34:14+01:00",
+      "date": "2026-10-22 12:34 BST",
+      "agent": "Claude",
+      "summary": "About page: walkthrough lines point at the right places and fit between the banners; mini cards evenly spaced",
+      "detail": [
+        "About ignores the app's 'Bigger' text setting. It zoomed the page 15%, so the walkthrough's lines missed their elements and cards ran past the top and bottom banners.",
+        "Mini demo cards: rows read tick, word, bars again (a card-back rule had squashed them into odd columns).",
+        "Mini demo cards: 400px instead of 480px, content centred, so the back no longer has a big empty block under the example."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T08:43:08+01:00",
       "date": "2026-10-22 08:43 BST",
       "agent": "Claude",
@@ -343,18 +355,6 @@
       "detail": [
         "Every word-type row (Verb, Noun...) is now 20px text and 44px high, like a sense row, whether or not it holds shared text.",
         "The active sub-meaning keeps a light wash across its whole row as well as the rounded highlight on its text."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T19:16:20+01:00",
-      "date": "2026-10-21 19:16 BST",
-      "agent": "Claude",
-      "summary": "Card back: grouped senses whose shared text stays in the group row (dejar) get the same left column and rounded active marker; word-type row is larger",
-      "detail": [
-        "dejar: 'to leave' stays centred over a left-aligned column of to put / to forget / to bequeath; the chosen one is a rounded rectangle just left of the column and the group drops to a light wash.",
-        "Shared-context groups (eh) get a bracketed left-aligned caption over centred translations.",
-        "The word-type row, when it holds the shared translation, is now 20px and 44px high like a sense row."
       ],
       "commit": "pending"
     }

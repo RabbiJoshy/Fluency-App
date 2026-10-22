@@ -33,12 +33,10 @@
             root.dataset.theme = theme;
             root.style.colorScheme = theme;
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
-            var textSize = 'normal';
-            try {
-                var savedSize = localStorage.getItem('fluency_text_size_v1');
-                if (savedSize === 'large' || savedSize === 'normal') textSize = savedSize;
-            } catch (_) {}
-            root.dataset.textSize = textSize;
+            // Text size is an app setting (it zooms the page); About is not
+            // part of the app and is always shown at normal size, which the
+            // walkthrough's measured labels depend on.
+            root.dataset.textSize = 'normal';
         })();
     </script>
     <link rel="stylesheet" href="css/style.css?v=20261014clarity">

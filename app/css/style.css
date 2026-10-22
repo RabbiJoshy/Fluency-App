@@ -14793,10 +14793,12 @@
             max-width: 100%;
         }
 
+        /* Sized to the backs (banco ~300px, cielo ~365px with its song
+           line); at 480px both left a large empty block under the example. */
         .about-demo-card-inner {
             width: 340px;
             max-width: 100%;
-            height: 480px;
+            height: 400px;
             margin: 0 auto;
             perspective: 1000px;
             position: relative;
@@ -14816,8 +14818,10 @@
             padding: 28px 20px;
         }
 
+        /* Centred, so a shorter back (banco) sits in the middle of the card
+           rather than leaving its spare room all at the bottom. */
         .about-demo-card-inner .card-back {
-            justify-content: flex-start;
+            justify-content: center;
             padding: 22px 18px 20px;
         }
 
@@ -14900,7 +14904,11 @@
            tinted in the part-of-speech colour, the chosen one ticked and
            outlined, the live four-bar meter at the right. The colour comes
            from --sense-match-rgb, set per card by _runAboutDemo(). */
-        .about-demo-card-inner .meaning-row-regular {
+        /* .meaning-row.meaning-row-regular (the live card's one-column
+           rows) is as specific as a plain .about-demo-card-inner
+           .meaning-row-regular and comes later, so it squashed the demo's
+           tick / word / bars into odd columns. Match its two classes. */
+        .about-demo-card-inner .meaning-row.meaning-row-regular {
             display: grid !important;
             grid-template-columns: 22px minmax(0, 1fr) 30px !important;
             grid-template-rows: auto !important;

@@ -44,6 +44,17 @@ class AboutSeparatePageTests(unittest.TestCase):
         sw = (APP / 'service-worker.js').read_text()
         self.assertIn("isAppShell ? scopedPath('/index.html') : request", sw)
 
+    def test_about_ignores_the_apps_text_size_zoom(self):
+        # "Bigger" text zooms the page; the walkthrough's measured leader
+        # lines then missed their elements and cards ran past the banners.
+        page = (APP / 'about.html').read_text()
+        self.assertIn("root.dataset.textSize = 'normal';", page)
+        self.assertNotIn('fluency_text_size_v1', page)
+
+    def test_demo_rows_outrank_the_live_card_row_grid(self):
+        css = (APP / 'css' / 'style.css').read_text()
+        self.assertIn('.about-demo-card-inner .meaning-row.meaning-row-regular {', css)
+
 
 if __name__ == '__main__':
     unittest.main()
