@@ -1,1 +1,1254 @@
-.app-loading-mark,.app-loading-mark.is-free{width:104px;height:104px;margin-bottom:20px}.app-loading-mark-text.is-flag{font-size:88px}.app-loading-mark-text.is-flag .flag-img{width:104px;height:78px}.card-front .front-lemma-pair,.card-front .front-lemma-pair.is-pos-only{background:none;border:0;padding:0;min-height:0}.card-front .front-lemma-pair .front-lemma-name{color:var(--text-primary)}.card-front .front-lemma-pair .front-lemma-from{color:var(--text-primary);opacity:0.75}.card-front .front-lemma-pair .card-pos{background:color-mix(in srgb,rgb(var(--front-pos-rgb,160,160,160)) 52%,#10151a);border-color:transparent;color:#fff;font-weight:700;text-shadow:none}.card-front .front-lemma-pair.is-companion-split{opacity:0.75;filter:none;cursor:pointer;pointer-events:auto}.card-front .front-lemma-pair.is-companion-split:hover{opacity:1}.card-front .front-lemma-pair.is-companion-split:focus-visible{outline:2px solid var(--accent-primary);outline-offset:3px}.front-lemma-from,.pos-collapsible .pos-lemma-from{color:var(--text-secondary);opacity:0.85;font-weight:400;font-size:0.85em;line-height:inherit;align-self:baseline}.pos-collapsible .pos-lemma-from{margin:0 5px 0 0;align-self:center;line-height:1}.meaning-row.meaning-row-known,.meaning-row.is-known-meaning,.group-card-varying-cell.is-known-subsense{opacity:0.52 !important;filter:grayscale(1);animation:none}.study-level-label{flex:none;color:var(--text-secondary);font:700 20px/1.2 var(--font-reading);white-space:nowrap}.study-level-label[hidden]{display:none}.card-back-scrubber{gap:12px}.account-ai{display:flex;align-items:center;gap:16px;margin:18px 0 0;padding:18px 0;border-top:1px solid var(--border-color);border-bottom:0}.account-avatar--ai{display:grid !important;place-items:center;flex:none;width:72px;height:72px;border-radius:50%;overflow:hidden;transition:background 0.2s ease,color 0.2s ease}.account-avatar--ai.is-chatgpt{background:#10a37f;color:#ffffff}.account-avatar--ai.is-claude{background:#d97757;color:#ffffff}.account-avatar--ai svg{width:38px;height:38px;display:block}.preferred-ai-actions{display:flex;align-items:center;gap:12px;margin-left:auto}.preferred-ai-dropdown{position:relative;display:inline-block}.preferred-ai-trigger{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:10px 16px;border:1px solid var(--border-color);border-radius:999px;background:var(--bg-card);color:var(--text-primary);font:600 14px/1 var(--font-reading);cursor:pointer;transition:all 0.15s ease}.preferred-ai-trigger:hover{border-color:var(--text-secondary);background:var(--bg-tertiary)}.preferred-ai-trigger-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none}.preferred-ai-trigger-icon svg{width:18px;height:18px;display:block}.account-ai:has(.account-avatar--ai.is-chatgpt) .preferred-ai-trigger-icon{color:#10a37f}.account-ai:has(.account-avatar--ai.is-claude) .preferred-ai-trigger-icon{color:#d97757}.preferred-ai-chevron{color:var(--text-muted);transition:transform 0.15s ease}.preferred-ai-dropdown.is-open .preferred-ai-chevron{transform:rotate(180deg)}.preferred-ai-menu{position:absolute;top:calc(100% + 6px);right:0;min-width:160px;padding:6px;border:1px solid var(--border-color);border-radius:14px;background:var(--bg-card);box-shadow:0 8px 24px rgba(0,0,0,0.35);z-index:100;display:flex;flex-direction:column;gap:3px}.preferred-ai-menu[hidden]{display:none !important}.preferred-ai-option{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border:0;border-radius:9px;background:transparent;color:var(--text-primary);font:600 14px/1.2 var(--font-reading);text-align:left;cursor:pointer;transition:background 0.12s ease}.preferred-ai-option:hover{background:var(--bg-tertiary)}.preferred-ai-option.is-selected{background:color-mix(in srgb,var(--text-primary) 8%,transparent);font-weight:700}.ai-menu-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none}.ai-menu-icon svg{width:18px;height:18px;display:block}.ai-menu-icon--chatgpt{color:#10a37f}.ai-menu-icon--claude{color:#d97757}#step1:not(.language-summary-active) #step1Header{width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px;margin-bottom:16px;border:1px solid var(--border-color);border-radius:16px;background:var(--bg-card);text-align:left}#step1:not(.language-summary-active) #step1Title{font-size:clamp(18px,3vw,22px);line-height:1.35}#step1:not(.language-summary-active) #step1PromptArrow{margin-left:auto;position:static}.app-brand-icon{display:block;width:100%;height:100%;object-fit:contain;border-radius:inherit}.app-loading-mark-text.is-app-logo{display:block;width:100%;height:100%;font-size:0;background:url('../icons/icon-192.png') center / contain no-repeat}.app-loading-mark:has(.is-app-logo):not(.has-art){border:0;background:transparent;box-shadow:none}.auth-welcome-mark:has(.app-brand-icon){padding:0;overflow:hidden;border:0;background:transparent;box-shadow:none}.pos-collapsible .pos-section-head{align-items:center}.split-usage-share{pointer-events:auto;align-self:center;font:500 12px/1.3 var(--font-reading);color:var(--text-secondary);white-space:nowrap}.sense-cycle-choices{display:flex;flex-direction:column;gap:4px}.sense-cycle-choice{appearance:none;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--text-primary);font:inherit;padding:4px 6px;cursor:pointer}.sense-cycle-choice.is-selected{border-color:rgb(var(--sense-match-rgb))}.sense-cycle-choice.is-known-subsense{opacity:.52;filter:grayscale(1)}.sense-cycle-choice .known-sense-tag{margin-left:8px}.sense-cycle-choice:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}.study-session-level{white-space:nowrap;font:500 .8em/1.2 var(--font-reading);color:var(--text-secondary)}.study-set-start-label{display:inline-flex;align-items:center;font-size:16px;font-weight:750;line-height:1}.study-session-divider{display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;line-height:1;opacity:.65;user-select:none}.study-session-count{display:inline-flex;align-items:center;font-size:14px;font-weight:600;line-height:1;opacity:.95}.review-deck-upcoming{font:400 12px/1.4 var(--font-reading);color:var(--text-secondary)}.session-action-pill:not(:has(.session-length-chip)) > .study-set-start,.session-action-pill:not(:has(.session-length-chip)) > .study-set-review,.session-action-pill > .study-set-start:only-child,.session-action-pill > .study-set-review:only-child{border-radius:12px !important}.cbs-end-label{display:none !important}#step4 .session-action-pill{display:inline-flex;align-items:stretch;width:auto;max-width:100%;position:relative;border-radius:12px;justify-self:center;margin:0 auto}#step4 .session-action-pill > .study-set-start{width:auto;border-radius:0 12px 12px 0 !important;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 20px;text-align:center;min-height:52px;z-index:1}#step4 .session-action-pill:not(:has(.session-length-chip)) > .study-set-start,#step4 .session-action-pill > .study-set-start:only-child{border-radius:12px !important}#step4 .session-action-pill > .session-length-chip{flex:none;border-radius:12px 0 0 12px;border-left:0;border-right:1px solid rgba(0,0,0,.18);min-height:52px;transition:filter 0.15s ease,background-color 0.15s ease;z-index:2}#step4 .session-action-pill > .session-length-chip:hover{filter:brightness(1.12)}#reviewDeckBody .session-action-pill{display:inline-flex;align-items:stretch;width:auto;max-width:100%;border-radius:12px;align-self:center;margin:0 auto}#reviewDeckBody .session-action-pill > .session-length-chip{flex:none;border-radius:12px 0 0 12px;border-left:0;border-right:1px solid rgba(0,0,0,.18);min-height:48px}#reviewDeckBody .session-action-pill > .study-set-review{flex:none;width:auto;min-width:0;min-height:48px;padding:10px 22px;border-radius:0 12px 12px 0;display:inline-flex;align-items:center;justify-content:center;font:750 15px/1 var(--font-emphasis)}#reviewDeckBody .session-action-pill:not(:has(.session-length-chip)) > .study-set-review,#reviewDeckBody .session-action-pill > .study-set-review:only-child{border-radius:12px !important}#step2 .level-choosing #step4{margin:0}#step2 .level-choosing .study-set-panel{border:0;border-radius:0;background:transparent;box-shadow:none}#step2 .level-choosing .study-set-choice{background:transparent}#step2 #setupOptions{margin:0;padding:0;border:0;border-top:1px solid color-mix(in srgb,var(--border-color) 45%,transparent);border-radius:0;background:color-mix(in srgb,var(--bg-secondary,var(--bg-card)) 40%,transparent);box-shadow:none}#setupOptions .fast-track-hub-row{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:8px 14px 10px;border:0;border-radius:0;background:transparent;box-shadow:none}.smart-skip-toggle-btn{appearance:none;-webkit-appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:52px;padding:0 22px;border-radius:12px;cursor:pointer;border:1px solid var(--border-color);background:color-mix(in srgb,var(--bg-card) 85%,transparent);color:var(--text-secondary);transition:background 0.18s ease,color 0.18s ease,border-color 0.18s ease,box-shadow 0.18s ease,transform 0.1s ease}.smart-skip-toggle-btn:hover{border-color:color-mix(in srgb,var(--text-primary) 30%,var(--border-color));color:var(--text-primary);transform:translateY(-1px)}.smart-skip-toggle-btn:active{transform:translateY(0)}.smart-skip-toggle-btn.is-on{background:var(--accent-primary);border-color:var(--accent-primary);color:var(--accent-primary-text,#ffffff);box-shadow:0 2px 14px color-mix(in srgb,var(--accent-primary) 35%,transparent)}.smart-skip-toggle-btn.is-on:hover{background:color-mix(in srgb,var(--accent-primary) 88%,white);border-color:var(--accent-primary);color:var(--accent-primary-text,#ffffff);filter:brightness(1.05)}.smart-skip-toggle-btn:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}.smart-skip-toggle-btn .smart-skip-status-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--text-muted);background:transparent;flex-shrink:0;box-sizing:border-box;transition:all 0.2s cubic-bezier(0.16,1,0.3,1)}.smart-skip-toggle-btn.is-on .smart-skip-status-dot{border-color:#ffffff;background:#ffffff;box-shadow:0 0 10px rgba(255,255,255,0.95),0 0 3px #ffffff}.smart-skip-toggle-btn .smart-skip-start-label{display:inline-flex;align-items:center;font:750 16px/1 var(--font-emphasis)}.smart-skip-toggle-btn.is-on .smart-skip-start-label{color:#ffffff}.smart-skip-toggle-btn .study-session-divider{display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;line-height:1;opacity:.6;user-select:none}.smart-skip-toggle-btn.is-on .study-session-divider{color:#ffffff;opacity:0.75}.smart-skip-toggle-btn .smart-skip-state-label{display:inline-flex;align-items:center;font:750 15px/1 var(--font-emphasis);color:var(--text-muted);min-width:24px}.smart-skip-toggle-btn.is-on .smart-skip-state-label{color:#ffffff}:root[data-theme="light"] .smart-skip-toggle-btn{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.14)}:root[data-theme="light"] .smart-skip-toggle-btn .smart-skip-status-dot{border-color:#64748b}:root[data-theme="light"] .smart-skip-toggle-btn.is-on{background:var(--accent-primary);border-color:var(--accent-primary);color:#ffffff;box-shadow:0 2px 14px color-mix(in srgb,var(--accent-primary) 30%,transparent)}:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-status-dot{background:#ffffff;border-color:#ffffff;box-shadow:0 0 10px rgba(255,255,255,0.95),0 0 3px #ffffff}:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-start-label,:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-state-label,:root[data-theme="light"] .smart-skip-toggle-btn.is-on .study-session-divider{color:#ffffff}#reviewDeckBody .review-deck-content{align-items:center;text-align:center}#reviewDeckBody .review-deck-summary{justify-content:center;text-align:center;width:auto;margin:0 auto;gap:6px}#reviewDeckBody .review-deck-summary:hover{transform:translateY(-1px)}#reviewDeckBody .review-deck-summary-copy,#reviewDeckBody .review-deck-summary-text{text-align:center}#setupOptions .smart-skip-summary-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px 6px;min-width:0}.smart-skip-dot{color:var(--text-muted);font:600 13px/1 var(--font-reading)}#setupOptions .smart-skip-hub-summary{margin:0;text-align:center;color:var(--text-secondary);font:400 12.5px/1.35 var(--font-reading)}#setupOptions .smart-skip-details-btn{flex-shrink:0;display:inline-flex;align-items:center;gap:3px;min-height:24px;padding:2px 4px;margin:-2px -4px;border:0;border-radius:6px;background:transparent;color:var(--text-secondary);font:600 13px/1.25 var(--font-reading);cursor:pointer}#setupOptions .smart-skip-details-btn:hover{color:var(--text-primary)}#setupOptions .smart-skip-details-btn:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}.level-help-section{margin:16px 0}.level-help-section h4{margin:0 0 6px;color:var(--text-primary);font:700 16px/1.3 var(--font-emphasis)}.level-help-section > p{margin:0;color:var(--text-secondary);font:400 14px/1.5 var(--font-reading)}.level-help-legend{margin-top:10px}.step-info-tooltip-inner .level-help-session-note{margin:16px 0 0;color:var(--text-secondary);font:400 13px/1.5 var(--font-reading)}.study-legend-info{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:2px;margin-left:4px;vertical-align:middle;background:transparent;border:0;color:var(--text-secondary);cursor:pointer}.study-legend-info svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.study-legend-info:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}.step-info-tooltip-inner .level-deck-total{display:block;margin-top:12px}.step-info-tooltip-inner .level-deck-total[hidden]{display:none}#settingsModal .settings-default-row,#settingsModal .settings-link-row,#settingsModal .settings-overview-footer .appearance-settings-card,#settingsModal .settings-words-saved-head{box-sizing:border-box;padding-inline:16px}#levelColoursTooltip .info-point-badge,#step2Tooltip .info-point-badge{min-width:88px;border:1px solid var(--border-color)}#levelColoursTooltip .info-point-badge.is-new,#step2Tooltip .info-point-badge.is-new{background:var(--set-new);color:#17202a}#levelColoursTooltip .info-point-badge.is-practice,#step2Tooltip .info-point-badge.is-practice{background:var(--set-review);color:#17202a}#levelColoursTooltip .info-point-badge.is-done,#step2Tooltip .info-point-badge.is-done{background:var(--set-known);color:#fff}#levelColoursTooltip .info-point-badge.is-estimated,#step2Tooltip .info-point-badge.is-estimated{background:var(--set-estimated);color:#17202a}#levelColoursTooltip .info-point-badge.is-skip,#step2Tooltip .info-point-badge.is-skip{background:var(--set-skipped);color:#fff}#levelEstimatedLegend[hidden],#step2EstimatedLegend[hidden]{display:none}.smart-skip-browser-actions:has(> #smartSkipResultsCount:empty):has(> button[hidden]){display:none}.pos-short-label{display:none}.card-front .front-pos-joined{display:inline-flex;gap:2px;max-width:100%}.card-front .front-pos-joined.is-short .pos-full-label{display:none}.card-front .front-pos-joined.is-short .pos-short-label{display:inline}.card-front .front-pos-joined > .front-pos-unit:not(:last-child) .card-pos{border-top-right-radius:0;border-bottom-right-radius:0}.card-front .front-pos-joined > .front-pos-unit:not(:first-child) .card-pos{border-top-left-radius:0;border-bottom-left-radius:0}#fastModeModal.hidden{display:none !important}.smart-skip-preview{z-index:2100 !important;backdrop-filter:blur(8px) !important;-webkit-backdrop-filter:blur(8px) !important;background:rgba(8,12,20,0.65) !important}.smart-skip-preview[hidden]{display:none !important}.smart-skip-preview-card{z-index:2101 !important;box-shadow:0 24px 64px rgba(0,0,0,0.5),0 0 0 1px color-mix(in srgb,var(--border-color) 45%,transparent) !important}#fastModeModal[data-dock]{justify-content:stretch !important;align-items:stretch !important;padding:0 !important}#fastModeModal[data-dock] > .modal-content{width:100% !important;max-width:none !important;height:100% !important;max-height:none !important}#fastModeModal.modal:not(.hidden){position:fixed !important;inset:0 !important;width:100% !important;height:auto !important;max-width:none !important;margin:0 !important;padding:0 !important;background:var(--bg-primary,var(--bg-card)) !important;z-index:1050 !important;overflow:hidden !important;display:flex !important;flex-direction:column !important;box-sizing:border-box !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important}@media (min-width:900px){body.desktop-workspace #fastModeModal.desktop-workspace-page:not(.hidden),#fastModeModal.modal:not(.hidden){left:var(--desktop-nav-width,0px) !important;right:0 !important;width:auto !important}}#fastModeModal:not(.hidden) > .modal-content,#fastModeModal:not(.hidden) .fast-mode-page{width:100% !important;max-width:none !important;flex:1 1 auto !important;height:100% !important;min-height:0 !important;max-height:none !important;margin:0 !important;padding:0 !important;background:var(--bg-primary,var(--bg-card)) !important;border:0 !important;box-shadow:none !important;border-radius:0 !important;display:flex !important;flex-direction:column !important;overflow-y:auto !important;overflow-x:hidden !important;-webkit-overflow-scrolling:touch !important;overscroll-behavior-y:contain !important}:root:not([data-theme="light"]) #fastModeModal{--bg-primary:#000;--bg-card:#0d0e10;--bg-card-hover:#17191c;--bg-tertiary:#0d0e10;--border-color:#24272b;--border-light:#24272b}#fastModeModal .smart-skip-body{box-sizing:border-box;width:100%;max-width:1180px;margin:0 auto;padding:0 16px calc(env(safe-area-inset-bottom,0px) + 32px);display:block}#fastModeModal .smart-skip-body .smart-skip-header-row{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;margin:0 -16px 12px;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;background:var(--bg-primary,var(--bg-card))}#fastModeModal .smart-skip-body .smart-skip-header-row > h2{position:static;margin:0;padding:0;background:none;text-align:left;font:700 var(--ss-title)/1.2 var(--font-emphasis);letter-spacing:-0.01em;color:var(--text-primary)}#fastModeModal .smart-skip-summary{flex:1;min-width:0;color:var(--text-muted);font:500 var(--ss-text)/1.2 var(--font-reading);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#fastModeModal .smart-skip-master{display:inline-flex;align-items:center;gap:8px;flex:none}#fastModeModal .smart-skip-master-state{color:var(--text-secondary);font:600 var(--ss-text)/1 var(--font-reading)}#fastModeModal .smart-skip-header-row .fast-mode-close{position:static;flex:none;display:grid;place-items:center;width:34px;height:34px;margin:0 0 0 4px;padding:0;border:1px solid var(--border-color);border-radius:50%;background:var(--bg-card);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;color:var(--text-secondary);line-height:1;cursor:pointer}#fastModeModal .smart-skip-header-row .fast-mode-close:hover{color:var(--text-primary);background:var(--bg-card-hover)}#fastModeModal .smart-skip-shortcuts{display:block;margin:0;padding:0;border:1px solid var(--border-color);border-radius:12px;background:var(--bg-card);box-shadow:none;overflow:visible}#fastModeModal .smart-skip-shortcut{margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none}#fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut + .smart-skip-shortcut,#fastModeModal .smart-skip-shortcuts > .smart-skip-more-options,#fastModeModal .smart-skip-more-rules > .smart-skip-shortcut + .smart-skip-shortcut{border-top:1px solid var(--border-color)}#fastModeModal .smart-skip-shortcut-row{display:flex;align-items:center;gap:8px;min-height:50px;padding:0 12px 0 14px}#fastModeModal .smart-skip-shortcut-name{flex:1;min-width:0;padding:0;color:var(--text-primary);font:600 var(--ss-text)/1.25 var(--font-reading);white-space:normal}#fastModeModal .smart-skip-info{flex:none;display:grid;place-items:center;width:30px;height:30px;margin:0 -2px;padding:0;border:0;border-radius:50%;background:none;color:var(--text-muted);cursor:pointer}#fastModeModal .smart-skip-info:hover,#fastModeModal .smart-skip-info[aria-expanded="true"]{color:var(--text-primary);background:var(--bg-card-hover)}#fastModeModal .smart-skip-info svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}#fastModeModal .smart-skip-shortcut-count,#fastModeModal .smart-skip-shortcut-count:not(:empty){flex:none;padding:0;border:0;border-radius:0;background:none;color:var(--text-muted);font:500 var(--ss-text)/1 var(--font-reading);font-variant-numeric:tabular-nums;white-space:nowrap}#fastModeModal .smart-skip-shortcut > .fast-mode-none{margin:0;padding:0 14px 12px}#fastModeModal .smart-skip-shortcut-detail{display:none;gap:10px;padding:0;border:0}#fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer{margin:0;color:var(--text-secondary);font:400 var(--ss-text)/1.5 var(--font-reading);opacity:1}#fastModeModal .smart-skip-shortcut-detail em{color:var(--text-primary);font-style:normal;font-weight:600}#fastModeModal .smart-skip-sheet-title{margin:0;color:var(--text-primary);font:700 var(--ss-sheet-title)/1.25 var(--font-emphasis)}#fastModeModal .smart-skip-sheet-done{width:100%;min-height:44px;margin-top:4px;border:1px solid var(--border-color);border-radius:10px;background:var(--bg-card-hover);color:var(--text-primary);font:600 var(--ss-text)/1 var(--font-reading);cursor:pointer}#fastModeModal .known-languages-context{margin:2px 0 0;padding:0;border:0;background:none;box-shadow:none}#fastModeModal .known-languages-bar-header{margin:0 0 6px}#fastModeModal .known-languages-bar-title{color:var(--text-muted);font:600 var(--ss-text)/1 var(--font-reading);letter-spacing:0;text-transform:none}#fastModeModal .known-languages-folded-row{display:flex;flex-wrap:wrap;gap:6px}#fastModeModal .known-language-chip,#fastModeModal .known-language-add-btn{display:inline-flex;align-items:center;gap:3px;min-height:30px;padding:0 11px;border:1px solid var(--border-color);border-radius:999px;background:none;color:var(--text-secondary);font:500 var(--ss-text)/1 var(--font-reading);cursor:pointer}#fastModeModal .known-language-chip.is-active{border-color:color-mix(in srgb,var(--accent-primary) 45%,transparent);background:color-mix(in srgb,var(--accent-primary) 14%,transparent);color:var(--text-primary)}#fastModeModal .known-language-chip-status{color:var(--text-muted);font-weight:700}#fastModeModal .known-language-chip.is-active .known-language-chip-status{color:var(--accent-primary)}#fastModeModal .known-language-add-btn{border-style:dashed;color:var(--text-muted)}#fastModeModal .known-language-add-plus{font-weight:700}#fastModeModal .smart-skip-more-options{display:flex;align-items:center;gap:8px;width:100%;min-height:46px;margin:0;padding:0 12px 0 14px;border:0;border-radius:0 0 12px 12px;background:none;box-shadow:none;color:var(--text-secondary);font:500 var(--ss-text)/1 var(--font-reading);text-align:left;cursor:pointer}#fastModeModal .smart-skip-more-options[hidden],#fastModeModal .smart-skip-more-rules[hidden]{display:none}#fastModeModal .smart-skip-more-options > span:first-child{flex:1}#fastModeModal .smart-skip-more-state:not(:empty){padding:0;background:none;color:var(--text-muted)}#fastModeModal .smart-skip-more-options svg{flex:none;width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:0.7}#fastModeModal .smart-skip-more-rules{display:none}#fastModeModal .smart-skip-more-title{margin:0;color:var(--text-primary);font:700 var(--ss-sheet-title)/1.25 var(--font-emphasis)}#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row{padding:0;min-height:44px}#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail{display:block;padding:0 0 12px;margin-top:-4px}#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail .fast-mode-explainer{color:var(--text-muted)}#fastModeModal .smart-skip-sheet-backdrop{position:fixed;inset:0;z-index:1070;background:rgba(6,9,14,0.55)}#fastModeModal .smart-skip-sheet-backdrop[hidden]{display:none}#fastModeModal .smart-skip-shortcut-detail.is-sheet-open,#fastModeModal .smart-skip-more-rules.is-sheet-open{position:fixed;left:0;right:0;bottom:0;z-index:1071;display:grid;gap:12px;max-height:85dvh;overflow-y:auto;box-sizing:border-box;padding:22px 18px calc(env(safe-area-inset-bottom,0px) + 16px);border:1px solid var(--border-color);border-bottom:0;border-radius:20px 20px 0 0;background:var(--bg-card);box-shadow:0 -12px 40px rgba(0,0,0,0.35);animation:smart-skip-preview-up 0.18s ease-out}#fastModeModal .smart-skip-more-rules.is-sheet-open{gap:4px}#fastModeModal .smart-skip-more-rules.is-sheet-open > .smart-skip-more-title{margin-bottom:6px}#fastModeModal .smart-skip-more-rules.is-sheet-open > .smart-skip-sheet-done{margin-top:10px}#fastModeModal .is-sheet-open:focus{outline:none}#fastModeModal .smart-skip-words{display:grid;gap:8px;margin:14px 0 0}#fastModeModal .smart-skip-words > .fast-mode-explainer{margin:0;color:var(--text-muted)}#fastModeModal .smart-skip-panel{border:1px solid var(--border-color);border-radius:12px;background:var(--bg-card);overflow:clip}#fastModeModal .smart-skip-browser-controls{position:static;display:grid;gap:8px;padding:10px 12px;border:0;background:none}#fastModeModal .smart-skip-toolbar{display:block;min-width:0}#fastModeModal .smart-skip-toolbar[hidden]{display:none}#fastModeModal .smart-skip-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -12px;padding:0 12px}#fastModeModal .smart-skip-chips::-webkit-scrollbar{display:none}#fastModeModal .smart-skip-cat{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 12px;border:1px solid var(--border-color);border-radius:999px;background:none;color:var(--text-secondary);font:600 var(--ss-text)/1 var(--font-reading);white-space:nowrap;cursor:pointer}#fastModeModal .smart-skip-cat span{color:var(--text-muted);font-weight:500;font-variant-numeric:tabular-nums}#fastModeModal .smart-skip-cat:hover{color:var(--text-primary)}#fastModeModal .smart-skip-cat[aria-selected="true"]{border-color:color-mix(in srgb,var(--accent-primary) 50%,transparent);background:color-mix(in srgb,var(--accent-primary) 15%,transparent);color:var(--text-primary)}#fastModeModal .smart-skip-cat[aria-selected="true"] span{color:var(--text-secondary)}#fastModeModal .smart-skip-lang-btn{display:flex;gap:2px;width:auto;height:auto;margin:0;padding:2px;border:0;border-radius:10px;background:color-mix(in srgb,var(--text-primary) 7%,transparent);box-shadow:none}#fastModeModal .smart-skip-lang-btn[hidden]{display:none}#fastModeModal .smart-skip-lang-btn button{flex:1;min-height:30px;padding:0 12px;border:0;border-radius:8px;background:none;color:var(--text-secondary);font:600 var(--ss-text)/1 var(--font-reading);white-space:nowrap;cursor:pointer}#fastModeModal .smart-skip-lang-btn button span{color:var(--text-muted);font-weight:500;font-variant-numeric:tabular-nums}#fastModeModal .smart-skip-lang-btn button[aria-pressed="true"]{background:var(--bg-card);color:var(--text-primary);box-shadow:0 0 0 1px var(--border-color),0 1px 3px rgba(0,0,0,0.2)}#fastModeModal #fastTrackDeckCard{margin:0;padding:0;border:0;background:none;box-shadow:none}#fastModeModal .smart-skip-panel .smart-skip-table{border:0;border-radius:0;background:none;box-shadow:none}#fastModeModal .smart-skip-panel .smart-skip-list{border:0;border-radius:0;background:none;box-shadow:none}#fastModeModal .smart-skip-panel .smart-skip-head{height:32px;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);background:color-mix(in srgb,var(--text-primary) 4%,transparent);color:var(--text-muted);font:600 var(--ss-text)/1 var(--font-reading)}#fastModeModal .smart-skip-panel .smart-skip-row{height:auto;min-height:44px;border-bottom:0}#fastModeModal .smart-skip-panel .smart-skip-row:hover{background:var(--bg-card-hover)}#fastModeModal .smart-skip-panel .smart-skip-w{font:600 var(--ss-text)/1.2 var(--font-reading)}#fastModeModal .smart-skip-panel .smart-skip-empty{padding:22px 14px;border-top:1px solid var(--border-color)}@media (min-width:900px){#fastModeModal{--ss-side-w:clamp(360px,33vw,480px)}#fastModeModal .smart-skip-body{display:grid;grid-template-columns:var(--ss-side-w) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:0;flex:1 1 auto;height:100%;min-height:0;max-width:none;padding:0;overflow:hidden}#fastModeModal .smart-skip-body .smart-skip-header-row{grid-column:1 / -1;grid-row:1;position:relative;box-sizing:border-box;height:68px;margin:0;padding:0 28px}#fastModeModal .smart-skip-body .smart-skip-header-row > h2{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap}#fastModeModal .smart-skip-summary{flex:1;text-align:right}#fastModeModal .smart-skip-body > .smart-skip-shortcuts{grid-column:1;grid-row:2;position:static;align-self:stretch;box-sizing:border-box;height:auto;min-height:0;max-height:none;overflow-y:auto;padding:8px 8px 32px 24px;border:0;border-radius:0;background:none}#fastModeModal .smart-skip-body > .smart-skip-words{grid-column:2;grid-row:2;align-self:stretch;display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;min-height:0;overflow-y:auto;margin:0;padding:8px 28px 28px 12px}#fastModeModal .smart-skip-body > .smart-skip-words > .smart-skip-panel{flex:1 0 auto}#fastModeModal .smart-skip-body > .fast-mode-admin-details{grid-column:1 / -1;grid-row:3;margin:0 28px 16px}#fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut{border:1px solid var(--border-color);border-radius:14px;background:var(--bg-card);padding:16px 18px 18px}#fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut + .smart-skip-shortcut{margin-top:12px;border-top:1px solid var(--border-color)}#fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-row{min-height:0;padding:0;gap:10px}#fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-detail{display:grid;gap:12px;padding:8px 0 0}#fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .fast-mode-none{padding:8px 0 0}#fastModeModal .smart-skip-info,#fastModeModal .smart-skip-sheet-title,#fastModeModal .smart-skip-sheet-done,#fastModeModal .smart-skip-sheet-backdrop,#fastModeModal .smart-skip-more-title{display:none}#fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer{line-height:1.55}#fastModeModal .known-language-chip,#fastModeModal .known-language-add-btn{min-height:34px;padding:0 13px}#fastModeModal .smart-skip-switch{width:44px;height:26px}#fastModeModal .smart-skip-switch::after{width:20px;height:20px}#fastModeModal .smart-skip-switch[aria-checked="true"]::after{transform:translateX(18px)}#fastModeModal .smart-skip-shortcuts > .smart-skip-more-options{margin-top:14px;min-height:44px;padding:0 19px;border:0;border-radius:8px}#fastModeModal .smart-skip-shortcuts > .smart-skip-more-options:hover{color:var(--text-primary)}#fastModeModal .smart-skip-more-options svg{transition:transform 0.15s ease}#fastModeModal .smart-skip-more-options[aria-expanded="true"] svg{transform:rotate(90deg)}#fastModeModal .smart-skip-more-rules:not([hidden]){display:none}#fastModeModal .smart-skip-more-rules.is-expanded:not([hidden]){display:block;padding:0 19px}#fastModeModal .smart-skip-more-rules > .smart-skip-shortcut + .smart-skip-shortcut{border-top:0}#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row{min-height:42px}#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-name{font-weight:500}#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail{padding:0 0 10px;margin-top:-2px}#fastModeModal .smart-skip-panel .smart-skip-table{--ss-cols:minmax(0,1.2fr) minmax(0,1fr) 76px}#fastModeModal .smart-skip-panel .smart-skip-table.has-tag{--ss-cols:minmax(0,1.2fr) minmax(0,1fr) 124px 76px}#fastModeModal .smart-skip-panel .smart-skip-table[data-cat="lemma"]{--ss-cols:minmax(0,1fr) minmax(0,1fr) minmax(0,1.4fr) 76px}#fastModeModal .smart-skip-lang-btn{display:inline-flex;justify-self:start}#fastModeModal .smart-skip-lang-btn button{flex:none;min-height:34px;padding:0 14px}#fastModeModal .smart-skip-chips{flex-wrap:wrap;overflow:visible;margin:0;padding:0}#fastModeModal .smart-skip-browser-controls{position:sticky;top:0;z-index:2;gap:10px;padding:14px 16px;background:var(--bg-card)}#fastModeModal .smart-skip-cat{min-height:36px;padding:0 14px}#fastModeModal .smart-skip-panel .smart-skip-head{height:38px;padding:0 34px 0 16px}#fastModeModal .smart-skip-panel .smart-skip-row{min-height:52px;padding:0 34px 0 16px}}#fastModeModal{--ss-text:15px;--ss-title:21px;--ss-sheet-title:18px}@media (min-width:900px){#fastModeModal{--ss-text:19px;--ss-title:28px;--ss-sheet-title:21px}}#fastModeModal .smart-skip-body:is( .smart-skip-summary,.smart-skip-master-state,.smart-skip-shortcut-name,.smart-skip-shortcut-count,.fast-mode-explainer,.fast-mode-none,.known-languages-bar-title,.known-language-chip,.known-language-add-btn,.smart-skip-more-options,.smart-skip-more-state,.smart-skip-cat,.smart-skip-lang-btn button,.smart-skip-source-picker,.smart-skip-source-picker select,.smart-skip-results-count,.range-btn-new,.smart-skip-head,.smart-skip-w,.smart-skip-g,.smart-skip-rank,.smart-skip-tag,.smart-skip-forms,.smart-skip-nforms,.smart-skip-more,.smart-skip-chip,.smart-skip-expand-open,.smart-skip-empty ){font-size:var(--ss-text)}#fastModeModal .smart-skip-body:is(.smart-skip-cat,.smart-skip-lang-btn button) span{font-size:inherit}#fastModeModal .smart-skip-body .smart-skip-shortcut-detail em{font-size:inherit}@media (min-width:900px) and (max-width:1279px){#fastModeModal{--ss-side-w:300px;--ss-text:17px;--ss-title:24px}#fastModeModal .smart-skip-panel .smart-skip-table.has-tag{--ss-cols:minmax(0,1.2fr) minmax(0,1fr) 100px 60px}#fastModeModal .smart-skip-panel .smart-skip-table{--ss-cols:minmax(0,1.2fr) minmax(0,1fr) 60px}}@media (min-width:900px){.app-loading-card{width:min(100%,440px)}.app-loading-mark,.app-loading-mark.is-free{width:144px;height:144px;margin-bottom:28px}.app-loading-mark-text.is-flag{font-size:120px}.app-loading-mark-text.is-flag .flag-img{width:144px;height:108px}.app-loading-visual[data-mode="spinner"]{width:72px;height:72px;margin-bottom:28px}.app-loading-visual[data-mode="spinner"] .app-loading-spinner{width:72px;height:72px;border-width:5px}.app-loading-card strong{font-size:30px}.app-loading-card > span{margin-top:10px;font-size:18px}}
+/* Card and account refinements, kept separate from the tutorial's styles. */
+.app-loading-mark,
+.app-loading-mark.is-free { width: 104px; height: 104px; margin-bottom: 20px; }
+.app-loading-mark-text.is-flag { font-size: 88px; }
+.app-loading-mark-text.is-flag .flag-img { width: 104px; height: 78px; }
+
+/* No capsule: each POS pill is its own colour, darkened for white text, and
+   sits straight on the card glow. A lemma is plain text beside it. */
+.card-front .front-lemma-pair,
+.card-front .front-lemma-pair.is-pos-only {
+    background: none;
+    border: 0;
+    padding: 0;
+    min-height: 0;
+}
+.card-front .front-lemma-pair .front-lemma-name { color: var(--text-primary); }
+.card-front .front-lemma-pair .front-lemma-from { color: var(--text-primary); opacity: 0.75; }
+.card-front .front-lemma-pair .card-pos {
+    background: color-mix(in srgb, rgb(var(--front-pos-rgb, 160, 160, 160)) 52%, #10151a);
+    border-color: transparent;
+    color: #fff;
+    font-weight: 700;
+    text-shadow: none;
+}
+.card-front .front-lemma-pair.is-companion-split {
+    opacity: 0.75;
+    filter: none;
+    cursor: pointer;
+    pointer-events: auto;
+}
+.card-front .front-lemma-pair.is-companion-split:hover { opacity: 1; }
+.card-front .front-lemma-pair.is-companion-split:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 3px;
+}
+.front-lemma-from,
+.pos-collapsible .pos-lemma-from {
+    color: var(--text-secondary);
+    opacity: 0.85;
+    font-weight: 400;
+    font-size: 0.85em;
+    line-height: inherit;
+    align-self: baseline;
+}
+/* In the sense-row head "from" sits on the pill's centre line, not on a
+   baseline of its own that floats it above "Verb" and "ser". */
+.pos-collapsible .pos-lemma-from { margin: 0 5px 0 0; align-self: center; line-height: 1; }
+.meaning-row.meaning-row-known,
+.meaning-row.is-known-meaning,
+.group-card-varying-cell.is-known-subsense {
+    opacity: 0.52 !important;
+    filter: grayscale(1);
+    animation: none;
+}
+
+.study-level-label {
+    flex: none;
+    color: var(--text-secondary);
+    font: 700 20px/1.2 var(--font-reading);
+    white-space: nowrap;
+}
+.study-level-label[hidden] { display: none; }
+.card-back-scrubber { gap: 12px; }
+.account-ai {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 18px 0 0;
+    padding: 18px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 0;
+}
+.account-avatar--ai {
+    display: grid !important;
+    place-items: center;
+    flex: none;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.account-avatar--ai.is-chatgpt {
+    background: #10a37f;
+    color: #ffffff;
+}
+.account-avatar--ai.is-claude {
+    background: #d97757;
+    color: #ffffff;
+}
+.account-avatar--ai svg {
+    width: 38px;
+    height: 38px;
+    display: block;
+}
+.preferred-ai-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+.preferred-ai-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.preferred-ai-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font: 600 14px/1 var(--font-reading);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.preferred-ai-trigger:hover {
+    border-color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+.preferred-ai-trigger-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex: none;
+}
+.preferred-ai-trigger-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+.account-ai:has(.account-avatar--ai.is-chatgpt) .preferred-ai-trigger-icon {
+    color: #10a37f;
+}
+.account-ai:has(.account-avatar--ai.is-claude) .preferred-ai-trigger-icon {
+    color: #d97757;
+}
+.preferred-ai-chevron {
+    color: var(--text-muted);
+    transition: transform 0.15s ease;
+}
+.preferred-ai-dropdown.is-open .preferred-ai-chevron {
+    transform: rotate(180deg);
+}
+.preferred-ai-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 160px;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.preferred-ai-menu[hidden] {
+    display: none !important;
+}
+.preferred-ai-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text-primary);
+    font: 600 14px/1.2 var(--font-reading);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+.preferred-ai-option:hover {
+    background: var(--bg-tertiary);
+}
+.preferred-ai-option.is-selected {
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    font-weight: 700;
+}
+.ai-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex: none;
+}
+.ai-menu-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+.ai-menu-icon--chatgpt {
+    color: #10a37f;
+}
+.ai-menu-icon--claude {
+    color: #d97757;
+}
+/* The first action gets the same deliberate full-width placement as source choices. */
+#step1:not(.language-summary-active) #step1Header {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background: var(--bg-card);
+    text-align: left;
+}
+#step1:not(.language-summary-active) #step1Title { font-size: clamp(18px, 3vw, 22px); line-height: 1.35; }
+#step1:not(.language-summary-active) #step1PromptArrow { margin-left: auto; position: static; }
+.app-brand-icon { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: inherit; }
+.app-loading-mark-text.is-app-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 0;
+  background: url('../icons/icon-192.png') center / contain no-repeat;
+}
+.app-loading-mark:has(.is-app-logo):not(.has-art) { border: 0; background: transparent; box-shadow: none; }
+.auth-welcome-mark:has(.app-brand-icon) { padding: 0; overflow: hidden; border: 0; background: transparent; box-shadow: none; }
+.pos-collapsible .pos-section-head { align-items: center; }
+
+/* Companion usage sits beside "Card N of M", never a rank. */
+.split-usage-share {
+    pointer-events: auto;
+    align-self: center;
+    font: 500 12px/1.3 var(--font-reading);
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+.sense-cycle-choices { display: flex; flex-direction: column; gap: 4px; }
+.sense-cycle-choice {
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    padding: 4px 6px;
+    cursor: pointer;
+}
+.sense-cycle-choice.is-selected { border-color: rgb(var(--sense-match-rgb)); }
+.sense-cycle-choice.is-known-subsense { opacity: .52; filter: grayscale(1); }
+.sense-cycle-choice .known-sense-tag { margin-left: 8px; }
+.sense-cycle-choice:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+/* Counts describe the batch; the heading scopes the level statistics. */
+.study-session-level { white-space: nowrap; font: 500 .8em/1.2 var(--font-reading); color: var(--text-secondary); }
+.study-set-start-label { display: inline-flex; align-items: center; font-size: 16px; font-weight: 750; line-height: 1; }
+.study-session-divider { display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; line-height: 1; opacity: .65; user-select: none; }
+.study-session-count { display: inline-flex; align-items: center; font-size: 14px; font-weight: 600; line-height: 1; opacity: .95; }
+.review-deck-upcoming { font: 400 12px/1.4 var(--font-reading); color: var(--text-secondary); }
+.session-action-pill:not(:has(.session-length-chip)) > .study-set-start,
+.session-action-pill:not(:has(.session-length-chip)) > .study-set-review,
+.session-action-pill > .study-set-start:only-child,
+.session-action-pill > .study-set-review:only-child { border-radius: 12px !important; }
+.cbs-end-label { display: none !important; }
+
+/* Level and session actions: Study and Practise buttons size to their content, clock chip on the left */
+#step4 .session-action-pill {
+    display: inline-flex;
+    align-items: stretch;
+    width: auto;
+    max-width: 100%;
+    position: relative;
+    border-radius: 12px;
+    justify-self: center;
+    margin: 0 auto;
+}
+#step4 .session-action-pill > .study-set-start {
+    width: auto;
+    border-radius: 0 12px 12px 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 20px;
+    text-align: center;
+    min-height: 52px;
+    z-index: 1;
+}
+#step4 .session-action-pill:not(:has(.session-length-chip)) > .study-set-start,
+#step4 .session-action-pill > .study-set-start:only-child {
+    border-radius: 12px !important;
+}
+#step4 .session-action-pill > .session-length-chip {
+    flex: none;
+    border-radius: 12px 0 0 12px;
+    border-left: 0;
+    border-right: 1px solid rgba(0, 0, 0, .18);
+    min-height: 52px;
+    transition: filter 0.15s ease, background-color 0.15s ease;
+    z-index: 2;
+}
+#step4 .session-action-pill > .session-length-chip:hover {
+    filter: brightness(1.12);
+}
+
+#reviewDeckBody .session-action-pill {
+    display: inline-flex;
+    align-items: stretch;
+    width: auto;
+    max-width: 100%;
+    border-radius: 12px;
+    align-self: center;
+    margin: 0 auto;
+}
+#reviewDeckBody .session-action-pill > .session-length-chip {
+    flex: none;
+    border-radius: 12px 0 0 12px;
+    border-left: 0;
+    border-right: 1px solid rgba(0, 0, 0, .18);
+    min-height: 48px;
+}
+#reviewDeckBody .session-action-pill > .study-set-review {
+    flex: none;
+    width: auto;
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 22px;
+    border-radius: 0 12px 12px 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: 750 15px/1 var(--font-emphasis);
+}
+#reviewDeckBody .session-action-pill:not(:has(.session-length-chip)) > .study-set-review,
+#reviewDeckBody .session-action-pill > .study-set-review:only-child {
+    border-radius: 12px !important;
+}
+
+#step2 .level-choosing #step4 { margin: 0; }
+#step2 .level-choosing .study-set-panel { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+#step2 .level-choosing .study-set-choice { background: transparent; }
+#step2 #setupOptions {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
+    border-radius: 0;
+    background: color-mix(in srgb, var(--bg-secondary, var(--bg-card)) 40%, transparent);
+    box-shadow: none;
+}
+
+/* Quiet attached footer row at the bottom of the Level card: unified Smart Skip toggle button */
+#setupOptions .fast-track-hub-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+    padding: 8px 14px 10px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+.smart-skip-toggle-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 52px;
+    padding: 0 22px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background: color-mix(in srgb, var(--bg-card) 85%, transparent);
+    color: var(--text-secondary);
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.1s ease;
+}
+.smart-skip-toggle-btn:hover {
+    border-color: color-mix(in srgb, var(--text-primary) 30%, var(--border-color));
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+.smart-skip-toggle-btn:active {
+    transform: translateY(0);
+}
+.smart-skip-toggle-btn.is-on {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary-text, #ffffff);
+    box-shadow: 0 2px 14px color-mix(in srgb, var(--accent-primary) 35%, transparent);
+}
+.smart-skip-toggle-btn.is-on:hover {
+    background: color-mix(in srgb, var(--accent-primary) 88%, white);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary-text, #ffffff);
+    filter: brightness(1.05);
+}
+.smart-skip-toggle-btn:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+.smart-skip-toggle-btn .smart-skip-status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text-muted);
+    background: transparent;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.smart-skip-toggle-btn.is-on .smart-skip-status-dot {
+    border-color: #ffffff;
+    background: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.95), 0 0 3px #ffffff;
+}
+.smart-skip-toggle-btn .smart-skip-start-label {
+    display: inline-flex;
+    align-items: center;
+    font: 750 16px/1 var(--font-emphasis);
+}
+.smart-skip-toggle-btn.is-on .smart-skip-start-label {
+    color: #ffffff;
+}
+.smart-skip-toggle-btn .study-session-divider {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: .6;
+    user-select: none;
+}
+.smart-skip-toggle-btn.is-on .study-session-divider {
+    color: #ffffff;
+    opacity: 0.75;
+}
+.smart-skip-toggle-btn .smart-skip-state-label {
+    display: inline-flex;
+    align-items: center;
+    font: 750 15px/1 var(--font-emphasis);
+    color: var(--text-muted);
+    min-width: 24px;
+}
+.smart-skip-toggle-btn.is-on .smart-skip-state-label {
+    color: #ffffff;
+}
+:root[data-theme="light"] .smart-skip-toggle-btn {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.14);
+}
+:root[data-theme="light"] .smart-skip-toggle-btn .smart-skip-status-dot {
+    border-color: #64748b;
+}
+:root[data-theme="light"] .smart-skip-toggle-btn.is-on {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: #ffffff;
+    box-shadow: 0 2px 14px color-mix(in srgb, var(--accent-primary) 30%, transparent);
+}
+:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-status-dot {
+    background: #ffffff;
+    border-color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.95), 0 0 3px #ffffff;
+}
+:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-start-label,
+:root[data-theme="light"] .smart-skip-toggle-btn.is-on .smart-skip-state-label,
+:root[data-theme="light"] .smart-skip-toggle-btn.is-on .study-session-divider {
+    color: #ffffff;
+}
+
+/* Center Practice text and summary above Practise button */
+#reviewDeckBody .review-deck-content {
+    align-items: center;
+    text-align: center;
+}
+#reviewDeckBody .review-deck-summary {
+    justify-content: center;
+    text-align: center;
+    width: auto;
+    margin: 0 auto;
+    gap: 6px;
+}
+#reviewDeckBody .review-deck-summary:hover {
+    transform: translateY(-1px);
+}
+#reviewDeckBody .review-deck-summary-copy,
+#reviewDeckBody .review-deck-summary-text {
+    text-align: center;
+}
+#setupOptions .smart-skip-summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2px 6px;
+    min-width: 0;
+}
+.smart-skip-dot {
+    color: var(--text-muted);
+    font: 600 13px/1 var(--font-reading);
+}
+#setupOptions .smart-skip-hub-summary {
+    margin: 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font: 400 12.5px/1.35 var(--font-reading);
+}
+#setupOptions .smart-skip-details-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    min-height: 24px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    font: 600 13px/1.25 var(--font-reading);
+    cursor: pointer;
+}
+#setupOptions .smart-skip-details-btn:hover { color: var(--text-primary); }
+#setupOptions .smart-skip-details-btn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+.level-help-section { margin: 16px 0; }
+.level-help-section h4 { margin: 0 0 6px; color: var(--text-primary); font: 700 16px/1.3 var(--font-emphasis); }
+.level-help-section > p { margin: 0; color: var(--text-secondary); font: 400 14px/1.5 var(--font-reading); }
+.level-help-legend { margin-top: 10px; }
+
+.step-info-tooltip-inner .level-help-session-note { margin: 16px 0 0; color: var(--text-secondary); font: 400 13px/1.5 var(--font-reading); }
+.study-legend-info { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 2px; margin-left: 4px; vertical-align: middle; background: transparent; border: 0; color: var(--text-secondary); cursor: pointer; }
+.study-legend-info svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.study-legend-info:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+.step-info-tooltip-inner .level-deck-total { display: block; margin-top: 12px; }
+.step-info-tooltip-inner .level-deck-total[hidden] { display: none; }
+
+/* Settings rows share the same inset across Study, App and Your words. */
+#settingsModal .settings-default-row,
+#settingsModal .settings-link-row,
+#settingsModal .settings-overview-footer .appearance-settings-card,
+#settingsModal .settings-words-saved-head {
+  box-sizing: border-box;
+  padding-inline: 16px;
+}
+
+/* Each legend swatch uses the exact fill of its progress-bar segment. */
+#levelColoursTooltip .info-point-badge , #step2Tooltip .info-point-badge {
+  min-width: 88px;
+  border: 1px solid var(--border-color);
+}
+#levelColoursTooltip .info-point-badge.is-new , #step2Tooltip .info-point-badge.is-new { background: var(--set-new); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-practice , #step2Tooltip .info-point-badge.is-practice { background: var(--set-review); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-done , #step2Tooltip .info-point-badge.is-done { background: var(--set-known); color: #fff; }
+#levelColoursTooltip .info-point-badge.is-estimated , #step2Tooltip .info-point-badge.is-estimated { background: var(--set-estimated); color: #17202a; }
+#levelColoursTooltip .info-point-badge.is-skip , #step2Tooltip .info-point-badge.is-skip { background: var(--set-skipped); color: #fff; }
+#levelEstimatedLegend[hidden], #step2EstimatedLegend[hidden] { display: none; }
+
+.smart-skip-browser-actions:has(> #smartSkipResultsCount:empty):has(> button[hidden]) { display: none; }
+
+/* Parts of speech of one lemma form one joined pill: a hairline gap between
+   segments, only the outer ends rounded. Short names show only when the full
+   names do not fit (.is-short, set by the card renderer). */
+.pos-short-label { display: none; }
+.card-front .front-pos-joined {
+    display: inline-flex;
+    gap: 2px;
+    max-width: 100%;
+}
+.card-front .front-pos-joined.is-short .pos-full-label { display: none; }
+.card-front .front-pos-joined.is-short .pos-short-label { display: inline; }
+.card-front .front-pos-joined > .front-pos-unit:not(:last-child) .card-pos {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.card-front .front-pos-joined > .front-pos-unit:not(:first-child) .card-pos {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* ==========================================================================
+   Smart Skip page shell: a full-screen page above the app (and beside the
+   desktop nav), with its own scroll. Its content is styled further down.
+   ========================================================================== */
+
+/* 1. Modal visibility: Ensure .hidden ALWAYS hides the modal completely */
+#fastModeModal.hidden {
+  display: none !important;
+}
+
+/* 2. Child Preview Modals Z-Index Fix: Must render ABOVE #fastModeModal (z-index 1050) */
+.smart-skip-preview {
+  z-index: 2100 !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background: rgba(8, 12, 20, 0.65) !important;
+}
+.smart-skip-preview[hidden] {
+  display: none !important;
+}
+.smart-skip-preview-card {
+  z-index: 2101 !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px color-mix(in srgb, var(--border-color) 45%, transparent) !important;
+}
+
+/* Defend fastModeModal against any side-dock width constraint */
+#fastModeModal[data-dock] {
+  justify-content: stretch !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+}
+#fastModeModal[data-dock] > .modal-content {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  max-height: none !important;
+}
+
+/* 2. Full-Bleed Studio Canvas on ALL screen sizes (Mobile + Desktop). Its
+   height comes from inset: 0, never from 100dvh: the app zooms the page
+   (--ui-zoom), and inside a zoomed page 100dvh is not the window's height,
+   which left the page ending short of the bottom edge. */
+#fastModeModal.modal:not(.hidden) {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--bg-primary, var(--bg-card)) !important;
+  z-index: 1050 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (min-width: 900px) {
+  body.desktop-workspace #fastModeModal.desktop-workspace-page:not(.hidden),
+  #fastModeModal.modal:not(.hidden) {
+    left: var(--desktop-nav-width, 0px) !important;
+    right: 0 !important;
+    width: auto !important;
+  }
+}
+
+#fastModeModal:not(.hidden) > .modal-content,
+#fastModeModal:not(.hidden) .fast-mode-page {
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--bg-primary, var(--bg-card)) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+}
+
+/* ---- Smart Skip page, 2026-10-18 ------------------------------------------
+   One header line (title, what the rules add up to, the master switch, ✕),
+   the rules, then the word list. A phone keeps the two main switches in one
+   card above the list; each rule's description sits behind its ⓘ and the
+   optional rules behind "More rules", both as bottom sheets. A wide screen puts
+   the rules in a column beside the list, with every description shown.
+   Language columns and switches name languages in words, never flags.
+   Selectors start at #fastModeModal so they outrank the older Smart Skip rules
+   in style.css without !important. */
+
+/* Dark theme: a black page, and surfaces (rule cards, the list, chips,
+   sheets) only just lifted off it instead of the app's slate blue-grey.
+   Trial on this page before deciding whether the whole app goes this dark. */
+:root:not([data-theme="light"]) #fastModeModal {
+  --bg-primary: #000;
+  --bg-card: #0d0e10;
+  --bg-card-hover: #17191c;
+  --bg-tertiary: #0d0e10;
+  --border-color: #24272b;
+  --border-light: #24272b;
+}
+
+#fastModeModal .smart-skip-body {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px calc(env(safe-area-inset-bottom, 0px) + 32px);
+  display: block;
+}
+
+/* Header: sticky, so the switch and ✕ stay in reach while the list scrolls. */
+#fastModeModal .smart-skip-body .smart-skip-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 -16px 12px;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
+  background: var(--bg-primary, var(--bg-card));
+}
+#fastModeModal .smart-skip-body .smart-skip-header-row > h2 {
+  position: static;
+  margin: 0;
+  padding: 0;
+  background: none;
+  text-align: left;
+  font: 700 var(--ss-title)/1.2 var(--font-emphasis);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+#fastModeModal .smart-skip-summary {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-muted);
+  font: 500 var(--ss-text)/1.2 var(--font-reading);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#fastModeModal .smart-skip-master { display: inline-flex; align-items: center; gap: 8px; flex: none; }
+#fastModeModal .smart-skip-master-state { color: var(--text-secondary); font: 600 var(--ss-text)/1 var(--font-reading); }
+#fastModeModal .smart-skip-header-row .fast-mode-close {
+  position: static;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin: 0 0 0 4px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: var(--bg-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  color: var(--text-secondary);
+  line-height: 1;
+  cursor: pointer;
+}
+#fastModeModal .smart-skip-header-row .fast-mode-close:hover { color: var(--text-primary); background: var(--bg-card-hover); }
+
+/* Rules: one card. Rows are title, ⓘ, count, switch. */
+#fastModeModal .smart-skip-shortcuts {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: none;
+  overflow: visible;
+}
+#fastModeModal .smart-skip-shortcut {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+#fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut + .smart-skip-shortcut,
+#fastModeModal .smart-skip-shortcuts > .smart-skip-more-options,
+#fastModeModal .smart-skip-more-rules > .smart-skip-shortcut + .smart-skip-shortcut {
+  border-top: 1px solid var(--border-color);
+}
+#fastModeModal .smart-skip-shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 0 12px 0 14px;
+}
+#fastModeModal .smart-skip-shortcut-name {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  color: var(--text-primary);
+  font: 600 var(--ss-text)/1.25 var(--font-reading);
+  white-space: normal;
+}
+#fastModeModal .smart-skip-info {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: 0 -2px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+#fastModeModal .smart-skip-info:hover,
+#fastModeModal .smart-skip-info[aria-expanded="true"] { color: var(--text-primary); background: var(--bg-card-hover); }
+#fastModeModal .smart-skip-info svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+#fastModeModal .smart-skip-shortcut-count,
+#fastModeModal .smart-skip-shortcut-count:not(:empty) {
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--text-muted);
+  font: 500 var(--ss-text)/1 var(--font-reading);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+#fastModeModal .smart-skip-shortcut > .fast-mode-none { margin: 0; padding: 0 14px 12px; }
+
+/* Descriptions. On a phone they are sheets (below); the title and Done exist
+   only for the sheet. */
+#fastModeModal .smart-skip-shortcut-detail {
+  display: none;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+}
+#fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer {
+  margin: 0;
+  color: var(--text-secondary);
+  font: 400 var(--ss-text)/1.5 var(--font-reading);
+  opacity: 1;
+}
+#fastModeModal .smart-skip-shortcut-detail em { color: var(--text-primary); font-style: normal; font-weight: 600; }
+#fastModeModal .smart-skip-sheet-title { margin: 0; color: var(--text-primary); font: 700 var(--ss-sheet-title)/1.25 var(--font-emphasis); }
+#fastModeModal .smart-skip-sheet-done {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  font: 600 var(--ss-text)/1 var(--font-reading);
+  cursor: pointer;
+}
+
+/* "Compare with": the languages look-alikes are matched against. */
+#fastModeModal .known-languages-context { margin: 2px 0 0; padding: 0; border: 0; background: none; box-shadow: none; }
+#fastModeModal .known-languages-bar-header { margin: 0 0 6px; }
+#fastModeModal .known-languages-bar-title {
+  color: var(--text-muted);
+  font: 600 var(--ss-text)/1 var(--font-reading);
+  letter-spacing: 0;
+  text-transform: none;
+}
+#fastModeModal .known-languages-folded-row { display: flex; flex-wrap: wrap; gap: 6px; }
+#fastModeModal .known-language-chip,
+#fastModeModal .known-language-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: none;
+  color: var(--text-secondary);
+  font: 500 var(--ss-text)/1 var(--font-reading);
+  cursor: pointer;
+}
+#fastModeModal .known-language-chip.is-active {
+  border-color: color-mix(in srgb, var(--accent-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+  color: var(--text-primary);
+}
+#fastModeModal .known-language-chip-status { color: var(--text-muted); font-weight: 700; }
+#fastModeModal .known-language-chip.is-active .known-language-chip-status { color: var(--accent-primary); }
+#fastModeModal .known-language-add-btn { border-style: dashed; color: var(--text-muted); }
+#fastModeModal .known-language-add-plus { font-weight: 700; }
+
+/* "More rules": a row on a phone, a short titled list on a wide screen. */
+#fastModeModal .smart-skip-more-options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 12px 0 14px;
+  border: 0;
+  border-radius: 0 0 12px 12px;
+  background: none;
+  box-shadow: none;
+  color: var(--text-secondary);
+  font: 500 var(--ss-text)/1 var(--font-reading);
+  text-align: left;
+  cursor: pointer;
+}
+#fastModeModal .smart-skip-more-options[hidden],
+#fastModeModal .smart-skip-more-rules[hidden] { display: none; }
+#fastModeModal .smart-skip-more-options > span:first-child { flex: 1; }
+#fastModeModal .smart-skip-more-state:not(:empty) { padding: 0; background: none; color: var(--text-muted); }
+#fastModeModal .smart-skip-more-options svg { flex: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.7; }
+#fastModeModal .smart-skip-more-rules { display: none; }
+#fastModeModal .smart-skip-more-title { margin: 0; color: var(--text-primary); font: 700 var(--ss-sheet-title)/1.25 var(--font-emphasis); }
+#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row { padding: 0; min-height: 44px; }
+#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail { display: block; padding: 0 0 12px; margin-top: -4px; }
+#fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail .fast-mode-explainer { color: var(--text-muted); }
+
+/* Phone sheets: the open description or More rules rises from the bottom. */
+#fastModeModal .smart-skip-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1070;
+  background: rgba(6, 9, 14, 0.55);
+}
+#fastModeModal .smart-skip-sheet-backdrop[hidden] { display: none; }
+#fastModeModal .smart-skip-shortcut-detail.is-sheet-open,
+#fastModeModal .smart-skip-more-rules.is-sheet-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1071;
+  display: grid;
+  gap: 12px;
+  max-height: 85dvh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 22px 18px calc(env(safe-area-inset-bottom, 0px) + 16px);
+  border: 1px solid var(--border-color);
+  border-bottom: 0;
+  border-radius: 20px 20px 0 0;
+  background: var(--bg-card);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+  animation: smart-skip-preview-up 0.18s ease-out;
+}
+#fastModeModal .smart-skip-more-rules.is-sheet-open { gap: 4px; }
+#fastModeModal .smart-skip-more-rules.is-sheet-open > .smart-skip-more-title { margin-bottom: 6px; }
+#fastModeModal .smart-skip-more-rules.is-sheet-open > .smart-skip-sheet-done { margin-top: 10px; }
+#fastModeModal .is-sheet-open:focus { outline: none; }
+
+/* The word list: one panel, its category chips and language switch on top. */
+#fastModeModal .smart-skip-words { display: grid; gap: 8px; margin: 14px 0 0; }
+#fastModeModal .smart-skip-words > .fast-mode-explainer { margin: 0; color: var(--text-muted); }
+#fastModeModal .smart-skip-panel {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  overflow: clip;
+}
+#fastModeModal .smart-skip-browser-controls {
+  position: static;
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 0;
+  background: none;
+}
+#fastModeModal .smart-skip-toolbar { display: block; min-width: 0; }
+#fastModeModal .smart-skip-toolbar[hidden] { display: none; }
+#fastModeModal .smart-skip-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 -12px;
+  padding: 0 12px;
+}
+#fastModeModal .smart-skip-chips::-webkit-scrollbar { display: none; }
+#fastModeModal .smart-skip-cat {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: none;
+  color: var(--text-secondary);
+  font: 600 var(--ss-text)/1 var(--font-reading);
+  white-space: nowrap;
+  cursor: pointer;
+}
+#fastModeModal .smart-skip-cat span { color: var(--text-muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+#fastModeModal .smart-skip-cat:hover { color: var(--text-primary); }
+#fastModeModal .smart-skip-cat[aria-selected="true"] {
+  border-color: color-mix(in srgb, var(--accent-primary) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+  color: var(--text-primary);
+}
+#fastModeModal .smart-skip-cat[aria-selected="true"] span { color: var(--text-secondary); }
+
+/* Look-alikes compared with: one segment per known language. */
+#fastModeModal .smart-skip-lang-btn {
+  display: flex;
+  gap: 2px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 2px;
+  border: 0;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--text-primary) 7%, transparent);
+  box-shadow: none;
+}
+#fastModeModal .smart-skip-lang-btn[hidden] { display: none; }
+#fastModeModal .smart-skip-lang-btn button {
+  flex: 1;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-secondary);
+  font: 600 var(--ss-text)/1 var(--font-reading);
+  white-space: nowrap;
+  cursor: pointer;
+}
+#fastModeModal .smart-skip-lang-btn button span { color: var(--text-muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+#fastModeModal .smart-skip-lang-btn button[aria-pressed="true"] {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 1px var(--border-color), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* The table sits flush inside the panel. */
+#fastModeModal #fastTrackDeckCard { margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+#fastModeModal .smart-skip-panel .smart-skip-table { border: 0; border-radius: 0; background: none; box-shadow: none; }
+#fastModeModal .smart-skip-panel .smart-skip-list { border: 0; border-radius: 0; background: none; box-shadow: none; }
+#fastModeModal .smart-skip-panel .smart-skip-head {
+  height: 32px;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  background: color-mix(in srgb, var(--text-primary) 4%, transparent);
+  color: var(--text-muted);
+  font: 600 var(--ss-text)/1 var(--font-reading);
+}
+#fastModeModal .smart-skip-panel .smart-skip-row {
+  height: auto;
+  min-height: 44px;
+  border-bottom: 0;
+}
+#fastModeModal .smart-skip-panel .smart-skip-row:hover { background: var(--bg-card-hover); }
+#fastModeModal .smart-skip-panel .smart-skip-w { font: 600 var(--ss-text)/1.2 var(--font-reading); }
+#fastModeModal .smart-skip-panel .smart-skip-empty { padding: 22px 14px; border-top: 1px solid var(--border-color); }
+
+/* Wide screens: the page fills the window. Below the header, two columns
+   fill the rest of the height and scroll on their own: the rules sidebar
+   and the word list, with no line between them. More rules stays folded until
+   asked for. Type is larger than on a phone: there is room for it. */
+@media (min-width: 900px) {
+  #fastModeModal { --ss-side-w: clamp(360px, 33vw, 480px); }
+  #fastModeModal .smart-skip-body {
+    display: grid;
+    grid-template-columns: var(--ss-side-w) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 0;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    max-width: none;
+    padding: 0;
+    overflow: hidden;
+  }
+  #fastModeModal .smart-skip-body .smart-skip-header-row {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    position: relative;
+    box-sizing: border-box;
+    height: 68px;
+    margin: 0;
+    padding: 0 28px;
+  }
+  #fastModeModal .smart-skip-body .smart-skip-header-row > h2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+  }
+  #fastModeModal .smart-skip-summary { flex: 1; text-align: right; }
+  #fastModeModal .smart-skip-body > .smart-skip-shortcuts {
+    grid-column: 1;
+    grid-row: 2;
+    position: static;
+    align-self: stretch;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    padding: 8px 8px 32px 24px;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+  #fastModeModal .smart-skip-body > .smart-skip-words {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    margin: 0;
+    padding: 8px 28px 28px 12px;
+  }
+  #fastModeModal .smart-skip-body > .smart-skip-words > .smart-skip-panel { flex: 1 0 auto; }
+  #fastModeModal .smart-skip-body > .fast-mode-admin-details { grid-column: 1 / -1; grid-row: 3; margin: 0 28px 16px; }
+
+  /* Each main rule is its own card with its description under the title. */
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut {
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-card);
+    padding: 16px 18px 18px;
+  }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut + .smart-skip-shortcut { margin-top: 12px; border-top: 1px solid var(--border-color); }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-row { min-height: 0; padding: 0; gap: 10px; }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .smart-skip-shortcut-detail { display: grid; gap: 12px; padding: 8px 0 0; }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-shortcut > .fast-mode-none { padding: 8px 0 0; }
+  #fastModeModal .smart-skip-info,
+  #fastModeModal .smart-skip-sheet-title,
+  #fastModeModal .smart-skip-sheet-done,
+  #fastModeModal .smart-skip-sheet-backdrop,
+  #fastModeModal .smart-skip-more-title { display: none; }
+  #fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer { line-height: 1.55; }
+  #fastModeModal .known-language-chip,
+  #fastModeModal .known-language-add-btn { min-height: 34px; padding: 0 13px; }
+  #fastModeModal .smart-skip-switch { width: 44px; height: 26px; }
+  #fastModeModal .smart-skip-switch::after { width: 20px; height: 20px; }
+  #fastModeModal .smart-skip-switch[aria-checked="true"]::after { transform: translateX(18px); }
+
+  /* More rules: a quiet disclosure row; the rules open in place under it. */
+  /* Its text lines up with the text inside the rule cards above it. */
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-more-options {
+    margin-top: 14px;
+    min-height: 44px;
+    padding: 0 19px;
+    border: 0;
+    border-radius: 8px;
+  }
+  #fastModeModal .smart-skip-shortcuts > .smart-skip-more-options:hover { color: var(--text-primary); }
+  #fastModeModal .smart-skip-more-options svg { transition: transform 0.15s ease; }
+  #fastModeModal .smart-skip-more-options[aria-expanded="true"] svg { transform: rotate(90deg); }
+  #fastModeModal .smart-skip-more-rules:not([hidden]) { display: none; }
+  #fastModeModal .smart-skip-more-rules.is-expanded:not([hidden]) { display: block; padding: 0 19px; }
+  #fastModeModal .smart-skip-more-rules > .smart-skip-shortcut + .smart-skip-shortcut { border-top: 0; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-row { min-height: 42px; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-name { font-weight: 500; }
+  #fastModeModal .smart-skip-more-rules .smart-skip-shortcut-detail { padding: 0 0 10px; margin-top: -2px; }
+
+  /* Narrower desktops (nav open, or a small laptop): a slimmer rules column
+     and tighter Type and Rank columns, so words are not cut short. */
+  #fastModeModal .smart-skip-panel .smart-skip-table { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 76px; }
+  #fastModeModal .smart-skip-panel .smart-skip-table.has-tag { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 124px 76px; }
+  #fastModeModal .smart-skip-panel .smart-skip-table[data-cat="lemma"] { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr) 76px; }
+
+  /* Larger list type on a wide screen. */
+  #fastModeModal .smart-skip-lang-btn { display: inline-flex; justify-self: start; }
+  #fastModeModal .smart-skip-lang-btn button { flex: none; min-height: 34px; padding: 0 14px; }
+  /* All the chips fit on a wide screen, so they wrap rather than scroll. */
+  #fastModeModal .smart-skip-chips { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; }
+
+  /* The chips stay in view at the top of the list column as it scrolls. */
+  #fastModeModal .smart-skip-browser-controls {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--bg-card);
+  }
+  #fastModeModal .smart-skip-cat { min-height: 36px; padding: 0 14px; }
+  #fastModeModal .smart-skip-panel .smart-skip-head { height: 38px; padding: 0 34px 0 16px; }
+  /* The row's › sits in its own space at the right, clear of Rank. */
+  #fastModeModal .smart-skip-panel .smart-skip-row { min-height: 52px; padding: 0 34px 0 16px; }
+}
+
+/* Type: one size for every piece of text on the page except the titles
+   (page title, sheet titles). Weight and colour carry the hierarchy, as in
+   the mockup, instead of half a dozen sizes. These also reset the older
+   per-element sizes in style.css. */
+#fastModeModal { --ss-text: 15px; --ss-title: 21px; --ss-sheet-title: 18px; }
+@media (min-width: 900px) {
+  #fastModeModal { --ss-text: 19px; --ss-title: 28px; --ss-sheet-title: 21px; }
+}
+#fastModeModal .smart-skip-body :is(
+  .smart-skip-summary, .smart-skip-master-state,
+  .smart-skip-shortcut-name, .smart-skip-shortcut-count, .fast-mode-explainer, .fast-mode-none,
+  .known-languages-bar-title, .known-language-chip, .known-language-add-btn,
+  .smart-skip-more-options, .smart-skip-more-state,
+  .smart-skip-cat, .smart-skip-lang-btn button, .smart-skip-source-picker, .smart-skip-source-picker select,
+  .smart-skip-results-count, .range-btn-new,
+  .smart-skip-head, .smart-skip-w, .smart-skip-g, .smart-skip-rank, .smart-skip-tag,
+  .smart-skip-forms, .smart-skip-nforms, .smart-skip-more, .smart-skip-chip, .smart-skip-expand-open, .smart-skip-empty
+) { font-size: var(--ss-text); }
+#fastModeModal .smart-skip-body :is(.smart-skip-cat, .smart-skip-lang-btn button) span { font-size: inherit; }
+#fastModeModal .smart-skip-body .smart-skip-shortcut-detail em { font-size: inherit; }
+
+/* Narrower desktops (a small laptop, or the app's nav taking the left edge):
+   a slimmer sidebar and one step down in text size, so the list keeps room
+   for whole words. */
+@media (min-width: 900px) and (max-width: 1279px) {
+  #fastModeModal { --ss-side-w: 300px; --ss-text: 17px; --ss-title: 24px; }
+  #fastModeModal .smart-skip-panel .smart-skip-table.has-tag { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 100px 60px; }
+  #fastModeModal .smart-skip-panel .smart-skip-table { --ss-cols: minmax(0, 1.2fr) minmax(0, 1fr) 60px; }
+}
+
+/* Smart Skip no longer switches the "Bigger text" zoom off, so the left nav keeps
+   one size on every page. */
+
+/* Desktop loading screen: the phone-sized card was barely legible on a laptop.
+   Bigger crest, spinner and text; the deck-progress ring keeps its own size. */
+@media (min-width: 900px) {
+    .app-loading-card { width: min(100%, 440px); }
+    .app-loading-mark,
+    .app-loading-mark.is-free { width: 144px; height: 144px; margin-bottom: 28px; }
+    .app-loading-mark-text.is-flag { font-size: 120px; }
+    .app-loading-mark-text.is-flag .flag-img { width: 144px; height: 108px; }
+    .app-loading-visual[data-mode="spinner"] { width: 72px; height: 72px; margin-bottom: 28px; }
+    .app-loading-visual[data-mode="spinner"] .app-loading-spinner { width: 72px; height: 72px; border-width: 5px; }
+    .app-loading-card strong { font-size: 30px; }
+    .app-loading-card > span { margin-top: 10px; font-size: 18px; }
+}

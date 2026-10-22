@@ -1,1 +1,1416 @@
-#setupPanel,#topBar{--home-text:16px}#setupPanel{--home-text-small:calc(var(--home-text) * 0.85);--home-title:calc(var(--home-text) * 1.25);--home-number:calc(var(--home-text) * 3)}@media (min-width:1024px){#setupPanel,#topBar{--home-text:21px}}@media (min-width:1440px){#setupPanel,#topBar{--home-text:23px}}#setupPanel{--set-new:#ffffff;--set-review:#ffcc00;--set-known:#06a557;--set-estimated:#9f7aea;--set-skipped:#64748b}@media (min-width:1024px){#setupPanel.file-upload,body.desktop-workspace #setupPanel.file-upload{display:block;max-width:none;margin-inline:auto}}#setupPanel #personalCoverageWrapper{display:none !important}#setupPanel .home-section{margin:0 0 10px;padding:0;border:1px solid var(--border-color);border-radius:14px;background:var(--bg-card);box-shadow:none;text-align:left}#setupPanel .home-section > .step-header{display:flex;align-items:center;justify-content:flex-start;gap:6px;margin:0;padding:14px 16px 2px}#setupPanel .home-section > .step-header > .step-number{display:none}#setupPanel .home-section > .step-header > .step-title-trigger{margin:0;font-family:var(--font-emphasis);font-size:var(--home-title);justify-self:start}#setupPanel .home-section-icon{width:1.1em;height:1.1em;flex:none;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}#setupPanel .home-section > .step-header > .step-title-trigger{display:inline-flex;align-items:center;gap:0.4em}#setupPanel .home-section-toggle{display:none;width:100%;align-items:center;gap:8px;padding:13px 16px;border:0;border-radius:14px;background:transparent;color:var(--text-primary);font:inherit;font-size:var(--home-text);text-align:left;cursor:pointer}#setupPanel .home-section-toggle:hover{background:var(--bg-card-hover)}#setupPanel .home-section-toggle strong{font-weight:600}#setupPanel .home-section-toggle-meta{color:var(--text-muted);font-size:var(--home-text)}#setupPanel .home-section-toggle-caret{margin-left:auto;color:var(--text-muted)}#setupPanel .home-section-toggle{padding:12px 16px 15px;gap:8px;row-gap:6px}#setupPanel .home-section-toggle .home-section-icon{width:22px;height:22px;margin-left:15px}#setupPanel .home-section-toggle .home-section-name{font-family:var(--font-emphasis);font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:44px}#setupPanel .home-section-info{display:inline-flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box;width:32px;height:32px;margin:-6px}#setupPanel .home-section-info{font-size:20px}#setupPanel .home-section-help{width:1.1em;height:1.1em;flex:none;fill:none;stroke:var(--accent-primary);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}body:not(.desktop-workspace) #setupPanel[data-home-open="learn"] #step2,body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckSection{border-color:color-mix(in srgb,var(--accent-primary) 70%,var(--border-color));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent-primary) 70%,var(--border-color))}#setupPanel .home-section-toggle-meta{order:1;flex:0 0 100%}#setupPanel .home-section-peek{order:2}#setupPanel .home-section-toggle-meta:empty{display:none}#setupPanel .home-section-toggle{flex-wrap:wrap;row-gap:10px}#setupPanel .home-section-peek{display:block;flex:0 0 100%;min-width:0}#setupPanel .home-section-peek[hidden],#setupPanel .home-section-peek:empty{display:none}#setupPanel .home-section-peek .home-level-bar.is-peek{height:6px;cursor:inherit}#setupPanel .home-section-peek .home-level-stats{margin-top:8px}#setupPanel #practiseSectionPeek{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--text-secondary)}#setupPanel #practiseSectionPeek:empty{display:none}.home-peek-item{display:inline-flex;align-items:center;gap:6px}.home-peek-item i{width:8px;height:8px;border-radius:50%}.home-peek-item.is-mistake i{background:#e5484d}.home-peek-item.is-due i{background:var(--accent-blue)}.home-peek-item.is-upcoming{color:var(--text-muted)}.home-peek-item.is-upcoming i{background:var(--border-light)}#setupPanel[data-home-open="practise"] #step2 > .home-section-toggle,#setupPanel[data-home-open="learn"] #reviewDeckSection > .home-section-toggle{display:flex}#setupPanel[data-home-open="practise"] #step2 > .step-header,#setupPanel[data-home-open="practise"] #step2 > .level-choosing,#setupPanel[data-home-open="learn"] #reviewDeckSection > .step-header,#setupPanel[data-home-open="learn"] #reviewDeckBody{display:none !important}#setupPanel[data-home-open] #reviewDeckSection{order:0}#setupPanel #step2 .level-choosing{margin:0;padding:0;border:0;background:transparent;box-shadow:none}#setupPanel #step2 .level-selector{margin:0;padding:0}#setupPanel #lswSlider,#setupPanel .lsw-ticks{display:none !important}#setupPanel .level-slider-wrap{padding:4px 16px 0;margin:0}.home-level-stepper{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:320px;margin:0 auto;touch-action:pan-y}.home-level-step{width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--text-muted);font-size:28px;line-height:1;cursor:pointer}.home-level-step:hover:not(:disabled){background:var(--bg-card-hover);color:var(--text-primary)}.home-level-step:disabled{opacity:.25;cursor:default}.home-level-readout{display:flex;flex-direction:column;align-items:center;line-height:1.15}.home-level-eyebrow{color:var(--text-muted);font-size:var(--home-text-small)}.home-level-readout strong{font-family:var(--font-emphasis);font-size:var(--home-number);font-weight:700;color:var(--text-primary)}.home-level-words{color:var(--text-muted);font-size:var(--home-text-small);white-space:nowrap}#setupPanel #lswExamples{margin:8px 0 0;padding:0;min-height:0;color:var(--text-muted);font-size:var(--home-text);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#setupPanel #lswExamples .lsw-egs,#setupPanel #lswExamples .lsw-egs *{max-width:none;margin:0;display:inline;color:var(--text-muted);font-size:var(--home-text);font-weight:400}#setupPanel #lswExamples .lsw-eg-extra{display:none}#setupPanel #step4{margin:0;padding:0;border:0;background:transparent}#setupPanel #rangeSelector{margin:0;padding:0}.home-level-progress{display:block;width:100%;padding:14px 16px 12px;box-sizing:border-box}#setupPanel .home-level-bar{display:flex;width:100%;margin:0;padding:0;border:0;gap:2px;height:8px;border-radius:4px;overflow:hidden;background:var(--bg-tertiary);cursor:pointer}#setupPanel .home-level-bar span{display:block;min-width:3px;height:100%;align-self:stretch}.home-level-stats{display:flex;justify-content:flex-start;flex-wrap:wrap;gap:4px 12px;margin-top:8px;color:var(--text-secondary);font-size:var(--home-text)}.home-level-stat{display:inline-flex;align-items:center;gap:5px}.home-level-stat i{width:8px;height:8px;border-radius:50%}.home-level-bar .is-new,.home-level-stat.is-new i{background:var(--set-new,#fff)}.home-level-bar .is-seen,.home-level-stat.is-seen i{background:var(--set-review,#896318)}.home-level-bar .is-known,.home-level-stat.is-known i{background:var(--set-known,#16734b)}.home-level-bar .is-estimated,.home-level-stat.is-estimated i{background:var(--set-estimated,#77669e)}.home-level-bar .is-skipped,.home-level-stat.is-skipped i{background:var(--set-skipped,#566477)}#setupPanel .home-section-footer{display:flex;flex-direction:column;gap:10px;padding:12px 16px 14px;border-top:1px solid var(--border-color);border-radius:0;background:transparent}#setupPanel #setupOptions.setup-options,#setupPanel #step2 #setupOptions{margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}.home-smart-skip{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 10px;border-radius:10px;background:var(--bg-tertiary);transition:background .15s ease}.home-smart-skip.is-on{background:color-mix(in srgb,var(--accent-primary) 18%,var(--bg-tertiary))}.home-smart-skip-icon{width:16px;height:16px;flex:none;fill:none;stroke:var(--text-muted);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.home-smart-skip.is-on .home-smart-skip-icon{stroke:var(--accent-primary)}.home-smart-skip-copy{flex:1;min-width:0;padding:4px 0;border:0;background:transparent;color:var(--text-muted);font:inherit;font-size:var(--home-text);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}.home-smart-skip-copy{display:flex;align-items:center}.home-smart-skip-copy strong{flex:none;color:var(--text-primary);font-weight:600}.home-smart-skip-copy .home-smart-skip-dot,.home-smart-skip-copy .home-smart-skip-details{flex:none}.home-smart-skip-copy #fastTrackHubSummary{min-width:0;overflow:hidden;text-overflow:ellipsis}.home-smart-skip-dot{margin:0 5px}.home-smart-skip-details{margin-left:6px;color:var(--text-secondary);font-size:1.15em;line-height:1}.home-switch{position:relative;flex:none;width:40px;height:24px;padding:0;border:0;border-radius:12px;background:var(--border-light);cursor:pointer;transition:background .15s ease}.home-switch-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s ease}.home-switch[aria-checked="true"]{background:var(--accent-primary)}.home-switch[aria-checked="true"] .home-switch-knob{transform:translateX(16px)}.home-cta{display:flex;min-height:50px;border-radius:12px;overflow:hidden;background:var(--accent-primary);color:var(--accent-primary-text,#fff)}.home-cta.is-disabled{opacity:.45}.home-cta-length,.home-cta-main{border:0;background:transparent;color:inherit;font:inherit;font-weight:700;cursor:pointer}.home-cta-length{display:inline-flex;align-items:center;gap:7px;padding:0 14px;border-right:1px solid color-mix(in srgb,currentColor 30%,transparent);font-size:var(--home-text)}.home-cta-main{flex:1;padding:0 16px;font-size:var(--home-text)}.home-cta-length::before{content:"";width:14px;height:14px;border:1.7px solid currentColor;border-radius:50%;background:linear-gradient(currentColor,currentColor) 50% 30% / 1.7px 40% no-repeat;opacity:.85}.home-cta-main:disabled{cursor:default}.home-cta-length:hover,.home-cta-main:hover:not(:disabled){background:color-mix(in srgb,#000 12%,transparent)}.home-footer-hint{margin:0;color:var(--text-muted);font-size:var(--home-text)}#setupPanel #reviewDeckBody{margin:0;padding:0;border:0;background:transparent}.home-practise{padding:6px 16px 12px}.home-practise-total{display:flex;flex-direction:column;align-items:center;padding:4px 0 12px;line-height:1.2}.home-practise-total strong{font-size:38px;font-weight:700;color:var(--text-primary)}.home-practise-total span{color:var(--text-muted);font-size:var(--home-text);text-align:center}.home-practise-total.is-empty strong{font-size:20px;margin-bottom:4px}.home-practise-rows{border-top:1px solid var(--border-color)}.home-practise-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-color);font-size:var(--home-text);color:var(--text-primary)}.home-practise-row i{width:8px;height:8px;border-radius:50%;flex:none}.home-practise-row span{flex:1}.home-practise-row b{font-weight:600;color:var(--text-secondary)}.home-practise-row.is-mistake i{background:#e5484d}.home-practise-row.is-due i{background:var(--accent-blue)}.home-practise-row.is-upcoming{color:var(--text-muted)}.home-practise-row.is-upcoming i{background:var(--border-light)}.home-practise-browse{margin-top:8px;padding:6px 0;border:0;background:transparent;color:var(--text-secondary);font:inherit;font-size:var(--home-text);cursor:pointer}.home-practise-browse:hover{color:var(--text-primary)}@media (max-width:767px){#setupPanel .home-section-footer{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:12px 16px max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--border-color);border-radius:0;background:var(--bg-primary);box-shadow:none}#setupPanel[data-home-open]{padding-bottom:calc(130px + env(safe-area-inset-bottom))}}@media (min-width:768px){#setupPanel .home-section-footer{flex-direction:row;align-items:center;flex-wrap:wrap}#setupPanel .home-section-footer > #setupOptions{flex:1;min-width:0}#setupPanel .home-section-footer > .home-action-slot{flex:none}#setupPanel #reviewDeckSection .home-section-footer{justify-content:space-between}.home-cta{min-height:44px}.home-cta-main{flex:none;font-size:var(--home-text)}}body:not(.desktop-workspace) #topBar{margin-top:-8px;margin-bottom:12px;padding:0 4px 6px;border:0;border-radius:0;background:color-mix(in srgb,var(--bg-primary) 90%,transparent);box-shadow:none}body:not(.desktop-workspace) #topBar::before{inset:auto 0 0 0;height:2px;padding:0;border-radius:1px;background:var(--accent-primary);opacity:.85;-webkit-mask:none;mask:none}body:not(.desktop-workspace) #topBar .learning-context-chip{min-height:40px;padding:4px 8px 4px 2px;border:0;border-radius:10px;background:transparent}body:not(.desktop-workspace) #topBar .learning-context-flag{font-size:29px}body:not(.desktop-workspace) #topBar .learning-context-chip-copy strong{font-size:18px}body:not(.desktop-workspace) #topBar .top-bar-icon-btn,body:not(.desktop-workspace) #topBar .gear-btn{width:40px;height:44px;flex:0 0 40px;background:transparent}body:not(.desktop-workspace) #topBar .top-bar-right-controls{gap:0}body:not(.desktop-workspace) #topBar .top-bar-icon-btn svg,body:not(.desktop-workspace) #topBar .gear-btn svg{width:29px;height:29px}@media (min-width:1024px){#setupPanel.file-upload:not(.hidden):not([style*="none"]),body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]){display:flex !important;flex-direction:column;gap:12px;width:100%;box-sizing:border-box;padding-inline:2vw}#setupPanel.file-upload{align-items:stretch}#setupPanel .home-section{margin:0;width:100%;max-width:none;align-self:stretch;box-sizing:border-box}#setupPanel #step2:not(.hidden):not([style*="none"]),#setupPanel #reviewDeckSection:not(.hidden):not([hidden]):not([style*="none"]){display:flex !important;flex-direction:column}#setupPanel .home-section > .step-header{padding:2.4vh 2vw 0.6vh}#setupPanel .home-section > .step-header > .step-title-trigger{font-size:clamp(28px,2.5vw,42px);letter-spacing:-0.01em}#setupPanel .home-section-footer{margin-top:0;padding:12px 2vw}#setupPanel .home-section-toggle{padding:1.6vh 2vw;font-size:var(--home-text)}#setupPanel .home-section-toggle-meta{font-size:var(--home-text)}#setupPanel #step2 .level-choosing{flex:1 1 auto;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);grid-template-rows:auto auto auto;align-items:center}#setupPanel #step2 #levelSelector,#setupPanel #step2 #levelSelector > .level-slider-wrap{display:contents}#setupPanel #step2 #homeLevelStepper{grid-column:1;grid-row:1 / span 2;padding:4px 0 14px}#setupPanel #step2 #lswExamples{grid-column:2;grid-row:1;align-self:end;justify-content:flex-start;align-items:flex-start;margin:0 0 1.4vh;padding:0 3vw 0 1vw;text-align:left}#setupPanel #step4:not(.hidden):not([style*="none"]){display:contents !important}#setupPanel #step2 #rangeSelector{grid-column:2;grid-row:2;align-self:start}#setupPanel #step2 .home-section-footer{grid-column:1 / -1;grid-row:3}#setupPanel #step2 .home-level-progress{padding:0 3vw 0 1vw}#setupPanel #step2 .home-level-bar{height:clamp(8px,1.2vh,14px);border-radius:7px}#setupPanel #step2 .home-level-stats{margin-top:1.6vh;font-size:var(--home-text);gap:6px 1.4vw}.home-level-stepper{max-width:none;gap:2vw}.home-level-step{width:clamp(48px,4.4vw,70px);height:clamp(48px,4.4vw,70px);font-size:clamp(32px,2.9vw,46px)}#setupPanel #lswExamples,#setupPanel #lswExamples .lsw-egs,#setupPanel #lswExamples .lsw-egs *{font-size:var(--home-text)}#setupPanel #reviewDeckBody:not([style*="none"]){display:flex;flex-direction:column}.home-practise{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);column-gap:3vw;align-content:center;align-items:center;padding:10px 2vw 14px}.home-practise-total{grid-column:1;grid-row:1 / span 2;padding:0}.home-practise-total strong{font-size:clamp(44px,4.2vw,68px)}.home-practise-total span{font-size:var(--home-text)}.home-practise-row{padding:8px 0;font-size:var(--home-text)}.home-practise-rows{grid-column:2;grid-row:1}.home-practise-browse{grid-column:2;grid-row:2;justify-self:start;font-size:var(--home-text)}.home-practise-total.is-empty{grid-column:1 / -1;grid-row:1}.home-practise-total.is-empty + .home-practise-browse{grid-column:1 / -1;grid-row:2;justify-self:center}.home-cta{min-height:46px}.home-cta-main{font-size:var(--home-text);padding:0 2vw}.home-smart-skip-copy{font-size:var(--home-text)}.home-footer-hint{font-size:var(--home-text)}}:is(#step1.language-summary-active,#step1) #standardSourceCard{--home-text:16px;margin:0;padding:0;border:0;background:transparent;box-shadow:none;text-align:left}:is(#step1.language-summary-active,#step1) #standardSourceCard #standardSourceLanguageBtn,:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-or{display:none !important}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice{margin:0;padding:0;border:0;background:transparent}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-intro{margin:0 0 16px;padding:0;text-align:left}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-heading{margin:0 0 6px;justify-content:center}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-title{font-size:24px;text-align:center}:is(#step1.language-summary-active,#step1) #standardSourceCard .vocabulary-choice-bullets{margin:0;padding:0;list-style:none;color:var(--text-muted);font-size:var(--home-text);line-height:1.45}:is(#step1.language-summary-active,#step1) #standardSourceCard .vocabulary-choice-bullets li{margin:0;padding:0}:is(#step1.language-summary-active,#step1) #standardSourceCard .vocabulary-choice-bullets li::before{display:none;content:none}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-buttons{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:0;padding:0;border:0;background:transparent}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-speech,:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-music{margin:0;border:1px solid var(--border-color);border-radius:14px;background:var(--bg-card);box-shadow:none;overflow:hidden}:is(#step1.language-summary-active,#step1) #standardSourceCard:is(.standard-source-speech,.standard-source-music){display:flex;flex-direction:column;padding:0}:is(#step1.language-summary-active,#step1) #standardSourceCard:is(#standardSourceSpeechBtn,#standardSourcePickerBtn){flex:1;margin:0;border:0;border-radius:0;background:transparent}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-item{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"icon . tail" "copy copy copy";align-items:center;row-gap:10px;width:100%;min-height:0;padding:16px;color:var(--text-primary);text-align:left;cursor:pointer;transition:border-color .15s ease,background .15s ease}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-speech:hover:not(:has(:disabled)),:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-music:hover{border-color:color-mix(in srgb,var(--accent-primary) 55%,var(--border-color))}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-icon{grid-area:icon;display:flex;align-items:center;justify-content:center;width:42px;height:42px;margin:0;border-radius:12px;background:var(--bg-tertiary);color:var(--accent-primary)}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-icon svg{width:22px;height:22px;stroke:currentColor}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-tail{display:block !important;grid-area:tail;color:var(--text-muted);font-size:22px}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-copy{grid-area:copy;display:flex;flex-direction:column;gap:4px;min-width:0}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-copy strong{font-size:19px;font-weight:700;color:var(--text-primary)}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-copy small{display:block;color:var(--text-secondary);font-size:var(--home-text);line-height:1.45}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-bestfor{display:flex;flex-direction:column;gap:3px;margin:8px 0 0;padding:0;border:0;color:var(--text-secondary);font-size:var(--home-text)}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-bestfor em{margin-bottom:2px;color:var(--text-muted);font-size:13px;font-style:normal;letter-spacing:0;text-transform:none}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-bestfor > span{display:flex;align-items:center;gap:8px}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-bestfor > span::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:var(--accent-primary)}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-spotify{margin:0;padding:0;border-top:1px solid var(--border-color)}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-spotify .spotify-status{display:flex;align-items:center;gap:10px;width:100%;margin:0;padding:12px 16px;border:0;border-radius:0;background:transparent;color:#1db954;font:inherit;font-size:var(--home-text);font-weight:600;text-align:left}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-spotify .spotify-status svg{width:20px;height:20px;flex:none}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-spotify button.spotify-status::after{content:"›";margin-left:auto;font-size:20px}:is(#step1.language-summary-active,#step1) #standardSourceCard .vocabulary-choice-reassurance{margin:16px 0 0;color:var(--text-muted);font-size:14px;text-align:left !important}@media (min-width:768px){:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-item{padding:20px;align-content:start}}@media (min-width:1024px){:is(#step1.language-summary-active,#step1) #standardSourceCard{--home-text:18px}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-title{font-size:30px}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-copy strong{font-size:22px}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-icon{width:52px;height:52px}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-icon svg{width:26px;height:26px}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-item{padding:26px;row-gap:18px}}:is(#step1.language-summary-active,#step1) #standardSourceCard{padding:4px 12px 0}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-intro{border:0 !important;padding-bottom:0 !important}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-heading{width:100%}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-title{display:block;width:100%}:is(#step1.language-summary-active,#step1) #standardSourceCard:is(.standard-source-speech,.standard-source-music):not(:hover){border-color:var(--border-color)}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-item{grid-template-columns:auto 1fr auto;grid-template-areas:"icon name tail";column-gap:12px;row-gap:8px}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-copy{display:contents}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-copy strong{grid-area:name}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-copy small{display:none}:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-bestfor{grid-column:1 / -1;grid-row:2;margin-top:4px}:is(#step1.language-summary-active,#step1) #standardSourceCard .vocabulary-choice-reassurance{display:none}@media (max-width:767px){:is(#step1.language-summary-active,#step1) #standardSourceCard #standardSourceSpeechBtn .choice-sheet-bestfor > span:nth-of-type(3),:is(#step1.language-summary-active,#step1) #standardSourceCard #standardSourcePickerBtn .choice-sheet-bestfor > span:nth-of-type(2):nth-last-of-type(2){display:none}}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-subtitles{display:none}@media (min-width:768px){:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-subtitles{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--border-color);color:var(--text-secondary);font-size:var(--home-text)}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-subtitles svg{width:20px;height:20px;flex:none;fill:none;stroke:#f5c518;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}}:is(#step1.language-summary-active,#step1) #standardSourceCard:is(.standard-source-choice,.standard-source-choice-intro){max-width:none}:is(#step1.language-summary-active,#step1) #standardSourceCard:is(.vocabulary-choice-bullets,.vocabulary-choice-bullets li,.choice-sheet-bestfor,.choice-sheet-bestfor em){text-align:left}@media (min-width:768px){:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-buttons{align-items:stretch}}:is(#step1.language-summary-active,#step1) #standardSourceCard .vocabulary-choice-bullets{max-width:none !important;margin:0 !important}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-spotify{margin:0 !important;border:0 !important;border-top:1px solid var(--border-color) !important;border-radius:0 !important}:is(#step1.language-summary-active,#step1) #standardSourceCard:is(.standard-source-speech,.standard-source-music){align-self:stretch !important;height:auto}:is(#step1.language-summary-active,#step1) #standardSourceCard .standard-source-choice-intro{justify-items:start !important}body.desktop-workspace #setupPanel[data-home-open] .home-section-toggle{display:none !important}body.desktop-workspace #setupPanel[data-home-open]:is(#step2,#reviewDeckSection) > .step-header{display:flex !important}body.desktop-workspace #setupPanel[data-home-open] #step2 > .level-choosing{display:grid !important}body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):not([style*="none"]){display:flex !important}@media (min-width:768px){:is(#step1.language-summary-active,#step1) #standardSourceCard .choice-sheet-item{align-content:start !important;align-items:center}}@media (min-width:768px){:is(#step1.language-summary-active,#step1) #standardSourceCard:is(#standardSourceSpeechBtn,#standardSourcePickerBtn){padding:20px !important}}@media (min-width:1024px){:is(#step1.language-summary-active,#step1) #standardSourceCard:is(#standardSourceSpeechBtn,#standardSourcePickerBtn){padding:26px !important}}#step2Tooltip .level-help-note{margin:0 0 14px;color:var(--text-secondary);font-size:15px;line-height:1.5}#step2Tooltip .level-help-note strong{color:var(--text-primary)}#step2Tooltip .level-help-subhead{margin:0 0 6px;color:var(--text-muted);font:700 12px/1 var(--font-emphasis);letter-spacing:0.08em;text-transform:uppercase}@media (min-width:1024px){#reviewHomeModal .modal-header h3{font-size:34px}#reviewHomeModal .review-home-section h4{font-size:15px;margin-bottom:12px}#reviewHomeModal .review-home-row{padding:18px 22px;margin-bottom:10px;border-radius:14px}#reviewHomeModal .review-home-row-copy{gap:5px}#reviewHomeModal .review-home-row-copy strong{font-size:21px}#reviewHomeModal .review-home-row-copy small{font-size:16px}#reviewHomeModal .review-home-row-count{font-size:28px;min-width:48px}#reviewHomeModal .review-home-row-chevron{font-size:32px}#reviewHomeModal .review-home-srs{padding:16px 20px;margin-bottom:26px;border-radius:14px}#reviewHomeModal .review-home-srs-copy strong{font-size:19px}#reviewHomeModal .review-home-srs-copy small{font-size:16px}#reviewHomeModal .review-home-srs-info{width:36px;height:36px;font-size:18px}#reviewHomeModal .review-home-back{font-size:17px;min-height:44px;padding:8px 14px}#reviewHomeModal .review-home-detail-head > span{font-size:16px}#reviewHomeModal .review-home-detail-title h4{font-size:32px}#reviewHomeModal .review-home-detail-title p{font-size:17px}#reviewHomeModal .review-home-word-row{padding-block:14px}#reviewHomeModal .review-home-word-row strong{font-size:21px}#reviewHomeModal .review-home-word-row span{font-size:16px}}#step2Tooltip .info-point-badge{min-width:88px;border:1px solid var(--border-color)}#step2Tooltip .info-point-badge.is-new{background:var(--set-new,#fff);color:#17202a}#step2Tooltip .info-point-badge.is-practice{background:var(--set-review);color:#17202a}#step2Tooltip .info-point-badge.is-done{background:var(--set-known,#16734b);color:#fff}#step2Tooltip .info-point-badge.is-estimated{background:var(--set-estimated);color:#17202a}#step2Tooltip .info-point-badge.is-skip{background:var(--set-skipped,#566477);color:#fff}.home-cta{min-height:56px}.home-cta-main{font-size:calc(var(--home-text) * 1.2)}.home-cta-count{font-weight:500;font-size:var(--home-text);opacity:.9}.home-cta-length{font-weight:500}@media (min-width:768px){.home-cta{min-height:56px}}@media (min-width:1024px){.home-cta{min-height:62px}}#step2Tooltip .level-estimate-modal-callout{margin:4px 0 18px}@media (min-width:1024px){#setupPanel .home-section > .step-header{justify-content:center;padding:1.6vh 2vw;border-bottom:1px solid var(--border-color)}#setupPanel #step2 > .level-choosing,#setupPanel #reviewDeckSection > #reviewDeckBody{padding-top:1.6vh}}:root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden):not([style*="none"])){--bg-primary:#15171b;background:#15171b}:root:not([data-theme="light"]) #setupPanel .home-section{background:#000;border-color:#2a2d33}#setupPanel .home-section{position:relative}#setupPanel .home-section-toggle{justify-content:center;text-align:center}#setupPanel .home-section > .step-header{justify-content:center}#setupPanel .home-section-toggle > .home-section-icon,#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child{position:absolute;top:14px;left:16px;margin:0}#setupPanel .home-section-toggle-caret{position:absolute;top:14px;right:16px;margin:0;line-height:28px}#setupPanel .home-section-toggle-meta{text-align:center}#setupPanel .home-section-peek .home-level-stats,#setupPanel #practiseSectionPeek{justify-content:center}@media (min-width:1024px){#setupPanel .home-section-toggle > .home-section-icon,#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child{top:1.6vh;left:2vw;width:28px;height:28px}}#setupPanel .home-section > .step-header > .step-title-trigger{font-size:18px}#setupPanel .home-section-toggle .home-section-name{font-size:18px}#setupPanel .home-section-toggle{padding-top:14px;padding-bottom:13px}#setupPanel .home-section-toggle > .home-section-icon,#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child{top:26px;left:16px;width:20px;height:20px}#setupPanel .home-section-toggle-caret{top:25px;line-height:22px}#setupPanel .home-section-help{stroke:var(--text-primary)}@media (min-width:1024px){#setupPanel .home-section > .step-header > .step-title-trigger{font-size:clamp(22px,1.9vw,30px)}#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child{top:calc(1.6vh + 8px);left:2vw;width:28px;height:28px}}.home-practise-total{align-items:stretch;gap:8px;padding:4px 0 12px}.home-practise-total > p{margin:0;text-align:center;color:var(--text-secondary);font-size:var(--home-text)}.home-practise-total > p strong{color:var(--text-primary);font-weight:700}.home-practise-total > p span{color:var(--text-muted)}.home-practise-bar{display:flex;gap:2px;height:6px;border-radius:3px;overflow:hidden}.home-practise-bar span{display:block;height:100%;min-width:3px}.home-practise-bar .is-mistake{background:#e5484d}.home-practise-bar .is-due{background:var(--accent-blue)}@media (min-width:1024px){.home-practise-total strong{font-size:inherit}.home-practise-total > p{font-size:calc(var(--home-text) * 1.15)}.home-practise-bar{height:clamp(8px,1.2vh,14px);border-radius:7px}}.home-practise-total > p strong{font-size:inherit}.home-practise-total.is-empty{align-items:center;text-align:center}#step2Tooltip.visible,body:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:not(.hidden){position:fixed !important;inset:0 !important;width:calc(100vw / var(--ui-zoom,1)) !important;height:calc(100dvh / var(--ui-zoom,1)) !important;padding:0 !important;align-items:stretch !important;justify-content:stretch !important;background:var(--bg-primary) !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important}#step2Tooltip .step-info-tooltip-inner,body:has(#appContent.hidden) #spacedRepetitionInfoModal > .modal-content{box-sizing:border-box !important;width:100% !important;max-width:none !important;height:100% !important;max-height:none !important;margin:0 !important;padding:max(18px,env(safe-area-inset-top)) 20px max(32px,env(safe-area-inset-bottom)) !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;background:transparent !important;overflow-y:auto;animation:none !important}#step2Tooltip .step-info-tooltip-inner >:not(.info-sheet-header),body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-body{width:min(100%,720px) !important;margin-inline:auto !important;box-sizing:border-box}#step2Tooltip .info-sheet-header,body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header{position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;padding:0 56px;margin-bottom:8px;box-sizing:border-box}#step2Tooltip .info-sheet-header h3,body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header h3{margin:0;font-size:21px;line-height:1.2;text-align:center}#step2Tooltip .info-sheet-close,body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-close{position:absolute !important;top:0;right:0;width:44px;height:44px}#step2Tooltip .info-sheet-lead{font-size:17px;line-height:1.55}#step2Tooltip .level-help-note{font-size:17px}#step2Tooltip .level-help-subhead{font-size:13px;margin-top:8px}#step2Tooltip .info-sheet-points p{font-size:16.5px;line-height:1.5}#step2Tooltip .info-point-badge{height:28px;min-width:96px;font-size:14px}#step2Tooltip .level-estimate-modal-body strong{font-size:17px}#step2Tooltip .level-estimate-modal-btn{font-size:16px;padding:12px 16px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-lead{font-size:17px;line-height:1.55}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-status{font-size:16.5px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps strong{font-size:18px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps span{font-size:16.5px;line-height:1.5}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li{grid-template-columns:32px 1fr}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li::before{width:32px;height:32px;font-size:14px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-note{font-size:16px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .review-home-link{font-size:16px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .product-modal-eyebrow{display:none}body.desktop-workspace #step2Tooltip.visible,body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:not(.hidden){left:var(--desktop-nav-width) !important;width:calc((100vw / var(--ui-zoom,1)) - var(--desktop-nav-width)) !important}@media (min-width:1024px){#step2Tooltip .step-info-tooltip-inner,body:has(#appContent.hidden) #spacedRepetitionInfoModal > .modal-content{padding:28px 32px 48px !important}#step2Tooltip .step-info-tooltip-inner >:not(.info-sheet-header),body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-body{width:min(100%,860px) !important}#step2Tooltip .info-sheet-header h3,body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header h3{font-size:34px}#step2Tooltip .info-sheet-lead,#step2Tooltip .level-help-note{font-size:22px}#step2Tooltip .level-help-subhead{font-size:15px}#step2Tooltip .info-sheet-points > div{padding:14px 0;gap:16px;align-items:center}#step2Tooltip .info-sheet-points p{font-size:20px}#step2Tooltip .info-point-badge{height:34px;min-width:124px;font-size:16px}#step2Tooltip .level-estimate-modal-body strong{font-size:21px}#step2Tooltip .level-estimate-modal-btn{font-size:18px;padding:14px 22px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-lead{font-size:22px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-status{font-size:20px;padding:14px 18px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps strong{font-size:22px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps span{font-size:20px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li{grid-template-columns:40px 1fr;margin-bottom:20px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li::before{width:40px;height:40px;font-size:17px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-note{font-size:19px}body:has(#appContent.hidden) #spacedRepetitionInfoModal .review-home-link{font-size:19px}}@media (min-width:1360px){body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]){display:grid !important;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:stretch;max-width:1140px}body.desktop-workspace #setupPanel > *{grid-column:1 / -1}body.desktop-workspace #setupPanel > #step2{grid-column:1}body.desktop-workspace #setupPanel > #reviewDeckSection{grid-column:2}body.desktop-workspace #setupPanel:has(> #reviewDeckSection[hidden]) > #step2{grid-column:1 / -1}body.desktop-workspace #setupPanel >:is(#step2,#reviewDeckSection){min-height:min(70vh,720px)}#setupPanel #step2 .level-choosing,#setupPanel #step2.has-level-tiles .level-choosing{grid-template-rows:auto 1fr auto auto 1fr auto;padding-top:3vh}#setupPanel #step2 #homeLevelStepper,#setupPanel #step2.has-level-tiles #homeLevelStepper{grid-row:3 / span 2}#setupPanel #step2 #lswExamples,#setupPanel #step2.has-level-tiles #lswExamples{grid-row:3}#setupPanel #step2 #rangeSelector,#setupPanel #step2.has-level-tiles #rangeSelector{grid-row:4}#setupPanel #step2 .home-section-footer,#setupPanel #step2.has-level-tiles .home-section-footer{grid-row:6}#setupPanel #step2 #lswExamples{padding-right:1.5vw;white-space:normal}#setupPanel #step2 #lswExamples .lsw-coverage-inline{white-space:normal}#setupPanel #lswExamples,#setupPanel #lswExamples .lsw-egs,#setupPanel #lswExamples .lsw-egs *{font-size:var(--home-text-small)}#setupPanel #step2 .home-level-progress{padding-right:1.5vw}#setupPanel #reviewDeckBody:not([style*="none"]){flex:1 1 auto}.home-practise{flex:1 1 auto;grid-template-columns:minmax(0,1fr);align-content:start;row-gap:14px;padding:14px 2vw}.home-practise-total,.home-practise-rows,.home-practise-browse{grid-column:1;grid-row:auto}.home-practise-total.is-empty{grid-column:1}.home-practise-total.is-empty + .home-practise-browse{grid-column:1;justify-self:start}#setupPanel #reviewDeckSection .home-section-footer{margin-top:auto;flex-direction:column;align-items:stretch}#setupPanel .home-section-footer > .home-action-slot{flex:1 1 auto}#setupPanel #step2 .home-section-footer{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:14px}#setupPanel #step2 .home-section-footer > #setupOptions{flex:none;width:100%}}.home-smart-skip{min-height:56px;padding:8px 10px 8px 14px;border-radius:12px;gap:10px}.home-switch{width:54px;height:32px;border-radius:16px}.home-switch-knob{top:3px;left:3px;width:26px;height:26px}.home-switch[aria-checked="true"] .home-switch-knob{transform:translateX(22px)}@media (min-width:1024px){.home-smart-skip{min-height:62px}}@media (max-width:767px){#setupPanel .home-section-footer{padding:14px 20px calc(max(14px,env(safe-area-inset-bottom)) + 12px)}#setupPanel[data-home-open]{padding-bottom:calc(190px + env(safe-area-inset-bottom))}}.home-level-stats{flex-wrap:nowrap;white-space:nowrap}.home-level-estimate{display:flex;align-items:center;gap:6px;margin:8px 0 0;color:var(--text-secondary);font-size:calc(var(--home-text) * 0.92)}.home-level-estimate i{width:8px;height:8px;border-radius:50%;background:var(--set-estimated);flex:none}#setupPanel .home-section-peek .home-level-estimate{justify-content:center;margin-top:6px}@media (min-width:1360px){#setupPanel #step2 .home-level-estimate{justify-content:center}}.home-level-stats{justify-content:center}.home-level-estimate{justify-content:center}@media (max-width:1023px){#setupPanel .home-section > .step-header{padding:6px 16px;border-bottom:1px solid var(--border-color)}#setupPanel .home-section-toggle{padding:6px 16px 14px;row-gap:6px}#setupPanel .home-section-toggle::after{content:"";position:absolute;left:0;right:0;top:56px;height:1px;background:var(--border-color)}#setupPanel .home-section-toggle-meta{margin-top:10px}#setupPanel .home-section-toggle > .home-section-icon,#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child{top:18px;left:16px}#setupPanel .home-section-toggle-caret{top:17px;right:16px}#setupPanel #step2 > .level-choosing{padding-top:12px}#setupPanel #reviewDeckSection > #reviewDeckBody{padding-top:6px}}#setupPanel #lswExamples{min-height:calc(var(--home-text) * 1.45 * 2)}.home-cta-length{flex:none}.home-cta-length::before{flex:none}@media (min-width:1360px){body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]){grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}.home-cta-main{flex:1;padding:0 1vw}}#standardSourceCard .standard-source-spotify[hidden]{display:none !important}#step1 #standardSourceCard .choice-sheet-item:disabled .choice-sheet-copy small{display:block !important;grid-area:2 / 1 / auto / -1;margin-top:6px;text-align:left;color:var(--text-muted)}#setupPanel #lswExamples .lsw-egs .lsw-coverage-inline{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.home-level-readout{padding:8px 16px 10px;border-radius:16px;background:var(--bg-tertiary)}.home-level-stepper{gap:6px;justify-content:center}.home-level-step{flex:none;width:46px;height:46px;font-size:34px;color:var(--text-secondary)}@media (min-width:1360px){.home-level-step{width:56px;height:56px;font-size:40px}}.home-level-tiles{--tile:60px;display:flex;align-items:center;justify-content:center;gap:4px;margin:4px 0 12px}.home-level-tiles[hidden]{display:none !important}.home-level-tile-list{flex:0 1 auto;min-width:0;display:flex;gap:6px}.home-level-tile{display:flex;flex-direction:column;align-items:stretch;flex:0 1 var(--tile);width:var(--tile);gap:6px;min-width:0;padding:8px 5px 7px;border:1px solid var(--border-color);border-radius:10px;background:transparent;color:var(--text-secondary);font-family:var(--font-emphasis);font-size:var(--home-text);font-weight:700;line-height:1;cursor:pointer}.home-level-tile:hover{background:var(--bg-card-hover);color:var(--text-primary)}.home-level-tile.is-selected{border-color:color-mix(in srgb,var(--accent-primary) 55%,var(--border-color));color:var(--text-primary);background:color-mix(in srgb,var(--accent-primary) 7%,transparent)}.home-level-tile-bar{display:flex;gap:1px;height:4px;border-radius:2px;overflow:hidden;background:var(--border-color)}.home-level-tile-bar span{display:block;min-width:2px}.home-level-tile-bar .is-new{background:var(--set-new,#fff)}.home-level-tile-bar .is-seen{background:var(--set-review,#896318)}.home-level-tile-bar .is-known{background:var(--set-known,#16734b)}.home-level-tile-bar .is-estimated{background:var(--set-estimated,#77669e)}.home-level-tile-bar .is-skipped{background:var(--set-skipped,#566477)}@media (min-width:1024px) and (max-width:1359px){#setupPanel #step2.has-level-tiles #homeLevelStepper{grid-row:2 / span 2}#setupPanel #step2.has-level-tiles #lswExamples{grid-row:2}#setupPanel #step2.has-level-tiles #rangeSelector{grid-row:3}#setupPanel #step2.has-level-tiles .home-section-footer{grid-row:4}}@media (min-width:1024px){#setupPanel #step2 #homeLevelTiles{grid-column:1 / -1;grid-row:1;padding:0 1vw}.home-level-tiles{--tile:clamp(60px,5.2vw,84px)}.home-level-tile{padding:1.1vh 6px 1vh;gap:0.9vh}.home-level-tile-bar{height:5px}}@media (max-width:1023px){.home-level-tile-list{gap:4px}.home-level-tile{padding:8px 3px 7px;gap:6px;border-radius:8px}}@media (min-width:1360px){body.desktop-workspace > .container:has(> #setupPanel > #step2:not([style*="none"])){padding:0}body.desktop-workspace #setupPanel.file-upload:has(> #step2:not([style*="none"])):not(.hidden):not([style*="none"]){grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:0;max-width:none;margin:0;padding:0;min-height:calc(100dvh / var(--ui-zoom,1))}body.desktop-workspace #setupPanel >:is(#step2,#reviewDeckSection){min-height:calc(100dvh / var(--ui-zoom,1));border:0;border-radius:0;background:transparent}:root:not([data-theme="light"]) body.desktop-workspace #setupPanel >:is(#step2,#reviewDeckSection){background:transparent}body.desktop-workspace #setupPanel > #reviewDeckSection{border-left:1px solid var(--border-color);background:var(--bg-secondary)}:root:not([data-theme="light"]) body.desktop-workspace #setupPanel > #reviewDeckSection{background:#121417}#setupPanel .home-section > .step-header{padding:4vh 3.5vw 2.4vh}#setupPanel #step2 > .level-choosing{padding:2vh 3.5vw 0}#setupPanel #step2 .home-section-footer,#setupPanel #reviewDeckSection .home-section-footer{padding:12px 3.5vw 5vh}.home-practise{padding:3vh 3vw;align-content:center}#setupPanel #step2 .home-level-readout strong{font-size:clamp(72px,6.5vw,128px)}#setupPanel .home-section > .step-header{border-bottom:0}#setupPanel .home-section > .step-header .step-title-trigger{display:inline-flex;align-items:center;gap:0.5em}#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child{position:static;width:0.85em;height:0.85em}#setupPanel .home-section > .step-header .step-title-trigger > .home-section-help{position:absolute;top:calc(4vh - 2px);right:3vw;width:44px;height:44px}#setupPanel .home-section-footer{border-top:0}.home-practise-rows{border-top:0}#setupPanel #step2 .home-level-readout{background:transparent;padding:0}#setupPanel #step2 .level-choosing{grid-template-columns:auto minmax(0,1fr);column-gap:2vw}#setupPanel #step2 #lswExamples{justify-content:center;align-items:center;text-align:center;padding:0 1vw}#setupPanel #step2 #lswExamples .lsw-egs .lsw-coverage-inline{white-space:normal}#setupPanel #step2 .home-level-progress{padding:0 1vw}#setupPanel #step2 .home-level-stats{justify-content:center}}#setupPanel #homeLevelStepper .home-level-readout strong{font-size:calc(var(--home-number) * 1.12)}#setupPanel #homeLevelStepper .home-level-eyebrow{font-size:var(--home-text);color:var(--text-secondary)}#setupPanel #homeLevelStepper{gap:0}#setupPanel #homeLevelStepper .home-level-step{width:38px}@media (min-width:1360px){#setupPanel #homeLevelStepper .home-level-step{width:44px}}#setupPanel #homeLevelStepper .home-level-words{font-size:var(--home-text);color:var(--text-secondary)}@media (min-width:1360px){#setupPanel #step2 .home-level-readout strong{font-size:clamp(80px,7.2vw,140px)}}#setupPanel .home-section-help circle{display:none}@media (max-width:1023px){#setupPanel .home-section-toggle > .home-section-icon,#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child{position:static;width:22px;height:22px;margin:0 8px 0 0}#setupPanel .home-section > .step-header .step-title-trigger{display:inline-flex;align-items:center}#setupPanel .home-section-toggle .home-section-info{display:none}#setupPanel .home-section > .step-header .home-section-help{width:30px;height:30px;margin:-9px -8px 0 -7px;align-self:flex-start}}@media (min-width:1360px){body.desktop-workspace #setupPanel:has(> #reviewDeckSection[hidden]) > #step2{grid-column:1 / -1;width:min(100%,980px);justify-self:center}}.home-level-tile{border-color:transparent}.home-level-tile.is-selected{border-color:var(--accent-primary)}.home-level-tile-dot{display:none}@media (max-width:1023px){.home-level-tile-bar{display:none}.home-level-tile-dot{display:block;align-self:center;width:7px;height:7px;border-radius:50%;background:var(--set-new,#fff)}.home-level-tile[data-dot="seen"] .home-level-tile-dot{background:var(--set-review,#ffcc00)}.home-level-tile[data-dot="known"] .home-level-tile-dot{background:var(--set-known,#06a557)}#setupPanel #homeLevelStepper .home-level-eyebrow,#setupPanel #homeLevelStepper .home-level-words{font-size:calc(var(--home-text) * 1.12)}#setupPanel .home-section > .step-header .home-section-help{position:absolute;top:9px;right:10px;margin:0;width:38px;height:38px}}#setupPanel #lswExamples .lsw-egs,#setupPanel #lswExamples .lsw-egs *{font-family:var(--font-reading,"DM Sans",-apple-system,system-ui,sans-serif)}@media (max-width:1023px){body:not(.desktop-workspace) #setupPanel[data-home-open]:is(#step2,#reviewDeckSection){border-color:var(--border-color);box-shadow:none}body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #step2,body:not(.desktop-workspace) #setupPanel[data-home-open="learn"] #reviewDeckSection{background:transparent;border:0;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);border-radius:0}body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #step2{border-top:0}#setupPanel .home-section-toggle{flex-wrap:nowrap;justify-content:flex-start;align-items:center;gap:8px;row-gap:0;padding:14px 6px;text-align:left}#setupPanel .home-section-toggle::after{display:none}#setupPanel .home-section-toggle > .home-section-icon{width:20px;height:20px;margin:0}#setupPanel .home-section-toggle .home-section-name{font-size:var(--home-text);white-space:nowrap}#setupPanel .home-section-toggle-meta{order:1;flex:0 1 auto;min-width:0;margin:0 !important;color:var(--text-muted);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#setupPanel .home-section-toggle-meta::before{content:"· "}#setupPanel .home-section-toggle-caret{order:2;position:static;margin-left:auto;transform:rotate(-90deg);color:var(--text-muted)}}
+/* Home (choose a set): Learn and Practise as two folding cards, one open at a
+   time. Loaded last; everything is scoped to #setupPanel and the home-* hooks
+   rendered by ui.js (renderRangeSelector, the level stepper). */
+
+/* Dark-theme surfaces for this screen come from css/black-palette.css. One
+   text size (16px phones, 21px from 1024px, 23px from 1440px). */
+#setupPanel, #topBar { --home-text: 16px; }
+/* Type scale for the level picker: every size is a multiple of --home-text. */
+#setupPanel { --home-text-small: calc(var(--home-text) * 0.85); --home-title: calc(var(--home-text) * 1.25); --home-number: calc(var(--home-text) * 3); }
+@media (min-width: 1024px) { #setupPanel, #topBar { --home-text: 21px; } }
+@media (min-width: 1440px) { #setupPanel, #topBar { --home-text: 23px; } }
+
+/* One set of status colours for every bar and legend on this screen, folded
+   rows and info sheets included (the older rules only reached #step4). */
+#setupPanel {
+    --set-new: #ffffff;
+    --set-review: #ffcc00;
+    --set-known: #06a557;
+    --set-estimated: #9f7aea;
+    --set-skipped: #64748b;
+}
+
+/* One centred column everywhere: no sidebar column for Practise. */
+@media (min-width: 1024px) {
+    #setupPanel.file-upload,
+    body.desktop-workspace #setupPanel.file-upload {
+        display: block;
+        max-width: none;
+        margin-inline: auto;
+    }
+}
+#setupPanel #personalCoverageWrapper { display: none !important; }
+
+/* --- Section cards ------------------------------------------------------- */
+#setupPanel .home-section {
+    margin: 0 0 10px;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: none;
+    text-align: left;
+}
+#setupPanel .home-section > .step-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    margin: 0;
+    padding: 14px 16px 2px;
+}
+#setupPanel .home-section > .step-header > .step-number { display: none; }
+#setupPanel .home-section > .step-header > .step-title-trigger {
+    margin: 0;
+    font-family: var(--font-emphasis);
+    font-size: var(--home-title);
+    justify-self: start;
+}
+/* Learn (seedling) and Practise (history clock): white line icons by the
+   names, so the two read as different things without more colour. */
+#setupPanel .home-section-icon {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+#setupPanel .home-section > .step-header > .step-title-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+/* The closed section is one row. */
+#setupPanel .home-section-toggle {
+    display: none;
+    width: 100%;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 16px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--home-text);
+    text-align: left;
+    cursor: pointer;
+}
+#setupPanel .home-section-toggle:hover { background: var(--bg-card-hover); }
+#setupPanel .home-section-toggle strong { font-weight: 600; }
+#setupPanel .home-section-toggle-meta { color: var(--text-muted); font-size: var(--home-text); }
+#setupPanel .home-section-toggle-caret { margin-left: auto; color: var(--text-muted); }
+/* The folded row reads like the open header, and its icon and name sit exactly
+   where the open header puts them (16px card padding + 14px title padding,
+   a 44px title row) so nothing jumps when the sections swap. The numbers go
+   underneath. */
+#setupPanel .home-section-toggle { padding: 12px 16px 15px; gap: 8px; row-gap: 6px; }
+#setupPanel .home-section-toggle .home-section-icon { width: 22px; height: 22px; margin-left: 15px; }
+#setupPanel .home-section-toggle .home-section-name {
+    font-family: var(--font-emphasis);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 44px;
+}
+#setupPanel .home-section-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    margin: -6px;
+}
+#setupPanel .home-section-info { font-size: 20px; }
+#setupPanel .home-section-help {
+    width: 1.1em; height: 1.1em; flex: none; fill: none; stroke: var(--accent-primary);
+    stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
+}
+/* A quiet marker for the section you are in: an accent edge and tinted border. */
+body:not(.desktop-workspace) #setupPanel[data-home-open="learn"] #step2,
+body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckSection {
+    /* One even outline: the 1px border plus a 1px inner ring, all the way round. */
+    border-color: color-mix(in srgb, var(--accent-primary) 70%, var(--border-color));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-primary) 70%, var(--border-color));
+}
+#setupPanel .home-section-toggle-meta { order: 1; flex: 0 0 100%; }
+#setupPanel .home-section-peek { order: 2; }
+#setupPanel .home-section-toggle-meta:empty { display: none; }
+/* The folded section's short version, on a line of its own under its name. */
+#setupPanel .home-section-toggle { flex-wrap: wrap; row-gap: 10px; }
+#setupPanel .home-section-peek { display: block; flex: 0 0 100%; min-width: 0; }
+#setupPanel .home-section-peek[hidden], #setupPanel .home-section-peek:empty { display: none; }
+#setupPanel .home-section-peek .home-level-bar.is-peek { height: 6px; cursor: inherit; }
+#setupPanel .home-section-peek .home-level-stats { margin-top: 8px; }
+#setupPanel #practiseSectionPeek { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--text-secondary); }
+#setupPanel #practiseSectionPeek:empty { display: none; }
+.home-peek-item { display: inline-flex; align-items: center; gap: 6px; }
+.home-peek-item i { width: 8px; height: 8px; border-radius: 50%; }
+.home-peek-item.is-mistake i { background: #e5484d; }
+.home-peek-item.is-due i { background: var(--accent-blue); }
+.home-peek-item.is-upcoming { color: var(--text-muted); }
+.home-peek-item.is-upcoming i { background: var(--border-light); }
+
+#setupPanel[data-home-open="practise"] #step2 > .home-section-toggle,
+#setupPanel[data-home-open="learn"] #reviewDeckSection > .home-section-toggle { display: flex; }
+#setupPanel[data-home-open="practise"] #step2 > .step-header,
+#setupPanel[data-home-open="practise"] #step2 > .level-choosing,
+#setupPanel[data-home-open="learn"] #reviewDeckSection > .step-header,
+#setupPanel[data-home-open="learn"] #reviewDeckBody { display: none !important; }
+/* Learn stays on top; Practise sits beneath it. */
+#setupPanel[data-home-open] #reviewDeckSection { order: 0; }
+
+/* --- Learn: level stepper ------------------------------------------------ */
+#setupPanel #step2 .level-choosing {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+#setupPanel #step2 .level-selector { margin: 0; padding: 0; }
+#setupPanel #lswSlider,
+#setupPanel .lsw-ticks { display: none !important; }
+#setupPanel .level-slider-wrap { padding: 4px 16px 0; margin: 0; }
+.home-level-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: 320px;
+    margin: 0 auto;
+    touch-action: pan-y;
+}
+.home-level-step {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+}
+.home-level-step:hover:not(:disabled) { background: var(--bg-card-hover); color: var(--text-primary); }
+.home-level-step:disabled { opacity: .25; cursor: default; }
+.home-level-readout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.15;
+}
+.home-level-eyebrow { color: var(--text-muted); font-size: var(--home-text-small); }
+.home-level-readout strong { font-family: var(--font-emphasis); font-size: var(--home-number); font-weight: 700; color: var(--text-primary); }
+.home-level-words { color: var(--text-muted); font-size: var(--home-text-small); white-space: nowrap; }
+#setupPanel #lswExamples {
+    margin: 8px 0 0;
+    padding: 0;
+    min-height: 0;
+    color: var(--text-muted);
+    font-size: var(--home-text);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#setupPanel #lswExamples .lsw-egs,
+#setupPanel #lswExamples .lsw-egs * {
+    max-width: none;
+    margin: 0;
+    display: inline;
+    color: var(--text-muted);
+    font-size: var(--home-text);
+    font-weight: 400;
+}
+#setupPanel #lswExamples .lsw-eg-extra { display: none; }
+
+/* --- Learn: this level's progress ---------------------------------------- */
+#setupPanel #step4 { margin: 0; padding: 0; border: 0; background: transparent; }
+#setupPanel #rangeSelector { margin: 0; padding: 0; }
+.home-level-progress { display: block; width: 100%; padding: 14px 16px 12px; box-sizing: border-box; }
+#setupPanel .home-level-bar {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    gap: 2px;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--bg-tertiary);
+    cursor: pointer;
+}
+#setupPanel .home-level-bar span { display: block; min-width: 3px; height: 100%; align-self: stretch; }
+.home-level-stats {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-top: 8px;
+    color: var(--text-secondary);
+    font-size: var(--home-text);
+}
+.home-level-stat { display: inline-flex; align-items: center; gap: 5px; }
+.home-level-stat i { width: 8px; height: 8px; border-radius: 50%; }
+.home-level-bar .is-new, .home-level-stat.is-new i { background: var(--set-new, #fff); }
+.home-level-bar .is-seen, .home-level-stat.is-seen i { background: var(--set-review, #896318); }
+.home-level-bar .is-known, .home-level-stat.is-known i { background: var(--set-known, #16734b); }
+.home-level-bar .is-estimated, .home-level-stat.is-estimated i { background: var(--set-estimated, #77669e); }
+.home-level-bar .is-skipped, .home-level-stat.is-skipped i { background: var(--set-skipped, #566477); }
+
+/* --- Footer: Smart Skip + the one button --------------------------------- */
+#setupPanel .home-section-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 16px 14px;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0;
+    background: transparent;
+}
+#setupPanel #setupOptions.setup-options,
+#setupPanel #step2 #setupOptions {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+.home-smart-skip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 10px;
+    border-radius: 10px;
+    background: var(--bg-tertiary);
+    transition: background .15s ease;
+}
+.home-smart-skip.is-on { background: color-mix(in srgb, var(--accent-primary) 18%, var(--bg-tertiary)); }
+.home-smart-skip-icon {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.home-smart-skip.is-on .home-smart-skip-icon { stroke: var(--accent-primary); }
+.home-smart-skip-copy {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: var(--home-text);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+.home-smart-skip-copy { display: flex; align-items: center; }
+.home-smart-skip-copy strong { flex: none; color: var(--text-primary); font-weight: 600; }
+.home-smart-skip-copy .home-smart-skip-dot, .home-smart-skip-copy .home-smart-skip-details { flex: none; }
+.home-smart-skip-copy #fastTrackHubSummary { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.home-smart-skip-dot { margin: 0 5px; }
+.home-smart-skip-details { margin-left: 6px; color: var(--text-secondary); font-size: 1.15em; line-height: 1; }
+.home-switch {
+    position: relative;
+    flex: none;
+    width: 40px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: var(--border-light);
+    cursor: pointer;
+    transition: background .15s ease;
+}
+.home-switch-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .15s ease;
+}
+.home-switch[aria-checked="true"] { background: var(--accent-primary); }
+.home-switch[aria-checked="true"] .home-switch-knob { transform: translateX(16px); }
+
+.home-cta {
+    display: flex;
+    min-height: 50px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--accent-primary);
+    color: var(--accent-primary-text, #fff);
+}
+.home-cta.is-disabled { opacity: .45; }
+.home-cta-length,
+.home-cta-main {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.home-cta-length {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 14px;
+    border-right: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    font-size: var(--home-text);
+}
+.home-cta-main { flex: 1; padding: 0 16px; font-size: var(--home-text); }
+.home-cta-length::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    border: 1.7px solid currentColor;
+    border-radius: 50%;
+    background: linear-gradient(currentColor, currentColor) 50% 30% / 1.7px 40% no-repeat;
+    opacity: .85;
+}
+.home-cta-main:disabled { cursor: default; }
+.home-cta-length:hover, .home-cta-main:hover:not(:disabled) { background: color-mix(in srgb, #000 12%, transparent); }
+.home-footer-hint { margin: 0; color: var(--text-muted); font-size: var(--home-text); }
+
+/* --- Practise body -------------------------------------------------------- */
+#setupPanel #reviewDeckBody { margin: 0; padding: 0; border: 0; background: transparent; }
+.home-practise { padding: 6px 16px 12px; }
+.home-practise-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0 12px;
+    line-height: 1.2;
+}
+.home-practise-total strong { font-size: 38px; font-weight: 700; color: var(--text-primary); }
+.home-practise-total span { color: var(--text-muted); font-size: var(--home-text); text-align: center; }
+.home-practise-total.is-empty strong { font-size: 20px; margin-bottom: 4px; }
+.home-practise-rows { border-top: 1px solid var(--border-color); }
+.home-practise-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: var(--home-text);
+    color: var(--text-primary);
+}
+.home-practise-row i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.home-practise-row span { flex: 1; }
+.home-practise-row b { font-weight: 600; color: var(--text-secondary); }
+.home-practise-row.is-mistake i { background: #e5484d; }
+.home-practise-row.is-due i { background: var(--accent-blue); }
+.home-practise-row.is-upcoming { color: var(--text-muted); }
+.home-practise-row.is-upcoming i { background: var(--border-light); }
+.home-practise-browse {
+    margin-top: 8px;
+    padding: 6px 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: var(--home-text);
+    cursor: pointer;
+}
+.home-practise-browse:hover { color: var(--text-primary); }
+
+/* --- Phones: the start button is a bar across the bottom of the screen ---
+   Only the open card's footer is ever displayed (the closed card's body is
+   hidden), so whichever card is open owns the bar. */
+@media (max-width: 767px) {
+    #setupPanel .home-section-footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 20;
+        padding: 12px 16px max(10px, env(safe-area-inset-bottom));
+        border-top: 1px solid var(--border-color);
+        border-radius: 0;
+        background: var(--bg-primary);
+        box-shadow: none;
+    }
+    /* Room so the last card never sits under the bar. */
+    #setupPanel[data-home-open] { padding-bottom: calc(130px + env(safe-area-inset-bottom)); }
+}
+
+/* --- Wider screens: Smart Skip beside the button ------------------------- */
+@media (min-width: 768px) {
+    #setupPanel .home-section-footer { flex-direction: row; align-items: center; flex-wrap: wrap; }
+    #setupPanel .home-section-footer > #setupOptions { flex: 1; min-width: 0; }
+    #setupPanel .home-section-footer > .home-action-slot { flex: none; }
+    #setupPanel #reviewDeckSection .home-section-footer { justify-content: space-between; }
+    .home-cta { min-height: 44px; }
+    .home-cta-main { flex: none; font-size: var(--home-text); }
+}
+
+/* --- Top bar on phones and narrow windows --------------------------------
+   No filled, ringed rectangle: a plain bar with the language's colours as a
+   thin line beneath it. The desktop sidebar (body.desktop-workspace) keeps
+   its own styling. */
+body:not(.desktop-workspace) #topBar {
+    /* Close to the top of the screen (the phone keeps the page below its
+       status bar and corners), and the line close under the icons. */
+    margin-top: -8px;
+    margin-bottom: 12px;
+    padding: 0 4px 6px;
+    border: 0;
+    border-radius: 0;
+    background: color-mix(in srgb, var(--bg-primary) 90%, transparent);
+    box-shadow: none;
+}
+body:not(.desktop-workspace) #topBar::before {
+    inset: auto 0 0 0;
+    height: 2px;
+    padding: 0;
+    border-radius: 1px;
+    /* One colour, the language's light one, not the flag's two. */
+    background: var(--accent-primary);
+    opacity: .85;
+    -webkit-mask: none;
+    mask: none;
+}
+body:not(.desktop-workspace) #topBar .learning-context-chip {
+    min-height: 40px;
+    padding: 4px 8px 4px 2px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+}
+body:not(.desktop-workspace) #topBar .learning-context-flag { font-size: 29px; }
+body:not(.desktop-workspace) #topBar .learning-context-chip-copy strong { font-size: 18px; }
+body:not(.desktop-workspace) #topBar .top-bar-icon-btn,
+body:not(.desktop-workspace) #topBar .gear-btn {
+    width: 40px;
+    height: 44px;
+    flex: 0 0 40px;
+    background: transparent;
+}
+body:not(.desktop-workspace) #topBar .top-bar-right-controls { gap: 0; }
+body:not(.desktop-workspace) #topBar .top-bar-icon-btn svg,
+body:not(.desktop-workspace) #topBar .gear-btn svg { width: 29px; height: 29px; }
+
+/* --- Wide screens: fill the window -------------------------------------
+   Nothing here scrolls, so nothing is capped in pixels: the column takes the
+   width beside the sidebar, the open card takes the height left over, and
+   the headline numbers scale with the window. */
+@media (min-width: 1024px) {
+    /* JS sets display:block inline on these; override it unless hidden. */
+    #setupPanel.file-upload:not(.hidden):not([style*="none"]),
+    body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]) {
+        display: flex !important;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        padding-inline: 2vw;
+    }
+    #setupPanel.file-upload { align-items: stretch; }
+    #setupPanel .home-section { margin: 0; width: 100%; max-width: none; align-self: stretch; box-sizing: border-box; }
+    #setupPanel #step2:not(.hidden):not([style*="none"]),
+    #setupPanel #reviewDeckSection:not(.hidden):not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
+    /* Desktop has the height to spare, so the two names read as titles. */
+    #setupPanel .home-section > .step-header { padding: 2.4vh 2vw 0.6vh; }
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(28px, 2.5vw, 42px); letter-spacing: -0.01em; }
+    #setupPanel .home-section-footer { margin-top: 0; padding: 12px 2vw; }
+    #setupPanel .home-section-toggle { padding: 1.6vh 2vw; font-size: var(--home-text); }
+    #setupPanel .home-section-toggle-meta { font-size: var(--home-text); }
+
+    /* Learn: picker on the left, this level's progress on the right, the
+       footer across both. #step4 joins the grid unless JS has hidden it. */
+    #setupPanel #step2 .level-choosing {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        grid-template-rows: auto auto auto;
+        align-items: center;
+    }
+    /* The picker's wrappers step aside so the example words can sit in the
+       right-hand column, above the bar they describe. */
+    #setupPanel #step2 #levelSelector,
+    #setupPanel #step2 #levelSelector > .level-slider-wrap { display: contents; }
+    #setupPanel #step2 #homeLevelStepper { grid-column: 1; grid-row: 1 / span 2; padding: 4px 0 14px; }
+    #setupPanel #step2 #lswExamples { grid-column: 2; grid-row: 1; align-self: end; justify-content: flex-start; align-items: flex-start; margin: 0 0 1.4vh; padding: 0 3vw 0 1vw; text-align: left; }
+    #setupPanel #step4:not(.hidden):not([style*="none"]) { display: contents !important; }
+    #setupPanel #step2 #rangeSelector { grid-column: 2; grid-row: 2; align-self: start; }
+    #setupPanel #step2 .home-section-footer { grid-column: 1 / -1; grid-row: 3; }
+    #setupPanel #step2 .home-level-progress { padding: 0 3vw 0 1vw; }
+    #setupPanel #step2 .home-level-bar { height: clamp(8px, 1.2vh, 14px); border-radius: 7px; }
+    #setupPanel #step2 .home-level-stats { margin-top: 1.6vh; font-size: var(--home-text); gap: 6px 1.4vw; }
+    .home-level-stepper { max-width: none; gap: 2vw; }
+    .home-level-step { width: clamp(48px, 4.4vw, 70px); height: clamp(48px, 4.4vw, 70px); font-size: clamp(32px, 2.9vw, 46px); }
+    #setupPanel #lswExamples,
+    #setupPanel #lswExamples .lsw-egs,
+    #setupPanel #lswExamples .lsw-egs * { font-size: var(--home-text); }
+
+    /* Practise: the total on the left, the breakdown on the right. */
+    #setupPanel #reviewDeckBody:not([style*="none"]) { display: flex; flex-direction: column; }
+    .home-practise {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        column-gap: 3vw;
+        align-content: center;
+        align-items: center;
+        padding: 10px 2vw 14px;
+    }
+    .home-practise-total { grid-column: 1; grid-row: 1 / span 2; padding: 0; }
+    .home-practise-total strong { font-size: clamp(44px, 4.2vw, 68px); }
+    .home-practise-total span { font-size: var(--home-text); }
+    .home-practise-row { padding: 8px 0; font-size: var(--home-text); }
+    .home-practise-rows { grid-column: 2; grid-row: 1; }
+    .home-practise-browse { grid-column: 2; grid-row: 2; justify-self: start; font-size: var(--home-text); }
+    .home-practise-total.is-empty { grid-column: 1 / -1; grid-row: 1; }
+    .home-practise-total.is-empty + .home-practise-browse { grid-column: 1 / -1; grid-row: 2; justify-self: center; }
+
+    .home-cta { min-height: 46px; }
+    .home-cta-main { font-size: var(--home-text); padding: 0 2vw; }
+    .home-smart-skip-copy { font-size: var(--home-text); }
+    .home-footer-hint { font-size: var(--home-text); }
+}
+
+/* --- Choose your vocabulary (Speech or Music) ----------------------------
+   Two equal cards, each one button: icon square, name, one sentence, Best
+   for. Spotify is the Music card's footer. No "or" divider and no second
+   language button (the top bar / sidebar already switches language). */
+:is(#step1.language-summary-active, #step1) #standardSourceCard {
+    --home-text: 16px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    text-align: left;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceLanguageBtn,
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-or { display: none !important; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice { margin: 0; padding: 0; border: 0; background: transparent; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro { margin: 0 0 16px; padding: 0; text-align: left; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-heading { margin: 0 0 6px; justify-content: center; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { font-size: 24px; text-align: center; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--text-muted);
+    font-size: var(--home-text);
+    line-height: 1.45;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets li { margin: 0; padding: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets li::before { display: none; content: none; }
+
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-buttons {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+/* The card surface: Speech's button itself, and Music's wrapper. */
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-speech,
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music {
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: none;
+    overflow: hidden;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-speech, .standard-source-music) { display: flex; flex-direction: column; padding: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, #standardSourcePickerBtn) {
+    flex: 1;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "icon . tail" "copy copy copy";
+    align-items: center;
+    row-gap: 10px;
+    width: 100%;
+    min-height: 0;
+    padding: 16px;
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-speech:hover:not(:has(:disabled)),
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-music:hover { border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color)); }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon {
+    grid-area: icon;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin: 0;
+    border-radius: 12px;
+    background: var(--bg-tertiary);
+    color: var(--accent-primary);
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon svg { width: 22px; height: 22px; stroke: currentColor; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-tail { display: block !important; grid-area: tail; color: var(--text-muted); font-size: 22px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy { grid-area: copy; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { font-size: 19px; font-weight: 700; color: var(--text-primary); }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy small {
+    display: block;
+    color: var(--text-secondary);
+    font-size: var(--home-text);
+    line-height: 1.45;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 8px 0 0;
+    padding: 0;
+    border: 0;
+    color: var(--text-secondary);
+    font-size: var(--home-text);
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor em {
+    margin-bottom: 2px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-style: normal;
+    letter-spacing: 0;
+    text-transform: none;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor > span { display: flex; align-items: center; gap: 8px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor > span::before {
+    content: "";
+    flex: none;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify { margin: 0; padding: 0; border-top: 1px solid var(--border-color); }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify .spotify-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 0;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #1db954;
+    font: inherit;
+    font-size: var(--home-text);
+    font-weight: 600;
+    text-align: left;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify .spotify-status svg { width: 20px; height: 20px; flex: none; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify button.spotify-status::after { content: "›"; margin-left: auto; font-size: 20px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-reassurance {
+    margin: 16px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: left !important;
+}
+
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item { padding: 20px; align-content: start; }
+}
+@media (min-width: 1024px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard { --home-text: 18px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { font-size: 30px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { font-size: 22px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon { width: 52px; height: 52px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-icon svg { width: 26px; height: 26px; }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item { padding: 26px; row-gap: 18px; }
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard { padding: 4px 12px 0; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro {
+    border: 0 !important;
+    padding-bottom: 0 !important;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-heading { width: 100%; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-title { display: block; width: 100%; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-speech, .standard-source-music):not(:hover) { border-color: var(--border-color); }
+/* Icon, name and › share the first row; Best for sits under them. The intro
+   says where the words come from, so the cards drop their own sentence. */
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "icon name tail";
+    column-gap: 12px;
+    row-gap: 8px;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy { display: contents; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy strong { grid-area: name; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-copy small { display: none; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-bestfor { grid-column: 1 / -1; grid-row: 2; margin-top: 4px; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-reassurance { display: none; }
+/* Phones keep two points per card: the intro already names films and TV,
+   and the Spotify footer stands for playlists. */
+@media (max-width: 767px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourceSpeechBtn .choice-sheet-bestfor > span:nth-of-type(3),
+    :is(#step1.language-summary-active, #step1) #standardSourceCard #standardSourcePickerBtn .choice-sheet-bestfor > span:nth-of-type(2):nth-last-of-type(2) { display: none; }
+}
+/* Speech's source line balances Music's Spotify footer side by side only. */
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-subtitles { display: none; }
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-subtitles {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-top: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        font-size: var(--home-text);
+    }
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-subtitles svg {
+        width: 20px; height: 20px; flex: none;
+        fill: none; stroke: #f5c518; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-choice, .standard-source-choice-intro) { max-width: none; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.vocabulary-choice-bullets, .vocabulary-choice-bullets li, .choice-sheet-bestfor, .choice-sheet-bestfor em) { text-align: left; }
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-buttons { align-items: stretch; }
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard .vocabulary-choice-bullets { max-width: none !important; margin: 0 !important; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-spotify {
+    margin: 0 !important;
+    border: 0 !important;
+    border-top: 1px solid var(--border-color) !important;
+    border-radius: 0 !important;
+}
+:is(#step1.language-summary-active, #step1) #standardSourceCard :is(.standard-source-speech, .standard-source-music) { align-self: stretch !important; height: auto; }
+:is(#step1.language-summary-active, #step1) #standardSourceCard .standard-source-choice-intro { justify-items: start !important; }
+
+/* Desktop with the sidebar: Learn and Practise are both open, one above the
+   other, so the fold rows go. Outranks the [data-home-open] hide rules. */
+body.desktop-workspace #setupPanel[data-home-open] .home-section-toggle { display: none !important; }
+body.desktop-workspace #setupPanel[data-home-open] :is(#step2, #reviewDeckSection) > .step-header { display: flex !important; }
+body.desktop-workspace #setupPanel[data-home-open] #step2 > .level-choosing { display: grid !important; }
+body.desktop-workspace #setupPanel[data-home-open] #reviewDeckBody:not(.hidden):not([style*="none"]) { display: flex !important; }
+/* Both cards start their content at the top, so icons and titles line up
+   even though Music's button is shorter (Spotify sits beneath it). */
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard .choice-sheet-item {
+        align-content: start !important;
+        align-items: center;
+    }
+}
+@media (min-width: 768px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, #standardSourcePickerBtn) { padding: 20px !important; }
+}
+@media (min-width: 1024px) {
+    :is(#step1.language-summary-active, #step1) #standardSourceCard :is(#standardSourceSpeechBtn, #standardSourcePickerBtn) { padding: 26px !important; }
+}
+
+/* Learn's info sheet: one note and a legend that matches the progress bar. */
+#step2Tooltip .level-help-note { margin: 0 0 14px; color: var(--text-secondary); font-size: 15px; line-height: 1.5; }
+#step2Tooltip .level-help-note strong { color: var(--text-primary); }
+#step2Tooltip .level-help-subhead {
+    margin: 0 0 6px; color: var(--text-muted); font: 700 12px/1 var(--font-emphasis);
+    letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+/* Practise's detail sheet is a page on desktop: type sized for it. */
+@media (min-width: 1024px) {
+    #reviewHomeModal .modal-header h3 { font-size: 34px; }
+    #reviewHomeModal .review-home-section h4 { font-size: 15px; margin-bottom: 12px; }
+    #reviewHomeModal .review-home-row { padding: 18px 22px; margin-bottom: 10px; border-radius: 14px; }
+    #reviewHomeModal .review-home-row-copy { gap: 5px; }
+    #reviewHomeModal .review-home-row-copy strong { font-size: 21px; }
+    #reviewHomeModal .review-home-row-copy small { font-size: 16px; }
+    #reviewHomeModal .review-home-row-count { font-size: 28px; min-width: 48px; }
+    #reviewHomeModal .review-home-row-chevron { font-size: 32px; }
+    #reviewHomeModal .review-home-srs { padding: 16px 20px; margin-bottom: 26px; border-radius: 14px; }
+    #reviewHomeModal .review-home-srs-copy strong { font-size: 19px; }
+    #reviewHomeModal .review-home-srs-copy small { font-size: 16px; }
+    #reviewHomeModal .review-home-srs-info { width: 36px; height: 36px; font-size: 18px; }
+    #reviewHomeModal .review-home-back { font-size: 17px; min-height: 44px; padding: 8px 14px; }
+    #reviewHomeModal .review-home-detail-head > span { font-size: 16px; }
+    #reviewHomeModal .review-home-detail-title h4 { font-size: 32px; }
+    #reviewHomeModal .review-home-detail-title p { font-size: 17px; }
+    #reviewHomeModal .review-home-word-row { padding-block: 14px; }
+    #reviewHomeModal .review-home-word-row strong { font-size: 21px; }
+    #reviewHomeModal .review-home-word-row span { font-size: 16px; }
+}
+
+/* Learn's legend swatches are the progress bar's own fills (same fallbacks). */
+#step2Tooltip .info-point-badge { min-width: 88px; border: 1px solid var(--border-color); }
+#step2Tooltip .info-point-badge.is-new { background: var(--set-new, #fff); color: #17202a; }
+#step2Tooltip .info-point-badge.is-practice { background: var(--set-review); color: #17202a; }
+#step2Tooltip .info-point-badge.is-done { background: var(--set-known, #16734b); color: #fff; }
+#step2Tooltip .info-point-badge.is-estimated { background: var(--set-estimated); color: #17202a; }
+#step2Tooltip .info-point-badge.is-skip { background: var(--set-skipped, #566477); color: #fff; }
+
+/* The button is the main action: a larger action word, with the time limit and
+   card count quieter (regular weight) beside it. */
+.home-cta { min-height: 56px; }
+.home-cta-main { font-size: calc(var(--home-text) * 1.2); }
+.home-cta-count { font-weight: 500; font-size: var(--home-text); opacity: .9; }
+.home-cta-length { font-weight: 500; }
+@media (min-width: 768px) { .home-cta { min-height: 56px; } }
+@media (min-width: 1024px) { .home-cta { min-height: 62px; } }
+#step2Tooltip .level-estimate-modal-callout { margin: 4px 0 18px; }
+
+/* Desktop: each section's title is a centred heading over its own rule, so
+   Learn and Practise read as two equal, separate panels. (Phones keep the
+   left-aligned row, which has to line up with the folded rows.) */
+@media (min-width: 1024px) {
+    #setupPanel .home-section > .step-header {
+        justify-content: center;
+        padding: 1.6vh 2vw;
+        border-bottom: 1px solid var(--border-color);
+    }
+    #setupPanel #step2 > .level-choosing,
+    #setupPanel #reviewDeckSection > #reviewDeckBody { padding-top: 1.6vh; }
+}
+
+/* Home, dark theme: the page is a touch lighter than the black Learn and
+   Practise panels, so the panels stand out. */
+:root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden):not([style*="none"])) {
+    --bg-primary: #15171b;
+    background: #15171b;
+}
+:root:not([data-theme="light"]) #setupPanel .home-section { background: #000; border-color: #2a2d33; }
+
+/* Titles are centred on every screen; the section icon sits in the card's top
+   left and the fold arrow in its top right. */
+#setupPanel .home-section { position: relative; }
+#setupPanel .home-section-toggle { justify-content: center; text-align: center; }
+#setupPanel .home-section > .step-header { justify-content: center; }
+#setupPanel .home-section-toggle > .home-section-icon,
+#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    margin: 0;
+}
+#setupPanel .home-section-toggle-caret { position: absolute; top: 14px; right: 16px; margin: 0; line-height: 28px; }
+#setupPanel .home-section-toggle-meta { text-align: center; }
+#setupPanel .home-section-peek .home-level-stats,
+#setupPanel #practiseSectionPeek { justify-content: center; }
+@media (min-width: 1024px) {
+    #setupPanel .home-section-toggle > .home-section-icon,
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+        top: 1.6vh; left: 2vw; width: 28px; height: 28px;
+    }
+}
+
+/* --- Round of refinements: smaller titles, icon on the title's line, white ? */
+#setupPanel .home-section > .step-header > .step-title-trigger { font-size: 18px; }
+#setupPanel .home-section-toggle .home-section-name { font-size: 18px; }
+#setupPanel .home-section-toggle { padding-top: 14px; padding-bottom: 13px; }
+/* The icon is as big as the title's text and centred on the title's line. */
+#setupPanel .home-section-toggle > .home-section-icon,
+#setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+    top: 26px; left: 16px; width: 20px; height: 20px;
+}
+#setupPanel .home-section-toggle-caret { top: 25px; line-height: 22px; }
+#setupPanel .home-section-help { stroke: var(--text-primary); }
+@media (min-width: 1024px) {
+    #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(22px, 1.9vw, 30px); }
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+        top: calc(1.6vh + 8px); left: 2vw; width: 28px; height: 28px;
+    }
+}
+
+/* Practise's headline is a sentence with the same split bar Learn has, not a
+   giant number. */
+.home-practise-total { align-items: stretch; gap: 8px; padding: 4px 0 12px; }
+.home-practise-total > p { margin: 0; text-align: center; color: var(--text-secondary); font-size: var(--home-text); }
+.home-practise-total > p strong { color: var(--text-primary); font-weight: 700; }
+.home-practise-total > p span { color: var(--text-muted); }
+.home-practise-bar { display: flex; gap: 2px; height: 6px; border-radius: 3px; overflow: hidden; }
+.home-practise-bar span { display: block; height: 100%; min-width: 3px; }
+.home-practise-bar .is-mistake { background: #e5484d; }
+.home-practise-bar .is-due { background: var(--accent-blue); }
+@media (min-width: 1024px) {
+    .home-practise-total strong { font-size: inherit; }
+    .home-practise-total > p { font-size: calc(var(--home-text) * 1.15); }
+    .home-practise-bar { height: clamp(8px, 1.2vh, 14px); border-radius: 7px; }
+}
+.home-practise-total > p strong { font-size: inherit; }
+.home-practise-total.is-empty { align-items: center; text-align: center; }
+
+/* ===== Learn and Practise help sheets: full screen =========================
+   Phones: the whole screen, close button top right. Desktop: the whole
+   workspace beside the sidebar. Text is sized for reading, not for a pop-up. */
+#step2Tooltip.visible,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:not(.hidden) {
+    position: fixed !important;
+    inset: 0 !important;
+    width: calc(100vw / var(--ui-zoom, 1)) !important;
+    height: calc(100dvh / var(--ui-zoom, 1)) !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    background: var(--bg-primary) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+#step2Tooltip .step-info-tooltip-inner,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal > .modal-content {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: max(18px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom)) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    overflow-y: auto;
+    animation: none !important;
+}
+/* One reading column; the header spans the screen so the close sits at the corner. */
+#step2Tooltip .step-info-tooltip-inner > :not(.info-sheet-header),
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-body {
+    width: min(100%, 720px) !important;
+    margin-inline: auto !important;
+    box-sizing: border-box;
+}
+#step2Tooltip .info-sheet-header,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 56px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+}
+#step2Tooltip .info-sheet-header h3,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header h3 { margin: 0; font-size: 21px; line-height: 1.2; text-align: center; }
+#step2Tooltip .info-sheet-close,
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-close {
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    width: 44px;
+    height: 44px;
+}
+/* Reading sizes (phones). */
+#step2Tooltip .info-sheet-lead { font-size: 17px; line-height: 1.55; }
+#step2Tooltip .level-help-note { font-size: 17px; }
+#step2Tooltip .level-help-subhead { font-size: 13px; margin-top: 8px; }
+#step2Tooltip .info-sheet-points p { font-size: 16.5px; line-height: 1.5; }
+#step2Tooltip .info-point-badge { height: 28px; min-width: 96px; font-size: 14px; }
+#step2Tooltip .level-estimate-modal-body strong { font-size: 17px; }
+#step2Tooltip .level-estimate-modal-btn { font-size: 16px; padding: 12px 16px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-lead { font-size: 17px; line-height: 1.55; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-status { font-size: 16.5px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps strong { font-size: 18px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps span { font-size: 16.5px; line-height: 1.5; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li { grid-template-columns: 32px 1fr; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li::before { width: 32px; height: 32px; font-size: 14px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-note { font-size: 16px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .review-home-link { font-size: 16px; }
+body:has(#appContent.hidden) #spacedRepetitionInfoModal .product-modal-eyebrow { display: none; }
+
+/* Desktop: the workspace beside the sidebar, larger type. */
+body.desktop-workspace #step2Tooltip.visible,
+body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:not(.hidden) {
+    left: var(--desktop-nav-width) !important;
+    width: calc((100vw / var(--ui-zoom, 1)) - var(--desktop-nav-width)) !important;
+}
+@media (min-width: 1024px) {
+    #step2Tooltip .step-info-tooltip-inner,
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal > .modal-content { padding: 28px 32px 48px !important; }
+    #step2Tooltip .step-info-tooltip-inner > :not(.info-sheet-header),
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-body { width: min(100%, 860px) !important; }
+    #step2Tooltip .info-sheet-header h3,
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .modal-header h3 { font-size: 34px; }
+    #step2Tooltip .info-sheet-lead,
+    #step2Tooltip .level-help-note { font-size: 22px; }
+    #step2Tooltip .level-help-subhead { font-size: 15px; }
+    #step2Tooltip .info-sheet-points > div { padding: 14px 0; gap: 16px; align-items: center; }
+    #step2Tooltip .info-sheet-points p { font-size: 20px; }
+    #step2Tooltip .info-point-badge { height: 34px; min-width: 124px; font-size: 16px; }
+    #step2Tooltip .level-estimate-modal-body strong { font-size: 21px; }
+    #step2Tooltip .level-estimate-modal-btn { font-size: 18px; padding: 14px 22px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-lead { font-size: 22px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-status { font-size: 20px; padding: 14px 18px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps strong { font-size: 22px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps span { font-size: 20px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li { grid-template-columns: 40px 1fr; margin-bottom: 20px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-steps li::before { width: 40px; height: 40px; font-size: 17px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .srs-info-note { font-size: 19px; }
+    body:has(#appContent.hidden) #spacedRepetitionInfoModal .review-home-link { font-size: 19px; }
+}
+
+/* ===== Wide desktop: Learn on the left, Practise on the right ===============
+   Both always visible, same height, each button pinned to its panel's bottom.
+   Below 1360px they stay stacked. Learn's picker and Practise's rows become one
+   column each, because a panel is now about half the width. */
+@media (min-width: 1360px) {
+    body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]) {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+        gap: 16px;
+        align-items: stretch;
+        max-width: 1140px;
+    }
+    body.desktop-workspace #setupPanel > * { grid-column: 1 / -1; }
+    body.desktop-workspace #setupPanel > #step2 { grid-column: 1; }
+    body.desktop-workspace #setupPanel > #reviewDeckSection { grid-column: 2; }
+    body.desktop-workspace #setupPanel:has(> #reviewDeckSection[hidden]) > #step2 { grid-column: 1 / -1; }
+
+    /* Learn keeps the level beside its words and progress (the 1024px grid);
+       the footer row takes the spare height so both buttons share one line. */
+    /* Both panels take most of the window's height; Learn spreads its rows
+       over it instead of packing them under the title. */
+    body.desktop-workspace #setupPanel > :is(#step2, #reviewDeckSection) { min-height: min(70vh, 720px); }
+    /* Rows: tiles, space, [level | examples + bar], space, footer. The level
+       and its words stay one block, centred in the height left over. */
+    #setupPanel #step2 .level-choosing,
+    #setupPanel #step2.has-level-tiles .level-choosing { grid-template-rows: auto 1fr auto auto 1fr auto; padding-top: 3vh; }
+    #setupPanel #step2 #homeLevelStepper,
+    #setupPanel #step2.has-level-tiles #homeLevelStepper { grid-row: 3 / span 2; }
+    #setupPanel #step2 #lswExamples,
+    #setupPanel #step2.has-level-tiles #lswExamples { grid-row: 3; }
+    #setupPanel #step2 #rangeSelector,
+    #setupPanel #step2.has-level-tiles #rangeSelector { grid-row: 4; }
+    #setupPanel #step2 .home-section-footer,
+    #setupPanel #step2.has-level-tiles .home-section-footer { grid-row: 6; }
+    /* The right-hand column is narrower in a side-by-side panel: let the
+       coverage line wrap rather than run past the edge. */
+    #setupPanel #step2 #lswExamples { padding-right: 1.5vw; white-space: normal; }
+    #setupPanel #step2 #lswExamples .lsw-coverage-inline { white-space: normal; }
+    #setupPanel #lswExamples,
+    #setupPanel #lswExamples .lsw-egs,
+    #setupPanel #lswExamples .lsw-egs * { font-size: var(--home-text-small); }
+    #setupPanel #step2 .home-level-progress { padding-right: 1.5vw; }
+
+    /* Practise: one column; the button stays at the bottom. */
+    #setupPanel #reviewDeckBody:not([style*="none"]) { flex: 1 1 auto; }
+    .home-practise {
+        flex: 1 1 auto;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        row-gap: 14px;
+        padding: 14px 2vw;
+    }
+    .home-practise-total, .home-practise-rows, .home-practise-browse { grid-column: 1; grid-row: auto; }
+    .home-practise-total.is-empty { grid-column: 1; }
+    .home-practise-total.is-empty + .home-practise-browse { grid-column: 1; justify-self: start; }
+    #setupPanel #reviewDeckSection .home-section-footer { margin-top: auto; flex-direction: column; align-items: stretch; }
+    #setupPanel .home-section-footer > .home-action-slot { flex: 1 1 auto; }
+    #setupPanel #step2 .home-section-footer { flex-direction: column; align-items: stretch; flex-wrap: nowrap; gap: 14px; }
+    #setupPanel #step2 .home-section-footer > #setupOptions { flex: none; width: 100%; }
+}
+
+/* Smart Skip row: the same height as the .home-cta button beside it (56px, 62px from 1024px), with a switch that is easy to hit. */
+.home-smart-skip { min-height: 56px; padding: 8px 10px 8px 14px; border-radius: 12px; gap: 10px; }
+.home-switch { width: 54px; height: 32px; border-radius: 16px; }
+.home-switch-knob { top: 3px; left: 3px; width: 26px; height: 26px; }
+.home-switch[aria-checked="true"] .home-switch-knob { transform: translateX(22px); }
+@media (min-width: 1024px) { .home-smart-skip { min-height: 62px; } }
+
+/* Phones: lift the bottom bar clear of rounded screen corners and the home bar. */
+@media (max-width: 767px) {
+    #setupPanel .home-section-footer { padding: 14px 20px calc(max(14px, env(safe-area-inset-bottom)) + 12px); }
+    #setupPanel[data-home-open] { padding-bottom: calc(190px + env(safe-area-inset-bottom)); }
+}
+
+/* Legend: one line that shrinks to fit (see fitLegendFonts); estimated words get
+   their own line beneath. */
+.home-level-stats { flex-wrap: nowrap; white-space: nowrap; }
+.home-level-estimate {
+    display: flex; align-items: center; gap: 6px; margin: 8px 0 0;
+    color: var(--text-secondary); font-size: calc(var(--home-text) * 0.92);
+}
+.home-level-estimate i { width: 8px; height: 8px; border-radius: 50%; background: var(--set-estimated); flex: none; }
+#setupPanel .home-section-peek .home-level-estimate { justify-content: center; margin-top: 6px; }
+@media (min-width: 1360px) { #setupPanel #step2 .home-level-estimate { justify-content: center; } }
+
+/* Legend and estimate line are centred. */
+.home-level-stats { justify-content: center; }
+.home-level-estimate { justify-content: center; }
+
+/* Phones and narrow windows: the title sits in its own band with a rule beneath,
+   as on desktop, so the corner icon is the same distance from the top and left
+   edges and the title centres in the band. */
+@media (max-width: 1023px) {
+    #setupPanel .home-section > .step-header { padding: 6px 16px; border-bottom: 1px solid var(--border-color); }
+    #setupPanel .home-section-toggle { padding: 6px 16px 14px; row-gap: 6px; }
+    #setupPanel .home-section-toggle::after {
+        content: ""; position: absolute; left: 0; right: 0; top: 56px; height: 1px; background: var(--border-color);
+    }
+    #setupPanel .home-section-toggle-meta { margin-top: 10px; }
+    #setupPanel .home-section-toggle > .home-section-icon,
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child { top: 18px; left: 16px; }
+    #setupPanel .home-section-toggle-caret { top: 17px; right: 16px; }
+    #setupPanel #step2 > .level-choosing { padding-top: 12px; }
+    #setupPanel #reviewDeckSection > #reviewDeckBody { padding-top: 6px; }
+}
+
+/* Level changes must not make the Learn box grow and shrink: the example words
+   arrive after the coverage line, so two lines are reserved up front (and the
+   height only ratchets up, see renderLevelExamples). */
+#setupPanel #lswExamples { min-height: calc(var(--home-text) * 1.45 * 2); }
+
+/* The time chip never squashes, however narrow the button. */
+.home-cta-length { flex: none; }
+.home-cta-length::before { flex: none; }
+
+@media (min-width: 1360px) {
+    /* Wider Practise column. The button text is centred in its own half, beside the time chip. */
+    body.desktop-workspace #setupPanel.file-upload:not(.hidden):not([style*="none"]) { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+    .home-cta-main { flex: 1; padding: 0 1vw; }
+}
+
+/* Music closed for this language (ui.js musicOpenFor): no Spotify footer. */
+#standardSourceCard .standard-source-spotify[hidden] { display: none !important; }
+/* A closed option still says why: its line reads "Coming soon". */
+#step1 #standardSourceCard .choice-sheet-item:disabled .choice-sheet-copy small { display: block !important; grid-area: 2 / 1 / auto / -1; margin-top: 6px; text-align: left; color: var(--text-muted); }
+
+/* The coverage figure sits on its own line under the example words. */
+#setupPanel #lswExamples .lsw-egs .lsw-coverage-inline { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* The level is the point of this card: bigger arrows and number, on a shaded plate. */
+.home-level-readout {
+    padding: 8px 16px 10px;
+    border-radius: 16px;
+    background: var(--bg-tertiary);
+}
+.home-level-stepper { gap: 6px; justify-content: center; }
+.home-level-step { flex: none; width: 46px; height: 46px; font-size: 34px; color: var(--text-secondary); }
+@media (min-width: 1360px) { .home-level-step { width: 56px; height: 56px; font-size: 40px; } }
+
+/* --- Learn: level tiles ---------------------------------------------------
+   Shown once two levels are started (renderHomeLevelTiles in ui.js), above
+   the stepper, which keeps its ‹ › arrows. Tiles keep one size and the row
+   centres; eight tiles shrink to fit a phone. */
+.home-level-tiles { --tile: 60px; display: flex; align-items: center; justify-content: center; gap: 4px; margin: 4px 0 12px; }
+.home-level-tiles[hidden] { display: none !important; }
+.home-level-tile-list { flex: 0 1 auto; min-width: 0; display: flex; gap: 6px; }
+.home-level-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 0 1 var(--tile);
+    width: var(--tile);
+    gap: 6px;
+    min-width: 0;
+    padding: 8px 5px 7px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-emphasis);
+    font-size: var(--home-text);
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+}
+.home-level-tile:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.home-level-tile.is-selected { border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color)); color: var(--text-primary); background: color-mix(in srgb, var(--accent-primary) 7%, transparent); }
+.home-level-tile-bar { display: flex; gap: 1px; height: 4px; border-radius: 2px; overflow: hidden; background: var(--border-color); }
+.home-level-tile-bar span { display: block; min-width: 2px; }
+.home-level-tile-bar .is-new { background: var(--set-new, #fff); }
+.home-level-tile-bar .is-seen { background: var(--set-review, #896318); }
+.home-level-tile-bar .is-known { background: var(--set-known, #16734b); }
+.home-level-tile-bar .is-estimated { background: var(--set-estimated, #77669e); }
+.home-level-tile-bar .is-skipped { background: var(--set-skipped, #566477); }
+@media (min-width: 1024px) and (max-width: 1359px) {
+    #setupPanel #step2.has-level-tiles #homeLevelStepper { grid-row: 2 / span 2; }
+    #setupPanel #step2.has-level-tiles #lswExamples { grid-row: 2; }
+    #setupPanel #step2.has-level-tiles #rangeSelector { grid-row: 3; }
+    #setupPanel #step2.has-level-tiles .home-section-footer { grid-row: 4; }
+}
+@media (min-width: 1024px) {
+    #setupPanel #step2 #homeLevelTiles { grid-column: 1 / -1; grid-row: 1; padding: 0 1vw; }
+    .home-level-tiles { --tile: clamp(60px, 5.2vw, 84px); }
+    .home-level-tile { padding: 1.1vh 6px 1vh; gap: 0.9vh; }
+    .home-level-tile-bar { height: 5px; }
+}
+@media (max-width: 1023px) {
+    .home-level-tile-list { gap: 4px; }
+    .home-level-tile { padding: 8px 3px 7px; gap: 6px; border-radius: 8px; }
+}
+
+/* ===== Wide desktop, full screen (2026-10-20) ===============================
+   No cards: Learn and Practise are two full-height columns beside the sidebar,
+   split by one line, Practise on a slightly darker ground. Each column keeps
+   title on top, content centred, button at the bottom. */
+@media (min-width: 1360px) {
+    body.desktop-workspace > .container:has(> #setupPanel > #step2:not([style*="none"])) { padding: 0; }
+    body.desktop-workspace #setupPanel.file-upload:has(> #step2:not([style*="none"])):not(.hidden):not([style*="none"]) {
+        grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+        gap: 0;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        min-height: calc(100dvh / var(--ui-zoom, 1));
+    }
+    body.desktop-workspace #setupPanel > :is(#step2, #reviewDeckSection) {
+        min-height: calc(100dvh / var(--ui-zoom, 1));
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+    :root:not([data-theme="light"]) body.desktop-workspace #setupPanel > :is(#step2, #reviewDeckSection) { background: transparent; }
+    body.desktop-workspace #setupPanel > #reviewDeckSection { border-left: 1px solid var(--border-color); background: var(--bg-secondary); }
+    :root:not([data-theme="light"]) body.desktop-workspace #setupPanel > #reviewDeckSection { background: #121417; }
+    #setupPanel .home-section > .step-header { padding: 4vh 3.5vw 2.4vh; }
+    #setupPanel #step2 > .level-choosing { padding: 2vh 3.5vw 0; }
+    #setupPanel #step2 .home-section-footer,
+    #setupPanel #reviewDeckSection .home-section-footer { padding: 12px 3.5vw 5vh; }
+    .home-practise { padding: 3vh 3vw; align-content: center; }
+    #setupPanel #step2 .home-level-readout strong { font-size: clamp(72px, 6.5vw, 128px); }
+
+    /* Icon beside the title, the ? in the column's top-right corner, and no
+       rules: the columns themselves are the separation. */
+    #setupPanel .home-section > .step-header { border-bottom: 0; }
+    #setupPanel .home-section > .step-header .step-title-trigger { display: inline-flex; align-items: center; gap: 0.5em; }
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child { position: static; width: 0.85em; height: 0.85em; }
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-help { position: absolute; top: calc(4vh - 2px); right: 3vw; width: 44px; height: 44px; }
+    #setupPanel .home-section-footer { border-top: 0; }
+    .home-practise-rows { border-top: 0; }
+
+    /* The level reads without its plate; its words, coverage and bar get more
+       of the row and sit centred. */
+    #setupPanel #step2 .home-level-readout { background: transparent; padding: 0; }
+    #setupPanel #step2 .level-choosing { grid-template-columns: auto minmax(0, 1fr); column-gap: 2vw; }
+    #setupPanel #step2 #lswExamples { justify-content: center; align-items: center; text-align: center; padding: 0 1vw; }
+    #setupPanel #step2 #lswExamples .lsw-egs .lsw-coverage-inline { white-space: normal; }
+    #setupPanel #step2 .home-level-progress { padding: 0 1vw; }
+    #setupPanel #step2 .home-level-stats { justify-content: center; }
+}
+
+/* The level readout is the first thing to read: a touch larger number, and
+   the word range in body text rather than muted small print. The selected
+   tile above it stays quiet so it does not compete. */
+#setupPanel #homeLevelStepper .home-level-readout strong { font-size: calc(var(--home-number) * 1.12); }
+#setupPanel #homeLevelStepper .home-level-eyebrow { font-size: var(--home-text); color: var(--text-secondary); }
+/* Chevrons close to the number: narrower buttons (same height to tap), no gap. */
+#setupPanel #homeLevelStepper { gap: 0; }
+#setupPanel #homeLevelStepper .home-level-step { width: 38px; }
+@media (min-width: 1360px) { #setupPanel #homeLevelStepper .home-level-step { width: 44px; } }
+#setupPanel #homeLevelStepper .home-level-words { font-size: var(--home-text); color: var(--text-secondary); }
+@media (min-width: 1360px) {
+    #setupPanel #step2 .home-level-readout strong { font-size: clamp(80px, 7.2vw, 140px); }
+}
+
+/* Section help is a plain ? (no circle) on every screen. On phones the leaf
+   and clock sit beside the title, the ? rides small and high after it, and
+   only the open section shows it. */
+#setupPanel .home-section-help circle { display: none; }
+@media (max-width: 1023px) {
+    #setupPanel .home-section-toggle > .home-section-icon,
+    #setupPanel .home-section > .step-header .step-title-trigger > .home-section-icon:first-child {
+        position: static; width: 22px; height: 22px; margin: 0 8px 0 0;
+    }
+    #setupPanel .home-section > .step-header .step-title-trigger { display: inline-flex; align-items: center; }
+    #setupPanel .home-section-toggle .home-section-info { display: none; }
+    #setupPanel .home-section > .step-header .home-section-help {
+        /* The ? glyph fills ~40% of its 24-unit box, hence the size and the
+           negative margins that pull it in beside the title. */
+        width: 30px; height: 30px; margin: -9px -8px 0 -7px; align-self: flex-start;
+    }
+}
+
+/* Before a first answer there is no Practise column: Learn alone, centred at a
+   readable width instead of stretched across the screen. */
+@media (min-width: 1360px) {
+    body.desktop-workspace #setupPanel:has(> #reviewDeckSection[hidden]) > #step2 {
+        grid-column: 1 / -1;
+        width: min(100%, 980px);
+        justify-self: center;
+    }
+}
+
+/* Level tiles: only the selected one has an outline. */
+.home-level-tile { border-color: transparent; }
+.home-level-tile.is-selected { border-color: var(--accent-primary); }
+.home-level-tile-dot { display: none; }
+@media (max-width: 1023px) {
+    /* Phones: a dot in the least-learned colour instead of a bar too thin to read. */
+    .home-level-tile-bar { display: none; }
+    .home-level-tile-dot { display: block; align-self: center; width: 7px; height: 7px; border-radius: 50%; background: var(--set-new, #fff); }
+    .home-level-tile[data-dot="seen"] .home-level-tile-dot { background: var(--set-review, #ffcc00); }
+    .home-level-tile[data-dot="known"] .home-level-tile-dot { background: var(--set-known, #06a557); }
+    /* Phones: the readout's words a step larger. */
+    #setupPanel #homeLevelStepper .home-level-eyebrow,
+    #setupPanel #homeLevelStepper .home-level-words { font-size: calc(var(--home-text) * 1.12); }
+    /* Phones: the ? at the title's height, at the right edge (where a folded
+       section's chevron sits). */
+    #setupPanel .home-section > .step-header .home-section-help {
+        position: absolute; top: 9px; right: 10px; margin: 0; width: 38px; height: 38px;
+    }
+}
+/* Example words and coverage line in the readout's font (DM Sans), not the
+   heavier display face, and kept in the dimmer grey. */
+#setupPanel #lswExamples .lsw-egs,
+#setupPanel #lswExamples .lsw-egs * { font-family: var(--font-reading, "DM Sans", -apple-system, system-ui, sans-serif); }
+
+/* Phones: which section is open is shown by shape, not an outline. The open
+   section is the only card; the folded one is a plain line, "Practise ·
+   12 waiting ›", that reads as a way across. With no Practise yet, Learn is
+   simply the one card. */
+@media (max-width: 1023px) {
+    body:not(.desktop-workspace) #setupPanel[data-home-open] :is(#step2, #reviewDeckSection) {
+        border-color: var(--border-color);
+        box-shadow: none;
+    }
+    body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #step2,
+    body:not(.desktop-workspace) #setupPanel[data-home-open="learn"] #reviewDeckSection {
+        background: transparent;
+        border: 0;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 0;
+    }
+    /* Folded Learn sits right under the top bar's line: no second line above it. */
+    body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #step2 { border-top: 0; }
+    #setupPanel .home-section-toggle {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 8px;
+        row-gap: 0;
+        padding: 14px 6px;
+        text-align: left;
+    }
+    #setupPanel .home-section-toggle::after { display: none; }
+    #setupPanel .home-section-toggle > .home-section-icon { width: 20px; height: 20px; margin: 0; }
+    #setupPanel .home-section-toggle .home-section-name { font-size: var(--home-text); white-space: nowrap; }
+    #setupPanel .home-section-toggle-meta {
+        order: 1;
+        flex: 0 1 auto;
+        min-width: 0;
+        margin: 0 !important;
+        color: var(--text-muted);
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #setupPanel .home-section-toggle-meta::before { content: "· "; }
+    #setupPanel .home-section-toggle-caret {
+        order: 2;
+        position: static;
+        margin-left: auto;
+        transform: rotate(-90deg);
+        color: var(--text-muted);
+    }
+}

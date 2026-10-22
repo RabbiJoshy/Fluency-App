@@ -1,1 +1,83 @@
-:root{--bg-primary:#0a0e14;--bg-secondary:#121820;--bg-tertiary:#1a222d;--bg-card:#1e2732;--bg-card-hover:#252f3c;--text-primary:#ffffff;--text-secondary:#e0e4ea;--text-muted:#c5ccd6;--text-subtle:#c5ccd6;--accent-orange:#ff6b35;--accent-amber:#f5a623;--accent-blue:#4a9eff;--accent-green:#00d4aa;--accent-phrases:#a78bfa;--accent-phrases-rgb:167,139,250;--accent-primary:#C8102E;--accent-secondary:#FFCC00;--accent-primary-text:#ffffff;--accent-secondary-text:#1a1a2e;--success:#00d4aa;--error:#ff5252;--warning:#f5a623;--border-color:#2a3441;--border-light:#3a4553;--glow-orange:rgba(255,107,53,0.3);--glow-blue:rgba(74,158,255,0.3);--glow-green:rgba(0,212,170,0.3);--font-reading:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;--font-emphasis:'Space Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;--font-data:'JetBrains Mono',monospace}:root[data-theme="light"]{color-scheme:light;--bg-primary:#eef2f5;--bg-secondary:#f6f8fa;--bg-tertiary:#e6ebef;--bg-card:#ffffff;--bg-card-hover:#f1f5f8;--text-primary:#17212b;--text-secondary:#354353;--text-muted:#5d6b7a;--accent-orange:#c84f24;--accent-amber:#946000;--accent-blue:#1769aa;--accent-green:#087f68;--accent-phrases:#7453c6;--accent-phrases-rgb:116,83,198;--success:#087f68;--error:#bd3847;--warning:#946000;--border-color:#d7dfe6;--border-light:#c1ccd6;--glow-orange:rgba(200,79,36,0.18);--glow-blue:rgba(23,105,170,0.17);--glow-green:rgba(8,127,104,0.17)}
+/* Shared Fluency palette for the study app and companion modes. */
+        :root {
+            /* Dark industrial base palette */
+            --bg-primary: #0a0e14;
+            --bg-secondary: #121820;
+            --bg-tertiary: #1a222d;
+            --bg-card: #1e2732;
+            --bg-card-hover: #252f3c;
+
+            /* Text colors - high contrast */
+            --text-primary: #ffffff;
+            --text-secondary: #e0e4ea;
+            --text-muted: #c5ccd6;
+            --text-subtle: #c5ccd6;
+
+            /* Accent colors - industrial/energy */
+            --accent-orange: #ff6b35;
+            --accent-amber: #f5a623;
+            --accent-blue: #4a9eff;
+            --accent-green: #00d4aa;
+            /* Phrase/clitic chain identity — deliberately not a language accent
+               (those change per language) and not a result colour. */
+            --accent-phrases: #a78bfa;
+            --accent-phrases-rgb: 167, 139, 250;
+
+            /* Language-specific theme colors (dynamically updated) */
+            --accent-primary: #C8102E;
+            --accent-secondary: #FFCC00;
+            --accent-primary-text: #ffffff;
+            --accent-secondary-text: #1a1a2e;
+
+            /* Semantic colors */
+            --success: #00d4aa;
+            --error: #ff5252;
+            --warning: #f5a623;
+
+            /* Borders and dividers */
+            --border-color: #2a3441;
+            --border-light: #3a4553;
+
+            /* Glow effects */
+            --glow-orange: rgba(255, 107, 53, 0.3);
+            --glow-blue: rgba(74, 158, 255, 0.3);
+            --glow-green: rgba(0, 212, 170, 0.3);
+
+            /* Fonts */
+            --font-reading: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-emphasis: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-data: 'JetBrains Mono', monospace;
+        }
+
+:root[data-theme="light"] {
+    color-scheme: light;
+
+    /* Cool daylight neutrals keep the industrial Fluency grammar crisp. */
+    --bg-primary: #eef2f5;
+    --bg-secondary: #f6f8fa;
+    --bg-tertiary: #e6ebef;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f1f5f8;
+
+    --text-primary: #17212b;
+    --text-secondary: #354353;
+    --text-muted: #5d6b7a;
+
+    --accent-orange: #c84f24;
+    --accent-amber: #946000;
+    --accent-blue: #1769aa;
+    --accent-green: #087f68;
+    --accent-phrases: #7453c6;
+    --accent-phrases-rgb: 116, 83, 198;
+
+    --success: #087f68;
+    --error: #bd3847;
+    --warning: #946000;
+
+    --border-color: #d7dfe6;
+    --border-light: #c1ccd6;
+
+    --glow-orange: rgba(200, 79, 36, 0.18);
+    --glow-blue: rgba(23, 105, 170, 0.17);
+    --glow-green: rgba(8, 127, 104, 0.17);
+}

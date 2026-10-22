@@ -2,8 +2,8 @@
 // Parses .srt/.vtt/text, routes through the live no-WSD engine,
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
-import './state.js?v=98a27d5a';
-import { CASA_PRESET_REVISION, validLiveDeck } from './playlist-live.js?v=98a27d5a';
+import './state.js?v=a4722059';
+import { CASA_PRESET_REVISION, validLiveDeck } from './playlist-live.js?v=a4722059';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
