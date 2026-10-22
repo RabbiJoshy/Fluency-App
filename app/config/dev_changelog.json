@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T01:00:55+01:00",
+      "date": "2026-10-22 01:00 BST",
+      "agent": "Claude",
+      "summary": "Practise is hidden until you've answered your first card; Learn alone before that",
+      "detail": [
+        "Never answered anything: the home screen is Learn only (no Practise column on desktop, no folded Practise row on phones). Removes the 'Nothing to practise yet' text.",
+        "After any answer, Practise appears and stays, showing 'All caught up' and the next due time when empty.",
+        "Desktop (1360px+): Learn alone is centred at 980px instead of stretched across the screen."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T00:58:03+01:00",
       "date": "2026-10-22 00:58 BST",
       "agent": "Claude",
@@ -333,16 +345,6 @@
       "detail": [
         "Selected tile: softer red outline and a faint tint instead of a full red outline and fill.",
         "Level readout: number about 12% larger; 'Level' and 'Words 1–100' one size up, in brighter grey."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T14:36:16+01:00",
-      "date": "2026-10-21 14:36 BST",
-      "agent": "Claude",
-      "summary": "Phones show at most 6 level tiles (desktop keeps 8)",
-      "detail": [
-        "Below 1024px the level tile row holds at most 6 tiles, sliding to keep the selected level in view; each tile is about 52px wide instead of 38px."
       ],
       "commit": "pending"
     }

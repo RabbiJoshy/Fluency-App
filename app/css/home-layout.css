@@ -1328,3 +1328,13 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
         width: 30px; height: 30px; margin: -9px -8px 0 -7px; align-self: flex-start;
     }
 }
+
+/* Before a first answer there is no Practise column: Learn alone, centred at a
+   readable width instead of stretched across the screen. */
+@media (min-width: 1360px) {
+    body.desktop-workspace #setupPanel:has(> #reviewDeckSection[hidden]) > #step2 {
+        grid-column: 1 / -1;
+        width: min(100%, 980px);
+        justify-self: center;
+    }
+}

@@ -3203,7 +3203,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     let practiseMistakes = 0;
     let practiseTotal = 0;
     let practiseDue = 0;
-    if (currentUser && !currentUser.isGuest) {
+    // Practise appears once the learner has answered anything at all; before
+    // that the home screen is Learn alone. Caught up later, it stays and says so.
+    const hasAnswered = typeof progressData !== 'undefined' && progressData && Object.keys(progressData).length > 0;
+    if (currentUser && !currentUser.isGuest && hasAnswered) {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
         const globalTotal = Number(summary?.total) || 0;
         const mistakes = (summary?.neverRight?.length || 0) + (summary?.critical?.length || 0);
@@ -3231,9 +3234,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
                     ${dueCount > 0 ? row('due', 'Time to review', dueCount) : ''}
                 </div>`;
-        } else if (typeof progressData === 'undefined' || !progressData || Object.keys(progressData).length === 0) {
-            // Nothing answered yet: "All caught up" would mean nothing to them.
-            body = `<div class="home-practise-total is-empty"><strong>Nothing to practise yet</strong><span>When you miss a word, it comes back here. Words you get right come back too, a few days later, so they stick.</span></div>`;
         } else {
             const empty = !srsOn
                 ? 'Review schedule paused: only mistakes come back.'
