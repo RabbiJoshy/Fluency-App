@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T20:51:26.577045+01:00",
+      "date": "2026-10-22 20:51 BST",
+      "agent": "Codex",
+      "summary": "Restore Portuguese decks using the previous published release.",
+      "detail": [
+        "Roll back only Portuguese release paths after decks failed to load.",
+        "Keep saved progress, account data, all other languages and app changes untouched."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T20:47:33.095708+01:00",
       "date": "2026-10-22 20:47 BST",
       "agent": "Codex",
@@ -354,17 +365,6 @@
         "Resting rows have no border and no tint; the chosen row is the fill plus left edge. A faint wash shows on hover.",
         "When a word type carries its group's shared words (estar: to be), pressing that row selects every sub-meaning at once, so you can go from one sub-meaning back to all. Pressing it again folds the section as before.",
         "Grouped rows with the shared text inside the group already did this; unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T20:52:23+01:00",
-      "date": "2026-10-21 20:52 BST",
-      "agent": "Claude",
-      "summary": "Card back: the chosen sub-meaning is one marker, its whole row as a rounded rectangle with a left edge (no chip round the text)",
-      "detail": [
-        "Replaces the row wash plus text chip: the active sub-meaning row now has a 0.24 fill and the 4px left edge of a sense row, with the text unchanged and still on its column.",
-        "Both layouts: shared text in the word-type row (água, aún) and shared text in the group row (dejar, passar)."
       ],
       "commit": "pending"
     }
