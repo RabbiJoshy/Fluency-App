@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-23T00:32:06.246572+01:00",
+      "date": "2026-10-23 00:32 BST",
+      "agent": "Codex",
+      "summary": "Show actual merged forms on card fronts, with a Smart Skip disclosure.",
+      "detail": [
+        "Use the infinitive only when it belongs to this merged group; otherwise show the most frequent member.",
+        "Place +N other forms below the front word; open a centered Merged by Smart Skip panel listing the actual group.",
+        "Keep existing lemma metadata, sense grouping, card identities and progress; verify phone and desktop layouts in both themes."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T22:57:00+01:00",
       "date": "2026-10-22 22:57 BST",
       "agent": "Antigravity",
@@ -359,30 +371,6 @@
         "The frame sits at the end of the row in use's context line, as a quiet pill holding the whole phrase ('contar que', 'acreditar em'). Other rows drop it, so they take no extra width.",
         "A row that is only a frame (estar: '+ em', '+ adj') is left as it was.",
         "Checked in the app on contar, acredito and estar (dark mode). Not checked: light mode, phone width, grouped rows (there are no longer any with frames in the Portuguese cards I scanned)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T22:09:27+01:00",
-      "date": "2026-10-21 22:09 BST",
-      "agent": "Claude",
-      "summary": "Card back: senses only share a heading when their whole list of translations is the same (contar, acredito stay as plain rows)",
-      "detail": [
-        "A sense with two translations ('to tell; to narrate') no longer joins one that is only 'to tell' under a shared 'to tell'. It keeps its translations together on its own row.",
-        "Portuguese, first 619 cards: shared-translation groups go from 136 to 87, and none has a sub-row with an extra translation.",
-        "Applies to every language that groups by translation."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T21:59:59+01:00",
-      "date": "2026-10-21 21:59 BST",
-      "agent": "Claude",
-      "summary": "Card back: shared contexts and frames only move up into the word-type row for the word type in use; shared translations still do wherever there's room",
-      "detail": [
-        "On a word type you aren't on, a shared context (or grammar frame) stays in its rows instead of taking up the word-type row. Shared translations still go up so you can see them at a glance.",
-        "A word type whose group shares both a translation and a context stays as it was (nothing moves up) until you are on it.",
-        "Checked on the Portuguese cards: inactive word types with a shared translation still show it in the header (merda, sé, poder). No Portuguese card has an inactive word type with a shared context, so that branch was not seen on a real card."
       ],
       "commit": "pending"
     }

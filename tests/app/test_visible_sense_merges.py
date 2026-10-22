@@ -28,7 +28,7 @@ assert.equal(h.selectLemmaModeRepresentatives([a,b,c]).length,2);
 assert.equal(h.lemmaSeenKey(a),h.lemmaSeenKey(b));
 assert.notEqual(h.lemmaSeenKey(a),h.lemmaSeenKey(c),'studying a different back cannot clear this form');
 assert.equal(a.id,'havia');
-assert.equal(h.buildCardFormModel(a,a.meanings,{mergedLemma:true}).displaySurface,'haver','internal signature must never appear in the title');
+assert.equal(h.buildCardFormModel(a,a.meanings,{mergedLemma:true}).displaySurface,'havia','an absent infinitive must never replace the group representative');
 // Same full repertoire, different visible backs: preserve both teaching items.
 const dominant=card('dom',[sense('exist',.97),sense('de',.03)]);
 assert.notEqual(h.lemmaStudyGroupKey(a),h.lemmaStudyGroupKey(dominant));

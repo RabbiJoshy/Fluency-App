@@ -111,6 +111,7 @@ const urlsToCache = [
   '/js/sense-reference-cards.js?v=1',
   '/data/see-references/pt-see-v1.json',
   '/js/card-row-layout.js?v=20261013rows',
+  '/js/merged-forms-cue.js',
   '/js/keyboard-guide.js?v=20261005kb',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',

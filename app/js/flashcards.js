@@ -8,6 +8,7 @@ import { songCreditHTML } from './song-credit.js?v=1';
 import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=2';
 import { installCardTouch } from './card-touch.js';
 import { fitSenseRowText } from './card-row-layout.js?v=20261013rows';
+import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20261013music';
 import { memoryTipTileHTML } from './memory-tips.js?v=20261019rules';
@@ -7156,6 +7157,8 @@ function renderCardWikipediaBadge(card) {
         shrinkToFit(frontWordEl, window.innerWidth < 768 ? 18 : 22);
     }
 
+    renderMergedFormsCue(card, !isFlipped && !flippedFrontMeanings && !card.isChainChild);
+
     // Display part of speech on front with color coding
     const frontPOSEl = document.getElementById('frontPOS');
     frontPOSEl.className = 'card-pos-list';
@@ -9824,6 +9827,7 @@ function maybeShowCardTutorialPrompt() {
 }
 
 function flipCard() {
+    closeMergedFormsCue();
     hideProminenceTooltip();
     // Chain children are back-only: there is no front content, so every flip
     // route (tap, keyboard, control button) is a no-op rather than a turn

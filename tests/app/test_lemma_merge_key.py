@@ -204,13 +204,13 @@ class CitationFormTests(unittest.TestCase):
             if (merged(contraction).displaySurface !== 'no') fail('contraction title stays no');
             const hay = { word: 'hay', meanings: [{headword: 'haber', pos: 'VERB'}, {headword: 'hay que', pos: 'PHRASE'}] };
             if (merged(hay).productionAnswer !== 'hay') fail('frozen hay tests hay');
-            const noun = { word: 'casas', noun_merge: {rule_version: 'noun-merge/v2', allowed: true, lemma: 'casa'}, meanings: [{headword: 'casa', pos: 'NOUN'}] };
+            const noun = { word: 'casas', _mergedDeckSurfaces: ['casa','casas'], noun_merge: {rule_version: 'noun-merge/v2', allowed: true, lemma: 'casa'}, meanings: [{headword: 'casa', pos: 'NOUN'}] };
             if (merged(noun).displaySurface !== 'casa') fail('approved noun title merges');
 
-            // A spelling that merges still wears the lemma.
+            // A merged title retains its own form when the infinitive is absent.
             const estaba = { word: 'estaba', meanings: [{ headword: 'estar', pos: 'VERB', frequency: '1' }] };
             const estabaForm = merged(estaba);
-            if (estabaForm.displaySurface !== 'estar' || !estabaForm.mergedLemma) fail('estaba merges into estar');
+            if (estabaForm.displaySurface !== 'estaba' || !estabaForm.mergedLemma) fail('an absent estar must not replace estaba');
 
             // buildCardFormModel merges _mergedDeckSurfaces and _dictionaryMergedSurfaces into card.mergedSurfaces
             const hostItem = {
