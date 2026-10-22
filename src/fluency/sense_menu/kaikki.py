@@ -250,6 +250,42 @@ def _open_jsonl(path: Path):
     return path.open("r", encoding="utf-8")
 
 
+_LINKED_FINITE_FORM = re.compile(
+    r"^(first|second|third)-person (singular|plural) "
+    r"(preterite/pluperfect) (indicative) of ([^\s;,.]+)$"
+)
+
+
+def _normalize_linked_finite_forms(row: dict[str, Any]) -> dict[str, Any]:
+    """Recover missing Kaikki structure only from matching grammar and links.
+
+    Some verb-form pages encode their relation as prose plus a language-anchored
+    link. Retain that source text and sense ID while supplying the same fields
+    the ordinary structured-form resolver consumes. Never infer a lemma from
+    spelling, or turn a lexical definition into a redirect.
+    """
+    if row.get("pos") != "verb":
+        return row
+    senses = []
+    for sense in _json_values(row.get("senses")):
+        glosses = _glosses(sense)
+        match = _LINKED_FINITE_FORM.fullmatch(glosses[0]) if len(glosses) == 1 else None
+        if match and not sense.get("form_of") and not sense.get("alt_of"):
+            person, number, tense, mood, target = match.groups()
+            links = sense.get("links") or []
+            if [target, f"{target}#{row.get('lang')}"] in links:
+                sense = {
+                    **sense,
+                    "form_of": [{"word": target}],
+                    "tags": sorted(_sense_tags(sense) | {
+                        "form-of", f"{person}-person", number, mood,
+                        *tense.split("/"),
+                    }),
+                }
+        senses.append(sense)
+    return {**row, "senses": senses}
+
+
 def _iter_rows(path: Path, *, language_code: str) -> Iterator[dict[str, Any]]:
     with _open_jsonl(path) as stream:
         for line_number, line in enumerate(stream, start=1):
@@ -264,7 +300,7 @@ def _iter_rows(path: Path, *, language_code: str) -> Iterator[dict[str, Any]]:
                     f"Kaikki snapshot line {line_number} is not an object"
                 )
             if row.get("lang_code") == language_code:
-                yield row
+                yield _normalize_linked_finite_forms(row)
 
 
 _SEE_REFERENCE = re.compile(r"^See (?P<targets>[^.]+)\.$")

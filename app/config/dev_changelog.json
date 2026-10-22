@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T20:47:33.095708+01:00",
+      "date": "2026-10-22 20:47 BST",
+      "agent": "Codex",
+      "summary": "Portuguese verb forms show real inflected meanings and conjugation tables.",
+      "detail": [
+        "Correct 100 grammatical-reading rows on 99 Portuguese cards; foram shows they went / they were.",
+        "Resolve the correct verb tables while preserving card and meaning IDs, example assignments and progress namespace.",
+        "Keep original dictionary grammar and correction provenance; no new lexical WSD assignments are claimed."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T15:29:59+01:00",
       "date": "2026-10-22 15:29 BST",
       "agent": "Codex",
@@ -353,16 +365,6 @@
       "detail": [
         "Replaces the row wash plus text chip: the active sub-meaning row now has a 0.24 fill and the 4px left edge of a sense row, with the text unchanged and still on its column.",
         "Both layouts: shared text in the word-type row (água, aún) and shared text in the group row (dejar, passar)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T20:36:52+01:00",
-      "date": "2026-10-21 20:36 BST",
-      "agent": "Claude",
-      "summary": "Card back: the chosen sub-meaning's whole row is washed in the one-grouped-row layout too (água, aún)",
-      "detail": [
-        "The wash across the chosen sub-meaning's row only worked for groups whose shared text stays in the group row (dejar); in the layout where the shared text moves up to the word-type row (água, aún, realmente) a higher-priority rule kept the row transparent, so only the text was highlighted. Both layouts now wash the row."
       ],
       "commit": "pending"
     }
