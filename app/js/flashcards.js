@@ -1,41 +1,42 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=a4722059';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=a4722059';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=a4722059';
-import { songCreditHTML } from './song-credit.js?v=a4722059';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=a4722059';
+import './state.js?v=45b3ed6f';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=45b3ed6f';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=45b3ed6f';
+import { songCreditHTML } from './song-credit.js?v=45b3ed6f';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=45b3ed6f';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=a4722059';
-import './speech.js?v=a4722059';
-import { goToRoute, routeCodeFor } from './routes.js?v=a4722059';
-import { memoryTipTileHTML } from './memory-tips.js?v=a4722059';
+import { fitSenseRowText } from './card-row-layout.js?v=45b3ed6f';
+import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
+import './speech.js?v=45b3ed6f';
+import { goToRoute, routeCodeFor } from './routes.js?v=45b3ed6f';
+import { memoryTipTileHTML } from './memory-tips.js?v=45b3ed6f';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=a4722059';
-import './side-dock.js?v=a4722059';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=a4722059';
+} from './function-word-card.js?v=45b3ed6f';
+import './side-dock.js?v=45b3ed6f';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=45b3ed6f';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=a4722059';
+} from './example-personalisation.js?v=45b3ed6f';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=a4722059';
+} from './spanishdict-usage.js?v=45b3ed6f';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=a4722059';
+} from './reverse-cues.js?v=45b3ed6f';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -70,8 +71,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=a4722059';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=a4722059';
+} from './card-metadata-pills.js?v=45b3ed6f';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=45b3ed6f';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -7156,6 +7157,8 @@ function renderCardWikipediaBadge(card) {
         shrinkToFit(frontWordEl, window.innerWidth < 768 ? 18 : 22);
     }
 
+    renderMergedFormsCue(card, !isFlipped && !flippedFrontMeanings && !card.isChainChild);
+
     // Display part of speech on front with color coding
     const frontPOSEl = document.getElementById('frontPOS');
     frontPOSEl.className = 'card-pos-list';
@@ -9824,6 +9827,7 @@ function maybeShowCardTutorialPrompt() {
 }
 
 function flipCard() {
+    closeMergedFormsCue();
     hideProminenceTooltip();
     // Chain children are back-only: there is no front content, so every flip
     // route (tap, keyboard, control button) is a no-op rather than a turn
@@ -11511,8 +11515,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'a4722059';
-const MODALS_ASSET_VERSION = 'a4722059';
+const ASSET_VERSION = '45b3ed6f';
+const MODALS_ASSET_VERSION = '45b3ed6f';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

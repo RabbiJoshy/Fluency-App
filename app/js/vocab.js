@@ -1,14 +1,14 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=a4722059';
-import { readJsonWithTimeout } from './read-request.js?v=a4722059';
-import { validateVocabularyIndex } from './data-contracts.js?v=a4722059';
-import { formatRoute } from './routes.js?v=a4722059';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=a4722059';
-import { releaseUrl } from './release-host.js?v=a4722059';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=a4722059';
-import { getGrammarWordDefinition } from './function-word-card.js?v=a4722059';
+import './state.js?v=45b3ed6f';
+import { readJsonWithTimeout } from './read-request.js?v=45b3ed6f';
+import { validateVocabularyIndex } from './data-contracts.js?v=45b3ed6f';
+import { formatRoute } from './routes.js?v=45b3ed6f';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=45b3ed6f';
+import { releaseUrl } from './release-host.js?v=45b3ed6f';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=45b3ed6f';
+import { getGrammarWordDefinition } from './function-word-card.js?v=45b3ed6f';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1455,15 +1455,28 @@ function buildCardFormModel(item, meanings = [], options = {}) {
         || item?.lemma
         || representativeSurface
     ).trim();
-    // Merge Lemmas still uses the most frequent surface entry as its stable
-    // rank/progress host, but the learner is studying the lexeme, not that
-    // accidental representative inflection. Present the citation form while
-    // retaining targetWord/representativeSurface for IDs and exact examples.
+    // Keep rank/progress on the elected surface entry. The title must belong
+    // to this particular sense-compatible group, rather than naming an absent
+    // infinitive shared by several different groups.
     // Only an unambiguous spelling is a merged lemma. Casado names casar and
     // casado, so it stays the surface card and does not wear the verb's title.
     const mergeKey = lemmaGroupKey(item);
     const mergedLemma = options.mergedLemma === true && Boolean(mergeKey) && item?.merge_key !== '';
-    const displaySurface = mergedLemma ? mergeKey : representativeSurface;
+    const recordedGroup = Array.isArray(item?._mergedDeckSurfaces)
+        ? item._mergedDeckSurfaces
+        : Array.isArray(item?._dictionaryMergedSurfaces) ? item._dictionaryMergedSurfaces
+            : Array.isArray(item?.mergedSurfaces) ? item.mergedSurfaces : [];
+    const groupForms = new Map();
+    for (const value of [item?.word || item?.targetWord || representativeSurface, ...recordedGroup]) {
+        const surface = String(value || '').trim();
+        if (surface) groupForms.set(normalizeLemmaToken(surface), surface);
+    }
+    const mergedGroupSurfaces = [...groupForms.values()];
+    const displaySurface = mergedLemma
+        ? (groupForms.get(normalizeLemmaToken(mergeKey))
+            || groupForms.get(normalizeLemmaToken(item?.word || item?.targetWord))
+            || representativeSurface)
+        : representativeSurface;
     const hasVerbSense = meanings.some(meaning => {
         const pos = String(meaning?.pos || '').toLocaleLowerCase('en');
         return pos === 'v' || pos === 'vb' || pos.includes('verb');
@@ -1499,6 +1512,7 @@ function buildCardFormModel(item, meanings = [], options = {}) {
         productionAnswer,
         isPronominal,
         mergedLemma,
+        mergedGroupSurfaces: mergedLemma ? mergedGroupSurfaces : null,
         dictionaryExamples: item?._dictionaryExamples || null,
         mergedSurfaces: combinedSurfaces.length > 0 ? combinedSurfaces : null
     };
@@ -3747,8 +3761,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 ? (lemmaSourceFrequencies.get(lemmaStudyGroupKey(item))
                     ?? (lemmaFallbackKey ? lemmaSourceFrequencies.get(lemmaFallbackKey) : undefined))
                 : null;
-            // The figure must describe the word printed on the card. A merged
-            // card prints the citation form, so the group's sum put ~141 per
+            // The figure must describe the word printed on the card, whether
+            // it is the infinitive or a group's most frequent member. The
+            // group's sum once put ~141 per
             // million under "unir" when the verb's own figure is 8.0 and most
             // of that sum is the adjective *unidos*. Decision 0024 rule 4:
             // only a published per-surface figure may be presented as this
