@@ -80,8 +80,8 @@ function control(dataset = {}) {
     // cognate is the group's frequency leader.
     const nounProof={rule_version:'noun-merge/v2',allowed:true,lemma:'hospital',sense_set:'same-complete-menu'};
     const mixed=h.buildEstimationPool([
-        word('hospital',1,[meaning('hospital','hospital')],{cognate_score:1,noun_merge:nounProof}),
-        word('hospitales',2,[meaning('hospital','hospitals')],{noun_merge:nounProof})
+        word('hospital',1,[meaning('hospital','hospital',1,{source_reference:'dictionary:hospital:noun'})],{cognate_score:1,noun_merge:nounProof}),
+        word('hospitales',2,[meaning('hospital','hospitals',1,{source_reference:'dictionary:hospital:noun'})],{noun_merge:nounProof})
     ],{values:{hospital:100,hospitales:5}},{includeAssumed:true});
     assert.equal(mixed.length,1); assert.equal(mixed[0].word,'hospitales');
     assert.equal(mixed[0].estimationAssumedKnown,false); assert.equal(mixed[0].estimationFrequency,105);

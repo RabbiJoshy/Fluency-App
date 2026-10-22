@@ -18,9 +18,9 @@ function setup(items, values = {}) {
 }
 (async () => {
     let h = setup([
-        surface('hablar', 10, [sense('hablar', 'to speak')]),
-        surface('hablo', 11, [sense('hablar', 'I speak')]),
-        surface('hablas', 12, [sense('hablar', 'you speak')]),
+        surface('hablar', 10, [sense('hablar', 'to speak', 1, {source_reference:'dictionary:hablar:speak'})]),
+        surface('hablo', 11, [sense('hablar', 'I speak', 1, {source_reference:'dictionary:hablar:speak'})]),
+        surface('hablas', 12, [sense('hablar', 'you speak', 1, {source_reference:'dictionary:hablar:speak'})]),
         surface('casa', 20, [sense('casa', 'house', 1, { pos: 'NOUN' })])
     ], { hablar: 4, hablo: 9, hablas: 3, casa: 12 });
     assert.equal(h.pool.length, 2);

@@ -3015,6 +3015,14 @@
         .example-source-chip[data-href] {
             cursor: pointer;
         }
+        .example-source-chip[data-href]:not(.example-source-chip--icon) {
+            font-size: 16px;
+            min-height: 44px;
+            padding: 4px 6px;
+            box-sizing: border-box;
+        }
+        .outbound-visit-label { font-size: 16px; line-height: 1.4; }
+        .outbound-leave-btn { min-height: 44px; }
         .example-source-chip--icon {
             padding: 2px;
             border-radius: 6px;
@@ -3432,7 +3440,13 @@
             border: 0;
             border-bottom: 1px solid currentColor;
             border-radius: 0;
-            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            min-width: 44px;
+            padding: 6px 8px;
+            box-sizing: border-box;
             background: transparent;
             color: rgb(var(--sense-match-rgb));
             font: inherit;
@@ -3470,7 +3484,7 @@
             width: 100%;
             margin-top: 3px;
             color: var(--text-muted);
-            font-size: 11px;
+            font-size: inherit;
             font-weight: 550;
             line-height: 1.35;
         }
@@ -3479,13 +3493,62 @@
             display: inline-flex;
             align-items: baseline;
             gap: 4px;
-            white-space: nowrap;
+            flex-wrap: wrap;
+            white-space: normal;
         }
 
         .sense-cross-reference-related .sense-cross-reference {
             color: rgb(var(--sense-match-rgb));
             font-weight: 700;
         }
+
+        .meaning-row :is(a, .sense-cross-reference) { font-size: inherit; }
+        .meaning-row .has-reference-links {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+        }
+        .sense-cross-reference { white-space: normal; overflow-wrap: anywhere; }
+
+        .see-expression-dialog {
+            width: min(540px, calc(100vw - 32px));
+            max-width: calc(100vw - 32px);
+            max-height: calc(100dvh - 32px);
+            margin: auto;
+            padding: 0;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            background: var(--bg-card, #1a1e27);
+            color: var(--text-primary);
+            font: 20px/1.4 var(--font-reading, sans-serif);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.4);
+        }
+        .see-expression-dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+        .see-expression-card { padding: 24px; }
+        .see-expression-card h2 { font-size: 32px; line-height: 1.2; margin: 4px 0 22px; overflow-wrap: anywhere; }
+        .see-expression-card h2:focus { outline: none; }
+        .see-expression-kind { color: var(--text-secondary); margin: 0; font-size: 18px; }
+        .see-expression-senses { margin: 0; padding-left: 24px; }
+        .see-expression-senses li + li { margin-top: 20px; }
+        .see-expression-definition { margin: 0; }
+        .see-expression-context { margin: 5px 0 0; color: var(--text-secondary); font-size: 18px; }
+        .see-expression-senses blockquote { margin: 14px 0 0; padding-left: 14px; border-left: 3px solid var(--accent-primary); }
+        .see-expression-senses blockquote p { margin: 4px 0; }
+        .see-expression-source, .see-expression-close {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 8px 12px;
+            font: inherit;
+            box-sizing: border-box;
+        }
+        .see-expression-source { color: var(--text-primary); text-decoration-color: var(--accent-primary); margin-top: 20px; }
+        .see-expression-close { width: 100%; margin-top: 18px; border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); background: var(--bg-secondary); cursor: pointer; }
+        .see-expression-close:focus-visible, .see-expression-source:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
 
         .sense-metadata-list {
             display: flex;
@@ -10341,6 +10404,8 @@
         /* One affordance for every row: they all navigate, so none of them is
            marked out as the special one. The chevron is the "tappable" cue. */
         .syn-item {
+            font-size: 18px;
+            min-height: 44px;
             flex: 1 1 calc(50% - 10px);
             min-width: 130px;
             max-width: 100%;
@@ -10372,10 +10437,10 @@
             font-weight: 600;
         }
         .syn-item.syn-strong .syn-word {
-            font-size: 16px;
+            font-size: inherit;
         }
         .syn-item.syn-weak .syn-word {
-            font-size: 15px;
+            font-size: inherit;
         }
         .syn-item .syn-context {
             font-size: 11px;
@@ -26152,7 +26217,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .links-section .ref-tile-icon,
 .links-section:has(> :nth-child(5)) .ref-tile-icon { width: 32px; height: 32px; }
 .links-section .ref-tile-label,
-.links-section:has(> :nth-child(5)) .ref-tile-label { font-size: 14px; }
+.links-section:has(> :nth-child(5)) .ref-tile-label { font-size: 16px; }
 .links-section .ref-tile-meter i { width: 7px; }
 .links-section .ref-tile-meter i:nth-child(1) { height: 9px; }
 .links-section .ref-tile-meter i:nth-child(2) { height: 17px; }

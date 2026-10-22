@@ -2,6 +2,7 @@
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=1';
 import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=20261013saved';
 import { songCreditHTML } from './song-credit.js?v=1';
 import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=2';
@@ -3947,9 +3948,9 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
     if (!active) return fallbackText;
     const references = senseCrossReferences(meaning);
     if (!references.length) return fallbackText;
-    const link = ({ target }) => {
+    const link = ({ target, relation }) => {
         const encoded = encodeURIComponent(target);
-        return `<button type="button" class="sense-cross-reference" data-reference-target="${encoded}" onclick="openSenseCrossReference(event, decodeURIComponent(this.dataset.referenceTarget))" title="Open ${escapeCardText(target)}">${escapeCardText(target)}</button>`;
+        return `<button type="button" class="sense-cross-reference" data-reference-target="${encoded}" data-reference-relation="${escapeCardText(relation)}" onclick="openSenseCrossReference(event, decodeURIComponent(this.dataset.referenceTarget), this.dataset.referenceRelation)" title="Open ${escapeCardText(target)}">${escapeCardText(target)}</button>`;
     };
     if (references.every(reference => reference.relation === 'see')) {
         const links = references.map(reference => (
@@ -3969,7 +3970,7 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
     return `<span class="sense-cross-reference-gloss">${projected?.display || fallbackText}</span><span class="sense-cross-reference-related" aria-label="Related cards">${related}</span>`;
 }
 
-async function openSenseCrossReference(event, target) {
+async function openSenseCrossReference(event, target, relation = 'see') {
     event?.preventDefault?.();
     event?.stopPropagation?.();
     const cleanTarget = String(target || '').trim();
@@ -3981,17 +3982,33 @@ async function openSenseCrossReference(event, target) {
         .flat();
     if (!cleanTarget || !Array.isArray(vocabSource)) return;
 
+    if (isSeeExpressionReference(cleanTarget, relation)) {
+        const trigger = event?.currentTarget;
+        const sourceCard = flashcards[currentIndex];
+        const language = selectedLanguage;
+        const langConfig = config?.languages?.[language] || {};
+        trigger?.setAttribute('aria-busy', 'true');
+        try {
+            const entry = await resolveSeeExpression(cleanTarget, langConfig, vocabSource);
+            if (selectedLanguage === language && flashcards[currentIndex] === sourceCard)
+                showSeeExpressionCard(entry, cleanTarget, trigger);
+        } catch (error) {
+            console.warn('Expression reference unavailable:', error);
+            if (selectedLanguage === language && flashcards[currentIndex] === sourceCard)
+                showSeeExpressionCard(null, cleanTarget, trigger, true);
+        } finally {
+            trigger?.removeAttribute('aria-busy');
+        }
+        return;
+    }
+
     const foldedTarget = foldSurfaceForm(cleanTarget);
     const exactEntry = vocabSource.find(entry => foldSurfaceForm(entry?.word) === foldedTarget)
         || vocabSource.find(entry => foldSurfaceForm(entry?.lemma) === foldedTarget);
     const phraseOwner = vocabSource.find(entry =>
         Array.isArray(entry?.mwe_memberships)
         && entry.mwe_memberships.some(mwe => foldSurfaceForm(mwe?.expression) === foldedTarget));
-    const headword = cleanTarget.split(/\s+/u)[0];
-    const foldedHeadword = foldSurfaceForm(headword);
-    const headwordEntry = vocabSource.find(entry => foldSurfaceForm(entry?.word) === foldedHeadword)
-        || vocabSource.find(entry => foldSurfaceForm(entry?.lemma) === foldedHeadword);
-    const entry = exactEntry || phraseOwner || headwordEntry;
+    const entry = exactEntry || phraseOwner;
     if (!entry?.id || !window.popupFoundWord) return;
 
     await window.popupFoundWord(

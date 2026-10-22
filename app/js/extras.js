@@ -73,7 +73,7 @@ function entityNote() {
 function lemmaKeyOf(item) {
     // vocab.js derives this from the assigned sense's headword; a second copy
     // here would group the Extras list differently from the deck it describes.
-    const key = g().lemmaGroupKey;
+    const key = g().lemmaStudyGroupKey || g().lemmaGroupKey;
     return key ? key(item) : String(item?.lemma || '').normalize('NFC').toLocaleLowerCase('es').trim();
 }
 
@@ -252,7 +252,7 @@ function lemmaDisplayOf(item, host) {
     // The surviving card is anchored to the most frequent surface, which can
     // itself be an inflection. Show the shared headword used for grouping,
     // with a translation from that headword's sense.
-    const key = lemmaKeyOf(item);
+    const key = g().lemmaGroupKey?.(item) || lemmaKeyOf(item);
     const matches = [host, item].flatMap(entry => (entry?.meanings || []).filter(meaning =>
         String(meaning?.headword || '').normalize('NFC').toLocaleLowerCase('es').trim() === key
     ));

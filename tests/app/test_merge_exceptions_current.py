@@ -49,6 +49,17 @@ class MergeExceptionsCurrentTests(unittest.TestCase):
                     payload.get("noun_merge_rule"), RULE_VERSION,
                     f"{path} predates noun merge rule {RULE_VERSION}; {REBUILD}",
                 )
+                self.assertEqual(payload.get("visible_sense_rule"), "visible-senses/v1")
+                signatures = payload.get("visible_sense_keys")
+                self.assertIsInstance(signatures, dict)
+                eligible = {word for word, key in payload["keys"].items() if key}
+                self.assertEqual(set(signatures), eligible, f"{path} lacks cold visible-sense decisions")
+                for signature in signatures.values():
+                    self.assertIsInstance(signature, str)
+                    if signature:
+                        senses = json.loads(signature)
+                        self.assertTrue(senses)
+                        self.assertEqual(senses, sorted(set(senses)))
         self.assertGreater(checked, 0)
 
 

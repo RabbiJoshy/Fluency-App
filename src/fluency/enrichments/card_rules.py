@@ -11,6 +11,10 @@ runs both on the same rows.
     lemma_group_key       app/js/vocab.js  lemmaGroupKey (decision 0028)
     sense_alternatives    app/js/cognates.js senseAlternatives
     card_cognate          app/js/cognates.js cardSenseCognate
+
+lemma_group_key is headword eligibility. Study grouping additionally requires
+the visible-sense signature from the shared JS display helpers (decision 0031),
+shipped by scripts/build_merge_exceptions.py without duplicating display policy.
 """
 
 from __future__ import annotations

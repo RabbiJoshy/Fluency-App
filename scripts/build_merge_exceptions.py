@@ -21,6 +21,10 @@ app's own rule (``fluency.enrichments.card_rules.lemma_group_key``, decision
         --release-index <workspace>/releases/pt/speech/<id>/app/vocabulary.index.json
 
 Writes app/data/merge-exceptions/<language>.json.
+
+With --release-index, also writes visible-senses/v1 signatures using the app's
+display helpers through scripts/build_visible_sense_merges.cjs (requires Node).
+Headword eligibility alone no longer establishes study equivalence (0031).
 """
 
 from __future__ import annotations
@@ -29,6 +33,7 @@ import argparse
 import gzip
 import json
 import re
+import subprocess
 from pathlib import Path
 
 from fluency.enrichments.card_rules import lemma_group_key, lemma_headwords, normal_token
@@ -125,6 +130,16 @@ def main() -> int:
     }
     if args.release_index:
         payload["release_index_content_id"] = file_content_id(args.release_index)
+        # Run the same JS display routine as the app, rather than maintaining
+        # a second copy of its low-share pooling and promotion policy in Python.
+        built = subprocess.run(
+            ["node", str(ROOT / "scripts/build_visible_sense_merges.cjs")],
+            input=json.dumps(rows, ensure_ascii=False), text=True,
+            capture_output=True, check=True,
+        )
+        signatures = json.loads(built.stdout)
+        payload["visible_sense_rule"] = "visible-senses/v1"
+        payload["visible_sense_keys"] = {word: value for word, value in signatures.items() if keys.get(word)}
     if args.sense_menu:
         payload["sense_menu_content_id"] = file_content_id(args.sense_menu)
         if menu.get("noun_merge_refresh"):

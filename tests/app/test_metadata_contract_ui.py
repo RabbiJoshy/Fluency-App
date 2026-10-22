@@ -145,7 +145,9 @@ class MetadataContractUITests(unittest.TestCase):
         ]
         self.assertIn("openSenseCrossReference", navigation)
         self.assertIn("window.popupFoundWord", navigation)
-        self.assertNotIn("selectedLanguage", navigation)
+        self.assertIn("isSeeExpressionReference(cleanTarget, relation)", navigation)
+        self.assertNotIn("=== 'portuguese'", navigation)
+        self.assertNotIn("headwordEntry", navigation)
 
     def test_related_cards_are_supporting_navigation_not_gloss_text(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")

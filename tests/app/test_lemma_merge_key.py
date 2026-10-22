@@ -92,7 +92,8 @@ class LemmaMergeExceptionTests(unittest.TestCase):
             const hostStart = source.indexOf('function selectLemmaModeRepresentatives');
             const host = source.slice(hostStart, source.indexOf('\n}\n', hostStart) + 3);
             const context = {};
-            vm.runInNewContext(pure + host, context);
+            const display = source.slice(source.indexOf('// low-share-pure'), source.indexOf('// /low-share-pure'));
+            vm.runInNewContext(pure + display + host, context);
             const { lemmaGroupKey, selectLemmaModeRepresentatives } = context;
             const fail = message => { throw new Error(message); };
 

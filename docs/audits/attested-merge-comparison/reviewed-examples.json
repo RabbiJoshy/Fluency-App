@@ -1,0 +1,1585 @@
+{
+  "portuguese": [
+    {
+      "forms": [
+        "estou",
+        "estás"
+      ],
+      "cards": [
+        {
+          "word": "estou",
+          "senses": [
+            {
+              "translation": "to be; forms the progressive aspect",
+              "context": "auxiliary",
+              "count": 10,
+              "reference": "kaikki:en-estar-pt-verb-pt:forms_the_progressive",
+              "examples": [
+                {
+                  "text": "E sim, sei o que estou a fazer.",
+                  "english": "And, yes, I know what I'm doing.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "É exactamente isso que estou a dizer.",
+                  "english": "That's exactly what I'm saying.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "to be",
+              "context": "intransitive",
+              "count": 6,
+              "reference": "kaikki:en-estar-pt-verb-pt:to_be_in_a_place",
+              "examples": [
+                {
+                  "text": "Eu estou aqui por causa de você.",
+                  "english": "I'm here because of you.",
+                  "url": "https://tatoeba.org/en/sentences/show/6473424"
+                },
+                {
+                  "text": "Não sei precisamente onde estou.",
+                  "english": "I don't know where I am exactly.",
+                  "url": "https://tatoeba.org/en/sentences/show/3799082"
+                }
+              ]
+            },
+            {
+              "translation": "to be",
+              "context": "copulative",
+              "count": 8,
+              "reference": "kaikki:en-estar-pt-verb-pt:to_be_in_a_transient_state",
+              "examples": [
+                {
+                  "text": "Estou muito orgulhoso em saber que ela é minha.",
+                  "english": "I'm so proud to know that she's mine.",
+                  "url": "https://tatoeba.org/en/sentences/show/909422"
+                },
+                {
+                  "text": "Ou você ou eu estou certo.",
+                  "english": "Either you or I am right.",
+                  "url": "https://tatoeba.org/en/sentences/show/5400864"
+                }
+              ]
+            },
+            {
+              "translation": "to look, to appear (to give an appearance of being)",
+              "context": "copulative",
+              "count": 1,
+              "reference": "kaikki:en-estar-pt-verb-pt:to_look",
+              "examples": [
+                {
+                  "text": "Eu estou ansioso para trabalhar com você.",
+                  "english": "I look forward to working with you.",
+                  "url": "https://tatoeba.org/en/sentences/show/7583182"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "estás",
+          "senses": [
+            {
+              "translation": "to be; forms the progressive aspect",
+              "context": "auxiliary",
+              "count": 19,
+              "reference": "kaikki:en-estar-pt-verb-pt:forms_the_progressive",
+              "examples": [
+                {
+                  "text": "Mas que raios estás tu a fazer aqui?",
+                  "english": "What on earth are you doing here?",
+                  "url": "https://tatoeba.org/en/sentences/show/438236"
+                },
+                {
+                  "text": "Por que estás a fazer isso agora?",
+                  "english": "Why are you doing this now?",
+                  "url": "https://tatoeba.org/en/sentences/show/11590753"
+                }
+              ]
+            },
+            {
+              "translation": "to be",
+              "context": "intransitive",
+              "count": 5,
+              "reference": "kaikki:en-estar-pt-verb-pt:to_be_in_a_place",
+              "examples": [
+                {
+                  "text": "Não lhes disse que estás aqui.",
+                  "english": "I didn't tell them you're here.",
+                  "url": "https://tatoeba.org/en/sentences/show/12341824"
+                },
+                {
+                  "text": "Não literalmente aqui, mas onde estás com ele.",
+                  "english": "Not literally here, but where you are with him.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "to be",
+              "context": "copulative",
+              "count": 6,
+              "reference": "kaikki:en-estar-pt-verb-pt:to_be_in_a_transient_state",
+              "examples": [
+                {
+                  "text": "Tu não estás mais convidada para a minha festa.",
+                  "english": "You're no longer invited to my party.",
+                  "url": "https://tatoeba.org/en/sentences/show/11912903"
+                },
+                {
+                  "text": "Tu não estás com sono?",
+                  "english": "Aren't you sleepy?",
+                  "url": "https://tatoeba.org/en/sentences/show/7276285"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "posso",
+        "podemos"
+      ],
+      "cards": [
+        {
+          "word": "posso",
+          "senses": [
+            {
+              "translation": "may; might",
+              "context": "",
+              "count": 1,
+              "reference": "kaikki:en-poder-pt-verb-exbQdxYL",
+              "examples": [
+                {
+                  "text": "Posso ver a vista?",
+                  "english": "May I see the view?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "can; could",
+              "context": "",
+              "count": 6,
+              "reference": "kaikki:en-poder-pt-verb-pt:it_is_possible_that",
+              "examples": [
+                {
+                  "text": "Não sei o que posso fazer.",
+                  "english": "I don't know what I can do.",
+                  "url": "https://tatoeba.org/en/sentences/show/8057144"
+                },
+                {
+                  "text": "Que é que posso dar a vocês?",
+                  "english": "What can I give you?",
+                  "url": "https://tatoeba.org/en/sentences/show/9199293"
+                }
+              ]
+            },
+            {
+              "translation": "to be able to; can (to have the ability to)",
+              "context": "",
+              "count": 13,
+              "reference": "kaikki:en-poder-pt-verb-pt:to_have_the_ability_to",
+              "examples": [
+                {
+                  "text": "Isso é tudo o que eu posso fazer.",
+                  "english": "That's all I can do.",
+                  "url": "https://tatoeba.org/en/sentences/show/2067154"
+                },
+                {
+                  "text": "Eu só posso ver o que você vê.",
+                  "english": "I can only see what you see.",
+                  "url": "https://tatoeba.org/en/sentences/show/11618319"
+                }
+              ]
+            },
+            {
+              "translation": "can; to be allowed to (to have the permission to)",
+              "context": "",
+              "count": 10,
+              "reference": "kaikki:en-poder-pt-verb-pt:to_have_the_permission_to",
+              "examples": [
+                {
+                  "text": "Mas não te posso dizer com quem estou a falar.",
+                  "english": "But I can't tell you who I'm talking to.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Eu não posso voltar para a prisão.",
+                  "english": "I can't go back to prison.",
+                  "url": "https://tatoeba.org/en/sentences/show/2595517"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "podemos",
+          "senses": [
+            {
+              "translation": "can; could",
+              "context": "",
+              "count": 11,
+              "reference": "kaikki:en-poder-pt-verb-pt:it_is_possible_that",
+              "examples": [
+                {
+                  "text": "Tu sabes que nós não podemos fazer isso.",
+                  "english": "You know we can't do it.",
+                  "url": "https://tatoeba.org/en/sentences/show/8057099"
+                },
+                {
+                  "text": "Eu acho que tudo que podemos fazer é esperar.",
+                  "english": "I guess that all we can do is wait.",
+                  "url": "https://tatoeba.org/en/sentences/show/8296786"
+                }
+              ]
+            },
+            {
+              "translation": "to be able to; can (to have the ability to)",
+              "context": "",
+              "count": 12,
+              "reference": "kaikki:en-poder-pt-verb-pt:to_have_the_ability_to",
+              "examples": [
+                {
+                  "text": "Eu sei que podemos fazer isso por ti.",
+                  "english": "I know we can do that for you.",
+                  "url": "https://tatoeba.org/en/sentences/show/8057129"
+                },
+                {
+                  "text": "Nós sabemos o que podemos ou não fazer.",
+                  "english": "We know what we can and can't do.",
+                  "url": "https://tatoeba.org/en/sentences/show/8057166"
+                }
+              ]
+            },
+            {
+              "translation": "can; to be allowed to (to have the permission to)",
+              "context": "",
+              "count": 7,
+              "reference": "kaikki:en-poder-pt-verb-pt:to_have_the_permission_to",
+              "examples": [
+                {
+                  "text": "Mas uma coisa é certa, não o podemos deixar ver-te.",
+                  "english": "But one thing's for sure, we cannot let him see you.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Por que não podemos conversar agora?",
+                  "english": "Why can't we talk now?",
+                  "url": "https://tatoeba.org/en/sentences/show/3424809"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "pode",
+        "posso"
+      ],
+      "cards": [
+        {
+          "word": "pode",
+          "senses": [
+            {
+              "translation": "may; might",
+              "context": "",
+              "count": 4,
+              "reference": "kaikki:en-poder-pt-verb-exbQdxYL",
+              "examples": [
+                {
+                  "text": "Alguma coisa pode ter acontecido com ele.",
+                  "english": "Something may have happened to him.",
+                  "url": "https://tatoeba.org/en/sentences/show/4292746"
+                },
+                {
+                  "text": "Eu acho que pode estar chovendo.",
+                  "english": "I think it might be raining.",
+                  "url": "https://tatoeba.org/en/sentences/show/5093790"
+                }
+              ]
+            },
+            {
+              "translation": "can; could",
+              "context": "",
+              "count": 9,
+              "reference": "kaikki:en-poder-pt-verb-pt:it_is_possible_that",
+              "examples": [
+                {
+                  "text": "Você pode me ajudar a fazer isso?",
+                  "english": "Can you help me do that?",
+                  "url": "https://tatoeba.org/en/sentences/show/4878399"
+                },
+                {
+                  "text": "Qual é a pior coisa que pode acontecer?",
+                  "english": "What's the worst that can happen?",
+                  "url": "https://tatoeba.org/en/sentences/show/7002878"
+                }
+              ]
+            },
+            {
+              "translation": "to be able to; can (to have the ability to)",
+              "context": "",
+              "count": 11,
+              "reference": "kaikki:en-poder-pt-verb-pt:to_have_the_ability_to",
+              "examples": [
+                {
+                  "text": "Mas sei de uma pessoa que nos pode dizer.",
+                  "english": "But I do know someone who can tell us.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "O homem só pode ser ele mesmo enquanto está só.",
+                  "english": "A man can be himself only so long as he is alone.",
+                  "url": "https://tatoeba.org/en/sentences/show/3080290"
+                }
+              ]
+            },
+            {
+              "translation": "can; to be allowed to (to have the permission to)",
+              "context": "",
+              "count": 6,
+              "reference": "kaikki:en-poder-pt-verb-pt:to_have_the_permission_to",
+              "examples": [
+                {
+                  "text": "Você não pode matar a nós dois.",
+                  "english": "You can't kill us both.",
+                  "url": "https://tatoeba.org/en/sentences/show/3389867"
+                },
+                {
+                  "text": "Você pode vir para o jantar hoje a noite?",
+                  "english": "Can you come for dinner tonight?",
+                  "url": "https://tatoeba.org/en/sentences/show/8202092"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "posso",
+          "senses": [
+            {
+              "translation": "may; might",
+              "context": "",
+              "count": 1,
+              "reference": "kaikki:en-poder-pt-verb-exbQdxYL",
+              "examples": [
+                {
+                  "text": "Posso ver a vista?",
+                  "english": "May I see the view?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "can; could",
+              "context": "",
+              "count": 6,
+              "reference": "kaikki:en-poder-pt-verb-pt:it_is_possible_that",
+              "examples": [
+                {
+                  "text": "Não sei o que posso fazer.",
+                  "english": "I don't know what I can do.",
+                  "url": "https://tatoeba.org/en/sentences/show/8057144"
+                },
+                {
+                  "text": "Que é que posso dar a vocês?",
+                  "english": "What can I give you?",
+                  "url": "https://tatoeba.org/en/sentences/show/9199293"
+                }
+              ]
+            },
+            {
+              "translation": "to be able to; can (to have the ability to)",
+              "context": "",
+              "count": 13,
+              "reference": "kaikki:en-poder-pt-verb-pt:to_have_the_ability_to",
+              "examples": [
+                {
+                  "text": "Isso é tudo o que eu posso fazer.",
+                  "english": "That's all I can do.",
+                  "url": "https://tatoeba.org/en/sentences/show/2067154"
+                },
+                {
+                  "text": "Eu só posso ver o que você vê.",
+                  "english": "I can only see what you see.",
+                  "url": "https://tatoeba.org/en/sentences/show/11618319"
+                }
+              ]
+            },
+            {
+              "translation": "can; to be allowed to (to have the permission to)",
+              "context": "",
+              "count": 10,
+              "reference": "kaikki:en-poder-pt-verb-pt:to_have_the_permission_to",
+              "examples": [
+                {
+                  "text": "Mas não te posso dizer com quem estou a falar.",
+                  "english": "But I can't tell you who I'm talking to.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Eu não posso voltar para a prisão.",
+                  "english": "I can't go back to prison.",
+                  "url": "https://tatoeba.org/en/sentences/show/2595517"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "sabe",
+        "sabia"
+      ],
+      "cards": [
+        {
+          "word": "sabe",
+          "senses": [
+            {
+              "translation": "to know",
+              "context": "catenative",
+              "count": 6,
+              "reference": "kaikki:en-saber-pt-verb-G7UJN~jl",
+              "examples": [
+                {
+                  "text": "A menina não sabe como fazer isso.",
+                  "english": "The girl doesn't know how to do it.",
+                  "url": "https://tatoeba.org/en/sentences/show/6385944"
+                },
+                {
+                  "text": "Nosso pai sabe falar inglês muito bem.",
+                  "english": "Our father speaks English very well.",
+                  "url": "https://tatoeba.org/en/sentences/show/3510252"
+                }
+              ]
+            },
+            {
+              "translation": "to know",
+              "context": "to be aware, to know",
+              "count": 17,
+              "reference": "kaikki:en-saber-pt-verb-pt:to_know_a_fact",
+              "examples": [
+                {
+                  "text": "Você sabe que não posso fazer isso, não é?",
+                  "english": "You know I can't do that, don't you?",
+                  "url": "https://tatoeba.org/en/sentences/show/8057131"
+                },
+                {
+                  "text": "Acho que você sabe o que eu quero dizer.",
+                  "english": "I think you know what I mean.",
+                  "url": "https://tatoeba.org/en/sentences/show/873876"
+                }
+              ]
+            },
+            {
+              "translation": "to know",
+              "context": "to be aware of a value or piece of information",
+              "count": 7,
+              "reference": "kaikki:en-saber-pt-verb-pt:to_know_info",
+              "examples": [
+                {
+                  "text": "Tem certeza de que não sabe o que foi?",
+                  "english": "Are you sure you don't know what it was?",
+                  "url": "https://tatoeba.org/en/sentences/show/10223749"
+                },
+                {
+                  "text": "Você nem ao menos sabe quem eu sou.",
+                  "english": "You don't even know who I am.",
+                  "url": "https://tatoeba.org/en/sentences/show/8060434"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "sabia",
+          "senses": [
+            {
+              "translation": "to know",
+              "context": "catenative",
+              "count": 1,
+              "reference": "kaikki:en-saber-pt-verb-G7UJN~jl",
+              "examples": [
+                {
+                  "text": "Aos cinco anos ele já sabia esquiar.",
+                  "english": "At five years old he already knew how to ski.",
+                  "url": "https://tatoeba.org/en/sentences/show/6310773"
+                }
+              ]
+            },
+            {
+              "translation": "to know",
+              "context": "to be aware, to know",
+              "count": 27,
+              "reference": "kaikki:en-saber-pt-verb-pt:to_know_a_fact",
+              "examples": [
+                {
+                  "text": "Eu não sabia o que dizer para ela.",
+                  "english": "I didn't know what to say to her.",
+                  "url": "https://tatoeba.org/en/sentences/show/5699445"
+                },
+                {
+                  "text": "Você não sabia que eu tinha que fazer isso hoje, sabia?",
+                  "english": "You didn't know that I had to do that today, did you?",
+                  "url": "https://tatoeba.org/en/sentences/show/6743121"
+                }
+              ]
+            },
+            {
+              "translation": "to know",
+              "context": "to be aware of a value or piece of information",
+              "count": 2,
+              "reference": "kaikki:en-saber-pt-verb-pt:to_know_info",
+              "examples": [
+                {
+                  "text": "Ele já sabia a história.",
+                  "english": "He knew the story already.",
+                  "url": "https://tatoeba.org/en/sentences/show/2831077"
+                },
+                {
+                  "text": "Como sabia os nossos nomes?",
+                  "english": "How did you know our names?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "devia",
+        "devo"
+      ],
+      "cards": [
+        {
+          "word": "devia",
+          "senses": [
+            {
+              "translation": "should",
+              "context": "",
+              "count": 29,
+              "reference": "kaikki:en-dever-pt-verb-CF0Pqi80",
+              "examples": [
+                {
+                  "text": "Eu sei que eu devia te dizer algo, mas não sabia o que dizer.",
+                  "english": "I know I should have said something, but I didn't know what to say.",
+                  "url": "https://tatoeba.org/en/sentences/show/2750898"
+                },
+                {
+                  "text": "Desculpa, eu sei que não devia estar aqui.",
+                  "english": "I'm sorry. I know I'm not supposed to be here.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "will likely",
+              "context": "",
+              "count": 1,
+              "reference": "kaikki:en-dever-pt-verb-sD0ZaLwc",
+              "examples": [
+                {
+                  "text": "Ele devia suspeitar de que se passava algo.",
+                  "english": "He must've suspected something was going on.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "devo",
+          "senses": [
+            {
+              "translation": "should",
+              "context": "",
+              "count": 27,
+              "reference": "kaikki:en-dever-pt-verb-CF0Pqi80",
+              "examples": [
+                {
+                  "text": "Por que você acha que eu devo fazer isso?",
+                  "english": "Why do you think I have to do this?",
+                  "url": "https://tatoeba.org/en/sentences/show/7935100"
+                },
+                {
+                  "text": "Tem uma coisa que devo te contar.",
+                  "english": "There's one thing I must tell you.",
+                  "url": "https://tatoeba.org/en/sentences/show/11115700"
+                }
+              ]
+            },
+            {
+              "translation": "will likely",
+              "context": "",
+              "count": 3,
+              "reference": "kaikki:en-dever-pt-verb-sD0ZaLwc",
+              "examples": [
+                {
+                  "text": "Devo voltar para casa dentro de uma semana.",
+                  "english": "I must return home within a week.",
+                  "url": "https://tatoeba.org/en/sentences/show/886754"
+                },
+                {
+                  "text": "Eu devo estar fazendo algo errado.",
+                  "english": "I must be doing something wrong.",
+                  "url": "https://tatoeba.org/en/sentences/show/6004285"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "havia",
+        "havemos"
+      ],
+      "cards": [
+        {
+          "word": "havia",
+          "senses": [
+            {
+              "translation": "there be; exist",
+              "context": "",
+              "count": 18,
+              "reference": "kaikki:en-haver-pt-verb-pt:exist",
+              "examples": [
+                {
+                  "text": "Não havia ninguém melhor que pudéssemos planear matar?",
+                  "english": "There wasn't any better person that we could plan to kill?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Não havia nada fora do comum.",
+                  "english": "There was nothing out of the ordinary.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "ago",
+              "context": "",
+              "count": 5,
+              "reference": "kaikki:en-haver-pt-verb-pt:it_has_been_since",
+              "examples": [
+                {
+                  "text": "Eu sabia o que havia na outra sala.",
+                  "english": "I knew what was in the other room.",
+                  "url": "https://tatoeba.org/en/sentences/show/5448653"
+                },
+                {
+                  "text": "Havia uma ponte aqui há muito tempo.",
+                  "english": "There once was a bridge here a long time ago.",
+                  "url": "https://tatoeba.org/en/sentences/show/6536369"
+                }
+              ]
+            },
+            {
+              "translation": "there be; to happen; to occur",
+              "context": "",
+              "count": 1,
+              "reference": "kaikki:en-haver-pt-verb-pt:occur",
+              "examples": [
+                {
+                  "text": "Sabíamos que havia essa possibilidade.",
+                  "english": "We knew this was a possibility.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "See haver de.",
+              "context": "with de + infinitive",
+              "count": 6,
+              "reference": "kaikki:en-haver-pt-verb-pt:shall",
+              "examples": [
+                {
+                  "text": "Eu sabia que minha vez havia de chegar.",
+                  "english": "I knew my time would come.",
+                  "url": "https://tatoeba.org/en/sentences/show/5218246"
+                },
+                {
+                  "text": "Achei que eu havia dito a você que eu não queria fazer isso.",
+                  "english": "I thought that I told you I didn't want you to do that.",
+                  "url": "https://tatoeba.org/en/sentences/show/9134791"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "havemos",
+          "senses": [
+            {
+              "translation": "there be; exist",
+              "context": "",
+              "count": 7,
+              "reference": "kaikki:en-haver-pt-verb-pt:exist",
+              "examples": [
+                {
+                  "text": "Qualquer que seja a ameaça dela, havemos de encontrar uma solução.",
+                  "english": "Whatever she's threatening, we'll find a way around it.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Eles não lutam pelas mesmas regras, porque havemos nós de lutar?",
+                  "english": "These guys aren't fighting by the same rules, so why should we?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "ago",
+              "context": "",
+              "count": 1,
+              "reference": "kaikki:en-haver-pt-verb-pt:it_has_been_since",
+              "examples": [
+                {
+                  "text": "É uma pena, pois nunca havemos saber.",
+                  "english": "Hmm, it's a shame we'll never find out.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "there be; to happen; to occur",
+              "context": "",
+              "count": 3,
+              "reference": "kaikki:en-haver-pt-verb-pt:occur",
+              "examples": [
+                {
+                  "text": "Como havemos de lidar com o que acabou de acontecer?",
+                  "english": "- How else are we gonna deal with what just happened?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Havemos de voltar quando tudo estiver normal e o possamos fazer juntos.",
+                  "english": "We'll come back again when everything's normal and we can do it together.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "See haver de.",
+              "context": "with de + infinitive",
+              "count": 19,
+              "reference": "kaikki:en-haver-pt-verb-pt:shall",
+              "examples": [
+                {
+                  "text": "Tens trabalhado muito e havemos de lá chegar.",
+                  "english": "You've been working really hard, and we're gonna get there.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Havemos de entrar em contacto se tivermos mais perguntas.",
+                  "english": "We'll be in touch if we have any more questions.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "hei",
+        "haveria"
+      ],
+      "cards": [
+        {
+          "word": "hei",
+          "senses": [
+            {
+              "translation": "there be; exist",
+              "context": "",
+              "count": 6,
+              "reference": "kaikki:en-haver-pt-verb-pt:exist",
+              "examples": [
+                {
+                  "text": "Mas hei, sem dor, não há sabedoria.",
+                  "english": "But hey, without pain, there's no wisdom.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "O que está a fazer...? Hei.",
+                  "english": "What are you doing...?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "ago",
+              "context": "",
+              "count": 2,
+              "reference": "kaikki:en-haver-pt-verb-pt:it_has_been_since",
+              "examples": [
+                {
+                  "text": "Hei, então eu acabei de chegar do hospital.",
+                  "english": "Hey, so I just got back from the hospital.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Hei, faz uma pausa.",
+                  "english": "Hey, take a break.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "See haver de.",
+              "context": "with de + infinitive",
+              "count": 22,
+              "reference": "kaikki:en-haver-pt-verb-pt:shall",
+              "examples": [
+                {
+                  "text": "Para mim, não sei mesmo o que hei de dizer.",
+                  "english": "For me it's... I don't literally don't know what to say.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Não faço ideia do que hei de fazer a seguir.",
+                  "english": "I got no fucking clue what to do next.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "haveria",
+          "senses": [
+            {
+              "translation": "there be; exist",
+              "context": "",
+              "count": 10,
+              "reference": "kaikki:en-haver-pt-verb-pt:exist",
+              "examples": [
+                {
+                  "text": "Como não havia mais ninguém como você... nem nunca haveria.",
+                  "english": "How there was no one else like you, and never would be.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Se nós tivéssemos asas, não mais haveria aviões.",
+                  "english": "If we had wings, there would be no more planes.",
+                  "url": "https://tatoeba.org/en/sentences/show/10047728"
+                }
+              ]
+            },
+            {
+              "translation": "there be; to happen; to occur",
+              "context": "",
+              "count": 1,
+              "reference": "kaikki:en-haver-pt-verb-pt:occur",
+              "examples": [
+                {
+                  "text": "O que você faria se fosse anunciado que haveria um grande dilúvio no seu país?",
+                  "english": "What would you do if you heard there'd be a huge flood in your country?",
+                  "url": "https://tatoeba.org/en/sentences/show/8349264"
+                }
+              ]
+            },
+            {
+              "translation": "See haver de.",
+              "context": "with de + infinitive",
+              "count": 19,
+              "reference": "kaikki:en-haver-pt-verb-pt:shall",
+              "examples": [
+                {
+                  "text": "Porque raio haveria eu de querer falar com alguém?",
+                  "english": "Why the hell would I want to talk to anyone?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Porque haveria de me querer no casamento dele?",
+                  "english": "Why'd he want me at his wedding?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "spanish": [
+    {
+      "forms": [
+        "necesito",
+        "necesita"
+      ],
+      "cards": [
+        {
+          "word": "necesito",
+          "senses": [
+            {
+              "translation": "to need",
+              "context": "to require",
+              "count": 30,
+              "reference": "spanishdict-menu:necesitar:19b",
+              "examples": [
+                {
+                  "text": "Si estás a mi lado no necesito nada más.",
+                  "english": "If you are by my side, I don't need anything else.",
+                  "url": "https://tatoeba.org/en/sentences/show/628024"
+                },
+                {
+                  "text": "Sólo necesito para hacer frente a esto ahora mismo.",
+                  "english": "I just need to face this right now.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "necesita",
+          "senses": [
+            {
+              "translation": "to need",
+              "context": "to require",
+              "count": 29,
+              "reference": "spanishdict-menu:necesitar:19b",
+              "examples": [
+                {
+                  "text": "No soy yo el que necesita hacer eso.",
+                  "english": "I'm not the one who needs to do that.",
+                  "url": "https://tatoeba.org/en/sentences/show/6710267"
+                },
+                {
+                  "text": "Ella necesita a alguien con quien hablar.",
+                  "english": "She needs someone to talk to.",
+                  "url": "https://tatoeba.org/en/sentences/show/449709"
+                }
+              ]
+            },
+            {
+              "translation": "to need",
+              "context": "to be necessary",
+              "count": 1,
+              "reference": "spanishdict-menu:necesitar:19bf",
+              "examples": [
+                {
+                  "text": "Ahora nos necesita más que nunca.",
+                  "english": "She needs us now more than ever.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "creo",
+        "cree"
+      ],
+      "cards": [
+        {
+          "word": "creo",
+          "senses": [
+            {
+              "translation": "to believe",
+              "context": "to have faith",
+              "count": 1,
+              "reference": "spanishdict-menu:creer:bc7",
+              "examples": [
+                {
+                  "text": "No creo en el aborto.",
+                  "english": "I don't believe in abortion.",
+                  "url": "https://tatoeba.org/en/sentences/show/9767477"
+                }
+              ]
+            },
+            {
+              "translation": "to think",
+              "context": "to suppose",
+              "count": 29,
+              "reference": "spanishdict-menu:creer:ff8",
+              "examples": [
+                {
+                  "text": "Creo que deberías ver esto una vez más.",
+                  "english": "I think you should look at this once more.",
+                  "url": "https://tatoeba.org/en/sentences/show/2466943"
+                },
+                {
+                  "text": "Yo creo que él te miraba a ti.",
+                  "english": "I think he was looking at you.",
+                  "url": "https://tatoeba.org/en/sentences/show/2342971"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "cree",
+          "senses": [
+            {
+              "translation": "to believe",
+              "context": "to have faith",
+              "count": 18,
+              "reference": "spanishdict-menu:creer:bc7",
+              "examples": [
+                {
+                  "text": "Hay gente que cree en todo lo que escucha.",
+                  "english": "There are people that believe everything they hear.",
+                  "url": "https://tatoeba.org/en/sentences/show/1482427"
+                },
+                {
+                  "text": "Cree en ti mismo o nadie más lo hará.",
+                  "english": "Believe in yourself or no one else will.",
+                  "url": "https://tatoeba.org/en/sentences/show/1632430"
+                }
+              ]
+            },
+            {
+              "translation": "to think",
+              "context": "to suppose",
+              "count": 12,
+              "reference": "spanishdict-menu:creer:ff8",
+              "examples": [
+                {
+                  "text": "Y ese tipo cree que yo sé algo que no sé.",
+                  "english": "And this guy thinks that I know something that I don't.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "El hombre ve lo que cree que es una niña joven.",
+                  "english": "The man sees what he thinks is a young girl.",
+                  "url": "https://tatoeba.org/en/sentences/show/1129982"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "espero",
+        "esperaba"
+      ],
+      "cards": [
+        {
+          "word": "espero",
+          "senses": [
+            {
+              "translation": "to wait for",
+              "context": "to await",
+              "count": 1,
+              "reference": "spanishdict-menu:esperar:da0",
+              "examples": [
+                {
+                  "text": "Yo espero que el venga en cualquier momento.",
+                  "english": "I expect him to come at any moment.",
+                  "url": "https://tatoeba.org/en/sentences/show/1189947"
+                }
+              ]
+            },
+            {
+              "translation": "to hope",
+              "context": "to wish",
+              "count": 28,
+              "reference": "spanishdict-menu:esperar:0cf",
+              "examples": [
+                {
+                  "text": "Espero verte de nuevo el año que viene.",
+                  "english": "Hope to see you again next year.",
+                  "url": "https://tatoeba.org/en/sentences/show/1336447"
+                },
+                {
+                  "text": "Espero ya no estar enfermo la semana próxima.",
+                  "english": "I hope to no longer be sick next week.",
+                  "url": "https://tatoeba.org/en/sentences/show/536455"
+                }
+              ]
+            },
+            {
+              "translation": "to expect",
+              "context": "to count on",
+              "count": 1,
+              "reference": "spanishdict-menu:esperar:95c",
+              "examples": [
+                {
+                  "text": "No espero que seas mi amigo.",
+                  "english": "I don't expect you to be my friend.",
+                  "url": "https://tatoeba.org/en/sentences/show/2230126"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "esperaba",
+          "senses": [
+            {
+              "translation": "to wait for",
+              "context": "to await",
+              "count": 4,
+              "reference": "spanishdict-menu:esperar:da0",
+              "examples": [
+                {
+                  "text": "Ella mató el tiempo leyendo una revista mientras esperaba.",
+                  "english": "She killed time reading a magazine while she waited.",
+                  "url": "https://tatoeba.org/en/sentences/show/918359"
+                },
+                {
+                  "text": "Le esperaba un terrible destino.",
+                  "english": "A terrible fate awaited him.",
+                  "url": "https://tatoeba.org/en/sentences/show/1604460"
+                }
+              ]
+            },
+            {
+              "translation": "to hope",
+              "context": "to wish",
+              "count": 5,
+              "reference": "spanishdict-menu:esperar:0cf",
+              "examples": [
+                {
+                  "text": "Esperaba que pudiera ayudarme con un caso.",
+                  "english": "I was hoping he could help me with a case.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "De verdad esperaba que te pudieras mejor.",
+                  "english": "I really hoped you were getting better.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "to expect",
+              "context": "to count on",
+              "count": 21,
+              "reference": "spanishdict-menu:esperar:95c",
+              "examples": [
+                {
+                  "text": "La película fue más interesante de lo que yo esperaba.",
+                  "english": "The movie was more interesting than I expected.",
+                  "url": "https://tatoeba.org/en/sentences/show/1340934"
+                },
+                {
+                  "text": "Este... este sitio no es lo que me esperaba.",
+                  "english": "This, um... this place isn't what I was expecting.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "hacer",
+        "haciendo"
+      ],
+      "cards": [
+        {
+          "word": "hacer",
+          "senses": [
+            {
+              "translation": "to do",
+              "context": "to complete",
+              "count": 27,
+              "reference": "spanishdict-menu:hacer:03d",
+              "examples": [
+                {
+                  "text": "Eso es algo que él no puede hacer.",
+                  "english": "That's something he can't do.",
+                  "url": "https://tatoeba.org/en/sentences/show/7056317"
+                },
+                {
+                  "text": "¿Estás seguro de que no quieres hacer eso?",
+                  "english": "Are you sure you don't want to do that?",
+                  "url": "https://tatoeba.org/en/sentences/show/2667272"
+                }
+              ]
+            },
+            {
+              "translation": "to make",
+              "context": "to produce",
+              "count": 1,
+              "reference": "spanishdict-menu:hacer:bf6",
+              "examples": [
+                {
+                  "text": "¿Os puedo hacer una propuesta?",
+                  "english": "Can I make you a proposal?",
+                  "url": "https://tatoeba.org/en/sentences/show/5535611"
+                }
+              ]
+            },
+            {
+              "translation": "to do",
+              "context": "to obey",
+              "count": 2,
+              "reference": "spanishdict-menu:hacer:03d82",
+              "examples": [
+                {
+                  "text": "Nunca te dejaría hacer eso.",
+                  "english": "I'd never allow you to do that.",
+                  "url": "https://tatoeba.org/en/sentences/show/13907313"
+                },
+                {
+                  "text": "- Pues no lo haces, así que deja de hablar y de hacer preguntas.",
+                  "english": "- Well, you're not, so stop talking and stop asking questions.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "haciendo",
+          "senses": [
+            {
+              "translation": "to do",
+              "context": "to complete",
+              "count": 24,
+              "reference": "spanishdict-menu:hacer:03d",
+              "examples": [
+                {
+                  "text": "No quiero pasarme todo el día haciendo esto.",
+                  "english": "I don't want to spend all day doing this.",
+                  "url": "https://tatoeba.org/en/sentences/show/8044405"
+                },
+                {
+                  "text": "No me importa si gano o no dinero haciendo esto.",
+                  "english": "It doesn't matter to me whether or not I make money doing this.",
+                  "url": "https://tatoeba.org/en/sentences/show/1503329"
+                }
+              ]
+            },
+            {
+              "translation": "to do",
+              "context": "used in place of another verb",
+              "count": 2,
+              "reference": "spanishdict-menu:hacer:03d8",
+              "examples": [
+                {
+                  "text": "¿Qué diablos estás haciendo con mi arma?",
+                  "english": "What the hell are you doing with my gun?",
+                  "url": "https://tatoeba.org/en/sentences/show/1142117"
+                },
+                {
+                  "text": "Agente. ¿Qué está haciendo aquí, hombre?",
+                  "english": "Agent. What are you doing here, man?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "to do",
+              "context": "to obey",
+              "count": 1,
+              "reference": "spanishdict-menu:hacer:03d82",
+              "examples": [
+                {
+                  "text": "Simplemente están haciendo lo que se les dice que hagan.",
+                  "english": "They are just doing what they're told to do.",
+                  "url": "https://tatoeba.org/en/sentences/show/11708213"
+                }
+              ]
+            },
+            {
+              "translation": "to make look",
+              "context": "to cause to look",
+              "count": 1,
+              "reference": "spanishdict-menu:hacer:347",
+              "examples": [
+                {
+                  "text": "¿Por qué está tu cara haciendo esa cara?",
+                  "english": "Why is your face making that face?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "to take",
+              "context": "to take time",
+              "count": 1,
+              "reference": "spanishdict-menu:hacer:76f",
+              "examples": [
+                {
+                  "text": "Nada termina, sólo estamos haciendo una pausa.",
+                  "english": "Nothing's ending, we're just hitting pause.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "to be",
+              "context": "weather",
+              "count": 1,
+              "reference": "spanishdict-menu:hacer:4dc",
+              "examples": [
+                {
+                  "text": "Los días se están haciendo más largos.",
+                  "english": "Days are getting longer.",
+                  "url": "https://tatoeba.org/en/sentences/show/1370341"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "gusta",
+        "gustaría"
+      ],
+      "cards": [
+        {
+          "word": "gusta",
+          "senses": [
+            {
+              "translation": "to like",
+              "context": "to enjoy",
+              "count": 28,
+              "reference": "spanishdict-menu:gustar:ebc",
+              "examples": [
+                {
+                  "text": "No me gusta la casa en la que vive.",
+                  "english": "I don't like the house which he lives in.",
+                  "url": "https://tatoeba.org/en/sentences/show/854994"
+                },
+                {
+                  "text": "Sé cuál de estas dos chicas te gusta.",
+                  "english": "I know which of these two girls you like.",
+                  "url": "https://tatoeba.org/en/sentences/show/1707618"
+                }
+              ]
+            },
+            {
+              "translation": "to like",
+              "context": "to be attracted to",
+              "count": 2,
+              "reference": "spanishdict-menu:gustar:ebcf",
+              "examples": [
+                {
+                  "text": "Me gusta el color de tus labios.",
+                  "english": "I like the color of your lips.",
+                  "url": "https://tatoeba.org/en/sentences/show/11204011"
+                },
+                {
+                  "text": "Ella me gusta mucho.",
+                  "english": "I like her very much.",
+                  "url": "https://tatoeba.org/en/sentences/show/475659"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "gustaría",
+          "senses": [
+            {
+              "translation": "to like",
+              "context": "to enjoy",
+              "count": 30,
+              "reference": "spanishdict-menu:gustar:ebc",
+              "examples": [
+                {
+                  "text": "Me gustaría pasar menos tiempo en el trabajo y más tiempo en casa.",
+                  "english": "I'd like to spend less time at work and more time at home.",
+                  "url": "https://tatoeba.org/en/sentences/show/1360740"
+                },
+                {
+                  "text": "¿Qué crees que te gustaría hacer la próxima vez?",
+                  "english": "What do you think you'd like to do next time?",
+                  "url": "https://tatoeba.org/en/sentences/show/2103170"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "forms": [
+        "su",
+        "sus"
+      ],
+      "cards": [
+        {
+          "word": "su",
+          "senses": [
+            {
+              "translation": "his",
+              "context": "possessive; third person",
+              "count": 20,
+              "reference": "spanishdict-menu:su:066",
+              "examples": [
+                {
+                  "text": "Así que no se lo dijiste a su madre.",
+                  "english": "So you didn't tell his mother.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "Bueno, ¿sabe ya lo de su mujer y su bebé?",
+                  "english": "Well, does he know yet, about his wife and baby?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "her",
+              "context": "possessive; third person",
+              "count": 5,
+              "reference": "spanishdict-menu:su:3ef",
+              "examples": [
+                {
+                  "text": "Ella de verdad se parece a su mamá.",
+                  "english": "She really looks like her mother.",
+                  "url": "https://tatoeba.org/en/sentences/show/5325084"
+                },
+                {
+                  "text": "Lo encontré en su escritorio.",
+                  "english": "I found it on her desk.",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "its",
+              "context": "possessive; third person",
+              "count": 2,
+              "reference": "spanishdict-menu:su:dc8",
+              "examples": [
+                {
+                  "text": "La única crítica para mi coche fue su aceleración.",
+                  "english": "My only critique for my car was its acceleration.",
+                  "url": "https://tatoeba.org/en/sentences/show/11853707"
+                },
+                {
+                  "text": "Cada animal cuida su nido.",
+                  "english": "Every animal cares for its nest.",
+                  "url": "https://tatoeba.org/en/sentences/show/1702645"
+                }
+              ]
+            },
+            {
+              "translation": "their",
+              "context": "possessive; third person",
+              "count": 2,
+              "reference": "spanishdict-menu:su:574",
+              "examples": [
+                {
+                  "text": "Acaban de llegar a su destino.",
+                  "english": "They just arrived at their destination.",
+                  "url": "https://tatoeba.org/en/sentences/show/3870716"
+                },
+                {
+                  "text": "¿Has visto su nuevo apartamento?",
+                  "english": "Have you seen their new apartment?",
+                  "url": "https://tatoeba.org/en/sentences/show/968669"
+                }
+              ]
+            },
+            {
+              "translation": "your",
+              "context": "possessive; second person plural",
+              "count": 1,
+              "reference": "spanishdict-menu:su:5ef1",
+              "examples": [
+                {
+                  "text": "Por favor no apague o desenchufe su máquina.",
+                  "english": "Please do not power off or unplug your machine.",
+                  "url": "https://tatoeba.org/en/sentences/show/1552896"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "word": "sus",
+          "senses": [
+            {
+              "translation": "his",
+              "context": "possessive; third person",
+              "count": 17,
+              "reference": "spanishdict-menu:su:066",
+              "examples": [
+                {
+                  "text": "Me gustaría hablar con uno de sus invitados.",
+                  "english": "I'd like to talk to one of your guests.",
+                  "url": "https://tatoeba.org/en/sentences/show/791693"
+                },
+                {
+                  "text": "¿O se trata de sólo otra de sus ilusiones?",
+                  "english": "Or is that just another one of their illusions?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                }
+              ]
+            },
+            {
+              "translation": "her",
+              "context": "possessive; third person",
+              "count": 4,
+              "reference": "spanishdict-menu:su:3ef",
+              "examples": [
+                {
+                  "text": "Ella perdió su dinero, su familia, sus amigos.",
+                  "english": "She lost her money, her family, her friends.",
+                  "url": "https://tatoeba.org/en/sentences/show/661568"
+                },
+                {
+                  "text": "¿Todos sus amigos la han abandonado?",
+                  "english": "Have all her friends left her?",
+                  "url": "https://tatoeba.org/en/sentences/show/1562973"
+                }
+              ]
+            },
+            {
+              "translation": "its",
+              "context": "possessive; third person",
+              "count": 1,
+              "reference": "spanishdict-menu:su:dc8",
+              "examples": [
+                {
+                  "text": "El nuevo coche pasó sus pruebas con éxito.",
+                  "english": "The new car underwent its tests successfully.",
+                  "url": "https://tatoeba.org/en/sentences/show/759939"
+                }
+              ]
+            },
+            {
+              "translation": "their",
+              "context": "possessive; third person",
+              "count": 8,
+              "reference": "spanishdict-menu:su:574",
+              "examples": [
+                {
+                  "text": "¿De esto hablan los hombres cuando sus esposas no están?",
+                  "english": "This is what men talk about when their wives aren't around?",
+                  "url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+                },
+                {
+                  "text": "¿Cómo se comunican los bebés con sus padres?",
+                  "english": "How do babies communicate with their parents?",
+                  "url": "https://tatoeba.org/en/sentences/show/1455258"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

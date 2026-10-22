@@ -95,6 +95,8 @@ assert.equal(displayExamplesForSense(match, [corpus], {targetWord:'hablas'})[1].
         end = source.index('// A small per-language file', start)
         script = '''const assert=require('assert');
 const lemmaGroupKey = x => x.merge_key;
+const lemmaStudyGroupKey = x => x.merge_key;
+const normalizeLemmaToken = x => String(x || '').toLowerCase();
 let reads=0;
 const readJsonWithTimeout=async path=>{reads++;return {response:{ok:true},data:{release_id:'r1',
  examples:{s:[{text:'Anos passam.',translation:'Years pass.'}]},groups:{ano:['ano','anos']}}};};

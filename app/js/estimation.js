@@ -178,7 +178,7 @@ function buildEstimationPool(vocabulary, frequencyData = null, { includeAssumed 
             });
             continue;
         }
-        const lemma = window.lemmaGroupKey(source);
+        const lemma = window.lemmaStudyGroupKey(source);
         if (!lemma) {
             items.push({ ...source, estimationKey: `surface:${source.id || source.word}`,
                 estimationFrequency: frequency, estimationMembers: [{ source, weight: 1 }] });

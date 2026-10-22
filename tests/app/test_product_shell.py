@@ -39,7 +39,7 @@ class ProductShellTests(unittest.TestCase):
             # million and showed *traje* at 113,380.
             self.assertLess(max(data["values"].values()), 100_000, language)
             self.assertIn(f"'/{path}'", worker)
-        self.assertIn("lemmaSourceFrequencies.get(lemmaGroupKey(item))", vocab)
+        self.assertIn("lemmaSourceFrequencies.get(lemmaStudyGroupKey(item))", vocab)
         self.assertIn("!activeArtist && Number(card.sourceFrequency) > 0", flashcards)
 
     def test_existing_fluency_entrypoint_and_core_surfaces_are_present(self) -> None:

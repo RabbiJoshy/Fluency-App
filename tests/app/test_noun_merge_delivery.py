@@ -29,10 +29,10 @@ vm.runInNewContext(requests+pure+loading,context);
  await context.stampContractions([item],config);
  assert.equal(item.merge_key,undefined);
  assert.equal(item.noun_merge,undefined);
- payload={...payload,noun_merge_rule:'noun-merge/v2',noun_verdicts:{gatos:{rule_version:'noun-merge/v2',allowed:true,lemma:'gato'}}};
+ payload={...payload,visible_sense_rule:'visible-senses/v1',visible_sense_keys:{gatos:'["ref:gato"]'},noun_merge_rule:'noun-merge/v2',noun_verdicts:{gatos:{rule_version:'noun-merge/v2',allowed:true,lemma:'gato'}}};
  config.mergeExceptionsPath='current.json';
  await context.stampContractions([item],config);
- assert.equal(context.lemmaSeenKey(item),'gato');
+ assert.equal(context.lemmaSeenKey(item),'gato\u001f["ref:gato"]');
  await context.stampContractions([item],{...config,indexPath:'/release-b/app/index.json'});
  assert.equal(item.merge_key,undefined);
  assert.equal(item.noun_merge,undefined);
@@ -54,7 +54,7 @@ const stamping=source.slice(start,source.indexOf('\n}\n',start)+3);
 const context={};vm.runInNewContext(pure+stamping,context);
 const proof={rule_version:'noun-merge/v2',lemma:'gato',allowed:true,sense_set:'complete-source-menu'};
 const item={word:'gatos',lemma:'gato',meanings:[]};
-context.stampMergeExceptionValues([item],null,{gatos:'gato'},{gatos:proof});
+context.stampMergeExceptionValues([item],null,{gatos:'gato'},{gatos:proof},{gatos:'["ref:gato"]'});
 assert.equal(context.lemmaGroupKey(item),'gato');
 // Noun approval cannot pull another dictionary entry into the same card.
 const mixed={word:'seres',noun_merge:{...proof,lemma:'ser'},meanings:[
@@ -67,7 +67,7 @@ mixed.meanings=[{pos:'SENSE_CYCLE',allSenses:[...mixed.meanings,...mixed.unused_
 mixed.unused_menu_senses=[];
 mixed.merge_key='ser';
 assert.equal(context.lemmaGroupKey(mixed),'');
-assert.equal(context.lemmaSeenKey(item),'gato');
+assert.equal(context.lemmaSeenKey(item),'gato\u001f["ref:gato"]');
 item.meanings=[{headword:'gato',pos:'NOUN',translation:'cats'}];
 assert.equal(context.lemmaGroupKey(item),'gato');
 context.stampMergeExceptionValues([item],null,{gatos:'gato'},{gatos:{...proof,allowed:false}});

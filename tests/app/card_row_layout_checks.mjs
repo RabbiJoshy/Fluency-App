@@ -64,7 +64,7 @@ try {
             const present = ui.learnerSensePresentation(meaning, true, {ignoreBudget:true,gloss:'remember',cardMeanings:[meaning]});
             const repeated = ui.senseNoteHTML(present);
             // DOM filtering also handles repeated fragments and empty sections.
-            const functions = new Function('senseNoteTextKey', `${helpers}; return {placeRowInformationButtons, dropNoteLinesShownIn, fitRowInformationButtons};`)(ui.senseNoteTextKey);
+            const functions = new Function('senseNoteTextKey', 'glossBaseStems', `${helpers}; return {placeRowInformationButtons, dropNoteLinesShownIn, fitRowInformationButtons};`)(ui.senseNoteTextKey, ui.glossBaseStems);
             root.innerHTML = `<div class="meaning-row"><span>remember</span><span>a fact</span><button class="sense-note-trigger"></button><template><div class="sense-note-copy" data-sense-note-base-gloss="to remember"><section><h3>Dictionary</h3><p>to remember</p><p>a fact</p></section></div></template></div>`;
             functions.placeRowInformationButtons(root);
             const emptyButtons = root.querySelectorAll('.sense-note-trigger').length;

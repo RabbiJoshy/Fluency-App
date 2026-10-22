@@ -46,7 +46,7 @@ class LemmaMergeCognatesTests(unittest.TestCase):
                     stableRank: 10,
                     rank: 10,
                     corpus_count: 500,
-                    meanings: [{ pos: 'VERB', headword: 'decidir', translation: 'to decide' }],
+                    meanings: [{ pos: 'VERB', headword: 'decidir', translation: 'to decide', source_reference: 'dictionary:decidir:decide' }],
                     cognate_score: 0.85,
                     cognate_scores: { en: 0.85 } // Cognate in English
                 },
@@ -55,7 +55,7 @@ class LemmaMergeCognatesTests(unittest.TestCase):
                     stableRank: 20,
                     rank: 20,
                     corpus_count: 300,
-                    meanings: [{ pos: 'VERB', headword: 'decidir', translation: 'he decided' }],
+                    meanings: [{ pos: 'VERB', headword: 'decidir', translation: 'he decided', source_reference: 'dictionary:decidir:decide' }],
                     cognate_score: 0.50,
                     cognate_scores: { en: 0.50 } // Below cutoff (not cognate on surface)
                 },
