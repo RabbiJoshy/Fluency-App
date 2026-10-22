@@ -2,6 +2,41 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T20:59:15.648074+01:00",
+      "date": "2026-10-22 20:59 BST",
+      "agent": "Codex",
+      "summary": "Restore corrected Portuguese verb meanings with verified deck loading.",
+      "detail": [
+        "Fizeram shows they did; made; foram shows they went / they were, with the correct verb tables.",
+        "Verify all 10000 published cards and preserve card IDs, meaning IDs and example assignments.",
+        "Bind merge keys, frequency, dictionary examples, placement and Smart Skip assets to the corrected release; preserve the previous release for rollback."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-22T20:51:26.577045+01:00",
+      "date": "2026-10-22 20:51 BST",
+      "agent": "Codex",
+      "summary": "Restore Portuguese decks using the previous published release.",
+      "detail": [
+        "Roll back only Portuguese release paths after decks failed to load.",
+        "Keep saved progress, account data, all other languages and app changes untouched."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-22T20:47:33.095708+01:00",
+      "date": "2026-10-22 20:47 BST",
+      "agent": "Codex",
+      "summary": "Portuguese verb forms show real inflected meanings and conjugation tables.",
+      "detail": [
+        "Correct 100 grammatical-reading rows on 99 Portuguese cards; foram shows they went / they were.",
+        "Resolve the correct verb tables while preserving card and meaning IDs, example assignments and progress namespace.",
+        "Keep original dictionary grammar and correction provenance; no new lexical WSD assignments are claimed."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T15:29:59+01:00",
       "date": "2026-10-22 15:29 BST",
       "agent": "Codex",
@@ -330,39 +365,6 @@
         "A group that shares a context over two or more translations (arriba: higher over up, above) shows 'up · higher' and 'above · higher' when each fits on one line, instead of a caption line plus one line each. If any would wrap, the caption stays.",
         "acredito: the heading read 'I believe' but the translation beside it read 'to think'. Translations next to a shared heading now take the same form, so it reads 'I think'.",
         "Only Spanish cards have shared-context groups (none in the first 619 Portuguese cards), so the first change was checked on a hand-built row, not on the real arriba card."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T21:10:17+01:00",
-      "date": "2026-10-21 21:10 BST",
-      "agent": "Claude",
-      "summary": "Card back: no outlines on sense and sub-meaning rows that aren't chosen; pressing the word-type row selects the whole group again",
-      "detail": [
-        "Resting rows have no border and no tint; the chosen row is the fill plus left edge. A faint wash shows on hover.",
-        "When a word type carries its group's shared words (estar: to be), pressing that row selects every sub-meaning at once, so you can go from one sub-meaning back to all. Pressing it again folds the section as before.",
-        "Grouped rows with the shared text inside the group already did this; unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T20:52:23+01:00",
-      "date": "2026-10-21 20:52 BST",
-      "agent": "Claude",
-      "summary": "Card back: the chosen sub-meaning is one marker, its whole row as a rounded rectangle with a left edge (no chip round the text)",
-      "detail": [
-        "Replaces the row wash plus text chip: the active sub-meaning row now has a 0.24 fill and the 4px left edge of a sense row, with the text unchanged and still on its column.",
-        "Both layouts: shared text in the word-type row (água, aún) and shared text in the group row (dejar, passar)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T20:36:52+01:00",
-      "date": "2026-10-21 20:36 BST",
-      "agent": "Claude",
-      "summary": "Card back: the chosen sub-meaning's whole row is washed in the one-grouped-row layout too (água, aún)",
-      "detail": [
-        "The wash across the chosen sub-meaning's row only worked for groups whose shared text stays in the group row (dejar); in the layout where the shared text moves up to the word-type row (água, aún, realmente) a higher-priority rule kept the row transparent, so only the text was highlighted. Both layouts now wash the row."
       ],
       "commit": "pending"
     }
