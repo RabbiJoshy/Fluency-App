@@ -2072,5 +2072,1540 @@
         }
       }
     ]
+  },
+  {
+    "id": "4cd59400",
+    "word": "que",
+    "meanings": [
+      {
+        "translation": "seeing as; since; for; because (introduces explanatory clause)",
+        "context": "only in subordinate clauses",
+        "pos": "conj",
+        "headword": "que",
+        "sense_id": "sense_1dc3e5f5cc61381f467cac615ff28c04",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              16,
+              19
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              13,
+              18
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Espere um pouco que a chuva já vai parar.",
+          "translation": "Wait a little, for the rain is about to stop."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-que-pt-conj-pt:because",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "only in subordinate clauses",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "only in subordinate clauses"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "that",
+        "pos": "conj",
+        "headword": "que",
+        "sense_id": "sense_62a90dec96a52b082b32ab40e9e63750",
+        "frequency": "0.137500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              7,
+              10
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              10,
+              14
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Pensei que eles fossem invisíveis.",
+          "translation": "I thought that they were invisible."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-que-pt-conj-pt:noun_clause_connector",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "connecting noun clause",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "connecting noun clause"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "what",
+        "context": "interrogative",
+        "pos": "det",
+        "headword": "que",
+        "sense_id": "sense_fd50ab74003cb83f284ea6af2e727d13",
+        "frequency": "0.087500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              0,
+              3
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              0,
+              4
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Que livro é esse?",
+          "translation": "What book is this?"
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-que-pt-det-pt:what",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "function=interrogative",
+                "family": "grammar",
+                "kind": "sense_mark",
+                "value": "function=interrogative"
+              },
+              {
+                "embedding_text": "used to ask for a specification",
+                "family": "functional",
+                "kind": "usage_note",
+                "value": "used to ask for a specification"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "what's the matter?",
+        "pos": "PHRASE",
+        "headword": "o que foi",
+        "sense_id": "sense_78f7bdd32646ecdf5f02b3ffefb2aa64",
+        "frequency": "0.012500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "why, what for, for what reason",
+        "pos": "PHRASE",
+        "headword": "por que",
+        "sense_id": "sense_2b989bb3059d3e431359da40e5653bc2",
+        "frequency": "0.050000",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "the thing is",
+        "pos": "PHRASE",
+        "headword": "é que",
+        "sense_id": "sense_4ea5a03f21978d862cd21202a36f993f",
+        "frequency": "0.087500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "what about; how about",
+        "pos": "PHRASE",
+        "headword": "que tal",
+        "sense_id": "sense_5f1e598a8135b4d8675020f9384708d2",
+        "frequency": "0.012500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "as soon as",
+        "pos": "PHRASE",
+        "headword": "assim que",
+        "sense_id": "sense_98b100aca092a6f71b861b446a8f5d44",
+        "frequency": "0.012500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "now that",
+        "pos": "PHRASE",
+        "headword": "agora que",
+        "sense_id": "sense_74ffb641e85e4212cf2e166b24b7fb71",
+        "frequency": "0.012500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "so that; in order to",
+        "pos": "PHRASE",
+        "headword": "para que",
+        "sense_id": "sense_cb2903eeaed7f787fcc988c0e1f45d6d",
+        "frequency": "0.025000",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "than",
+        "pos": "PHRASE",
+        "headword": "do que",
+        "sense_id": "sense_5a4a32652513bb12f138bcfd3741c464",
+        "frequency": "0.025000",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "as soon as",
+        "pos": "PHRASE",
+        "headword": "no que",
+        "sense_id": "sense_0438a2b7cc012c870f3595d4a1bb4c34",
+        "frequency": "0.012500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "damn!",
+        "pos": "PHRASE",
+        "headword": "que isso",
+        "sense_id": "sense_fa5d35a9db6017132ec38d212c69eda6",
+        "frequency": "0.012500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      }
+    ],
+    "function_word": {
+      "considered": 80,
+      "labelled": 30,
+      "patterns": [
+        {
+          "count": 8,
+          "gloss": "what / which",
+          "value": "o que"
+        },
+        {
+          "count": 4,
+          "gloss": "why, what for, for what reason (introduces a question)",
+          "value": "por que"
+        },
+        {
+          "count": 4,
+          "gloss": "(question emphasis, not translated)",
+          "value": "é que"
+        },
+        {
+          "count": 2,
+          "gloss": "have to",
+          "value": "ter que"
+        },
+        {
+          "count": 1,
+          "gloss": "now that",
+          "value": "agora que"
+        },
+        {
+          "count": 1,
+          "gloss": "as soon as",
+          "value": "assim que"
+        },
+        {
+          "count": 1,
+          "gloss": "than",
+          "value": "do que"
+        },
+        {
+          "count": 1,
+          "gloss": "what about; how about (used to ask for an opinion about a suggestion)",
+          "value": "que tal"
+        }
+      ],
+      "roles": [
+        {
+          "count": 6,
+          "gloss": "that",
+          "value": "conj_that"
+        },
+        {
+          "count": 2,
+          "gloss": "that / which / who",
+          "value": "relative"
+        }
+      ],
+      "summary_version": "function-word-summary/v1"
+    }
+  },
+  {
+    "id": "a18e5652",
+    "word": "estamos",
+    "meanings": [
+      {
+        "translation": "to stand",
+        "pos": "verb",
+        "headword": "estar",
+        "sense_id": "sense_d4f737a4670ddd9a12f6d0df110daef4",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              5,
+              10
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              7,
+              12
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Aqui estou.",
+          "translation": "Here I stand."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-estar-pt-verb-M5TgKh6g",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "first-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=1"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "plural",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=plural"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to be; forms the progressive aspect",
+        "context": "auxiliary",
+        "pos": "verb",
+        "headword": "estar",
+        "sense_id": "sense_0cc85e36fc3831dc27097873b051b429",
+        "frequency": "0.175000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              4,
+              8
+            ],
+            [
+              25,
+              29
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              0,
+              2
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Ela está cantando? / Ela está a cantar?",
+          "translation": "Is she singing?"
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-estar-pt-verb-pt:forms_the_progressive",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "auxiliary",
+                "family": "construction",
+                "kind": "auxiliary_frame",
+                "value": "auxiliary"
+              },
+              {
+                "embedding_text": "[with gerund (Brazil) or a (+ infinitive) (Portugal)]",
+                "family": "construction",
+                "kind": "companion_form",
+                "value": "[with gerund (Brazil) or a (+ infinitive) (Portugal)]"
+              },
+              {
+                "embedding_text": "first-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=1"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "plural",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=plural"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to be",
+        "context": "intransitive",
+        "pos": "verb",
+        "headword": "estar",
+        "sense_id": "sense_7759a76e9c2c144421b0795ce9a291dc",
+        "frequency": "0.112500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              0,
+              5
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              0,
+              4
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Estou em casa.",
+          "translation": "I am at home."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-estar-pt-verb-pt:to_be_in_a_place",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "em",
+                "family": "companion",
+                "kind": "required_word",
+                "value": "em"
+              },
+              {
+                "embedding_text": "indicates location in space",
+                "family": "functional",
+                "kind": "usage_note",
+                "value": "indicates location in space"
+              },
+              {
+                "embedding_text": "first-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=1"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "plural",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=plural"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to be",
+        "context": "copulative",
+        "pos": "verb",
+        "headword": "estar",
+        "sense_id": "sense_a432aaf424cd3e9e1b5e5a467d547b14",
+        "frequency": "0.075000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              7,
+              11
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              10,
+              12
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "A maçã está madura.",
+          "translation": "The apple is ripe."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-estar-pt-verb-pt:to_be_in_a_transient_state",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "copulative",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "copulative"
+              },
+              {
+                "embedding_text": "adjective",
+                "family": "construction",
+                "kind": "complement_form",
+                "value": "adjective"
+              },
+              {
+                "embedding_text": "denotes a transient quality; a quality expected to change",
+                "family": "functional",
+                "kind": "usage_note",
+                "value": "denotes a transient quality; a quality expected to change"
+              },
+              {
+                "embedding_text": "first-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=1"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "plural",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=plural"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "dbe148ff",
+    "word": "saber",
+    "meanings": [
+      {
+        "translation": "to know",
+        "context": "to know how",
+        "pos": "verb",
+        "headword": "saber",
+        "sense_id": "sense_810701a1716d854d28835438d7fdaae7",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              4,
+              7
+            ],
+            [
+              28,
+              32
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              8,
+              16
+            ],
+            [
+              37,
+              42
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Não sei fazer isso, mas ela sabe.",
+          "translation": "I don’t know how to do this, but she knows."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-saber-pt-verb-G7UJN~jl",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "verb-class=catenative",
+                "family": "grammar",
+                "kind": "sense_mark",
+                "value": "verb-class=catenative"
+              },
+              {
+                "embedding_text": "[with infinitive ‘to do something’]",
+                "family": "construction",
+                "kind": "companion_form",
+                "value": "[with infinitive ‘to do something’]"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to know",
+        "context": "to be aware, to know",
+        "pos": "verb",
+        "headword": "saber",
+        "sense_id": "sense_59f88459d0dec87a2163077e986666a4",
+        "frequency": "0.337500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              38,
+              43
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              39,
+              43
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Perguntaram-me a resposta, mas eu não sabia.",
+          "translation": "They asked me the answer, but I didn’t know."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-saber-pt-verb-pt:to_know_a_fact",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "[with direct object ‘a fact’ or que (+ indicative clause when positive or subjunctive clause when negated) ‘that ...’ or indirect question]",
+                "family": "construction",
+                "kind": "companion_form",
+                "value": "[with direct object ‘a fact’ or que (+ indicative clause when positive or subjunctive clause when negated) ‘that ...’ or indirect question]"
+              },
+              {
+                "embedding_text": "transitive or intransitive",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "transitive or intransitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to know",
+        "context": "to be aware of a value or piece of information",
+        "pos": "verb",
+        "headword": "saber",
+        "sense_id": "sense_d00916604e18a36748f9a3696cdb0b3d",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              3,
+              6
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              2,
+              6
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Eu sei qual é a capital da Assíria.",
+          "translation": "I know what is the capital of Assyria."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-saber-pt-verb-pt:to_know_info",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "I don't care",
+        "pos": "PHRASE",
+        "headword": "não quero saber",
+        "sense_id": "sense_f99c968b7fce68123e57993de3d9684e",
+        "frequency": "0.012500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "namely, i.e., to wit; that is to say",
+        "pos": "PHRASE",
+        "headword": "a saber",
+        "sense_id": "sense_4138cfca768d04406f9a446ee4e11e59",
+        "frequency": "0.012500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "ad52dc1d",
+    "word": "dela",
+    "meanings": [
+      {
+        "translation": "of (in relation to)",
+        "context": "of; about (on the subject of)",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_5461f20601875109a021e499a8cbc75f",
+        "frequency": "0.050000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              0,
+              2
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              23,
+              28
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Do que estavam falando?",
+          "translation": "What were they talking about?"
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-14BZEtt0",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "of (in relation to)",
+        "context": "of (forms compounds; often untranslated)",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_c2b31244db19948bce255cbf07ca3ac3",
+        "frequency": "0.025000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              12,
+              14
+            ]
+          ],
+          "bold_translation_offsets": [],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "acampamento de verão",
+          "translation": "summer camp"
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-7uPtEUdv",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "of (in relation to)",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_80417b83b44fd89131062f299a3fed6e",
+        "frequency": "0.050000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              10,
+              12
+            ]
+          ],
+          "bold_translation_offsets": [],
+          "literal_meaning": "the friends of him",
+          "tags": [],
+          "text": "os amigos dele",
+          "translation": "his friends"
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-FPYEuswM",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "as (in the role of)",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_89925ae9f642ce6c3562ba3ca0db89ca",
+        "frequency": "0.062500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              21,
+              23
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              21,
+              33
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Na festa, ele estava de bruxo.",
+          "translation": "At the party, he was dressed as a wizard."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-WCV2WFhp",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "from (born in or coming out of)",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_bfec338bcc07ce029d743488058d6c38",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              0,
+              2
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              14,
+              18
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "De onde você é?",
+          "translation": "Where are you from?"
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-g7Q~dFUn",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "of (in relation to)",
+        "context": "of (introduces the name of a place following its hypernym)",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_77b30371c97883c2f9e366c520465c6d",
+        "frequency": "0.025000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              7,
+              9
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              12,
+              14
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "A vila de Iorque.",
+          "translation": "The village of York."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-kZMREFEx",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "by means of; by",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_201d2c595f1c29f820d8b98782ae945e",
+        "frequency": "0.062500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              24,
+              26
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              20,
+              22
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Eu sempre vou trabalhar de ônibus.",
+          "translation": "I always go to work by bus."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-nKUUhIL5",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "of (in relation to)",
+        "context": "of (introduces the month a given day is part of)",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_bf970763ae75ac374ab0cab8f9681b3a",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              9,
+              11
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              6,
+              8
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Primeiro de janeiro.",
+          "translation": "First of January."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-nPME3yXE",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "of (in relation to)",
+        "context": "of; -'s (belonging to)",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_18f34924286f37c43264d5e670a2c80f",
+        "frequency": "0.050000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              7,
+              9
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              7,
+              9
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "a casa de alguém",
+          "translation": "someone's house"
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-qQkvZv1Y",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "in (wearing)",
+        "pos": "prep",
+        "headword": "de",
+        "sense_id": "sense_4cf945214098cefe5221adddee199693",
+        "frequency": "0.025000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              7,
+              9
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              4,
+              6
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Homens de Preto",
+          "translation": "Men in Black"
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-de-pt-prep-xhpb7xdf",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "feminine",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "gender=feminine"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      }
+    ],
+    "function_word": {
+      "considered": 80,
+      "labelled": 30,
+      "patterns": [],
+      "roles": [
+        {
+          "count": 30,
+          "gloss": "her / of her",
+          "value": "prep"
+        }
+      ],
+      "summary_version": "function-word-summary/v1"
+    }
+  },
+  {
+    "id": "d2b50224",
+    "word": "querer",
+    "meanings": [
+      {
+        "translation": "to want to (to feel the need to do something)",
+        "context": "auxiliary",
+        "pos": "verb",
+        "headword": "querer",
+        "sense_id": "sense_48b0aeeac1ca448964b5a95f3e79e237",
+        "frequency": "0.312500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              16,
+              23
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              12,
+              21
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Os agricultores queriam colher o trigo.",
+          "translation": "The farmers wanted to harvest the wheat."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-querer-pt-verb-ISYtOdX1",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "auxiliary",
+                "family": "construction",
+                "kind": "auxiliary_frame",
+                "value": "auxiliary"
+              },
+              {
+                "embedding_text": "infinitive",
+                "family": "construction",
+                "kind": "complement_form",
+                "value": "infinitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to want; to wish; to desire",
+        "context": "transitive, intransitive",
+        "pos": "verb",
+        "headword": "querer",
+        "sense_id": "sense_8f5f986e506605a52fa1d856b538c9ff",
+        "frequency": "0.050000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              15,
+              21
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              12,
+              16
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Os meus filhos querem uma bola para o Natal.",
+          "translation": "My children want a ball for Christmas."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-querer-pt-verb-UQp~~50X",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to want",
+        "context": "transitive",
+        "pos": "verb",
+        "headword": "querer",
+        "sense_id": "sense_a502227ce425260f57587f3e6a205991",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              3,
+              8
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              2,
+              6
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Eu quero que venhas comigo.",
+          "translation": "I want you to come with me."
+        },
+        "source": "wiktionary",
+        "source_reference": "kaikki:en-querer-pt-verb-lNUNkoH8",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "que",
+                "family": "companion",
+                "kind": "required_word",
+                "value": "que"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "inadvertently, unintentionally, accidentally",
+        "pos": "PHRASE",
+        "headword": "sem querer",
+        "sense_id": "sense_6f04ec4d567cc284510653ce679f286a",
+        "frequency": "0.062500",
+        "source": "mwe-merged",
+        "source_reference": "mwe-merged/v1",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      }
+    ]
   }
 ]

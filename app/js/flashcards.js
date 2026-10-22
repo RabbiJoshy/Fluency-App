@@ -1176,8 +1176,9 @@ function framesOnActiveRow(scroll) {
 
 // A construction frame reads like a function-word pattern: the connecting
 // word is bold ("a", "por", "que"); a slot that names a word type is a pill in
-// that type's colour. "+ a +inf / por +inf" -> "+ **a** (inf) / **por** (inf)".
-const FRAME_SLOT_TYPES = { inf: 'verb', ger: 'verb', pp: 'verb', subj: 'verb', adj: 'adj' };
+// that type's colour. "+ a +inf / por +inf" -> "+ **a** + (inf) / **por** + (inf)".
+const FRAME_SLOT_TYPES = { inf: 'verb', infinitive: 'verb', ger: 'verb', gerund: 'verb',
+    pp: 'verb', participle: 'verb', subj: 'verb', subjunctive: 'verb', adj: 'adj', adjective: 'adj', noun: 'noun', adverb: 'adv' };
 function styleGrammarFrames(scroll) {
     scroll.querySelectorAll('.sense-grammar-cue .sense-abbr[data-family="construction"]').forEach(el => {
         if (el.dataset.framed || el.children.length) return;
@@ -1201,10 +1202,7 @@ function styleGrammarFrames(scroll) {
                 connector.textContent = token;
                 el.append(connector);
             } else if (token === '+') {
-                // "+ a +inf": the plus before a slot that follows a word is implied.
-                const next = FRAME_SLOT_TYPES[(tokens.slice(i + 1).find(t => t.trim()) || '').toLowerCase()];
-                const prevWord = tokens.slice(0, i).reverse().find(t => t.trim());
-                if (!(next && prevWord && /^[^\s+\/]+$/u.test(prevWord))) el.append('+');
+                el.append(' + ');
             } else {
                 el.append(token.trim() ? token : ' ');
             }

@@ -34,7 +34,7 @@ try {
    document.getElementById('setupPanel').style.display='none';
    document.getElementById('appContent').classList.remove('hidden');
    for(let el=document.getElementById('flashcard').parentElement;el;el=el.parentElement){el.classList.remove('hidden');if(getComputedStyle(el).display==='none')el.style.display='block';}
-   flashcards=rows.map(row=>({...row,fullId:`pt-${row.id}`,targetWord:row.word,citationForm:row.word==='tem'?'ter':row.word==='acabou'?'acabar':row.word,displaySurface:row.word,isMultiMeaning:true,partOfSpeech:'verb',links:[],meanings:row.meanings.map(m=>({...m,meaning:m.translation,senseId:m.sense_id,percentage:Number(m.frequency),canonicalExample:m.canonical_example,allExamples:[]}))}));
+   flashcards=rows.map(row=>({...row,fullId:`pt-${row.id}`,targetWord:row.word,citationForm:row.word==='estamos'?'estar':row.word==='tem'?'ter':row.word==='acabou'?'acabar':row.word,displaySurface:row.word,isMultiMeaning:true,partOfSpeech:'verb',links:[],meanings:row.meanings.map(m=>({...m,meaning:m.translation,senseId:m.sense_id,percentage:Number(m.frequency),canonicalExample:m.canonical_example,allExamples:[]}))}));
    window.showTestWord=word=>{currentIndex=flashcards.findIndex(c=>c.targetWord===word);currentMeaningIndex=0;currentMWEIndex=0;currentExampleIndex=0;currentGroupSelection=null;document.getElementById('flashcard').classList.add('flipped');window.updateCard({announceHeadword:true});};
   },{config,rows});
   await page.evaluate(()=>{
@@ -44,14 +44,35 @@ try {
   });
   await page.locator('.lemma-companion-cards button').click();
   assert.equal(await page.evaluate(()=>flashcards[currentIndex].targetWord),'tem','companion links navigate to the distinct card');
-  for(const word of ['tratar','procurar','começar','ir']) {
+  for(const word of ['tratar','procurar','começar','ir','saber','estamos','querer']) {
    await page.evaluate(word=>showTestWord(word),word);
-   await page.locator('.is-frame-pill').first().waitFor();
+   if(word==='estamos')await page.evaluate(()=>window.selectMeaning(flashcards[currentIndex].meanings.findIndex(m=>m.metadata?.sense_metadata?.features?.some(f=>f.kind==='complement_form'&&f.value==='adjective'))));
+   if(await page.locator('.is-frame-pill:visible').count()===0)await page.locator('#backContent .meaning-row-group').filter({has:page.locator('.is-frame-pill')}).first().click();
+   await page.locator('.is-frame-pill:visible').first().waitFor({timeout:5000});
    const pills=await page.locator('#backContent .is-frame-pill').evaluateAll(els=>els.map(el=>({right:el.getBoundingClientRect().right,rowRight:el.closest('.meaning-row').getBoundingClientRect().right,ancestors:(()=>{let out=[];for(let p=el.parentElement;p && !p.matches('.meaning-row');p=p.parentElement)out.push([p.className,getComputedStyle(p).whiteSpace,getComputedStyle(p).overflow,p.getBoundingClientRect().width]);return out;})(),text:el.textContent,size:parseFloat(getComputedStyle(el).fontSize),width:el.getBoundingClientRect().width,overflow:el.scrollWidth>el.clientWidth+1,bg:getComputedStyle(el).backgroundColor,textOutside:(()=>{const range=document.createRange();range.selectNodeContents(el);const text=range.getBoundingClientRect(),pill=el.getBoundingClientRect();return text.left<pill.left-1||text.right>pill.right+1;})()})));
    assert(pills.length>0,`${word}: has pills`);
-   for(const pill of pills){assert(pill.text.startsWith(word),JSON.stringify(pill));assert(pill.size>=19);assert(!pill.overflow,JSON.stringify(pill));assert(pill.width<=width,JSON.stringify(pill));assert(pill.right<=pill.rowRight+1,JSON.stringify(pill));assert(!pill.textOutside,'pill must cover its full phrase: '+JSON.stringify(pill));}
+   for(const pill of pills){assert(pill.text.startsWith(word==='estamos'?'estar':word),JSON.stringify(pill));assert(pill.size>=19);assert(!pill.overflow,JSON.stringify(pill));assert(pill.width<=width,JSON.stringify(pill));assert(pill.right<=pill.rowRight+1,JSON.stringify(pill));assert(!pill.textOutside,'pill must cover its full phrase: '+JSON.stringify(pill));}
+   if(word==='saber')assert(pills.some(pill=>pill.text==='saber + infinitive'));
+   if(word==='estamos')assert(pills.some(pill=>pill.text==='estar + adjective'));
+   if(word==='querer')assert(pills.some(pill=>pill.text==='querer que'));
    if(word==='ir')assert(pills.some(pill=>pill.text==='ir para'));
    if(width===320 || width===390){await mkdir('/tmp/portuguese-verb-ui',{recursive:true});await page.screenshot({path:`/tmp/portuguese-verb-ui/${word}.png`});}
+  }
+
+  for(const word of ['que','dela']) {
+   await page.evaluate(word=>showTestWord(word),word);
+   await page.locator('.fw-deterministic-card').waitFor();
+   for(const selector of ['.fw-relation-formula','.fw-relation-meaning','.fw-sentence-translation']) {
+    const styles=await page.locator(selector).first().evaluate(el=>({size:parseFloat(getComputedStyle(el).fontSize),weight:parseFloat(getComputedStyle(el).fontWeight)}));
+    assert(styles.size>=20,`${word} ${selector}: readable size`);
+    if(selector!=='.fw-relation-formula')assert(styles.weight>=700,`${word}: bold translation`);
+   }
+   assert.equal(await page.locator('.fw-relation-formula').evaluateAll(els=>els.some(el=>el.scrollWidth>el.clientWidth+1)),false,'patterns do not clip');
+   if(word==='dela') {
+    const alignment=await page.locator('.fw-heading').evaluate(el=>{const word=el.querySelector('.fw-heading-word').getBoundingClientRect(),parts=el.querySelector('.fw-heading-parts').getBoundingClientRect();return Math.abs((word.top+word.bottom-parts.top-parts.bottom)/2);});
+    assert(alignment<4,'contraction parts are centred beside the headword');
+   }
+   if(width===390)await page.screenshot({path:`/tmp/portuguese-verb-ui/${word}.png`});
   }
   await page.evaluate(()=>showTestWord('acabou'));
   try {await page.waitForFunction(()=>document.getElementById('backContent').textContent.includes('to have just'),{},{timeout:10000});} catch(error){console.error(await page.evaluate(()=>({meanings:flashcards[currentIndex].meanings.map(m=>({text:m.meaning,load:m._seeExpressionLoad,gloss:m._seeExpressionGloss})),text:document.getElementById('backContent').textContent})));throw error;}
@@ -63,7 +84,7 @@ try {
   await page.keyboard.press('Escape');
   await page.evaluate(()=>showTestWord('tem'));
   assert(!(await page.locator('#backContent').innerText()).includes('there be'));
-  console.log(`${width}px: all four construction cards, optional prepositions, readable full pills, existential English and acabar de definition/navigation verified`);
+  console.log(`${width}px: construction slots, function-word typography and contraction alignment, optional prepositions, readable full pills, existential English and acabar de definition/navigation verified`);
   await page.close();
  }
 } finally {await browser?.close();server.close();}

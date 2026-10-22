@@ -27053,5 +27053,21 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .sense-grammar-cue .frame-slot-pill {
   display: inline-block; padding: 0 8px; border-radius: 999px;
   background: rgba(var(--slot-rgb), 0.22); color: rgb(var(--slot-rgb));
-  font-weight: 500; line-height: 1.5;
+  font-weight: 500; line-height: 1.5; text-indent: 0;
+  white-space: nowrap; vertical-align: baseline;
+}
+
+/* Patterns and their English meanings carry the same reading hierarchy as
+   ordinary sense rows. Slots remain distinct without shrinking their text. */
+.fw-relation-box .fw-relation-formula { font-size: 20px; white-space: normal; overflow: visible; }
+.fw-relation-box .fw-relation-meaning { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+.fw-relation-formula .fw-slot-pill { font-size: inherit; }
+.fw-sentence-translation { font-size: 20px; font-weight: 700; }
+.fw-heading-word { display: block; line-height: 1; }
+.fw-heading-parts { display: inline-flex; align-items: center; align-self: center; line-height: 1; transform: translateY(-0.1em); }
+.fw-heading { flex-wrap: wrap; }
+.meanings-scroll.inline-sense-rows .sense-grammar-cue .frame-slot-pill:not(#_) {
+  display: inline-block !important; padding: 0 8px !important;
+  margin: 0 0.15em !important; text-indent: 0 !important;
+  white-space: nowrap !important; font-size: inherit !important;
 }

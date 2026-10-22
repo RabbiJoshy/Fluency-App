@@ -476,7 +476,8 @@ export function compactLearnerSenseMetadata(items, meaning, options = {}) {
     const hasCompanion = items.some(item => item.family === 'companion' || item.kind === 'required_case');
     const kept = (items || []).filter(item => {
         if (options.excludeCompanion && (item.family === 'companion' || (item.family === 'construction'
-            && (item.kind === 'optional_companion' || (item.kind === 'companion_form' && frameCue(item.value)))))) return false;
+            && (item.kind === 'optional_companion' || item.kind === 'complement_form'
+                || (item.kind === 'companion_form' && frameCue(item.value)))))) return false;
         if (item.family === 'grammar' && item.kind === 'surface_mark') return false;
         const display = senseMetadataDisplay(item, { gloss });
         if (item.family === 'register' && SUPPORTING_REGISTER_VALUES.has(item.value.toLowerCase())) return false;
@@ -1524,7 +1525,8 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         if (visible.some(shown => shown.kind === 'combined_frame')
             && ((item.family === 'grammar' && item.value === 'reflexive=true')
                 || (item.family === 'construction' && /^(?:reflexive|pronominal)$/i.test(item.value)))) return false;
-        if (options.excludeCompanion && item.family === 'companion') return false;
+        if (options.excludeCompanion && (item.family === 'companion'
+            || (item.family === 'construction' && item.kind === 'complement_form'))) return false;
         if (item.family === 'register' && SUPPORTING_REGISTER_VALUES.has(item.value.toLowerCase())) return false;
         const gloss = options.gloss || meaning?.meaning || meaning?.translation || '';
         if (grammarIsAlreadyInGloss(item, gloss)) return false;
@@ -2170,6 +2172,7 @@ export function extractSenseCompanion(meaning) {
     const items = senseMetadataItems(meaning);
     const companionItem = items.find(i => i.family === 'companion');
     const optCompanionItem = items.find(i => i.family === 'construction' && i.kind === 'optional_companion');
+    const complement = items.find(item => item.family === 'construction' && item.kind === 'complement_form');
 
     let qualifier = null;
     let terms = [];
@@ -2212,14 +2215,16 @@ export function extractSenseCompanion(meaning) {
     if (!terms.length) {
         const construction = items.find(item => item.family === 'construction'
             && item.kind === 'companion_form' && frameCue(item.value));
-        if (!construction) return null;
-        return {terms: [], qualifier: null, isOptional: false, frame: frameCue(construction.value)};
+        if (!construction && !complement) return null;
+        return {terms: [], qualifier: null, isOptional: false,
+            frame: construction ? frameCue(construction.value) : `+ ${complement.value}`};
     }
 
     return {
         terms,
         qualifier,
         isOptional,
+        ...(complement ? {frame: `+ ${terms.join(' / ')} + ${complement.value}`} : {}),
     };
 }
 
@@ -2233,7 +2238,9 @@ export function senseCollocationHTML(meaning, card = null) {
     const particle = escapeCardText(comp.terms.join(' / '));
     const isOptional = comp.isOptional;
     const qualifier = comp.qualifier ? escapeCardText(comp.qualifier) : '';
-    const framePhrase = comp.frame ? comp.frame.replace(/^\+\s*/, '').replace(/\s*\+\s*/g, ' … ') : '';
+    // Literal partners form a phrase; grammar slots retain their join marker.
+    const framePhrase = comp.frame ? comp.frame.replace(/\+\s*(?:(personal infinitive|past participle|infinitive|gerund|subjunctive|indicative|participle|adjective|adverb|noun|inf|ger|pp|subj|adj)\b|([^\s+]+))/giu,
+        (_, slot, word) => slot ? `+ ${slot}` : word).replace(/\s+/gu, ' ').trim() : '';
     const titleAttr = comp.frame ? `Used with: ${target} ${escapeCardText(framePhrase)}` : isOptional
         ? (qualifier ? `${qualifier} used with: ${target} + ${particle}` : `Used with: ${target} + ${particle}`)
         : `Used with: ${target} ${particle}`;
