@@ -85,8 +85,7 @@ function buildScreens(pair) {
         return [{
             id: 'card',
             title: 'This is a flashcard',
-            lead: 'The front asks you to recall a word. The back shows everything it can mean, '
-                + 'how often each meaning comes up, and a real sentence for it.',
+            lead: '',
             cards: [
                 { key: 'bancoSpeech', face: 'front', labels: FRONT_LABELS.map(l => ({ ...l, side: 'left' })) },
                 { key: 'bancoSpeech', face: 'back', labels: BACK_LABELS.map(l => ({ ...l, side: 'right' })) },
@@ -174,7 +173,11 @@ function renderScreen({ turnFrom = null } = {}) {
     if (!screen || !stage) return;
 
     document.getElementById('walkthroughTitle').textContent = screen.title;
-    document.getElementById('walkthroughLead').textContent = screen.lead;
+    const leadEl = document.getElementById('walkthroughLead');
+    if (leadEl) {
+        leadEl.textContent = screen.lead || '';
+        leadEl.hidden = !screen.lead;
+    }
     renderProgress();
 
     state.slots = screen.cards.map(spec => ({
@@ -299,15 +302,11 @@ function fitCards() {
     }
 
     const tallest = Math.max(...inners.map(measureReplicaCard));
-    // Leave the footer on screen with the card. The room is measured from
-    // where the card starts to where the footer starts; an estimate of the
-    // header and footer left ~100px unused on a laptop and cut the last
-    // meaning row off.
+    // Room is measured from where the card starts to the bottom of the window,
+    // leaving a comfortable margin.
     const cardTop = inners[0].getBoundingClientRect().top;
-    const footTop = document.querySelector('.walkthrough-foot')?.getBoundingClientRect().top;
-    const chrome = (document.querySelector('.walkthrough-head')?.offsetHeight || 90)
-        + (document.querySelector('.walkthrough-foot')?.offsetHeight || 70) + 48;
-    const room = footTop && cardTop > 0 ? footTop - cardTop - 16 : window.innerHeight - chrome;
+    const headHeight = document.querySelector('.walkthrough-head')?.offsetHeight || 60;
+    const room = cardTop > 0 ? window.innerHeight - cardTop - 28 : window.innerHeight - headHeight - 56;
     const ceiling = Math.max(0.5, room / window.innerHeight);
     inners.forEach(inner => fitReplicaCard(inner, { height: tallest, ceiling, floor: 380 }));
     // The sum of blocks can fall a little short of what the list needs once
@@ -330,14 +329,19 @@ function fitCards() {
 }
 
 function renderProgress() {
-    const dots = document.getElementById('walkthroughDots');
-    if (dots) {
-        dots.innerHTML = state.screens.map((_, i) =>
-            `<span class="walkthrough-dot${i === state.index ? ' is-current' : ''}${i < state.index ? ' is-done' : ''}"></span>`,
-        ).join('');
+    const tabs = document.getElementById('walkthroughTabs');
+    if (tabs) {
+        tabs.innerHTML = state.screens.map((screen, i) => {
+            const isMusic = screen.id === 'lyrics';
+            const label = isMusic ? 'Music mode' : (state.pair ? 'Everyday speech' : (screen.id === 'front' ? 'Front' : 'Back'));
+            const icon = isMusic ? '🎵' : '💬';
+            const isCurrent = i === state.index;
+            return `<button type="button" role="tab" class="walkthrough-tab${isCurrent ? ' is-current' : ''}" data-index="${i}" aria-selected="${isCurrent ? 'true' : 'false'}" title="${esc(label)}">`
+                + `<span class="walkthrough-tab-icon" aria-hidden="true">${icon}</span>`
+                + `<span class="walkthrough-tab-label">${esc(label)}</span>`
+                + `</button>`;
+        }).join('');
     }
-    const count = document.getElementById('walkthroughCount');
-    if (count) count.textContent = `${state.index + 1} of ${state.screens.length}`;
 
     const back = document.getElementById('walkthroughBack');
     if (back) back.hidden = state.index === 0;
@@ -591,6 +595,12 @@ function setupWalkthrough() {
     document.getElementById('closeWalkthroughModal')?.addEventListener('click', closeWalkthrough);
     document.getElementById('walkthroughNext')?.addEventListener('click', () => goTo(state.index + 1));
     document.getElementById('walkthroughBack')?.addEventListener('click', () => goTo(state.index - 1));
+    document.getElementById('walkthroughTabs')?.addEventListener('click', e => {
+        const tab = e.target.closest('.walkthrough-tab');
+        if (!tab) return;
+        const idx = Number(tab.dataset.index);
+        if (!Number.isNaN(idx)) goTo(idx);
+    });
     document.addEventListener('keydown', e => {
         if (modal.classList.contains('hidden')) return;
         if (e.key === 'Escape') {

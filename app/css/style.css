@@ -21283,54 +21283,137 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 16px;
-    padding: 18px 24px 8px;
-}
-
-.walkthrough-dots {
-    display: flex;
-    gap: 7px;
-    justify-self: start;
-}
-
-.walkthrough-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--border-color);
-    transition: background 0.2s ease, width 0.2s ease;
-}
-
-.walkthrough-dot.is-done {
-    background: color-mix(in srgb, var(--accent-primary) 45%, var(--border-color));
-}
-
-.walkthrough-dot.is-current {
-    width: 22px;
-    border-radius: 999px;
-    background: var(--accent-primary);
+    gap: 20px;
+    padding: 16px 28px 12px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-primary);
+    z-index: 10;
 }
 
 .walkthrough-copy {
-    max-width: 640px;
-    text-align: center;
+    justify-self: start;
+    text-align: left;
+    min-width: 0;
 }
 
 .walkthrough-title {
-    margin: 0 0 4px;
-    font: 700 24px/1.2 var(--font-emphasis);
+    margin: 0;
+    font: 700 22px/1.2 var(--font-emphasis);
     color: var(--text-primary);
+    white-space: nowrap;
 }
 
 .walkthrough-lead {
-    margin: 0;
-    font: 15px/1.45 var(--font-reading);
+    margin: 4px 0 0;
+    font: 14px/1.4 var(--font-reading);
     color: var(--text-secondary);
+    max-width: 500px;
+}
+
+.walkthrough-lead[hidden] {
+    display: none !important;
+}
+
+.walkthrough-tabs {
+    display: inline-flex;
+    align-items: center;
+    justify-self: center;
+    background: color-mix(in srgb, var(--bg-card, #171b24) 85%, transparent);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+    border-radius: 999px;
+    padding: 4px;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.walkthrough-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font: 600 13.5px/1 var(--font-emphasis);
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    white-space: nowrap;
+}
+
+.walkthrough-tab:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.walkthrough-tab.is-current {
+    background: var(--bg-card, #202634);
+    color: var(--text-primary);
+    border-color: color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.walkthrough-tab-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.walkthrough-head-actions {
+    display: flex;
+    align-items: center;
+    justify-self: end;
+    gap: 12px;
+}
+
+.walkthrough-next {
+    white-space: nowrap;
+    background: var(--accent-primary);
+    color: var(--accent-primary-text, #10141b);
+    border: 1px solid transparent;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font: 700 13.5px/1 var(--font-emphasis);
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.walkthrough-next:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.walkthrough-next.is-final {
+    background: transparent;
+    border-color: var(--border-light);
+    color: var(--text-secondary);
+}
+
+.walkthrough-next.is-final:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+    filter: none;
 }
 
 .walkthrough-close {
     position: static;
-    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.walkthrough-close:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .walkthrough-body {
@@ -21449,59 +21532,6 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     border-radius: 999px;
 }
 
-.walkthrough-foot {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 24px calc(16px + env(safe-area-inset-bottom, 0px));
-    border-top: 1px solid var(--border-light);
-}
-
-/* Explicit columns: Back is hidden on the first screen, and auto-placement
-   would otherwise slide the count and Next one column left. */
-.walkthrough-back {
-    grid-column: 1;
-    justify-self: start;
-    background: transparent;
-    border: 1px solid var(--border-light);
-    color: var(--text-secondary);
-    padding: 10px 18px;
-    border-radius: 999px;
-    font: 600 14px/1 var(--font-emphasis);
-    cursor: pointer;
-}
-
-.walkthrough-back:hover {
-    border-color: var(--text-muted);
-    color: var(--text-primary);
-}
-
-.walkthrough-count {
-    grid-column: 2;
-    font: 600 12.5px/1 var(--font-reading);
-    color: var(--text-muted);
-}
-
-.walkthrough-next {
-    grid-column: 3;
-    justify-self: end;
-    white-space: nowrap;
-    background: var(--accent-primary);
-    color: var(--accent-primary-text, #10141b);
-    border: 0;
-    padding: 12px 22px;
-    border-radius: 999px;
-    font: 700 14.5px/1 var(--font-emphasis);
-    cursor: pointer;
-    transition: filter 0.15s ease, transform 0.15s ease;
-}
-
-.walkthrough-next:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
-}
-
 @media (max-width: 700px) {
     /* Full-bleed: the generic .modal inset (12px) and the content's rounded
        corners cost a phone width and height it cannot spare. */
@@ -21513,19 +21543,64 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
         border-radius: 0;
     }
 
-    /* Title and exit share one row; the lead sits beneath. The dots would
-       need a row of their own and the footer already counts "2 of 3". */
     .walkthrough-head {
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: start;
-        padding: max(10px, env(safe-area-inset-top, 0px)) 12px 2px 16px;
-        row-gap: 2px;
-        column-gap: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: max(10px, env(safe-area-inset-top, 0px)) 14px 10px;
+        gap: 8px 10px;
+        border-bottom: 1px solid var(--border-light);
     }
 
-    .walkthrough-dots { display: none; }
+    .walkthrough-copy {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
 
-    .walkthrough-copy { display: contents; }
+    .walkthrough-title {
+        font-size: 17px;
+    }
+
+    .walkthrough-lead {
+        flex: 1 1 100%;
+        font-size: 13px;
+        line-height: 1.35;
+        margin: 2px 0 0;
+    }
+
+    .walkthrough-head-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .walkthrough-tabs {
+        width: 100%;
+        order: 3;
+        padding: 3px;
+        gap: 3px;
+        box-shadow: none;
+    }
+
+    .walkthrough-tab {
+        flex: 1;
+        justify-content: center;
+        padding: 6px 8px;
+        font-size: 12px;
+        gap: 5px;
+    }
+
+    .walkthrough-next {
+        padding: 8px 14px;
+        font-size: 12.5px;
+    }
+
+    .walkthrough-close {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
 
     /* A card too tall for the room is scaled (walkthrough.js sets the scale
        and a layout width of width ÷ scale); the card row centres the wider
@@ -21538,40 +21613,8 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
         margin-bottom: calc(var(--replica-card-h, 480px) * (var(--replica-card-scale, 1) - 1));
     }
 
-    .walkthrough-title {
-        grid-column: 1;
-        grid-row: 1;
-        align-self: center;
-        margin: 0;
-        font-size: 18px;
-        text-align: left;
-    }
-
-    .walkthrough-close { grid-column: 2; grid-row: 1; }
-
-    .walkthrough-lead {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        padding-right: 4px;
-        font-size: 13.5px;
-        line-height: 1.4;
-        text-align: left;
-    }
-
     .walkthrough-body {
         padding: 12px 12px 6px;
-    }
-
-    .walkthrough-foot {
-        padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
-    }
-
-    .walkthrough-next {
-        padding: 12px 18px;
-    }
-
-    .walkthrough-back {
-        padding: 10px 14px;
     }
 }
 
