@@ -400,7 +400,7 @@ function initDesktopShell() {
         refresh();
     });
     document.getElementById('desktopAboutBtn')?.addEventListener('click', () => {
-        window.openAboutProjectModal?.();
+        window.openAboutPage?.();
     });
     const observer = new MutationObserver(refresh);
     observer.observe(setup, { attributes: true, attributeFilter: ['class'] });

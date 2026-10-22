@@ -1,13 +1,13 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=6db54830';
-import { accountPermissions } from './account-permissions.js?v=6db54830';
-import { readJsonWithTimeout } from './read-request.js?v=6db54830';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=6db54830';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=6db54830';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=6db54830';
-import { dbGet, dbPut } from './offline-db.js?v=6db54830';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=6db54830';
+import './state.js?v=cf53dfc3';
+import { accountPermissions } from './account-permissions.js?v=cf53dfc3';
+import { readJsonWithTimeout } from './read-request.js?v=cf53dfc3';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=cf53dfc3';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=cf53dfc3';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=cf53dfc3';
+import { dbGet, dbPut } from './offline-db.js?v=cf53dfc3';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=cf53dfc3';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -16,9 +16,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=6db54830';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=6db54830';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=6db54830';
+} from './sync-queue.js?v=cf53dfc3';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=cf53dfc3';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=cf53dfc3';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {
@@ -148,12 +148,13 @@ function onPasswordlessSignedOut() {
     showAuthModal();
 }
 
-// Set when a signed-out visitor arrived on #/about and sign-in was held back.
-let _signInAfterAbout = false;
-
 function checkAuthentication() {
     if (PASSWORDLESS_ENABLED) {
         GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
+        // About is a page of its own, the same for everyone. It opens in its
+        // own tab (openAboutPage) and never reads or starts a sign-in, so a
+        // signed-in learner and a visitor with a shared link see one page.
+        if (parseRoute(window.location.hash).kind === 'about') return;
         const savedUser = localStorage.getItem('flashcardUser');
         if (savedUser) {
             try {
@@ -169,12 +170,6 @@ function checkAuthentication() {
                     return;
                 }
             } catch (_) {}
-        }
-        // A shared #/about link is a page for people who have no account:
-        // show it, and start sign-in only when they leave it.
-        if (parseRoute(window.location.hash).kind === 'about') {
-            _signInAfterAbout = true;
-            return;
         }
         showAuthModal();
         startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
@@ -1508,71 +1503,15 @@ function _appendAboutFootnotes(body) {
     body.appendChild(notes);
 }
 
-// The About modal is often entered from an external link, so the
-// top-right affordance needs to let visitors bail out early without
-// reading the whole page. A pill-shaped "Back to app" is the same
-// action as the bottom CTA and visible while scrolling. Applied for
-// both authenticated and unauthenticated visitors.
-function _updateAboutCloseButton() {
-    const btn = document.getElementById('closeAboutProjectModal');
-    if (!btn) return;
-    // Signed out, "back" could only lead to sign-in: About is the whole page.
-    btn.hidden = PASSWORDLESS_ENABLED && !currentUser;
-    const label = _aboutReturnTo ? 'Back to Settings' : 'Back to app';
-    btn.textContent = `← ${label}`;
-    btn.classList.add('about-close-as-pill');
-    btn.setAttribute('aria-label', label);
-}
-
-// Append CTAs to the rendered About body so a first-time visitor has a direct
-// path into the app from the landing. If the user is already authenticated,
-// collapse the pair into a single "Back to the app" button.
-function _appendAboutCTAs(body) {
-    const existing = body.querySelector('.about-ctas');
-    if (existing) existing.remove();
-
-    const cta = document.createElement('div');
-    cta.className = 'about-ctas';
-
-    if (currentUser) {
-        const name = currentUser.isGuest ? 'Guest' : (currentUser.username || currentUser.initials || 'Back');
-        const back = document.createElement('button');
-        back.type = 'button'; back.className = 'about-cta-btn primary'; back.id = 'aboutCTABack';
-        back.textContent = _aboutReturnTo ? 'Back to Settings'
-            : 'Back to the app' + (currentUser.isGuest ? '' : ' (' + name + ')');
-        cta.appendChild(back);
-        body.appendChild(cta);
-        document.getElementById('aboutCTABack').addEventListener('click', hideAboutProjectModal);
-    } else if (PASSWORDLESS_ENABLED) {
-        // A visitor reading a shared About page is never shown sign-in.
-        return;
-    } else {
-        cta.innerHTML =
-            '<div class="about-ctas-label">Ready to try it?</div>'
-            + '<div class="about-ctas-buttons">'
-            +   '<button type="button" class="about-cta-btn secondary" id="aboutCTAGuest">Try it as Guest</button>'
-            +   '<button type="button" class="about-cta-btn primary" id="aboutCTALogin">Log in with your name</button>'
-            + '</div>';
-        body.appendChild(cta);
-        document.getElementById('aboutCTAGuest').addEventListener('click', () => {
-            hideAboutProjectModal();
-            enterGuestMode();
-        });
-        document.getElementById('aboutCTALogin').addEventListener('click', () => {
-            hideAboutProjectModal();
-            // Auth modal is already visible underneath; surface the login form.
-            if (typeof showLoginForm === 'function') showLoginForm();
-        });
-    }
+// Every About entry inside the app (sidebar, Settings, Help) opens the page
+// in a new tab rather than over the app, so it is never mixed up with the
+// learner's own session.
+function openAboutPage() {
+    window.open(`${window.location.origin}${window.location.pathname}${formatRoute({ kind: 'about' })}`, '_blank', 'noopener');
 }
 
 let _aboutMarkdownCache = null;
-// Set when About was opened from somewhere it should go back to (Settings);
-// closing About runs it instead of leaving the learner on the bare app.
-let _aboutReturnTo = null;
-
-async function openAboutProjectModal({ returnTo = null } = {}) {
-    _aboutReturnTo = typeof returnTo === 'function' ? returnTo : null;
+async function openAboutProjectModal() {
     const modal = document.getElementById('aboutProjectModal');
     const body = document.getElementById('aboutProjectBody');
     modal.classList.remove('hidden');
@@ -1582,8 +1521,6 @@ async function openAboutProjectModal({ returnTo = null } = {}) {
         layoutAboutTwoModes(body);
         mountAboutDemos(body);
         _appendAboutFootnotes(body);
-        _appendAboutCTAs(body);
-        _updateAboutCloseButton();
         return;
     }
     try {
@@ -1595,8 +1532,6 @@ async function openAboutProjectModal({ returnTo = null } = {}) {
         layoutAboutTwoModes(body);
         mountAboutDemos(body);
         _appendAboutFootnotes(body);
-        _appendAboutCTAs(body);
-        _updateAboutCloseButton();
     } catch (e) {
         console.error('About modal: failed to load markdown', e);
         body.innerHTML = '<p style="color: var(--text-muted);">Could not load project description.</p>';
@@ -1609,14 +1544,6 @@ function hideAboutProjectModal() {
     modal.classList.add('hidden');
     modal.querySelectorAll('video').forEach(v => { try { v.pause(); } catch (_) {} });
     _setAboutURLParam(false);
-    if (_signInAfterAbout && !currentUser) {
-        _signInAfterAbout = false;
-        showAuthModal();
-        startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
-    }
-    const returnTo = _aboutReturnTo;
-    _aboutReturnTo = null;
-    returnTo?.();
 }
 
 // ----- About-modal card demos --------------------------------------------------
@@ -2026,17 +1953,9 @@ function setupAuthEventListeners() {
         });
     }
 
-    // About this project button. Fullscreen modal; only close paths are the ×
-    // button and Escape. hideAboutProjectModal also strips #/about from the
-    // URL so refreshing after dismissing lands you in the app, not the modal.
-    const aboutModal = document.getElementById('aboutProjectModal');
-    document.getElementById('aboutProjectBtn').addEventListener('click', openAboutProjectModal);
-    document.getElementById('closeAboutProjectModal').addEventListener('click', hideAboutProjectModal);
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !aboutModal.classList.contains('hidden') && !_signInAfterAbout) {
-            hideAboutProjectModal();
-        }
-    });
+    // About opens in its own tab; the page there has no close (see
+    // openAboutPage and checkAuthentication).
+    document.getElementById('aboutProjectBtn').addEventListener('click', openAboutPage);
 
     // Cancel login button
     document.getElementById('cancelLoginBtn').addEventListener('click', hideLoginForm);
@@ -2064,16 +1983,8 @@ function setupAuthEventListeners() {
     });
     wireAccountPassword();
 
-    // Settings → Account → "About this project" row. Replaces settings with
-    // the landing page so signed-in users can revisit the explainer; its back
-    // button returns to Account.
-    const aboutSettingsRow = document.getElementById('aboutProjectSettingsRow');
-    if (aboutSettingsRow) {
-        aboutSettingsRow.addEventListener('click', function() {
-            hideSettingsModal();
-            openAboutProjectModal({ returnTo: () => showSettingsModalWithTab('account') });
-        });
-    }
+    // Settings → Account → "About this project" row: About in its own tab.
+    document.getElementById('aboutProjectSettingsRow')?.addEventListener('click', openAboutPage);
 
     // Gear button opens settings modal
     document.getElementById('gearBtn').addEventListener('click', function() {
@@ -2120,6 +2031,7 @@ window.showUserInfo = showUserInfo;
 window.enterGuestMode = enterGuestMode;
 window.showLoginForm = showLoginForm;
 window.openAboutProjectModal = openAboutProjectModal;
+window.openAboutPage = openAboutPage;
 window.hideAboutProjectModal = hideAboutProjectModal;
 window.hideLoginForm = hideLoginForm;
 window.submitLogin = submitLogin;

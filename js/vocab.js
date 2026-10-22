@@ -1,13 +1,14 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=6db54830';
-import { readJsonWithTimeout } from './read-request.js?v=6db54830';
-import { validateVocabularyIndex } from './data-contracts.js?v=6db54830';
-import { formatRoute } from './routes.js?v=6db54830';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=6db54830';
-import { releaseUrl } from './release-host.js?v=6db54830';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=6db54830';
+import './state.js?v=cf53dfc3';
+import { readJsonWithTimeout } from './read-request.js?v=cf53dfc3';
+import { validateVocabularyIndex } from './data-contracts.js?v=cf53dfc3';
+import { formatRoute } from './routes.js?v=cf53dfc3';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=cf53dfc3';
+import { releaseUrl } from './release-host.js?v=cf53dfc3';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=cf53dfc3';
+import { getGrammarWordDefinition } from './function-word-card.js?v=cf53dfc3';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -187,7 +188,8 @@ function getLastStudySession() {
 }
 
 function renderResumeLastSetCard() {
-    if (window.fluencyRoute?.kind === 'tutorial'
+    // The About page is its own tab and never a study session.
+    if (['tutorial', 'about'].includes(window.fluencyRoute?.kind)
         || document.querySelector('#tutorialIntroModal:not(.hidden), #cardTutorialModal:not(.hidden)')) {
         document.getElementById('resumeLastSetCard')?.remove();
         return;
@@ -1199,6 +1201,8 @@ function detectSplitCardTuples(item, lang = 'es') {
 // Shared by study sets, search, word links and vocabulary estimation. Keep
 // every represented sense on exactly one card, including low-share senses.
 function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
+    // A function word's back already lists every construction; companions would repeat it.
+    if (typeof getGrammarWordDefinition === 'function' && getGrammarWordDefinition(item?.word || item?.targetWord, lang)) return null;
     const split = detectSplitCardTuples(item, lang);
     if (!split) return null;
     const tuples = split.tuples;

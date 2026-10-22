@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=6db54830';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=6db54830';
-import { readFastTrack } from './fast-track-preferences.js?v=6db54830';
-import './session-plan.js?v=6db54830';
+import './state.js?v=cf53dfc3';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=cf53dfc3';
+import { readFastTrack } from './fast-track-preferences.js?v=cf53dfc3';
+import './session-plan.js?v=cf53dfc3';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3203,7 +3203,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     let practiseMistakes = 0;
     let practiseTotal = 0;
     let practiseDue = 0;
-    if (currentUser && !currentUser.isGuest) {
+    // Practise appears once the learner has answered anything at all; before
+    // that the home screen is Learn alone. Caught up later, it stays and says so.
+    const hasAnswered = typeof progressData !== 'undefined' && progressData && Object.keys(progressData).length > 0;
+    if (currentUser && !currentUser.isGuest && hasAnswered) {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
         const globalTotal = Number(summary?.total) || 0;
         const mistakes = (summary?.neverRight?.length || 0) + (summary?.critical?.length || 0);
@@ -3231,9 +3234,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     ${mistakes > 0 ? row('mistake', 'Mistakes', mistakes) : ''}
                     ${dueCount > 0 ? row('due', 'Time to review', dueCount) : ''}
                 </div>`;
-        } else if (typeof progressData === 'undefined' || !progressData || Object.keys(progressData).length === 0) {
-            // Nothing answered yet: "All caught up" would mean nothing to them.
-            body = `<div class="home-practise-total is-empty"><strong>Nothing to practise yet</strong><span>When you miss a word, it comes back here. Words you get right come back too, a few days later, so they stick.</span></div>`;
         } else {
             const empty = !srsOn
                 ? 'Review schedule paused: only mistakes come back.'
@@ -3245,7 +3245,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 <button class="home-practise-browse" type="button" id="openReviewHomeBtn">Browse all <span aria-hidden="true">›</span></button>
             </div>
             <div class="home-section-footer">
-                ${globalTotal > 0 ? '<p class="home-footer-hint">Mistakes first, then words to review</p>' : ''}
+                ${mistakes > 0 && dueCount > 0 ? '<p class="home-footer-hint">Mistakes first</p>' : ''}
                 ${homeCta(lengthChip(globalTotal, 'practice'), 'id="quickReviewBtn"',
                     globalTotal > 0 ? `Practise<span class="home-cta-count"> · ${practiseCount.toLocaleString()}</span>` : 'Practise', globalTotal === 0)}
             </div>`;
@@ -3331,8 +3331,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         if (reviewBody) reviewBody.innerHTML = reviewHTML;
         reviewSection.hidden = !reviewHTML;
     }
-    // The folded section keeps a short version of itself: Learn its level,
-    // bar and counts; Practise its total and what makes it up.
+    // The folded section keeps a one-line version of itself: Learn its level
+    // and words, Practise how many are waiting.
     const learnMeta = document.getElementById('learnSectionMeta');
     if (learnMeta) {
         const wordsText = document.getElementById('homeLevelWords')?.textContent || '';
@@ -3340,10 +3340,10 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
     const learnPeek = document.getElementById('learnSectionPeek');
     if (learnPeek) {
-        learnPeek.innerHTML = `<span class="home-level-bar is-peek" aria-hidden="true">${barHTML}</span>
-            <span class="home-level-stats">${statsHTML}</span>
-            ${estimateHTML}`;
-        window.fitLegendFonts?.(learnPeek);
+        // Folded (Practise open), Learn says only its level and words (the meta
+        // line above), so the open Practise has the attention.
+        learnPeek.innerHTML = '';
+        learnPeek.hidden = true;
     }
     const practiseMeta = document.getElementById('practiseSectionMeta');
     if (practiseMeta) {
@@ -3731,7 +3731,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=6db54830')
+        import('./spotify.js?v=cf53dfc3')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -3868,12 +3868,8 @@ function setupSettingsOverview() {
     });
     go('settingsAccountBtn', 'account');
     go('settingsAdminBtn', 'appData');
-    // About is a full page that replaces Settings; its back button returns
-    // to the Settings tab it was opened from.
-    document.getElementById('settingsAboutBtn')?.addEventListener('click', () => {
-        hideSettingsModal();
-        window.openAboutProjectModal?.({ returnTo: () => showSettingsModalWithTab('study') });
-    });
+    // About opens in its own tab, leaving Settings as it was.
+    document.getElementById('settingsAboutBtn')?.addEventListener('click', () => window.openAboutPage?.());
     const runImport = () => {
         if (!currentUser || currentUser.isGuest) return;
         window.openVocabularyImportModal?.();

@@ -82021,6 +82021,27 @@ function refreshFunctionWordCardBack() {
     }
 }
 
+// Pattern rows: the meaning sits beside the pattern when both fit, else beneath it.
+export function fitFunctionWordRows(root = document) {
+    root.querySelectorAll?.('.fw-relations-list').forEach(list => {
+        const boxes = [...list.querySelectorAll('.fw-relation-box')];
+        boxes.forEach(box => box.classList.remove('is-stacked'));
+        // One card, one arrangement: if any row has to wrap, they all do.
+        const anyWraps = boxes.some(box => {
+            const f = box.querySelector('.fw-relation-formula');
+            const m = box.querySelector('.fw-relation-meaning');
+            return f && m && m.offsetTop > f.offsetTop + f.offsetHeight / 2;
+        });
+        if (anyWraps) boxes.forEach(box => box.classList.add('is-stacked'));
+    });
+}
+if (typeof window !== 'undefined' && typeof MutationObserver !== 'undefined') {
+    let queued = false;
+    const refit = () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; fitFunctionWordRows(); }); };
+    new MutationObserver(refit).observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('resize', refit);
+}
+
 // Make functions available globally for onclick handlers
 if (typeof window !== 'undefined') {
     window.selectFunctionWordRelation = selectFunctionWordRelation;

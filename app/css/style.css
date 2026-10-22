@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=6db54830");
+@import url("./appearance.css?v=cf53dfc3");
 
 
         * {
@@ -26930,3 +26930,21 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     color: var(--text-secondary);
     font-weight: 700;
 }
+
+/* Function-word cards (2026-10-22): the function word is bold white, no wash.
+   Each pattern row reads left to right: the pattern, then its meaning on the
+   same line when both fit (right-aligned), else the meaning drops beneath,
+   left-aligned (.is-stacked, set by fitFunctionWordRows). */
+.fw-token-connector, .fw-sentence-target .fw-token-connector,
+.fw-relation-formula .fw-token-connector {
+  background: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+.fw-relation-box {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 2px 14px; text-align: left; padding: 10px 14px;
+}
+.fw-relation-box .fw-relation-formula { flex: 0 0 auto; max-width: 100%; text-align: left; line-height: 1.5; }
+.fw-relation-box .fw-relation-meaning { flex: 0 1 auto; margin: 0; text-align: right; font-size: 16px; color: var(--text-secondary); }
+.fw-relation-box.is-stacked .fw-relation-meaning { flex: 1 0 100%; text-align: left; }
