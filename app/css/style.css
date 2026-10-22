@@ -26964,3 +26964,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-relation-box .fw-relation-formula { flex: 0 0 auto; max-width: 100%; text-align: left; line-height: 1.5; }
 .fw-relation-box .fw-relation-meaning { flex: 0 1 auto; margin: 0; text-align: right; font-size: 16px; color: var(--text-secondary); }
 .fw-relation-box.is-stacked .fw-relation-meaning { flex: 1 0 100%; text-align: left; }
+
+/* Construction frames match function-word patterns: bold connector, word-type pill. */
+.sense-grammar-cue .frame-connector { color: var(--text-primary); font-weight: 700; }
+.sense-grammar-cue .frame-slot-pill {
+  display: inline-block; padding: 0 8px; border-radius: 999px;
+  background: rgba(var(--slot-rgb), 0.22); color: rgb(var(--slot-rgb));
+  font-weight: 500; line-height: 1.5;
+}

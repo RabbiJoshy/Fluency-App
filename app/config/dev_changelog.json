@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T08:43:08+01:00",
+      "date": "2026-10-22 08:43 BST",
+      "agent": "Claude",
+      "summary": "Grammar frames on sense rows match function-word patterns: bold connector word, coloured pill for the slot (começar: + a [inf] / por [inf])",
+      "detail": [
+        "The connecting word (a, por, em, que) is bold; a slot that names a word type (inf, ger, pp, subj = verb colour; adj) is a pill in that colour, as in the function-word cards.",
+        "Frame text and the tap-for-full-wording note are unchanged; the grey phrase pill on the row in use (contar que) is unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T06:34:55+01:00",
       "date": "2026-10-22 06:34 BST",
       "agent": "Claude",
@@ -344,19 +355,6 @@
         "dejar: 'to leave' stays centred over a left-aligned column of to put / to forget / to bequeath; the chosen one is a rounded rectangle just left of the column and the group drops to a light wash.",
         "Shared-context groups (eh) get a bracketed left-aligned caption over centred translations.",
         "The word-type row, when it holds the shared translation, is now 20px and 44px high like a sense row."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T19:09:29+01:00",
-      "date": "2026-10-21 19:09 BST",
-      "agent": "Claude",
-      "summary": "Card back: active sub-meaning is a rounded rectangle sized to its text; shared-text header and sub-rows never share an alignment",
-      "detail": [
-        "Active sub-meaning (aún: still / yet) now uses the same rounded fill + left-edge rectangle as a sense row, sized to its own text, instead of a ring around the whole row.",
-        "Shared context is a bracketed caption beside the word type, with the translations centred below it.",
-        "Shared translation is centred across the whole word-type row, with its contexts in a left-aligned column and the marker just left of the active line.",
-        "Inactive sub-rows lose their boxes inside this layout."
       ],
       "commit": "pending"
     }

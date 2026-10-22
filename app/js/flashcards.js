@@ -1183,6 +1183,44 @@ function framesOnActiveRow(scroll) {
     });
 }
 
+// A construction frame reads like a function-word pattern: the connecting
+// word is bold ("a", "por", "que"); a slot that names a word type is a pill in
+// that type's colour. "+ a +inf / por +inf" -> "+ **a** (inf) / **por** (inf)".
+const FRAME_SLOT_TYPES = { inf: 'verb', ger: 'verb', pp: 'verb', subj: 'verb', adj: 'adj' };
+function styleGrammarFrames(scroll) {
+    scroll.querySelectorAll('.sense-grammar-cue .sense-abbr[data-family="construction"]').forEach(el => {
+        if (el.dataset.framed || el.children.length) return;
+        const text = el.textContent.trim();
+        if (!text.startsWith('+')) return;
+        el.dataset.framed = '1';
+        el.textContent = '';
+        const tokens = text.match(/\+|\/|[^\s+\/]+|\s+/gu);
+        tokens.forEach((token, i) => {
+            const slot = FRAME_SLOT_TYPES[token.toLowerCase()];
+            const afterPlus = tokens.slice(0, i).reverse().find(t => t.trim()) === '+';
+            if (slot && afterPlus) {
+                const pill = document.createElement('span');
+                pill.className = 'frame-slot-pill';
+                pill.style.setProperty('--slot-rgb', getPosAccentRgb(slot));
+                pill.textContent = token;
+                el.append(pill);
+            } else if (/^[^\s+\/]+$/u.test(token)) {
+                const connector = document.createElement('span');
+                connector.className = 'frame-connector';
+                connector.textContent = token;
+                el.append(connector);
+            } else if (token === '+') {
+                // "+ a +inf": the plus before a slot that follows a word is implied.
+                const next = FRAME_SLOT_TYPES[(tokens.slice(i + 1).find(t => t.trim()) || '').toLowerCase()];
+                const prevWord = tokens.slice(0, i).reverse().find(t => t.trim());
+                if (!(next && prevWord && /^[^\s+\/]+$/u.test(prevWord))) el.append('+');
+            } else {
+                el.append(token.trim() ? token : ' ');
+            }
+        });
+    });
+}
+
 function hoistSharedRowText(scroll, card) {
     // A gloss is the meaning's own text, or a context slot holding the
     // translation: bom's three Wiktionary senses all translate "good", so the
@@ -1455,6 +1493,7 @@ function inlineSenseRows(root, card) {
     groupInlineTranslation(scroll);
     arrangeGroupCues(scroll);
     framesOnActiveRow(scroll);
+    styleGrammarFrames(scroll);
     inlineRowFlags(scroll);
     fitHoistedShared(root);
     fitSharedContextInline(root);
