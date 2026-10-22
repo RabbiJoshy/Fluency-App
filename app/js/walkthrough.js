@@ -176,7 +176,6 @@ function renderScreen({ turnFrom = null } = {}) {
     const leadEl = document.getElementById('walkthroughLead');
     if (leadEl) {
         leadEl.textContent = screen.lead || '';
-        leadEl.hidden = !screen.lead;
     }
     renderProgress();
 
@@ -333,11 +332,9 @@ function renderProgress() {
     if (tabs) {
         tabs.innerHTML = state.screens.map((screen, i) => {
             const isMusic = screen.id === 'lyrics';
-            const label = isMusic ? 'Music mode' : (state.pair ? 'Everyday speech' : (screen.id === 'front' ? 'Front' : 'Back'));
-            const icon = isMusic ? '🎵' : '💬';
+            const label = isMusic ? 'Music Example' : (state.pair ? 'Speech Example' : (screen.id === 'front' ? 'Speech (Front)' : 'Speech (Back)'));
             const isCurrent = i === state.index;
             return `<button type="button" role="tab" class="walkthrough-tab${isCurrent ? ' is-current' : ''}" data-index="${i}" aria-selected="${isCurrent ? 'true' : 'false'}" title="${esc(label)}">`
-                + `<span class="walkthrough-tab-icon" aria-hidden="true">${icon}</span>`
                 + `<span class="walkthrough-tab-label">${esc(label)}</span>`
                 + `</button>`;
         }).join('');
@@ -566,7 +563,8 @@ function openWalkthrough({ start = null } = {}) {
     state.screens = buildScreens(state.pair);
     state.index = Math.max(0, state.screens.findIndex(screen => screen.id === start));
     renderScreen();
-    document.getElementById('walkthroughNext')?.focus({ preventScroll: true });
+    const activeTab = modal.querySelector('.walkthrough-tab.is-current') || document.getElementById('closeWalkthroughModal');
+    activeTab?.focus({ preventScroll: true });
     if (!_resizeHandler) {
         _resizeHandler = () => relayout();
         window.addEventListener('resize', _resizeHandler);
