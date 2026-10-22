@@ -14,6 +14,8 @@ class AboutSeparatePageTests(unittest.TestCase):
         page = (APP / 'about.html').read_text()
         about = (APP / 'js' / 'about-page.js').read_text()
         self.assertIn('js/about-page.js', page)
+        self.assertIn('css/appearance.css', page)
+        self.assertIn('css/style.css', page)
         for app_only in ['main.js', 'auth.js', 'passwordless', 'clerk', 'flashcards.js']:
             self.assertNotIn(app_only, page)
         imports = re.findall(r"^import .*?'\./([\w-]+\.js)", about, re.M)
