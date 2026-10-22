@@ -965,7 +965,7 @@ function setupLanguageTabs() {
                 document.getElementById('step1')?.classList.add('source-speech-active');
                 speechSourceButton?.classList.add('is-selected');
                 sourceCardButton?.classList.remove('is-selected');
-                window.showAppLoading?.('Preparing speech vocabulary', 'Loading levels and your progress…');
+                window.showAppLoading?.(window.isSeriesStudy?.() ? 'Preparing TV Series vocabulary' : 'Preparing speech vocabulary', 'Loading levels and your progress…');
                 const speechSetupStarted = performance.now();
                 let deckOverviewHold = null;
                 try {
@@ -1377,7 +1377,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         const coverageType = activeArtist
             ? 'lyrics comprehension'
             : (window.playlistLiveActive?.()
-                ? 'playlist words'
+                ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words')
                 : (globalThis.coverageAvailable?.()
                     && (usingReleaseLevels || getActiveLevelRanges()[0]?.threshold == null)
                     ? globalThis.coverageLabel()
@@ -2380,7 +2380,7 @@ function updateLevelSliderReadout(i) {
     const coverageType = activeArtist
         ? 'lyrics comprehension'
         : (window.playlistLiveActive?.()
-            ? 'playlist words'
+            ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words')
             : (globalThis.coverageAvailable?.()
                 && (usingReleaseLevels || ranges[0]?.threshold == null)
                 ? globalThis.coverageLabel()
@@ -2437,7 +2437,7 @@ function updateLevelSliderReadout(i) {
         const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
         const levelsLabel = i === 0 ? 'Level 1 makes' : `Levels 1–${i + 1} make`;
         const covHTML = coverageRounded
-            ? `<span class="lsw-coverage-inline">${levelsLabel} up <strong>${coverageRounded}</strong> of ${activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? 'playlist words' : 'speech')}</span>`
+            ? `<span class="lsw-coverage-inline">${levelsLabel} up <strong>${coverageRounded}</strong> of ${activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'speech')}</span>`
             : '';
         const egHTML = (examplesText || covHTML)
             ? `<div class="lsw-egs">${examplesText || ''}${covHTML}</div>`

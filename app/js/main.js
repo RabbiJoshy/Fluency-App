@@ -1027,7 +1027,7 @@ loadConfig().then(async () => {
         const deck = window.playlistLiveDeck?.();
         const sourceName = document.getElementById('selectedSourceInline');
         if (sourceName && deck?.playlistName) {
-            sourceName.textContent = `Live · ${deck.playlistName}`;
+            sourceName.textContent = window.isSeriesStudy?.() ? `TV Series · ${deck.playlistName}` : `Live · ${deck.playlistName}`;
         }
         document.body.classList.add('has-learning-context');
         window.updateLearningContextUI?.();

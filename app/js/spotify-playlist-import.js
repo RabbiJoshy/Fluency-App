@@ -851,13 +851,13 @@ function activatePlaylistLiveStudy(language) {
     document.body.classList.add('playlist-live-mode');
     const sourceName = document.getElementById('selectedSourceInline');
     if (sourceName && deck.playlistName) {
-        sourceName.textContent = `Live · ${deck.playlistName}`;
+        sourceName.textContent = window.isSeriesStudy?.() ? `TV Series · ${deck.playlistName}` : `Live · ${deck.playlistName}`;
     }
     replaceRoute({
         kind: 'live',
         language: routeCodeFor(language, typeof config !== 'undefined' ? config?.languages : null)
     });
-    window.showAppLoading?.('Opening your live deck', `${deck.playlistName} · ${deck.matchedCount} words`);
+    window.showAppLoading?.(window.isSeriesStudy?.() ? 'Opening your series deck' : 'Opening your live deck', `${deck.playlistName} · ${deck.matchedCount} words`);
     sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
     sessionStorage.setItem('fluencyPendingLiveStudy', '1');
     window.invalidatePreparedSetupVocabulary?.();
