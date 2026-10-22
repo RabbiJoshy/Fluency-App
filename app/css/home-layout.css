@@ -1338,3 +1338,27 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
         justify-self: center;
     }
 }
+
+/* Level tiles: only the selected one has an outline. */
+.home-level-tile { border-color: transparent; }
+.home-level-tile.is-selected { border-color: var(--accent-primary); }
+.home-level-tile-dot { display: none; }
+@media (max-width: 1023px) {
+    /* Phones: a dot in the least-learned colour instead of a bar too thin to read. */
+    .home-level-tile-bar { display: none; }
+    .home-level-tile-dot { display: block; align-self: center; width: 7px; height: 7px; border-radius: 50%; background: var(--set-new, #fff); }
+    .home-level-tile[data-dot="seen"] .home-level-tile-dot { background: var(--set-review, #ffcc00); }
+    .home-level-tile[data-dot="known"] .home-level-tile-dot { background: var(--set-known, #06a557); }
+    /* Phones: the readout's words a step larger. */
+    #setupPanel #homeLevelStepper .home-level-eyebrow,
+    #setupPanel #homeLevelStepper .home-level-words { font-size: calc(var(--home-text) * 1.12); }
+    /* Phones: the ? at the title's height, at the right edge (where a folded
+       section's chevron sits). */
+    #setupPanel .home-section > .step-header .home-section-help {
+        position: absolute; top: 9px; right: 10px; margin: 0; width: 38px; height: 38px;
+    }
+}
+/* Example words and coverage line in the readout's font (DM Sans), not the
+   heavier display face, and kept in the dimmer grey. */
+#setupPanel #lswExamples .lsw-egs,
+#setupPanel #lswExamples .lsw-egs * { font-family: var(--font-reading, "DM Sans", -apple-system, system-ui, sans-serif); }

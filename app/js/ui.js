@@ -2167,9 +2167,13 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
             .filter(([, n]) => n > 0)
             .map(([kind, n]) => `<span class="is-${kind}" style="flex-grow:${n}"></span>`).join('');
         const metrics = _levelBandMetrics(ranges[i]);
-        return `<button type="button" class="home-level-tile${i === selectedIdx ? ' is-selected' : ''}" data-level-index="${i}" role="radio" aria-checked="${i === selectedIdx}" aria-label="Level ${i + 1}, words ${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}">
+        // Phones show one dot per tile, the least-learned colour present:
+        // any new word → white, else any seen → yellow, else green.
+        const dot = c.cards - c.seen > 0 ? 'new' : c.review > 0 ? 'seen' : 'known';
+        return `<button type="button" class="home-level-tile${i === selectedIdx ? ' is-selected' : ''}" data-dot="${dot}" data-level-index="${i}" role="radio" aria-checked="${i === selectedIdx}" aria-label="Level ${i + 1}, words ${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}">
                 <span class="home-level-tile-num">${i + 1}</span>
                 <span class="home-level-tile-bar" aria-hidden="true">${segments}</span>
+                <span class="home-level-tile-dot" aria-hidden="true"></span>
             </button>`;
     }).join('');
     row.innerHTML = `<div class="home-level-tile-list">${tileHTML}</div>`;

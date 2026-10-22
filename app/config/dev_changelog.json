@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T01:20:58+01:00",
+      "date": "2026-10-22 01:20 BST",
+      "agent": "Claude",
+      "summary": "Level tiles: outline only on your level, dots on phones; readout and ? tweaks",
+      "detail": [
+        "Level tiles (everywhere): only the selected tile has an outline (red).",
+        "Phones: each tile shows one dot in its least-learned colour (any new → white, else any seen → yellow, else green) instead of a thin bar.",
+        "Phones: 'Level' and 'Words 1–100' a step larger; the ? sits at the right edge, level with the section title.",
+        "Example words and coverage line use the same font as the level readout (DM Sans), in the dimmer grey."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T01:02:28+01:00",
       "date": "2026-10-22 01:02 BST",
       "agent": "Claude",
@@ -336,17 +349,6 @@
         "The active sense row (and the active sub-meaning inside a grouped sense) now has a 0.24 fill and a 4px bar on its left edge in its word type's colour; the 2px outline is gone.",
         "Applies to single rows, grouped rows, and the group that is lit when several word types are on the card; dark and light theme.",
         "Inactive rows and the word-type rows are unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T14:56:52+01:00",
-      "date": "2026-10-21 14:56 BST",
-      "agent": "Claude",
-      "summary": "'Level' in the same lighter grey as 'Words 1–100'; level chevrons tight to the number",
-      "detail": [
-        "'Level' label uses the same brighter grey as the word range.",
-        "‹ › buttons are narrower (38px phones, 44px wide desktop; same tap height) with no gap, so they sit beside the number's plate."
       ],
       "commit": "pending"
     }
