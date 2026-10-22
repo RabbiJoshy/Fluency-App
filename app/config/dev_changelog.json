@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T01:27:45+01:00",
+      "date": "2026-10-22 01:27 BST",
+      "agent": "Claude",
+      "summary": "Phones: no red outline on the open section; the folded one is a plain line",
+      "detail": [
+        "The open Learn or Practise section is the only card, with an ordinary border (no red outline; none for new users either).",
+        "The folded section is one line, e.g. 'Practise · 12 waiting ›' or 'Learn · Level 1 · Words 1–100 ›', with no card around it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T01:20:58+01:00",
       "date": "2026-10-22 01:20 BST",
       "agent": "Claude",
@@ -337,18 +348,6 @@
       "summary": "Function-word cards: the active pattern uses the same fill-and-left-bar marker as other senses",
       "detail": [
         "The selected pattern box on function-word backs (de, que, em...) now has a 0.24 fill and a 4px left bar in its partner's colour instead of a 2px outline."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T15:01:30+01:00",
-      "date": "2026-10-21 15:01 BST",
-      "agent": "Claude",
-      "summary": "Card back: the active sense is marked by a stronger fill and a left bar instead of an outline",
-      "detail": [
-        "The active sense row (and the active sub-meaning inside a grouped sense) now has a 0.24 fill and a 4px bar on its left edge in its word type's colour; the 2px outline is gone.",
-        "Applies to single rows, grouped rows, and the group that is lit when several word types are on the card; dark and light theme.",
-        "Inactive rows and the word-type rows are unchanged."
       ],
       "commit": "pending"
     }
