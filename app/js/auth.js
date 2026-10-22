@@ -138,6 +138,7 @@ function _openFirstRunTutorialUnlessLinked() {
 //   - new tab at app URL   → no session → landing
 //   - new tab at #/about   → no session → landing + About on top
 function onPasswordlessSignedOut() {
+    if (currentUser?.isGuest) return;
     if (currentUser?.initials) {
         localStorage.removeItem(`progress_cache_${currentUser.initials}`);
         localStorage.removeItem(`progress_cache_${getIsolatedSyncUser(currentUser.initials)}`);
@@ -150,6 +151,20 @@ function onPasswordlessSignedOut() {
 }
 
 function checkAuthentication() {
+    if (_isPageReload() && !consumeRouteNavigation()) {
+        sessionStorage.removeItem('flashcardGuestSession');
+    }
+    // Guest browsing does not depend on Clerk. Restore it before starting any
+    // account requests so mode/artist navigation also works without sign-in.
+    if (sessionStorage.getItem('flashcardGuestSession') === '1') {
+        currentUser = { isGuest: true };
+        window.markProgressLoaded?.();
+        window.applyGlobalStudyDefaults?.();
+        showUserInfo();
+        hideAuthModal();
+        _markAuthReady();
+        return;
+    }
     if (PASSWORDLESS_ENABLED) {
         GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
         const savedUser = localStorage.getItem('flashcardUser');
@@ -172,13 +187,6 @@ function checkAuthentication() {
         startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
         return;
     }
-    // User-initiated refresh should drop guest mode so the landing reappears.
-    // A route change also reloads (mode is decided at boot) but is a same-tab
-    // navigation, so it keeps the guest session like any other.
-    if (_isPageReload() && !consumeRouteNavigation()) {
-        sessionStorage.removeItem('flashcardGuestSession');
-    }
-
     const savedUser = localStorage.getItem('flashcardUser');
     if (savedUser) {
         try {
@@ -197,19 +205,6 @@ function checkAuthentication() {
         } catch (e) {
             localStorage.removeItem('flashcardUser');
         }
-    }
-    // Tab-scoped guest session: survives same-tab navigations (mode/artist
-    // switches) but was just cleared above if this load is a reload.
-    if (sessionStorage.getItem('flashcardGuestSession') === '1') {
-        currentUser = { isGuest: true };
-        // A guest session restored from sessionStorage never passes through
-        // enterGuestMode(), so it has to settle progress readiness itself.
-        window.markProgressLoaded?.();
-        window.applyGlobalStudyDefaults?.();
-        showUserInfo();
-        hideAuthModal();
-        _markAuthReady();
-        return;
     }
     showAuthModal();
 }
@@ -267,7 +262,6 @@ function showUserInfo() {
 //
 // Progress is still never persisted for guests.
 function enterGuestMode() {
-    if (PASSWORDLESS_ENABLED) return;
     currentUser = { isGuest: true };
     // A guest has no stored progress to wait for, so the setup screen must not
     // sit behind a promise that will never resolve.
@@ -356,6 +350,7 @@ function clearDeviceSessionState() {
 }
 
 async function completeProfileLogin(user) {
+    sessionStorage.removeItem('flashcardGuestSession');
     currentUser = user;
     if (user.isNew) {
         clearDeviceSessionState();

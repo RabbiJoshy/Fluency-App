@@ -50,7 +50,9 @@ function loadScript(src, attributes = {}) {
 }
 
 export function hideLegacyAuthChoices() {
-    for (const id of ['guestModeRow', 'loginModeRow', 'createModeRow', 'loginForm', 'loginInfoNote']) {
+    // Guest entry is independent of the account provider and stays available
+    // while sign-in loads, including when the provider is unavailable.
+    for (const id of ['loginModeRow', 'createModeRow', 'loginForm', 'loginInfoNote']) {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
     }
@@ -67,6 +69,8 @@ async function resolveProfile(user, container) {
     }
     const existing = await account();
     if (existing) return existing;
+    document.getElementById('passwordlessMoreOptions')?.remove();
+    document.getElementById('passwordlessAccountSwitch')?.remove();
     if (mounted) { window.Clerk.unmountSignIn(container); window.Clerk.unmountSignUp(container); mounted = false; }
     container.replaceChildren();
     return new Promise(resolve => {
@@ -147,6 +151,8 @@ function mountSignInUI(container) {
     const returnUrl = window.location.origin + window.location.pathname + window.location.hash;
     const signupUrl = new URL(window.location.href);
     signupUrl.searchParams.set('account', 'create');
+    const isSignUp = new URLSearchParams(window.location.search).get('account') === 'create';
+    const optionsLabel = isSignUp ? 'More sign-up options' : 'More sign-in options';
     const props = {
         routing: 'virtual', forceRedirectUrl: returnUrl,
         signInForceRedirectUrl: returnUrl, signUpForceRedirectUrl: returnUrl,
@@ -156,18 +162,51 @@ function mountSignInUI(container) {
             socialButtons: { display: 'flex', flexDirection: 'column', gap: '10px' },
             card: { boxShadow: 'none', background: 'transparent', border: 'none', padding: '0' },
             cardBox: { boxShadow: 'none', width: '100%', borderRadius: '0' },
-            socialButtonsBlockButton: { minHeight: '44px', width: '100%' }
+            socialButtonsBlockButton: { minHeight: '48px', width: '100%', fontSize: '14px', fontWeight: '600' },
+            formButtonPrimary: { minHeight: '48px', fontSize: '14px', fontWeight: '600' },
+            formFieldInput: { minHeight: '48px', fontSize: '14px' }
         }, variables: {
+            fontFamily: 'var(--font-reading, sans-serif)',
             colorPrimary: '#a5b4fc', colorForeground: '#f8fafc', colorMutedForeground: '#cbd5e1',
             colorBackground: '#1a222c', colorInputBackground: '#111827',
             colorInputText: '#f8fafc', borderRadius: '12px'
         } }
     };
-    if (new URLSearchParams(window.location.search).get('account') === 'create') {
+    if (isSignUp) {
         window.Clerk.mountSignUp(container, props);
     } else {
         window.Clerk.mountSignIn(container, props);
     }
+    modal.classList.add('passwordless-options-collapsed');
+    let moreOptions = document.getElementById('passwordlessMoreOptions');
+    if (!moreOptions) {
+        moreOptions = document.createElement('button');
+        moreOptions.id = 'passwordlessMoreOptions';
+        moreOptions.type = 'button';
+        moreOptions.className = 'passwordless-options-toggle';
+        moreOptions.setAttribute('aria-controls', container.id);
+        moreOptions.onclick = () => {
+            const collapsed = modal.classList.toggle('passwordless-options-collapsed');
+            moreOptions.setAttribute('aria-expanded', String(!collapsed));
+            moreOptions.textContent = collapsed ? optionsLabel : 'Show fewer options';
+        };
+        container.after(moreOptions);
+    }
+    moreOptions.setAttribute('aria-expanded', 'false');
+    moreOptions.textContent = optionsLabel;
+    let accountSwitch = document.getElementById('passwordlessAccountSwitch');
+    if (!accountSwitch) {
+        accountSwitch = document.createElement('p');
+        accountSwitch.id = 'passwordlessAccountSwitch';
+        accountSwitch.className = 'passwordless-account-switch';
+        moreOptions.after(accountSwitch);
+    }
+    const accountLink = document.createElement('a');
+    accountLink.href = isSignUp ? returnUrl : signupUrl.href;
+    accountLink.textContent = isSignUp ? 'Sign in' : 'Sign up';
+    accountSwitch.replaceChildren(
+        document.createTextNode(isSignUp ? 'Have an account? ' : 'New here? '), accountLink
+    );
     mounted = true;
 }
 
@@ -183,6 +222,9 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
         modal.querySelector('.auth-modal-content')?.classList.add('passwordless-modal');
         const heading = modal.querySelector('.auth-welcome-copy h3');
         if (heading) heading.textContent = 'Fluency';
+        const welcome = modal.querySelector('.auth-welcome-copy');
+        const mark = modal.querySelector('.auth-welcome-mark');
+        if (welcome && mark) welcome.prepend(mark);
         const subtitle = modal.querySelector('.auth-welcome-copy p');
         // Email codes don't reach Apple addresses: stop the attempt and say so in
         // a dialog that has to be dismissed.
@@ -218,8 +260,18 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
             await loadScript(`https://${CLERK_DOMAIN}/npm/@clerk/clerk-js@6/dist/clerk.browser.js`, {
                 'data-clerk-publishable-key': PUBLISHABLE_KEY
             });
-            await window.Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } });
+            const providerLabel = new URLSearchParams(window.location.search).get('account') === 'create'
+                ? 'Sign up with {{provider|titleize}}' : 'Sign in with {{provider|titleize}}';
+            await window.Clerk.load({
+                ui: { ClerkUI: window.__internal_ClerkUICtor },
+                localization: {
+                    socialButtonsBlockButton: providerLabel,
+                    socialButtonsBlockButtonManyInView: providerLabel
+                }
+            });
             const handle = async ({ user, session }) => {
+                // A visitor may choose guest while Clerk is still loading.
+                if (sessionStorage.getItem('flashcardGuestSession') === '1') return;
                 if (!user || !session) {
                     if (activeUserId) {
                         activeUserId = null;
@@ -237,6 +289,7 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
                 let profile;
                 try { profile = await resolveProfile(user, container); }
                 finally { resolvingUserId = null; }
+                if (sessionStorage.getItem('flashcardGuestSession') === '1') return;
                 activeUserId = user.id;
                 await onSignedIn({
                     initials: IS_STAGING ? profile.id.replace(/^stg_/, '') : profile.id,

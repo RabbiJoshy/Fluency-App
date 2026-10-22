@@ -1,8 +1,10 @@
 # Passwordless demo accounts
 
 The live GitHub Pages app and staging both use the Fluency Clerk development
-instance, Google and Microsoft sign-in, and email verification codes. Password creation and
-guest mode are disabled. This is intentionally Clerk's development setup for
+instance, Google and Microsoft sign-in, and email verification codes. Google is
+the primary option; Microsoft and email appear under More sign-in options.
+Sign-up is a separate, matching screen. Try as guest allows account-free
+exploration without saving progress. Password creation is disabled. This is intentionally Clerk's development setup for
 Josh's small demo, not a configured Clerk production instance.
 
 New verified users choose a username once. The username field starts empty;
