@@ -1155,31 +1155,21 @@ function sharedRowText(rows, selector) {
     return texts.every(text => text && text === texts[0]) ? texts[0] : '';
 }
 
-// A grammar frame ("+ que") is only the row in use's to show, as the phrase
-// itself in a pill ("contar que"). Other rows keep their words and drop it.
-// A row that is only a frame (estar: "+ em", "+ adj") is left as it is.
+// Every usable construction has the same phrase pill, including inactive rows.
 function framesOnActiveRow(scroll) {
     scroll.querySelectorAll('.sense-target-collocation').forEach(frame => {
         const holder = frame.closest('.group-card-varying-cell, .meaning-row');
         if (!holder) return;
-        const group = holder.closest('.meaning-row-group');
-        const active = holder.matches('.group-card-varying-cell')
-            ? holder.classList.contains('is-active-subsense')
-                || Boolean(group?.classList.contains('selected') && !group.querySelector('.is-active-subsense'))
-            : holder.classList.contains('is-current-sense');
-        const clone = holder.cloneNode(true);
-        clone.querySelectorAll('.sense-target-collocation, .sense-inline-info, .pct-column, .sense-prominence-badge, .meaning-row-check, .sense-note-template, .row-lead-marks').forEach(el => el.remove());
-        const hasOtherWords = clone.textContent.replace(/\s+/g, '').length > 0;
-        const phrase = (frame.getAttribute('aria-label') || '').replace(/^Used with:\s*/, '').trim();
-        if (active && phrase && hasOtherWords) {
+        const phrase = frame.dataset.framePhrase
+            || (frame.getAttribute('aria-label') || '').replace(/^Used with:\s*/, '').trim();
+        if (phrase) {
+            holder.classList.add('has-construction-pill');
             frame.classList.add('is-frame-pill');
             frame.textContent = phrase;
             // After the row's words, not between its translation and context.
             const context = holder.querySelector('.meaning-context');
             if (context) context.after(frame);
             else holder.querySelector('.sense-inline-line, .meaning-context-cell')?.append(frame);
-        } else if (hasOtherWords) {
-            frame.classList.add('is-frame-hidden');
         }
     });
 }
@@ -3337,6 +3327,17 @@ function selectSplitCompanion(event, readingIndex) {
 }
 window.selectSplitCompanion = selectSplitCompanion;
 
+window.openLemmaCompanion = async function(event, id) {
+    event.preventDefault();
+    event.stopPropagation();
+    const index = flashcards.findIndex(card => String(card.id) === String(id));
+    if (index >= 0) {
+        goToDeckCard(index);
+        return;
+    }
+    await window.popupFoundWord?.({id}, {reopenSearchOnBack: false, startFlipped: false});
+};
+
 function splitUsageShareHTML(card) {
     const share = card?.splitInfo?.share;
     if (typeof share !== 'number' || !Number.isFinite(share) || share < 0 || share > 1) return '';
@@ -3945,7 +3946,8 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
     // them off inactive rows, then give them their own quiet line once this
     // sense is selected. This prevents a compact menu label from reading like
     // one long, malformed definition.
-    if (!active) return fallbackText;
+    const resolvedGloss = meaning?._seeExpressionGloss;
+    if (!active) return resolvedGloss ? escapeCardText(resolvedGloss) : fallbackText;
     const references = senseCrossReferences(meaning);
     if (!references.length) return fallbackText;
     const link = ({ target, relation }) => {
@@ -3956,7 +3958,8 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
         const links = references.map(reference => (
             `<span class="sense-cross-reference-item"><span class="sense-cross-reference-prefix">Related</span>${link(reference)}</span>`
         )).join('');
-        return `<span class="sense-cross-reference-related" aria-label="Related cards">${links}</span>`;
+        return (resolvedGloss ? `<span class="sense-cross-reference-gloss">${escapeCardText(resolvedGloss)}</span>` : '')
+            + `<span class="sense-cross-reference-related" aria-label="Related cards">${links}</span>`;
     }
     const labels = {
         indirect_object: 'Indirect form',
@@ -6703,6 +6706,26 @@ function updateCard({ announceHeadword = false } = {}) {
         }
     }
     const langConfig = config.languages[selectedLanguage];
+    // Resolve explicit dictionary redirects into English without changing
+    // sense IDs, stored translations, example assignments or progress keys.
+    for (const meaning of card.meanings || []) {
+        if (meaning._seeExpressionLoad) continue;
+        const references = senseCrossReferences(meaning);
+        if (!references.length || !references.every(ref => isSeeExpressionReference(ref.target, ref.relation))) continue;
+        meaning._seeExpressionLoad = true;
+        const language = selectedLanguage;
+        Promise.all(references.map(ref => resolveSeeExpression(ref.target, langConfig,
+            window._cachedJoinedIndex || []))).then(entries => {
+            const glosses = [...new Set(entries.flatMap(entry => (entry?.senses || [])
+                .map(sense => sense.translation).filter(Boolean)))];
+            if (!glosses.length) return;
+            meaning._seeExpressionGloss = glosses.join('; ');
+            if (selectedLanguage === language && flashcards[currentIndex] === card) updateCard();
+        }).catch(error => {
+            delete meaning._seeExpressionLoad;
+            console.warn('Expression meaning unavailable:', error);
+        });
+    }
     const displaySurface = card.displaySurface || card.targetWord;
     // A surface-keyed card can hold senses from several headwords. Start with
     // the only unambiguous card-level citation; once currentMeaning is resolved
@@ -7220,6 +7243,13 @@ function renderCardWikipediaBadge(card) {
                 frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
                 if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
                 frontPOSEl.innerHTML = pillsHTML;
+                if (card.lemmaModeCompanions?.length > 1) {
+                    const companions = card.lemmaModeCompanions;
+                    const index = companions.findIndex(entry => String(entry.id) === String(card.id));
+                    const links = companions.filter(entry => String(entry.id) !== String(card.id)).map(entry =>
+                        `<button type="button" class="sense-cross-reference" data-companion-id="${escapeCardText(entry.id)}" onclick="openLemmaCompanion(event, this.dataset.companionId)">Uses in ${escapeCardText(entry.surface)}</button>`).join('');
+                    frontPOSEl.innerHTML += `<div class="lemma-companion-cards"><span>Uses ${index + 1} of ${companions.length} · ${escapeCardText(card.targetWord)}</span>${links}</div>`;
+                }
             }
             frontPOSEl.style.display = 'grid';
             // Keep every label in a group at the same size. The grid reserves

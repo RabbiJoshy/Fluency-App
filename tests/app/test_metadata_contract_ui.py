@@ -153,7 +153,7 @@ class MetadataContractUITests(unittest.TestCase):
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn("function senseCrossReferenceHTML(meaning, fallbackText, active = true)", flashcards)
-        self.assertIn("if (!active) return fallbackText", flashcards)
+        self.assertIn("if (!active) return resolvedGloss ? escapeCardText(resolvedGloss) : fallbackText", flashcards)
         self.assertIn('class="sense-cross-reference-gloss"', flashcards)
         self.assertIn('aria-label="Related cards"', flashcards)
         self.assertIn("Indirect form", flashcards)

@@ -1,0 +1,2076 @@
+[
+  {
+    "id": "6f1aa316",
+    "word": "tem",
+    "meanings": [
+      {
+        "translation": "to have",
+        "context": "to have (to be related in some way to, with the object identifying the relationship)",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_2ec9935f866f190f97a710bb077c362d",
+        "frequency": "0.062500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              11,
+              14
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              10,
+              13
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Este livro tem dono.",
+          "translation": "This book has an owner."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "imperative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=imperative"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              },
+              {
+                "embedding_text": "second-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=2"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to have",
+        "context": "to be in possession of; to have as part of one’s personal effects; to have in hand",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_81231c58fdeb387abf5f1817ac057669",
+        "frequency": "0.087500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              9,
+              12
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              7,
+              11
+            ],
+            [
+              24,
+              30
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "O senhor tem a sua carteira?",
+          "translation": "Do you have your wallet on you?"
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "imperative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=imperative"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              },
+              {
+                "embedding_text": "second-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=2"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "See ter de, ter que.",
+        "context": "auxiliary, with de or que + infinitive",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_8b96e52f82b718eb3b2e0448dbcfa78f",
+        "frequency": "0.025000",
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "auxiliary",
+                "family": "construction",
+                "kind": "auxiliary_frame",
+                "value": "auxiliary"
+              },
+              {
+                "embedding_text": "with de or que + infinitive",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "with de or que + infinitive"
+              },
+              {
+                "embedding_text": "imperative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=imperative"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              },
+              {
+                "embedding_text": "second-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=2"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": [
+            {
+              "relation": "see",
+              "target": "ter de"
+            },
+            {
+              "relation": "see",
+              "target": "ter que"
+            }
+          ]
+        }
+      },
+      {
+        "translation": "to have",
+        "context": "to have as a component or to consist of",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_76bcc8ce74373487164e40142cbee6cf",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              10,
+              13
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              7,
+              11
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "As lanças têm cabos compridos.",
+          "translation": "Spears have long shafts."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "imperative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=imperative"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              },
+              {
+                "embedding_text": "second-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=2"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to have",
+        "context": "to own; to possess; to have; to have got",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_e44f052c791a21f744ba75d704ca009e",
+        "frequency": "0.037500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              0,
+              5
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              2,
+              6
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Tenho uma bela casa.",
+          "translation": "I have a beautiful house."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "imperative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=imperative"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              },
+              {
+                "embedding_text": "second-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=2"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "there be (to exist, physically or abstractly)",
+        "context": "Brazil, informal, impersonal, transitive",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_f7368313e461f6cea14d53990fde3be0",
+        "frequency": "0.087500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              0,
+              3
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              0,
+              9
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Tem países em guerra naquela região.",
+          "translation": "There are countries at war in that region."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "Brazil",
+                "family": "register",
+                "kind": "region",
+                "value": "Brazil"
+              },
+              {
+                "embedding_text": "impersonal",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "impersonal"
+              },
+              {
+                "embedding_text": "informal",
+                "family": "register",
+                "kind": "usage_tag",
+                "value": "informal"
+              },
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "imperative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=imperative"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              },
+              {
+                "embedding_text": "second-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=2"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to have",
+        "context": "to have a certain characteristic",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_ef973b08f9a2a5b63c9f4db3b4f576fd",
+        "frequency": "0.025000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              22,
+              25
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              18,
+              22
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "As palavras que dizes têm significado.",
+          "translation": "The words you say have meaning."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "imperative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=imperative"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              },
+              {
+                "embedding_text": "second-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=2"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to have",
+        "context": "used in forming the perfect aspect",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_ec684090e14e8de12e93db42d0429547",
+        "frequency": "0.037500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              5,
+              10
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              2,
+              12
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Eu o teria comprado, se tivesse dinheiro.",
+          "translation": "I would have bought it, if I had money."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "auxiliary",
+                "family": "construction",
+                "kind": "auxiliary_frame",
+                "value": "auxiliary"
+              },
+              {
+                "embedding_text": "taking a masculine singular past participle",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "taking a masculine singular past participle"
+              },
+              {
+                "embedding_text": "imperative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=imperative"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "present",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=present"
+              },
+              {
+                "embedding_text": "second-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=2"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "69688526",
+    "word": "ter",
+    "meanings": [
+      {
+        "translation": "to have",
+        "context": "to have (to be related in some way to, with the object identifying the relationship)",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_f0870885f5e696a4111cf4b03877ee28",
+        "frequency": "0.025000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              11,
+              14
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              10,
+              13
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Este livro tem dono.",
+          "translation": "This book has an owner."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "See ter de, ter que.",
+        "context": "auxiliary, with de or que + infinitive",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_075183174a3c257e37749d828c9089d8",
+        "frequency": "0.012500",
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "auxiliary",
+                "family": "construction",
+                "kind": "auxiliary_frame",
+                "value": "auxiliary"
+              },
+              {
+                "embedding_text": "with de or que + infinitive",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "with de or que + infinitive"
+              }
+            ]
+          },
+          "cross_references": [
+            {
+              "relation": "see",
+              "target": "ter de"
+            },
+            {
+              "relation": "see",
+              "target": "ter que"
+            }
+          ]
+        }
+      },
+      {
+        "translation": "to have",
+        "context": "indicates that the subject has an event (the object) scheduled",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_fb0b9cef1f40fd126ac7e03679b02248",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              0,
+              5
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              3,
+              7
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Temos uma partida de xadrez daqui a uma semana.",
+          "translation": "We have a chess match in a week."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to have",
+        "context": "to have a certain characteristic",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_23a0b3f82c24dff19324a04f46b47a9c",
+        "frequency": "0.037500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              22,
+              25
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              18,
+              22
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "As palavras que dizes têm significado.",
+          "translation": "The words you say have meaning."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to have",
+        "context": "used in forming the perfect aspect",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_45b09aaa65d7b338367d99d4cd7b38ac",
+        "frequency": "0.250000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              5,
+              10
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              2,
+              12
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Eu o teria comprado, se tivesse dinheiro.",
+          "translation": "I would have bought it, if I had money."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "auxiliary",
+                "family": "construction",
+                "kind": "auxiliary_frame",
+                "value": "auxiliary"
+              },
+              {
+                "embedding_text": "taking a masculine singular past participle",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "taking a masculine singular past participle"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to have",
+        "context": "to be afflicted with a certain disease or other medical condition",
+        "pos": "verb",
+        "headword": "ter",
+        "sense_id": "sense_d05741138485172ca6a06d388f781f3a",
+        "frequency": "0.025000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              0,
+              4
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              4,
+              8
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Tens um resfriado.",
+          "translation": "You have a cold."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to have  to do with; to be related to or relevant to",
+        "pos": "PHRASE",
+        "headword": "ter a ver",
+        "sense_id": "sense_34b664de038fdfe2f242000bb3519b73",
+        "frequency": "0.025000",
+        "source": "mwe-merged",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "2cb8420f",
+    "word": "ir",
+    "meanings": [
+      {
+        "translation": "to go (to begin an action or process)",
+        "context": "intransitive",
+        "pos": "verb",
+        "headword": "ir",
+        "sense_id": "sense_2b6e2a2972d085c5ec0b879efc2afdf7",
+        "frequency": "0.250000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              24,
+              27
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              29,
+              37
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "O sinal verde ainda não foi!",
+          "translation": "The green light still didn’t light up."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to go (to move to a destination)",
+        "pos": "verb",
+        "headword": "ir",
+        "sense_id": "sense_d2e8da6b879af69a9ce5ff59e6b943b2",
+        "frequency": "0.112500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              5,
+              10
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              5,
+              9
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Eles foram ao centro comercial/shopping.",
+          "translation": "They went to the shopping centre."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "para",
+                "family": "companion",
+                "kind": "required_word",
+                "value": "para"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to go ahead; to proceed",
+        "pos": "PHRASE",
+        "headword": "ir em frente",
+        "sense_id": "sense_780126046bb28f417a819454e272c79a",
+        "frequency": "0.012500",
+        "source": "mwe-merged",
+        "metadata": {
+          "source_adapter": "mwe-merged/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": []
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "51c4a214",
+    "word": "acabou",
+    "meanings": [
+      {
+        "translation": "to finish (to be over, completed)",
+        "context": "intransitive",
+        "pos": "verb",
+        "headword": "acabar",
+        "sense_id": "sense_dc949dd513d0e5634d667b2241a35866",
+        "frequency": "0.150000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              8,
+              14
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              9,
+              16
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "O filme acabou.",
+          "translation": "The film is over."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "preterite",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=preterite"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "See acabar de.",
+        "context": "auxiliary, with de + infinitive",
+        "pos": "verb",
+        "headword": "acabar",
+        "sense_id": "sense_1e58167c105fc9b0e483ba4024b9471f",
+        "frequency": "0.200000",
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "auxiliary",
+                "family": "construction",
+                "kind": "auxiliary_frame",
+                "value": "auxiliary"
+              },
+              {
+                "embedding_text": "with de + infinitive",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "with de + infinitive"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "preterite",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=preterite"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": [
+            {
+              "relation": "see",
+              "target": "acabar de"
+            }
+          ]
+        }
+      },
+      {
+        "translation": "to run out (to be entirely used up)",
+        "context": "intransitive or pronominal",
+        "pos": "verb",
+        "headword": "acabar",
+        "sense_id": "sense_bc4125d29ce921b0c832bf285f0014f1",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              16,
+              22
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              14,
+              21
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Todo o dinheiro acabou.",
+          "translation": "All the money ran out."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "pronominal",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "pronominal"
+              },
+              {
+                "embedding_text": "intransitive or pronominal",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "intransitive or pronominal"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "preterite",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=preterite"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to end up; to turn out (to become, at the end of a process)",
+        "context": "copulative",
+        "pos": "verb",
+        "headword": "acabar",
+        "sense_id": "sense_de8427cab58aa28be512bc94e95feb6b",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              37,
+              43
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              53,
+              61
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "De tanto misturarmos, a cor da tinta acabou cinza.",
+          "translation": "Because we mixed it so much, the colour of the paint ended up grey."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "copulative",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "copulative"
+              },
+              {
+                "embedding_text": "indicative",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "mood=indicative"
+              },
+              {
+                "embedding_text": "preterite",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "tense=preterite"
+              },
+              {
+                "embedding_text": "singular",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "number=singular"
+              },
+              {
+                "embedding_text": "third-person",
+                "family": "grammar",
+                "kind": "surface_mark",
+                "value": "person=3"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "57f52fbd",
+    "word": "começar",
+    "meanings": [
+      {
+        "translation": "to begin",
+        "context": "catenative",
+        "pos": "verb",
+        "headword": "começar",
+        "sense_id": "sense_b294d1308259c73b1492a784cc373d7c",
+        "frequency": "0.050000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              12,
+              19
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              7,
+              12
+            ],
+            [
+              25,
+              30
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Um pirralho começou a gritar.",
+          "translation": "A brat began to scream / began screaming."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "verb-class=catenative",
+                "family": "grammar",
+                "kind": "sense_mark",
+                "value": "verb-class=catenative"
+              },
+              {
+                "embedding_text": "[with a (+ infinitive) or (less common) por (+ infinitive) ‘to do something’]",
+                "family": "construction",
+                "kind": "companion_form",
+                "value": "[with a (+ infinitive) or (less common) por (+ infinitive) ‘to do something’]"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to start; to begin; to commence",
+        "context": "intransitive",
+        "pos": "verb",
+        "headword": "começar",
+        "sense_id": "sense_28ebf1ebb7a33522c8db36ca0701bcde",
+        "frequency": "0.287500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              29,
+              36
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              34,
+              39
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Fique quieto, o filme já vai começar!",
+          "translation": "Keep quiet, the movie is going to start soon!"
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to begin; to start to do",
+        "context": "transitive",
+        "pos": "verb",
+        "headword": "começar",
+        "sense_id": "sense_614279aa939a61bc394376ede1d0bc59",
+        "frequency": "0.037500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              4,
+              11
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              2,
+              12
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Vou começar a lição de inglês falando sobre verbos irregulares.",
+          "translation": "I will start the English lesson talking about irregular verbs."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "005cb8e7",
+    "word": "acabar",
+    "meanings": [
+      {
+        "translation": "to finish (to be over, completed)",
+        "context": "intransitive",
+        "pos": "verb",
+        "headword": "acabar",
+        "sense_id": "sense_e3cac88f326417b2acccbac809b82fc7",
+        "frequency": "0.262500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              8,
+              14
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              9,
+              16
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "O filme acabou.",
+          "translation": "The film is over."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to destroy completely, to defeat thoroughly",
+        "context": "intransitive",
+        "pos": "verb",
+        "headword": "acabar",
+        "sense_id": "sense_30283b6926f67123f13c272119007eeb",
+        "frequency": "0.025000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              26,
+              38
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              28,
+              39
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "O inseticida prometeu que acabaria com as baratas.",
+          "translation": "The insecticide promised to exterminate cockroaches."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "com",
+                "family": "companion",
+                "kind": "required_word",
+                "value": "com"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to complete; to finish (to make done)",
+        "context": "transitive",
+        "pos": "verb",
+        "headword": "acabar",
+        "sense_id": "sense_598dbded9ad1e555ae7b7993b1fe9754",
+        "frequency": "0.037500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              0,
+              5
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              0,
+              6
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Acabe suas tarefas antes de sair.",
+          "translation": "Finish your chores before going out."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to break up; to put an end to (to make an activity or practice stop)",
+        "context": "intransitive",
+        "pos": "verb",
+        "headword": "acabar",
+        "sense_id": "sense_d0c60b2646d684a3de8b7aecacc3ec92",
+        "frequency": "0.037500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              9,
+              16
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              14,
+              24
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Essa lei acabará com a impunidade.",
+          "translation": "This law will put an end to impunity."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "com",
+                "family": "companion",
+                "kind": "required_word",
+                "value": "com"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to end up; to turn out (to become, at the end of a process)",
+        "context": "copulative",
+        "pos": "verb",
+        "headword": "acabar",
+        "sense_id": "sense_6d2d6af1422a762345c66798cad5e32e",
+        "frequency": "0.012500",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              37,
+              43
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              53,
+              61
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "De tanto misturarmos, a cor da tinta acabou cinza.",
+          "translation": "Because we mixed it so much, the colour of the paint ended up grey."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "copulative",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "copulative"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "e5287e94",
+    "word": "tratar",
+    "meanings": [
+      {
+        "translation": "to treat (to apply medical care to a person)",
+        "pos": "verb",
+        "headword": "tratar",
+        "sense_id": "sense_525f9aa50df984bfb260a0512f1ba3a7",
+        "frequency": "0.013514",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              13,
+              19
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              10,
+              17
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "A enfermeira tratou as vítimas da explosão.",
+          "translation": "The nurse treated the victims of the explosion."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "[with direct object (more common) or de ‘someone’]",
+                "family": "construction",
+                "kind": "companion_form",
+                "value": "[with direct object (more common) or de ‘someone’]"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to take care of; to care for (to attend to the needs of)",
+        "context": "transitive or intransitive",
+        "pos": "verb",
+        "headword": "tratar",
+        "sense_id": "sense_2eaf293ab14a8f514b3688b96ed008a9",
+        "frequency": "0.054054",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              39,
+              45
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              37,
+              45
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Depois que ficou velho, mandou o filho tratar do negócio da família.",
+          "translation": "After he got old, he told his son to care for the family business."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "[with direct object (more common) or de ‘something’]",
+                "family": "construction",
+                "kind": "companion_form",
+                "value": "[with direct object (more common) or de ‘something’]"
+              },
+              {
+                "embedding_text": "transitive or intransitive",
+                "family": "construction",
+                "kind": "gloss_phrase",
+                "value": "transitive or intransitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to deal with, to handle, to take care of",
+        "pos": "verb",
+        "headword": "tratar",
+        "sense_id": "sense_c38ec0ac46c27411fe984be90be5408d",
+        "frequency": "0.067568",
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "com",
+                "family": "companion",
+                "kind": "required_word",
+                "value": "com"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to feed (to give someone, especially an animal, food to eat)",
+        "context": "Brazil, transitive",
+        "pos": "verb",
+        "headword": "tratar",
+        "sense_id": "sense_de27f2ec2578f48c8ae9e9e4c576139b",
+        "frequency": "0.013514",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              32,
+              40
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              43,
+              47
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "O gato miava alto para que eu o tratasse.",
+          "translation": "The cat was meowing loudly so that I would feed him."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "Brazil",
+                "family": "register",
+                "kind": "region",
+                "value": "Brazil"
+              },
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to negotiate, to deal, to have dealings",
+        "context": "intransitive",
+        "pos": "verb",
+        "headword": "tratar",
+        "sense_id": "sense_3015ed48285f723a5952662bfbc32cc6",
+        "frequency": "0.013514",
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "com",
+                "family": "companion",
+                "kind": "required_word",
+                "value": "com"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to talk about; to discuss",
+        "context": "intransitive",
+        "pos": "verb",
+        "headword": "tratar",
+        "sense_id": "sense_0a88cbdc206323f07432d7a4b286e4b7",
+        "frequency": "0.013514",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              12,
+              18
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              14,
+              23
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "O professor tratou de matrizes.",
+          "translation": "The professor discussed matrices."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "intransitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "intransitive"
+              },
+              {
+                "embedding_text": "de",
+                "family": "companion",
+                "kind": "required_word",
+                "value": "de"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to treat (to apply medical care in order to eliminate a condition)",
+        "pos": "verb",
+        "headword": "tratar",
+        "sense_id": "sense_3725e33161c1581755baec2373dd9204",
+        "frequency": "0.013514",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              45,
+              51
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              41,
+              46
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "O oncologista quis que eu usasse químio para tratar o câncer.",
+          "translation": "The oncologist wanted me to use chemo to treat the cancer."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "[with direct object (more common) or de ‘a medical condition’]",
+                "family": "construction",
+                "kind": "companion_form",
+                "value": "[with direct object (more common) or de ‘a medical condition’]"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      },
+      {
+        "translation": "to treat (to handle, deal with or behave towards in a specific way)",
+        "pos": "verb",
+        "headword": "tratar",
+        "sense_id": "sense_8d17a890608090bae55a0529518603b6",
+        "frequency": "0.216216",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              13,
+              21
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              18,
+              26
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Vi um senhor tratando seus filhos muito mal.",
+          "translation": "I saw a gentleman treating his children very badly."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "[with direct object (more common) or de ‘someone’, along with bem or mal or other adverb ‘a particular way’]",
+                "family": "construction",
+                "kind": "companion_form",
+                "value": "[with direct object (more common) or de ‘someone’, along with bem or mal or other adverb ‘a particular way’]"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "2aa1d65d",
+    "word": "procurar",
+    "meanings": [
+      {
+        "translation": "to search; to seek; to look for",
+        "context": "transitive",
+        "pos": "verb",
+        "headword": "procurar",
+        "sense_id": "sense_f018a0d1c3096c67fb1960539acb9896",
+        "frequency": "0.375000",
+        "canonical_example": {
+          "bold_text_offsets": [
+            [
+              135,
+              142
+            ]
+          ],
+          "bold_translation_offsets": [
+            [
+              124,
+              132
+            ]
+          ],
+          "literal_meaning": "",
+          "tags": [],
+          "text": "Se você sentir que a acupuntura incomoda, discuta o assunto com o seu acupunturista. Se não ficar satisfeito com o que ele lhe disser, procure outro acupunturista que use agulhas mais finas.",
+          "translation": "If you feel acupuncture bothers you, discuss this with your acupuncturist. If you are not satisfied with what he tells you, look for another acupuncturist who uses thinner needles."
+        },
+        "source": "wiktionary",
+        "metadata": {
+          "source_adapter": "wiktionary-sense-menu/v1",
+          "sense_metadata": {
+            "contract_version": "sense-metadata/v1",
+            "features": [
+              {
+                "embedding_text": "transitive",
+                "family": "construction",
+                "kind": "grammar_tag",
+                "value": "transitive"
+              },
+              {
+                "embedding_text": "[with direct object or por ‘for something’]",
+                "family": "construction",
+                "kind": "companion_form",
+                "value": "[with direct object or por ‘for something’]"
+              }
+            ]
+          },
+          "cross_references": []
+        }
+      }
+    ]
+  }
+]

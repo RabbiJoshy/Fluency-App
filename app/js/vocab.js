@@ -1491,6 +1491,7 @@ function buildCardFormModel(item, meanings = [], options = {}) {
         productionAnswer,
         isPronominal,
         mergedLemma,
+        lemmaModeCompanions: mergedLemma ? item?._lemmaModeCompanions || null : null,
         dictionaryExamples: item?._dictionaryExamples || null,
         mergedSurfaces: combinedSurfaces.length > 0 ? combinedSurfaces : null
     };
@@ -2641,6 +2642,7 @@ function selectLemmaModeRepresentatives(items) {
     for (const item of items) {
         item._lemmaModeRepresentative = false;
         delete item._mergedDeckSurfaces;
+        delete item._lemmaModeCompanions;
         const lemmaKey = lemmaStudyGroupKey(item);
         if (!lemmaKey) {
             item._lemmaModeRepresentative = true;
@@ -2679,7 +2681,20 @@ function selectLemmaModeRepresentatives(items) {
         representative._lemmaModeRepresentative = true;
         representative._mergedDeckSurfaces = Array.from(surfacesByLemma.get(lemmaKey) || []);
     }
-    return items.filter(item => item._lemmaModeRepresentative === true);
+    const representatives = items.filter(item => item._lemmaModeRepresentative === true);
+    const backsByLemma = new Map();
+    for (const item of representatives) {
+        const lemma = lemmaStudyGroupKey(item) && lemmaGroupKey(item);
+        if (!lemma) continue;
+        if (!backsByLemma.has(lemma)) backsByLemma.set(lemma, []);
+        backsByLemma.get(lemma).push(item);
+    }
+    for (const backs of backsByLemma.values()) {
+        if (backs.length < 2) continue;
+        const companions = backs.map(item => ({id: item.id, surface: item.word}));
+        for (const item of backs) item._lemmaModeCompanions = companions;
+    }
+    return representatives;
 }
 
 // Each language the learner reads excludes on its own, at its own cutoff, so

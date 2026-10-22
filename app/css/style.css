@@ -26934,8 +26934,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     text-align: left !important;
 }
 
-/* Grammar frames show only on the row in use, as a pill holding the phrase
-   ("contar que"); other rows drop them unless the frame is all they say. */
+/* Construction phrases share readable, wrapping pills on every sense row. */
 .meanings-scroll.inline-sense-rows .sense-target-collocation.is-frame-hidden:not(#_) { display: none !important; }
 .meanings-scroll.inline-sense-rows .meaning-row .sense-target-collocation.is-frame-pill:not(#_),
 .meanings-scroll.inline-sense-rows .meaning-row .sense-inline-tr > .sense-target-collocation.is-frame-pill:not(#_) {
@@ -26945,12 +26944,44 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     border-radius: 999px !important;
     background: color-mix(in srgb, var(--text-primary) 14%, transparent) !important;
     color: var(--text-primary) !important;
-    font-size: 15px !important;
+    font-size: 20px !important;
     font-weight: 500 !important;
     font-style: normal !important;
     line-height: 1.5 !important;
-    white-space: nowrap;
+    white-space: normal !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    text-indent: 0 !important;
     vertical-align: 1px;
+}
+
+.lemma-companion-cards {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 12px;
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+/* Compact-menu clamps must not cut a required construction in half. */
+.meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-regular.has-construction-pill .meaning-row-body:not(#_) {
+    display: block !important;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    overflow: visible !important;
+}
+.meanings-scroll.inline-sense-rows.has-compact-rows .has-construction-pill :is(.meaning-row-body, .sense-inline-line, .meaning-row-sub, .meaning-row-gloss, .meaning-context-cell):not(#_),
+.meanings-scroll.inline-sense-rows.has-compact-rows .group-card-varying-cell.has-construction-pill:not(#_) {
+    white-space: normal !important;
+    overflow: visible !important;
+    max-width: 100%;
+}
+.meanings-scroll.inline-sense-rows.has-compact-rows .has-construction-pill .is-frame-pill:not(#_) {
+    display: inline-block !important;
+    white-space: normal !important;
 }
 
 /* A shared translation shows alone until it is the one in use; its contexts
