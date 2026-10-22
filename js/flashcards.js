@@ -1,41 +1,41 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=df3b5cc7';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=df3b5cc7';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=df3b5cc7';
-import { songCreditHTML } from './song-credit.js?v=df3b5cc7';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=df3b5cc7';
+import './state.js?v=a88a91c3';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=a88a91c3';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=a88a91c3';
+import { songCreditHTML } from './song-credit.js?v=a88a91c3';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=a88a91c3';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=df3b5cc7';
-import './speech.js?v=df3b5cc7';
-import { goToRoute, routeCodeFor } from './routes.js?v=df3b5cc7';
-import { memoryTipTileHTML } from './memory-tips.js?v=df3b5cc7';
+import { fitSenseRowText } from './card-row-layout.js?v=a88a91c3';
+import './speech.js?v=a88a91c3';
+import { goToRoute, routeCodeFor } from './routes.js?v=a88a91c3';
+import { memoryTipTileHTML } from './memory-tips.js?v=a88a91c3';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=df3b5cc7';
-import './side-dock.js?v=df3b5cc7';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=df3b5cc7';
+} from './function-word-card.js?v=a88a91c3';
+import './side-dock.js?v=a88a91c3';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=a88a91c3';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=df3b5cc7';
+} from './example-personalisation.js?v=a88a91c3';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=df3b5cc7';
+} from './spanishdict-usage.js?v=a88a91c3';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=df3b5cc7';
+} from './reverse-cues.js?v=a88a91c3';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -70,8 +70,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=df3b5cc7';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=df3b5cc7';
+} from './card-metadata-pills.js?v=a88a91c3';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=a88a91c3';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -3324,17 +3324,6 @@ function selectSplitCompanion(event, readingIndex) {
         && candidate.targetWord === card.targetWord) goToDeckCard(index);
 }
 window.selectSplitCompanion = selectSplitCompanion;
-
-window.openLemmaCompanion = async function(event, id) {
-    event.preventDefault();
-    event.stopPropagation();
-    const index = flashcards.findIndex(card => String(card.id) === String(id));
-    if (index >= 0) {
-        goToDeckCard(index);
-        return;
-    }
-    await window.popupFoundWord?.({id}, {reopenSearchOnBack: false, startFlipped: false});
-};
 
 function splitUsageShareHTML(card) {
     const share = card?.splitInfo?.share;
@@ -7241,13 +7230,6 @@ function renderCardWikipediaBadge(card) {
                 frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
                 if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
                 frontPOSEl.innerHTML = pillsHTML;
-                if (card.lemmaModeCompanions?.length > 1) {
-                    const companions = card.lemmaModeCompanions;
-                    const index = companions.findIndex(entry => String(entry.id) === String(card.id));
-                    const links = companions.filter(entry => String(entry.id) !== String(card.id)).map(entry =>
-                        `<button type="button" class="sense-cross-reference" data-companion-id="${escapeCardText(entry.id)}" onclick="openLemmaCompanion(event, this.dataset.companionId)">Uses in ${escapeCardText(entry.surface)}</button>`).join('');
-                    frontPOSEl.innerHTML += `<div class="lemma-companion-cards"><span>Uses ${index + 1} of ${companions.length} · ${escapeCardText(card.targetWord)}</span>${links}</div>`;
-                }
             }
             frontPOSEl.style.display = 'grid';
             // Keep every label in a group at the same size. The grid reserves
@@ -11529,8 +11511,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'df3b5cc7';
-const MODALS_ASSET_VERSION = 'df3b5cc7';
+const ASSET_VERSION = 'a88a91c3';
+const MODALS_ASSET_VERSION = 'a88a91c3';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

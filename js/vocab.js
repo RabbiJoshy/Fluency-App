@@ -1,14 +1,14 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=df3b5cc7';
-import { readJsonWithTimeout } from './read-request.js?v=df3b5cc7';
-import { validateVocabularyIndex } from './data-contracts.js?v=df3b5cc7';
-import { formatRoute } from './routes.js?v=df3b5cc7';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=df3b5cc7';
-import { releaseUrl } from './release-host.js?v=df3b5cc7';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=df3b5cc7';
-import { getGrammarWordDefinition } from './function-word-card.js?v=df3b5cc7';
+import './state.js?v=a88a91c3';
+import { readJsonWithTimeout } from './read-request.js?v=a88a91c3';
+import { validateVocabularyIndex } from './data-contracts.js?v=a88a91c3';
+import { formatRoute } from './routes.js?v=a88a91c3';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=a88a91c3';
+import { releaseUrl } from './release-host.js?v=a88a91c3';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=a88a91c3';
+import { getGrammarWordDefinition } from './function-word-card.js?v=a88a91c3';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1499,7 +1499,6 @@ function buildCardFormModel(item, meanings = [], options = {}) {
         productionAnswer,
         isPronominal,
         mergedLemma,
-        lemmaModeCompanions: mergedLemma ? item?._lemmaModeCompanions || null : null,
         dictionaryExamples: item?._dictionaryExamples || null,
         mergedSurfaces: combinedSurfaces.length > 0 ? combinedSurfaces : null
     };
@@ -2650,7 +2649,6 @@ function selectLemmaModeRepresentatives(items) {
     for (const item of items) {
         item._lemmaModeRepresentative = false;
         delete item._mergedDeckSurfaces;
-        delete item._lemmaModeCompanions;
         const lemmaKey = lemmaStudyGroupKey(item);
         if (!lemmaKey) {
             item._lemmaModeRepresentative = true;
@@ -2689,20 +2687,7 @@ function selectLemmaModeRepresentatives(items) {
         representative._lemmaModeRepresentative = true;
         representative._mergedDeckSurfaces = Array.from(surfacesByLemma.get(lemmaKey) || []);
     }
-    const representatives = items.filter(item => item._lemmaModeRepresentative === true);
-    const backsByLemma = new Map();
-    for (const item of representatives) {
-        const lemma = lemmaStudyGroupKey(item) && lemmaGroupKey(item);
-        if (!lemma) continue;
-        if (!backsByLemma.has(lemma)) backsByLemma.set(lemma, []);
-        backsByLemma.get(lemma).push(item);
-    }
-    for (const backs of backsByLemma.values()) {
-        if (backs.length < 2) continue;
-        const companions = backs.map(item => ({id: item.id, surface: item.word}));
-        for (const item of backs) item._lemmaModeCompanions = companions;
-    }
-    return representatives;
+    return items.filter(item => item._lemmaModeRepresentative === true);
 }
 
 // Each language the learner reads excludes on its own, at its own cutoff, so
