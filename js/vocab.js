@@ -1,14 +1,14 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=9e4eaa75';
-import { readJsonWithTimeout } from './read-request.js?v=9e4eaa75';
-import { validateVocabularyIndex } from './data-contracts.js?v=9e4eaa75';
-import { formatRoute } from './routes.js?v=9e4eaa75';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=9e4eaa75';
-import { releaseUrl } from './release-host.js?v=9e4eaa75';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=9e4eaa75';
-import { getGrammarWordDefinition } from './function-word-card.js?v=9e4eaa75';
+import './state.js?v=7d3488cd';
+import { readJsonWithTimeout } from './read-request.js?v=7d3488cd';
+import { validateVocabularyIndex } from './data-contracts.js?v=7d3488cd';
+import { formatRoute } from './routes.js?v=7d3488cd';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=7d3488cd';
+import { releaseUrl } from './release-host.js?v=7d3488cd';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=7d3488cd';
+import { getGrammarWordDefinition } from './function-word-card.js?v=7d3488cd';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';

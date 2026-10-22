@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v596-9e4eaa75';
+const CACHE_NAME = 'flashcards-v596-7d3488cd';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = '9e4eaa75';
+const ASSET_VERSION = '7d3488cd';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -26,22 +26,22 @@ const ASSET_VERSION = '9e4eaa75';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=9e4eaa75',
-  '/css/appearance.css?v=9e4eaa75',
-  '/css/ui-refinements.css?v=9e4eaa75',
-  '/css/desktop-shell.css?v=9e4eaa75',
-  '/css/black-palette.css?v=9e4eaa75',
-  '/css/home-layout.css?v=9e4eaa75',
-  '/css/music-workspace.css?v=9e4eaa75',
-  '/js/music-workspace.js?v=9e4eaa75',
-  '/js/saved-items.js?v=9e4eaa75',
-  '/css/saved-items.css?v=9e4eaa75',
-  '/js/desktop-shell.js?v=9e4eaa75',
-  '/js/ai-preference.js?v=9e4eaa75',
-  '/js/appearance-bootstrap.js?v=9e4eaa75',
-  '/js/theme.js?v=9e4eaa75',
+  '/css/style.css?v=7d3488cd',
+  '/css/appearance.css?v=7d3488cd',
+  '/css/ui-refinements.css?v=7d3488cd',
+  '/css/desktop-shell.css?v=7d3488cd',
+  '/css/black-palette.css?v=7d3488cd',
+  '/css/home-layout.css?v=7d3488cd',
+  '/css/music-workspace.css?v=7d3488cd',
+  '/js/music-workspace.js?v=7d3488cd',
+  '/js/saved-items.js?v=7d3488cd',
+  '/css/saved-items.css?v=7d3488cd',
+  '/js/desktop-shell.js?v=7d3488cd',
+  '/js/ai-preference.js?v=7d3488cd',
+  '/js/appearance-bootstrap.js?v=7d3488cd',
+  '/js/theme.js?v=7d3488cd',
   `/css/progress-overview.css?v=${ASSET_VERSION}`,
-  '/css/light-theme.css?v=9e4eaa75',
+  '/css/light-theme.css?v=7d3488cd',
   '/config/config.json',
   '/data/speech-frequency/es-literal-ground-r6-fw1.json',
   '/data/speech-frequency/fi.json',
@@ -55,77 +55,77 @@ const urlsToCache = [
   '/data/estimation-pools/french.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/routes.js?v=9e4eaa75',
-  '/js/main.js?v=9e4eaa75',
-  '/js/theme.js?v=9e4eaa75',
-  '/js/state.js?v=9e4eaa75',
+  '/js/routes.js?v=7d3488cd',
+  '/js/main.js?v=7d3488cd',
+  '/js/theme.js?v=7d3488cd',
+  '/js/state.js?v=7d3488cd',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
   `/js/offline-db.js?v=${ASSET_VERSION}`,
   `/js/read-request.js?v=${ASSET_VERSION}`,
   `/js/sync-queue.js?v=${ASSET_VERSION}`,
   `/js/offline-content.js?v=${ASSET_VERSION}`,
-  '/js/speech.js?v=9e4eaa75',
+  '/js/speech.js?v=7d3488cd',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
-  '/js/auth.js?v=9e4eaa75',
+  '/js/auth.js?v=7d3488cd',
   `/js/learning-profiles.js?v=${ASSET_VERSION}`,
   `/js/swipe-onboarding.js?v=${ASSET_VERSION}`,
   `/css/learning-profiles.css?v=${ASSET_VERSION}`,
-  '/js/card-replica.js?v=9e4eaa75',
-  '/js/tutorial.js?v=9e4eaa75',
-  '/js/walkthrough.js?v=9e4eaa75',
-  '/js/spotify.js?v=9e4eaa75',
-  '/js/estimation.js?v=9e4eaa75',
-  '/js/release-host.js?v=9e4eaa75',
-  '/js/sense-gloss.js?v=9e4eaa75',
-  '/js/env.js?v=9e4eaa75',
-  '/js/config.js?v=9e4eaa75',
-  '/js/progress.js?v=9e4eaa75',
-  '/js/srs-policy.js?v=9e4eaa75',
-  '/js/account-permissions.js?v=9e4eaa75',
-  '/js/progress-identity.js?v=9e4eaa75',
-  '/js/knowledge.js?v=9e4eaa75',
+  '/js/card-replica.js?v=7d3488cd',
+  '/js/tutorial.js?v=7d3488cd',
+  '/js/walkthrough.js?v=7d3488cd',
+  '/js/spotify.js?v=7d3488cd',
+  '/js/estimation.js?v=7d3488cd',
+  '/js/release-host.js?v=7d3488cd',
+  '/js/sense-gloss.js?v=7d3488cd',
+  '/js/env.js?v=7d3488cd',
+  '/js/config.js?v=7d3488cd',
+  '/js/progress.js?v=7d3488cd',
+  '/js/srs-policy.js?v=7d3488cd',
+  '/js/account-permissions.js?v=7d3488cd',
+  '/js/progress-identity.js?v=7d3488cd',
+  '/js/knowledge.js?v=7d3488cd',
   `/js/progress-overview.js?v=${ASSET_VERSION}`,
-  '/js/session-plan.js?v=9e4eaa75',
-  '/js/ui.js?v=9e4eaa75',
-  '/js/fast-track-preferences.js?v=9e4eaa75',
-  '/js/vocab.js?v=9e4eaa75',
-  '/js/grammar-cards.js?v=9e4eaa75',
-  '/js/language-profile.js?v=9e4eaa75',
-  '/js/bridge.js?v=9e4eaa75',
-  '/js/smart-skip-pairs.js?v=9e4eaa75',
+  '/js/session-plan.js?v=7d3488cd',
+  '/js/ui.js?v=7d3488cd',
+  '/js/fast-track-preferences.js?v=7d3488cd',
+  '/js/vocab.js?v=7d3488cd',
+  '/js/grammar-cards.js?v=7d3488cd',
+  '/js/language-profile.js?v=7d3488cd',
+  '/js/bridge.js?v=7d3488cd',
+  '/js/smart-skip-pairs.js?v=7d3488cd',
   '/config/smart-skip-pairs.json',
   '/data/bridge/es-fw1-ds25.json',
   '/data/bridge/fr-fw1-ds25.json',
   '/data/bridge/pt-fw1-ds25.json',
   '/data/bridge/cs-fw1.json',
-  '/js/cognates.js?v=9e4eaa75',
-  '/js/coverage.js?v=9e4eaa75',
-  '/js/fast-mode.js?v=9e4eaa75',
-  '/js/extras.js?v=9e4eaa75',
+  '/js/cognates.js?v=7d3488cd',
+  '/js/coverage.js?v=7d3488cd',
+  '/js/fast-mode.js?v=7d3488cd',
+  '/js/extras.js?v=7d3488cd',
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
-  '/js/song-sets.js?v=9e4eaa75',
-  '/js/spotify-playlist-import.js?v=9e4eaa75',
-  '/js/playlist-live.js?v=9e4eaa75',
-  '/js/subtitle-import.js?v=9e4eaa75',
+  '/js/song-sets.js?v=7d3488cd',
+  '/js/spotify-playlist-import.js?v=7d3488cd',
+  '/js/playlist-live.js?v=7d3488cd',
+  '/js/subtitle-import.js?v=7d3488cd',
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
-  '/js/vocabulary-import.js?v=9e4eaa75',
+  '/js/vocabulary-import.js?v=7d3488cd',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
-  '/js/reverse-cues.js?v=9e4eaa75',
-  '/js/flags.js?v=9e4eaa75',
-  '/js/card-metadata-pills.js?v=9e4eaa75',
-  '/js/flashcards.js?v=9e4eaa75',
-  '/js/card-row-layout.js?v=9e4eaa75',
-  '/js/keyboard-guide.js?v=9e4eaa75',
+  '/js/reverse-cues.js?v=7d3488cd',
+  '/js/flags.js?v=7d3488cd',
+  '/js/card-metadata-pills.js?v=7d3488cd',
+  '/js/flashcards.js?v=7d3488cd',
+  '/js/card-row-layout.js?v=7d3488cd',
+  '/js/keyboard-guide.js?v=7d3488cd',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   '/icons/apple-touch-icon.png',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
-  '/js/flashcards-modals.js?v=9e4eaa75',
-  '/js/flashcards-conj.js?v=9e4eaa75',
-  '/js/side-dock.js?v=9e4eaa75',
-  '/js/review-home.js?v=9e4eaa75'
+  '/js/flashcards-modals.js?v=7d3488cd',
+  '/js/flashcards-conj.js?v=7d3488cd',
+  '/js/side-dock.js?v=7d3488cd',
+  '/js/review-home.js?v=7d3488cd'
 ];
 
 self.addEventListener('install', event => {
@@ -291,18 +291,21 @@ self.addEventListener('fetch', event => {
   // Pay one small HTML request while online, cache it for offline fallback,
   // and keep every heavier asset on the fast path below.
   if (request.mode === 'navigate') {
+    // Only the app's own page is the offline shell. The standalone About page
+    // is cached under its own address, never as index.html. Cloudflare serves
+    // it as /about (no .html), GitHub Pages as /about.html.
+    const isAppShell = !/\/about(?:\.html)?$/.test(new URL(request.url).pathname);
     event.respondWith(
       fetch(request).then(response => {
         if (response && response.status === 200 && response.type === 'basic') {
           return caches.open(CACHE_NAME)
-            .then(cache => cache.put(scopedPath('/index.html'), response.clone()))
+            .then(cache => cache.put(isAppShell ? scopedPath('/index.html') : request, response.clone()))
             .then(() => response);
         }
         return response;
       }).catch(() => caches.open(CACHE_NAME).then(cache =>
         cache.match(request).then(cached => cached
-          || cache.match(scopedPath('/index.html'))
-          || cache.match(scopedPath('/')))
+          || (isAppShell ? cache.match(scopedPath('/index.html')) : Response.error()))
       ))
     );
     return;
