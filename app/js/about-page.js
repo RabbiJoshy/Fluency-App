@@ -6,9 +6,9 @@
 // from them. The cards are the shared replicas (card-replica.js); the
 // frequency bars come from prominence-badge.js, as on the live card.
 
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=696926f8';
-import './prominence-badge.js?v=696926f8';
-import './walkthrough.js?v=696926f8';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=df3b5cc7';
+import './prominence-badge.js?v=df3b5cc7';
+import './walkthrough.js?v=df3b5cc7';
 
 // Minimal Markdown → HTML renderer. Handles headings (##/###), paragraphs,
 // unordered lists, bold/italic, inline code, links, and images. Enough for
@@ -118,6 +118,26 @@ function renderMarkdown(md) {
     }
     flushAll();
     return html.join('\n');
+}
+
+// Wrap the leading h2 title in a header with the "Open app →" link tucked in
+// the top-right corner on the same horizontal line.
+function _setupAboutHeader(body) {
+    const existing = body.querySelector('.about-standalone-header');
+    if (existing) existing.remove();
+    const title = body.querySelector('h2');
+    if (!title) return;
+
+    const header = document.createElement('header');
+    header.className = 'about-standalone-header';
+    title.parentNode.insertBefore(header, title);
+    header.appendChild(title);
+
+    const link = document.createElement('a');
+    link.href = './';
+    link.className = 'about-standalone-app-link';
+    link.innerHTML = 'Open app &rarr;';
+    header.appendChild(link);
 }
 
 // Append the footnote + data-sources section at the bottom of the About
@@ -570,6 +590,7 @@ async function renderAboutPage() {
         const resp = await fetch('content/about.md');
         if (!resp.ok) throw new Error('Failed to load about.md');
         body.innerHTML = renderMarkdown(await resp.text());
+        _setupAboutHeader(body);
         layoutAboutTwoModes(body);
         mountAboutDemos(body);
         _appendAboutFootnotes(body);
