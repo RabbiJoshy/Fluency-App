@@ -292,8 +292,9 @@ self.addEventListener('fetch', event => {
   // and keep every heavier asset on the fast path below.
   if (request.mode === 'navigate') {
     // Only the app's own page is the offline shell. The standalone About page
-    // (about.html) is cached under its own address, never as index.html.
-    const isAppShell = !new URL(request.url).pathname.endsWith('/about.html');
+    // is cached under its own address, never as index.html. Cloudflare serves
+    // it as /about (no .html), GitHub Pages as /about.html.
+    const isAppShell = !/\/about(?:\.html)?$/.test(new URL(request.url).pathname);
     event.respondWith(
       fetch(request).then(response => {
         if (response && response.status === 200 && response.type === 'basic') {
