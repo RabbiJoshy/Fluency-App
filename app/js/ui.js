@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=766d9c0f';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=766d9c0f';
-import { readFastTrack } from './fast-track-preferences.js?v=766d9c0f';
-import './session-plan.js?v=766d9c0f';
+import './state.js?v=15615a29';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=15615a29';
+import { readFastTrack } from './fast-track-preferences.js?v=15615a29';
+import './session-plan.js?v=15615a29';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3746,7 +3746,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=766d9c0f')
+        import('./spotify.js?v=15615a29')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -4413,6 +4413,7 @@ window.updatePercentModeButton = updatePercentModeButton;
 window.updateStep2Tooltip = updateStep2Tooltip;
 window.updateStep5Tooltip = updateStep5Tooltip;
 window.renderLevelSelector = renderLevelSelector;
+window.updateLevelSelector = renderLevelSelector;
 window.refreshSetupAfterProgress = async function() {
     if (_setupLevelSelectionWasManual) return renderRangeSelector();
     return renderLevelSelector(selectedLanguage, { preferActionable: true });

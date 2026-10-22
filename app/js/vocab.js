@@ -1,14 +1,14 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=766d9c0f';
-import { readJsonWithTimeout } from './read-request.js?v=766d9c0f';
-import { validateVocabularyIndex } from './data-contracts.js?v=766d9c0f';
-import { formatRoute } from './routes.js?v=766d9c0f';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=766d9c0f';
-import { releaseUrl } from './release-host.js?v=766d9c0f';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=766d9c0f';
-import { getGrammarWordDefinition } from './function-word-card.js?v=766d9c0f';
+import './state.js?v=15615a29';
+import { readJsonWithTimeout } from './read-request.js?v=15615a29';
+import { validateVocabularyIndex } from './data-contracts.js?v=15615a29';
+import { formatRoute } from './routes.js?v=15615a29';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=15615a29';
+import { releaseUrl } from './release-host.js?v=15615a29';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=15615a29';
+import { getGrammarWordDefinition } from './function-word-card.js?v=15615a29';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1302,7 +1302,13 @@ globalThis.isExpressionSenseForLemma = isExpressionSenseForLemma;
 globalThis.detectSplitCardTuples = detectSplitCardTuples;
 globalThis.cleanHeadwordToken = cleanHeadwordToken;
 
+let _lastLemmaExampleBasis = null;
 function computeLemmaExampleCounts(vocabData, examplesData) {
+    if (_lastLemmaExampleBasis
+        && _lastLemmaExampleBasis.vocabData === vocabData
+        && _lastLemmaExampleBasis.examplesData === examplesData) {
+        return _lastLemmaExampleBasis.result;
+    }
     const linesByLemma = new Map();
     let hasExampleBasis = false;
     for (const item of vocabData) {
@@ -1319,10 +1325,12 @@ function computeLemmaExampleCounts(vocabData, examplesData) {
             }
         });
     }
-    return {
+    const result = {
         counts: new Map(Array.from(linesByLemma, ([lemma, lines]) => [lemma, lines.size])),
         hasExampleBasis
     };
+    _lastLemmaExampleBasis = { vocabData, examplesData, result };
+    return result;
 }
 
 function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {

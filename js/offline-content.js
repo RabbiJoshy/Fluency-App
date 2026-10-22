@@ -1,4 +1,4 @@
-import { dbDelete, dbGetAll, dbPut } from './offline-db.js?v=766d9c0f';
+import { dbDelete, dbGetAll, dbPut } from './offline-db.js?v=15615a29';
 
 const MANIFEST_URL = 'config/offline-content-manifest.json';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
@@ -182,7 +182,9 @@ export async function initOfflineContent() {
         }
     });
     document.getElementById('cancelOfflineDownloadBtn')?.addEventListener('click', cancelOfflineDownload);
-    await renderOfflineContent();
+    document.getElementById('storageTabBtn')?.addEventListener('click', () => {
+        renderOfflineContent();
+    });
 }
 
 window.renderOfflineContent = renderOfflineContent;

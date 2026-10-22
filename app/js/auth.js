@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=766d9c0f';
-import { accountPermissions } from './account-permissions.js?v=766d9c0f';
-import { readJsonWithTimeout } from './read-request.js?v=766d9c0f';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=766d9c0f';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=766d9c0f';
-import { dbGet, dbPut } from './offline-db.js?v=766d9c0f';
-import { consumeRouteNavigation } from './routes.js?v=766d9c0f';
+import './state.js?v=15615a29';
+import { accountPermissions } from './account-permissions.js?v=15615a29';
+import { readJsonWithTimeout } from './read-request.js?v=15615a29';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=15615a29';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=15615a29';
+import { dbGet, dbPut } from './offline-db.js?v=15615a29';
+import { consumeRouteNavigation } from './routes.js?v=15615a29';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=766d9c0f';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=766d9c0f';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=766d9c0f';
+} from './sync-queue.js?v=15615a29';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=15615a29';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=15615a29';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {
@@ -68,8 +68,10 @@ async function loadSecrets() {
 
     // Pages never ships backend/. Older offline workers can replay a cached
     // HTML fallback here and start recursive module preloads before updating.
-    // Staging already has every public endpoint above; do not probe that URL.
+    // Staging and production already have public endpoints above; do not probe that URL.
     if (IS_STAGING) return;
+    const isLocal = typeof window !== 'undefined' && /^(localhost|127\.0\.0\.1)$/.test(window.location?.hostname || '');
+    if (!isLocal) return;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
