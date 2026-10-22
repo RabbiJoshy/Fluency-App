@@ -1,26 +1,28 @@
 ## The problem with most vocabulary apps
 
-Most vocabulary apps teach by theme (colours, at the airport, in the kitchen) and drill you on lists of words you have no reason to care about yet. You learn *la cuchara* (spoon) and forget it before you ever hear or use it in the wild.
+Most vocabulary apps teach by theme (colours, at the airport, in the kitchen) and drill you on lists of words you have no reason to care about yet. You learn *la cuchara* (spoon) and forget it before you ever hear or use it in real life.
 
-This app takes the opposite approach: it turns speech and song lyrics into flashcards, starts with the words that occur most often, and teaches them through material you already care about.
+This app takes the opposite approach: it starts with the words that occur most often, and teaches them through things you already watch and listen to. Learn from everyday speech, from a playlist of songs you love, or from the series you are watching right now.
+
+Choose a series and its dialogue becomes your vocabulary. In *La Casa de Papel*, *rehenes* (hostages) is the 120th most common word, where everyday Spanish puts it around 4,300th; *atraco* (heist) is 193rd, against nearly 9,000th. Music works the same way: on Bad Bunny's *YHLQMDLG*, *perreo* (reggaeton dancing) is among the 70 most common words, though it is rare in everyday Spanish.
 
 ### Speech
 
 ![Speech: a flashcard flipping and cycling through senses](demo://normal)
 
-Learn from subtitle dialogue, ordered by how common each word is across millions of subtitle lines. Every flashcard is paired with real examples from OpenSubtitles and Tatoeba at your current level, so you don't get a rare word hidden inside an even rarer sentence.
+Learn Spanish as people actually speak it, with every word ranked by how often it comes up across millions of conversations in films and TV shows. Each card comes with real examples, lines from film and TV alongside professionally translated sentences, chosen to suit your level, so you never meet a rare word hidden inside an even rarer sentence.
 
-Words with more than one meaning are split apart: *banco* is usually a *bank* and occasionally a *bench*, and each meaning gets its own sentence. Starting from frequency also brings small linking words like *que* to the front, where a themed lesson would bury them.
+Words with more than one meaning are split apart: *banco* is usually a *bank* and occasionally a *bench*, and each meaning gets its own sentence. Starting from frequency also brings everyday essentials like *mañana* (tomorrow) and *todavía* (still) to the front, where a themed lesson would bury them.
 
-### Lyrics
+### Music
 
 ![Lyrics: a lyric card with the translated line](demo://artist)
 
-Pick an artist (Bad Bunny, say) and the app builds a frequency-ranked vocabulary from their catalogue. Each flashcard shows an actual song lyric containing the word, with the line translated underneath. Tap the Spotify button and the line plays in your own Spotify at that exact moment, so you hear the word in context on the original track.
+Bring a playlist, your own from Spotify or one of the ready-made ones, and the app turns it into a vocabulary of the words those songs actually use, most frequent first. Each flashcard shows a real lyric containing the word, with the line translated underneath. Tap the Spotify button and the line plays at that exact moment, so you hear the word on the original track.
 
-For words with several meanings, the card shows how the artist actually uses them: in these songs *cielo* is mostly *heaven*, and sometimes the *sky*.
+For words with several meanings, the card shows how your songs actually use them: in these songs *cielo* is mostly *heaven*, and sometimes the *sky*.
 
-A relatively small number of words make up most lyrics. Learn the most frequent few hundred and you can already recognise much of the catalogue.
+A relatively small number of words make up most lyrics. Learn the most frequent few hundred and you can already follow much of the playlist.
 
 ## What's under the hood
 

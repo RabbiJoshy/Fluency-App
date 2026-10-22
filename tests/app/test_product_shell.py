@@ -456,7 +456,9 @@ class ProductShellTests(unittest.TestCase):
         # The demo cards are the way in: tapping one opens the walkthrough on
         # that card, with a caption under the pair saying so.
         self.assertIn("window.openWalkthrough?.({ start })", auth)
-        self.assertIn("Tap a card to see every part of it explained", auth)
+        # A tapped card shows a tooltip into the walkthrough (no caption button).
+        self.assertIn("See every part of this card explained", auth)
+        self.assertNotIn("about-demo-caption", auth)
         self.assertIn("demo://normal", about)
         self.assertIn("demo://artist", about)
         self.assertNotIn("tutorial", about.lower())

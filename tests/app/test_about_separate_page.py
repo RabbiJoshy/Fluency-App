@@ -55,6 +55,18 @@ class AboutSeparatePageTests(unittest.TestCase):
         css = (APP / 'css' / 'style.css').read_text()
         self.assertIn('.about-demo-card-inner .meaning-row.meaning-row-regular {', css)
 
+    def test_demo_meanings_most_common_first(self):
+        about = (APP / 'js' / 'about-page.js').read_text()
+        self.assertIn("[...card.meanings].sort((a, b) => (Number(b.pct) || 0) - (Number(a.pct) || 0))", about)
+
+    def test_about_copy(self):
+        md = (APP / 'content' / 'about.md').read_text()
+        self.assertIn('in real life', md)
+        self.assertNotIn('in the wild', md)
+        self.assertIn('### Music', md)
+        self.assertIn('*rehenes* (hostages)', md)
+        self.assertNotIn('Bad Bunny, say', md)
+
 
 if __name__ == '__main__':
     unittest.main()
