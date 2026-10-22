@@ -182,7 +182,9 @@ export async function initOfflineContent() {
         }
     });
     document.getElementById('cancelOfflineDownloadBtn')?.addEventListener('click', cancelOfflineDownload);
-    await renderOfflineContent();
+    document.getElementById('storageTabBtn')?.addEventListener('click', () => {
+        renderOfflineContent();
+    });
 }
 
 window.renderOfflineContent = renderOfflineContent;

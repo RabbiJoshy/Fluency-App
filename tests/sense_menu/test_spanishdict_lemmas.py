@@ -161,6 +161,30 @@ class EncliticTests(unittest.TestCase):
     def test_object_pronoun_is_not_reflexive(self) -> None:
         self.assertEqual(rule().resolve("cógelo").lemma_names, ["coger"])
 
+    def test_semantic_enclitic_split(self) -> None:
+        # Pure object clitic: dele -> dar (is_pure_object=True, target_card=dar)
+        dele_split = rule().semantic_enclitic_split("dele")
+        self.assertIsNotNone(dele_split)
+        self.assertEqual(dele_split["target_card"], "dar")
+        self.assertTrue(dele_split["is_pure_object"])
+        self.assertFalse(dele_split["meaning_shift"])
+
+        # Pronominal verb: vayámonos -> irse (meaning_shift=True, target_card=irse)
+        vaya_split = rule().semantic_enclitic_split("vayámonos")
+        self.assertIsNotNone(vaya_split)
+        self.assertEqual(vaya_split["target_card"], "irse")
+        self.assertTrue(vaya_split["meaning_shift"])
+
+    def test_is_its_own_word(self) -> None:
+        r = rule()
+        # Words in conjugation table or with non-verb senses
+        self.assertIsNotNone(r.is_its_own_word("chica"))
+        cache = {"pelo": {"dictionary_analyses": [{"headword": "pelo", "senses": [{"pos": "noun"}]}]}}
+        self.assertIsNotNone(r.is_its_own_word("pelo", cache))
+        # Non-guarded clitic
+        self.assertIsNone(r.is_its_own_word("matarme", cache))
+
+
 
 class OverrideAndTrustTests(unittest.TestCase):
     def test_override_replaces_everything_for_its_surface(self) -> None:

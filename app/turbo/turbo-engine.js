@@ -94,6 +94,49 @@ export class TurboEngine {
             };
         }
 
+        // 2b. Spanish attached enclitic resolution (e.g. matarme -> matar, matárselo -> matar, hacerlo -> hacer, dímelo -> decir)
+        if (this.language === 'es' || !this.language) {
+            const encliticMatch = norm.match(/^(.+?)(me|te|se|nos|os|le|les|lo|la|los|las)$/);
+            if (encliticMatch) {
+                const candidates = [];
+                const doubleMatch = norm.match(/^(.+?)(me|te|se|nos|os)(lo|la|los|las|le|les)$/);
+                if (doubleMatch) {
+                    candidates.push({ stem: doubleMatch[1], clitics: [doubleMatch[2], doubleMatch[3]] });
+                }
+                candidates.push({ stem: encliticMatch[1], clitics: [encliticMatch[2]] });
+
+                for (const { stem, clitics } of candidates) {
+                    const deaccented = stem.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const stemVariants = [stem, deaccented];
+                    if (!deaccented.endsWith('r') && !deaccented.endsWith('ando') && !deaccented.endsWith('iendo') && !deaccented.endsWith('yendo')) {
+                        stemVariants.push(deaccented + 'r');
+                    }
+
+                    for (const cand of stemVariants) {
+                        const targetWord = this.dictionary[cand] ? cand : (this.lemmas50k[cand] && this.dictionary[this.lemmas50k[cand]] ? this.lemmas50k[cand] : null);
+                        if (targetWord && this.dictionary[targetWord]) {
+                            const entry = this.dictionary[targetWord];
+                            const rank = this.ranks50k[norm] || entry.rank || null;
+                            return {
+                                word: targetWord,
+                                originalWord: norm,
+                                cliticAttached: true,
+                                clitics,
+                                dictEntry: entry,
+                                translation: entry.top_translation,
+                                pos: entry.top_pos,
+                                rank,
+                                speechRank: entry.rank,
+                                isPolysemous: entry.polysemous,
+                                meaningCount: entry.meaningCount,
+                                meanings: entry.meanings
+                            };
+                        }
+                    }
+                }
+            }
+        }
+
         // 3. Fallback: Check if word exists in 50k frequency list without dictionary meaning
         const freqRank = this.ranks50k[norm] || null;
         if (freqRank) {

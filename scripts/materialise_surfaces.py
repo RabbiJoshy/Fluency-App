@@ -242,6 +242,27 @@ def main() -> int:
 
     surfaces = {}
     lang = args.language
+
+    clitic_rule = None
+    surface_cache = {}
+    if lang == "es":
+        from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule
+        sd_root = ws / "raw/dictionaries/es/spanishdict"
+        if sd_root.is_dir():
+            snapshots = sorted([p for p in sd_root.glob("spanishdict-complete-menu-*") if (p / "conjugation_reverse.json").is_file()])
+            if snapshots:
+                latest_sd = snapshots[-1]
+                try:
+                    rev_data = json.loads((latest_sd / "conjugation_reverse.json").read_text(encoding="utf-8"))
+                    headwords_file = latest_sd / "headword_cache.json"
+                    surface_cache_file = latest_sd / "surface_cache.json"
+                    surface_cache = json.loads(surface_cache_file.read_text(encoding="utf-8")) if surface_cache_file.is_file() else {}
+                    hw_cache = json.loads(headwords_file.read_text(encoding="utf-8")) if headwords_file.is_file() else {}
+                    headwords_set = set(surface_cache.keys()) | set(hw_cache.keys())
+                    clitic_rule = SpanishDictLemmaRule(rev_data, known_headwords=frozenset(headwords_set))
+                except Exception:
+                    clitic_rule = None
+
     for surface, items in sorted(grouped.items()):
         found = verdict(items, policy)
         lemmas, pos, evidence = [], [], {}
@@ -293,6 +314,15 @@ def main() -> int:
                 seen_alt.add(lemma)
                 alternates.append({"lemma": lemma, "provenance": label})
         lemmas = [primary] if primary else []
+
+        parent_surface = None
+        parent_relation = None
+        if clitic_rule is not None:
+            split = clitic_rule.semantic_enclitic_split(surface, cache=surface_cache)
+            if split:
+                parent_surface = split["target_card"]
+                parent_relation = "pronominal_enclitic" if split["meaning_shift"] else "enclitic"
+
         surfaces[surface] = {
             "surface": surface,
             "rank": ranks.get(surface),
@@ -304,6 +334,9 @@ def main() -> int:
             "lemma_alternates": alternates,
             "lemmas": lemmas,
             "part_of_speech": pos,
+            "parent_surface": parent_surface,
+            "parent_relation": parent_relation,
+            "child_surfaces": [],
             "evidence": evidence,
             "observations": len(items),
             # Split so a rerun can be reasoned about: the durable tags are
@@ -337,6 +370,12 @@ def main() -> int:
                 "rejected_sentence_ids": {},
                 "sentences_withheld": "surface excluded",
             }
+
+    # Cross-reference child surfaces on their parent entry
+    for surf, entry in surfaces.items():
+        ps = entry.get("parent_surface")
+        if ps and ps in surfaces and ps != surf:
+            surfaces[ps].setdefault("child_surfaces", []).append(surf)
 
     out = args.out or ledger_write_path(ws, lang)
     if not args.dry_run:

@@ -157,3 +157,20 @@ def test_inflect_verb_with_embedded_punctuation():
     assert inflect_single_verb_gloss("to matter; to mind", "indicativo", "presente", 2) == "he/she matters"
     assert inflect_single_verb_gloss("to mind, why don't", "indicativo", "presente", 2) == "he/she minds"
 
+
+def test_infinitive_and_gerund_clitic_inflection():
+    """Clitic object pronouns on infinitives and gerunds must inflect English glosses appropriately."""
+    assert inflect_single_verb_gloss("to kill", "infinitivo", "infinitivo", None, clitics=["me"]) == "to kill me"
+    assert inflect_single_verb_gloss("to kill", "infinitivo", "infinitivo", None, clitics=["lo"]) == "to kill it"
+    assert inflect_single_verb_gloss("to give", "infinitivo", "infinitivo", None, clitics=["te", "lo"]) == "to give you it"
+    assert inflect_single_verb_gloss("to kill", "gerundio", "gerundio", None, clitics=["me"]) == "killing me"
+    assert inflect_single_verb_gloss("to kill", "gerundio", "gerundio", None, clitics=["lo"]) == "killing it"
+
+    senses = [{"pos": "VERB", "translation": "to kill", "headword": "matar"}]
+    res = inflect_card_senses("matarme", "matar", senses, {})
+    assert res[0]["translation"] == "to kill me"
+
+    res_lo = inflect_card_senses("matarlo", "matar", senses, {})
+    assert res_lo[0]["translation"] == "to kill it"
+
+

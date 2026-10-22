@@ -4413,6 +4413,7 @@ window.updatePercentModeButton = updatePercentModeButton;
 window.updateStep2Tooltip = updateStep2Tooltip;
 window.updateStep5Tooltip = updateStep5Tooltip;
 window.renderLevelSelector = renderLevelSelector;
+window.updateLevelSelector = renderLevelSelector;
 window.refreshSetupAfterProgress = async function() {
     if (_setupLevelSelectionWasManual) return renderRangeSelector();
     return renderLevelSelector(selectedLanguage, { preferActionable: true });

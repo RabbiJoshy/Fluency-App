@@ -282,6 +282,18 @@ class LemmaResolution:
         }
 
 
+PRONOMINAL_SHIFT_VERBS = frozenset({
+    "ir", "acordar", "dormir", "morir", "poner", "quedar", "despedir",
+    "volver", "hacer", "llevar", "encontrar", "fijar", "negar",
+    "parecer", "pasar", "tirar", "levantar", "sentar", "llamar",
+})
+
+NON_VERB_POS = (
+    "noun", "adjective", "adverb", "preposition", "pronoun", "conjunction",
+    "article", "determiner", "numeral", "interjection",
+)
+
+
 @dataclass
 class SpanishDictLemmaRule:
     """Apply the declared-lemma rule to one surface at a time, offline."""
@@ -471,6 +483,78 @@ class SpanishDictLemmaRule:
         (lemma, form), (base, pronouns) = next(
             (key, value) for key, value in found.items() if key[1] == forms[0])
         return {"surface": surface, "host": form, "pronouns": list(pronouns), "lemma": lemma}
+
+    def is_its_own_word(self, surface: str, cache: Mapping[str, Any] | None = None) -> str | None:
+        """A surface that is a word in its own right is not a clitic bundle.
+
+        seguidos is a participle, pase a subjunctive, palo and finales nouns
+        and adjectives: stripping a pronoun-shaped ending from them invents a
+        split. Two tests, both SpanishDict's: the surface is itself a form in
+        the conjugation table, or its page files it under a non-verb part of
+        speech.
+        """
+        if surface.lower() in self._exact:
+            return "conjugation-table form"
+        if cache:
+            page = cache.get(surface) or {}
+            for analysis in page.get("dictionary_analyses") or []:
+                if headword_key((analysis or {}).get("headword") or "") != headword_key(surface):
+                    continue
+                for sense in (analysis or {}).get("senses") or []:
+                    pos = str((sense or {}).get("pos") or "").lower()
+                    if any(word in pos for word in NON_VERB_POS):
+                        return f"SpanishDict files it as {pos}"
+        return None
+
+    def semantic_enclitic_split(self, surface: str, cache: Mapping[str, Any] | None = None) -> dict[str, Any] | None:
+        """Determines how an enclitic surface consolidates into an underlying card.
+
+        Distinguishes:
+        1. Pure object clitics (lo, la, los, las, le, les): 100% direct/indirect object,
+           always consolidates into base lemma (e.g. matarlo -> matar, hacerlo -> hacer).
+        2. Reflexive/pronominal clitics (se, and reflexive me, te, nos, os):
+           If the verb has a distinct pronominal lemma (e.g. irse, acordarse, dormirse, matarse),
+           consolidates into that pronominal card, preserving semantic divergence.
+        3. Guarded words (words in their own right, e.g. pelo, regalo, verme):
+           Abstains and returns None.
+        """
+        if self.is_its_own_word(surface, cache):
+            return None
+
+        split = self.enclitic_split(surface)
+        if not split:
+            return None
+
+        lemma = split["lemma"]
+        pronouns = split["pronouns"]
+        is_pure_object = all(p in {"lo", "la", "los", "las", "le", "les"} for p in pronouns)
+
+        pronominal = lemma + "se"
+        has_pronominal_lemma = pronominal in self.known_headwords
+
+        first_pronoun = pronouns[0] if pronouns else ""
+        has_reflexive_pronoun = first_pronoun in {"se", "me", "te", "nos", "os"}
+
+        meaning_shift = False
+        target_card = lemma
+
+        if has_pronominal_lemma and has_reflexive_pronoun:
+            if (lemma not in self.known_headwords
+                    or first_pronoun == "se"
+                    or lemma in PRONOMINAL_SHIFT_VERBS):
+                target_card = pronominal
+                meaning_shift = True
+            elif first_pronoun in {"me", "te", "nos", "os"}:
+                target_card = pronominal
+                meaning_shift = True
+
+        return {
+            **split,
+            "target_card": target_card,
+            "pronominal_lemma": pronominal if has_pronominal_lemma else None,
+            "is_pure_object": is_pure_object,
+            "meaning_shift": meaning_shift,
+        }
 
     # ------------------------------------------------------------------ public
 

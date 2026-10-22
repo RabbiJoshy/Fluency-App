@@ -1302,7 +1302,13 @@ globalThis.isExpressionSenseForLemma = isExpressionSenseForLemma;
 globalThis.detectSplitCardTuples = detectSplitCardTuples;
 globalThis.cleanHeadwordToken = cleanHeadwordToken;
 
+let _lastLemmaExampleBasis = null;
 function computeLemmaExampleCounts(vocabData, examplesData) {
+    if (_lastLemmaExampleBasis
+        && _lastLemmaExampleBasis.vocabData === vocabData
+        && _lastLemmaExampleBasis.examplesData === examplesData) {
+        return _lastLemmaExampleBasis.result;
+    }
     const linesByLemma = new Map();
     let hasExampleBasis = false;
     for (const item of vocabData) {
@@ -1319,10 +1325,12 @@ function computeLemmaExampleCounts(vocabData, examplesData) {
             }
         });
     }
-    return {
+    const result = {
         counts: new Map(Array.from(linesByLemma, ([lemma, lines]) => [lemma, lines.size])),
         hasExampleBasis
     };
+    _lastLemmaExampleBasis = { vocabData, examplesData, result };
+    return result;
 }
 
 function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {

@@ -349,7 +349,11 @@ def inflect_single_verb_gloss(
             if pron and not re.search(r"\b" + re.escape(pron) + r"\b", tail, re.IGNORECASE):
                 clitic_additions.append(pron)
         elif cl_clean in {"te", "me", "se", "nos", "os"}:
-            if re.search(r"\b(?:to|with|for|at|on)\s*$", tail, re.IGNORECASE):
+            if mood in {"infinitivo", "infinitive", "gerundio", "gerund"}:
+                pron = CLITIC_ENGLISH.get(cl_clean, cl_clean)
+                if pron and not re.search(r"\b" + re.escape(pron) + r"\b", tail, re.IGNORECASE):
+                    clitic_additions.append(pron)
+            elif re.search(r"\b(?:to|with|for|at|on)\s*$", tail, re.IGNORECASE):
                 pron = CLITIC_ENGLISH.get(cl_clean, cl_clean)
                 clitic_additions.append(pron)
             elif not tail and base not in {"go", "leave", "beat", "get"}:
@@ -357,8 +361,10 @@ def inflect_single_verb_gloss(
                 clitic_additions.append(pron)
         else:
             pron = CLITIC_ENGLISH.get(cl_clean, cl_clean)
-            if cl_clean == "lo":
+            if cl_clean in {"lo", "la"}:
                 pron = "it"
+            elif cl_clean in {"los", "las"}:
+                pron = "them"
             if not re.search(r"\b" + re.escape(pron) + r"\b", tail, re.IGNORECASE):
                 clitic_additions.append(pron)
 
@@ -368,6 +374,10 @@ def inflect_single_verb_gloss(
         if person_idx == 3:  # 1p (nosotros)
             return f"let's {base}{tail}{clitic_tail}!"
         return f"{base}{tail}{clitic_tail}!"
+
+    if mood in {"infinitivo", "infinitive"}:
+        prefix = "to " if parts is not None else ""
+        return f"{prefix}{base}{tail}{clitic_tail}"
 
     if mood in {"gerundio", "gerund"}:
         return f"{english_ing(base)}{tail}{clitic_tail}"
@@ -506,9 +516,14 @@ def inflect_card_senses(
                 if not lem_norm or m.get("lemma", "").lower() in {lem_norm, lem_base}
             ]
             if not morph_entries:
-                # If lemma matches stem or pronominal lemma, synthesize imperative
+                # If lemma matches stem or pronominal lemma, synthesize mood based on stem ending
                 if stem_norm == lem_base or stem_norm == strip_accents(lem_base):
-                    morph_entries = [{"mood": "imperativo", "tense": "afirmativo", "person": "2s"}]
+                    if stem_norm.endswith(("ar", "er", "ir")):
+                        morph_entries = [{"mood": "infinitivo", "tense": "infinitivo", "person": None}]
+                    elif stem_norm.endswith(("ando", "iendo", "yendo")):
+                        morph_entries = [{"mood": "gerundio", "tense": "gerundio", "person": None}]
+                    else:
+                        morph_entries = [{"mood": "imperativo", "tense": "afirmativo", "person": "2s"}]
 
     out_senses = []
     for s in senses:

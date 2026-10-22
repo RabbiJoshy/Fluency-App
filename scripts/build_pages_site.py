@@ -36,6 +36,21 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 # audit datasets (8 MB, a research tool, never served).
 EXCLUDED_PREFIXES = ("backend/", "lyrics-audit/")
 EXCLUDED_NAMES = (".DS_Store",)
+EXCLUDED_PATTERNS = (
+    "-headway-",
+    "verify-turbo",
+    "_probe_songs.json",
+    "data/bridge/es.json",
+    "data/bridge/es-fw1.json",
+    "data/bridge/es-fw1-ds25.json",
+    "data/bridge/pt.json",
+    "data/bridge/pt-fw1.json",
+    "data/bridge/pt-fw1-ds25.json",
+    "data/bridge/cs.json",
+    "data/bridge/fr.json",
+    "data/bridge/fr-fw1.json",
+    "data/bridge/fr-fw1-ds25.json",
+)
 STAMPED_SUFFIXES = (".html", ".js", ".css")
 # Published data with no source in this repository; see the docstring.
 EXTERNAL_DATA = ("cognates/", "coverage/", "app/cognates/", "app/coverage/")
@@ -53,6 +68,16 @@ def stamp(text: str, version: str) -> str:
     text = _ASSET_TAG.sub(rf"\g<1>?v={version}", text)
     text = _VERSION_CONST.sub(rf"\g<1>\g<2>{version}\g<2>", text)
     return _CACHE_NAME.sub(rf"\g<1>\g<2>\g<3>-{version}\g<2>", text)
+
+
+def minify_css(text: str) -> str:
+    """Safely strip comments and collapse whitespace in production CSS."""
+    text = re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
+    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"\s*([{};,])\s*", r"\1", text)
+    text = re.sub(r"\s*:\s*", ":", text)
+    text = re.sub(r";}", "}", text)
+    return text.strip()
 
 
 def git(*args: str) -> bytes:
@@ -74,6 +99,8 @@ def tracked_app_files(ref: str) -> list[tuple[str, str]]:
             continue
         rel = path[len("app/"):]
         if rel.startswith(EXCLUDED_PREFIXES) or Path(rel).name in EXCLUDED_NAMES:
+            continue
+        if any(pat in rel for pat in EXCLUDED_PATTERNS):
             continue
         files.append((sha, rel))
     return files
@@ -114,7 +141,10 @@ def build(dest: Path, ref: str, version: str | None = None, env: str = "producti
     for sha, rel in files:
         content = git("cat-file", "blob", sha)
         if version and rel.endswith(STAMPED_SUFFIXES):
-            content = stamp(content.decode("utf-8"), version).encode("utf-8")
+            text = stamp(content.decode("utf-8"), version)
+            if rel.endswith(".css"):
+                text = minify_css(text)
+            content = text.encode("utf-8")
         if env == "staging" and rel == "index.html":
             content = content.replace(b"<head>", b"<head>\n    <script>window.__FLUENCY_ENV__ = 'staging';</script>")
         if env == "staging":

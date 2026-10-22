@@ -143,6 +143,11 @@ function listVoices(preferredLang = 'en-US') {
 // Speak a word in the target language. The optional completion callback lets
 // lyric autoplay wait for the English sense label before starting its first
 // example; ordinary callers remain fire-and-forget.
+// Retain an explicit reference to the active utterance so browser garbage
+// collection (especially in Chromium and Safari) does not prematurely destroy
+// the SpeechSynthesisUtterance instance mid-playback.
+let _activeUtterance = null;
+
 function speakWord(text, useEnglish = false, onComplete = null) {
     if (!speechEnabled || !text || !window.speechSynthesis) {
         if (typeof onComplete === 'function') onComplete();
@@ -151,13 +156,18 @@ function speakWord(text, useEnglish = false, onComplete = null) {
 
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
+    _activeUtterance = null;
     document.body.classList.remove('is-speaking-active');
 
     const utterance = new SpeechSynthesisUtterance(text);
+    _activeUtterance = utterance;
     let completed = false;
     const complete = () => {
         if (completed) return;
         completed = true;
+        if (_activeUtterance === utterance) {
+            _activeUtterance = null;
+        }
         document.body.classList.remove('is-speaking-active');
         if (typeof onComplete === 'function') onComplete();
     };

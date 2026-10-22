@@ -68,8 +68,10 @@ async function loadSecrets() {
 
     // Pages never ships backend/. Older offline workers can replay a cached
     // HTML fallback here and start recursive module preloads before updating.
-    // Staging already has every public endpoint above; do not probe that URL.
+    // Staging and production already have public endpoints above; do not probe that URL.
     if (IS_STAGING) return;
+    const isLocal = typeof window !== 'undefined' && /^(localhost|127\.0\.0\.1)$/.test(window.location?.hostname || '');
+    if (!isLocal) return;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
