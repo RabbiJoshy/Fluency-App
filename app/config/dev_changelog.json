@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T15:26:00+01:00",
+      "date": "2026-10-22 15:26 BST",
+      "agent": "Antigravity",
+      "summary": "Walkthrough: single close button, Speech/Music Example tabs without emojis, fixed header separator line",
+      "detail": [
+        "Removed the duplicate text exit button, keeping just the clean '✕' close button in the top right.",
+        "Renamed segmented switcher tabs to 'Speech Example' and 'Music Example', removing emojis.",
+        "Fixed the header and subtitle height so the horizontal line separator stays in the exact same position when toggling between tabs."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T13:38:00+01:00",
       "date": "2026-10-22 13:38 BST",
       "agent": "Antigravity",

@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=9ac74cfb");
+@import url("./appearance.css?v=8923a224");
 
 
         * {
@@ -21284,7 +21284,9 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     gap: 20px;
-    padding: 16px 28px 12px;
+    padding: 14px 28px;
+    min-height: 96px;
+    box-sizing: border-box;
     border-bottom: 1px solid var(--border-light);
     background: var(--bg-primary);
     z-index: 10;
@@ -21294,6 +21296,10 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     justify-self: start;
     text-align: left;
     min-width: 0;
+    min-height: 68px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .walkthrough-title {
@@ -21308,10 +21314,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     font: 14px/1.4 var(--font-reading);
     color: var(--text-secondary);
     max-width: 500px;
-}
-
-.walkthrough-lead[hidden] {
-    display: none !important;
+    min-height: 40px;
 }
 
 .walkthrough-tabs {
@@ -21329,7 +21332,6 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 .walkthrough-tab {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
     padding: 8px 18px;
     border-radius: 999px;
     border: 1px solid transparent;
@@ -21353,49 +21355,10 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
-.walkthrough-tab-icon {
-    font-size: 14px;
-    line-height: 1;
-}
-
-.walkthrough-head-actions {
-    display: flex;
-    align-items: center;
-    justify-self: end;
-    gap: 12px;
-}
-
-.walkthrough-next {
-    white-space: nowrap;
-    background: var(--accent-primary);
-    color: var(--accent-primary-text, #10141b);
-    border: 1px solid transparent;
-    padding: 10px 20px;
-    border-radius: 999px;
-    font: 700 13.5px/1 var(--font-emphasis);
-    cursor: pointer;
-    transition: filter 0.15s ease, transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-}
-
-.walkthrough-next:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
-}
-
-.walkthrough-next.is-final {
-    background: transparent;
-    border-color: var(--border-light);
-    color: var(--text-secondary);
-}
-
-.walkthrough-next.is-final:hover {
-    border-color: var(--text-muted);
-    color: var(--text-primary);
-    filter: none;
-}
-
 .walkthrough-close {
+    grid-column: 3;
     position: static;
+    justify-self: end;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -21550,12 +21513,14 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
         justify-content: space-between;
         padding: max(10px, env(safe-area-inset-top, 0px)) 14px 10px;
         gap: 8px 10px;
+        min-height: auto;
         border-bottom: 1px solid var(--border-light);
     }
 
     .walkthrough-copy {
         flex: 1 1 auto;
         min-width: 0;
+        min-height: 48px;
     }
 
     .walkthrough-title {
@@ -21567,12 +21532,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
         font-size: 13px;
         line-height: 1.35;
         margin: 2px 0 0;
-    }
-
-    .walkthrough-head-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        min-height: 0;
     }
 
     .walkthrough-tabs {
@@ -21588,15 +21548,10 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
         justify-content: center;
         padding: 6px 8px;
         font-size: 12px;
-        gap: 5px;
-    }
-
-    .walkthrough-next {
-        padding: 8px 14px;
-        font-size: 12.5px;
     }
 
     .walkthrough-close {
+        grid-column: auto;
         width: 32px;
         height: 32px;
         font-size: 14px;
