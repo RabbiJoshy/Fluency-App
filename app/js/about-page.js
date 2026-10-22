@@ -6,9 +6,9 @@
 // from them. The cards are the shared replicas (card-replica.js); the
 // frequency bars come from prominence-badge.js, as on the live card.
 
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=7d3488cd';
-import './prominence-badge.js?v=7d3488cd';
-import './walkthrough.js?v=7d3488cd';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=9826b0f7';
+import './prominence-badge.js?v=9826b0f7';
+import './walkthrough.js?v=9826b0f7';
 
 // Minimal Markdown → HTML renderer. Handles headings (##/###), paragraphs,
 // unordered lists, bold/italic, inline code, links, and images. Enough for
@@ -134,8 +134,8 @@ function _appendAboutFootnotes(body) {
     notes.innerHTML =
         '<p id="about-footnote-1">'
         + '<sup class="about-footnote-number">1</sup> '
-        + 'Three Spanish artists (Bad Bunny, Rosalía, Young Miko) are built in, '
-        + 'or you can connect Spotify and study a live vocabulary deck from any playlist of your own.'
+        + 'Ready-made collections from Bad Bunny, Rosalía and Young Miko are built in, '
+        + 'or connect Spotify and study any playlist of your own.'
         + '</p>'
         + '<p class="about-references">'
         + '<strong>Sources:</strong> lyrics from Genius, synced timestamps via LRCLIB and Spotify, '
@@ -167,7 +167,8 @@ function _aboutDemoEntry(key) {
         pos: card.pos,
         rank: card.rank,
         corpusCount: card.corpusCount,
-        meanings: card.meanings.map(m => {
+        // Most common meaning first, as on the live card (banco: bank, then bench).
+        meanings: [...card.meanings].sort((a, b) => (Number(b.pct) || 0) - (Number(a.pct) || 0)).map(m => {
             const ex = m.examples[0];
             return {
                 translation: m.translation,
@@ -413,6 +414,29 @@ async function _runAboutDemo(container, mode) {
     }
 }
 
+// The tooltip a demo card shows: on a mouse it appears as the pointer moves
+// over the card, and a click opens the walkthrough on that card. Touch has no
+// hover, so the first tap shows the tooltip and a second tap opens.
+function _closeExplainTips() {
+    document.querySelectorAll('.about-demo-tip').forEach(tip => tip.remove());
+}
+
+function _showExplainTip(card, text) {
+    _closeExplainTips();
+    const tip = document.createElement('div');
+    tip.className = 'about-demo-tip';
+    tip.setAttribute('role', 'tooltip');
+    tip.innerHTML = `<span class="about-demo-tip-label">${text}</span>`;
+    card.appendChild(tip);
+}
+
+document.addEventListener('pointerdown', event => {
+    if (!event.target.closest('.about-demo-card')) _closeExplainTips();
+});
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') _closeExplainTips();
+});
+
 function mountAboutDemos(root) {
     const placeholders = root.querySelectorAll('.about-demo-card[data-mode]');
     placeholders.forEach(el => {
@@ -423,26 +447,36 @@ function mountAboutDemos(root) {
         el.appendChild(inner);
 
         // The loop is the trailer; the walkthrough is the film. A tap on
-        // either card opens the walkthrough on that same card, annotated —
-        // one thing to click rather than a card and a separate button.
+        // either card shows a small tooltip offering the walkthrough on that
+        // same card, annotated. No separate button under the cards.
         const start = mode === 'artist' ? 'lyrics' : null;
-        const openExplained = () => window.openWalkthrough?.({ start });
         el.classList.add('is-walkthrough-link');
         el.setAttribute('role', 'button');
         el.setAttribute('tabindex', '0');
-        el.setAttribute('aria-label', mode === 'artist'
-            ? 'See this Lyrics card with every part explained'
-            : 'See this card with every part explained');
-        el.insertAdjacentHTML('beforeend',
-            '<span class="about-demo-explain-chip" aria-hidden="true">See it explained →</span>');
+        el.setAttribute('aria-label', 'See every part of this card explained');
+        const open = () => { _closeExplainTips(); window.openWalkthrough?.({ start }); };
+        let lastPointer = 'mouse';
+        el.addEventListener('pointerenter', event => {
+            if (event.pointerType !== 'touch') _showExplainTip(el, 'Click to see every part explained');
+        });
+        el.addEventListener('pointerleave', event => {
+            if (event.pointerType !== 'touch') _closeExplainTips();
+        });
+        el.addEventListener('pointerdown', event => { lastPointer = event.pointerType; });
         el.addEventListener('click', event => {
             if (event.target.closest('.about-demo-footnote-ref')) return;
-            openExplained();
+            if (lastPointer === 'touch' && !el.querySelector('.about-demo-tip')) {
+                _showExplainTip(el, 'Tap again to see every part explained');
+                return;
+            }
+            open();
         });
+        el.addEventListener('focus', () => _showExplainTip(el, 'Press Enter to see every part explained'));
+        el.addEventListener('blur', _closeExplainTips);
         el.addEventListener('keydown', event => {
             if (event.target !== el || (event.key !== 'Enter' && event.key !== ' ')) return;
             event.preventDefault();
-            openExplained();
+            open();
         });
 
         // Wire the ¹ superscript next to the Spotify logo so clicking (or
@@ -477,7 +511,7 @@ function layoutAboutTwoModes(root) {
     const h3s = Array.from(root.querySelectorAll('h3'));
     // Match current copy plus prior headings for cached/older About content.
     const normal = h3s.find(h => /^(?:speech\b|standard mode\b|normal mode\b)/i.test(h.textContent.trim()));
-    const lyrics = h3s.find(h => /^(?:lyrics\b|artist mode\b)/i.test(h.textContent.trim()));
+    const lyrics = h3s.find(h => /^(?:music\b|lyrics\b|artist mode\b)/i.test(h.textContent.trim()));
     if (!normal || !lyrics) return;
 
     // Drop a comment placeholder at the Standard-mode h3's position BEFORE
@@ -518,16 +552,7 @@ function layoutAboutTwoModes(root) {
         bodies.push(body);
     });
 
-    // Say what a tap does. Touch has no hover, so the cards' own "See it
-    // explained" chip cannot be the only hint.
-    const caption = document.createElement('p');
-    caption.className = 'about-demo-caption';
-    caption.innerHTML = '<button type="button" class="about-demo-caption-btn">'
-        + '<span class="about-see-example-icon" aria-hidden="true">▶</span>'
-        + '<span>Tap a card to see every part of it explained</span></button>';
-    caption.querySelector('button').addEventListener('click', () => window.openWalkthrough?.());
-
-    row.append(...heads, caption, ...bodies);
+    row.append(...heads, ...bodies);
     anchor.parentNode.replaceChild(row, anchor);
 }
 

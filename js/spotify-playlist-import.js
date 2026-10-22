@@ -1,9 +1,9 @@
 // Live playlist: look up lyrics on LRCLIB (six at a time), land each song in
 // the progress list, save tracks to Fluency, then build a study deck from
 // speech-inventory tokens plus unassigned song-line examples.
-import './state.js?v=7d3488cd';
-import { combineSongCatalogs } from './song-sets-core.js?v=7d3488cd';
-import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=7d3488cd';
+import './state.js?v=9826b0f7';
+import { combineSongCatalogs } from './song-sets-core.js?v=9826b0f7';
+import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=9826b0f7';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
 const LYRICS_DB_NAME = 'fluency-playlist-lyrics';
@@ -14,7 +14,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=7d3488cd';
+const SPOTIFY_MODULE = './spotify.js?v=9826b0f7';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
@@ -851,13 +851,13 @@ function activatePlaylistLiveStudy(language) {
     document.body.classList.add('playlist-live-mode');
     const sourceName = document.getElementById('selectedSourceInline');
     if (sourceName && deck.playlistName) {
-        sourceName.textContent = `Live · ${deck.playlistName}`;
+        sourceName.textContent = window.isSeriesStudy?.() ? `TV Series · ${deck.playlistName}` : `Live · ${deck.playlistName}`;
     }
     replaceRoute({
         kind: 'live',
         language: routeCodeFor(language, typeof config !== 'undefined' ? config?.languages : null)
     });
-    window.showAppLoading?.('Opening your live deck', `${deck.playlistName} · ${deck.matchedCount} words`);
+    window.showAppLoading?.(window.isSeriesStudy?.() ? 'Opening your series deck' : 'Opening your live deck', `${deck.playlistName} · ${deck.matchedCount} words`);
     sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
     sessionStorage.setItem('fluencyPendingLiveStudy', '1');
     window.invalidatePreparedSetupVocabulary?.();

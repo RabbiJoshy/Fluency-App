@@ -1,0 +1,22 @@
+/* TV Series is available from the desktop chooser and the in-mode source chip. */
+#standardSourceSeriesCard[hidden] { display: none !important; }
+@media (max-width: 899px) {
+    #standardSourceSeriesCard { display: none !important; }
+}
+@media (min-width: 900px) {
+    #step1.language-summary-active #standardSourceCard .standard-source-choice-buttons.has-series-choice {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        column-gap: 20px;
+    }
+    .standard-source-choice-buttons.has-series-choice .standard-source-or { display: none; }
+}
+#seriesBrowser > p { color: var(--text-secondary); }
+#casaSeriesBtn {
+    flex-direction: row; text-align: left; gap: 18px; width: 100%;
+    padding: 20px; border: 1px solid var(--border-color); background: var(--bg-card);
+}
+#casaSeriesBtn .music-artist-image {
+    flex: 0 0 76px; border-radius: 14px; background: #9f2837; color: #fff;
+}
+#casaSeriesBtn strong { font-size: 18px; }
+#casaSeriesBtn small { margin-top: 6px; }

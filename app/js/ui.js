@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=7d3488cd';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=7d3488cd';
-import { readFastTrack } from './fast-track-preferences.js?v=7d3488cd';
-import './session-plan.js?v=7d3488cd';
+import './state.js?v=9826b0f7';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=9826b0f7';
+import { readFastTrack } from './fast-track-preferences.js?v=9826b0f7';
+import './session-plan.js?v=9826b0f7';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -518,9 +518,11 @@ function paintLearningContextPhoto(el, artist) {
 // choosing. Speech counts only once it has been picked, not merely because no
 // artist is active.
 function currentLearningMode() {
+    if (window.seriesWorkspaceActive?.()) return 'series';
+    if (window.musicWorkspaceActive?.()) return 'lyrics';
+    if (window.isSeriesStudy?.()) return 'series';
     if (window.playlistLiveActive?.()) return 'live';
     if (activeArtist) return 'lyrics';
-    if (window.musicWorkspaceActive?.()) return 'lyrics';
     if (document.getElementById('step1')?.classList.contains('source-speech-active')) return 'speech';
     return null;
 }
@@ -546,7 +548,7 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     if (!button || !languageConfig) return;
 
     const modeKey = currentLearningMode();
-    const mode = modeKey === 'live'
+    const mode = modeKey === 'series' ? 'TV Series' : modeKey === 'live'
         ? `Live · ${window.playlistLiveDeck?.()?.playlistName || 'playlist'}`
         : modeKey === 'lyrics'
             ? 'Music'
@@ -555,6 +557,7 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
                 : 'Choose…';
     const flag = languageConfig.flag || LEARNING_CONTEXT_FLAGS[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
 
+    document.getElementById('learningContextSourceBtn').hidden = !modeKey;
     button.hidden = false;
     const flagEl = document.getElementById('learningContextFlag');
     const photoEl = document.getElementById('learningContextPhoto');
@@ -577,7 +580,7 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     const modeIcon = document.getElementById('learningContextSheetModeIcon');
     if (modeIcon) {
         modeIcon.innerHTML = modeKey === 'speech' ? MODE_ICON_SPEECH
-            : modeKey ? MODE_ICON_MUSIC : '';
+            : modeKey === 'series' ? MODE_ICON_SERIES : modeKey ? MODE_ICON_MUSIC : '';
     }
     // Verb drills are a separate page, not a third vocabulary, so they live
     // here beside the language rather than on the vocabulary choice. Only
@@ -602,7 +605,7 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     // No vocabulary chosen yet means no deck to measure.
     const progressButton = document.getElementById('topBarProgressBtn');
     if (progressButton) progressButton.hidden = !modeKey;
-    if (activeArtist) {
+    if (activeArtist && modeKey === 'lyrics') {
         const artistName = activeArtist.name || 'Artist';
         nameEl.textContent = artistName;
         button.setAttribute('aria-label', `Open learning settings for ${artistName}`);
@@ -778,6 +781,7 @@ function renderLanguageTabs() {
 // The vocabulary choice, worded once. The inline page and the modal picker
 // (main.js openLearningSourcePicker) both read this, so they cannot drift.
 const MODE_ICON_SPEECH = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"></path></svg>';
+const MODE_ICON_SERIES = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m9 2 3 3 3-3M10 10l5 3-5 3z"/></svg>';
 const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg>';
 
 // Music (artists, your songs, live playlists) is open in Spanish only for now.
@@ -794,8 +798,9 @@ function learningModeCopy(language = selectedLanguage) {
     return {
         title: 'Choose what to learn from',
         intro: [
-            'This app teaches the most common words first, counted from everyday speech, or from songs if you’d rather learn the vocabulary of the music you listen to. You can switch any time, and your progress is shared.'
+            'Learn the most common words in your chosen source. You can switch any time, and your progress is shared.'
         ],
+        series: { label: 'TV Series', description: 'Vocabulary from a series you’re watching.', bestFor: ['Following a particular series', 'Learning its recurring words'], iconHTML: MODE_ICON_SERIES },
         speech: {
             label: 'Speech',
             description: 'Words and examples from films and TV.',
@@ -839,6 +844,7 @@ function setupLanguageTabs() {
     const languageCardButton = document.getElementById('standardSourceLanguageBtn');
     const speechSourceButton = document.getElementById('standardSourceSpeechBtn');
     const sourceCardButton = document.getElementById('standardSourcePickerBtn');
+    const seriesButton = document.getElementById('standardSourceSeriesBtn');
 
     // Opening the language picker changes nothing by itself. The deck on screen
     // stays until a different language is actually chosen — the .lang-tab click
@@ -927,6 +933,11 @@ function setupLanguageTabs() {
             const modeCopy = learningModeCopy(newLanguage);
             paintModeButton(speechSourceButton, modeCopy.speech);
             paintModeButton(sourceCardButton, modeCopy.lyrics);
+            const seriesAvailable = window.seriesOpenFor?.(newLanguage) === true;
+            document.getElementById('standardSourceSeriesCard').hidden = !seriesAvailable;
+            document.querySelector('.standard-source-choice-buttons')?.classList.toggle('has-series-choice', seriesAvailable);
+            paintModeButton(seriesButton, modeCopy.series);
+            seriesButton.onclick = () => window.openSeriesMode?.(newLanguage);
             const choiceTitle = document.getElementById('standardSourceChoiceTitle');
             const choiceIntro = document.getElementById('standardSourceChoiceIntro');
             if (choiceTitle) choiceTitle.textContent = modeCopy.title;
@@ -954,13 +965,13 @@ function setupLanguageTabs() {
                 document.getElementById('step1')?.classList.add('source-speech-active');
                 speechSourceButton?.classList.add('is-selected');
                 sourceCardButton?.classList.remove('is-selected');
-                window.showAppLoading?.('Preparing speech vocabulary', 'Loading levels and your progress…');
+                window.showAppLoading?.(window.isSeriesStudy?.() ? 'Preparing TV Series vocabulary' : 'Preparing speech vocabulary', 'Loading levels and your progress…');
                 const speechSetupStarted = performance.now();
                 let deckOverviewHold = null;
                 try {
                     if (window.playlistLiveActive?.()) {
                         const liveName = window.playlistLiveDeck?.()?.playlistName;
-                        sourceLabel.textContent = liveName ? `Live · ${liveName}` : 'Live playlist';
+                        sourceLabel.textContent = window.isSeriesStudy?.() ? `TV Series · ${liveName}` : liveName ? `Live · ${liveName}` : 'Live playlist';
                         document.getElementById('step1').style.display = 'none';
                     } else {
                         sourceLabel.textContent = 'Speech';
@@ -1366,7 +1377,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         const coverageType = activeArtist
             ? 'lyrics comprehension'
             : (window.playlistLiveActive?.()
-                ? 'playlist words'
+                ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words')
                 : (globalThis.coverageAvailable?.()
                     && (usingReleaseLevels || getActiveLevelRanges()[0]?.threshold == null)
                     ? globalThis.coverageLabel()
@@ -2369,7 +2380,7 @@ function updateLevelSliderReadout(i) {
     const coverageType = activeArtist
         ? 'lyrics comprehension'
         : (window.playlistLiveActive?.()
-            ? 'playlist words'
+            ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words')
             : (globalThis.coverageAvailable?.()
                 && (usingReleaseLevels || ranges[0]?.threshold == null)
                 ? globalThis.coverageLabel()
@@ -2426,7 +2437,7 @@ function updateLevelSliderReadout(i) {
         const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
         const levelsLabel = i === 0 ? 'Level 1 makes' : `Levels 1–${i + 1} make`;
         const covHTML = coverageRounded
-            ? `<span class="lsw-coverage-inline">${levelsLabel} up <strong>${coverageRounded}</strong> of ${activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? 'playlist words' : 'speech')}</span>`
+            ? `<span class="lsw-coverage-inline">${levelsLabel} up <strong>${coverageRounded}</strong> of ${activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'speech')}</span>`
             : '';
         const egHTML = (examplesText || covHTML)
             ? `<div class="lsw-egs">${examplesText || ''}${covHTML}</div>`
@@ -3735,7 +3746,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=7d3488cd')
+        import('./spotify.js?v=9826b0f7')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -4205,11 +4216,11 @@ async function showTotalStatsModal() {
             image: artist.pickerImage || artist.image || artist.defaultAlbumArt || '',
             fallback: artist.customSongSource ? '♫' : learningContextInitials(artist.name)
         } : null,
-        contentNoun: mode === 'speech' ? 'everyday speech' : mode === 'live' ? 'your playlist' : 'lyrics',
+        contentNoun: mode === 'series' ? 'this series' : mode === 'speech' ? 'everyday speech' : mode === 'live' ? 'your playlist' : 'lyrics',
         smartSkipOn,
         source: artist?.name || langConfig?.name || language,
-        mode: mode === 'speech' ? 'Speech' : mode === 'live' ? 'Your playlist' : 'Music',
-        coverageLabel: mode === 'live' ? 'Estimated playlist coverage' : artist ? (scope === 'extra' ? 'Extra vocabulary explored' : 'Estimated lyrics coverage') : 'Estimated speech coverage',
+        mode: mode === 'series' ? 'TV Series' : mode === 'speech' ? 'Speech' : mode === 'live' ? 'Your playlist' : 'Music',
+        coverageLabel: mode === 'series' ? 'Estimated series coverage' : mode === 'live' ? 'Estimated playlist coverage' : artist ? (scope === 'extra' ? 'Extra vocabulary explored' : 'Estimated lyrics coverage') : 'Estimated speech coverage',
         isCurrent: () => selectedLanguage === language && activeArtist === artist && artistVocabularyScope === scope && currentLearningMode() === mode && currentUser === user,
         loadVocabulary: async () => {
             if (!langConfig || !mode) throw new Error('Choose a vocabulary source first.');

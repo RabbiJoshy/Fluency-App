@@ -33,18 +33,16 @@
             root.dataset.theme = theme;
             root.style.colorScheme = theme;
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
-            var textSize = 'normal';
-            try {
-                var savedSize = localStorage.getItem('fluency_text_size_v1');
-                if (savedSize === 'large' || savedSize === 'normal') textSize = savedSize;
-            } catch (_) {}
-            root.dataset.textSize = textSize;
+            // Text size is an app setting (it zooms the page); About is not
+            // part of the app and is always shown at normal size, which the
+            // walkthrough's measured labels depend on.
+            root.dataset.textSize = 'normal';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=7d3488cd">
-    <link rel="stylesheet" href="css/light-theme.css?v=7d3488cd">
-    <link rel="stylesheet" href="css/ui-refinements.css?v=7d3488cd">
-    <link rel="stylesheet" href="css/black-palette.css?v=7d3488cd">
+    <link rel="stylesheet" href="css/style.css?v=9826b0f7">
+    <link rel="stylesheet" href="css/light-theme.css?v=9826b0f7">
+    <link rel="stylesheet" href="css/ui-refinements.css?v=9826b0f7">
+    <link rel="stylesheet" href="css/black-palette.css?v=9826b0f7">
 </head>
 <body class="about-standalone">
     <div id="aboutProjectModal" class="modal about-standalone-page">
@@ -80,6 +78,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/about-page.js?v=7d3488cd"></script>
+    <script type="module" src="js/about-page.js?v=9826b0f7"></script>
 </body>
 </html>

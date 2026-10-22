@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=7d3488cd");
+@import url("./appearance.css?v=9826b0f7");
 
 
         * {
@@ -14793,10 +14793,12 @@
             max-width: 100%;
         }
 
+        /* Sized to the backs (banco ~300px, cielo ~365px with its song
+           line); at 480px both left a large empty block under the example. */
         .about-demo-card-inner {
             width: 340px;
             max-width: 100%;
-            height: 480px;
+            height: 400px;
             margin: 0 auto;
             perspective: 1000px;
             position: relative;
@@ -14816,8 +14818,10 @@
             padding: 28px 20px;
         }
 
+        /* Centred, so a shorter back (banco) sits in the middle of the card
+           rather than leaving its spare room all at the bottom. */
         .about-demo-card-inner .card-back {
-            justify-content: flex-start;
+            justify-content: center;
             padding: 22px 18px 20px;
         }
 
@@ -14900,7 +14904,11 @@
            tinted in the part-of-speech colour, the chosen one ticked and
            outlined, the live four-bar meter at the right. The colour comes
            from --sense-match-rgb, set per card by _runAboutDemo(). */
-        .about-demo-card-inner .meaning-row-regular {
+        /* .meaning-row.meaning-row-regular (the live card's one-column
+           rows) is as specific as a plain .about-demo-card-inner
+           .meaning-row-regular and comes later, so it squashed the demo's
+           tick / word / bars into odd columns. Match its two classes. */
+        .about-demo-card-inner .meaning-row.meaning-row-regular {
             display: grid !important;
             grid-template-columns: 22px minmax(0, 1fr) 30px !important;
             grid-template-rows: auto !important;
@@ -15143,46 +15151,11 @@
             margin-top: 6px;
         }
 
-        .about-demo-caption {
-            margin: 0;
-            text-align: center;
-        }
-
-        @media (min-width: 900px) {
-            .about-modes-row.is-split .about-demo-caption {
-                grid-column: 1 / -1;
-            }
-        }
-
         @media (max-width: 899px) {
             .about-modes-row.is-split .about-modes-head.about-modes-speech { order: 1; }
-            .about-modes-row.is-split .about-demo-caption { order: 2; }
             .about-modes-row.is-split .about-modes-body.about-modes-speech { order: 3; }
             .about-modes-row.is-split .about-modes-head.about-modes-lyrics { order: 4; }
             .about-modes-row.is-split .about-modes-body.about-modes-lyrics { order: 5; }
-        }
-
-        .about-demo-caption-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 18px 10px 10px;
-            background: linear-gradient(135deg,
-                color-mix(in srgb, var(--accent-primary) 16%, var(--bg-card)),
-                var(--bg-card));
-            border: 1px solid color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
-            border-radius: 999px;
-            color: var(--text-primary);
-            font: 700 15px/1.2 var(--font-emphasis);
-            cursor: pointer;
-            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .about-demo-caption-btn:hover,
-        .about-demo-caption-btn:focus-visible {
-            transform: translateY(-1px);
-            border-color: var(--accent-primary);
-            box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
         }
 
         /* The demo cards are the way into the walkthrough: they lift on hover
@@ -15204,34 +15177,50 @@
             outline-offset: 4px;
         }
 
-        .about-demo-explain-chip {
+        /* Shown while the pointer is over a demo card (first tap on touch):
+           a click on the card opens the walkthrough (about-page.js). */
+        .about-demo-tip {
+            pointer-events: none;
             position: absolute;
             left: 50%;
-            bottom: 14px;
-            transform: translate(-50%, 6px);
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: var(--accent-primary);
-            color: var(--accent-primary-text, #10141b);
-            font: 700 12.5px/1 var(--font-emphasis);
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-            z-index: 5;
+            bottom: 18px;
+            transform: translateX(-50%);
+            z-index: 6;
+            animation: about-demo-tip-in 0.18s ease-out both;
         }
 
-        .about-demo-card.is-walkthrough-link:hover .about-demo-explain-chip,
-        .about-demo-card.is-walkthrough-link:focus-visible .about-demo-explain-chip {
-            opacity: 1;
-            transform: translate(-50%, 0);
+        .about-demo-tip::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: -6px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-primary);
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .about-demo-tip-label {
+            position: relative;
+            z-index: 1;
+            display: block;
+            padding: 9px 15px;
+            border-radius: 12px;
+            background: var(--accent-primary);
+            color: var(--accent-primary-text, #fff);
+            font: 700 13.5px/1.25 var(--font-emphasis);
+            white-space: nowrap;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes about-demo-tip-in {
+            from { opacity: 0; transform: translate(-50%, 6px); }
+            to { opacity: 1; transform: translateX(-50%); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .about-demo-card.is-walkthrough-link,
-            .about-demo-explain-chip {
-                transition: none;
-            }
+            .about-demo-card.is-walkthrough-link { transition: none; }
+            .about-demo-tip { animation: none; }
         }
 
         /* User Display */
@@ -26964,3 +26953,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-relation-box .fw-relation-formula { flex: 0 0 auto; max-width: 100%; text-align: left; line-height: 1.5; }
 .fw-relation-box .fw-relation-meaning { flex: 0 1 auto; margin: 0; text-align: right; font-size: 16px; color: var(--text-secondary); }
 .fw-relation-box.is-stacked .fw-relation-meaning { flex: 1 0 100%; text-align: left; }
+
+/* Construction frames match function-word patterns: bold connector, word-type pill. */
+.sense-grammar-cue .frame-connector { color: var(--text-primary); font-weight: 700; }
+.sense-grammar-cue .frame-slot-pill {
+  display: inline-block; padding: 0 8px; border-radius: 999px;
+  background: rgba(var(--slot-rgb), 0.22); color: rgb(var(--slot-rgb));
+  font-weight: 500; line-height: 1.5;
+}

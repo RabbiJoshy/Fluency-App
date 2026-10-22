@@ -1,44 +1,44 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=7d3488cd';
-import { releaseUrl } from './release-host.js?v=7d3488cd';
-import './theme.js?v=7d3488cd';
-import './desktop-shell.js?v=7d3488cd';
-import './extra-workspace.js?v=7d3488cd';
-import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=7d3488cd';
-import './ai-preference.js?v=7d3488cd';
-import { installFlagRendering } from './flags.js?v=7d3488cd';
-import { IS_STAGING } from './env.js?v=7d3488cd';
-import './state.js?v=7d3488cd';
-import './offline-db.js?v=7d3488cd';
-import './sync-queue.js?v=7d3488cd';
-import { initOfflineContent } from './offline-content.js?v=7d3488cd';
-import './speech.js?v=7d3488cd';
-import './artist-ui.js?v=7d3488cd';
-import './auth.js?v=7d3488cd';
-import './tutorial.js?v=7d3488cd';
-import './estimation.js?v=7d3488cd';
-import './config.js?v=7d3488cd';
-import './progress.js?v=7d3488cd';
-import './knowledge.js?v=7d3488cd';
-import './session-plan.js?v=7d3488cd';
-import './ui.js?v=7d3488cd';
-import './vocab.js?v=7d3488cd';
-import './language-profile.js?v=7d3488cd';
-import './smart-skip-pairs.js?v=7d3488cd';
-import './bridge.js?v=7d3488cd';
-import './cognates.js?v=7d3488cd';
-import './coverage.js?v=7d3488cd';
-import './fast-mode.js?v=7d3488cd';
-import './extras.js?v=7d3488cd';
-import './review-home.js?v=7d3488cd';
-import './song-sets.js?v=7d3488cd';
-import './playlist-live.js?v=7d3488cd';
-import './spotify-playlist-import.js?v=7d3488cd';
-import './subtitle-import.js?v=7d3488cd';
-import './vocabulary-import.js?v=7d3488cd';
-import './flashcards.js?v=7d3488cd';
-import { validateArtistCatalog } from './data-contracts.js?v=7d3488cd';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=9826b0f7';
+import { releaseUrl } from './release-host.js?v=9826b0f7';
+import './theme.js?v=9826b0f7';
+import './desktop-shell.js?v=9826b0f7';
+import './extra-workspace.js?v=9826b0f7';
+import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=9826b0f7';
+import './ai-preference.js?v=9826b0f7';
+import { installFlagRendering } from './flags.js?v=9826b0f7';
+import { IS_STAGING } from './env.js?v=9826b0f7';
+import './state.js?v=9826b0f7';
+import './offline-db.js?v=9826b0f7';
+import './sync-queue.js?v=9826b0f7';
+import { initOfflineContent } from './offline-content.js?v=9826b0f7';
+import './speech.js?v=9826b0f7';
+import './artist-ui.js?v=9826b0f7';
+import './auth.js?v=9826b0f7';
+import './tutorial.js?v=9826b0f7';
+import './estimation.js?v=9826b0f7';
+import './config.js?v=9826b0f7';
+import './progress.js?v=9826b0f7';
+import './knowledge.js?v=9826b0f7';
+import './session-plan.js?v=9826b0f7';
+import './ui.js?v=9826b0f7';
+import './vocab.js?v=9826b0f7';
+import './language-profile.js?v=9826b0f7';
+import './smart-skip-pairs.js?v=9826b0f7';
+import './bridge.js?v=9826b0f7';
+import './cognates.js?v=9826b0f7';
+import './coverage.js?v=9826b0f7';
+import './fast-mode.js?v=9826b0f7';
+import './extras.js?v=9826b0f7';
+import './review-home.js?v=9826b0f7';
+import './song-sets.js?v=9826b0f7';
+import './playlist-live.js?v=9826b0f7';
+import './spotify-playlist-import.js?v=9826b0f7';
+import './subtitle-import.js?v=9826b0f7';
+import './vocabulary-import.js?v=9826b0f7';
+import './flashcards.js?v=9826b0f7';
+import { validateArtistCatalog } from './data-contracts.js?v=9826b0f7';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -92,7 +92,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=7d3488cd').catch(error => {
+    ? import('./spotify.js?v=9826b0f7').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -788,7 +788,7 @@ loadConfig().then(async () => {
     // A language or word link names the language outright and becomes the
     // saved preference, as choosing it on the picker would.
     const bootRoute = window.fluencyRoute || { kind: 'home' };
-    const routeLanguage = ['language', 'word', 'live', 'music'].includes(bootRoute.kind)
+    const routeLanguage = ['language', 'word', 'live', 'music', 'series'].includes(bootRoute.kind)
         ? languageKeyFor(bootRoute.language, config.languages)
         : null;
     if (routeLanguage && config.languages[routeLanguage].hasData !== false) {
@@ -1027,7 +1027,7 @@ loadConfig().then(async () => {
         const deck = window.playlistLiveDeck?.();
         const sourceName = document.getElementById('selectedSourceInline');
         if (sourceName && deck?.playlistName) {
-            sourceName.textContent = `Live · ${deck.playlistName}`;
+            sourceName.textContent = window.isSeriesStudy?.() ? `TV Series · ${deck.playlistName}` : `Live · ${deck.playlistName}`;
         }
         document.body.classList.add('has-learning-context');
         window.updateLearningContextUI?.();
@@ -1088,7 +1088,10 @@ loadConfig().then(async () => {
         const pendingTab = pendingSpeechLanguage
             ? document.querySelector(`.lang-tab[data-lang="${pendingSpeechLanguage}"]`)
             : null;
-        if (bootRoute.kind === 'music') {
+        if (bootRoute.kind === 'series' && selectedLanguage === 'spanish') {
+            await chooseSeriesVocabulary(selectedLanguage);
+            hideAppLoading();
+        } else if (bootRoute.kind === 'music') {
             await showArtistPicker(null, null, selectedLanguage);
             hideAppLoading();
         } else if (wordRoute) {
@@ -1843,7 +1846,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=7d3488cd')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=9826b0f7')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
@@ -1889,6 +1892,16 @@ function chooseSpeechVocabulary(language) {
     }
 }
 
+async function chooseSeriesVocabulary(language = selectedLanguage) {
+    if (!window.seriesOpenFor?.(language)) return;
+    if (!document.getElementById('appContent')?.classList.contains('hidden')) await window.goBackToSetup?.();
+    window.closeChoiceSheet?.('learningSourceChoiceSheet', true);
+    document.getElementById('step1').style.display = 'none';
+    replaceRoute({ kind: 'series', language: routeCodeFor(language, config.languages) });
+    window.showSeriesChoices?.(language);
+}
+window.openSeriesMode = chooseSeriesVocabulary;
+
 // What the desktop sidebar trail (desktop-shell.js) calls. Each chip in the
 // trail switches its own level in place, so none of these start from the
 // beginning: they are the same handlers the modal pickers use.
@@ -1898,6 +1911,7 @@ window.desktopTrailActions = {
         else window.reopenLanguagePicker?.();
     },
     chooseSpeech(language) { chooseSpeechVocabulary(language); },
+    chooseSeries(language) { return chooseSeriesVocabulary(language); },
     chooseMusic(language, stage = 'choices') { return showArtistPicker(null, null, language, { stage }); },
     chooseArtists(language) { return showArtistPicker(null, null, language, { stage: 'artists' }); },
     openPlaylists(language) { return showArtistPicker(null, null, language, { stage: 'playlists' }); },
@@ -1948,7 +1962,11 @@ function openLearningSourcePicker() {
                 onSelect: () => {
                     showArtistPicker(null, null, language);
                 }
-            }
+            },
+            ...(window.seriesOpenFor?.(language) ? [{
+                ...copy.series, selected: current === 'series',
+                onSelect: () => chooseSeriesVocabulary(language)
+            }] : [])
         ]
     });
 }

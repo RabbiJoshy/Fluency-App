@@ -1,40 +1,40 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=7d3488cd';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=7d3488cd';
-import { songCreditHTML } from './song-credit.js?v=7d3488cd';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=7d3488cd';
+import './state.js?v=9826b0f7';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=9826b0f7';
+import { songCreditHTML } from './song-credit.js?v=9826b0f7';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=9826b0f7';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=7d3488cd';
-import './speech.js?v=7d3488cd';
-import { goToRoute, routeCodeFor } from './routes.js?v=7d3488cd';
-import { memoryTipTileHTML } from './memory-tips.js?v=7d3488cd';
+import { fitSenseRowText } from './card-row-layout.js?v=9826b0f7';
+import './speech.js?v=9826b0f7';
+import { goToRoute, routeCodeFor } from './routes.js?v=9826b0f7';
+import { memoryTipTileHTML } from './memory-tips.js?v=9826b0f7';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=7d3488cd';
-import './side-dock.js?v=7d3488cd';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=7d3488cd';
+} from './function-word-card.js?v=9826b0f7';
+import './side-dock.js?v=9826b0f7';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=9826b0f7';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=7d3488cd';
+} from './example-personalisation.js?v=9826b0f7';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=7d3488cd';
+} from './spanishdict-usage.js?v=9826b0f7';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=7d3488cd';
+} from './reverse-cues.js?v=9826b0f7';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,8 +69,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=7d3488cd';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=7d3488cd';
+} from './card-metadata-pills.js?v=9826b0f7';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=9826b0f7';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1183,6 +1183,44 @@ function framesOnActiveRow(scroll) {
     });
 }
 
+// A construction frame reads like a function-word pattern: the connecting
+// word is bold ("a", "por", "que"); a slot that names a word type is a pill in
+// that type's colour. "+ a +inf / por +inf" -> "+ **a** (inf) / **por** (inf)".
+const FRAME_SLOT_TYPES = { inf: 'verb', ger: 'verb', pp: 'verb', subj: 'verb', adj: 'adj' };
+function styleGrammarFrames(scroll) {
+    scroll.querySelectorAll('.sense-grammar-cue .sense-abbr[data-family="construction"]').forEach(el => {
+        if (el.dataset.framed || el.children.length) return;
+        const text = el.textContent.trim();
+        if (!text.startsWith('+')) return;
+        el.dataset.framed = '1';
+        el.textContent = '';
+        const tokens = text.match(/\+|\/|[^\s+\/]+|\s+/gu);
+        tokens.forEach((token, i) => {
+            const slot = FRAME_SLOT_TYPES[token.toLowerCase()];
+            const afterPlus = tokens.slice(0, i).reverse().find(t => t.trim()) === '+';
+            if (slot && afterPlus) {
+                const pill = document.createElement('span');
+                pill.className = 'frame-slot-pill';
+                pill.style.setProperty('--slot-rgb', getPosAccentRgb(slot));
+                pill.textContent = token;
+                el.append(pill);
+            } else if (/^[^\s+\/]+$/u.test(token)) {
+                const connector = document.createElement('span');
+                connector.className = 'frame-connector';
+                connector.textContent = token;
+                el.append(connector);
+            } else if (token === '+') {
+                // "+ a +inf": the plus before a slot that follows a word is implied.
+                const next = FRAME_SLOT_TYPES[(tokens.slice(i + 1).find(t => t.trim()) || '').toLowerCase()];
+                const prevWord = tokens.slice(0, i).reverse().find(t => t.trim());
+                if (!(next && prevWord && /^[^\s+\/]+$/u.test(prevWord))) el.append('+');
+            } else {
+                el.append(token.trim() ? token : ' ');
+            }
+        });
+    });
+}
+
 function hoistSharedRowText(scroll, card) {
     // A gloss is the meaning's own text, or a context slot holding the
     // translation: bom's three Wiktionary senses all translate "good", so the
@@ -1455,6 +1493,7 @@ function inlineSenseRows(root, card) {
     groupInlineTranslation(scroll);
     arrangeGroupCues(scroll);
     framesOnActiveRow(scroll);
+    styleGrammarFrames(scroll);
     inlineRowFlags(scroll);
     fitHoistedShared(root);
     fitSharedContextInline(root);
@@ -2328,7 +2367,7 @@ function initializeApp() {
         // Set progress and Saved words are not offered mid-set: progress adds
         // little here, and saved words lives in Settings → Words & data.
         const entries = [
-            { label: activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
+            { label: window.isSeriesStudy?.() ? 'TV Series setup' : activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
             { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
             { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
             { ...darkModeRow(), keepOpen: true, tail: '', refresh: darkModeRow, onSelect: () => window.applyThemePreference?.(
@@ -3408,7 +3447,7 @@ async function goBackToSetup() {
     // other transition in the app announces itself. Without this the tap read
     // as the app stalling rather than working — the same overlay Learn New and
     // Review already use.
-    window.showAppLoading?.(activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', 'Updating your levels…');
+    window.showAppLoading?.(window.isSeriesStudy?.() ? 'TV Series setup' : activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', 'Updating your levels…');
     stopExampleAutoplay(true);
     // Hide app content, show setup
     const appContent = document.getElementById('appContent');
@@ -11445,8 +11484,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '7d3488cd';
-const MODALS_ASSET_VERSION = '7d3488cd';
+const ASSET_VERSION = '9826b0f7';
+const MODALS_ASSET_VERSION = '9826b0f7';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

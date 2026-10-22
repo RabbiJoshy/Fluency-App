@@ -1,3 +1,5 @@
+import { entityTitleMatchesQuery, guardStandaloneDictionary } from '../js/lexical-guards.js';
+
 /**
  * TURBO v2: Ultra-fast, live, zero-cost Spanish playlist intake engine.
  * 
@@ -22,7 +24,7 @@ export class TurboEngine {
         this.elisions = assets.elisions || {};
         this.mwes = assets.mwes || {};
         this.curatedEntities = assets.curatedEntities || {};
-        this.dictionary = assets.dictionary || {};
+        this.dictionary = guardStandaloneDictionary(assets.dictionary || {}, this.language);
         this.ranks50k = extra50k.ranks || {};
         this.lemmas50k = extra50k.lemmas || {};
         this.entityCache = new Map(); // query -> entity object or null
@@ -380,24 +382,16 @@ export class TurboEngine {
                 for (const hit of hits) {
                     const title = hit.title;
 
-                    // Surface Coherence Gate:
-                    // The Wikipedia title MUST share significant token overlap with the surface query!
-                    // This prevents "Beanie Prada" from matching "Prochilodus magdalenae" (0 overlap)
-                    // or "La Industria Inc" from matching "R. J. Reynolds Tobacco Company" (0 overlap).
-                    const qTokens = cleanQ.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, '').split(/\s+/).filter(t => t.length > 2);
-                    const titleClean = title.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, '');
-                    const titleTokens = new Set(titleClean.split(/\s+/).filter(t => t.length > 2));
-                    
-                    const hasOverlap = qTokens.some(qt => titleTokens.has(qt) || titleClean.includes(qt));
-                    if (!hasOverlap) {
-                        continue; // Reject completely unrelated Wikipedia search hits!
-                    }
+                    // Search ranking/token overlap cannot establish entity identity.
+                    // Expanded names (Berlín -> Muro de Berlín) must not be promoted.
+                    if (!entityTitleMatchesQuery(cleanQ, title)) continue;
 
                     const sumUrl = `https://${language}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, '_'))}`;
                     const sResp = await fetch(sumUrl, { headers });
                     if (!sResp.ok) continue;
                     const sData = await sResp.json();
                     if (sData.type === 'disambiguation') continue;
+                    if (sData.title && !entityTitleMatchesQuery(cleanQ, sData.title)) continue;
 
                     const desc = (sData.description || '').trim();
                     const extract = (sData.extract || '').trim();

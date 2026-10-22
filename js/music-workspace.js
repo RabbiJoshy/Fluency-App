@@ -9,6 +9,11 @@ let stage = 'artists';
 let active = false;
 let busy = false;
 let playlistReturn = false;
+let sourceMode = 'music';
+function isSeriesDeck(deck) { return deck?.sourceKind === 'series' || deck?.playlistId === 'la-casa-de-papel'; }
+window.seriesOpenFor = language => language === 'spanish';
+window.isSeriesStudy = () => Boolean(window.playlistLiveActive?.() && isSeriesDeck(window.playlistLiveDeck?.()));
+window.seriesWorkspaceActive = () => active && sourceMode === 'series';
 let returnFocus;
 const homes = new Map();
 
@@ -34,7 +39,6 @@ function init() {
             <nav class="music-workspace-nav" aria-label="Music source">
                 <button type="button" data-music-stage="artists">Artists</button>
                 <button type="button" data-music-stage="playlists">Spotify playlists</button>
-                <button type="button" data-music-stage="subtitles">Series &amp; subtitles</button>
                 <button type="button" data-music-stage="setup" id="musicSetupBtn" hidden aria-hidden="true" tabindex="-1">Study setup</button>
             </nav>
         </header>
@@ -46,6 +50,13 @@ function init() {
                         <button type="button" id="musicMixBtn" class="music-mix-btn" hidden>Mix several</button>
                     </div>
                     <div id="musicArtistList"></div>
+                </div>
+                <div id="seriesBrowser" hidden>
+                    <p>Choose a TV series</p>
+                    <button type="button" id="casaSeriesBtn" class="music-artist-option">
+                        <span class="music-artist-image" aria-hidden="true">LCDP</span>
+                        <span><strong>La Casa de Papel</strong><small>30 episodes · Seasons 1–4 sample · Spanish dialogue</small></span>
+                    </button>
                 </div>
                 <div id="musicPickerHost"></div>
                 <div id="musicStudySetup" hidden></div>
@@ -64,12 +75,24 @@ function init() {
             if (busy) return;
             const next = button.dataset.musicStage;
             if (next === 'playlists') openPlaylists();
-            else if (next === 'subtitles') openSubtitles();
             else if (next === 'setup') showMusicStudySetup();
             else showArtists();
         });
     });
     document.getElementById('musicBackBtn').addEventListener('click', back);
+    document.getElementById('casaSeriesBtn').addEventListener('click', async () => {
+        if (busy || options.language !== 'spanish') return;
+        window.setMusicWorkspaceBusy?.(true);
+        window.showAppLoading?.('Loading La Casa de Papel', 'Preparing your series vocabulary…');
+        try {
+            await window.loadCasaDePapelPreset();
+            dismissMusicWorkspace();
+            window.activatePlaylistLiveStudy('spanish');
+        } catch (error) {
+            window.hideAppLoading?.();
+            alert(error.message || 'Could not load La Casa de Papel.');
+        } finally { window.setMusicWorkspaceBusy?.(false); }
+    });
     document.getElementById('musicEditSongsBtn').addEventListener('click', () => {
         if (window.playlistLiveActive?.()) openPlaylists();
         else window.showSongSetPicker?.();
@@ -88,7 +111,7 @@ function enter() {
     document.body.classList.add('music-workspace-active');
     document.getElementById('step1')?.classList.remove('source-speech-active');
     const studyNav = document.querySelector('#desktopStudyBtn .desktop-shell-label');
-    if (studyNav) studyNav.textContent = 'Music';
+    if (studyNav) studyNav.textContent = sourceMode === 'series' ? 'TV Series' : 'Music';
     // Moving the real controls preserves all their handlers and source state.
     for (const id of SETUP_IDS) {
         const element = document.getElementById(id);
@@ -96,7 +119,7 @@ function enter() {
         rememberHome(element);
         if (element) document.getElementById('musicStudySetup').appendChild(element);
     }
-    for (const id of ['songSetModal', 'spotifyPlaylistModal', 'subtitleImportModal']) {
+    for (const id of ['songSetModal', 'spotifyPlaylistModal']) {
         const panel = document.getElementById(id);
         rememberHome(panel);
         if (!panel) continue;
@@ -113,10 +136,12 @@ function enter() {
 
 function showStage(next, { focus = true } = {}) {
     stage = next;
+    document.getElementById('seriesBrowser').hidden = next !== 'series';
+    workspace.dataset.sourceMode = sourceMode;
     const artistBrowser = document.getElementById('musicArtistBrowser');
     if (artistBrowser) artistBrowser.hidden = next !== 'artists';
     const pickerHost = document.getElementById('musicPickerHost');
-    if (pickerHost) pickerHost.hidden = !['songs', 'playlists', 'subtitles'].includes(next);
+    if (pickerHost) pickerHost.hidden = !['songs', 'playlists'].includes(next);
     const studySetup = document.getElementById('musicStudySetup');
     if (studySetup) studySetup.hidden = next !== 'setup';
     workspace.dataset.stage = next;
@@ -125,7 +150,7 @@ function showStage(next, { focus = true } = {}) {
         if (selected) button.setAttribute('aria-current', 'page');
         else button.removeAttribute('aria-current');
     });
-    const isPick = ['artists', 'playlists', 'subtitles'].includes(next);
+    const isPick = ['artists', 'playlists', 'series'].includes(next);
     const backButton = document.getElementById('musicBackBtn');
     if (backButton) {
         // The pick screens are the top level: Back only appears to return to a deck.
@@ -133,10 +158,10 @@ function showStage(next, { focus = true } = {}) {
         backButton.textContent = isPick ? `‹ ${window.activeArtist?.name || window.playlistLiveDeck?.()?.playlistName || 'Back'}` : '‹ Back';
     }
     const nav = workspace.querySelector('.music-workspace-nav');
-    if (nav) nav.hidden = !isPick;
+    if (nav) nav.hidden = !isPick || sourceMode === 'series';
     const title = document.getElementById('musicWorkspaceTitle');
     if (title) {
-        title.textContent = next === 'songs' ? 'Choose songs' : next === 'setup' ? 'Study setup' : 'Music';
+        title.textContent = next === 'songs' ? 'Choose songs' : next === 'setup' ? 'Study setup' : sourceMode === 'series' ? 'TV Series' : 'Music';
     }
     updateMusicSelection();
     window.refreshDesktopTrail?.();
@@ -155,24 +180,29 @@ export function showChoices() {
 }
 
 export function showArtists() {
+    sourceMode = 'music';
     enter();
     closePickers();
     showStage('artists');
 }
 
 export function openPlaylists() {
+    sourceMode = 'music';
     enter();
     closePickers();
     showStage('playlists');
     options.onSelectPlaylist?.();
 }
 
-export function openSubtitles() {
+export function showSeriesChoices(language = 'spanish') {
+    if (!window.seriesOpenFor(language)) return;
+    sourceMode = 'series';
+    options = { ...options, language };
     enter();
     closePickers();
-    showStage('subtitles');
-    window.openSubtitleImport?.();
+    showStage('series');
 }
+window.showSeriesChoices = showSeriesChoices;
 
 function back() {
     if (busy) return;
@@ -181,30 +211,23 @@ function back() {
         if (playlistReturn) openPlaylists();
         else if (hasDeck() && !unfinishedMix) window.dismissMusicWorkspace?.();
         else showArtists();
-    } else if (stage === 'artists' || stage === 'playlists' || stage === 'subtitles') {
+    } else if (stage === 'artists' || stage === 'playlists' || stage === 'series') {
         // Back from a pick screen returns to the deck you came from.
         if (hasDeck()) window.dismissMusicWorkspace?.();
         else showArtists();
     } else if (stage === 'setup') {
-        showArtists();
+        if (sourceMode === 'series') showSeriesChoices(options.language);
+        else showArtists();
     }
 }
 
 export function openMusicWorkspace(nextOptions = {}) {
+    sourceMode = 'music';
     options = { ...options, ...nextOptions };
     enter();
     const list = document.getElementById('musicArtistList');
     list.replaceChildren();
-    const entries = [...(options.artists || [])];
-    if (options.language === 'spanish' && !entries.some(e => e.slug === 'la-casa-de-papel')) {
-        entries.unshift({
-            slug: 'la-casa-de-papel',
-            name: 'La Casa de Papel',
-            initials: 'LCDP',
-            description: '30 episodes · Seasons 1–4 sample · Spanish dialogue',
-            isSeries: true
-        });
-    }
+    const entries = (options.artists || []).filter(entry => !entry.isSeries && entry.slug !== 'la-casa-de-papel');
     const mixEntry = entries.find(e => e.slug === '__custom__');
     const mixBtn = document.getElementById('musicMixBtn');
     mixBtn.hidden = !mixEntry;
@@ -239,12 +262,7 @@ export function openMusicWorkspace(nextOptions = {}) {
         button.append(image, copy);
         button.addEventListener('click', () => {
             playlistReturn = false;
-            if (entry.isSeries) {
-                window.showAppLoading?.('Loading La Casa de Papel', 'Building study deck from dialogue…');
-                window.openSubtitleImport?.({ preselect: entry.slug });
-            } else {
-                options.onSelectArtist?.(entry);
-            }
+            options.onSelectArtist?.(entry);
         });
         list.appendChild(button);
     }
@@ -269,6 +287,7 @@ export function showMusicSongPicker() {
 
 export function showMusicStudySetup() {
     if (!hasDeck()) return;
+    sourceMode = window.isSeriesStudy?.() ? 'series' : 'music';
     enter();
     closePickers();
     showStage('setup');
@@ -301,7 +320,7 @@ export function updateMusicSelection(songs = null, sourceName = '') {
         preview.appendChild(item);
     }
     const edit = document.getElementById('musicEditSongsBtn');
-    edit.hidden = (!artist && !live) || stage === 'songs';
+    edit.hidden = sourceMode === 'series' || (!artist && !live) || stage === 'songs';
     edit.textContent = live && !artist ? 'Change playlist songs' : 'Choose songs';
 }
 

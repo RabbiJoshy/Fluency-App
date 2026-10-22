@@ -40,7 +40,7 @@ export function parseRoute(hash) {
         return { kind: 'artist', artist: second, scope: third === 'extra' ? 'extra' : 'main' };
     }
     if (parts.length === 1) return { kind: 'language', language: first };
-    if (parts.length === 2 && (second === 'songs' || second === 'live' || second === 'music')) return { kind: second, language: first };
+    if (parts.length === 2 && (second === 'songs' || second === 'live' || second === 'music' || second === 'series')) return { kind: second, language: first };
     if (parts.length === 3 && second === 'w' && third) return { kind: 'word', language: first, surface: third };
     if (second === 'conjugate' && parts.length <= 3) {
         return third ? { kind: 'conjugate', language: first, verb: third } : { kind: 'conjugate', language: first };
@@ -61,6 +61,7 @@ export function formatRoute(route) {
             return `#/${enc(route.language)}/w/${enc(route.surface)}`;
         case 'songs':
         case 'music':
+        case 'series':
         case 'live':
             return `#/${enc(route.language)}/${route.kind}`;
         case 'conjugate':
