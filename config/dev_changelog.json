@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T15:29:59+01:00",
+      "date": "2026-10-22 15:29 BST",
+      "agent": "Codex",
+      "summary": "Smart Skip compares visible meanings; card links stay readable and See links open expression reference cards.",
+      "detail": [
+        "Separate related forms when their displayed sense sets differ, while preserving existing merge safeguards and release consistency.",
+        "Keep linked card text at normal size with comfortable tap targets.",
+        "Generate dictionary reference cards only for explicit See links to multiword expressions, including Portuguese haver de."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T15:26:00+01:00",
       "date": "2026-10-22 15:26 BST",
       "agent": "Antigravity",
@@ -351,38 +363,6 @@
       "summary": "Card back: the chosen sub-meaning's whole row is washed in the one-grouped-row layout too (água, aún)",
       "detail": [
         "The wash across the chosen sub-meaning's row only worked for groups whose shared text stays in the group row (dejar); in the layout where the shared text moves up to the word-type row (água, aún, realmente) a higher-priority rule kept the row transparent, so only the text was highlighted. Both layouts now wash the row."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T20:04:25+01:00",
-      "date": "2026-10-21 20:04 BST",
-      "agent": "Claude",
-      "summary": "Card back: grammar frames are inline everywhere; a sub-row's gloss and context share a line (guerra: warfare · the waging of war)",
-      "detail": [
-        "The base grammar-frame rule was a full-width flex block from the older layout; it is now inline, so no wrapper can reintroduce a line break after a short gloss.",
-        "A sub-row's own gloss ('warfare') was a block that pushed its context ('the waging of war') onto a second line even when both fit; they now read 'warfare · the waging of war' on one line."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T19:53:58+01:00",
-      "date": "2026-10-21 19:53 BST",
-      "agent": "Claude",
-      "summary": "Card back: a grammar frame after a translation (you know +inf) stays on the translation's line",
-      "detail": [
-        "The frame was drawn as a full-width block under the gloss, so a short gloss and a short frame used two lines. It is now inline, so 'you know +inf' is one line; longer ones still wrap."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T19:45:47+01:00",
-      "date": "2026-10-21 19:45 BST",
-      "agent": "Claude",
-      "summary": "Card back: removed the stray empty line under rows that have only a gloss and a grammar cue (e.g. Portuguese sabes)",
-      "detail": [
-        "An empty, already-hoisted context span was still being drawn as an inline block and wrapped onto its own blank line; the rule that hides it now wins over the rule that showed it.",
-        "Affects any single-gloss row whose context was hoisted away; sabes rows shrink from about 94px to 68px."
       ],
       "commit": "pending"
     }

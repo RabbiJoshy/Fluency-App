@@ -57,8 +57,12 @@ export function fitSenseRowText(root) {
     for (const element of elements) {
         restoreText(element);
         element.style.removeProperty('font-size');
+        element.classList.toggle('has-reference-links', Boolean(element.querySelector('.sense-cross-reference')));
     }
     for (const element of elements) {
+        // Navigation is content, not a compact gloss: wrap it at normal size
+        // rather than shrinking its label or truncating the button's markup.
+        if (element.classList.contains('has-reference-links')) continue;
         if (!element.clientWidth || !element.textContent.trim()) continue;
         const style = getComputedStyle(element);
         const size = parseFloat(style.fontSize);

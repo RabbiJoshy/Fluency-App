@@ -1,4 +1,4 @@
-import './state.js?v=8923a224';
+import './state.js?v=62b90095';
 
 const ESTIMATION_QUESTION_LIMIT = 30;
 const ESTIMATION_BAND_TARGET = 10;
@@ -178,7 +178,7 @@ function buildEstimationPool(vocabulary, frequencyData = null, { includeAssumed 
             });
             continue;
         }
-        const lemma = window.lemmaGroupKey(source);
+        const lemma = window.lemmaStudyGroupKey(source);
         if (!lemma) {
             items.push({ ...source, estimationKey: `surface:${source.id || source.word}`,
                 estimationFrequency: frequency, estimationMembers: [{ source, weight: 1 }] });

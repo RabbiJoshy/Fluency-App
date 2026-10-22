@@ -1,0 +1,95 @@
+{
+  "schema": "see-expression-references/v1",
+  "scope": "see_links_only",
+  "source": {
+    "provider": "wiktionary",
+    "snapshot": "enwiktionary-2026-08-20",
+    "filename": "kaikki.org-dictionary-Portuguese.jsonl",
+    "sha256": "29c17be277879653aa60fc24413ba071e81845b6bb1b1bb7e7828d239796209d"
+  },
+  "entries": {
+    "acabar de": {
+      "expression": "acabar de",
+      "senses": [
+        {
+          "translation": "to have just (indicates recency)",
+          "context": "with infinitive",
+          "pos": "verb",
+          "source": "wiktionary",
+          "canonical_example": {
+            "text": "Ele acabou de sair.",
+            "translation": "He has just left.",
+            "evidence": "dictionary"
+          }
+        }
+      ],
+      "reference_only": true,
+      "source_url": "https://en.wiktionary.org/wiki/acabar_de#Portuguese"
+    },
+    "haver de": {
+      "expression": "haver de",
+      "senses": [
+        {
+          "translation": "ought to; shall",
+          "context": "forms a future tense; with infinitive",
+          "pos": "verb",
+          "source": "wiktionary"
+        },
+        {
+          "translation": "ought to; shall",
+          "context": "indicates duty; with infinitive",
+          "pos": "verb",
+          "source": "wiktionary"
+        },
+        {
+          "translation": "ought to; shall",
+          "context": "indicates modality of probability; with infinitive",
+          "pos": "verb",
+          "source": "wiktionary"
+        }
+      ],
+      "reference_only": true,
+      "source_url": "https://en.wiktionary.org/wiki/haver_de#Portuguese"
+    },
+    "ter que": {
+      "expression": "ter que",
+      "senses": [
+        {
+          "translation": "to have to (indicates obligation)",
+          "context": "with infinitive",
+          "pos": "verb",
+          "source": "wiktionary",
+          "canonical_example": {
+            "text": "Tenho que preparar o café da manhã.",
+            "translation": "I have to prepare breakfast.",
+            "evidence": "dictionary"
+          }
+        }
+      ],
+      "reference_only": true,
+      "source_url": "https://en.wiktionary.org/wiki/ter_que#Portuguese"
+    },
+    "ter de": {
+      "expression": "ter de",
+      "senses": [
+        {
+          "translation": "to have to (indicates obligation)",
+          "context": "with infinitive",
+          "pos": "verb",
+          "source": "wiktionary",
+          "canonical_example": {
+            "text": "Você tem de chegar no horário na faculdade, então durma cedo.",
+            "translation": "You have to get to the university on time, so sleep early.",
+            "evidence": "dictionary"
+          }
+        }
+      ],
+      "reference_only": true,
+      "source_url": "https://en.wiktionary.org/wiki/ter_de#Portuguese"
+    }
+  },
+  "unresolved": [],
+  "language": "pt",
+  "built_from_index": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim/app/vocabulary.index.json",
+  "index_sha256": "00d9064b839f3e206a46fc694e0375f4abc246f56a2766570f7eb9513fd172b6"
+}

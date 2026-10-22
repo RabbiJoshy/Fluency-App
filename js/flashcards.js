@@ -1,40 +1,41 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=8923a224';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=8923a224';
-import { songCreditHTML } from './song-credit.js?v=8923a224';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=8923a224';
+import './state.js?v=62b90095';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=62b90095';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=62b90095';
+import { songCreditHTML } from './song-credit.js?v=62b90095';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=62b90095';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=8923a224';
-import './speech.js?v=8923a224';
-import { goToRoute, routeCodeFor } from './routes.js?v=8923a224';
-import { memoryTipTileHTML } from './memory-tips.js?v=8923a224';
+import { fitSenseRowText } from './card-row-layout.js?v=62b90095';
+import './speech.js?v=62b90095';
+import { goToRoute, routeCodeFor } from './routes.js?v=62b90095';
+import { memoryTipTileHTML } from './memory-tips.js?v=62b90095';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=8923a224';
-import './side-dock.js?v=8923a224';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=8923a224';
+} from './function-word-card.js?v=62b90095';
+import './side-dock.js?v=62b90095';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=62b90095';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=8923a224';
+} from './example-personalisation.js?v=62b90095';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=8923a224';
+} from './spanishdict-usage.js?v=62b90095';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=8923a224';
+} from './reverse-cues.js?v=62b90095';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -69,8 +70,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=8923a224';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=8923a224';
+} from './card-metadata-pills.js?v=62b90095';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=62b90095';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -3947,9 +3948,9 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
     if (!active) return fallbackText;
     const references = senseCrossReferences(meaning);
     if (!references.length) return fallbackText;
-    const link = ({ target }) => {
+    const link = ({ target, relation }) => {
         const encoded = encodeURIComponent(target);
-        return `<button type="button" class="sense-cross-reference" data-reference-target="${encoded}" onclick="openSenseCrossReference(event, decodeURIComponent(this.dataset.referenceTarget))" title="Open ${escapeCardText(target)}">${escapeCardText(target)}</button>`;
+        return `<button type="button" class="sense-cross-reference" data-reference-target="${encoded}" data-reference-relation="${escapeCardText(relation)}" onclick="openSenseCrossReference(event, decodeURIComponent(this.dataset.referenceTarget), this.dataset.referenceRelation)" title="Open ${escapeCardText(target)}">${escapeCardText(target)}</button>`;
     };
     if (references.every(reference => reference.relation === 'see')) {
         const links = references.map(reference => (
@@ -3969,7 +3970,7 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
     return `<span class="sense-cross-reference-gloss">${projected?.display || fallbackText}</span><span class="sense-cross-reference-related" aria-label="Related cards">${related}</span>`;
 }
 
-async function openSenseCrossReference(event, target) {
+async function openSenseCrossReference(event, target, relation = 'see') {
     event?.preventDefault?.();
     event?.stopPropagation?.();
     const cleanTarget = String(target || '').trim();
@@ -3981,17 +3982,33 @@ async function openSenseCrossReference(event, target) {
         .flat();
     if (!cleanTarget || !Array.isArray(vocabSource)) return;
 
+    if (isSeeExpressionReference(cleanTarget, relation)) {
+        const trigger = event?.currentTarget;
+        const sourceCard = flashcards[currentIndex];
+        const language = selectedLanguage;
+        const langConfig = config?.languages?.[language] || {};
+        trigger?.setAttribute('aria-busy', 'true');
+        try {
+            const entry = await resolveSeeExpression(cleanTarget, langConfig, vocabSource);
+            if (selectedLanguage === language && flashcards[currentIndex] === sourceCard)
+                showSeeExpressionCard(entry, cleanTarget, trigger);
+        } catch (error) {
+            console.warn('Expression reference unavailable:', error);
+            if (selectedLanguage === language && flashcards[currentIndex] === sourceCard)
+                showSeeExpressionCard(null, cleanTarget, trigger, true);
+        } finally {
+            trigger?.removeAttribute('aria-busy');
+        }
+        return;
+    }
+
     const foldedTarget = foldSurfaceForm(cleanTarget);
     const exactEntry = vocabSource.find(entry => foldSurfaceForm(entry?.word) === foldedTarget)
         || vocabSource.find(entry => foldSurfaceForm(entry?.lemma) === foldedTarget);
     const phraseOwner = vocabSource.find(entry =>
         Array.isArray(entry?.mwe_memberships)
         && entry.mwe_memberships.some(mwe => foldSurfaceForm(mwe?.expression) === foldedTarget));
-    const headword = cleanTarget.split(/\s+/u)[0];
-    const foldedHeadword = foldSurfaceForm(headword);
-    const headwordEntry = vocabSource.find(entry => foldSurfaceForm(entry?.word) === foldedHeadword)
-        || vocabSource.find(entry => foldSurfaceForm(entry?.lemma) === foldedHeadword);
-    const entry = exactEntry || phraseOwner || headwordEntry;
+    const entry = exactEntry || phraseOwner;
     if (!entry?.id || !window.popupFoundWord) return;
 
     await window.popupFoundWord(
@@ -11484,8 +11501,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '8923a224';
-const MODALS_ASSET_VERSION = '8923a224';
+const ASSET_VERSION = '62b90095';
+const MODALS_ASSET_VERSION = '62b90095';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

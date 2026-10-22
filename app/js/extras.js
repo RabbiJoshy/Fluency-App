@@ -3,8 +3,8 @@
 // vocabulary in the same browser, with no coverage gate or separate setup.
 // The filtered vocabulary snapshot supplies the active songs and original IDs.
 // Each supplementary word has one home even when it also resembles a cognate.
-import './state.js?v=8923a224';
-import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=8923a224';
+import './state.js?v=62b90095';
+import { isItemSaved, toggleAndRenderSavedItem, renderSavedItems, openSavedItems, downloadSavedItems } from './saved-items.js?v=62b90095';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -73,7 +73,7 @@ function entityNote() {
 function lemmaKeyOf(item) {
     // vocab.js derives this from the assigned sense's headword; a second copy
     // here would group the Extras list differently from the deck it describes.
-    const key = g().lemmaGroupKey;
+    const key = g().lemmaStudyGroupKey || g().lemmaGroupKey;
     return key ? key(item) : String(item?.lemma || '').normalize('NFC').toLocaleLowerCase('es').trim();
 }
 
@@ -252,7 +252,7 @@ function lemmaDisplayOf(item, host) {
     // The surviving card is anchored to the most frequent surface, which can
     // itself be an inflection. Show the shared headword used for grouping,
     // with a translation from that headword's sense.
-    const key = lemmaKeyOf(item);
+    const key = g().lemmaGroupKey?.(item) || lemmaKeyOf(item);
     const matches = [host, item].flatMap(entry => (entry?.meanings || []).filter(meaning =>
         String(meaning?.headword || '').normalize('NFC').toLocaleLowerCase('es').trim() === key
     ));

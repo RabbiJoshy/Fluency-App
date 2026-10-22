@@ -1,14 +1,14 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=8923a224';
-import { readJsonWithTimeout } from './read-request.js?v=8923a224';
-import { validateVocabularyIndex } from './data-contracts.js?v=8923a224';
-import { formatRoute } from './routes.js?v=8923a224';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=8923a224';
-import { releaseUrl } from './release-host.js?v=8923a224';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=8923a224';
-import { getGrammarWordDefinition } from './function-word-card.js?v=8923a224';
+import './state.js?v=62b90095';
+import { readJsonWithTimeout } from './read-request.js?v=62b90095';
+import { validateVocabularyIndex } from './data-contracts.js?v=62b90095';
+import { formatRoute } from './routes.js?v=62b90095';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=62b90095';
+import { releaseUrl } from './release-host.js?v=62b90095';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=62b90095';
+import { getGrammarWordDefinition } from './function-word-card.js?v=62b90095';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -566,7 +566,7 @@ function isCoveredByEstimatedIds(item, estimatedIds) {
 }
 
 async function buildSeenLemmaSet(vocabData) {
-    const hasLemmas = lemmaFieldAvailable || (Array.isArray(vocabData) && vocabData.some(item => lemmaGroupKey(item)));
+    const hasLemmas = lemmaFieldAvailable || (Array.isArray(vocabData) && vocabData.some(item => lemmaStudyGroupKey(item)));
     if (!useLemmaMode || !hasLemmas || !progressData) return new Set();
     if (!lemmaFieldAvailable && hasLemmas) lemmaFieldAvailable = true;
 
@@ -574,7 +574,7 @@ async function buildSeenLemmaSet(vocabData) {
     const lemmaBySurface = new Map();
     const addEntries = entries => {
         for (const entry of entries || []) {
-            const lemma = lemmaGroupKey(entry);
+            const lemma = lemmaStudyGroupKey(entry);
             if (!lemma) continue;
             if (entry.id) lemmaById.set(entry.id, lemma);
             const surface = window.normalizeProgressSurface?.(entry.word);
@@ -590,7 +590,11 @@ async function buildSeenLemmaSet(vocabData) {
     // normal-only surface forms also contribute to a merged lemma's history.
     if (activeArtist) {
         const normalConfig = window._normalModeLangConfigs?.[selectedLanguage];
-        if (normalConfig) addEntries(await fetchAndJoinIndex(normalConfig));
+        if (normalConfig) {
+            const normal = await fetchAndJoinIndex(normalConfig);
+            await stampContractions(normal, normalConfig, { detached: true });
+            addEntries(normal);
+        }
     }
 
     const seenLemmas = new Set();
@@ -1007,7 +1011,45 @@ function lemmaGroupKey(item) {
 
 function lemmaSeenKey(item) {
     if (lemmaHeadwordsOf(item).length > 1) return '';
-    return lemmaGroupKey(item);
+    return lemmaStudyGroupKey(item);
+}
+
+// Eligibility/headword and study equivalence are different questions. These
+// keys are transient grouping metadata, never card IDs or printed headwords.
+const VISIBLE_SENSE_MERGE_RULE = 'visible-senses/v1';
+const visibleSenseMergeCache = new WeakMap();
+function visibleSenseMergeSignature(item) {
+    if (!item || typeof item !== 'object') return '';
+    if (item._visibleSenseMergeOverlay) {
+        return item._visibleSenseMergeOverlay.rule === VISIBLE_SENSE_MERGE_RULE
+            ? item._visibleSenseMergeOverlay.signature : '';
+    }
+    const source = item._base_meanings || item.meanings;
+    if (!source?.length || item._indexRowsPending) return '';
+    const cached = visibleSenseMergeCache.get(item);
+    if (cached?.source === source) return cached.signature;
+    if (typeof finishCardMeanings !== 'function') return '';
+    const meanings = source.map(m => ({ ...m,
+        meaning: m.original_translation ?? m.translation ?? m.meaning ?? '',
+        percentage: Number(m.display_frequency ?? m.frequency ?? m.percentage) || 0,
+        canonicalExample: m.canonical_example || m.canonicalExample,
+    }));
+    const finished = finishCardMeanings(item, meanings);
+    const keys = finished.meanings.filter(m => !m.unassigned && !m.exampleOnly
+        && m.assignment_method !== 'unassigned' && Number(m.percentage) > 0
+        && isShownSense(m, item)).map(lemmaSenseDedupeKey);
+    const signature = keys.length ? JSON.stringify([...new Set(keys)].sort()) : '';
+    visibleSenseMergeCache.set(item, { source, signature });
+    return signature;
+}
+
+function lemmaStudyGroupKey(item) {
+    // Explicit release-bound exclusions must survive hydration as well.
+    if (item?.merge_key === '') return '';
+    const lemma = lemmaGroupKey(item);
+    if (!lemma) return '';
+    const signature = visibleSenseMergeSignature(item);
+    return signature ? `${lemma}\u001f${signature}` : '';
 }
 
 function spellingWithoutBreaks(value) {
@@ -1264,7 +1306,7 @@ function computeLemmaExampleCounts(vocabData, examplesData) {
     const linesByLemma = new Map();
     let hasExampleBasis = false;
     for (const item of vocabData) {
-        const lemmaKey = lemmaGroupKey(item);
+        const lemmaKey = lemmaStudyGroupKey(item);
         if (!lemmaKey || item.is_english || item.is_noise || item.is_interjection || item.duplicate) continue;
         if (!linesByLemma.has(lemmaKey)) linesByLemma.set(lemmaKey, new Set());
         const lines = linesByLemma.get(lemmaKey);
@@ -1286,16 +1328,15 @@ function computeLemmaExampleCounts(vocabData, examplesData) {
 function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
     const hosts = new Map();
     for (const item of filteredData) {
-        const lemmaKey = lemmaGroupKey(item);
+        const lemmaKey = lemmaStudyGroupKey(item);
         if (lemmaKey && !hosts.has(lemmaKey)) hosts.set(lemmaKey, item);
     }
     if (hosts.size === 0) return;
 
-    const normalize = t => (t || '').trim().toLowerCase();
     for (const sib of allVocabData) {
         // An ambiguous spelling never donates its examples or its sense rows.
         if (lemmaHeadwordsOf(sib).length !== 1) continue;
-        const host = hosts.get(lemmaGroupKey(sib));
+        const host = hosts.get(lemmaStudyGroupKey(sib));
         if (!host || sib === host || (sib.id && sib.id === host.id)) continue;
         if (sib.is_english || sib.is_noise || sib.is_interjection || sib.duplicate) continue;
         if (!sib.meanings || sib.meanings.length === 0) continue;
@@ -1310,9 +1351,7 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
             // Match on the sense itself first. Each form's gloss is inflected
             // for that form (despeja "clear!", despejas "you clear"), so the
             // same sense no longer shares its translation text across forms.
-            const target = (sm.sense_id && host.meanings.find(hm => hm.sense_id === sm.sense_id))
-                || host.meanings.find(hm => normalize(hm.translation) === normalize(sm.translation))
-                || host.meanings[0];
+            const target = host.meanings.find(hm => lemmaSenseDedupeKey(hm) === lemmaSenseDedupeKey(sm));
             if (!target) continue;
             if (!target.examples) target.examples = [];
             const seen = new Set(target.examples.map(exampleSentenceKey));
@@ -1415,7 +1454,7 @@ function buildCardFormModel(item, meanings = [], options = {}) {
     // Only an unambiguous spelling is a merged lemma. Casado names casar and
     // casado, so it stays the surface card and does not wear the verb's title.
     const mergeKey = lemmaGroupKey(item);
-    const mergedLemma = options.mergedLemma === true && Boolean(mergeKey);
+    const mergedLemma = options.mergedLemma === true && Boolean(mergeKey) && item?.merge_key !== '';
     const displaySurface = mergedLemma ? mergeKey : representativeSurface;
     const hasVerbSense = meanings.some(meaning => {
         const pos = String(meaning?.pos || '').toLocaleLowerCase('en');
@@ -2202,12 +2241,21 @@ async function stampDictionaryExamples(vocabulary, langConfig) {
     }
     const sameRelease = payload?.release_id && String(langConfig?.indexPath || '')
         .includes(`/${payload.release_id}/`);
+    const members = new Map();
+    if (sameRelease) for (const item of vocabulary || []) {
+        const key = lemmaStudyGroupKey(item);
+        if (!key) continue;
+        if (!members.has(key)) members.set(key, new Set());
+        members.get(key).add(normalizeLemmaToken(item.word));
+    }
     for (const item of vocabulary || []) {
         delete item._dictionaryExamples;
         delete item._dictionaryMergedSurfaces;
         if (!sameRelease) continue;
         item._dictionaryExamples = payload.examples || {};
-        item._dictionaryMergedSurfaces = payload.groups?.[lemmaGroupKey(item)] || null;
+        const group = members.get(lemmaStudyGroupKey(item));
+        item._dictionaryMergedSurfaces = (payload.groups?.[lemmaGroupKey(item)] || [])
+            .filter(surface => group?.has(normalizeLemmaToken(surface)));
     }
 }
 
@@ -2220,6 +2268,7 @@ let _mergeExceptionsFor;
 let _contractionSurfaces = null;
 let _mergeKeys = null;
 let _nounMergeVerdicts = null;
+let _visibleMergeSenses = null;
 let _mergeKeysRelease = null;
 
 async function stampContractions(vocabulary, langConfig, { detached = false } = {}) {
@@ -2237,7 +2286,9 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
             .some(value => String(value || '').includes(`/${built}/`));
         stampMergeExceptionValues(vocabulary, contractions,
             sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.keys : null,
-            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.noun_verdicts : null);
+            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.noun_verdicts : null,
+            built && String(langConfig?.indexPath || '').includes(`/${built}/`)
+                && payload?.visible_sense_rule === VISIBLE_SENSE_MERGE_RULE ? payload?.visible_sense_keys : null);
         return;
     }
     if (_mergeExceptionsFor !== path) {
@@ -2245,6 +2296,7 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
         _contractionSurfaces = null;
         _mergeKeys = null;
         _nounMergeVerdicts = null;
+        _visibleMergeSenses = null;
         _mergeKeysRelease = null;
         if (path) {
             try {
@@ -2262,6 +2314,8 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
                     && payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
                 _nounMergeVerdicts = sameRelease && payload?.noun_merge_rule === 'noun-merge/v2'
                     ? payload?.noun_verdicts : null;
+                _visibleMergeSenses = payload?.visible_sense_rule === VISIBLE_SENSE_MERGE_RULE
+                    ? payload?.visible_sense_keys : null;
                 if (!sameRelease) console.warn(`Merge keys were built for ${built}; ignoring them for this release.`);
             } catch (error) {
                 console.warn('Merge exceptions unavailable:', error);
@@ -2273,13 +2327,21 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
     const sameRelease = !_mergeKeysRelease || [langConfig?.indexPath, langConfig?.releaseManifestPath]
         .some(value => String(value || '').includes(`/${_mergeKeysRelease}/`));
     stampMergeExceptionValues(vocabulary, _contractionSurfaces,
-        sameRelease ? _mergeKeys : null, sameRelease ? _nounMergeVerdicts : null);
+        sameRelease ? _mergeKeys : null, sameRelease ? _nounMergeVerdicts : null,
+        _mergeKeysRelease && String(langConfig?.indexPath || '').includes(`/${_mergeKeysRelease}/`)
+            ? _visibleMergeSenses : null);
 }
 
-function stampMergeExceptionValues(vocabulary, contractions, keys, nounVerdicts = null) {
+function stampMergeExceptionValues(vocabulary, contractions, keys, nounVerdicts = null, visibleSenses = null) {
     if (!Array.isArray(vocabulary)) return;
     for (const item of vocabulary) {
         const surface = normalizeLemmaToken(item?.word);
+        visibleSenseMergeCache.delete(item);
+        delete item._visibleSenseMergeOverlay;
+        if (typeof visibleSenses?.[surface] === 'string') {
+            item._visibleSenseMergeOverlay = { rule: VISIBLE_SENSE_MERGE_RULE,
+                signature: visibleSenses[surface] };
+        }
         if (item._nounMergeOverlay) {
             if (item._nounMergeOriginal) item.noun_merge = item._nounMergeOriginal;
             else delete item.noun_merge;
@@ -2578,7 +2640,8 @@ function selectLemmaModeRepresentatives(items) {
     const surfacesByLemma = new Map();
     for (const item of items) {
         item._lemmaModeRepresentative = false;
-        const lemmaKey = lemmaGroupKey(item);
+        delete item._mergedDeckSurfaces;
+        const lemmaKey = lemmaStudyGroupKey(item);
         if (!lemmaKey) {
             item._lemmaModeRepresentative = true;
             continue;
@@ -2593,8 +2656,8 @@ function selectLemmaModeRepresentatives(items) {
         // The lemma's own spelling fronts the merged card whenever it is in
         // the deck (estar, not estaba), so the face does not move when a rule
         // keeps some other form apart.
-        const itemIsLemma = normalizeLemmaToken(item.word) === lemmaKey;
-        const previousIsLemma = previous ? normalizeLemmaToken(previous.word) === lemmaKey : false;
+        const itemIsLemma = normalizeLemmaToken(item.word) === lemmaGroupKey(item);
+        const previousIsLemma = previous ? normalizeLemmaToken(previous.word) === lemmaGroupKey(previous) : false;
         if (previous && itemIsLemma !== previousIsLemma) {
             if (itemIsLemma) representativeByLemma.set(lemmaKey, item);
             continue;
@@ -2630,7 +2693,7 @@ function isCognateAlreadyKnown(item) {
     if (globalThis.bridgeVerdict?.(item, {useProfile: excludeCognates})) return true;
     if (decide && excludeCognates && Boolean(decide(item))) return true;
     if (useLemmaMode && lemmaFieldAvailable) {
-        const lKey = lemmaGroupKey(item);
+        const lKey = lemmaStudyGroupKey(item);
         if (lKey && _cognateSkippedLemmas.has(lKey)) return true;
     }
     return Number(item?.cognate_score || 0) >= cognateThreshold;
@@ -2755,7 +2818,7 @@ function buildFilteredVocab(vocabData) {
         );
     }
     if (!lemmaFieldAvailable && Array.isArray(vocabData)) {
-        lemmaFieldAvailable = vocabData.some(item => lemmaGroupKey(item));
+        lemmaFieldAvailable = vocabData.some(item => lemmaStudyGroupKey(item));
     }
 
     // Single-pass filter combining: basic validity → POS=X placeholder
@@ -2772,11 +2835,11 @@ function buildFilteredVocab(vocabData) {
     if (!isExtraScope && useLemmaMode && lemmaFieldAvailable && (excludeCognates || globalThis.isBridgeEnabled?.()) && (cognateFieldAvailable || globalThis.isBridgeEnabled?.())) {
         const candidatesByLemma = new Map();
         for (const item of vocabData) {
-            const lKey = lemmaGroupKey(item);
+            const lKey = lemmaStudyGroupKey(item);
             if (!lKey) continue;
             const prev = candidatesByLemma.get(lKey);
-            const itemIsLemma = normalizeLemmaToken(item.word) === lKey;
-            const prevIsLemma = prev ? normalizeLemmaToken(prev.word) === lKey : false;
+            const itemIsLemma = normalizeLemmaToken(item.word) === lemmaGroupKey(item);
+            const prevIsLemma = prev ? normalizeLemmaToken(prev.word) === lemmaGroupKey(prev) : false;
             if (prev && itemIsLemma !== prevIsLemma) {
                 if (itemIsLemma) candidatesByLemma.set(lKey, item);
                 continue;
@@ -2910,7 +2973,7 @@ function buildFilteredVocab(vocabData) {
         // Merge Lemmas from moving the card to a different level or set.
         const lemmaStableRanks = new Map();
         for (const entry of vocabData) {
-            const lemmaKey = lemmaGroupKey(entry);
+            const lemmaKey = lemmaStudyGroupKey(entry);
             if (!lemmaKey || !Number.isFinite(entry.stableRank)) continue;
             const previous = lemmaStableRanks.get(lemmaKey);
             if (previous === undefined || entry.stableRank < previous) {
@@ -2919,13 +2982,13 @@ function buildFilteredVocab(vocabData) {
         }
         const lemmaTotals = new Map();
         for (const e of vocabData) {
-            const lemmaKey = lemmaGroupKey(e);
+            const lemmaKey = lemmaStudyGroupKey(e);
             if (!lemmaKey || e.is_english || e.is_noise || e.is_interjection || e.duplicate) continue;
             lemmaTotals.set(lemmaKey, (lemmaTotals.get(lemmaKey) || 0) + (e.corpus_count || 0));
         }
         const exampleBasis = computeLemmaExampleCounts(vocabData, window._cachedExamplesData);
         for (const item of result) {
-            const lemmaKey = lemmaGroupKey(item);
+            const lemmaKey = lemmaStudyGroupKey(item);
             item.stableRank = lemmaStableRanks.get(lemmaKey) || item.stableRank;
             item.lemma_total_count = lemmaTotals.get(lemmaKey) || item.corpus_count || 0;
             // The pipeline stamp includes raw one-off lyric evidence that may
@@ -3093,7 +3156,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         if (speechFrequency && useLemmaMode) {
             for (const entry of vocabularyData) {
                 if (entry.is_english || entry.is_noise || entry.is_interjection || entry.duplicate) continue;
-                const lemmaKey = lemmaGroupKey(entry);
+                const lemmaKey = lemmaStudyGroupKey(entry);
                 const value = speechSourceFrequencyOf(entry, speechFrequency);
                 if (!lemmaKey || value === null) continue;
                 // Keep the individual surfaces, not just how many there were.
@@ -3123,7 +3186,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // test asked for `most_frequent_lemma_instance`, a pipeline-stamped
         // election this app re-does at runtime anyway, which made the feature
         // unavailable on every deck the current pipeline builds.
-        lemmaFieldAvailable = vocabularyData.some(item => lemmaGroupKey(item));
+        lemmaFieldAvailable = vocabularyData.some(item => lemmaStudyGroupKey(item));
         cognateFieldAvailable = vocabularyData.some(item =>
             (item.cognate_score > 0) || item.cognate_scores || item.cognate_sense_map || item.cognet_cognate || item.is_transparent_cognate
         );
@@ -3673,7 +3736,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
             const lemmaFallbackKey = String(item?.lemma || '')
                 .normalize('NFC').toLocaleLowerCase('es').trim();
             const sourceFrequency = useLemmaMode && lemmaFieldAvailable
-                ? (lemmaSourceFrequencies.get(lemmaGroupKey(item))
+                ? (lemmaSourceFrequencies.get(lemmaStudyGroupKey(item))
                     ?? (lemmaFallbackKey ? lemmaSourceFrequencies.get(lemmaFallbackKey) : undefined))
                 : null;
             // The figure must describe the word printed on the card. A merged
@@ -4850,5 +4913,6 @@ window.detectSplitCardTuples = detectSplitCardTuples;
 // Extras reports the forms merging absorbed, and must group them exactly as
 // the filter did. Exporting the rule keeps one definition of it.
 globalThis.lemmaGroupKey = lemmaGroupKey;
+globalThis.lemmaStudyGroupKey = lemmaStudyGroupKey;
 globalThis.lemmaSeenKey = lemmaSeenKey;
 globalThis.lemmaHeadwordsOf = lemmaHeadwordsOf;
