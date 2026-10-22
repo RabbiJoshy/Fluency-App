@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v596"
+EXPECTED_CACHE_NAME = "flashcards-v597"
 
 
 
@@ -149,11 +149,11 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["portuguese"]["indexPath"],
-            "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim/app/vocabulary.index.json",
+            "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-finite-v1-slim/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["portuguese"]["conjugationsPath"],
-            "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-slim/app/conjugations.json",
+            "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-finite-v1-slim/app/conjugations.json",
         )
         self.assertEqual(
             config["languages"]["czech"]["indexPath"],

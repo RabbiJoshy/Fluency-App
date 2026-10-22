@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T20:59:15.648074+01:00",
+      "date": "2026-10-22 20:59 BST",
+      "agent": "Codex",
+      "summary": "Restore corrected Portuguese verb meanings with verified deck loading.",
+      "detail": [
+        "Fizeram shows they did; made; foram shows they went / they were, with the correct verb tables.",
+        "Verify all 10000 published cards and preserve card IDs, meaning IDs and example assignments.",
+        "Bind merge keys, frequency, dictionary examples, placement and Smart Skip assets to the corrected release; preserve the previous release for rollback."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T20:51:26.577045+01:00",
       "date": "2026-10-22 20:51 BST",
       "agent": "Codex",
@@ -353,18 +365,6 @@
         "A group that shares a context over two or more translations (arriba: higher over up, above) shows 'up · higher' and 'above · higher' when each fits on one line, instead of a caption line plus one line each. If any would wrap, the caption stays.",
         "acredito: the heading read 'I believe' but the translation beside it read 'to think'. Translations next to a shared heading now take the same form, so it reads 'I think'.",
         "Only Spanish cards have shared-context groups (none in the first 619 Portuguese cards), so the first change was checked on a hand-built row, not on the real arriba card."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T21:10:17+01:00",
-      "date": "2026-10-21 21:10 BST",
-      "agent": "Claude",
-      "summary": "Card back: no outlines on sense and sub-meaning rows that aren't chosen; pressing the word-type row selects the whole group again",
-      "detail": [
-        "Resting rows have no border and no tint; the chosen row is the fill plus left edge. A faint wash shows on hover.",
-        "When a word type carries its group's shared words (estar: to be), pressing that row selects every sub-meaning at once, so you can go from one sub-meaning back to all. Pressing it again folds the section as before.",
-        "Grouped rows with the shared text inside the group already did this; unchanged."
       ],
       "commit": "pending"
     }

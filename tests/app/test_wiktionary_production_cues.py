@@ -12,6 +12,30 @@ REVERSE_CUES = REPOSITORY_ROOT / "app" / "js" / "reverse-cues.js"
 
 
 class WiktionaryProductionCueTests(unittest.TestCase):
+    def test_portuguese_repaired_finite_forms_use_verb_tables(self) -> None:
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required")
+        script = r"""
+import { englishProductionCue } from %s;
+const tables = {
+    fazer: {tenses: {'Pretérito': ['fiz','fizeste','fez','fizemos','fizestes','fizeram']}},
+    ir: {tenses: {'Pretérito': ['fui','foste','foi','fomos','fostes','foram']}},
+    ser: {tenses: {'Pretérito': ['fui','foste','foi','fomos','fostes','foram']}},
+};
+const cue = (word, headword, translation) => englishProductionCue(
+    {targetWord: word}, {pos:'verb', headword, translation}, null,
+    {conjugationData: tables});
+console.log(JSON.stringify([
+    cue('fizeram', 'fazer', 'to do; to make'),
+    cue('foram', 'ir', 'to go'),
+    cue('foram', 'ser', 'to be'),
+]));
+""" % json.dumps(REVERSE_CUES.as_uri())
+        result = subprocess.run([node, "--input-type=module", "-e", script],
+                                check=True, capture_output=True, text=True)
+        self.assertEqual(json.loads(result.stdout), ['they did; made', 'they went', 'they were'])
+
     def test_czech_jsem_becomes_i_am(self) -> None:
         node = shutil.which("node")
         if not node:

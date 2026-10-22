@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v596';
+const CACHE_NAME = 'flashcards-v597';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -46,10 +46,10 @@ const urlsToCache = [
   '/data/speech-frequency/es-literal-ground-r6-fw1.json',
   '/data/speech-frequency/fi.json',
   '/data/speech-frequency/fr.json',
-  '/data/speech-frequency/pt-literal-ground-r4-fw1-ds25.json',
+  '/data/speech-frequency/pt-literal-ground-r4-fw1-ds25-finite-v1.json',
   '/data/speech-frequency/cs-fw1.json',
   '/data/estimation-pools/spanish-literal-ground-r6-seam-v1-fw1-visible-v1.json',
-  '/data/estimation-pools/portuguese-literal-ground-r4-seam-v1-fw1-ds25-visible-v1.json',
+  '/data/estimation-pools/portuguese-literal-ground-r4-seam-v1-fw1-ds25-visible-v1-finite-v1.json',
   '/data/estimation-pools/czech-fw1-visible-v1.json',
   '/data/estimation-pools/finnish-visible-v1.json',
   '/data/estimation-pools/french-visible-v1.json',
@@ -94,9 +94,9 @@ const urlsToCache = [
   '/js/bridge.js?v=1',
   '/js/smart-skip-pairs.js?v=1',
   '/config/smart-skip-pairs.json',
-  '/data/bridge/es-fw1-ds25.json',
-  '/data/bridge/fr-fw1-ds25.json',
-  '/data/bridge/pt-fw1-ds25.json',
+  '/data/bridge/es-fw1-ds25-finite-v1.json',
+  '/data/bridge/fr-fw1-ds25-finite-v1.json',
+  '/data/bridge/pt-fw1-ds25-finite-v1.json',
   '/data/bridge/cs-fw1.json',
   '/js/cognates.js?v=20261019tips',
   '/js/coverage.js?v=20260909a',
