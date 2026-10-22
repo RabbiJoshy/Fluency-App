@@ -14597,6 +14597,53 @@
 
         .about-project-body h2:first-child {
             margin-top: 0;
+            display: table;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .about-standalone-header {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 24px 48px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .about-standalone-brand {
+            font-family: var(--font-emphasis);
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.2px;
+            color: var(--text-primary);
+        }
+
+        .about-standalone-app-link {
+            font-family: var(--font-emphasis);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .about-standalone-app-link:hover {
+            color: var(--text-primary);
+            border-color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .about-bottom-cta {
+            display: flex;
+            justify-content: center;
+            margin: 36px 0 20px;
         }
 
         .about-project-body h3 {
@@ -21349,40 +21396,18 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     gap: 20px;
-    padding: 14px 28px;
-    min-height: 96px;
-    box-sizing: border-box;
+    padding: 12px 28px;
     border-bottom: 1px solid var(--border-light);
     background: var(--bg-primary);
     z-index: 10;
 }
 
-.walkthrough-copy {
-    justify-self: start;
-    text-align: left;
-    min-width: 0;
-    min-height: 68px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-.walkthrough-title {
-    margin: 0;
-    font: 700 22px/1.2 var(--font-emphasis);
-    color: var(--text-primary);
-    white-space: nowrap;
-}
-
-.walkthrough-lead {
-    margin: 4px 0 0;
-    font: 14px/1.4 var(--font-reading);
-    color: var(--text-secondary);
-    max-width: 500px;
-    min-height: 40px;
+.walkthrough-head-spacer {
+    grid-column: 1;
 }
 
 .walkthrough-tabs {
+    grid-column: 2;
     display: inline-flex;
     align-items: center;
     justify-self: center;
@@ -21571,38 +21596,25 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
         border-radius: 0;
     }
 
+    .about-standalone-header {
+        padding: 18px 20px 0;
+    }
+
     .walkthrough-head {
         display: flex;
-        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        padding: max(10px, env(safe-area-inset-top, 0px)) 14px 10px;
-        gap: 8px 10px;
-        min-height: auto;
+        padding: max(10px, env(safe-area-inset-top, 0px)) 14px;
+        gap: 12px;
         border-bottom: 1px solid var(--border-light);
     }
 
-    .walkthrough-copy {
-        flex: 1 1 auto;
-        min-width: 0;
-        min-height: 48px;
-    }
-
-    .walkthrough-title {
-        font-size: 17px;
-    }
-
-    .walkthrough-lead {
-        flex: 1 1 100%;
-        font-size: 13px;
-        line-height: 1.35;
-        margin: 2px 0 0;
-        min-height: 0;
+    .walkthrough-head-spacer {
+        display: none;
     }
 
     .walkthrough-tabs {
-        width: 100%;
-        order: 3;
+        flex: 1;
         padding: 3px;
         gap: 3px;
         box-shadow: none;
@@ -21616,7 +21628,6 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     }
 
     .walkthrough-close {
-        grid-column: auto;
         width: 32px;
         height: 32px;
         font-size: 14px;

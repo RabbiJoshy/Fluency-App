@@ -128,6 +128,13 @@ function renderMarkdown(md) {
 function _appendAboutFootnotes(body) {
     const existing = body.querySelector('.about-footnotes');
     if (existing) existing.remove();
+    const existingCta = body.querySelector('.about-bottom-cta');
+    if (existingCta) existingCta.remove();
+
+    const cta = document.createElement('div');
+    cta.className = 'about-bottom-cta';
+    cta.innerHTML = '<a href="./" class="about-standalone-app-link">Open app &rarr;</a>';
+    body.appendChild(cta);
 
     const notes = document.createElement('aside');
     notes.className = 'about-footnotes';
