@@ -70,16 +70,6 @@ def stamp(text: str, version: str) -> str:
     return _CACHE_NAME.sub(rf"\g<1>\g<2>\g<3>-{version}\g<2>", text)
 
 
-def minify_css(text: str) -> str:
-    """Safely strip comments and collapse whitespace in production CSS."""
-    text = re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
-    text = re.sub(r"\s+", " ", text)
-    text = re.sub(r"\s*([{};,])\s*", r"\1", text)
-    text = re.sub(r"\s*:\s*", ":", text)
-    text = re.sub(r";}", "}", text)
-    return text.strip()
-
-
 def git(*args: str) -> bytes:
     return subprocess.run(
         ["git", *args], cwd=REPO_ROOT, check=True, capture_output=True
@@ -142,8 +132,6 @@ def build(dest: Path, ref: str, version: str | None = None, env: str = "producti
         content = git("cat-file", "blob", sha)
         if version and rel.endswith(STAMPED_SUFFIXES):
             text = stamp(content.decode("utf-8"), version)
-            if rel.endswith(".css"):
-                text = minify_css(text)
             content = text.encode("utf-8")
         if env == "staging" and rel == "index.html":
             content = content.replace(b"<head>", b"<head>\n    <script>window.__FLUENCY_ENV__ = 'staging';</script>")
