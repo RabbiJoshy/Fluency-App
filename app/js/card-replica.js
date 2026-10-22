@@ -1,4 +1,4 @@
-import { songCreditHTML } from './song-credit.js?v=cf53dfc3';
+import { songCreditHTML } from './song-credit.js?v=9e4eaa75';
 // The replica card: real demo entries and the markup that draws them.
 //
 // Two features show a flashcard without the app having loaded a deck, and they
@@ -426,6 +426,11 @@ const SPOTIFY_SVG = '<svg width="44" height="44" viewBox="0 0 24 24" fill="#1DB9
     + ' 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>'
     + '</svg>';
 
+// The word is not its own dictionary form (quiero → querer).
+export function hasDistinctLemma(card) {
+    return Boolean(card?.lemma) && String(card.lemma).toLowerCase() !== String(card.word || '').toLowerCase();
+}
+
 export function renderFront(card) {
     // Like the live card: the deck's size sits small under the rank.
     const rankOf = card.vocabSize ? `of ${card.vocabSize.toLocaleString()}` : '';
@@ -448,18 +453,20 @@ export function renderFront(card) {
     // updateCard() pairs each POS pill with the lemma it governs inside one
     // capsule (.front-lemma-pair), which is how a learner sees that `tem` is
     // a form of `ter`. The replica dropped the lemma and showed a bare pill.
+    // As on the live card: a capitalised pill, and the dictionary form only
+    // when it differs from the word ("from querer"); banco shows the pill alone.
     const lemma = card.lemma || card.word;
     const accent = posAccentRgb(card.pos);
-    const posUnit = `<span class="front-pos-unit" style="--front-pos-rgb: ${accent};"><span class="card-pos ${posClass(card.pos)}">${posName(card.pos)}</span></span>`;
-    const lemmaPrefix = String(lemma).toLowerCase() !== String(card.word || '').toLowerCase()
-        ? '<span class="front-lemma-from">from </span>'
-        : '';
+    const posUnit = `<span class="front-pos-unit" style="--front-pos-rgb: ${accent};"><span class="card-pos ${posClass(card.pos)}">${posLabel(card.pos)}</span></span>`;
+    const lemmaPair = hasDistinctLemma(card)
+        ? `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name"><span class="front-lemma-from">from </span>${esc(lemma)}</span></span>`
+        : `<span class="front-lemma-pair is-pos-only">${posUnit}</span>`;
 
     return `
         <div class="card-face card-front">
             <div class="card-word">${esc(card.word)}</div>
             <div class="card-pos-list is-lemma-map pos-count-1" style="display: flex;">
-                <span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${lemmaPrefix}${esc(lemma)}</span></span>
+                ${lemmaPair}
             </div>
             <div class="card-ranking" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 12px;">${rankLabel}${freqLabel}</div>
             <div class="card-tint" aria-hidden="true"></div>

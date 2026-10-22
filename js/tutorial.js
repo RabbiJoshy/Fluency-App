@@ -12,8 +12,8 @@
 // The card itself is drawn by card-replica.js, which both features share.
 
 import {
-    REPLICA_CARDS, esc, hasConjugateTile, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=cf53dfc3';
+    REPLICA_CARDS, esc, hasConjugateTile, hasDistinctLemma, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
+} from './card-replica.js?v=9e4eaa75';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -305,6 +305,7 @@ const TUTORIAL_DECKS = [
                     {
                         side: 'right',
                         anchor: '.front-lemma-name',
+                        when: card => hasDistinctLemma(card),
                         title: 'The dictionary form',
                         text: '{lemmaSentence} The small label tells you which dictionary entry to look up.',
                     },

@@ -1,13 +1,13 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=cf53dfc3';
-import { accountPermissions } from './account-permissions.js?v=cf53dfc3';
-import { readJsonWithTimeout } from './read-request.js?v=cf53dfc3';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=cf53dfc3';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=cf53dfc3';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=cf53dfc3';
-import { dbGet, dbPut } from './offline-db.js?v=cf53dfc3';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=cf53dfc3';
+import './state.js?v=9e4eaa75';
+import { accountPermissions } from './account-permissions.js?v=9e4eaa75';
+import { readJsonWithTimeout } from './read-request.js?v=9e4eaa75';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=9e4eaa75';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=9e4eaa75';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=9e4eaa75';
+import { dbGet, dbPut } from './offline-db.js?v=9e4eaa75';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=9e4eaa75';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -16,9 +16,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=cf53dfc3';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=cf53dfc3';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=cf53dfc3';
+} from './sync-queue.js?v=9e4eaa75';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=9e4eaa75';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=9e4eaa75';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {
@@ -1491,7 +1491,7 @@ function _appendAboutFootnotes(body) {
     notes.innerHTML =
         '<p id="about-footnote-1">'
         + '<sup class="about-footnote-number">1</sup> '
-        + 'Three Spanish artists (Bad Bunny, Rosalía, Young Miko) and a curated French playlist are built in, '
+        + 'Three Spanish artists (Bad Bunny, Rosalía, Young Miko) are built in, '
         + 'or you can connect Spotify and study a live vocabulary deck from any playlist of your own.'
         + '</p>'
         + '<p class="about-references">'

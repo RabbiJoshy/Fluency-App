@@ -1338,3 +1338,79 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
         justify-self: center;
     }
 }
+
+/* Level tiles: only the selected one has an outline. */
+.home-level-tile { border-color: transparent; }
+.home-level-tile.is-selected { border-color: var(--accent-primary); }
+.home-level-tile-dot { display: none; }
+@media (max-width: 1023px) {
+    /* Phones: a dot in the least-learned colour instead of a bar too thin to read. */
+    .home-level-tile-bar { display: none; }
+    .home-level-tile-dot { display: block; align-self: center; width: 7px; height: 7px; border-radius: 50%; background: var(--set-new, #fff); }
+    .home-level-tile[data-dot="seen"] .home-level-tile-dot { background: var(--set-review, #ffcc00); }
+    .home-level-tile[data-dot="known"] .home-level-tile-dot { background: var(--set-known, #06a557); }
+    /* Phones: the readout's words a step larger. */
+    #setupPanel #homeLevelStepper .home-level-eyebrow,
+    #setupPanel #homeLevelStepper .home-level-words { font-size: calc(var(--home-text) * 1.12); }
+    /* Phones: the ? at the title's height, at the right edge (where a folded
+       section's chevron sits). */
+    #setupPanel .home-section > .step-header .home-section-help {
+        position: absolute; top: 9px; right: 10px; margin: 0; width: 38px; height: 38px;
+    }
+}
+/* Example words and coverage line in the readout's font (DM Sans), not the
+   heavier display face, and kept in the dimmer grey. */
+#setupPanel #lswExamples .lsw-egs,
+#setupPanel #lswExamples .lsw-egs * { font-family: var(--font-reading, "DM Sans", -apple-system, system-ui, sans-serif); }
+
+/* Phones: which section is open is shown by shape, not an outline. The open
+   section is the only card; the folded one is a plain line, "Practise ·
+   12 waiting ›", that reads as a way across. With no Practise yet, Learn is
+   simply the one card. */
+@media (max-width: 1023px) {
+    body:not(.desktop-workspace) #setupPanel[data-home-open] :is(#step2, #reviewDeckSection) {
+        border-color: var(--border-color);
+        box-shadow: none;
+    }
+    body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #step2,
+    body:not(.desktop-workspace) #setupPanel[data-home-open="learn"] #reviewDeckSection {
+        background: transparent;
+        border: 0;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 0;
+    }
+    /* Folded Learn sits right under the top bar's line: no second line above it. */
+    body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #step2 { border-top: 0; }
+    #setupPanel .home-section-toggle {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 8px;
+        row-gap: 0;
+        padding: 14px 6px;
+        text-align: left;
+    }
+    #setupPanel .home-section-toggle::after { display: none; }
+    #setupPanel .home-section-toggle > .home-section-icon { width: 20px; height: 20px; margin: 0; }
+    #setupPanel .home-section-toggle .home-section-name { font-size: var(--home-text); white-space: nowrap; }
+    #setupPanel .home-section-toggle-meta {
+        order: 1;
+        flex: 0 1 auto;
+        min-width: 0;
+        margin: 0 !important;
+        color: var(--text-muted);
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #setupPanel .home-section-toggle-meta::before { content: "· "; }
+    #setupPanel .home-section-toggle-caret {
+        order: 2;
+        position: static;
+        margin-left: auto;
+        transform: rotate(-90deg);
+        color: var(--text-muted);
+    }
+}
