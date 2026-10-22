@@ -23,7 +23,7 @@
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
     measureReplicaCard, fitReplicaCard,
-} from './card-replica.js?v=97605c48';
+} from './card-replica.js?v=766d9c0f';
 
 // ---------------------------------------------------------------------------
 // Content
@@ -172,7 +172,8 @@ function renderScreen({ turnFrom = null } = {}) {
     const stage = document.getElementById('walkthroughStage');
     if (!screen || !stage) return;
 
-    document.getElementById('walkthroughTitle').textContent = screen.title;
+    const titleEl = document.getElementById('walkthroughTitle');
+    if (titleEl) titleEl.textContent = screen.title;
     const leadEl = document.getElementById('walkthroughLead');
     if (leadEl) {
         leadEl.textContent = screen.lead || '';

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T22:57:00+01:00",
+      "date": "2026-10-22 22:57 BST",
+      "agent": "Antigravity",
+      "summary": "About & Walkthrough: centered title, subtle top and bottom app links, pure toggle walkthrough header",
+      "detail": [
+        "About page: centered the top title ('The problem with most vocabulary apps') so it aligns naturally with the page layout.",
+        "About page: added subtle 'Open app →' links at the top header and at the bottom before footnotes for visitors arriving from a CV.",
+        "Walkthrough modal: streamlined top bar down to just the centered Speech/Music toggle and the close button, eliminating layout shift and visual clutter."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T21:51:58.244631+01:00",
       "date": "2026-10-22 21:51 BST",
       "agent": "Codex",

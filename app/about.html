@@ -39,14 +39,18 @@
             root.dataset.textSize = 'normal';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=97605c48">
-    <link rel="stylesheet" href="css/light-theme.css?v=97605c48">
-    <link rel="stylesheet" href="css/ui-refinements.css?v=97605c48">
-    <link rel="stylesheet" href="css/black-palette.css?v=97605c48">
+    <link rel="stylesheet" href="css/style.css?v=766d9c0f">
+    <link rel="stylesheet" href="css/light-theme.css?v=766d9c0f">
+    <link rel="stylesheet" href="css/ui-refinements.css?v=766d9c0f">
+    <link rel="stylesheet" href="css/black-palette.css?v=766d9c0f">
 </head>
 <body class="about-standalone">
     <div id="aboutProjectModal" class="modal about-standalone-page">
         <div class="modal-content fullscreen-modal about-project-modal">
+            <header class="about-standalone-header">
+                <span class="about-standalone-brand">Fluency</span>
+                <a href="./" class="about-standalone-app-link">Open app &rarr;</a>
+            </header>
             <div id="aboutProjectBody" class="about-project-body">
                 <div class="about-loading">Loading…</div>
             </div>
@@ -60,10 +64,7 @@
     <div id="walkthroughModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="walkthroughTitle">
         <div class="modal-content fullscreen-modal walkthrough-modal">
             <header class="walkthrough-head">
-                <div class="walkthrough-copy">
-                    <h2 class="walkthrough-title" id="walkthroughTitle"></h2>
-                    <p class="walkthrough-lead" id="walkthroughLead"></p>
-                </div>
+                <div class="walkthrough-head-spacer" aria-hidden="true"></div>
                 <nav class="walkthrough-tabs" id="walkthroughTabs" role="tablist" aria-label="Walkthrough screens"></nav>
                 <button class="modal-close walkthrough-close" id="closeWalkthroughModal" aria-label="Back to About" title="Back to About">&#10005;</button>
             </header>
@@ -73,6 +74,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/about-page.js?v=97605c48"></script>
+    <script type="module" src="js/about-page.js?v=766d9c0f"></script>
 </body>
 </html>
