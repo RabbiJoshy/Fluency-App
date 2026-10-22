@@ -75,9 +75,10 @@ class AboutSeparatePageTests(unittest.TestCase):
         css = (APP / 'css' / 'style.css').read_text()
         self.assertNotIn('about-standalone-brand', page)
         self.assertNotIn('about-standalone-brand', about)
-        self.assertIn('_setupAboutHeader', about)
-        self.assertIn('.about-standalone-header {', css)
-        self.assertIn('.about-standalone-header .about-standalone-app-link {', css)
+        self.assertIn('about-top-app-link', page)
+        self.assertIn('Open app', page)
+        self.assertIn('.about-top-app-link {', css)
+        self.assertIn('a.about-standalone-app-link', css)
 
 
 if __name__ == '__main__':

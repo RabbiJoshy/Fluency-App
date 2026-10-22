@@ -120,26 +120,6 @@ function renderMarkdown(md) {
     return html.join('\n');
 }
 
-// Wrap the leading h2 title in a header with the "Open app →" link tucked in
-// the top-right corner on the same horizontal line.
-function _setupAboutHeader(body) {
-    const existing = body.querySelector('.about-standalone-header');
-    if (existing) existing.remove();
-    const title = body.querySelector('h2');
-    if (!title) return;
-
-    const header = document.createElement('header');
-    header.className = 'about-standalone-header';
-    title.parentNode.insertBefore(header, title);
-    header.appendChild(title);
-
-    const link = document.createElement('a');
-    link.href = './';
-    link.className = 'about-standalone-app-link';
-    link.innerHTML = 'Open app &rarr;';
-    header.appendChild(link);
-}
-
 // Append the footnote + data-sources section at the bottom of the About
 // body. The ¹ footnote is paired with the superscript next to the Spotify
 // logo on the artist demo card. The sources line credits the external
@@ -590,7 +570,6 @@ async function renderAboutPage() {
         const resp = await fetch('content/about.md');
         if (!resp.ok) throw new Error('Failed to load about.md');
         body.innerHTML = renderMarkdown(await resp.text());
-        _setupAboutHeader(body);
         layoutAboutTwoModes(body);
         mountAboutDemos(body);
         _appendAboutFootnotes(body);
