@@ -26985,16 +26985,6 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     vertical-align: 1px;
 }
 
-.lemma-companion-cards {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 4px 12px;
-    font-size: 16px;
-    color: var(--text-secondary);
-}
-
 /* Compact-menu clamps must not cut a required construction in half. */
 .meanings-scroll.inline-sense-rows.has-compact-rows .meaning-row-regular.has-construction-pill .meaning-row-body:not(#_) {
     display: block !important;

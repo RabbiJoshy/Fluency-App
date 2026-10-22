@@ -37,13 +37,6 @@ try {
    flashcards=rows.map(row=>({...row,fullId:`pt-${row.id}`,targetWord:row.word,citationForm:row.word==='estamos'?'estar':row.word==='tem'?'ter':row.word==='acabou'?'acabar':row.word,displaySurface:row.word,isMultiMeaning:true,partOfSpeech:'verb',links:[],meanings:row.meanings.map(m=>({...m,meaning:m.translation,senseId:m.sense_id,percentage:Number(m.frequency),canonicalExample:m.canonical_example,allExamples:[]}))}));
    window.showTestWord=word=>{currentIndex=flashcards.findIndex(c=>c.targetWord===word);currentMeaningIndex=0;currentMWEIndex=0;currentExampleIndex=0;currentGroupSelection=null;document.getElementById('flashcard').classList.add('flipped');window.updateCard({announceHeadword:true});};
   },{config,rows});
-  await page.evaluate(()=>{
-   const cards=flashcards.filter(card=>['ter','tem'].includes(card.targetWord));
-   for(const card of cards) card.lemmaModeCompanions=cards.map(other=>({id:other.id,surface:other.targetWord}));
-   showTestWord('ter');document.getElementById('flashcard').classList.remove('flipped');
-  });
-  await page.locator('.lemma-companion-cards button').click();
-  assert.equal(await page.evaluate(()=>flashcards[currentIndex].targetWord),'tem','companion links navigate to the distinct card');
   for(const word of ['tratar','procurar','começar','ir','saber','estamos','querer']) {
    await page.evaluate(word=>showTestWord(word),word);
    if(word==='estamos')await page.evaluate(()=>window.selectMeaning(flashcards[currentIndex].meanings.findIndex(m=>m.metadata?.sense_metadata?.features?.some(f=>f.kind==='complement_form'&&f.value==='adjective'))));

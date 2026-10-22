@@ -25,14 +25,6 @@ assert.equal(h.lemmaGroupKey(a),'haver');
 assert.equal(h.lemmaStudyGroupKey(a),h.lemmaStudyGroupKey(b),'one-off rare use should not split a matching back');
 assert.notEqual(h.lemmaStudyGroupKey(a),h.lemmaStudyGroupKey(c),'additional visible meaning must split');
 assert.equal(h.selectLemmaModeRepresentatives([a,b,c]).length,2);
-assert.deepEqual(Array.from(a._lemmaModeCompanions,entry=>entry.surface),['havia','houve'],
-    'distinct visible backs of a merged lemma must link to one another');
-assert.equal(c._lemmaModeCompanions,a._lemmaModeCompanions);
-assert.equal(b._lemmaModeCompanions,undefined,'a non-representative is not another card');
-assert.equal(h.buildCardFormModel(a,a.meanings,{mergedLemma:true}).lemmaModeCompanions.length,2);
-assert.equal(h.buildCardFormModel(a,a.meanings,{mergedLemma:false}).lemmaModeCompanions,null);
-h.selectLemmaModeRepresentatives([a]);
-assert.equal(a._lemmaModeCompanions,undefined,'changing filters clears stale companion links');
 assert.equal(h.lemmaSeenKey(a),h.lemmaSeenKey(b));
 assert.notEqual(h.lemmaSeenKey(a),h.lemmaSeenKey(c),'studying a different back cannot clear this form');
 assert.equal(a.id,'havia');

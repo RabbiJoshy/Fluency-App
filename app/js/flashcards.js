@@ -3325,17 +3325,6 @@ function selectSplitCompanion(event, readingIndex) {
 }
 window.selectSplitCompanion = selectSplitCompanion;
 
-window.openLemmaCompanion = async function(event, id) {
-    event.preventDefault();
-    event.stopPropagation();
-    const index = flashcards.findIndex(card => String(card.id) === String(id));
-    if (index >= 0) {
-        goToDeckCard(index);
-        return;
-    }
-    await window.popupFoundWord?.({id}, {reopenSearchOnBack: false, startFlipped: false});
-};
-
 function splitUsageShareHTML(card) {
     const share = card?.splitInfo?.share;
     if (typeof share !== 'number' || !Number.isFinite(share) || share < 0 || share > 1) return '';
@@ -7241,13 +7230,6 @@ function renderCardWikipediaBadge(card) {
                 frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
                 if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
                 frontPOSEl.innerHTML = pillsHTML;
-                if (card.lemmaModeCompanions?.length > 1) {
-                    const companions = card.lemmaModeCompanions;
-                    const index = companions.findIndex(entry => String(entry.id) === String(card.id));
-                    const links = companions.filter(entry => String(entry.id) !== String(card.id)).map(entry =>
-                        `<button type="button" class="sense-cross-reference" data-companion-id="${escapeCardText(entry.id)}" onclick="openLemmaCompanion(event, this.dataset.companionId)">Uses in ${escapeCardText(entry.surface)}</button>`).join('');
-                    frontPOSEl.innerHTML += `<div class="lemma-companion-cards"><span>Uses ${index + 1} of ${companions.length} · ${escapeCardText(card.targetWord)}</span>${links}</div>`;
-                }
             }
             frontPOSEl.style.display = 'grid';
             // Keep every label in a group at the same size. The grid reserves
