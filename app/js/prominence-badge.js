@@ -4,7 +4,7 @@
 // bars as the live card. flashcards.js imports it; inline handlers in the
 // badge markup call the window.* functions set at the bottom.
 
-import { escapeCardText } from './card-metadata-pills.js?v=62b90095';
+import { escapeCardText } from './card-metadata-pills.js?v=12b4ab06';
 
 export const PROMINENCE_BLURBS = {
     dominant: 'means this most often',
