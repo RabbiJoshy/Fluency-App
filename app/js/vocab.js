@@ -1723,7 +1723,9 @@ async function ensureExamplesForRange(langConfig, rangeStart, rangeEnd, ranks) {
     return loadMonolithExamples(langConfig);
 }
 
-const loadedIndexRowShards = new Set();
+// Keep the source rows, not just a loaded flag: Speech and live study can
+// have different column-only indexes for the same release/shard.
+const loadedIndexRowShards = new Map();
 const indexRowShardInflight = new Map();
 let indexShardManifest = null;
 let indexShardManifestFor = null;
@@ -1823,16 +1825,24 @@ function mergeIndexRowPayload(payload) {
 async function fetchIndexRowShard(langConfig, shard) {
     const indexPath = langConfig.indexPath || langConfig.dataPath;
     const key = `${indexPath}:${shard.path}`;
-    if (loadedIndexRowShards.has(key)) return;
+    const applyRows = payload => {
+        // Study projection/pooling may mutate meanings. Cached source rows
+        // must remain pristine when another source index is hydrated later.
+        mergeIndexRowPayload(JSON.parse(JSON.stringify(payload)));
+        for (const card of window._cachedJoinedIndex || []) {
+            if (payload?.[card.id]) promoteSubglossTranslations(card.meanings);
+        }
+    };
+    if (loadedIndexRowShards.has(key)) {
+        applyRows(loadedIndexRowShards.get(key));
+        return;
+    }
     if (indexRowShardInflight.has(key)) return indexRowShardInflight.get(key);
     const pending = readJsonWithTimeout(`${indexDirectory(indexPath)}${shard.path}`).then(async ({ response, data: responseData }) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         trackDataFreshness(response);
-        mergeIndexRowPayload(responseData);
-        for (const card of window._cachedJoinedIndex || []) {
-            if (responseData?.[card.id]) promoteSubglossTranslations(card.meanings);
-        }
-        loadedIndexRowShards.add(key);
+        loadedIndexRowShards.set(key, responseData);
+        applyRows(responseData);
     }).finally(() => indexRowShardInflight.delete(key));
     indexRowShardInflight.set(key, pending);
     return pending;

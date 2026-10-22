@@ -59,6 +59,7 @@ function load(path) {
         .replaceAll('import.meta.url', JSON.stringify('http://localhost/js/' + path.split('/').at(-1)));
     vm.runInContext(source, context);
 }
+load('app/js/lexical-guards.js');
 load('app/js/offline-intake.js');
 load('app/js/playlist-live.js');
 load('app/js/subtitle-import.js');
@@ -111,6 +112,14 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     w.applyPlaylistLiveVocabulary([original]);
     assert.equal(w.playlistLiveDeck().matchedCount, 6102);
     assert.equal(original.meanings[0].examples, undefined);
+    const berlin = canonical.find(card => card.word === 'berlín');
+    berlin.meanings = [{pos:'PHRASE',translation:'Berlin Wall',headword:'muro de berlín',frequency:1}];
+    berlin._indexRowsPending = false;
+    const berlinCard = w.refreshPlaylistLiveEntry(ranked.find(card => card.word === 'berlín'));
+    assert.equal(berlinCard.meanings[0].translation, 'Berlin');
+    assert.equal(berlinCard.meanings[0].pos, 'PROPN');
+    assert.equal(berlinCard.meanings[0].examples[0].unassigned, true);
+    assert.equal(berlin.meanings[0].translation, 'Berlin Wall');
 
     // An artist's partial song selection can remain in memory when the
     // series is opened. Exercise the real shared index loader and song filter.

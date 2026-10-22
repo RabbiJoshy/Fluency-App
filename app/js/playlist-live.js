@@ -3,6 +3,7 @@
 import { clearRoute, parseRoute } from './routes.js?v=20261013music';
 import { releaseUrl } from './release-host.js?v=20260921rh';
 import { enrichOfflineDeck } from './offline-intake.js?v=20261022';
+import { standaloneWordMeanings } from './lexical-guards.js?v=20261022';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -456,7 +457,7 @@ function projectPlaylistLiveEntry(item) {
         ...item,
         offlineRecognition: _liveDeck?.intake?.surfaces[normalizeSurface(item.word)] || null,
         sourceRank: item.sourceRank || item.rank,
-        meanings: [...(item.meanings || [])],
+        meanings: standaloneWordMeanings(item.word, [...(item.meanings || [])], _liveDeck.language),
         playlist_count: entry.count,
         corpusCount: entry.count,
         corpus_count: entry.count,
