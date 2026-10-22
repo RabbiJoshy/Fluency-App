@@ -12,7 +12,7 @@ class LexicalGuardTests(unittest.TestCase):
     def test_turbo_and_offline_reject_phrase_contamination(self):
         helper = (ROOT / 'app/js/lexical-guards.js').read_text().replace('export ', '')
         engine = (ROOT / 'app/turbo/turbo-engine.js').read_text()
-        engine = '\n'.join(line for line in engine.splitlines() if not line.startswith('import ')).replace('export ', '')
+        engine = '\n'.join(line for line in engine.splitlines() if not line.startswith('import ')).replace('export ', '').replace('import.meta.url', repr('https://app.test/turbo/turbo-engine.js'))
         script = "const assert=require('node:assert/strict');\n" + helper + '\n' + engine + r"""
 assert.equal(entityTitleMatchesQuery('Berlín','Muro de Berlín'),false);
 assert.equal(entityTitleMatchesQuery('Berlin','Berlín (personaje)'),true);

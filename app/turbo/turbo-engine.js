@@ -30,7 +30,7 @@ export class TurboEngine {
         this.entityCache = new Map(); // query -> entity object or null
     }
 
-    static async create(assetsUrl = './turbo_assets.json', extra50kUrl = './es_50k_data.json') {
+    static async create(assetsUrl = new URL('./turbo_assets.json', import.meta.url), extra50kUrl = null) {
         const resp = await fetch(assetsUrl);
         if (!resp.ok) {
             throw new Error(`Failed to load Turbo assets from ${assetsUrl}: HTTP ${resp.status}`);
@@ -39,7 +39,8 @@ export class TurboEngine {
 
         let extra50kData = {};
         try {
-            const r50 = await fetch(extra50kUrl);
+            const wordlistUrl = extra50kUrl || new URL(`./${data.language || 'es'}_50k_data.json`, import.meta.url);
+            const r50 = await fetch(wordlistUrl);
             if (r50.ok) {
                 extra50kData = await r50.json();
             }
@@ -518,6 +519,31 @@ export class TurboEngine {
         return entities;
     }
 
+    // Match the same token spans during card counting and the line audit.
+    // Longest aliases win; aliases/canonical names cannot count a mention twice.
+    findEntitySpans(tokens, resolvedEntities, lineText) {
+        let cursor = 0;
+        const offsets = tokens.map(token => {
+            const start = lineText.indexOf(token.raw, cursor);
+            if (start < 0) return null;
+            cursor = start + token.raw.length;
+            return { start, end: cursor };
+        });
+        const spans = [];
+        for (let start = 0; start < tokens.length; start++) {
+            for (let end = Math.min(tokens.length, start + 6); end > start; end--) {
+                const phrase = tokens.slice(start, end).map(t => t.raw).join(' ').normalize('NFC').toLowerCase();
+                const entity = resolvedEntities.get(phrase);
+                if (!entity || offsets.slice(start, end).some((offset, idx) => !offset
+                    || (idx > 0 && !/^\s+$/.test(lineText.slice(offsets[start + idx - 1].end, offset.start))))) continue;
+                spans.push({ start, end, entity });
+                start = end - 1;
+                break;
+            }
+        }
+        return spans;
+    }
+
     findMweSpans(tokens) {
         const matches = [];
         const n = tokens.length;
@@ -736,8 +762,8 @@ export class TurboEngine {
             if (reflexIdx >= 0) return reflexIdx;
         }
 
-        // Fallback: Default to primary meaning (highest prior frequency)
-        return 0;
+        // No contextual rule matched. Keep the example separate from dictionary senses.
+        return -1;
     }
 
     /**
@@ -775,15 +801,14 @@ export class TurboEngine {
             }
         }
 
-        // Also check single known curated entity words (Prada, Gucci, Santurce, Venezuela, Cuba, etc.)
+        // Curated aliases do not depend on title casing in lyrics or subtitles.
+        const curatedAliases = new Map(Object.entries(this.curatedEntities));
         for (const song of parsedSongs) {
             for (const lineObj of song.lines) {
-                const tokens = lineObj.text.split(/\s+/);
-                for (let i = 0; i < tokens.length; i++) {
-                    const cleanWord = tokens[i].replace(/[^\p{L}]/gu, '');
-                    if (this.curatedEntities[cleanWord.toLowerCase()]) {
-                        candidateEntityQueries.add(cleanWord);
-                    }
+                const tokens = this.tokenizeLine(lineObj.text);
+                for (const span of this.findEntitySpans(tokens, curatedAliases, lineObj.text)) {
+                    candidateEntityQueries.add(tokens.slice(span.start, span.end)
+                        .map(token => token.raw).join(' '));
                 }
             }
         }
@@ -815,36 +840,26 @@ export class TurboEngine {
                     score: lineScore
                 };
 
-                // Check for multi-word entity matches in this line
-                const lowerLine = lineObj.text.toLowerCase();
-                let entityMatched = false;
-                for (const [qKey, ent] of resolvedEntitiesMap.entries()) {
-                    if (qKey.includes(' ') && lowerLine.includes(qKey)) {
-                        let entry = entityCardCandidates.get(ent.canonicalTitle);
-                        if (!entry) {
-                            entry = {
-                                entity: ent,
-                                count: 0,
-                                songs: new Set(),
-                                lines: []
-                            };
-                            entityCardCandidates.set(ent.canonicalTitle, entry);
-                        }
-                        entry.count += 1;
-                        entry.songs.add(song.title);
-                        if (!entry.lines.some(l => l.text === lineObj.text)) {
-                            entry.lines.push(lineInfo);
-                        }
-                        entityMatched = true;
+                const tokens = this.tokenizeLine(lineObj.text);
+                const entitySpans = this.findEntitySpans(tokens, resolvedEntitiesMap, lineObj.text);
+                const entityIndices = new Set();
+                for (const { start, end, entity: ent } of entitySpans) {
+                    for (let idx = start; idx < end; idx++) entityIndices.add(idx);
+                    let entry = entityCardCandidates.get(ent.canonicalTitle);
+                    if (!entry) {
+                        entry = { entity: ent, count: 0, songs: new Set(), lines: [] };
+                        entityCardCandidates.set(ent.canonicalTitle, entry);
                     }
+                    entry.count++;
+                    entry.songs.add(song.title);
+                    if (!entry.lines.some(l => l.text === lineObj.text)) entry.lines.push(lineInfo);
                 }
 
-                // Tokenize line for MWEs and single words
-                const tokens = this.tokenizeLine(lineObj.text);
                 const mweSpans = this.findMweSpans(tokens);
                 const mweIndices = new Set();
 
                 for (const span of mweSpans) {
+                    if (tokens.slice(span.start, span.end).some((_, idx) => entityIndices.has(span.start + idx))) continue;
                     for (let idx = span.start; idx < span.end; idx++) {
                         mweIndices.add(idx);
                     }
@@ -868,31 +883,10 @@ export class TurboEngine {
 
                 // Single words (excluding MWE spans)
                 for (let i = 0; i < tokens.length; i++) {
-                    if (mweIndices.has(i)) continue;
+                    if (mweIndices.has(i) || entityIndices.has(i)) continue;
                     const norm = tokens[i].normalized;
                     if (norm.length < 1) continue;
                     if (norm.length === 1 && !this.dictionary[norm] && !resolvedEntitiesMap.has(norm)) continue;
-
-                    // Check single word entity
-                    if (resolvedEntitiesMap.has(norm)) {
-                        const ent = resolvedEntitiesMap.get(norm);
-                        let entry = entityCardCandidates.get(ent.canonicalTitle);
-                        if (!entry) {
-                            entry = {
-                                entity: ent,
-                                count: 0,
-                                songs: new Set(),
-                                lines: []
-                            };
-                            entityCardCandidates.set(ent.canonicalTitle, entry);
-                        }
-                        entry.count += 1;
-                        entry.songs.add(song.title);
-                        if (!entry.lines.some(l => l.text === lineObj.text)) {
-                            entry.lines.push(lineInfo);
-                        }
-                        continue;
-                    }
 
                     // Single word dictionary entry
                     let entry = wordCandidates.get(norm);
@@ -977,24 +971,18 @@ export class TurboEngine {
 
         // 5c. Standard Word Cards
         for (const [word, entry] of wordCandidates.entries()) {
-            let dictEntry = this.dictionary[word];
-            let effectiveWord = word;
-            if (!dictEntry) {
-                const lemma = this.lemmas50k[word];
-                if (lemma && this.dictionary[lemma]) {
-                    dictEntry = this.dictionary[lemma];
-                    effectiveWord = lemma;
-                }
-            }
-            if (!dictEntry) continue; // Out of 50k / unknown dictionary
+            const resolved = this.resolveWordInfo(word);
+            const dictEntry = resolved?.dictEntry;
+            if (!dictEntry) continue; // Keep unknown frequency-list words in the audit only.
 
             entry.lines.sort((a, b) => b.score - a.score);
             const bestLines = entry.lines.slice(0, 2);
 
             // WSD bucket routing: Assign each best example to its disambiguated meaning bucket
-            const meaningBuckets = dictEntry.meanings.map(m => ({ ...m, examples: [] }));
+            const meaningBuckets = (dictEntry.meanings || []).map(m => ({ ...m, examples: [] }));
+            const selectedExamples = [];
             for (const l of bestLines) {
-                const chosenIdx = this.disambiguateWord(word, dictEntry, l.text);
+                const chosenIdx = options.skipWsd ? -1 : this.disambiguateWord(word, dictEntry, l.text);
                 const exampleObj = {
                     target: l.text,
                     spanish: l.text,
@@ -1003,16 +991,18 @@ export class TurboEngine {
                     spotify_track_id: l.spotify_track_id,
                     timestamp_ms: l.timestamp_ms,
                     end_timestamp_ms: l.end_timestamp_ms,
-                    isSynced: l.isSynced
+                    isSynced: l.isSynced,
+                    assigned: Boolean(meaningBuckets[chosenIdx]),
+                    unassigned: !meaningBuckets[chosenIdx],
+                    assignment_method: meaningBuckets[chosenIdx] ? 'turbo-context-rule' : 'unassigned'
                 };
+                selectedExamples.push({ ...l, ...exampleObj });
                 if (meaningBuckets[chosenIdx]) {
                     meaningBuckets[chosenIdx].examples.push(exampleObj);
-                } else if (meaningBuckets[0]) {
-                    meaningBuckets[0].examples.push(exampleObj);
                 }
             }
 
-            // Ensure primary meaning has examples if secondary received them all
+            // Dictionary glosses remain available independently of example assignments.
             const topMeaning = meaningBuckets[0];
             const topTranslation = (topMeaning?.translation) || dictEntry.top_translation;
 
@@ -1022,13 +1012,14 @@ export class TurboEngine {
                 word,
                 translation: topTranslation,
                 pos: topMeaning?.pos || dictEntry.top_pos,
-                speechRank: dictEntry.rank,
+                speechRank: resolved.speechRank,
+                lemma: resolved.word,
                 isPolysemous: dictEntry.polysemous,
                 meaningCount: dictEntry.meaningCount,
                 playlistCount: entry.count,
                 songCount: entry.songs.size,
                 meanings: meaningBuckets,
-                examples: bestLines
+                examples: selectedExamples
             });
         }
 
@@ -1053,52 +1044,28 @@ export class TurboEngine {
         const annotatedSongs = parsedSongs.map(song => {
             const auditLines = song.lines.map((lineObj, lineIdx) => {
                 const tokens = this.tokenizeLine(lineObj.text);
+                const entitySpans = this.findEntitySpans(tokens, resolvedEntitiesMap, lineObj.text);
+                const entityIndices = new Set();
+                const tokenBreakdowns = [];
+                for (const { start, end, entity: ent } of entitySpans) {
+                    for (let idx = start; idx < end; idx++) entityIndices.add(idx);
+                    const card = cardByLookupKey.get(ent.canonicalTitle.toLowerCase());
+                    tokenBreakdowns.push({ startIndex: start,
+                        raw: tokens.slice(start, end).map(t => t.raw).join(' '),
+                        type: 'entity', card: card || null, word: ent.canonicalTitle,
+                        translation: ent.description || 'Entity', rank: card?.rank || null });
+                }
                 const mweSpans = this.findMweSpans(tokens);
                 const mweIndices = new Set();
-                const tokenBreakdowns = [];
-
-                // Track MWEs
                 for (const span of mweSpans) {
-                    for (let idx = span.start; idx < span.end; idx++) {
-                        mweIndices.add(idx);
-                    }
-                    const mweCard = cardByLookupKey.get(span.phrase.toLowerCase());
-                    tokenBreakdowns.push({
-                        startIndex: span.start,
+                    if (tokens.slice(span.start, span.end).some((_, idx) => entityIndices.has(span.start + idx))) continue;
+                    for (let idx = span.start; idx < span.end; idx++) mweIndices.add(idx);
+                    const card = cardByLookupKey.get(span.phrase.toLowerCase());
+                    tokenBreakdowns.push({ startIndex: span.start,
                         raw: tokens.slice(span.start, span.end).map(t => t.raw).join(' '),
-                        type: 'mwe',
-                        card: mweCard || null,
-                        word: span.phrase,
-                        translation: mweCard?.translation || span.mweInfo?.translation || 'Idiom',
-                        rank: mweCard?.rank || null
-                    });
-                }
-
-                // Track Multi-Token Entities (e.g. "Brad Pitt", "Puerto Rico", "Myke Towers")
-                const entityIndices = new Set();
-                const n = tokens.length;
-                for (let i = 0; i < n; i++) {
-                    if (mweIndices.has(i)) continue;
-                    for (let len = Math.min(4, n - i); len >= 2; len--) {
-                        const rawPhrase = tokens.slice(i, i + len).map(t => t.raw).join(' ');
-                        const lowerPhrase = rawPhrase.toLowerCase();
-                        const ent = resolvedEntitiesMap.get(lowerPhrase);
-                        if (ent) {
-                            for (let k = i; k < i + len; k++) entityIndices.add(k);
-                            const entCard = cardByLookupKey.get(ent.canonicalTitle.toLowerCase());
-                            tokenBreakdowns.push({
-                                startIndex: i,
-                                raw: rawPhrase,
-                                type: 'entity',
-                                card: entCard || null,
-                                word: ent.canonicalTitle,
-                                translation: ent.description || 'Entity',
-                                rank: entCard?.rank || null
-                            });
-                            i += len - 1;
-                            break;
-                        }
-                    }
+                        type: 'mwe', card: card || null, word: span.phrase,
+                        translation: card?.translation || span.mweInfo?.translation || 'Idiom',
+                        rank: card?.rank || null });
                 }
 
                 // Single words & single-token entities
