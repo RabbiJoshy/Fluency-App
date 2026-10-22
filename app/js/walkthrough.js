@@ -38,7 +38,7 @@ const FRONT_LABELS = [
     { face: 'front', anchor: '.card-word', title: 'The word, as it is said',
       text: 'Taken from real speech, not a dictionary headword.' },
     { face: 'front', anchor: '.front-lemma-pair', title: 'What kind of word',
-      text: 'With the dictionary form it belongs to.' },
+      text: 'Noun, verb and so on, each with its own colour.' },
     // One label for the whole row. Rank and frequency as two labels drew two
     // leader lines across each other to reach the right-hand figure.
     { face: 'front', anchor: '.card-ranking', title: 'Ranked by use',
@@ -46,7 +46,10 @@ const FRONT_LABELS = [
 ];
 
 const BACK_LABELS = [
-    { face: 'back', anchor: '.pos-section-head', title: 'Every meaning, separated',
+    // The whole list, not its heading: the label is about the meanings.
+    // Aimed at the top of the list, so its leader sits above the one that
+    // goes to the first row's bars instead of crossing it.
+    { face: 'back', anchor: '.meanings-scroll', aim: 'top', title: 'Every meaning, separated',
       text: 'One word, two unrelated meanings: a bank and a bench.' },
     { face: 'back', anchor: '.meaning-row.is-current-sense .sense-prominence-badge',
       pinTitle: 'How common', title: 'How often each is used',
@@ -296,11 +299,34 @@ function fitCards() {
     }
 
     const tallest = Math.max(...inners.map(measureReplicaCard));
-    // Leave the header and the footer on screen with the card.
+    // Leave the footer on screen with the card. The room is measured from
+    // where the card starts to where the footer starts; an estimate of the
+    // header and footer left ~100px unused on a laptop and cut the last
+    // meaning row off.
+    const cardTop = inners[0].getBoundingClientRect().top;
+    const footTop = document.querySelector('.walkthrough-foot')?.getBoundingClientRect().top;
     const chrome = (document.querySelector('.walkthrough-head')?.offsetHeight || 90)
         + (document.querySelector('.walkthrough-foot')?.offsetHeight || 70) + 48;
-    const ceiling = Math.max(0.5, (window.innerHeight - chrome) / window.innerHeight);
+    const room = footTop && cardTop > 0 ? footTop - cardTop - 16 : window.innerHeight - chrome;
+    const ceiling = Math.max(0.5, room / window.innerHeight);
     inners.forEach(inner => fitReplicaCard(inner, { height: tallest, ceiling, floor: 380 }));
+    // The sum of blocks can fall a little short of what the list needs once
+    // rows wrap; whatever the meanings list still hides is added, within the room.
+    const hidden = Math.max(0, ...inners.map(inner => {
+        const list = inner.querySelector('.card-back .meanings-scroll');
+        return list ? list.scrollHeight - list.clientHeight : 0;
+    }));
+    if (hidden > 1) {
+        // No room to grow: give the card the height it needs and scale the
+        // whole card back down to the room (never below 85%).
+        const fitted = parseFloat(inners[0].style.getPropertyValue('--replica-card-h')) || tallest;
+        const needed = fitted + hidden;
+        const scale = Math.max(0.85, fitted / needed);
+        inners.forEach(inner => {
+            inner.style.setProperty('--replica-card-h', `${Math.ceil(needed)}px`);
+            inner.style.setProperty('--replica-card-scale', String(scale));
+        });
+    }
 }
 
 function renderProgress() {
@@ -380,7 +406,9 @@ function placeLabels() {
                 right: box.right - frame.left,
                 top: box.top - frame.top,
                 bottom: box.bottom - frame.top,
-                cy: box.top - frame.top + box.height / 2,
+                cy: label.aim === 'top'
+                    ? box.top - frame.top + Math.min(18, box.height / 2)
+                    : box.top - frame.top + box.height / 2,
             };
             if (callouts) {
                 // In a pair, a label goes on the outside of its own card; a
@@ -470,8 +498,10 @@ function pinLabel(layer, label, rel, cardLeft, cardRight) {
     // Above the element by default. `below` is for an element with text
     // directly over it that a tag would cover — the Spotify button sits under
     // the translation.
+    // With no room above (the pill at the top of the card), go below rather
+    // than on top of the element the tag names.
     let top = label.pin === 'below' ? rel.bottom + 3 : rel.top - h - 3;
-    if (top < 4) top = rel.top + 3;
+    if (top < 4) top = rel.bottom + 3;
     tag.style.left = `${left}px`;
     tag.style.top = `${top}px`;
 }

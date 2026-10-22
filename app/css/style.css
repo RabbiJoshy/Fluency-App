@@ -21444,6 +21444,22 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     outline-offset: -2px;
 }
 
+/* Wider screens: a card taller than the room is scaled down a little rather
+   than cutting off its last meaning row (walkthrough.js fitCards). */
+@media (min-width: 701px) {
+    .walkthrough-stage .card-replica {
+        transform: scale(var(--replica-card-scale, 1));
+        transform-origin: top center;
+        margin-bottom: calc(var(--replica-card-h, 480px) * (var(--replica-card-scale, 1) - 1));
+    }
+}
+
+/* The Spotify button's row clips its overflow, which hid an outside ring. */
+.walkthrough-anchored.spotify-btn {
+    outline-offset: -2px;
+    border-radius: 999px;
+}
+
 .walkthrough-foot {
     display: grid;
     grid-template-columns: 1fr auto 1fr;

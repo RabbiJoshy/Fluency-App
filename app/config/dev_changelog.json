@@ -2,6 +2,22 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T01:31:56+01:00",
+      "date": "2026-10-22 01:31 BST",
+      "agent": "Claude",
+      "summary": "Walkthrough labels point at the right parts; demo card front matches the real card; About text up to date",
+      "detail": [
+        "'Every meaning, separated' frames the meaning rows, not just the heading; on desktop its line no longer crosses 'How often each is used'.",
+        "Demo card front: capitalised 'Noun' pill, and no dictionary form when it equals the word (as on the real card). Label now 'Noun, verb and so on, each with its own colour.'",
+        "Phone: a tag with no room above its element goes below it instead of covering it (the 'What kind of word' pill).",
+        "Spotify button gets its ring back (it was clipped).",
+        "Desktop Music screen: the card shrinks slightly instead of cutting off the last meaning row.",
+        "About: 'Tap the Spotify button and the line plays…'; footnote no longer claims a built-in French playlist.",
+        "Tutorial: the 'dictionary form' note is skipped on cards that are their own dictionary form."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T01:27:45+01:00",
       "date": "2026-10-22 01:27 BST",
       "agent": "Claude",
@@ -338,16 +354,6 @@
       "detail": [
         "With a shared translation or context over several sub-meanings (aún: time over still / yet) and none chosen, the rows now share one fill and one left bar, with hairlines between them, instead of looking like separate selected rows.",
         "Tapping a single sub-meaning returns to the row-by-row marker."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T18:27:31+01:00",
-      "date": "2026-10-21 18:27 BST",
-      "agent": "Claude",
-      "summary": "Function-word cards: the active pattern uses the same fill-and-left-bar marker as other senses",
-      "detail": [
-        "The selected pattern box on function-word backs (de, que, em...) now has a 0.24 fill and a 4px left bar in its partner's colour instead of a 2px outline."
       ],
       "commit": "pending"
     }

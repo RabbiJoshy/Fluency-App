@@ -1491,7 +1491,7 @@ function _appendAboutFootnotes(body) {
     notes.innerHTML =
         '<p id="about-footnote-1">'
         + '<sup class="about-footnote-number">1</sup> '
-        + 'Three Spanish artists (Bad Bunny, Rosalía, Young Miko) and a curated French playlist are built in, '
+        + 'Three Spanish artists (Bad Bunny, Rosalía, Young Miko) are built in, '
         + 'or you can connect Spotify and study a live vocabulary deck from any playlist of your own.'
         + '</p>'
         + '<p class="about-references">'

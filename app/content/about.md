@@ -16,7 +16,7 @@ Words with more than one meaning are split apart: *banco* is usually a *bank* an
 
 ![Lyrics: a lyric card with the translated line](demo://artist)
 
-Pick an artist (Bad Bunny, say) and the app builds a frequency-ranked vocabulary from their catalogue. Each flashcard shows an actual song lyric containing the word, with the line translated underneath. Tap the lyric and it plays in your own Spotify at that exact moment, so you hear the word in context on the original track.
+Pick an artist (Bad Bunny, say) and the app builds a frequency-ranked vocabulary from their catalogue. Each flashcard shows an actual song lyric containing the word, with the line translated underneath. Tap the Spotify button and the line plays in your own Spotify at that exact moment, so you hear the word in context on the original track.
 
 For words with several meanings, the card shows how the artist actually uses them: in these songs *cielo* is mostly *heaven*, and sometimes the *sky*.
 

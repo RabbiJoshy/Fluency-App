@@ -99,9 +99,9 @@ assert(!deck.faces.back.notes.some(note => note.title === 'Where the example is 
             input=r'''import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import { REPLICA_CARDS, esc, hasConjugateTile } from './app/js/card-replica.js';
+import { REPLICA_CARDS, esc, hasConjugateTile, hasDistinctLemma } from './app/js/card-replica.js';
 const source = fs.readFileSync('./app/js/tutorial.js', 'utf8').replace(/import \{[\s\S]*?\} from '[^']+';/, '');
-const context = vm.createContext({assert, REPLICA_CARDS, esc, hasConjugateTile,
+const context = vm.createContext({assert, REPLICA_CARDS, esc, hasConjugateTile, hasDistinctLemma,
   window: {}, document: {readyState: 'loading', addEventListener() {}, querySelector() {return null;}, getElementById() {return null;}},
   localStorage: {getItem() {return null;}}});
 vm.runInContext(source + `
@@ -171,12 +171,12 @@ assert.deepEqual(tutorialStepPosition(0), {current: 1, total: 4});
 state.stepIndex = 0;
 tutorialLanguageOverride = 'spanish';
 state.mode = 'lyrics';
-assert.equal(tutorialStepPosition().total, 20);
+assert.equal(tutorialStepPosition().total, 19);  // cielo is its own dictionary form: no "dictionary form" note
 const lyricsBack = stepNotes(tutorialSteps()[1]);
 assert(lyricsBack.some(note => note.title === 'Play the line'));
 // Grading closes the face even after the song details are added.
 assert.equal(lyricsBack[lyricsBack.length - 1].title, 'Grade your answer');
-assert.equal(stepNotes(tutorialSteps()[0]).length, 5);
+assert.equal(stepNotes(tutorialSteps()[0]).length, 4);
 `, context);
 ''', capture_output=True,
         )
