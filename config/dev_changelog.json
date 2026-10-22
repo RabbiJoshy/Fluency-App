@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-22T13:38:00+01:00",
+      "date": "2026-10-22 13:38 BST",
+      "agent": "Antigravity",
+      "summary": "Walkthrough: top-bar segmented switcher, no bottom bar, cleaner card header",
+      "detail": [
+        "Removed the redundant summary sentence under 'This is a flashcard', giving full prominence to the card and leader lines.",
+        "Removed the bottom footer bar to reclaim ~80px of vertical space, preventing card scaling on laptops and desktops.",
+        "Added a segmented control in the top bar (Everyday Speech / Music Mode) so visitors and hirers immediately see both modes.",
+        "Next button and close button sit in the top-right header actions; arrow keys and direct tab clicks switch seamlessly."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-22T13:05:06+01:00",
       "date": "2026-10-22 13:05 BST",
       "agent": "Claude",

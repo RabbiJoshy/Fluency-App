@@ -6,9 +6,9 @@
 // from them. The cards are the shared replicas (card-replica.js); the
 // frequency bars come from prominence-badge.js, as on the live card.
 
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=9826b0f7';
-import './prominence-badge.js?v=9826b0f7';
-import './walkthrough.js?v=9826b0f7';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=9ac74cfb';
+import './prominence-badge.js?v=9ac74cfb';
+import './walkthrough.js?v=9ac74cfb';
 
 // Minimal Markdown → HTML renderer. Handles headings (##/###), paragraphs,
 // unordered lists, bold/italic, inline code, links, and images. Enough for
