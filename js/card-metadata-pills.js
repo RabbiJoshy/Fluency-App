@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=3e821184';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=97605c48';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -90,7 +90,8 @@ export function projectWiktionaryGloss(meaning, value) {
         };
     }
 
-    let remaining = text;
+    // Wiktionary's infinitive shorthand is not grammatical learner English.
+    let remaining = text.replace(/^there be\b/iu, 'to exist');
     const notes = [];
     const pronounMatch = WIKTIONARY_PRONOUN_DEFINITION.exec(remaining);
     if (pronounMatch) {
@@ -474,7 +475,9 @@ export function compactLearnerSenseMetadata(items, meaning, options = {}) {
     const differs = item => peerKeys.length > 0 && peerKeys.some(keys => !keys.has(metadataItemKey(item)));
     const hasCompanion = items.some(item => item.family === 'companion' || item.kind === 'required_case');
     const kept = (items || []).filter(item => {
-        if (options.excludeCompanion && (item.family === 'companion' || (item.family === 'construction' && item.kind === 'optional_companion'))) return false;
+        if (options.excludeCompanion && (item.family === 'companion' || (item.family === 'construction'
+            && (item.kind === 'optional_companion' || item.kind === 'complement_form'
+                || (item.kind === 'companion_form' && frameCue(item.value)))))) return false;
         if (item.family === 'grammar' && item.kind === 'surface_mark') return false;
         const display = senseMetadataDisplay(item, { gloss });
         if (item.family === 'register' && SUPPORTING_REGISTER_VALUES.has(item.value.toLowerCase())) return false;
@@ -900,11 +903,15 @@ export function frameCue(value) {
         .trim();
     const OBJECT = /^(?:(?:in)?direct object(?: pronoun)?|object|subject pronoun|indirect question|someone|something)$/i;
     const segments = first.split(/,\s*along with\s+|\s+and\s+/i).map(segment => {
+        const optionalObject = /\bdirect object\b/i.test(segment);
         const alternatives = [...new Set(segment.replace(/,?\s*etc\.?$/i, '').split(/\s+or\s+|,\s*/i).map(part => part.trim())
             .filter(part => part && !OBJECT.test(part)))];
         const plain = alternatives.includes('infinitive')
             ? alternatives.filter(part => part !== 'personal infinitive') : alternatives;
-        return plain.join(' / ');
+        const label = plain.includes('other adverb')
+            ? `adverb (${plain.filter(part => part !== 'other adverb').join(' / ')})`
+            : plain.join(' / ');
+        return optionalObject && label ? `(${label})` : label;
     }).filter(Boolean);
     if (!segments.length) {
         // "[noun]", "[a debt or bill]": the slot itself.
@@ -1518,7 +1525,8 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         if (visible.some(shown => shown.kind === 'combined_frame')
             && ((item.family === 'grammar' && item.value === 'reflexive=true')
                 || (item.family === 'construction' && /^(?:reflexive|pronominal)$/i.test(item.value)))) return false;
-        if (options.excludeCompanion && item.family === 'companion') return false;
+        if (options.excludeCompanion && (item.family === 'companion'
+            || (item.family === 'construction' && item.kind === 'complement_form'))) return false;
         if (item.family === 'register' && SUPPORTING_REGISTER_VALUES.has(item.value.toLowerCase())) return false;
         const gloss = options.gloss || meaning?.meaning || meaning?.translation || '';
         if (grammarIsAlreadyInGloss(item, gloss)) return false;
@@ -2164,6 +2172,7 @@ export function extractSenseCompanion(meaning) {
     const items = senseMetadataItems(meaning);
     const companionItem = items.find(i => i.family === 'companion');
     const optCompanionItem = items.find(i => i.family === 'construction' && i.kind === 'optional_companion');
+    const complement = items.find(item => item.family === 'construction' && item.kind === 'complement_form');
 
     let qualifier = null;
     let terms = [];
@@ -2203,12 +2212,19 @@ export function extractSenseCompanion(meaning) {
     }
 
     terms = [...new Set(terms.map(t => t.trim()).filter(Boolean))];
-    if (!terms.length) return null;
+    if (!terms.length) {
+        const construction = items.find(item => item.family === 'construction'
+            && item.kind === 'companion_form' && frameCue(item.value));
+        if (!construction && !complement) return null;
+        return {terms: [], qualifier: null, isOptional: false,
+            frame: construction ? frameCue(construction.value) : `+ ${complement.value}`};
+    }
 
     return {
         terms,
         qualifier,
         isOptional,
+        ...(complement ? {frame: `+ ${terms.join(' / ')} + ${complement.value}`} : {}),
     };
 }
 
@@ -2222,15 +2238,19 @@ export function senseCollocationHTML(meaning, card = null) {
     const particle = escapeCardText(comp.terms.join(' / '));
     const isOptional = comp.isOptional;
     const qualifier = comp.qualifier ? escapeCardText(comp.qualifier) : '';
-    const titleAttr = isOptional
+    // Literal partners form a phrase; grammar slots retain their join marker.
+    const framePhrase = comp.frame ? comp.frame.replace(/\+\s*(?:(personal infinitive|past participle|infinitive|gerund|subjunctive|indicative|participle|adjective|adverb|noun|inf|ger|pp|subj|adj)\b|([^\s+]+))/giu,
+        (_, slot, word) => slot ? `+ ${slot}` : word).replace(/\s+/gu, ' ').trim() : '';
+    const titleAttr = comp.frame ? `Used with: ${target} ${escapeCardText(framePhrase)}` : isOptional
         ? (qualifier ? `${qualifier} used with: ${target} + ${particle}` : `Used with: ${target} + ${particle}`)
         : `Used with: ${target} ${particle}`;
+    const phrase = `${qualifier ? `${qualifier}: ` : ''}${target} ${comp.frame ? escapeCardText(framePhrase) : particle}`;
 
     // The partner word is a privileged cue, not a sub-meaning: "+ de" opens
     // the row's context. The lemma is already the card's headword, so only
     // the partner is printed; the full "precisar de" stays in the tooltip.
     const qualifierTag = qualifier ? `<span class="sense-collocation-qualifier">${qualifier}</span> ` : '';
-    return `<span class="sense-target-collocation sense-companion-lead${isOptional ? ' is-optional' : ''}" title="${titleAttr}" aria-label="${titleAttr}">${qualifierTag}<span class="sense-collocation-particle">+ ${particle}</span></span>`;
+    return `<span class="sense-target-collocation sense-companion-lead${isOptional ? ' is-optional' : ''}" data-frame-phrase="${phrase}" title="${titleAttr}" aria-label="${titleAttr}">${qualifierTag}<span class="sense-collocation-particle">${comp.frame ? escapeCardText(comp.frame) : `+ ${particle}`}</span></span>`;
 }
 
 // Window attachments for inline HTML onclick handlers
