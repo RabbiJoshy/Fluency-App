@@ -40,6 +40,23 @@ inside a signed-in user's existing session, or freshness of that browser's cache
 The DeepSeek pass covered close embedding decisions on words 1–4,000; it did not
 reclassify every Portuguese sentence. See `research/cascade/README.md`.
 
+## First concrete trace: certeza
+
+The served card has 19 selected examples attached to the question interjection,
+one to the affirmative interjection, one to the noun, and nine to `com certeza`.
+One of the question-interjection examples is `Eu só quero ter certeza de que está
+tudo bem.` / `I just want to be certain that it's OK.` This is a noun construction,
+not the standalone interjection `Certeza?`.
+
+The raw DeepSeek `results.jsonl` named by the assigner manifest contains only two
+attempted examples for this card. DeepSeek retained the baseline pick on
+`Com toda certeza, eu não quero esquecer.` and changed `Eu tinha certeza de ter
+ouvido algo.` from the question interjection to the noun. That correction is
+present in the published shards. The erroneous `Eu só quero ter certeza...`
+example was not among the two attempted items. This establishes one coverage
+gap in the selective correction pass; it is not a measured explanation for all
+Portuguese WSD errors.
+
 ## Separate WSD pass
 
 Start with the actual example sentences on `certeza`, then the reported verbs.
