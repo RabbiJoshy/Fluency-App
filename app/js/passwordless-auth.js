@@ -1,4 +1,4 @@
-import { IS_STAGING } from './env.js?v=d76b5fc8';
+import { IS_STAGING } from './env.js?v=7a369b8a';
 
 export const PASSWORDLESS_ENABLED = true;
 export const PASSWORDLESS_SYNC_URL = IS_STAGING

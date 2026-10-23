@@ -1,44 +1,44 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=d76b5fc8';
-import { releaseUrl } from './release-host.js?v=d76b5fc8';
-import './theme.js?v=d76b5fc8';
-import './desktop-shell.js?v=d76b5fc8';
-import './extra-workspace.js?v=d76b5fc8';
-import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=d76b5fc8';
-import './ai-preference.js?v=d76b5fc8';
-import { installFlagRendering } from './flags.js?v=d76b5fc8';
-import { IS_STAGING } from './env.js?v=d76b5fc8';
-import './state.js?v=d76b5fc8';
-import './offline-db.js?v=d76b5fc8';
-import './sync-queue.js?v=d76b5fc8';
-import { initOfflineContent } from './offline-content.js?v=d76b5fc8';
-import './speech.js?v=d76b5fc8';
-import './artist-ui.js?v=d76b5fc8';
-import './auth.js?v=d76b5fc8';
-import './tutorial.js?v=d76b5fc8';
-import './estimation.js?v=d76b5fc8';
-import './config.js?v=d76b5fc8';
-import './progress.js?v=d76b5fc8';
-import './knowledge.js?v=d76b5fc8';
-import './session-plan.js?v=d76b5fc8';
-import './ui.js?v=d76b5fc8';
-import './vocab.js?v=d76b5fc8';
-import './language-profile.js?v=d76b5fc8';
-import './smart-skip-pairs.js?v=d76b5fc8';
-import './bridge.js?v=d76b5fc8';
-import './cognates.js?v=d76b5fc8';
-import './coverage.js?v=d76b5fc8';
-import './fast-mode.js?v=d76b5fc8';
-import './extras.js?v=d76b5fc8';
-import './review-home.js?v=d76b5fc8';
-import './song-sets.js?v=d76b5fc8';
-import './playlist-live.js?v=d76b5fc8';
-import './spotify-playlist-import.js?v=d76b5fc8';
-import './subtitle-import.js?v=d76b5fc8';
-import './vocabulary-import.js?v=d76b5fc8';
-import './flashcards.js?v=d76b5fc8';
-import { validateArtistCatalog } from './data-contracts.js?v=d76b5fc8';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=7a369b8a';
+import { releaseUrl } from './release-host.js?v=7a369b8a';
+import './theme.js?v=7a369b8a';
+import './desktop-shell.js?v=7a369b8a';
+import './extra-workspace.js?v=7a369b8a';
+import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=7a369b8a';
+import './ai-preference.js?v=7a369b8a';
+import { installFlagRendering } from './flags.js?v=7a369b8a';
+import { IS_STAGING } from './env.js?v=7a369b8a';
+import './state.js?v=7a369b8a';
+import './offline-db.js?v=7a369b8a';
+import './sync-queue.js?v=7a369b8a';
+import { initOfflineContent } from './offline-content.js?v=7a369b8a';
+import './speech.js?v=7a369b8a';
+import './artist-ui.js?v=7a369b8a';
+import './auth.js?v=7a369b8a';
+import './tutorial.js?v=7a369b8a';
+import './estimation.js?v=7a369b8a';
+import './config.js?v=7a369b8a';
+import './progress.js?v=7a369b8a';
+import './knowledge.js?v=7a369b8a';
+import './session-plan.js?v=7a369b8a';
+import './ui.js?v=7a369b8a';
+import './vocab.js?v=7a369b8a';
+import './language-profile.js?v=7a369b8a';
+import './smart-skip-pairs.js?v=7a369b8a';
+import './bridge.js?v=7a369b8a';
+import './cognates.js?v=7a369b8a';
+import './coverage.js?v=7a369b8a';
+import './fast-mode.js?v=7a369b8a';
+import './extras.js?v=7a369b8a';
+import './review-home.js?v=7a369b8a';
+import './song-sets.js?v=7a369b8a';
+import './playlist-live.js?v=7a369b8a';
+import './spotify-playlist-import.js?v=7a369b8a';
+import './subtitle-import.js?v=7a369b8a';
+import './vocabulary-import.js?v=7a369b8a';
+import './flashcards.js?v=7a369b8a';
+import { validateArtistCatalog } from './data-contracts.js?v=7a369b8a';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -92,7 +92,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=d76b5fc8').catch(error => {
+    ? import('./spotify.js?v=7a369b8a').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1044,6 +1044,8 @@ loadConfig().then(async () => {
     } else if (activeArtist) {
         const promptForCustomSongs = activeArtist.customSongSource && selectedSongIds.length === 0;
         let deckOverviewHold = null;
+        let resumeEarly = false;
+        let markSetupReady = () => {};
         try {
             selectedLanguage = activeArtist.language || 'spanish';
             await loadReleaseProvenance(selectedLanguage);
@@ -1054,6 +1056,14 @@ loadConfig().then(async () => {
             window.dismissMusicWorkspace?.();
             await loadPpmData(activeArtist.language || 'spanish');
             document.getElementById('step2').style.display = 'block';
+            // A saved session: raise the Welcome back modal over the setup
+            // screen now and let it fill in behind, rather than after a wheel.
+            resumeEarly = !isResumeNavigation && !musicHandoff && window.shouldOfferResume?.() === true;
+            window._setupReady = new Promise(resolve => { markSetupReady = resolve; });
+            if (resumeEarly) {
+                hideAppLoading();
+                window.renderResumeLastSetCard?.();
+            }
             // Title is now static ("Choose level" in the HTML); the
             // CEFR/% toggle hides itself in artist mode via
             // setupPercentModeButton() — both are no-ops here.
@@ -1066,12 +1076,13 @@ loadConfig().then(async () => {
             // builds. So publish it first, raise the wheel, and let the selector
             // render underneath it rather than ahead of it.
             await updateExclusionBars();
-            if (!isResumeNavigation && !musicHandoff) deckOverviewHold = window.showDeckOverviewLoading?.();
+            if (!isResumeNavigation && !musicHandoff && !resumeEarly) deckOverviewHold = window.showDeckOverviewLoading?.();
             await renderLevelSelector(activeArtist.language || 'spanish');
             document.body.classList.add('has-learning-context');
             document.getElementById('artistSourceStep')?.classList.add('context-ready');
             window.updateLearningContextUI?.();
         } finally {
+            markSetupReady();
             if (!isResumeNavigation) {
                 await deckOverviewHold;
                 hideAppLoading();
@@ -1846,7 +1857,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=d76b5fc8')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=7a369b8a')).catch(() => null);
             window.spotifyLogin?.();
         });
     }

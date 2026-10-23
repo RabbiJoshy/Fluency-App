@@ -1,9 +1,9 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=d76b5fc8';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=d76b5fc8';
-import { readFastTrack } from './fast-track-preferences.js?v=d76b5fc8';
-import './session-plan.js?v=d76b5fc8';
+import './state.js?v=7a369b8a';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=7a369b8a';
+import { readFastTrack } from './fast-track-preferences.js?v=7a369b8a';
+import './session-plan.js?v=7a369b8a';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -965,7 +965,14 @@ function setupLanguageTabs() {
                 document.getElementById('step1')?.classList.add('source-speech-active');
                 speechSourceButton?.classList.add('is-selected');
                 sourceCardButton?.classList.remove('is-selected');
-                window.showAppLoading?.(window.isSeriesStudy?.() ? 'Preparing TV Series vocabulary' : 'Preparing speech vocabulary', 'Loading levels and your progress…');
+                // A saved session means the learner has a decision to make: raise
+                // the Welcome back modal now, over the setup screen as it fills in,
+                // instead of behind a loading wheel.
+                const resumeEarly = window.shouldOfferResume?.() === true;
+                let markSetupReady = () => {};
+                window._setupReady = new Promise(resolve => { markSetupReady = resolve; });
+                if (resumeEarly) window.renderResumeLastSetCard?.();
+                else window.showAppLoading?.(window.isSeriesStudy?.() ? 'Preparing TV Series vocabulary' : 'Preparing speech vocabulary', 'Loading levels and your progress…');
                 const speechSetupStarted = performance.now();
                 let deckOverviewHold = null;
                 try {
@@ -1032,7 +1039,7 @@ function setupLanguageTabs() {
                     await timePhase('updateCognateToggleVisibility',
                         () => updateCognateToggleVisibility());
                     await timePhase('updateExclusionBars', () => updateExclusionBars());
-                    deckOverviewHold = showDeckOverviewLoading();
+                    deckOverviewHold = resumeEarly ? null : showDeckOverviewLoading();
                     // Everything below this marker runs while the wheel is up, so
                     // the table says how much of the hold covered real work.
                     _setupTimings.push({ phase: '-- deck wheel raised --', ms: 0 });
@@ -1059,7 +1066,8 @@ function setupLanguageTabs() {
                 } finally {
                     document.getElementById('dataLoadingIndicator')?.classList.remove('visible');
                     await deckOverviewHold;
-                    window.hideAppLoading?.();
+                    markSetupReady();
+                    if (!resumeEarly) window.hideAppLoading?.();
                 }
                 window.renderResumeLastSetCard?.();
                 if (!window.maybeShowKnownLanguagesIntro?.(newLanguage)) {
@@ -3746,7 +3754,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=d76b5fc8')
+        import('./spotify.js?v=7a369b8a')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

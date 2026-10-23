@@ -1,42 +1,42 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=d76b5fc8';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=d76b5fc8';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence } from './saved-items.js?v=d76b5fc8';
-import { songCreditHTML } from './song-credit.js?v=d76b5fc8';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=d76b5fc8';
+import './state.js?v=7a369b8a';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=7a369b8a';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=7a369b8a';
+import { songCreditHTML } from './song-credit.js?v=7a369b8a';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=7a369b8a';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=d76b5fc8';
+import { fitSenseRowText } from './card-row-layout.js?v=7a369b8a';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=d76b5fc8';
-import { goToRoute, routeCodeFor } from './routes.js?v=d76b5fc8';
-import { memoryTipTileHTML } from './memory-tips.js?v=d76b5fc8';
+import './speech.js?v=7a369b8a';
+import { goToRoute, routeCodeFor } from './routes.js?v=7a369b8a';
+import { memoryTipTileHTML } from './memory-tips.js?v=7a369b8a';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=d76b5fc8';
-import './side-dock.js?v=d76b5fc8';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=d76b5fc8';
+} from './function-word-card.js?v=7a369b8a';
+import './side-dock.js?v=7a369b8a';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=7a369b8a';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=d76b5fc8';
+} from './example-personalisation.js?v=7a369b8a';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=d76b5fc8';
+} from './spanishdict-usage.js?v=7a369b8a';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=d76b5fc8';
+} from './reverse-cues.js?v=7a369b8a';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -71,8 +71,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=d76b5fc8';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=d76b5fc8';
+} from './card-metadata-pills.js?v=7a369b8a';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=7a369b8a';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -5774,21 +5774,97 @@ function renderRareSenseGroups(rareItems, ctx = { total: 1 }) {
     }).join('');
 }
 
-// No PHRASE badge: every row in this list is a phrase, and the subtitle
-// already says so. Only the owner-account source pill still earns a row.
-function renderPhraseRow(item) {
+// Clean, full-width expression row with tap-to-expand detail view.
+// Starts unselected so learners can survey the expressions cleanly.
+function renderPhraseRow(item, index) {
     const example = (item.examples || [])[0];
-    // Expressions share the phrase accent with the set scrubber's phrase pip.
     const entry = savedPhraseEntry(item, item.parentCard?.language || selectedLanguage, example);
-    const exampleHTML = compactPhraseExampleHTML(example, 'var(--accent-phrases-rgb)', entry);
+    const isSaved = isItemSaved(entry);
     const sourcePill = phraseSourcePillHTML(item);
-    const textHTML = `<div class="phrase-expression">${escapeCardText(item.expression)}</div>`
-        + (item.translation ? `<div class="phrase-translation">${escapeCardText(item.translation)}</div>` : '')
-        + (item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : '');
-    return `<div class="phrase-summary-item">
-        ${sourcePill ? `<div class="phrase-badge-row">${sourcePill}</div>` : ''}
-        ${rareRowHTML(textHTML, exampleHTML, 1, saveItemButtonHTML(entry))}
+    const targetSentence = entry?.sentence || exampleTargetText(example) || example?.text || example?.targetSentence || '';
+    const englishSentence = example?.english || example?.translation || example?.englishSentence || '';
+    const hasExample = Boolean(targetSentence);
+    const highlightedTarget = targetSentence
+        ? (entry?.highlightRanges?.length ? highlightSavedSentence(targetSentence, entry.highlightRanges) : escapeCardText(targetSentence))
+        : '';
+
+    return `<div class="expression-card-item" data-expression-index="${index}" data-surface="${escapeCardText(item.expression)}">
+        <div class="expression-row-main" role="button" tabindex="0"
+            aria-expanded="false" aria-controls="exprDetail-${index}"
+            onclick="toggleExpressionDetail(event, ${index})"
+            onkeydown="handleExpressionKeydown(event, ${index})">
+            <div class="expression-row-text">
+                <div class="expression-row-headword-wrap">
+                    <span class="expression-row-headword">${escapeCardText(item.expression)}</span>
+                    <span class="expression-saved-indicator${isSaved ? ' is-visible' : ''}" data-saved-indicator="${escapeSavedText(item.expression)}" title="${isSaved ? 'Saved in your collection' : ''}" aria-label="Saved" ${isSaved ? '' : 'hidden'}>${SAVE_STAR_ICON}</span>
+                </div>
+                ${item.translation ? `<div class="expression-row-translation">${escapeCardText(item.translation)}</div>` : ''}
+                ${item.context ? `<div class="expression-row-context">${escapeCardText(item.context)}</div>` : ''}
+            </div>
+            ${sourcePill ? `<div class="expression-badge-slot">${sourcePill}</div>` : ''}
+            <div class="expression-row-affordance">
+                ${hasExample ? `<span class="expression-example-pill"><span class="expression-example-quotes" aria-hidden="true">“ ”</span>Example</span>` : ''}
+                <svg class="expression-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+        </div>
+        <div class="expression-detail-panel" id="exprDetail-${index}" hidden>
+            <div class="expression-detail-inner">
+                ${hasExample ? `
+                <div class="expression-example-block" style="--sense-match-rgb: var(--accent-phrases-rgb);">
+                    <div class="expression-example-target">${highlightedTarget}</div>
+                    ${englishSentence ? `<div class="expression-example-translation">${escapeCardText(englishSentence)}</div>` : ''}
+                </div>` : ''}
+                <div class="expression-detail-actions">
+                    ${saveItemButtonHTML(entry)}
+                    <span class="expression-save-action-label" onclick="this.previousElementSibling?.click()">${isSaved ? 'Saved' : 'Save expression'}</span>
+                </div>
+            </div>
+        </div>
     </div>`;
+}
+
+function toggleExpressionDetail(event, index) {
+    event?.stopPropagation?.();
+    const container = event.target?.closest('.uses-list') || document.querySelector('#backContent .uses-list') || document.getElementById('rareUsesBody');
+    if (!container) return;
+    const clickedItem = container.querySelector(`.expression-card-item[data-expression-index="${index}"]`);
+    if (!clickedItem) return;
+
+    const mainBtn = clickedItem.querySelector('.expression-row-main');
+    const panel = clickedItem.querySelector('.expression-detail-panel');
+    const isCurrentlyOpen = clickedItem.classList.contains('is-expanded');
+
+    // Accordion: close all other open expression items in this list
+    container.querySelectorAll('.expression-card-item.is-expanded').forEach(item => {
+        if (item === clickedItem) return;
+        item.classList.remove('is-expanded');
+        item.querySelector('.expression-row-main')?.setAttribute('aria-expanded', 'false');
+        const p = item.querySelector('.expression-detail-panel');
+        if (p) p.hidden = true;
+    });
+
+    // Toggle clicked item
+    if (isCurrentlyOpen) {
+        clickedItem.classList.remove('is-expanded');
+        mainBtn?.setAttribute('aria-expanded', 'false');
+        if (panel) panel.hidden = true;
+    } else {
+        clickedItem.classList.add('is-expanded');
+        mainBtn?.setAttribute('aria-expanded', 'true');
+        if (panel) panel.hidden = false;
+        clickedItem.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+function handleExpressionKeydown(event, index) {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleExpressionDetail(event, index);
+    }
+}
+
+if (typeof window !== 'undefined') {
+    window.toggleExpressionDetail = toggleExpressionDetail;
+    window.handleExpressionKeydown = handleExpressionKeydown;
 }
 
 // The shared body of the expressions child card and the Rarer uses sheet.
@@ -5825,11 +5901,11 @@ function phraseSummaryContent(items, ctx0 = {}) {
         : ctx.total > 1
             ? usesSectionHTML(ctx, {
                 key: 'phrases', rgb: 'var(--accent-phrases-rgb)', label: 'Expressions',
-                count: phraseItems.length, bodyHTML: phraseItems.map(renderPhraseRow).join(''),
+                count: phraseItems.length, bodyHTML: phraseItems.map((item, idx) => renderPhraseRow(item, idx)).join(''),
                 extraClass: 'other-uses-pos--phrases',
             })
             : `<section class="other-uses-pos other-uses-pos--phrases" style="--sense-match-rgb: var(--accent-phrases-rgb);">
-                ${phraseItems.map(renderPhraseRow).join('')}
+                ${phraseItems.map((item, idx) => renderPhraseRow(item, idx)).join('')}
                </section>`;
     const cliticSection = !cliticHTML ? ''
         : ctx.total > 1
@@ -5852,9 +5928,6 @@ function phraseSummaryContent(items, ctx0 = {}) {
 
 function renderPhraseSummaryBack(card) {
     resetUsesSectionState(`child:${card.id}`);
-    // The markup is returned as a string and inserted by the caller; measure
-    // once it is in the document.
-    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => requestAnimationFrame(() => fitRareExamples(document.querySelector('#backContent .uses-list'))));
     const { subtitle, onlyExpressions, bodyHTML } = phraseSummaryContent(cardChainQueue || []);
     const lead = onlyExpressions ? 'Expressions with' : 'Less common uses of';
     return `<div class="back-header other-uses-header">
@@ -11515,8 +11588,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'd76b5fc8';
-const MODALS_ASSET_VERSION = 'd76b5fc8';
+const ASSET_VERSION = '7a369b8a';
+const MODALS_ASSET_VERSION = '7a369b8a';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

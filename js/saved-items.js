@@ -76,7 +76,7 @@ export function savedPhraseEntry(item, language, example = (item.examples || ite
     };
 }
 
-const SAVE_STAR_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2L3.2 9.6l6.3-.9L12 3Z"/></svg>';
+export const SAVE_STAR_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2L3.2 9.6l6.3-.9L12 3Z"/></svg>';
 
 export function saveItemButtonHTML(entry) {
     if (!entry.surface) return '';
@@ -121,6 +121,17 @@ export function renderSavedItems() {
             button.setAttribute('aria-label', `${saved ? 'Remove' : 'Add'} ${entry.surface}${saved ? ' from Saved' : ' to Saved'}`);
             button.title = saved ? 'Remove from Saved' : 'Add to Saved';
             button.innerHTML = SAVE_STAR_ICON;
+            const actionLabel = button.nextElementSibling?.classList.contains('expression-save-action-label') ? button.nextElementSibling : null;
+            if (actionLabel) {
+                actionLabel.textContent = saved ? 'Saved' : 'Save expression';
+            }
+            const cardItem = button.closest('.expression-card-item');
+            const indicator = cardItem?.querySelector('.expression-saved-indicator');
+            if (indicator) {
+                indicator.hidden = !saved;
+                indicator.classList.toggle('is-visible', saved);
+                indicator.title = saved ? 'Saved in your collection' : '';
+            }
         } catch (_) { /* Ignore an unrelated malformed control. */ }
     });
 }
