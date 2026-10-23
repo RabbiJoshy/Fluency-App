@@ -87,6 +87,7 @@ const urlsToCache = [
   '/js/ui.js?v=20261019stg8',
   '/js/fast-track-preferences.js?v=20260920a',
   '/js/vocab.js?v=20261019stg8',
+  '/js/wsd-ui-sidecar.js?v=1',
   '/js/grammar-cards.js?v=20260923gn',
   '/js/language-profile.js?v=1',
   '/js/bridge.js?v=1',

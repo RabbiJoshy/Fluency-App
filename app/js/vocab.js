@@ -9,6 +9,7 @@ import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260923gn';
 import { releaseUrl } from './release-host.js?v=20260921rh';
 import { promoteSubglossTranslations } from './sense-gloss.js?v=1';
 import { getGrammarWordDefinition } from './function-word-card.js?v=20261016slots';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=1';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1697,6 +1698,7 @@ function expandSlimExample(record, sources) {
         if (agree) metadata.wsd.gemini_recommendation = { reason: 'cheap_leaf_choices_agree' };
     }
     example.metadata = metadata;
+    if (record.ju) metadata.wsd_ui = record.ju;
     return example;
 }
 
@@ -1744,7 +1746,13 @@ async function fetchExampleShard(langConfig, shard) {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         trackDataFreshness(response);
         const manifest = exampleShardManifestFor === examplesPath ? exampleShardManifest : null;
-        mergeExamplePayload(expandSlimExamplePayload(responseData, manifest), examplesPath);
+        const sidecar = await loadWsdUiSidecar(langConfig);
+        const expanded = expandSlimExamplePayload(responseData, manifest);
+        const overlay = expandSlimExamplePayload(wsdUiExamplePayload(responseData, sidecar), sidecar);
+        for (const [id, corrected] of Object.entries(overlay)) {
+            expanded[id] = { ...expanded[id], ...corrected };
+        }
+        mergeExamplePayload(expanded, examplesPath);
         loadedExampleShards.add(key);
     }).finally(() => exampleShardInflight.delete(key));
     exampleShardInflight.set(key, pending);
@@ -1789,7 +1797,12 @@ async function loadMonolithExamples(langConfig) {
         throw new Error(`Configured examples file ${examplesPath} returned HTTP ${response.status}`);
     }
     trackDataFreshness(response);
-    const examples = responseData;
+    const sidecar = await loadWsdUiSidecar(langConfig);
+    const examples = { ...responseData };
+    const overlay = expandSlimExamplePayload(wsdUiExamplePayload(responseData, sidecar), sidecar);
+    for (const [id, corrected] of Object.entries(overlay)) {
+        examples[id] = { ...examples[id], ...corrected };
+    }
     return window.setActiveExamplesData?.(examples, examplesPath)
         || (window._cachedExamplesData = examples);
 }
@@ -1904,10 +1917,15 @@ function mergeIndexRowPayload(payload) {
 async function fetchIndexRowShard(langConfig, shard) {
     const indexPath = langConfig.indexPath || langConfig.dataPath;
     const key = `${indexPath}:${shard.path}`;
+    const sidecar = await loadWsdUiSidecar(langConfig);
     const applyRows = payload => {
         // Study projection/pooling may mutate meanings. Cached source rows
         // must remain pristine when another source index is hydrated later.
         mergeIndexRowPayload(JSON.parse(JSON.stringify(payload)));
+        applyWsdUiIndex((window._cachedJoinedIndex || []).filter(card => payload?.[card.id]), sidecar);
+        for (const card of window._cachedJoinedIndex || []) {
+            if (payload?.[card.id] && wsdUiCard(sidecar, card.id, card.surface_card_id)) visibleSenseMergeCache.delete(card);
+        }
         for (const card of window._cachedJoinedIndex || []) {
             if (payload?.[card.id]) promoteSubglossTranslations(card.meanings);
         }
@@ -2034,6 +2052,7 @@ async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
         }
     }
 
+    applyWsdUiIndex(data, await loadWsdUiSidecar(effectiveConfig));
     validateVocabularyIndex(data, { source: indexPath });
     if (Array.isArray(data)) for (const card of data) promoteSubglossTranslations(card?.meanings);
 
@@ -2061,6 +2080,7 @@ async function fetchDetachedIndex(langConfig) {
         trackDataFreshness(response);
         data = responseData;
     }
+    applyWsdUiIndex(data, await loadWsdUiSidecar(langConfig));
     validateVocabularyIndex(data, { source: indexPath });
     joinedIndexCacheByPath.set(cacheKey, data);
     return data;

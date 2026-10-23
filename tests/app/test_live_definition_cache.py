@@ -12,6 +12,8 @@ class LiveDefinitionCacheTests(unittest.TestCase):
     def test_switching_indexes_reuses_definitions_not_just_loaded_flags(self):
         source = (ROOT / 'app/js/vocab.js').read_text()
         functions = source[source.index('const loadedIndexRowShards'):source.index('function parseStudyRangeString')]
+        sidecar = (ROOT / 'app/js/wsd-ui-sidecar.js').read_text()
+        sidecar = '\n'.join(line for line in sidecar.splitlines() if not line.startswith('import ')).replace('export ', '')
         script = r"""
 const assert = require('node:assert/strict');
 let fetches = 0;
@@ -19,7 +21,7 @@ const window = {_cachedJoinedIndex:[{id:'segundos',word:'segundos',meanings:[],_
 const readJsonWithTimeout = async () => { fetches++; return {response:{ok:true},data:{segundos:{meanings:[{translation:'second',pos:'NOUN'}]}}}; };
 const trackDataFreshness = () => {};
 const promoteSubglossTranslations = () => {};
-""" + functions + r"""
+""" + sidecar + functions + r"""
 (async()=>{
 const cfg={indexPath:'speech/vocabulary.index.json'}, shard={path:'rows/943.json'};
 await fetchIndexRowShard(cfg,shard);
