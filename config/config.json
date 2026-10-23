@@ -516,6 +516,8 @@
     },
     "portuguese": {
       "name": "Portuguese",
+      "wsdSidecarPath": "data/wsd-sidecars/pt-first200-jev-v1.json",
+      "wsdSidecarRelease": "pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-finite-v1-slim",
       "indexPath": "releases/pt/speech/pt-speech-v25-literal-ground-r4-10000x30-fw1-deepseek-v25-finite-v1-slim/app/vocabulary.index.json",
       "seeReferencesPath": "data/see-references/pt-see-v1.json",
       "estimationPoolPath": "data/estimation-pools/portuguese-literal-ground-r4-seam-v1-fw1-ds25-visible-v1-finite-v1.json",

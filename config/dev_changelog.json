@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-23T18:39:01.084546+01:00",
+      "date": "2026-10-23 18:39 BST",
+      "agent": "Codex",
+      "summary": "Apply Jev assignments above the Portuguese deck for ordinary words in the first 200 cards.",
+      "detail": [
+        "Use a release-pinned UI sidecar above existing DeepSeek assignments, preserving card IDs, learner progress and the published release.",
+        "Regroup all exported examples, update canonical examples and shares from the reviewed exported set, and keep unresolved decisions explicit.",
+        "Leave grammar-word cards, companion splitting and the rest of the deck unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-23T00:32:06.246572+01:00",
       "date": "2026-10-23 00:32 BST",
       "agent": "Codex",
@@ -359,18 +371,6 @@
         "An unchosen shared translation (daqui: 'of') is one line; its contexts open when you choose it. This applies within one word type too, not only between word types.",
         "When sub-rows shared a translation and also a context (daqui: 'of' and 'in relation to'), the context is no longer lifted into the heading. Each row keeps it: 'in relation to · introduces the name of a place…' and 'in relation to', instead of a leftover reading 'general use'.",
         "Checked in the app on daqui (dark mode). Not checked: light mode, phone width, the Spanish shared-context groups, or cards with several shared translations in one word type."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T22:35:55+01:00",
-      "date": "2026-10-21 22:35 BST",
-      "agent": "Claude",
-      "summary": "Card back: the grammar frame (+ que, + com) shows only on the row in use, as a pill with the phrase (contar que)",
-      "detail": [
-        "The frame sits at the end of the row in use's context line, as a quiet pill holding the whole phrase ('contar que', 'acreditar em'). Other rows drop it, so they take no extra width.",
-        "A row that is only a frame (estar: '+ em', '+ adj') is left as it was.",
-        "Checked in the app on contar, acredito and estar (dark mode). Not checked: light mode, phone width, grouped rows (there are no longer any with frames in the Portuguese cards I scanned)."
       ],
       "commit": "pending"
     }
