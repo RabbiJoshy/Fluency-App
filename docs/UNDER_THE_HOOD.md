@@ -1,9 +1,9 @@
-# What's under the hood — draft 1
+# What's under the hood — draft 2
 
 Working draft for the About page's "What's under the hood" section. Replaces the
 current bullet list in `app/content/about.md`. Not wired into the app yet.
 
-Audience: a curious learner or a recruiter. No frontend talk. Each block is a
+Audience: anyone curious. Plain words, no app vocabulary, no frontend talk. Each block is a
 feature a learner can feel, then the NLP that makes it work.
 
 Open questions for Josh are at the bottom.
@@ -12,64 +12,57 @@ Open questions for Josh are at the bottom.
 
 ## What's under the hood
 
-The app looks simple: a card, a word, an example. Most of the work happens
-before you ever see the card, in a pipeline that reads millions of lines of
-subtitles, lyrics and dictionary entries and decides what is worth showing you.
-
 ### Smart Skip: don't teach what you already know
 
-Skip the words you can already guess. If you speak English, *información*
-doesn't need a flashcard. Smart Skip finds those words and sets them aside, and
-you can still browse them, with the reason shown.
+Smart Skip leaves out words you can already guess. If you speak English,
+*información* doesn't need a flashcard. Skipped words aren't deleted: you can
+still browse them, with the reason shown.
 
-Three ideas make it work:
+- **Spelling similarity.** Each word is compared with its English counterpart
+  using rules for how languages really drift: *-ción* becomes *-tion*, a *b*
+  sneaks in between *m* and *r* (*número / number*), letters swap places
+  (*capitán / captain*). Short words are held to a stricter standard, so *este*
+  isn't treated as *east*.
+- **Shared ancestry.** Looking alike isn't enough. The two words must also be
+  known relatives or direct translations, which keeps false friends like
+  *sensible* (it means "sensitive") from being skipped.
+- **Every meaning must be easy.** A word is skipped only if all of its meanings
+  are easy. *Banco* means *bank*, which you know, but also *bench*, which you may
+  not, so it stays.
+- **Other languages you speak.** Know Spanish and learning Portuguese? Words you
+  already learned in Spanish can be skipped in Portuguese.
 
-- **Look-alike scoring.** A word pair like *capitán / captain* is scored on how
-  similar the two spellings are, using rules for how languages really drift:
-  *-ción* becomes *-tion*, *b* sneaks in between *m* and *r* (*número / number*),
-  letters swap places. Short words are held to a stricter standard so that
-  *este* does not count as *east*.
-- **Both words must be real relatives.** Looking alike is not enough. The pair
-  also has to be a known cognate (a word with the same ancestor) or a direct
-  translation. That filter is what keeps *sensible* (sensitive) from being
-  skipped as if it meant *sensible*.
-- **Every meaning has to pass.** A card is skipped only if *all* the meanings it
-  shows are easy. *Banco* is *bank*, which you know, and also *bench*, which you
-  might not, so it stays.
-
-It also works across languages you already speak. Know Spanish, learning
-Portuguese? Words you've already learned in Spanish are skipped in Portuguese.
-
-### The right meaning in every example: sentence embeddings (bi-encoders)
+### Matching each example to the right meaning: bi-encoders
 
 *Banco* is a bank in one sentence and a bench in the next. To give each meaning
 its own examples, the pipeline turns text into numbers.
 
-A **bi-encoder** reads two pieces of text separately and gives each a position
-in a shared meaning-space; the closer two positions are, the closer the
-meanings. Because each text is encoded once and stored, comparing millions of
-pairs is cheap. It runs here in two places:
+A **bi-encoder** reads two pieces of text separately and places each one in a
+shared "meaning space". The closer two positions are, the closer the meanings.
+Each text is encoded once and stored, so comparing millions of pairs is cheap.
+It is used in two places:
 
-1. **Picking the meaning.** Each example sentence is compared against each
-   dictionary definition of the word, one definition at a time (never a whole
-   entry blended together, which turns into vague topic noise). The closest
-   definition wins, with a small nudge towards the dictionary's first meaning,
-   since real speech favours it more than 80% of the time. Grammar comes first:
-   a verb in the sentence rules out noun definitions before anything is scored.
+1. **Choosing the meaning.** Each example sentence is compared with each
+   dictionary definition of the word, one definition at a time. Blending all
+   definitions together would wash the signal out into general topic noise. The
+   closest definition wins, with a small nudge towards the dictionary's first
+   definition, since real speech picks it more than 80% of the time. Grammar is
+   checked first: if the word is a verb in the sentence, noun definitions are
+   ruled out before anything is scored.
 2. **Catching bad translations.** Subtitle files drift out of sync, so a
-   Portuguese line can end up paired with an unrelated English one ("Porque este
-   bebe está a bater à porta" next to "Is the Sarah parade over?"). A
+   Portuguese line can end up next to an unrelated English one ("Porque este
+   bebe está a bater à porta" paired with "Is the Sarah parade over?"). A
    multilingual bi-encoder (LaBSE) scores how well the two sides match. Only
-   pairs below 0.30, where every one read by hand was genuinely misaligned, are
-   dropped. That removes about 0.55% of candidates and leaves natural, idiomatic
-   subtitles alone.
+   pairs below 0.30, where every pair checked by hand was genuinely misaligned,
+   are dropped. That removes about 0.55% of candidates and leaves idiomatic
+   subtitle translations alone.
 
 ### Knowing when not to answer
 
-When the two ways of picking a meaning disagree, the card doesn't guess. It
-falls back to a broader, safer description (the exact meaning, then the shared
-English gloss, then just the headword) and keeps the full answer on file.
-Better a slightly vaguer card than a confidently wrong one.
+When the two ways of choosing a meaning disagree, the system doesn't guess. It
+shows a broader, safer description instead: the exact meaning if both agree,
+otherwise the shared English translation, otherwise just the word. The full
+answer stays on file. A slightly vaguer answer beats a confident wrong one.
 
 ### JEV
 
@@ -78,9 +71,9 @@ Better a slightly vaguer card than a confidently wrong one.
 ### Every decision is recorded
 
 Each choice about a word (kept, merged, rejected, and why) is stored as a plain
-fact in an append-only log. The verdict is worked out from those facts when
-needed. So when a rule changes, nothing is rebuilt from scratch, and any card
-can be traced back to the sentence, dictionary and corpus it came from.
+fact in an append-only log. Conclusions are worked out from those facts when
+needed, so when a rule changes nothing is rebuilt from scratch, and any
+flashcard can be traced back to the sentence and dictionary it came from.
 
 ---
 
