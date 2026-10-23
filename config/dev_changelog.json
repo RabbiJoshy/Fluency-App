@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-23T20:32:33.705058+01:00",
+      "date": "2026-10-23 20:32 BST",
+      "agent": "Antigravity",
+      "summary": "Add admin-only setup filters for single-sense words and assignment source (All / DeepSeek / Jev / No overlay).",
+      "detail": [
+        "Each card is classified by its highest-priority applied overlay: Jev, then DeepSeek (at least one accepted correction), then original.",
+        "Filtering happens on the stable-ranked vocabulary before deck creation; card IDs, ranks, progress and assignments are unchanged.",
+        "Portuguese only for now; a compact card-ID index supplies the single-sense and DeepSeek lists."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-23T18:39:01.084546+01:00",
       "date": "2026-10-23 18:39 BST",
       "agent": "Codex",

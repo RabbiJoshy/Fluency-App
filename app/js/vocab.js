@@ -1,15 +1,16 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=b624e66b';
-import { readJsonWithTimeout } from './read-request.js?v=b624e66b';
-import { validateVocabularyIndex } from './data-contracts.js?v=b624e66b';
-import { formatRoute } from './routes.js?v=b624e66b';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=b624e66b';
-import { releaseUrl } from './release-host.js?v=b624e66b';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=b624e66b';
-import { getGrammarWordDefinition } from './function-word-card.js?v=b624e66b';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=b624e66b';
+import './state.js?v=dd40022a';
+import { readJsonWithTimeout } from './read-request.js?v=dd40022a';
+import { validateVocabularyIndex } from './data-contracts.js?v=dd40022a';
+import { formatRoute } from './routes.js?v=dd40022a';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=dd40022a';
+import { releaseUrl } from './release-host.js?v=dd40022a';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=dd40022a';
+import { getGrammarWordDefinition } from './function-word-card.js?v=dd40022a';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=dd40022a';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=dd40022a';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -2052,7 +2053,9 @@ async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
         }
     }
 
-    applyWsdUiIndex(data, await loadWsdUiSidecar(effectiveConfig));
+    const wsdSidecar = await loadWsdUiSidecar(effectiveConfig);
+    applyWsdUiIndex(data, wsdSidecar);
+    await prepareAssignmentFilters(data, effectiveConfig, wsdSidecar);
     validateVocabularyIndex(data, { source: indexPath });
     if (Array.isArray(data)) for (const card of data) promoteSubglossTranslations(card?.meanings);
 
@@ -3004,6 +3007,9 @@ function buildFilteredVocab(vocabData) {
                 }
             }
         }
+        // Admin setup filters run on the stable-ranked vocabulary, so levels and
+        // sets keep their card membership; only the deck loses the cards.
+        if (!passesAssignmentFilters(item)) continue;
         // Cognates: dropped in Main/normal per the toggle, but KEPT in Extra so
         // they populate the Cognates category (the toggle is hidden there and
         // only decides which group cognates land in, not deck inclusion).

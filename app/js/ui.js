@@ -1,9 +1,10 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=b624e66b';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=b624e66b';
-import { readFastTrack } from './fast-track-preferences.js?v=b624e66b';
-import './session-plan.js?v=b624e66b';
+import './state.js?v=dd40022a';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=dd40022a';
+import { readFastTrack } from './fast-track-preferences.js?v=dd40022a';
+import './session-plan.js?v=dd40022a';
+import { assignmentFilter, assignmentFiltersAvailable } from './assignment-filters.js?v=dd40022a';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2530,6 +2531,30 @@ function setupCognateToggle() {
     updateCognateSensitivityVisibility();
 }
 
+// Admin-only: shown once a release with an assignment-filter index is loaded.
+function syncAssignmentFilterControls() {
+    const box = document.getElementById('assignmentFilters');
+    if (!box) return;
+    box.hidden = !(window.isAuditAccount?.() && assignmentFiltersAvailable());
+    document.getElementById('excludeSingleSenseToggle').checked = assignmentFilter.excludeSingleSense;
+    document.getElementById('assignmentSourceSelect').value = assignmentFilter.source;
+}
+
+function setupAssignmentFilters() {
+    const refresh = () => _refreshAfterCognateChange();
+    document.getElementById('excludeSingleSenseToggle')?.addEventListener('change', event => {
+        assignmentFilter.excludeSingleSense = event.target.checked;
+        refresh();
+    });
+    document.getElementById('assignmentSourceSelect')?.addEventListener('change', event => {
+        assignmentFilter.source = event.target.value;
+        refresh();
+    });
+    syncAssignmentFilterControls();
+}
+window.syncAssignmentFilterControls = syncAssignmentFilterControls;
+window.setupAssignmentFilters = setupAssignmentFilters;
+
 async function _refreshAfterCognateChange() {
     invalidatePreparedSetupVocabulary();
     await renderLevelSelector(selectedLanguage);
@@ -3754,7 +3779,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=b624e66b')
+        import('./spotify.js?v=dd40022a')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
