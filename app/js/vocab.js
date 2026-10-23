@@ -187,6 +187,21 @@ function getLastStudySession() {
         : null;
 }
 
+// Pure guard for the entry prompt: no DOM side effects, so callers can decide
+// up front whether to skip a loading screen and raise the modal immediately.
+function shouldOfferResume() {
+    if (['tutorial', 'about'].includes(window.fluencyRoute?.kind)
+        || document.querySelector('#tutorialIntroModal:not(.hidden), #cardTutorialModal:not(.hidden)')) return false;
+    if (window.playlistLiveActive?.()) return false;
+    const snapshot = getLastStudySession();
+    if (!snapshot) return false;
+    if (new URLSearchParams(window.location.search).get('resume') === '1') return false;
+    try {
+        if (sessionStorage.getItem('fluency_resume_prompt_seen_v1') === snapshot.savedAt) return false;
+    } catch (_) {}
+    return true;
+}
+
 function renderResumeLastSetCard() {
     // The About page is its own tab and never a study session.
     if (['tutorial', 'about'].includes(window.fluencyRoute?.kind)
@@ -211,7 +226,8 @@ function renderResumeLastSetCard() {
     try {
         if (sessionStorage.getItem('fluency_resume_prompt_seen_v1') === snapshot.savedAt) return;
     } catch (_) {}
-    if (card) card.remove();
+    // Already raised (early, over a still-loading setup screen): keep it.
+    if (card) return;
     card = document.createElement('section');
     card.id = 'resumeLastSetCard';
     card.className = 'modal resume-entry-modal';
@@ -387,6 +403,8 @@ async function resumeLastStudySession() {
         window.hideAppLoading?.();
         return;
     }
+    // Setup may still be rendering behind the early modal.
+    try { await window._setupReady; } catch (_) {}
     window.showAppLoading?.('Continuing your session', 'Returning to the card where you stopped…', true);
     try { sessionStorage.setItem('fluency_resume_prompt_seen_v1', snapshot.savedAt); } catch (_) {}
     document.getElementById('resumeLastSetCard')?.remove();
@@ -4920,6 +4938,7 @@ window.ensureIndexRowsForRange = ensureIndexRowsForRange;
 window.prefetchStudySetPayload = prefetchStudySetPayload;
 window.exampleShardsActive = () => exampleShardsActive;
 window.renderResumeLastSetCard = renderResumeLastSetCard;
+window.shouldOfferResume = shouldOfferResume;
 window.resumeLastStudySession = resumeLastStudySession;
 window.saveStudySessionSnapshot = saveStudySessionSnapshot;
 window.clearStudySessionSnapshot = clearStudySessionSnapshot;

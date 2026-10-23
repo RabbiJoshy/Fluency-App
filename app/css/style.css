@@ -6720,10 +6720,13 @@
 
         .resume-entry-modal {
             padding: 18px;
-            background: rgba(7, 9, 14, 0.74);
+            background: rgba(7, 9, 14, 0.55);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            animation: resume-entry-fade 150ms ease-out;
         }
+        @keyframes resume-entry-fade { from { opacity: 0; } to { opacity: 1; } }
+        @media (prefers-reduced-motion: reduce) { .resume-entry-modal { animation: none; } }
         .resume-entry-content {
             box-sizing: border-box;
             width: min(92vw, 470px);

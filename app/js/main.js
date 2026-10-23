@@ -1044,6 +1044,8 @@ loadConfig().then(async () => {
     } else if (activeArtist) {
         const promptForCustomSongs = activeArtist.customSongSource && selectedSongIds.length === 0;
         let deckOverviewHold = null;
+        let resumeEarly = false;
+        let markSetupReady = () => {};
         try {
             selectedLanguage = activeArtist.language || 'spanish';
             await loadReleaseProvenance(selectedLanguage);
@@ -1054,6 +1056,14 @@ loadConfig().then(async () => {
             window.dismissMusicWorkspace?.();
             await loadPpmData(activeArtist.language || 'spanish');
             document.getElementById('step2').style.display = 'block';
+            // A saved session: raise the Welcome back modal over the setup
+            // screen now and let it fill in behind, rather than after a wheel.
+            resumeEarly = !isResumeNavigation && !musicHandoff && window.shouldOfferResume?.() === true;
+            window._setupReady = new Promise(resolve => { markSetupReady = resolve; });
+            if (resumeEarly) {
+                hideAppLoading();
+                window.renderResumeLastSetCard?.();
+            }
             // Title is now static ("Choose level" in the HTML); the
             // CEFR/% toggle hides itself in artist mode via
             // setupPercentModeButton() — both are no-ops here.
@@ -1066,12 +1076,13 @@ loadConfig().then(async () => {
             // builds. So publish it first, raise the wheel, and let the selector
             // render underneath it rather than ahead of it.
             await updateExclusionBars();
-            if (!isResumeNavigation && !musicHandoff) deckOverviewHold = window.showDeckOverviewLoading?.();
+            if (!isResumeNavigation && !musicHandoff && !resumeEarly) deckOverviewHold = window.showDeckOverviewLoading?.();
             await renderLevelSelector(activeArtist.language || 'spanish');
             document.body.classList.add('has-learning-context');
             document.getElementById('artistSourceStep')?.classList.add('context-ready');
             window.updateLearningContextUI?.();
         } finally {
+            markSetupReady();
             if (!isResumeNavigation) {
                 await deckOverviewHold;
                 hideAppLoading();
