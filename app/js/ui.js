@@ -4,6 +4,7 @@ import './state.js?v=20260825ak';
 import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=20261013saved';
 import { readFastTrack } from './fast-track-preferences.js?v=20260920a';
 import './session-plan.js?v=1';
+import { assignmentFilter, assignmentFiltersAvailable } from './assignment-filters.js?v=1';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2529,6 +2530,30 @@ function setupCognateToggle() {
     // opens both its one-line description and the longer aria-controls block.
     updateCognateSensitivityVisibility();
 }
+
+// Admin-only: shown once a release with an assignment-filter index is loaded.
+function syncAssignmentFilterControls() {
+    const box = document.getElementById('assignmentFilters');
+    if (!box) return;
+    box.hidden = !(window.isAuditAccount?.() && assignmentFiltersAvailable());
+    document.getElementById('excludeSingleSenseToggle').checked = assignmentFilter.excludeSingleSense;
+    document.getElementById('assignmentSourceSelect').value = assignmentFilter.source;
+}
+
+function setupAssignmentFilters() {
+    const refresh = () => _refreshAfterCognateChange();
+    document.getElementById('excludeSingleSenseToggle')?.addEventListener('change', event => {
+        assignmentFilter.excludeSingleSense = event.target.checked;
+        refresh();
+    });
+    document.getElementById('assignmentSourceSelect')?.addEventListener('change', event => {
+        assignmentFilter.source = event.target.value;
+        refresh();
+    });
+    syncAssignmentFilterControls();
+}
+window.syncAssignmentFilterControls = syncAssignmentFilterControls;
+window.setupAssignmentFilters = setupAssignmentFilters;
 
 async function _refreshAfterCognateChange() {
     invalidatePreparedSetupVocabulary();

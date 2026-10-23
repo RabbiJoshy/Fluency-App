@@ -837,6 +837,7 @@ loadConfig().then(async () => {
     applyLanguageColorTheme();
     setupLemmaToggle();
     setupCognateToggle();
+    window.setupAssignmentFilters?.();
     setupGlobalStudyDefaults();
     setupPercentModeButton();
     setupEstimationModal();

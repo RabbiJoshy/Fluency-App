@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v597';
+const CACHE_NAME = 'flashcards-v598';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -88,6 +88,7 @@ const urlsToCache = [
   '/js/fast-track-preferences.js?v=20260920a',
   '/js/vocab.js?v=20261019stg8',
   '/js/wsd-ui-sidecar.js?v=1',
+  '/js/assignment-filters.js?v=1',
   '/js/grammar-cards.js?v=20260923gn',
   '/js/language-profile.js?v=1',
   '/js/bridge.js?v=1',

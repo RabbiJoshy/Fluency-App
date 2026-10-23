@@ -634,6 +634,17 @@
                                         <span class="visually-hidden" id="smartSkipStateLabel">Off</span>
                                     </button>
                                 </div>
+                                <div id="assignmentFilters" class="assignment-filters" hidden>
+                                    <label><input type="checkbox" id="excludeSingleSenseToggle"> Exclude single-sense words</label>
+                                    <label>Assignments
+                                        <select id="assignmentSourceSelect" aria-label="Assignment source">
+                                            <option value="all">All</option>
+                                            <option value="deepseek">DeepSeek</option>
+                                            <option value="jev">Jev</option>
+                                            <option value="original">No overlay</option>
+                                        </select>
+                                    </label>
+                                </div>
                             </div>
                             <div id="learnActionSlot" class="home-action-slot"></div>
                         </div>

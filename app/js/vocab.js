@@ -10,6 +10,7 @@ import { releaseUrl } from './release-host.js?v=20260921rh';
 import { promoteSubglossTranslations } from './sense-gloss.js?v=1';
 import { getGrammarWordDefinition } from './function-word-card.js?v=20261016slots';
 import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=1';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=1';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -2052,7 +2053,9 @@ async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
         }
     }
 
-    applyWsdUiIndex(data, await loadWsdUiSidecar(effectiveConfig));
+    const wsdSidecar = await loadWsdUiSidecar(effectiveConfig);
+    applyWsdUiIndex(data, wsdSidecar);
+    await prepareAssignmentFilters(data, effectiveConfig, wsdSidecar);
     validateVocabularyIndex(data, { source: indexPath });
     if (Array.isArray(data)) for (const card of data) promoteSubglossTranslations(card?.meanings);
 
@@ -3004,6 +3007,9 @@ function buildFilteredVocab(vocabData) {
                 }
             }
         }
+        // Admin setup filters run on the stable-ranked vocabulary, so levels and
+        // sets keep their card membership; only the deck loses the cards.
+        if (!passesAssignmentFilters(item)) continue;
         // Cognates: dropped in Main/normal per the toggle, but KEPT in Extra so
         // they populate the Cognates category (the toggle is hidden there and
         // only decides which group cognates land in, not deck inclusion).
