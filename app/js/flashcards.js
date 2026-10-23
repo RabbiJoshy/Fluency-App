@@ -1,42 +1,42 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=dd40022a';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=dd40022a';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=dd40022a';
-import { songCreditHTML } from './song-credit.js?v=dd40022a';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=dd40022a';
+import './state.js?v=bbe02df1';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=bbe02df1';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=bbe02df1';
+import { songCreditHTML } from './song-credit.js?v=bbe02df1';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=bbe02df1';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=dd40022a';
+import { fitSenseRowText } from './card-row-layout.js?v=bbe02df1';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=dd40022a';
-import { goToRoute, routeCodeFor } from './routes.js?v=dd40022a';
-import { memoryTipTileHTML } from './memory-tips.js?v=dd40022a';
+import './speech.js?v=bbe02df1';
+import { goToRoute, routeCodeFor } from './routes.js?v=bbe02df1';
+import { memoryTipTileHTML } from './memory-tips.js?v=bbe02df1';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=dd40022a';
-import './side-dock.js?v=dd40022a';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=dd40022a';
+} from './function-word-card.js?v=bbe02df1';
+import './side-dock.js?v=bbe02df1';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=bbe02df1';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=dd40022a';
+} from './example-personalisation.js?v=bbe02df1';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=dd40022a';
+} from './spanishdict-usage.js?v=bbe02df1';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=dd40022a';
+} from './reverse-cues.js?v=bbe02df1';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -71,8 +71,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=dd40022a';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=dd40022a';
+} from './card-metadata-pills.js?v=bbe02df1';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=bbe02df1';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -11588,8 +11588,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'dd40022a';
-const MODALS_ASSET_VERSION = 'dd40022a';
+const ASSET_VERSION = 'bbe02df1';
+const MODALS_ASSET_VERSION = 'bbe02df1';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

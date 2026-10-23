@@ -1,16 +1,16 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=dd40022a';
-import { readJsonWithTimeout } from './read-request.js?v=dd40022a';
-import { validateVocabularyIndex } from './data-contracts.js?v=dd40022a';
-import { formatRoute } from './routes.js?v=dd40022a';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=dd40022a';
-import { releaseUrl } from './release-host.js?v=dd40022a';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=dd40022a';
-import { getGrammarWordDefinition } from './function-word-card.js?v=dd40022a';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=dd40022a';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=dd40022a';
+import './state.js?v=bbe02df1';
+import { readJsonWithTimeout } from './read-request.js?v=bbe02df1';
+import { validateVocabularyIndex } from './data-contracts.js?v=bbe02df1';
+import { formatRoute } from './routes.js?v=bbe02df1';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=bbe02df1';
+import { releaseUrl } from './release-host.js?v=bbe02df1';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=bbe02df1';
+import { getGrammarWordDefinition } from './function-word-card.js?v=bbe02df1';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=bbe02df1';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=bbe02df1';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -2083,7 +2083,9 @@ async function fetchDetachedIndex(langConfig) {
         trackDataFreshness(response);
         data = responseData;
     }
-    applyWsdUiIndex(data, await loadWsdUiSidecar(langConfig));
+    const sidecar = await loadWsdUiSidecar(langConfig);
+    applyWsdUiIndex(data, sidecar);
+    await prepareAssignmentFilters(data, langConfig, sidecar);
     validateVocabularyIndex(data, { source: indexPath });
     joinedIndexCacheByPath.set(cacheKey, data);
     return data;

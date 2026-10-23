@@ -1,10 +1,10 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=dd40022a';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=dd40022a';
-import { readFastTrack } from './fast-track-preferences.js?v=dd40022a';
-import './session-plan.js?v=dd40022a';
-import { assignmentFilter, assignmentFiltersAvailable } from './assignment-filters.js?v=dd40022a';
+import './state.js?v=bbe02df1';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=bbe02df1';
+import { readFastTrack } from './fast-track-preferences.js?v=bbe02df1';
+import './session-plan.js?v=bbe02df1';
+import { assignmentFilter, assignmentFiltersAvailable } from './assignment-filters.js?v=bbe02df1';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -136,6 +136,7 @@ function syncStudyPreferenceControls() {
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', selected ? 'true' : 'false');
     });
+    syncAssignmentFilterControls();
     const currentProm = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) || 'labels';
     document.querySelectorAll('.sense-prominence-btn').forEach(button => {
         const selected = button.dataset.prominence === currentProm;
@@ -3779,7 +3780,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=dd40022a')
+        import('./spotify.js?v=bbe02df1')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
