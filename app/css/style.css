@@ -27112,6 +27112,20 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   white-space: nowrap !important; font-size: inherit !important;
 }
 
+/* Lift the front prompt above geometric card-centre so it sits closer to
+   optical screen-centre below the top scrubber bar and leaves balanced room
+   underneath for the Smart Skip merged-forms disclosure and bottom stats. */
+#flashcard .card-front > #flipBtn,
+#flashcard .card-front > .front-practice-badge {
+    transform: translateY(-20px);
+}
+@media (max-width: 767px) {
+    #flashcard .card-front > #flipBtn,
+    #flashcard .card-front > .front-practice-badge {
+        transform: translateY(-32px);
+    }
+}
+
 /* Membership belongs beside the displayed surface, below the word. */
 .front-merged-forms {
     position: absolute;
