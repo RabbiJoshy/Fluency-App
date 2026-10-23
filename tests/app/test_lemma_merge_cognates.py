@@ -21,6 +21,7 @@ class LemmaMergeCognatesTests(unittest.TestCase):
                 console, localStorage: { getItem: () => null, setItem: () => {} },
                 document: { readyState: 'complete', getElementById: () => null, addEventListener: () => {} },
                 window: { addEventListener: () => {} },
+                passesAssignmentFilters: () => true,
                 selectedLanguage: 'spanish',
                 activeArtist: null,
                 artistVocabularyScope: 'main',
