@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=45b3ed6f';
-import { accountPermissions } from './account-permissions.js?v=45b3ed6f';
-import { readJsonWithTimeout } from './read-request.js?v=45b3ed6f';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=45b3ed6f';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=45b3ed6f';
-import { dbGet, dbPut } from './offline-db.js?v=45b3ed6f';
-import { consumeRouteNavigation } from './routes.js?v=45b3ed6f';
+import './state.js?v=d76b5fc8';
+import { accountPermissions } from './account-permissions.js?v=d76b5fc8';
+import { readJsonWithTimeout } from './read-request.js?v=d76b5fc8';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=d76b5fc8';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=d76b5fc8';
+import { dbGet, dbPut } from './offline-db.js?v=d76b5fc8';
+import { consumeRouteNavigation } from './routes.js?v=d76b5fc8';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=45b3ed6f';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=45b3ed6f';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=45b3ed6f';
+} from './sync-queue.js?v=d76b5fc8';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=d76b5fc8';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=d76b5fc8';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {
@@ -138,6 +138,7 @@ function _openFirstRunTutorialUnlessLinked() {
 //   - new tab at app URL   → no session → landing
 //   - new tab at #/about   → no session → landing + About on top
 function onPasswordlessSignedOut() {
+    if (currentUser?.isGuest) return;
     if (currentUser?.initials) {
         localStorage.removeItem(`progress_cache_${currentUser.initials}`);
         localStorage.removeItem(`progress_cache_${getIsolatedSyncUser(currentUser.initials)}`);
@@ -150,6 +151,20 @@ function onPasswordlessSignedOut() {
 }
 
 function checkAuthentication() {
+    if (_isPageReload() && !consumeRouteNavigation()) {
+        sessionStorage.removeItem('flashcardGuestSession');
+    }
+    // Guest browsing does not depend on Clerk. Restore it before starting any
+    // account requests so mode/artist navigation also works without sign-in.
+    if (sessionStorage.getItem('flashcardGuestSession') === '1') {
+        currentUser = { isGuest: true };
+        window.markProgressLoaded?.();
+        window.applyGlobalStudyDefaults?.();
+        showUserInfo();
+        hideAuthModal();
+        _markAuthReady();
+        return;
+    }
     if (PASSWORDLESS_ENABLED) {
         GOOGLE_SCRIPT_URL = PASSWORDLESS_SYNC_URL;
         const savedUser = localStorage.getItem('flashcardUser');
@@ -172,13 +187,6 @@ function checkAuthentication() {
         startPasswordlessAuth(completeProfileLogin, onPasswordlessSignedOut);
         return;
     }
-    // User-initiated refresh should drop guest mode so the landing reappears.
-    // A route change also reloads (mode is decided at boot) but is a same-tab
-    // navigation, so it keeps the guest session like any other.
-    if (_isPageReload() && !consumeRouteNavigation()) {
-        sessionStorage.removeItem('flashcardGuestSession');
-    }
-
     const savedUser = localStorage.getItem('flashcardUser');
     if (savedUser) {
         try {
@@ -197,19 +205,6 @@ function checkAuthentication() {
         } catch (e) {
             localStorage.removeItem('flashcardUser');
         }
-    }
-    // Tab-scoped guest session: survives same-tab navigations (mode/artist
-    // switches) but was just cleared above if this load is a reload.
-    if (sessionStorage.getItem('flashcardGuestSession') === '1') {
-        currentUser = { isGuest: true };
-        // A guest session restored from sessionStorage never passes through
-        // enterGuestMode(), so it has to settle progress readiness itself.
-        window.markProgressLoaded?.();
-        window.applyGlobalStudyDefaults?.();
-        showUserInfo();
-        hideAuthModal();
-        _markAuthReady();
-        return;
     }
     showAuthModal();
 }
@@ -267,7 +262,6 @@ function showUserInfo() {
 //
 // Progress is still never persisted for guests.
 function enterGuestMode() {
-    if (PASSWORDLESS_ENABLED) return;
     currentUser = { isGuest: true };
     // A guest has no stored progress to wait for, so the setup screen must not
     // sit behind a promise that will never resolve.
@@ -356,6 +350,7 @@ function clearDeviceSessionState() {
 }
 
 async function completeProfileLogin(user) {
+    sessionStorage.removeItem('flashcardGuestSession');
     currentUser = user;
     if (user.isNew) {
         clearDeviceSessionState();
