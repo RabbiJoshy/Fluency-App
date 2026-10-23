@@ -2083,7 +2083,9 @@ async function fetchDetachedIndex(langConfig) {
         trackDataFreshness(response);
         data = responseData;
     }
-    applyWsdUiIndex(data, await loadWsdUiSidecar(langConfig));
+    const sidecar = await loadWsdUiSidecar(langConfig);
+    applyWsdUiIndex(data, sidecar);
+    await prepareAssignmentFilters(data, langConfig, sidecar);
     validateVocabularyIndex(data, { source: indexPath });
     joinedIndexCacheByPath.set(cacheKey, data);
     return data;

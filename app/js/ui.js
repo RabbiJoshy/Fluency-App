@@ -136,6 +136,7 @@ function syncStudyPreferenceControls() {
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', selected ? 'true' : 'false');
     });
+    syncAssignmentFilterControls();
     const currentProm = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) || 'labels';
     document.querySelectorAll('.sense-prominence-btn').forEach(button => {
         const selected = button.dataset.prominence === currentProm;
