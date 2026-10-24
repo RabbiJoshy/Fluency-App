@@ -58,7 +58,7 @@ EXTERNAL_DATA = ("cognates/", "coverage/", "app/cognates/", "app/coverage/")
 # manifest.json is versioned too: production's old service worker keeps serving
 # its cached manifest (and so an old home-screen name) until the learner accepts
 # the update, but it cannot have cached a URL it has never seen.
-_ASSET_TAG = re.compile(r"(\.(?:js|css)|manifest\.json)\?v=[A-Za-z0-9_.-]+")
+_ASSET_TAG = re.compile(r"(\.(?:js|css|md)|manifest\.json)\?v=[A-Za-z0-9_.-]+")
 _VERSION_CONST = re.compile(r"(const [A-Z_]*ASSET_VERSION\s*=\s*)(['\"])[^'\"]*\2")
 _CACHE_NAME = re.compile(r"(const CACHE_NAME\s*=\s*)(['\"])(flashcards-v\d+)[^'\"]*\2")
 

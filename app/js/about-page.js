@@ -598,7 +598,7 @@ async function renderAboutPage() {
     const body = document.getElementById('aboutProjectBody');
     if (!body) return;
     try {
-        const resp = await fetch('content/about.md');
+        const resp = await fetch('content/about.md?v=20261024about', { cache: 'no-cache' });
         if (!resp.ok) throw new Error('Failed to load about.md');
         body.innerHTML = renderMarkdown(await resp.text());
         layoutAboutFeatures(body);
