@@ -1,103 +1,124 @@
-# Features and the NLP behind them — draft 5
+# Features and the NLP behind them — draft 6
 
 Working draft for the About page, replacing "What's under the hood" in
 `app/content/about.md`. Not wired into the app yet.
 
-Plain words, no app vocabulary. Feature first, then one line of how.
+Plain words, no app vocabulary. Part 1 is for learners, short. Part 2 is for the
+technically curious.
 
 ---
 
 ## What makes it different
 
-### Skips words you already know
+### Skip what you already know
 
-Words that look and mean the same in a language you speak, like *información /
-information*, are left out, so your time goes to words that actually need it.
-No complete cognate list exists for every language pair; existing databases
-cover some pairs only partly. So the app builds its own: it compares spellings
-the way languages really drift (*-ción* becomes *-tion*), uses translations
-as a bridge between languages, and cross-checks with the existing cognate data
-where there is any. False friends like *sensible* aren't skipped. Adding a new
-pair needs a small config file, not new code.
+Why spend time on words you can already guess? The app cuts through vocabulary
+you effectively know, so study time goes to what's new.
 
-### One flashcard per word, not per form
+**Words you already know**
+*Información* is *information*. Look-alike words are left out, but false friends
+like *sensible* (it means "sensitive") are kept.
 
-*Estaba*, *estamos* and *estar* are one word. Different forms are merged into a
-single flashcard, with the forms listed on it, so you don't study the same word
-five times. Each language handles this differently (contractions like Portuguese
-*no* or French *au* must stay separate), and no standard list of these exists,
-so the exceptions are generated per language.
+**One flashcard per word**
+*Estaba*, *estamos* and *estar* are one word, so they share one flashcard, not
+five.
 
-### Clean, useful example sentences
+### Examples worth learning from
 
-Examples come from real film and TV dialogue and professionally translated
-sentences, then filtered down to ones that are clear, natural and the right
-difficulty. Sentences with misaligned translations, broken text or odd
-formatting are removed.
+Real lines from film and TV, cleaned down to clear, natural sentences with
+accurate translations, at the right difficulty.
 
 ### The right meaning, every time
 
-Most words have several meanings, and each gets examples that really use it.
-*Banco* shows a bank in some sentences and a bench in others.
+*Banco* is a bank in one sentence and a bench in another. Each meaning gets its
+own examples.
 
 ### Idioms and expressions
 
-Multi-word expressions like *de nuevo* or *a menos que* are recognised as units
-rather than word by word.
+Phrases like *de nuevo* and *a menos que* are learned as units, not word by word.
 
-### Language that belongs to each artist
+### The slang each artist actually uses
 
-For music, vocabulary and slang are drawn from the artist's own lyrics, so
-*perreo* appears for Bad Bunny and not for a general learner.
+For music, vocabulary comes from the artist's own lyrics. Dictionaries often
+don't have the slang, so I built the missing word lists myself, so *perreo*
+appears for Bad Bunny and is translated properly.
+
+### Learn what things are, too
+
+People, places, brands and names aren't dictionary words. The app recognises
+them and teaches what they are, instead of a bad literal translation.
+
+### Any language
+
+The same pipeline works for any language that has a Wiktionary.
 
 ---
 
-## For the curious: how it works
+## How it works
 
-**Built for any language.** The pipeline is multilingual by design. It works
-for any language that has a Wiktionary, such as French, Portuguese, Czech,
-Finnish or Dutch. Adding a language means adding files for it, not rewriting
-the engine.
+**Any language.** The pipeline is multilingual by design. It works for any
+language with a Wiktionary, such as French, Portuguese, Czech, Finnish or Dutch.
+Adding a language means adding files for it, not rewriting the engine.
 
-**Dictionaries.** Meanings come from real dictionaries, but there is no single
-standard. SpanishDict covers Spanish; Wiktionary covers the rest. Their
-structures differ, so each is converted into one common format, and everything
-downstream works the same regardless of source.
+**Skipping known words.** No complete cognate list exists for every language
+pair, and existing databases cover only some pairs, partly. So I built my own.
+It compares spellings the way languages really drift (*-ción* becomes *-tion*),
+uses translations as a bridge between languages, and cross-checks with existing
+cognate data where there is any. A word is skipped only if every one of its
+meanings is easy. Words learned in one language can also be skipped in a related
+one.
 
-**Cleaning and normalising.** Sentences are tokenised and tagged for
-part-of-speech with spaCy and Stanza, Unicode-normalised, and filtered with
-rules for form, length and difficulty. Translation pairs are checked for
-alignment with LaBSE.
+**One flashcard per word.** Forms are merged under one headword. Languages
+differ (Portuguese *no* and French *au* must stay separate), and no standard
+list of exceptions exists, so they're generated for each language.
+
+**Cleaning sentences.** Sentences are tokenised and tagged for part-of-speech
+with spaCy and Stanza, Unicode-normalised, and filtered on form, length and
+difficulty. Translation pairs are checked for alignment with LaBSE.
+
+**Dictionaries.** There is no single standard. SpanishDict covers Spanish;
+Wiktionary covers the rest. Each is converted into one common format, so
+everything downstream works the same whatever the source.
 
 **Choosing the meaning.** Each example is matched to a dictionary definition in
 two tiers:
 
-- **Bi-encoder for the easy cases.** A bi-encoder turns the sentence and each
-  definition into numbers and picks the closest meaning. This handles the
-  majority of words quickly and cheaply.
+- **Bi-encoder for the easy cases.** It turns the sentence and each definition
+  into numbers and picks the closest meaning. Fast and cheap, and enough for
+  most words.
 - **Jev for the hard cases.** When the bi-encoder isn't confident, the sentence
   goes to Jev, a new kind of decision model. Instead of writing text, it picks
-  from a fixed list of options and says how sure it is, which is exactly what
-  choosing a dictionary meaning needs. *(Experimental, still being tested.)*
+  from a fixed list of options and says how sure it is, which is what choosing a
+  dictionary meaning needs. *(Experimental, still being tested.)*
 
 When neither is sure, the flashcard shows a broader meaning rather than a wrong
 one.
+
+**Expressions and artist vocabulary.** Multi-word expressions compete with
+single words as candidate meanings, so *de nuevo* can win without erasing the
+literal meaning of its parts. For artists, I assembled slang and regional
+vocabulary menus where dictionaries had none.
+
+**Names and things.** Entities are identified using Wikipedia-style sources, so
+the app can say what something is.
+
+*(Entity recognition and the slang source are written from your description, not
+from the repo. Please correct.)*
 
 ---
 
 ## And more
 
-Support for further languages is on the way, including ones that have no
-dedicated tools of their own yet.
+Support for further languages is on the way, including ones with no dedicated
+tools of their own yet.
 
 ---
 
 ## Open questions
 
-1. **Jev.** Web search shows Jev is TypeSafe AI's decision model (a product
-   name, not an acronym), so I've written "Jev", not "JEV". Fine, or do you
-   want the company named?
-2. **Merged forms and artist vocabulary.** I wrote these from the repo's
-   descriptions. Check the merged-forms example and the artist-slang line are
-   how you'd say it.
-3. **Tools.** I listed spaCy, Stanza and LaBSE. Anything else you'd name?
+1. **Entity recognition.** I couldn't find it in the repo. What source do you
+   use (Wiktionary, Wikipedia, Wikidata), and what does a learner see?
+2. **Artist slang.** Which source(s) did you use for the slang menus, and does
+   "built the missing word lists myself" overstate it?
+3. **Jev.** Name TypeSafe AI as the maker, or just "Jev"?
+4. **Tools.** spaCy, Stanza, LaBSE. Anything else to name?
