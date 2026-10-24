@@ -1,10 +1,10 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=70c90599';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=70c90599';
-import { readFastTrack } from './fast-track-preferences.js?v=70c90599';
-import './session-plan.js?v=70c90599';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=70c90599';
+import './state.js?v=394bc622';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=394bc622';
+import { readFastTrack } from './fast-track-preferences.js?v=394bc622';
+import './session-plan.js?v=394bc622';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=394bc622';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1215,15 +1215,44 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
     }
 
     if (parsedButtons.length > 0) {
-        // Distribute vocabulary in a single pass, breaking as soon as the matching range is found
-        for (let i = 0; i < filteredVocab.length; i++) {
-            const it = filteredVocab[i];
-            for (let j = 0; j < parsedButtons.length; j++) {
-                const p = parsedButtons[j];
-                const rank = p.rankFn(it);
-                if (rank >= p.minWord && rank < p.maxWord) {
-                    p.words.push(it);
-                    break;
+        const rankFn = parsedButtons[0].rankFn;
+        const btnCount = parsedButtons.length;
+        let isSorted = true;
+        for (let k = 1; k < btnCount; k++) {
+            if (parsedButtons[k].minWord < parsedButtons[k - 1].minWord) {
+                isSorted = false;
+                break;
+            }
+        }
+        if (isSorted) {
+            for (let i = 0; i < filteredVocab.length; i++) {
+                const it = filteredVocab[i];
+                const rank = rankFn(it);
+                let low = 0;
+                let high = btnCount - 1;
+                while (low <= high) {
+                    const mid = (low + high) >> 1;
+                    const p = parsedButtons[mid];
+                    if (rank < p.minWord) {
+                        high = mid - 1;
+                    } else if (rank >= p.maxWord) {
+                        low = mid + 1;
+                    } else {
+                        p.words.push(it);
+                        break;
+                    }
+                }
+            }
+        } else {
+            for (let i = 0; i < filteredVocab.length; i++) {
+                const it = filteredVocab[i];
+                const rank = rankFn(it);
+                for (let j = 0; j < btnCount; j++) {
+                    const p = parsedButtons[j];
+                    if (rank >= p.minWord && rank < p.maxWord) {
+                        p.words.push(it);
+                        break;
+                    }
                 }
             }
         }
@@ -3852,7 +3881,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=70c90599')
+        import('./spotify.js?v=394bc622')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

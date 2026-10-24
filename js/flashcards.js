@@ -1,42 +1,42 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=70c90599';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=70c90599';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=70c90599';
-import { songCreditHTML } from './song-credit.js?v=70c90599';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=70c90599';
+import './state.js?v=394bc622';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=394bc622';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=394bc622';
+import { songCreditHTML } from './song-credit.js?v=394bc622';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=394bc622';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=70c90599';
+import { fitSenseRowText } from './card-row-layout.js?v=394bc622';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=70c90599';
-import { goToRoute, routeCodeFor } from './routes.js?v=70c90599';
-import { memoryTipTileHTML } from './memory-tips.js?v=70c90599';
+import './speech.js?v=394bc622';
+import { goToRoute, routeCodeFor } from './routes.js?v=394bc622';
+import { memoryTipTileHTML } from './memory-tips.js?v=394bc622';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=70c90599';
-import './side-dock.js?v=70c90599';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=70c90599';
+} from './function-word-card.js?v=394bc622';
+import './side-dock.js?v=394bc622';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=394bc622';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=70c90599';
+} from './example-personalisation.js?v=394bc622';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=70c90599';
+} from './spanishdict-usage.js?v=394bc622';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=70c90599';
+} from './reverse-cues.js?v=394bc622';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -71,8 +71,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=70c90599';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=70c90599';
+} from './card-metadata-pills.js?v=394bc622';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=394bc622';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -3433,11 +3433,14 @@ function showFloatingBtns(show) {
 
 async function goBackToSetup() {
     hideProminenceTooltip();
-    // Rebuilding the level selector takes long enough to notice, and every
-    // other transition in the app announces itself. Without this the tap read
-    // as the app stalling rather than working — the same overlay Learn New and
-    // Review already use.
-    window.showAppLoading?.(window.isSeriesStudy?.() ? 'TV Series setup' : activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', 'Updating your levels…');
+    // Rebuilding the level selector is now fast; debounce the full-screen loading
+    // overlay so instant returns don't flash, while slower network fetches still announce.
+    const loadingTimer = setTimeout(() => {
+        window.showAppLoading?.(
+            window.isSeriesStudy?.() ? 'TV Series setup' : activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu',
+            'Updating your levels…'
+        );
+    }, 120);
     stopExampleAutoplay(true);
     // Hide app content, show setup
     const appContent = document.getElementById('appContent');
@@ -3499,7 +3502,7 @@ async function goBackToSetup() {
     // overlay stuck on screen. The timeout guarantees the yield ends either way.
     await new Promise(resolve => {
         requestAnimationFrame(resolve);
-        setTimeout(resolve, 50);
+        setTimeout(resolve, 16);
     });
 
     // Always load PPM data if available (needed for coverage bar even in CEFR mode)
@@ -3532,6 +3535,7 @@ async function goBackToSetup() {
         total: 0,
         cardStats: {}
     };
+    clearTimeout(loadingTimer);
     window.hideAppLoading?.();
 }
 
@@ -11588,8 +11592,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '70c90599';
-const MODALS_ASSET_VERSION = '70c90599';
+const ASSET_VERSION = '394bc622';
+const MODALS_ASSET_VERSION = '394bc622';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

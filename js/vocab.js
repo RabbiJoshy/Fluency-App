@@ -1,16 +1,16 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=70c90599';
-import { readJsonWithTimeout } from './read-request.js?v=70c90599';
-import { validateVocabularyIndex } from './data-contracts.js?v=70c90599';
-import { formatRoute } from './routes.js?v=70c90599';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=70c90599';
-import { releaseUrl } from './release-host.js?v=70c90599';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=70c90599';
-import { getGrammarWordDefinition } from './function-word-card.js?v=70c90599';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=70c90599';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=70c90599';
+import './state.js?v=394bc622';
+import { readJsonWithTimeout } from './read-request.js?v=394bc622';
+import { validateVocabularyIndex } from './data-contracts.js?v=394bc622';
+import { formatRoute } from './routes.js?v=394bc622';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=394bc622';
+import { releaseUrl } from './release-host.js?v=394bc622';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=394bc622';
+import { getGrammarWordDefinition } from './function-word-card.js?v=394bc622';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=394bc622';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=394bc622';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -516,10 +516,17 @@ const LANG_CODES = {
  * Always contains letters → Google Sheets never auto-converts to a number.
  */
 function getWordId(item) {
+    if (!item) return '';
     const lang = LANG_CODES[selectedLanguage] || selectedLanguage.slice(0, 2);
     const mode = activeArtist ? '1' : '0';
+    if (item._fullId && item._fullIdLang === lang && item._fullIdMode === mode) {
+        return item._fullId;
+    }
     const hex = item.id || Number(item.rank).toString(16).padStart(4, '0');
     const fullId = `${lang}${mode}${hex}`;
+    item._fullId = fullId;
+    item._fullIdLang = lang;
+    item._fullIdMode = mode;
     window.registerProgressCardSurface?.(fullId, item.word);
     return fullId;
 }
@@ -585,10 +592,20 @@ function isCoveredByEstimatedIds(item, estimatedIds) {
     return Boolean(surface && estimatedIds.has(`surface:${surface}`));
 }
 
+let _cachedSeenLemmas = null;
+let _cachedSeenLemmasKey = null;
+
 async function buildSeenLemmaSet(vocabData) {
     const hasLemmas = lemmaFieldAvailable || (Array.isArray(vocabData) && vocabData.some(item => lemmaStudyGroupKey(item)));
     if (!useLemmaMode || !hasLemmas || !progressData) return new Set();
     if (!lemmaFieldAvailable && hasLemmas) lemmaFieldAvailable = true;
+
+    const epoch = Number(window.__progressEpoch || 0);
+    const artistSlug = activeArtist?.slug || window._urlArtistSlug || '';
+    const cacheKey = `${selectedLanguage}|${artistSlug}|${useLemmaMode ? '1' : '0'}|${vocabData?.length || 0}|${epoch}`;
+    if (_cachedSeenLemmas && _cachedSeenLemmasKey === cacheKey) {
+        return _cachedSeenLemmas;
+    }
 
     const lemmaById = new Map();
     const lemmaBySurface = new Map();
@@ -634,6 +651,8 @@ async function buildSeenLemmaSet(vocabData) {
             mark(progress.parentWordId, getProgressState(progress));
         }
     }
+    _cachedSeenLemmas = seenLemmas;
+    _cachedSeenLemmasKey = cacheKey;
     return seenLemmas;
 }
 
