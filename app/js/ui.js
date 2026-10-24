@@ -1215,15 +1215,44 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
     }
 
     if (parsedButtons.length > 0) {
-        // Distribute vocabulary in a single pass, breaking as soon as the matching range is found
-        for (let i = 0; i < filteredVocab.length; i++) {
-            const it = filteredVocab[i];
-            for (let j = 0; j < parsedButtons.length; j++) {
-                const p = parsedButtons[j];
-                const rank = p.rankFn(it);
-                if (rank >= p.minWord && rank < p.maxWord) {
-                    p.words.push(it);
-                    break;
+        const rankFn = parsedButtons[0].rankFn;
+        const btnCount = parsedButtons.length;
+        let isSorted = true;
+        for (let k = 1; k < btnCount; k++) {
+            if (parsedButtons[k].minWord < parsedButtons[k - 1].minWord) {
+                isSorted = false;
+                break;
+            }
+        }
+        if (isSorted) {
+            for (let i = 0; i < filteredVocab.length; i++) {
+                const it = filteredVocab[i];
+                const rank = rankFn(it);
+                let low = 0;
+                let high = btnCount - 1;
+                while (low <= high) {
+                    const mid = (low + high) >> 1;
+                    const p = parsedButtons[mid];
+                    if (rank < p.minWord) {
+                        high = mid - 1;
+                    } else if (rank >= p.maxWord) {
+                        low = mid + 1;
+                    } else {
+                        p.words.push(it);
+                        break;
+                    }
+                }
+            }
+        } else {
+            for (let i = 0; i < filteredVocab.length; i++) {
+                const it = filteredVocab[i];
+                const rank = rankFn(it);
+                for (let j = 0; j < btnCount; j++) {
+                    const p = parsedButtons[j];
+                    if (rank >= p.minWord && rank < p.maxWord) {
+                        p.words.push(it);
+                        break;
+                    }
                 }
             }
         }

@@ -3433,11 +3433,14 @@ function showFloatingBtns(show) {
 
 async function goBackToSetup() {
     hideProminenceTooltip();
-    // Rebuilding the level selector takes long enough to notice, and every
-    // other transition in the app announces itself. Without this the tap read
-    // as the app stalling rather than working — the same overlay Learn New and
-    // Review already use.
-    window.showAppLoading?.(window.isSeriesStudy?.() ? 'TV Series setup' : activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu', 'Updating your levels…');
+    // Rebuilding the level selector is now fast; debounce the full-screen loading
+    // overlay so instant returns don't flash, while slower network fetches still announce.
+    const loadingTimer = setTimeout(() => {
+        window.showAppLoading?.(
+            window.isSeriesStudy?.() ? 'TV Series setup' : activeArtist || window.playlistLiveActive?.() ? 'Music setup' : 'Main menu',
+            'Updating your levels…'
+        );
+    }, 120);
     stopExampleAutoplay(true);
     // Hide app content, show setup
     const appContent = document.getElementById('appContent');
@@ -3499,7 +3502,7 @@ async function goBackToSetup() {
     // overlay stuck on screen. The timeout guarantees the yield ends either way.
     await new Promise(resolve => {
         requestAnimationFrame(resolve);
-        setTimeout(resolve, 50);
+        setTimeout(resolve, 16);
     });
 
     // Always load PPM data if available (needed for coverage bar even in CEFR mode)
@@ -3532,6 +3535,7 @@ async function goBackToSetup() {
         total: 0,
         cardStats: {}
     };
+    clearTimeout(loadingTimer);
     window.hideAppLoading?.();
 }
 

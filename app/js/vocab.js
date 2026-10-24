@@ -516,10 +516,17 @@ const LANG_CODES = {
  * Always contains letters → Google Sheets never auto-converts to a number.
  */
 function getWordId(item) {
+    if (!item) return '';
     const lang = LANG_CODES[selectedLanguage] || selectedLanguage.slice(0, 2);
     const mode = activeArtist ? '1' : '0';
+    if (item._fullId && item._fullIdLang === lang && item._fullIdMode === mode) {
+        return item._fullId;
+    }
     const hex = item.id || Number(item.rank).toString(16).padStart(4, '0');
     const fullId = `${lang}${mode}${hex}`;
+    item._fullId = fullId;
+    item._fullIdLang = lang;
+    item._fullIdMode = mode;
     window.registerProgressCardSurface?.(fullId, item.word);
     return fullId;
 }
@@ -585,10 +592,20 @@ function isCoveredByEstimatedIds(item, estimatedIds) {
     return Boolean(surface && estimatedIds.has(`surface:${surface}`));
 }
 
+let _cachedSeenLemmas = null;
+let _cachedSeenLemmasKey = null;
+
 async function buildSeenLemmaSet(vocabData) {
     const hasLemmas = lemmaFieldAvailable || (Array.isArray(vocabData) && vocabData.some(item => lemmaStudyGroupKey(item)));
     if (!useLemmaMode || !hasLemmas || !progressData) return new Set();
     if (!lemmaFieldAvailable && hasLemmas) lemmaFieldAvailable = true;
+
+    const epoch = Number(window.__progressEpoch || 0);
+    const artistSlug = activeArtist?.slug || window._urlArtistSlug || '';
+    const cacheKey = `${selectedLanguage}|${artistSlug}|${useLemmaMode ? '1' : '0'}|${vocabData?.length || 0}|${epoch}`;
+    if (_cachedSeenLemmas && _cachedSeenLemmasKey === cacheKey) {
+        return _cachedSeenLemmas;
+    }
 
     const lemmaById = new Map();
     const lemmaBySurface = new Map();
@@ -634,6 +651,8 @@ async function buildSeenLemmaSet(vocabData) {
             mark(progress.parentWordId, getProgressState(progress));
         }
     }
+    _cachedSeenLemmas = seenLemmas;
+    _cachedSeenLemmasKey = cacheKey;
     return seenLemmas;
 }
 
