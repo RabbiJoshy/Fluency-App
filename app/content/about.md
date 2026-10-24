@@ -55,18 +55,11 @@ Clean, natural lines from film and TV with accurate translations. Words with sev
 Phrases made of several words are learned as one unit, not word by word: *de nuevo* (again), *a menos que* (unless).
 :::
 
-## Music mode
-
 :::feature
-### The slang each artist uses
+### Music
 
-Word lists built from the artist's own lyrics, so *perreo* (reggaeton dancing) appears for Bad Bunny and is translated properly.
-:::
-
-:::feature
-### Learn what things are
-
-People, places and brands in lyrics are recognised and explained.
+- **The slang each artist uses**: word lists built from the artist's own lyrics, so *perreo* (reggaeton dancing) appears for Bad Bunny and is translated properly.
+- **Learn what things are**: people, places and brands in lyrics are recognised and explained.
 :::
 
 ## How it works (technical details)

@@ -2,15 +2,29 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
-      "timestamp": "2026-10-24T17:58:00+01:00",
-      "date": "2026-10-24 17:58 BST",
+      "timestamp": "2026-10-24T18:07:00+01:00",
+      "date": "2026-10-24 18:07 BST",
       "agent": "Antigravity",
-      "summary": "About page: flank Speech and Music demo cards with side descriptions and reveal on scroll.",
+      "summary": "Flashcards: make chevron functional for collapse/expand and enable POS-wide selection.",
       "detail": [
+        "Enabled the chevron (▾/▸) on POS section headers to cleanly toggle section expand and collapse.",
+        "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
+        "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
+        "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-24T18:07:00+01:00",
+      "date": "2026-10-24 18:07 BST",
+      "agent": "Antigravity",
+      "summary": "About page: center section titles and integrate music bullet points under What makes it different.",
+      "detail": [
+        "Centered major section headings on the About page (What makes it different, How it works, etc.).",
+        "Integrated Music directly into What makes it different without a section gap, placing a side label in line with the two music bullet points.",
         "Shortened and tightened descriptions for Speech and Music modes, removing redundant frequency recaps and duplicate sense examples.",
         "Positioned descriptions on the outer sides of the cards on desktop viewports, breaking out of the single central channel.",
-        "Added scroll-reveal effect that smoothly unfolds the side descriptions outward from behind the cards as the learner scrolls down.",
-        "Responsive layout folds gracefully to card-and-description side-by-side on tablets and single-column stack on phones."
+        "Added scroll-reveal effect that smoothly unfolds the side descriptions outward from behind the cards as the learner scrolls down."
       ],
       "commit": "pending"
     },
