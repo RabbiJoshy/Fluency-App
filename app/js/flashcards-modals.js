@@ -435,12 +435,6 @@ async function hydrateBreakdownEntries(results) {
 // save it for export.
 let currentBreakdownRows = [];
 
-function breakdownPosPill(pos) {
-    if (!pos) return '';
-    const name = window.posDisplayName ? window.posDisplayName(pos) : pos;
-    return `<span class="wbw-pos card-pos ${getPosColorClass(pos) || ''}">${escapeBreakdownText(name)}</span>`;
-}
-
 function breakdownWords(text) {
     return String(text || '').toLocaleLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
 }
@@ -735,7 +729,6 @@ function renderBreakdownBody() {
             : `<button type="button" class="wbw-word" data-row="${index}" aria-haspopup="dialog">${label}${known}</button>`;
         return `
             <li class="${classes.join(' ')}">
-                <span class="wbw-pos-cell">${breakdownPosPill(row.pos)}</span>
                 ${word}
                 <span class="wbw-gloss"${row.gloss ? ` title="${escapeBreakdownText(row.gloss)}"` : ''}>${row.gloss ? escapeBreakdownText(row.gloss) : '<span class="wbw-none">—</span>'}</span>
             </li>`;
