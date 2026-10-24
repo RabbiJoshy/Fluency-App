@@ -1,4 +1,4 @@
-# Features and the NLP behind them — draft 3
+# Features and the NLP behind them — draft 4
 
 Working draft for the About page, replacing "What's under the hood" in
 `app/content/about.md`. Not wired into the app yet.
@@ -13,15 +13,20 @@ Plain words, no app vocabulary. Feature first, then one line of how.
 
 Words that look and mean the same in a language you speak, like *información /
 information*, are left out, so your time goes to words that actually need it.
-Look-alikes are found by comparing spellings the way languages really drift
-(*-ción* becomes *-tion*), and checked against a database of true cognates so
-false friends like *sensible* aren't skipped.
+No complete cognate list exists for every language pair; existing databases
+cover some pairs only partly. So the app builds its own: it compares spellings
+the way languages really drift (*-ción* becomes *-tion*), uses translations
+as a bridge between languages, and cross-checks with the existing cognate data
+where there is any. False friends like *sensible* aren't skipped. Adding a new
+pair needs a small config file, not new code.
 
 ### One flashcard per word, not per form
 
 *Estaba*, *estamos* and *estar* are one word. Different forms are merged into a
 single flashcard, with the forms listed on it, so you don't study the same word
-five times.
+five times. Each language handles this differently (contractions like Portuguese
+*no* or French *au* must stay separate), and no standard list of these exists,
+so the exceptions are generated per language.
 
 ### Clean, useful example sentences
 
@@ -49,8 +54,15 @@ For music, vocabulary and slang are drawn from the artist's own lyrics, so
 
 ## For the curious: how it works
 
-**Dictionaries.** Meanings come from real dictionaries: SpanishDict for Spanish,
-Wiktionary for the other languages.
+**Built for any language.** The pipeline is multilingual by design. Adding a
+language means adding files for it, not rewriting the engine. It is live in
+Spanish, Portuguese, Czech, Finnish and French, with Dutch and Polish in
+progress.
+
+**Dictionaries.** Meanings come from real dictionaries, but there is no single
+standard. SpanishDict covers Spanish; Wiktionary covers the rest. Their
+structures differ, so each is converted into one common format, and everything
+downstream works the same regardless of source.
 
 **Cleaning and normalising.** Sentences are tokenised and tagged for
 part-of-speech with spaCy and Stanza, Unicode-normalised, and filtered with
@@ -79,4 +91,6 @@ one.
 2. **Merged forms and artist vocabulary.** I wrote these from the repo's
    descriptions. Check the merged-forms example and the artist-slang line are
    how you'd say it.
-3. **Tools.** I listed spaCy, Stanza and LaBSE. Anything else you'd name?
+3. **Language list.** I wrote "Dutch and Polish in progress" from the repo
+   (packages exist, no live release). Correct that if it's out of date.
+4. **Tools.** I listed spaCy, Stanza and LaBSE. Anything else you'd name?
