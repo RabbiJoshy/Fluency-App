@@ -2,8 +2,8 @@
 // and parts of speech. Classification follows live precedence: Jev sidecar >
 // DeepSeek (at least one accepted correction) > original. Rows are stamped once
 // per loaded index; filtering never touches card IDs, progress or assignments.
-import { readJsonWithTimeout } from './read-request.js?v=575c395b';
-import { wsdUiCard } from './wsd-ui-sidecar.js?v=575c395b';
+import { readJsonWithTimeout } from './read-request.js?v=24494fd1';
+import { wsdUiCard } from './wsd-ui-sidecar.js?v=24494fd1';
 
 export const assignmentFilter = {
     excludeSingleSense: false,

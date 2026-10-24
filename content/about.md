@@ -10,19 +10,17 @@ Choose a series and its dialogue becomes your vocabulary. In *La Casa de Papel*,
 
 ![Speech: a flashcard flipping and cycling through senses](demo://normal)
 
-Learn Spanish as people actually speak it, with every word ranked by how often it comes up across millions of conversations in films and TV shows. Each card comes with real examples, lines from film and TV alongside professionally translated sentences, chosen to suit your level, so you never meet a rare word hidden inside an even rarer sentence.
+Learn Spanish as people actually speak it. Every word is ranked by frequency across millions of lines of film and TV dialogue, so everyday essentials like *mañana* (tomorrow) come first.
 
-Words with more than one meaning are split apart: *banco* is usually a *bank* and occasionally a *bench*, and each meaning gets its own sentence. Starting from frequency also brings everyday essentials like *mañana* (tomorrow) and *todavía* (still) to the front, where a themed lesson would bury them.
+Each card gives you clean, natural dialogue suited to your level, with multiple meanings split into their own clear context.
 
 ### Music
 
 ![Lyrics: a lyric card with the translated line](demo://artist)
 
-Bring a playlist, your own from Spotify or one of the ready-made ones, and the app turns it into a vocabulary of the words those songs actually use, most frequent first. Each flashcard shows a real lyric containing the word, with the line translated underneath. Tap the Spotify button and the line plays at that exact moment, so you hear the word on the original track.
+Bring any Spotify playlist or pick an artist to learn the exact words their songs use, most frequent first.
 
-For words with several meanings, the card shows how your songs actually use them: in these songs *cielo* is mostly *heaven*, and sometimes the *sky*.
-
-A relatively small number of words make up most lyrics. Learn the most frequent few hundred and you can already follow much of the playlist.
+Each card pairs a real translated line with a Spotify button that jumps straight to that moment in the track, showing how each word is actually used in the music.
 
 ## What makes it different
 
@@ -57,18 +55,18 @@ Clean, natural lines from film and TV with accurate translations. Words with sev
 Phrases made of several words are learned as one unit, not word by word: *de nuevo* (again), *a menos que* (unless).
 :::
 
-## Music mode
-
+:::music-group
 :::feature
 ### The slang each artist uses
 
-Word lists built from the artist's own lyrics, so *perreo* (reggaeton dancing) appears for Bad Bunny and is translated properly.
+Word lists built from the artist's own lyrics, so words like *roncar* (to brag, not "to snore") and *perreo* (reggaeton dancing) appear for Bad Bunny and are translated properly.
 :::
 
 :::feature
 ### Learn what things are
 
 People, places and brands in lyrics are recognised and explained.
+:::
 :::
 
 ## How it works (technical details)

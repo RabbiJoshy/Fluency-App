@@ -2,6 +2,32 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-24T18:07:00+01:00",
+      "date": "2026-10-24 18:07 BST",
+      "agent": "Antigravity",
+      "summary": "Flashcards: make chevron functional for collapse/expand and enable POS-wide selection.",
+      "detail": [
+        "Enabled the chevron (▾/▸) on POS section headers to cleanly toggle section expand and collapse.",
+        "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
+        "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
+        "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-24T19:33:00+01:00",
+      "date": "2026-10-24 19:33 BST",
+      "agent": "Antigravity",
+      "summary": "About page: repeat Music subtitle beside both music features and add roncar slang contrast.",
+      "detail": [
+        "Added *roncar* (to brag, not 'to snore') alongside *perreo* (reggaeton dancing) to contrast standard words given new meaning through slang vs slang-native words.",
+        "Positioned the Music subtitle in the left channel beside both music features (The slang each artist uses and Learn what things are) with scroll reveal.",
+        "Centered \"What makes it different\" and \"How it works\" in the main channel with table display matching the top title.",
+        "Formatted all bullet points under \"What makes it different\" equally as feature rows."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-24T16:00:00+01:00",
       "date": "2026-10-24 16:00 BST",
       "agent": "Claude",

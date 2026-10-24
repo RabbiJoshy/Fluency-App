@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=575c395b");
+@import url("./appearance.css?v=24494fd1");
 
 
         * {
@@ -2707,6 +2707,19 @@
             cursor: pointer;
             text-align: left;
             font: inherit;
+            transition: background 0.15s ease, box-shadow 0.15s ease;
+        }
+        .pos-collapsible .pos-section-head.is-pos-selected {
+            background: rgba(var(--sense-match-rgb), 0.22);
+            border: 1px solid rgba(var(--sense-match-rgb), 0.5);
+            border-left: 4px solid rgb(var(--sense-match-rgb));
+            box-shadow: 0 0 10px rgba(var(--sense-match-rgb), 0.25);
+        }
+        .meaning-row.is-sentence-source {
+            box-shadow: inset 3px 0 0 #fff, inset -3px 0 0 #fff !important;
+        }
+        .group-card-varying-cell.is-sentence-source {
+            box-shadow: inset 3px 0 0 #fff, inset -3px 0 0 #fff !important;
         }
         .pos-collapsible .pos-section-label {
             flex-shrink: 0;
@@ -3074,7 +3087,17 @@
         .pos-collapsible .pos-section-chevron {
             flex-shrink: 0;
             color: var(--text-muted);
-            font-size: 11px;
+            font-size: 13px;
+            padding: 2px 8px;
+            margin: -2px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.15s ease, background-color 0.15s ease;
+        }
+        .pos-collapsible .pos-section-chevron:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.14);
         }
         .pos-collapsible .meaning-pos-rows {
             display: none;
@@ -19883,10 +19906,9 @@ html[data-text-size="large"] body {
   zoom: var(--ui-zoom);
 }
 /* Word by word: the sentence the card is showing, then one row per distinct
-   word or fixed expression: its part-of-speech pill (the card front's pill),
-   the word, and the translation on one line, shrinking and then cut short.
-   The word is the button: a quick look at its card in a popup, or, for a word
-   with no card, an offer to save it for export. */
+   word or fixed expression: the word and the translation on one line,
+   shrinking and then cut short. The word is the button: a quick look at its
+   card in a popup, or, for a word with no card, an offer to save it for export. */
 #lyricBreakdownModal > .modal-content {
   box-sizing: border-box;
   width: min(560px, calc(100% - 32px));
@@ -19918,7 +19940,7 @@ html[data-text-size="large"] body {
   line-height: 1.4;
   color: var(--text-secondary);
 }
-/* Three columns shared by every row (subgrid), so pills, words and
+/* Two columns shared by every row (subgrid), so words and
    translations line up down the list. */
 .wbw-list {
   list-style: none;
@@ -19926,8 +19948,8 @@ html[data-text-size="large"] body {
   padding: 0;
   display: grid;
   /* The word never breaks inside itself; an expression may wrap at a space. */
-  grid-template-columns: max-content minmax(min-content, max-content) minmax(0, 1fr);
-  column-gap: 12px;
+  grid-template-columns: minmax(min-content, max-content) minmax(0, 1fr);
+  column-gap: 16px;
   row-gap: 2px;
 }
 .wbw-row {
@@ -27379,7 +27401,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .merged-forms-trigger:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
 .merged-forms-tooltip {
     position: absolute;
-    top: calc(100% + 8px);
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
@@ -27393,8 +27415,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     text-align: center;
     max-height: min(300px, 45vh);
     overflow-y: auto;
+    z-index: 2;
 }
-.merged-forms-tooltip.opens-up { top: auto; bottom: calc(100% + 8px); }
 .merged-forms-heading { margin-bottom: 12px; font: 600 15px/1.4 var(--font-reading); text-align: center; }
 .merged-forms-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font: 400 15px/1.5 var(--font-reading); text-align: center; }
 .merged-forms-list .is-displayed { font-weight: 700; }

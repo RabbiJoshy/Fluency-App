@@ -17,6 +17,7 @@ let trigger;
 export function closeMergedFormsCue() {
     if (!panel) return;
     panel.hidden = true;
+    panel.style.maxHeight = '';
     trigger.setAttribute('aria-expanded', 'false');
 }
 
@@ -28,10 +29,13 @@ function positionCue() {
     const wordBounds = word.getBoundingClientRect();
     // Ratios keep coordinates in the card's own space during scaled layouts.
     const scale = bounds.height / face.offsetHeight || 1;
-    cue.style.top = `${(wordBounds.bottom - bounds.top) / scale + 10}px`;
+    const topInFace = (wordBounds.bottom - bounds.top) / scale + 10;
+    cue.style.top = `${topInFace}px`;
     if (!panel.hidden) {
-        panel.classList.remove('opens-up');
-        if (panel.getBoundingClientRect().bottom > bounds.bottom - 12) panel.classList.add('opens-up');
+        const availableHeight = face.offsetHeight - topInFace - 12;
+        if (availableHeight > 60) {
+            panel.style.maxHeight = `${Math.min(300, Math.floor(availableHeight))}px`;
+        }
     }
 }
 

@@ -6,9 +6,9 @@
 // from them. The cards are the shared replicas (card-replica.js); the
 // frequency bars come from prominence-badge.js, as on the live card.
 
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=575c395b';
-import './prominence-badge.js?v=575c395b';
-import './walkthrough.js?v=575c395b';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=24494fd1';
+import './prominence-badge.js?v=24494fd1';
+import './walkthrough.js?v=24494fd1';
 
 // Minimal Markdown → HTML renderer. Handles headings (##/###), paragraphs,
 // unordered lists, bold/italic, inline code, links, and images. Enough for
@@ -535,6 +535,26 @@ function layoutAboutFeatures(root) {
             if (col) col.appendChild(child);
         });
     });
+    root.querySelectorAll('.about-music-group').forEach(group => {
+        group.querySelectorAll('.about-feature').forEach(feature => {
+            if (feature.querySelector('.about-music-label')) return;
+            const label = document.createElement('div');
+            label.className = 'about-music-label';
+            label.textContent = 'Music';
+            feature.insertBefore(label, feature.firstChild);
+        });
+
+        const checkMusicScroll = () => {
+            const rect = group.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 0.85) {
+                group.classList.add('is-revealed');
+            }
+        };
+        const modal = document.querySelector('.about-project-modal') || window;
+        modal.addEventListener('scroll', checkMusicScroll, { passive: true });
+        window.addEventListener('scroll', checkMusicScroll, { passive: true });
+        checkMusicScroll();
+    });
 }
 
 // Rewire the two source-section <h3>s so they sit side by side on desktop.
@@ -590,15 +610,24 @@ function layoutAboutTwoModes(root) {
         bodies.push(body);
     });
 
-    row.append(...heads, ...bodies);
+    row.append(bodies[0], heads[0], heads[1], bodies[1]);
     anchor.parentNode.replaceChild(row, anchor);
+
+    const modal = document.querySelector('.about-project-modal') || window;
+    const checkScroll = () => {
+        const top = (modal === window ? window.scrollY : modal.scrollTop) || 0;
+        row.classList.toggle('is-revealed', top > 25);
+    };
+    modal.addEventListener('scroll', checkScroll, { passive: true });
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    checkScroll();
 }
 
 async function renderAboutPage() {
     const body = document.getElementById('aboutProjectBody');
     if (!body) return;
     try {
-        const resp = await fetch('content/about.md?v=575c395b', { cache: 'no-cache' });
+        const resp = await fetch('content/about.md?v=24494fd1', { cache: 'no-cache' });
         if (!resp.ok) throw new Error('Failed to load about.md');
         body.innerHTML = renderMarkdown(await resp.text());
         layoutAboutFeatures(body);
