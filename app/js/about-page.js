@@ -590,8 +590,17 @@ function layoutAboutTwoModes(root) {
         bodies.push(body);
     });
 
-    row.append(...heads, ...bodies);
+    row.append(bodies[0], heads[0], heads[1], bodies[1]);
     anchor.parentNode.replaceChild(row, anchor);
+
+    const modal = document.querySelector('.about-project-modal') || window;
+    const checkScroll = () => {
+        const top = (modal === window ? window.scrollY : modal.scrollTop) || 0;
+        row.classList.toggle('is-revealed', top > 25);
+    };
+    modal.addEventListener('scroll', checkScroll, { passive: true });
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    checkScroll();
 }
 
 async function renderAboutPage() {

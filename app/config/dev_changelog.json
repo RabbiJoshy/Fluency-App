@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-24T17:58:00+01:00",
+      "date": "2026-10-24 17:58 BST",
+      "agent": "Antigravity",
+      "summary": "About page: flank Speech and Music demo cards with side descriptions and reveal on scroll.",
+      "detail": [
+        "Shortened and tightened descriptions for Speech and Music modes, removing redundant frequency recaps and duplicate sense examples.",
+        "Positioned descriptions on the outer sides of the cards on desktop viewports, breaking out of the single central channel.",
+        "Added scroll-reveal effect that smoothly unfolds the side descriptions outward from behind the cards as the learner scrolls down.",
+        "Responsive layout folds gracefully to card-and-description side-by-side on tablets and single-column stack on phones."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-24T16:00:00+01:00",
       "date": "2026-10-24 16:00 BST",
       "agent": "Claude",
