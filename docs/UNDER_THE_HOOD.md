@@ -1,4 +1,4 @@
-# Features and the NLP behind them — draft 6
+# Features and the NLP behind them — draft 7
 
 Working draft for the About page, replacing "What's under the hood" in
 `app/content/about.md`. Not wired into the app yet.
@@ -20,18 +20,21 @@ you effectively know, so study time goes to what's new.
 like *sensible* (it means "sensitive") are kept.
 
 **One flashcard per word**
-*Estaba*, *estamos* and *estar* are one word, so they share one flashcard, not
-five.
+Different forms of the same word share a flashcard: *estaba*, *estamos* and
+*estar* are one verb, and *gato* and *gatos* are one noun. But only when the
+meaning really is the same. Forms stay separate when they differ in meaning or
+function:
+- *fue* (could be *ser* or *ir*)
+- *del* and *al* (contractions)
+- *seres* (beings), which isn't just the plural of the verb *ser* (to be)
+- *no sé* (a set phrase)
 
 ### Examples worth learning from
 
 Real lines from film and TV, cleaned down to clear, natural sentences with
-accurate translations, at the right difficulty.
-
-### The right meaning, every time
-
-*Banco* is a bank in one sentence and a bench in another. Each meaning gets its
-own examples.
+accurate translations, at the right difficulty. Words with several meanings get
+separate examples for each: *banco* is a bank in one sentence and a bench in
+another.
 
 ### Idioms and expressions
 
@@ -68,9 +71,13 @@ cognate data where there is any. A word is skipped only if every one of its
 meanings is easy. Words learned in one language can also be skipped in a related
 one.
 
-**One flashcard per word.** Forms are merged under one headword. Languages
-differ (Portuguese *no* and French *au* must stay separate), and no standard
-list of exceptions exists, so they're generated for each language.
+**One flashcard per word.** Verb forms merge under their base verb, and plurals
+merge with singulars, but only when the dictionary entries for both forms carry
+exactly the same set of meanings. An extra meaning on either side, a noun and
+a verb that share a spelling (*ser* / *seres*), a plural-only sense, or a missing
+dictionary link keeps them apart. Contractions and frozen phrases are protected
+too. Languages differ (Portuguese *no*, French *au*), and no standard list of
+exceptions exists, so it is generated for each language.
 
 **Cleaning sentences.** Sentences are tokenised and tagged for part-of-speech
 with spaCy and Stanza, Unicode-normalised, and filtered on form, length and
