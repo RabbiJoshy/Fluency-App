@@ -1,42 +1,42 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=bbe02df1';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=bbe02df1';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=bbe02df1';
-import { songCreditHTML } from './song-credit.js?v=bbe02df1';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=bbe02df1';
+import './state.js?v=70c90599';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=70c90599';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=70c90599';
+import { songCreditHTML } from './song-credit.js?v=70c90599';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=70c90599';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=bbe02df1';
+import { fitSenseRowText } from './card-row-layout.js?v=70c90599';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=bbe02df1';
-import { goToRoute, routeCodeFor } from './routes.js?v=bbe02df1';
-import { memoryTipTileHTML } from './memory-tips.js?v=bbe02df1';
+import './speech.js?v=70c90599';
+import { goToRoute, routeCodeFor } from './routes.js?v=70c90599';
+import { memoryTipTileHTML } from './memory-tips.js?v=70c90599';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=bbe02df1';
-import './side-dock.js?v=bbe02df1';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=bbe02df1';
+} from './function-word-card.js?v=70c90599';
+import './side-dock.js?v=70c90599';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=70c90599';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=bbe02df1';
+} from './example-personalisation.js?v=70c90599';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=bbe02df1';
+} from './spanishdict-usage.js?v=70c90599';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=bbe02df1';
+} from './reverse-cues.js?v=70c90599';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -71,8 +71,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=bbe02df1';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=bbe02df1';
+} from './card-metadata-pills.js?v=70c90599';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=70c90599';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -8635,7 +8635,7 @@ function renderCardWikipediaBadge(card) {
                     const memberCells = displayMemberEntries.map((entry, rowIdx) => {
                         const memberIdx = entry.representative;
                         const mm = card.meanings[memberIdx];
-                        const isMemberSelected = !groupSelected && entry.memberIndices.includes(currentMeaningIndex);
+                        const isMemberSelected = groupSelected || entry.memberIndices.includes(currentMeaningIndex);
                         const cellBg = isMemberSelected
                             ? 'rgba(var(--sense-match-rgb), 0.2)'
                             : 'rgba(255, 255, 255, 0.03)';
@@ -11588,8 +11588,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'bbe02df1';
-const MODALS_ASSET_VERSION = 'bbe02df1';
+const ASSET_VERSION = '70c90599';
+const MODALS_ASSET_VERSION = '70c90599';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

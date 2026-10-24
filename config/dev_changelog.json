@@ -2,6 +2,31 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-24T16:39:16.580689+01:00",
+      "date": "2026-10-24 16:39 BST",
+      "agent": "Antigravity",
+      "summary": "Consolidate admin deck filters into a popup modal, adding Part of Speech and Jev Confidence filters.",
+      "detail": [
+        "Grouped all admin setup filters into a dedicated modal opened by an Admin Filters button in the level chooser footer.",
+        "Added Part of Speech filtering (Verbs, Nouns, Adjectives, Adverbs, Function words, Other).",
+        "Added Jev Confidence & Gaps filtering (Lowest < 0.2, Marginal < 0.3, Moderate < 0.5, Unresolved gaps, High ≥ 0.8).",
+        "Trigger button features an active filter count badge; Reset button restores defaults instantly."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-24T15:53:50+01:00",
+      "date": "2026-10-24 15:53 BST",
+      "agent": "Antigravity",
+      "summary": "Highlight all subsenses immediately when selecting a grouped sense row.",
+      "detail": [
+        "Clicking the sense row (whole-group selection) marks every member subsense active, immediately highlighting all subsenses.",
+        "Selecting an individual subsense continues to pin and highlight only that specific member.",
+        "Subsense groups with active members use clean spacing between highlighted items."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-23T20:32:33.705058+01:00",
       "date": "2026-10-23 20:32 BST",
       "agent": "Antigravity",

@@ -1,10 +1,10 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=bbe02df1';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=bbe02df1';
-import { readFastTrack } from './fast-track-preferences.js?v=bbe02df1';
-import './session-plan.js?v=bbe02df1';
-import { assignmentFilter, assignmentFiltersAvailable } from './assignment-filters.js?v=bbe02df1';
+import './state.js?v=70c90599';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=70c90599';
+import { readFastTrack } from './fast-track-preferences.js?v=70c90599';
+import './session-plan.js?v=70c90599';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=70c90599';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2532,17 +2532,70 @@ function setupCognateToggle() {
     updateCognateSensitivityVisibility();
 }
 
-// Admin-only: shown once a release with an assignment-filter index is loaded.
+// Admin-only modal & trigger controls
 function syncAssignmentFilterControls() {
-    const box = document.getElementById('assignmentFilters');
-    if (!box) return;
-    box.hidden = !(window.isAuditAccount?.() && assignmentFiltersAvailable());
-    document.getElementById('excludeSingleSenseToggle').checked = assignmentFilter.excludeSingleSense;
-    document.getElementById('assignmentSourceSelect').value = assignmentFilter.source;
+    const slot = document.getElementById('assignmentFilters');
+    if (!slot) return;
+    const available = window.isAuditAccount?.() && assignmentFiltersAvailable();
+    slot.hidden = !available;
+
+    const count = activeFilterCount();
+    const badge = document.getElementById('adminFiltersBadge');
+    const btn = document.getElementById('openAdminFiltersModalBtn');
+    if (badge) {
+        badge.textContent = count > 0 ? `${count} active` : '';
+        badge.hidden = count === 0;
+    }
+    if (btn) {
+        btn.classList.toggle('is-active', count > 0);
+    }
+
+    const singleSenseEl = document.getElementById('excludeSingleSenseToggle');
+    if (singleSenseEl) singleSenseEl.checked = assignmentFilter.excludeSingleSense;
+    const sourceEl = document.getElementById('assignmentSourceSelect');
+    if (sourceEl) sourceEl.value = assignmentFilter.source;
+    const confEl = document.getElementById('assignmentConfidenceSelect');
+    if (confEl) confEl.value = assignmentFilter.confidence;
+    const posEl = document.getElementById('assignmentPosSelect');
+    if (posEl) posEl.value = assignmentFilter.pos;
+}
+
+function openAdminFiltersModal() {
+    const modal = document.getElementById('adminDeckFiltersModal');
+    if (!modal) return;
+    syncAssignmentFilterControls();
+    modal.classList.remove('hidden');
+    document.getElementById('openAdminFiltersModalBtn')?.setAttribute('aria-expanded', 'true');
+}
+
+function closeAdminFiltersModal() {
+    const modal = document.getElementById('adminDeckFiltersModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    document.getElementById('openAdminFiltersModalBtn')?.setAttribute('aria-expanded', 'false');
 }
 
 function setupAssignmentFilters() {
-    const refresh = () => _refreshAfterCognateChange();
+    const refresh = () => {
+        syncAssignmentFilterControls();
+        _refreshAfterCognateChange();
+    };
+
+    document.getElementById('openAdminFiltersModalBtn')?.addEventListener('click', openAdminFiltersModal);
+    document.getElementById('closeAdminDeckFiltersModal')?.addEventListener('click', closeAdminFiltersModal);
+    document.getElementById('applyAdminDeckFiltersBtn')?.addEventListener('click', closeAdminFiltersModal);
+
+    const modal = document.getElementById('adminDeckFiltersModal');
+    modal?.addEventListener('click', e => {
+        if (e.target === modal) closeAdminFiltersModal();
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+            closeAdminFiltersModal();
+        }
+    });
+
     document.getElementById('excludeSingleSenseToggle')?.addEventListener('change', event => {
         assignmentFilter.excludeSingleSense = event.target.checked;
         refresh();
@@ -2551,10 +2604,29 @@ function setupAssignmentFilters() {
         assignmentFilter.source = event.target.value;
         refresh();
     });
+    document.getElementById('assignmentConfidenceSelect')?.addEventListener('change', event => {
+        assignmentFilter.confidence = event.target.value;
+        refresh();
+    });
+    document.getElementById('assignmentPosSelect')?.addEventListener('change', event => {
+        assignmentFilter.pos = event.target.value;
+        refresh();
+    });
+
+    document.getElementById('resetAdminDeckFiltersBtn')?.addEventListener('click', () => {
+        assignmentFilter.excludeSingleSense = false;
+        assignmentFilter.source = 'all';
+        assignmentFilter.confidence = 'all';
+        assignmentFilter.pos = 'all';
+        refresh();
+    });
+
     syncAssignmentFilterControls();
 }
 window.syncAssignmentFilterControls = syncAssignmentFilterControls;
 window.setupAssignmentFilters = setupAssignmentFilters;
+window.openAdminFiltersModal = openAdminFiltersModal;
+window.closeAdminFiltersModal = closeAdminFiltersModal;
 
 async function _refreshAfterCognateChange() {
     invalidatePreparedSetupVocabulary();
@@ -3780,7 +3852,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=bbe02df1')
+        import('./spotify.js?v=70c90599')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
