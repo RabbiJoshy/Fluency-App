@@ -15,16 +15,16 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-10-24T18:07:00+01:00",
-      "date": "2026-10-24 18:07 BST",
+      "timestamp": "2026-10-24T19:10:00+01:00",
+      "date": "2026-10-24 19:10 BST",
       "agent": "Antigravity",
-      "summary": "About page: center section titles and integrate music bullet points under What makes it different.",
+      "summary": "About page: center titles in the main channel and position animated Music subtitle in the left channel.",
       "detail": [
-        "Centered major section headings on the About page (What makes it different, How it works, etc.).",
-        "Integrated Music directly into What makes it different without a section gap, placing a side label in line with the two music bullet points.",
+        "Centered \"What makes it different\" and \"How it works\" in the main channel with table display matching the top title.",
+        "Formatted all bullet points under \"What makes it different\" equally as feature rows.",
+        "Placed the \"Music\" subtitle in the outer left-hand channel beside the music bullet points, revealing smoothly as you scroll into the section.",
         "Shortened and tightened descriptions for Speech and Music modes, removing redundant frequency recaps and duplicate sense examples.",
-        "Positioned descriptions on the outer sides of the cards on desktop viewports, breaking out of the single central channel.",
-        "Added scroll-reveal effect that smoothly unfolds the side descriptions outward from behind the cards as the learner scrolls down."
+        "Positioned descriptions on the outer sides of the cards on desktop viewports, breaking out of the single central channel."
       ],
       "commit": "pending"
     },

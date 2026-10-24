@@ -535,6 +535,24 @@ function layoutAboutFeatures(root) {
             if (col) col.appendChild(child);
         });
     });
+    root.querySelectorAll('.about-music-group').forEach(group => {
+        if (group.querySelector('.about-music-label')) return;
+        const label = document.createElement('div');
+        label.className = 'about-music-label';
+        label.textContent = 'Music';
+        group.insertBefore(label, group.firstChild);
+
+        const checkMusicScroll = () => {
+            const rect = group.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 0.85) {
+                group.classList.add('is-revealed');
+            }
+        };
+        const modal = document.querySelector('.about-project-modal') || window;
+        modal.addEventListener('scroll', checkMusicScroll, { passive: true });
+        window.addEventListener('scroll', checkMusicScroll, { passive: true });
+        checkMusicScroll();
+    });
 }
 
 // Rewire the two source-section <h3>s so they sit side by side on desktop.
