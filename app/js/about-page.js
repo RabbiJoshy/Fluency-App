@@ -109,7 +109,13 @@ function renderMarkdown(md) {
             continue;
         }
         if (!line) { flushAll(); continue; }
-        if (line.startsWith('### ')) { flushAll(); html.push('<h3>' + inline(line.slice(4)) + '</h3>'); }
+        if (line.startsWith(':::')) {
+            flushAll();
+            html.push(line === ':::' ? '</div>' : '<div class="about-' + line.slice(3).trim().replace(/[^a-z-]/gi, '') + '">');
+        }
+        else if (line.startsWith('~ ')) { flushAll(); html.push('<p class="about-note">' + inline(line.slice(2)) + '</p>'); }
+        else if (line.startsWith('#### ')) { flushAll(); html.push('<h4>' + inline(line.slice(5)) + '</h4>'); }
+        else if (line.startsWith('### ')) { flushAll(); html.push('<h3>' + inline(line.slice(4)) + '</h3>'); }
         else if (line.startsWith('## ')) { flushAll(); html.push('<h2>' + inline(line.slice(3)) + '</h2>'); }
         else if (line.startsWith('# ')) { flushAll(); html.push('<h1>' + inline(line.slice(2)) + '</h1>'); }
         else if (line.startsWith('- ') || line.startsWith('* ')) { pushItem('ul', line.slice(2)); }
@@ -506,6 +512,31 @@ function mountAboutDemos(root) {
     });
 }
 
+// Feature rows (`:::feature`) put the heading in a left column and the rest in
+// a right one; a `:::compare` block splits at each #### into side-by-side
+// columns. The renderer emits them flat, so group the children here.
+function layoutAboutFeatures(root) {
+    root.querySelectorAll('.about-feature').forEach(feature => {
+        const head = feature.querySelector(':scope > h3');
+        if (!head || feature.querySelector(':scope > .about-feature-body')) return;
+        const bodyEl = document.createElement('div');
+        bodyEl.className = 'about-feature-body';
+        while (head.nextSibling) bodyEl.appendChild(head.nextSibling);
+        feature.appendChild(bodyEl);
+    });
+    root.querySelectorAll('.about-compare').forEach(compare => {
+        let col = null;
+        Array.from(compare.children).forEach(child => {
+            if (child.tagName === 'H4') {
+                col = document.createElement('div');
+                col.className = 'about-compare-col';
+                compare.appendChild(col);
+            }
+            if (col) col.appendChild(child);
+        });
+    });
+}
+
 // Rewire the two source-section <h3>s so they sit side by side on desktop.
 // The Markdown source stays linear (easier to edit); we detect the
 // "Speech" / "Lyrics" pair after rendering and wrap each h3 +
@@ -570,6 +601,7 @@ async function renderAboutPage() {
         const resp = await fetch('content/about.md');
         if (!resp.ok) throw new Error('Failed to load about.md');
         body.innerHTML = renderMarkdown(await resp.text());
+        layoutAboutFeatures(body);
         layoutAboutTwoModes(body);
         mountAboutDemos(body);
         _appendAboutFootnotes(body);
