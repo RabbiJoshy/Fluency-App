@@ -59,7 +59,7 @@ Phrases made of several words are learned as one unit, not word by word: *de nue
 :::feature
 ### The slang each artist uses
 
-Word lists built from the artist's own lyrics, so *perreo* (reggaeton dancing) appears for Bad Bunny and is translated properly.
+Word lists built from the artist's own lyrics, so words like *roncar* (to brag, not "to snore") and *perreo* (reggaeton dancing) appear for Bad Bunny and are translated properly.
 :::
 
 :::feature

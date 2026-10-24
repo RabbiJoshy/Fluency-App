@@ -536,11 +536,13 @@ function layoutAboutFeatures(root) {
         });
     });
     root.querySelectorAll('.about-music-group').forEach(group => {
-        if (group.querySelector('.about-music-label')) return;
-        const label = document.createElement('div');
-        label.className = 'about-music-label';
-        label.textContent = 'Music';
-        group.insertBefore(label, group.firstChild);
+        group.querySelectorAll('.about-feature').forEach(feature => {
+            if (feature.querySelector('.about-music-label')) return;
+            const label = document.createElement('div');
+            label.className = 'about-music-label';
+            label.textContent = 'Music';
+            feature.insertBefore(label, feature.firstChild);
+        });
 
         const checkMusicScroll = () => {
             const rect = group.getBoundingClientRect();

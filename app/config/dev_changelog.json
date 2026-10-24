@@ -15,16 +15,15 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-10-24T19:10:00+01:00",
-      "date": "2026-10-24 19:10 BST",
+      "timestamp": "2026-10-24T19:33:00+01:00",
+      "date": "2026-10-24 19:33 BST",
       "agent": "Antigravity",
-      "summary": "About page: center titles in the main channel and position animated Music subtitle in the left channel.",
+      "summary": "About page: repeat Music subtitle beside both music features and add roncar slang contrast.",
       "detail": [
+        "Added *roncar* (to brag, not 'to snore') alongside *perreo* (reggaeton dancing) to contrast standard words given new meaning through slang vs slang-native words.",
+        "Positioned the Music subtitle in the left channel beside both music features (The slang each artist uses and Learn what things are) with scroll reveal.",
         "Centered \"What makes it different\" and \"How it works\" in the main channel with table display matching the top title.",
-        "Formatted all bullet points under \"What makes it different\" equally as feature rows.",
-        "Placed the \"Music\" subtitle in the outer left-hand channel beside the music bullet points, revealing smoothly as you scroll into the section.",
-        "Shortened and tightened descriptions for Speech and Music modes, removing redundant frequency recaps and duplicate sense examples.",
-        "Positioned descriptions on the outer sides of the cards on desktop viewports, breaking out of the single central channel."
+        "Formatted all bullet points under \"What makes it different\" equally as feature rows."
       ],
       "commit": "pending"
     },
