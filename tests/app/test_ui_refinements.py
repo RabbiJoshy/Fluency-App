@@ -238,4 +238,22 @@ class UiRefinementTests(unittest.TestCase):
         )
         self.assertIn('.meaning-row .sense-cue-group:has(.is-active-subsense)', style_css)
 
+    def test_pos_chevron_collapse_and_pos_wide_selection(self):
+        flashcards_js = (ROOT / 'app/js/flashcards.js').read_text(encoding='utf-8')
+        style_css = (ROOT / 'app/css/style.css').read_text(encoding='utf-8')
+
+        # Chevron has dedicated click delegation for collapse
+        self.assertIn("toggleBackPosSection('${key.replace(/\\u0000/g, '~~')}');", flashcards_js)
+        self.assertIn("event?.target?.closest?.('.pos-section-chevron')", flashcards_js)
+
+        # POS header row toggles POS-wide selection (axis: 'pos')
+        self.assertIn("axis: 'pos'", flashcards_js)
+        self.assertIn("isPosSelectionActive", flashcards_js)
+
+        # Highlight styles in CSS
+        self.assertIn('.pos-section-head.is-pos-selected', style_css)
+        self.assertIn('.meaning-row.is-sentence-source', style_css)
+        self.assertIn('.group-card-varying-cell.is-sentence-source', style_css)
+        self.assertIn('.pos-collapsible .pos-section-chevron:hover', style_css)
+
 

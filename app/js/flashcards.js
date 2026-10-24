@@ -202,7 +202,7 @@ function getCurrentSpokenEnglish(card) {
     const meaning = card?.meanings?.[currentMeaningIndex];
     if (!meaning) return '';
     if (!currentGroupSelection?.members?.length) return getSpokenEnglish(card, meaning);
-    if (currentGroupSelection.axis === 'translation') {
+    if (currentGroupSelection.axis === 'translation' || currentGroupSelection.axis === 'pos') {
         return getProductionEnglishCue(card, meaning) || meaning.meaning || '';
     }
     const glosses = currentGroupSelection.members
@@ -5101,36 +5101,99 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
     const meaning = card?.meanings?.[meaningIndex];
     if (!card || !meaning) return;
     const real = String(key).replace(/~~/g, '\u0000');
-    const inSection = lemmaPosGroupKeyForMeaning(card.meanings[currentMeaningIndex]) === real;
-    // A word-type row that carries the shared words of its one group stands
-    // for that group: pressing it goes back from a single sub-meaning to all.
-    const section = event?.currentTarget?.closest?.('.meaning-pos-section');
-    const lone = section?.querySelector('.pos-section-shared')
-        ? section.querySelector('.meaning-row-group[data-anchor-idx]') : null;
-    if (lone && !(inSection && currentGroupSelection)) {
-        selectGroup(lone.dataset.axis, Number(lone.dataset.anchorIdx));
-        if (currentGroupSelection) return;
-    }
-    const alreadyActive = inSection && (!currentGroupSelection || !!lone);
-    // Choosing another group moves the active sense; which sections stay
-    // open is still decided by whether they fit above the sentence.
-    if (alreadyActive) {
-        card._backSectionsManuallySet = true;
-        card._expandedPos = card._expandedPos || new Set();
-        if (card._expandedPos.has(real)) card._expandedPos.delete(real);
-        else card._expandedPos.add(real);
+
+    // If the click is directly on or inside the chevron, toggle accordion collapse
+    if (event?.target?.closest?.('.pos-section-chevron')) {
+        toggleBackPosSection(key);
         return;
     }
 
-    currentGroupSelection = null;
+    const currentKey = lemmaPosGroupKeyForMeaning(card.meanings[currentMeaningIndex]);
+    const inSection = currentKey === real;
+    const isSectionOpen = card._expandedPos?.has(real);
+
+    // If the section is closed, open it and focus on meaningIndex
+    if (!isSectionOpen) {
+        card._expandedPos = card._expandedPos || new Set();
+        card._expandedPos.add(real);
+        card._backSectionsManuallySet = true;
+        currentGroupSelection = null;
+        currentMeaningIndex = meaningIndex;
+        const selectedPos = meaning.pos === 'SENSE_CYCLE'
+            ? (meaning.cycle_pos || 'X')
+            : meaning.pos;
+        if (selectedPos) card._activePosTab = selectedPos;
+        currentExampleIndex = 0;
+        currentMWEIndex = 0;
+        _explicitMeaningSelectionKey = meaningSelectionKey(card, meaningIndex);
+        updateCard();
+        return;
+    }
+
+    // If already open, but we were focused in a different section, switch to this section
+    if (!inSection) {
+        currentGroupSelection = null;
+        currentMeaningIndex = meaningIndex;
+        const selectedPos = meaning.pos === 'SENSE_CYCLE'
+            ? (meaning.cycle_pos || 'X')
+            : meaning.pos;
+        if (selectedPos) card._activePosTab = selectedPos;
+        currentExampleIndex = 0;
+        currentMWEIndex = 0;
+        _explicitMeaningSelectionKey = meaningSelectionKey(card, meaningIndex);
+        updateCard();
+        return;
+    }
+
+    // Already active in this section: toggle POS-wide selection!
+    const targetPos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
+    const targetHeadword = meaning.headword || '';
+    const isPosSelectionActive = currentGroupSelection?.axis === 'pos'
+        && currentGroupSelection.pos === targetPos
+        && (currentGroupSelection.headword || '') === targetHeadword;
+
+    if (isPosSelectionActive) {
+        // Toggle OFF POS-wide selection back to single primary meaning
+        currentGroupSelection = null;
+        currentMeaningIndex = meaningIndex;
+        currentExampleIndex = 0;
+        currentMWEIndex = 0;
+        _explicitMeaningSelectionKey = meaningSelectionKey(card, meaningIndex);
+        updateCard();
+        return;
+    }
+
+    // A word-type row that carries the shared words of its lone group
+    // stands for that group: pressing it enters group selection for that group.
+    const section = event?.currentTarget?.closest?.('.meaning-pos-section');
+    const lone = section?.querySelector('.pos-section-shared')
+        ? section.querySelector('.meaning-row-group[data-anchor-idx]') : null;
+    if (lone && !currentGroupSelection) {
+        selectGroup(lone.dataset.axis, Number(lone.dataset.anchorIdx));
+        if (currentGroupSelection) return;
+    }
+
+    // Activate POS-wide selection across all meanings belonging to this POS
+    const members = (card.meanings || [])
+        .map((m, i) => ({ m, i }))
+        .filter(({ m }) => {
+            if (!m || m.exampleOnly) return false;
+            const mPos = m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || 'X') : m.pos;
+            return mPos === targetPos && (m.headword || '') === targetHeadword;
+        })
+        .map(({ i }) => i);
+
+    _explicitMeaningSelectionKey = null;
+    currentGroupSelection = {
+        axis: 'pos',
+        groupKey: real,
+        pos: targetPos,
+        headword: targetHeadword,
+        members: members.length ? members : [meaningIndex],
+    };
     currentMeaningIndex = meaningIndex;
-    const selectedPos = meaning.pos === 'SENSE_CYCLE'
-        ? (meaning.cycle_pos || 'X')
-        : meaning.pos;
-    if (selectedPos) card._activePosTab = selectedPos;
     currentExampleIndex = 0;
     currentMWEIndex = 0;
-    _explicitMeaningSelectionKey = meaningSelectionKey(card, meaningIndex);
     updateCard();
 }
 window.selectLemmaPosGroup = selectLemmaPosGroup;
@@ -7870,16 +7933,20 @@ function renderCardWikipediaBadge(card) {
                 // answered this", which is what the tick means everywhere else
                 // on the card; here it meant something narrower and only added
                 // a third symbol to an already dense line.
+                const isPosSelected = currentGroupSelection?.axis === 'pos'
+                    && currentGroupSelection.pos === pos
+                    && (currentGroupSelection.headword || '') === (g.headword || '');
                 return `
                 <section class="meaning-pos-section pos-collapsible${open ? ' is-open' : ''}"
                          data-pos="${pos}" data-group-key="${escapeCardText(key.replace(/\u0000/g, '~~'))}" style="${accent}">
-                    <button type="button" class="pos-section-head"
+                    <button type="button" class="pos-section-head${isPosSelected ? ' is-pos-selected' : ''}"
+                            aria-pressed="${isPosSelected ? 'true' : 'false'}"
                             aria-label="${escapeCardText(`${headAria}: ${summarySenses.join('; ')}`)}"
                             onclick="selectLemmaPosGroup(event, '${key.replace(/\u0000/g, '~~')}', ${g.firstMeaningIndex})">
                         <span class="pos-section-label">${escapeCardText(posDisplayName(pos))}</span>
                         ${hw}
                         ${collapsedSummary}
-                        <span class="pos-section-chevron">${open ? '\u25BE' : '\u25B8'}</span>
+                        <span class="pos-section-chevron" role="button" tabindex="0" title="${open ? 'Collapse section' : 'Expand section'}" onclick="event.stopPropagation(); toggleBackPosSection('${key.replace(/\u0000/g, '~~')}');">${open ? '\u25BE' : '\u25B8'}</span>
                     </button>
                     <div class="meaning-pos-rows">${rows.join('')}</div>
                 </section>`;
@@ -8157,6 +8224,17 @@ function renderCardWikipediaBadge(card) {
         const senseDisplay = new Map();
         card._senseDisplay = senseDisplay;
         const recordSenseDisplay = (index, entry) => senseDisplay.set(index, { order: senseDisplay.size, ...entry });
+
+        // When POS-wide selection is active, determine which specific meaning
+        // owns the currently displayed example sentence so it can receive a focal indicator.
+        let activeSentenceMeaningIndex = null;
+        if (currentGroupSelection?.axis === 'pos' && currentMeaning) {
+            const pooledExamples = getCyclableExamples(card, currentMeaning);
+            if (pooledExamples.length > 0) {
+                const activeEx = pooledExamples[currentExampleIndex % pooledExamples.length];
+                activeSentenceMeaningIndex = activeEx?._meaningIndex ?? null;
+            }
+        }
         displayEntries.forEach(({ meaning: m, index: idx }) => {
             if (m.exampleOnly) return;
             if (singletonFoldFollowers.has(idx)) return;
@@ -8473,7 +8551,10 @@ function renderCardWikipediaBadge(card) {
                     // Group-level selection: clicking the shared field selects
                     // the whole group (examples become union of members);
                     // clicking any sub-item reverts to per-meaning selection.
-                    const groupSelected = !!(currentGroupSelection
+                    const isPosGroup = currentGroupSelection?.axis === 'pos'
+                        && currentGroupSelection.pos === m.pos
+                        && (currentGroupSelection.headword || '') === (m.headword || '');
+                    const groupSelected = isPosGroup || !!(currentGroupSelection
                         && currentGroupSelection.axis === axis
                         && currentGroupSelection.pos === m.pos
                         && (currentGroupSelection.headword || '') === (m.headword || '')
@@ -8750,7 +8831,9 @@ function renderCardWikipediaBadge(card) {
                         const groupPinned = orderedMembers.some(index => practiceIndices.has(index));
                         const knownTag = memberKnown && !groupKnown && !isPinningMode && !groupPinned
                             ? ` ${knownSenseTagHTML('', entry.memberIndices)}` : '';
-                        const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}${memberKnown ? ' is-known-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}${knownTag}</div>`;
+                        const isMemberSentenceSource = activeSentenceMeaningIndex !== null
+                            && entry.memberIndices.includes(activeSentenceMeaningIndex);
+                        const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}${isMemberSentenceSource ? ' is-sentence-source' : ''}${memberKnown ? ' is-known-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}${knownTag}</div>`;
                         return varyingCell;
                     }).join('');
 
@@ -8858,7 +8941,10 @@ function renderCardWikipediaBadge(card) {
                     const foldInfo = singletonFoldLeaders.get(idx);
                     const isFoldedLeader = !!foldInfo;
                     const isFoldActive = isFoldedLeader && foldInfo.allIndices.includes(currentMeaningIndex);
-                    const isRowSelected = isFoldedLeader ? isFoldActive : isSelected;
+                    const isPosSelected = currentGroupSelection?.axis === 'pos'
+                        && currentGroupSelection.pos === (m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || 'X') : m.pos)
+                        && (currentGroupSelection.headword || '') === (m.headword || '');
+                    const isRowSelected = isPosSelected || (isFoldedLeader ? isFoldActive : isSelected);
                     const rowSelectedClasses = isRowSelected ? ' is-current-sense' : '';
 
                     // Individual sense row: 2-line presentation when space permits
@@ -8917,6 +9003,8 @@ function renderCardWikipediaBadge(card) {
                         ? (foldInfo.hasOnlyRare ? ' meaning-row-rare' : '')
                         : ((m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '');
                     const rowIndices = isFoldedLeader ? foldInfo.allIndices : [idx];
+                    const isRowSentenceSource = activeSentenceMeaningIndex !== null
+                        && rowIndices.includes(activeSentenceMeaningIndex);
                     const rowPinned = rowIndices.some(index => practiceIndices.has(index));
                     const rowKnown = rowIndices.every(index => card.meanings[index]?.isKnownSense);
                     const knownRowClass = rowKnown ? ' meaning-row-known' : '';
@@ -8933,7 +9021,7 @@ function renderCardWikipediaBadge(card) {
                             : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, edgeStyle) : ''));
                     const sidePad = (rowKnown && !rowPinned && !isPinningMode) ? '52px' : ((rowPinned || isPinningMode) ? '44px' : (useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px')));
                     target.push(`
-                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}${knownRowClass}${practiceRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
+                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}${knownRowClass}${practiceRowClass}${isRowSentenceSource ? ' is-sentence-source' : ''}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
                         <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${sidePad} 2px ${sidePad};">
                             <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${visibleMeaningHTML}</span>
@@ -9964,7 +10052,13 @@ function getCyclableExamples(card, currentMeaning) {
         const merged = [];
         for (const meaningIndex of currentGroupSelection.members) {
             const member = card.meanings[meaningIndex];
-            if (member?.allExamples) merged.push(...member.allExamples);
+            const memberExamples = member?.allExamples || member?.examples || [];
+            for (const ex of memberExamples) {
+                if (ex && typeof ex === 'object' && ex._meaningIndex === undefined) {
+                    ex._meaningIndex = meaningIndex;
+                }
+                merged.push(ex);
+            }
         }
         examples = dedupeExamples(merged);
     } else {
