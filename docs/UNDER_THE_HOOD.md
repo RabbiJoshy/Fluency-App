@@ -1,4 +1,4 @@
-# Features and the NLP behind them — draft 4
+# Features and the NLP behind them — draft 5
 
 Working draft for the About page, replacing "What's under the hood" in
 `app/content/about.md`. Not wired into the app yet.
@@ -54,10 +54,10 @@ For music, vocabulary and slang are drawn from the artist's own lyrics, so
 
 ## For the curious: how it works
 
-**Built for any language.** The pipeline is multilingual by design. Adding a
-language means adding files for it, not rewriting the engine. It is live in
-Spanish, Portuguese, Czech, Finnish and French, with Dutch and Polish in
-progress.
+**Built for any language.** The pipeline is multilingual by design. It works
+for any language that has a Wiktionary, such as French, Portuguese, Czech,
+Finnish or Dutch. Adding a language means adding files for it, not rewriting
+the engine.
 
 **Dictionaries.** Meanings come from real dictionaries, but there is no single
 standard. SpanishDict covers Spanish; Wiktionary covers the rest. Their
@@ -75,22 +75,29 @@ two tiers:
 - **Bi-encoder for the easy cases.** A bi-encoder turns the sentence and each
   definition into numbers and picks the closest meaning. This handles the
   majority of words quickly and cheaply.
-- **JEV for the hard cases.** When the bi-encoder isn't confident, the sentence
-  goes to JEV, a constrained decision model. Instead of writing text, it picks
-  from a fixed list of options. *(Experimental, still in development.)*
+- **Jev for the hard cases.** When the bi-encoder isn't confident, the sentence
+  goes to Jev, a new kind of decision model. Instead of writing text, it picks
+  from a fixed list of options and says how sure it is, which is exactly what
+  choosing a dictionary meaning needs. *(Experimental, still being tested.)*
 
 When neither is sure, the flashcard shows a broader meaning rather than a wrong
 one.
 
 ---
 
+## And more
+
+Support for further languages is on the way, including ones that have no
+dedicated tools of their own yet.
+
+---
+
 ## Open questions
 
-1. **JEV.** Is "constrained decision model" the right description, or does the
-   name stand for something I should spell out?
+1. **Jev.** Web search shows Jev is TypeSafe AI's decision model (a product
+   name, not an acronym), so I've written "Jev", not "JEV". Fine, or do you
+   want the company named?
 2. **Merged forms and artist vocabulary.** I wrote these from the repo's
    descriptions. Check the merged-forms example and the artist-slang line are
    how you'd say it.
-3. **Language list.** I wrote "Dutch and Polish in progress" from the repo
-   (packages exist, no live release). Correct that if it's out of date.
-4. **Tools.** I listed spaCy, Stanza and LaBSE. Anything else you'd name?
+3. **Tools.** I listed spaCy, Stanza and LaBSE. Anything else you'd name?
