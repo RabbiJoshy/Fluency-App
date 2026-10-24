@@ -228,3 +228,14 @@ class UiRefinementTests(unittest.TestCase):
         self.assertIn("backdrop.classList.add('visible')", fast_mode_js)
         self.assertIn("backdrop.classList.add('fade-out')", fast_mode_js)
 
+    def test_group_selection_highlights_all_subsenses(self):
+        flashcards_js = (ROOT / 'app/js/flashcards.js').read_text(encoding='utf-8')
+        style_css = (ROOT / 'app/css/style.css').read_text(encoding='utf-8')
+        # Whole group selection immediately highlights all member subsenses
+        self.assertIn(
+            'const isMemberSelected = groupSelected || entry.memberIndices.includes(currentMeaningIndex);',
+            flashcards_js
+        )
+        self.assertIn('.meaning-row .sense-cue-group:has(.is-active-subsense)', style_css)
+
+

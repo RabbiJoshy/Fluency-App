@@ -26698,6 +26698,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 /* Sub-lines sit close under the shared gloss. */
 .meanings-scroll.inline-sense-rows .meaning-row .group-card-body { gap: 0 !important; }
 .meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group { gap: 0 !important; flex: none !important; justify-content: center !important; }
+.meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group:has(.is-active-subsense) { gap: 3px !important; }
 .meanings-scroll.inline-sense-rows .meaning-row .sense-cue-group > .group-card-varying-cell { padding: 1px 8px !important; }
 /* The meter's bars stand on the gloss's baseline. */
 .meanings-scroll.inline-sense-rows .meaning-row-group > :is(.pct-column, .sense-prominence-badge, .sense-percentage-tail, .known-sense-tag) { top: 5px !important; }

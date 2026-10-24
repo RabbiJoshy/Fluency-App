@@ -123,13 +123,45 @@ def staging_identity(rel: str, content: bytes) -> bytes:
     return content.replace(b"icons/icon-", b"icons/staging/icon-")
 
 
+def read_blobs_batch(shas: list[str]) -> dict[str, bytes]:
+    """Read multiple git blobs in a single streaming process instead of spawning git per file."""
+    unique_shas = list(dict.fromkeys(shas))
+    if not unique_shas:
+        return {}
+    proc = subprocess.Popen(
+        ["git", "cat-file", "--batch"],
+        cwd=REPO_ROOT,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+    )
+    proc.stdin.write("\n".join(unique_shas).encode("ascii") + b"\n")
+    proc.stdin.flush()
+    proc.stdin.close()
+    blobs = {}
+    for sha in unique_shas:
+        header = proc.stdout.readline()
+        if not header:
+            break
+        parts = header.decode("ascii").split()
+        if len(parts) >= 3 and parts[1] == "blob":
+            size = int(parts[2])
+            data = proc.stdout.read(size)
+            proc.stdout.read(1)  # trailing newline
+            blobs[sha] = data
+        else:
+            blobs[sha] = b""
+    proc.wait()
+    return blobs
+
+
 def build(dest: Path, ref: str, version: str | None = None, env: str = "production") -> int:
     files = tracked_app_files(ref)
     if not any(rel == "index.html" for _, rel in files):
         raise SystemExit(f"{ref}:app/index.html missing; refusing to build the site")
+    blobs = read_blobs_batch([sha for sha, _ in files])
     written = 0
     for sha, rel in files:
-        content = git("cat-file", "blob", sha)
+        content = blobs[sha]
         if version and rel.endswith(STAMPED_SUFFIXES):
             text = stamp(content.decode("utf-8"), version)
             content = text.encode("utf-8")

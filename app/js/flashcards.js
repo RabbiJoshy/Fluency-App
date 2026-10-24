@@ -8635,7 +8635,7 @@ function renderCardWikipediaBadge(card) {
                     const memberCells = displayMemberEntries.map((entry, rowIdx) => {
                         const memberIdx = entry.representative;
                         const mm = card.meanings[memberIdx];
-                        const isMemberSelected = !groupSelected && entry.memberIndices.includes(currentMeaningIndex);
+                        const isMemberSelected = groupSelected || entry.memberIndices.includes(currentMeaningIndex);
                         const cellBg = isMemberSelected
                             ? 'rgba(var(--sense-match-rgb), 0.2)'
                             : 'rgba(255, 255, 255, 0.03)';

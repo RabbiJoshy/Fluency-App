@@ -634,16 +634,12 @@
                                         <span class="visually-hidden" id="smartSkipStateLabel">Off</span>
                                     </button>
                                 </div>
-                                <div id="assignmentFilters" class="assignment-filters" hidden>
-                                    <label><input type="checkbox" id="excludeSingleSenseToggle"> Exclude single-sense words</label>
-                                    <label>Assignments
-                                        <select id="assignmentSourceSelect" aria-label="Assignment source">
-                                            <option value="all">All</option>
-                                            <option value="deepseek">DeepSeek</option>
-                                            <option value="jev">Jev</option>
-                                            <option value="original">No overlay</option>
-                                        </select>
-                                    </label>
+                                <div id="assignmentFilters" class="assignment-filters-slot" hidden>
+                                    <button type="button" id="openAdminFiltersModalBtn" class="home-admin-filters-btn" aria-haspopup="dialog" aria-expanded="false" title="Admin deck filters">
+                                        <svg class="home-admin-filters-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                                        <span>Admin Filters</span>
+                                        <span id="adminFiltersBadge" class="admin-filters-badge" hidden></span>
+                                    </button>
                                 </div>
                             </div>
                             <div id="learnActionSlot" class="home-action-slot"></div>
@@ -1407,6 +1403,70 @@
             <div class="admin-update-modal-body" id="adminUpdateModalBody"></div>
             <div class="admin-update-modal-footer">
                 <button type="button" class="admin-update-dismiss-btn" id="dismissAdminUpdateBtn">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Deck Filters Modal -->
+    <div id="adminDeckFiltersModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="adminDeckFiltersTitle">
+        <div class="modal-content admin-deck-filters-sheet">
+            <div class="admin-deck-filters-header">
+                <div>
+                    <h3 id="adminDeckFiltersTitle" class="admin-deck-filters-title">Admin Deck Filters</h3>
+                    <p class="admin-deck-filters-subtitle">Filter cards before deck creation. Progress &amp; assignments stay intact.</p>
+                </div>
+                <button type="button" class="modal-close" id="closeAdminDeckFiltersModal" aria-label="Close">&#10005;</button>
+            </div>
+            <div class="admin-deck-filters-body">
+                <!-- 1. Single Sense Filter -->
+                <div class="admin-filter-group">
+                    <label class="admin-filter-toggle-label">
+                        <input type="checkbox" id="excludeSingleSenseToggle">
+                        <span><strong>Exclude single-sense words</strong> (require multi-meaning dictionary menu)</span>
+                    </label>
+                </div>
+
+                <!-- 2. Assignment Source -->
+                <div class="admin-filter-group">
+                    <label for="assignmentSourceSelect" class="admin-filter-label">Assignment Source</label>
+                    <select id="assignmentSourceSelect" class="admin-filter-select">
+                        <option value="all">All sources</option>
+                        <option value="deepseek">DeepSeek (accepted corrections)</option>
+                        <option value="jev">Jev (sidecar)</option>
+                        <option value="original">No overlay (original WSD)</option>
+                    </select>
+                </div>
+
+                <!-- 3. Jev / WSD Confidence & Gaps -->
+                <div class="admin-filter-group">
+                    <label for="assignmentConfidenceSelect" class="admin-filter-label">Jev Confidence &amp; Gaps</label>
+                    <select id="assignmentConfidenceSelect" class="admin-filter-select">
+                        <option value="all">All confidence levels</option>
+                        <option value="lowest">Lowest confidence (&lt; 0.2)</option>
+                        <option value="marginal">Marginal close-calls (&lt; 0.3)</option>
+                        <option value="close">Moderate (&lt; 0.5)</option>
+                        <option value="unresolved">Unresolved gaps (missing sense / ambiguous / disagree)</option>
+                        <option value="high">High confidence (≥ 0.8)</option>
+                    </select>
+                </div>
+
+                <!-- 4. Part of Speech Filter -->
+                <div class="admin-filter-group">
+                    <label for="assignmentPosSelect" class="admin-filter-label">Part of Speech</label>
+                    <select id="assignmentPosSelect" class="admin-filter-select">
+                        <option value="all">All parts of speech</option>
+                        <option value="verb">Verbs</option>
+                        <option value="noun">Nouns</option>
+                        <option value="adj">Adjectives</option>
+                        <option value="adv">Adverbs</option>
+                        <option value="function">Function words (prep, pron, conj, det, article)</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="admin-deck-filters-footer">
+                <button type="button" class="admin-filter-reset-btn" id="resetAdminDeckFiltersBtn">Reset filters</button>
+                <button type="button" class="admin-update-dismiss-btn" id="applyAdminDeckFiltersBtn">Done</button>
             </div>
         </div>
     </div>

@@ -4,7 +4,7 @@ VENV_PYTHON := $(VENV)/bin/python
 RUN_PYTHON := $(if $(wildcard $(VENV_PYTHON)),$(VENV_PYTHON),$(PYTHON))
 FLUENCY_WORKSPACE ?= /Users/joshuathomasamar/PycharmProjects/Fluency-Workspace
 
-.PHONY: bootstrap test pilot dev stage promote deploy sync clean-venv
+.PHONY: bootstrap test pilot dev stage stage-fast promote deploy sync clean-venv
 
 bootstrap:
 	$(PYTHON) -m venv $(VENV)
@@ -23,6 +23,10 @@ dev:
 # Publish current changes to Staging (https://fluency-staging.pages.dev) for review
 stage:
 	python3 scripts/deploy_staging.py
+
+# Fast staging publish for UI tweaks (skips 30s unit test discovery suite)
+stage-fast:
+	python3 scripts/deploy_staging.py --skip-tests
 
 # Deliberately promote the reviewed staging version to production (https://rabbijoshy.github.io/Fluency-App/)
 promote:
