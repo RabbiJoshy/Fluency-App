@@ -256,9 +256,8 @@ class UiRefinementTests(unittest.TestCase):
 
         # Highlight styles in CSS
         self.assertIn('.pos-section-head.is-pos-selected', style_css)
-        self.assertIn('.meaning-row.is-sentence-source', style_css)
-        self.assertIn('.group-card-varying-cell.is-sentence-source', style_css)
         self.assertIn('.pos-collapsible .pos-section-chevron:hover', style_css)
         self.assertIn(':not(.is-group-selected):has(.is-active-subsense)', style_css)
+        self.assertIn('.meaning-row-group:not(.has-hoisted-shared-cell):not(.is-group-selected) .sense-cue-group > .group-card-varying-cell.is-active-subsense', style_css)
 
 
