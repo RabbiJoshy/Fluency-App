@@ -26970,7 +26970,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .meanings-scroll.inline-sense-rows .pos-section-head:not(:has(> :is(.sense-prominence-badge, .sense-pin-btn, .pct-column, .known-sense-tag))) > .pos-section-chevron,
 .meanings-scroll.inline-sense-rows .pos-collapsible.is-open.rows-carry-meters > .pos-section-head:not(:has(> :is(.sense-pin-btn, .pct-column, .known-sense-tag))) > .pos-section-chevron { margin-left: auto; }
-.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-context-cell :is(.meaning-context-cell, .meaning-context-cell *):not(.sense-inline-info, .sense-inline-info *, #_) {
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-context-cell :is(.meaning-context-cell, .meaning-context-cell *):not(.sense-inline-info, .sense-inline-info *, .lone-shared-inline.is-gloss, #_) {
     font-weight: 400 !important;
     color: var(--text-secondary) !important;
 }
@@ -27462,3 +27462,16 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .merged-forms-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font: 400 15px/1.5 var(--font-reading); text-align: center; }
 .merged-forms-list .is-displayed { font-weight: 700; }
 @media (pointer: coarse) { .merged-forms-trigger { min-height: 44px; } }
+
+/* A lone grouped row's shared words, written into each sub-sense when every
+   one fits on a line ("man · adult male"); the word-type row is then bare. */
+.lone-shared-inline { display: none; }
+.pos-collapsible.shared-inline .lone-shared-inline { display: inline; }
+.pos-collapsible.shared-inline .pos-section-head .pos-section-shared { display: none; }
+/* The gloss reads bold and the context muted, as on any other row; the
+   cell's own lead-in dot would sit before the gloss, so it goes. */
+.pos-collapsible.shared-inline .lone-shared-inline.is-gloss:not(#_) { font-weight: 700 !important; color: var(--text-primary) !important; }
+.pos-collapsible.shared-inline .lone-shared-inline.is-gloss::after { content: '·'; margin: 0 6px; font-weight: 400; color: var(--text-secondary); }
+.pos-collapsible.shared-inline .lone-shared-inline.is-context:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; }
+.pos-collapsible.shared-inline .meaning-context-cell:has(> .lone-shared-inline.is-gloss)::before { content: none !important; }
+.pos-collapsible.shared-inline .lone-shared-inline.is-context::before { content: '·'; margin: 0 6px; }

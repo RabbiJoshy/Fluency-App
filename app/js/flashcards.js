@@ -740,12 +740,28 @@ function senseSummaryText(value) {
         .trim();
 }
 
+// Folded word types read as one list: every translation starts where the
+// one after the widest word-type label starts, so the eye runs straight down.
+function alignPosSectionSummaries(root) {
+    root?.querySelectorAll('.meanings-scroll').forEach(scroll => {
+        const summaries = [...scroll.querySelectorAll('.pos-collapsible:not(.is-open) > .pos-section-head > .pos-section-summary')];
+        summaries.forEach(el => { el.style.marginLeft = ''; });
+        if (summaries.length < 2) return;
+        const starts = summaries.map(el => el.offsetLeft);
+        const column = Math.max(...starts);
+        summaries.forEach((el, i) => {
+            if (column > starts[i]) el.style.marginLeft = `${column - starts[i]}px`;
+        });
+    });
+}
+
 // A collapsed (POS, headword) row is a useful sense overview, not merely an
 // expand control. Show every short sense that genuinely fits in the available
 // width and collapse only the measured overflow behind +N. This deliberately
 // uses rendered width rather than a fixed item/character limit, so compact
 // glosses such as "to go · to leave" are not reduced to "to go +1".
 function fitPosSectionSummaries(root) {
+    alignPosSectionSummaries(root);
     root?.querySelectorAll('.pos-section-summary').forEach(summary => {
         const senses = Array.from(summary.querySelectorAll('.pos-summary-sense'));
         const more = summary.querySelector('.pos-pill-more');
@@ -1326,6 +1342,42 @@ function fitSharedContextInline(root) {
     });
 }
 
+// A word type drawn as one grouped row sends its shared words up to the
+// word-type row (hombre: "man" over "adult male" and "human species"). When
+// every sub-sense fits on one line with them, they go into each row instead
+// ("man · adult male"), leaving the word-type row bare, so each row reads on
+// its own. Past four sub-senses the repetition shows, and a row that would
+// wrap keeps the shared words above.
+function fitLoneSharedInline(root) {
+    root?.querySelectorAll('.pos-collapsible.has-hoisted-shared').forEach(section => {
+        const group = section.querySelector(':scope > .meaning-pos-rows > .meaning-row-group.has-hoisted-shared-cell');
+        const shared = section.querySelector(':scope > .pos-section-head .pos-section-shared');
+        if (!group || !shared) return;
+        const cells = [...group.querySelectorAll('.group-card-varying-cell')];
+        if (cells.length < 2 || cells.length > 4) return;
+        const hostOf = cell => cell.querySelector('.meaning-context-cell, .row-adaptive-text') || cell;
+        cells.forEach(cell => {
+            if (cell.querySelector('.lone-shared-inline')) return;
+            const host = hostOf(cell);
+            [...shared.children].forEach(piece => {
+                const isGloss = piece.classList.contains('pos-shared-gloss');
+                const span = document.createElement('span');
+                span.className = `lone-shared-inline ${isGloss ? 'is-gloss' : 'is-context'}`;
+                span.textContent = piece.textContent;
+                if (isGloss) host.prepend(span);
+                else host.append(span);
+            });
+        });
+        section.classList.add('shared-inline');
+        const wraps = cells.some(cell => {
+            const range = document.createRange();
+            range.selectNodeContents(hostOf(cell));
+            return new Set([...range.getClientRects()].map(rect => Math.round(rect.top / 4))).size > 1;
+        });
+        if (wraps) section.classList.remove('shared-inline');
+    });
+}
+
 // The shared words take the rest of the word type's line; when they would
 // wrap there, they move to a line of their own under it instead.
 function fitHoistedShared(root) {
@@ -1488,10 +1540,11 @@ function inlineSenseRows(root, card) {
     inlineRowFlags(scroll);
     fitHoistedShared(root);
     fitSharedContextInline(root);
+    fitLoneSharedInline(root);
     fitInlineRows(root);
     // Measured again once the card is laid out and its font has loaded: a
     // first pass on a card still opening can see every line as wrapped.
-    const refit = () => { fitHoistedShared(root); fitSharedContextInline(root); fitInlineRows(root); };
+    const refit = () => { fitHoistedShared(root); fitSharedContextInline(root); fitLoneSharedInline(root); fitInlineRows(root); };
     requestAnimationFrame(refit);
     document.fonts?.ready?.then(refit);
 }
@@ -1554,6 +1607,7 @@ function fitSenseRowLayouts(root) {
     fitRowInformationButtons(root);
     fitHoistedShared(root);
     fitSharedContextInline(root);
+    fitLoneSharedInline(root);
     fitInlineRows(root);
 }
 
@@ -5062,6 +5116,7 @@ function toggleBackPosSection(key) {
     // Once the learner expresses a preference, preserve it. The automatic
     // "open everything if it fits" pass is only a first-presentation default.
     card._backSectionsManuallySet = true;
+    card._backSectionChosen = true;
     if (card._expandedPos.has(real)) card._expandedPos.delete(real);
     else card._expandedPos.add(real);
     updateCard();
@@ -5102,6 +5157,7 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
     const meaning = card?.meanings?.[meaningIndex];
     if (!card || !meaning) return;
     const real = String(key).replace(/~~/g, '\u0000');
+    card._backSectionChosen = true;
 
     // If the click is directly on or inside the chevron, toggle accordion collapse
     if (event?.target?.closest?.('.pos-section-chevron')) {
@@ -9048,13 +9104,18 @@ function renderCardWikipediaBadge(card) {
                 }
             }
         });
-        // A card opens with only the word type in use expanded; the others
-        // show as their word-type row (translation beside the pill). Choosing
-        // a row or a word type changes which one is open, so the card looks
-        // the same on opening as after you tap, and a heading you tap
-        // overrides it.
-        if (!card._backSectionsManuallySet) {
-            card._expandedPos = new Set(activeLemmaPosKey ? [activeLemmaPosKey] : []);
+        // A card with several word types opens with all of them folded to
+        // their translations, so no one meaning and its contexts reads as the
+        // answer before the rest are seen. A card with one word type opens
+        // it: there is nothing to choose between. Once the learner taps a
+        // word type or a row, the word type in use is the open one, and a
+        // heading they fold or unfold by hand overrides that. Picking
+        // meanings to see again needs every row in reach, so all open then.
+        if (card._pinningMode) {
+            scrollSections.forEach((_, key) => card._expandedPos.add(key));
+        } else if (!card._backSectionsManuallySet) {
+            const openActive = activeLemmaPosKey && (card._backSectionChosen || scrollSections.size < 2);
+            card._expandedPos = new Set(openActive ? [activeLemmaPosKey] : []);
         }
         // Emit the scroll region first, then the pinned tray underneath
         // (MWE/CLITIC rows that stay visible when the user scrolls).
@@ -10278,6 +10339,7 @@ function selectPartOfSpeech(event, meaningIndex, pos) {
     // accumulates.
     card._expandedPos = new Set([lemmaPosGroupKeyForMeaning(card.meanings[meaningIndex])]);
     card._backSectionsManuallySet = true;
+    card._backSectionChosen = true;
     updateCard();
 }
 

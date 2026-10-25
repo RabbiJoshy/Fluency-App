@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-25T23:16:00+00:00",
+      "date": "2026-10-25 23:16 GMT",
+      "agent": "Claude",
+      "summary": "Card back: word types open folded, translations line up, and short shared glosses go into each row.",
+      "detail": [
+        "A card with several word types opens with all of them folded to their translations; tapping one opens it. A card with one word type opens as before.",
+        "Folded translations start at the same place on every word-type row, so they read down one column.",
+        "When a word type's sub-senses share a gloss and each fits on one line, every row reads 'gloss · context' (hombre: 'man · adult male') and the word-type row is bare; otherwise the gloss stays above.",
+        "See again still opens every word type so any meaning can be pinned."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T22:12:00+00:00",
       "date": "2026-10-25 22:12 GMT",
       "agent": "Claude",
@@ -364,17 +377,6 @@
         "Desktop Music screen: the card shrinks slightly instead of cutting off the last meaning row.",
         "About: 'Tap the Spotify button and the line plays…'; footnote no longer claims a built-in French playlist.",
         "Tutorial: the 'dictionary form' note is skipped on cards that are their own dictionary form."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:27:45+01:00",
-      "date": "2026-10-22 01:27 BST",
-      "agent": "Claude",
-      "summary": "Phones: no red outline on the open section; the folded one is a plain line",
-      "detail": [
-        "The open Learn or Practise section is the only card, with an ordinary border (no red outline; none for new users either).",
-        "The folded section is one line, e.g. 'Practise · 12 waiting ›' or 'Learn · Level 1 · Words 1–100 ›', with no card around it."
       ],
       "commit": "pending"
     }

@@ -398,12 +398,16 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn('compact-example-counter-label', flashcards)
 
-    def test_cards_open_only_the_active_word_type(self) -> None:
+    def test_cards_open_with_word_types_folded(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8") + (APP_ROOT / "js" / "prominence-badge.js").read_text(encoding="utf-8")
         self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT_PHONE = 6", flashcards)
         self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT_DESKTOP = 8", flashcards)
-        # Only the word type in use opens; the rest show as their word-type row.
-        self.assertIn("card._expandedPos = new Set(activeLemmaPosKey ? [activeLemmaPosKey] : [])", flashcards)
+        # Several word types open folded to their translations; a card with
+        # one opens it, and after a tap the word type in use is the open one.
+        self.assertIn("const openActive = activeLemmaPosKey && (card._backSectionChosen || scrollSections.size < 2);", flashcards)
+        self.assertIn("card._expandedPos = new Set(openActive ? [activeLemmaPosKey] : []);", flashcards)
+        self.assertIn("function alignPosSectionSummaries(root)", flashcards)
+        self.assertIn("function fitLoneSharedInline(root)", flashcards)
         self.assertNotIn("renderedSectionRowCount", flashcards)
         self.assertIn("roomForInlineDetails", flashcards)
         self.assertIn("function learnerGroupingGloss(card, meaning)", flashcards)
