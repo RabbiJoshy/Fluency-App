@@ -2988,7 +2988,7 @@
         /* See again: while choosing, only the word and its rows stay. Everything
            else fades where it stands, so nothing moves, and one line of
            instructions takes the tiles' place. */
-        .card-back:has(.pin-mode-hint:not(.is-notice)) #backContent > :not(.back-header, .meanings-scroll),
+        .card-back:has(.pin-mode-hint:not(.is-notice)) .card-details > :not(.back-header, .meanings-scroll, .links-section),
         .card-back:has(.pin-mode-hint) .links-section > :not(.pin-mode-hint) {
             opacity: 0;
             pointer-events: none;

@@ -1180,6 +1180,7 @@ function closeDemoSheet() {
     const stage = document.getElementById('cardTutorialStage');
     if (!stage) return;
     stage.querySelectorAll('.sense-pin-btn[data-demo-pin]').forEach(el => el.remove());
+    stage.querySelectorAll('.pin-mode-hint').forEach(el => el.remove());
     stage.querySelectorAll('.meaning-row .sense-prominence-badge').forEach(el => { el.hidden = false; });
     const trigger = stage.querySelector('.knowledge-overview-trigger');
     if (trigger) {
@@ -1304,6 +1305,8 @@ function openDemoSheet(kind) {
     const card = currentCard();
     if (!replica || !card) return;
     closeLookupDemo();
+    const pinnedBefore = [...replica.querySelectorAll('.sense-pin-btn[data-demo-pin].is-pinned')]
+        .map(btn => btn.dataset.demoPin);
     closeDemoSheet();
     if (kind === 'rare') {
         replica.insertAdjacentHTML('beforeend', rareSheetHTML(card));
@@ -1319,10 +1322,45 @@ function openDemoSheet(kind) {
     replica.querySelectorAll('.meaning-row').forEach((row, i) => {
         const badge = row.querySelector('.sense-prominence-badge');
         if (badge) badge.hidden = true;
-        row.insertAdjacentHTML('beforeend', demoPinBtnHTML(i, false));
+        row.insertAdjacentHTML('beforeend', demoPinBtnHTML(i, pinnedBefore.includes(String(i))));
     });
+    replica.querySelector('.links-section')?.insertAdjacentHTML('beforeend',
+        '<div class="pin-mode-hint" role="status">Tap the pin on a meaning to see it again in Practise.</div>');
     updateDemoFlagCount();
     positionRing();
+}
+
+function demoPinModeOpen() {
+    return Boolean(document.querySelector('#cardTutorialStage .pin-mode-hint:not(.is-notice)'));
+}
+
+// One pin ends the step, as on the card: unpinned rows get their badges back,
+// and a pin brings up the next-step line where the tiles are.
+function endDemoPinMode(notice = '') {
+    const stage = document.getElementById('cardTutorialStage');
+    if (!stage) return;
+    stage.querySelectorAll('.sense-pin-btn[data-demo-pin]:not(.is-pinned)').forEach(btn => {
+        const badge = btn.closest('.meaning-row')?.querySelector('.sense-prominence-badge');
+        if (badge) badge.hidden = false;
+        btn.remove();
+    });
+    stage.querySelectorAll('.pin-mode-hint').forEach(el => el.remove());
+    const trigger = stage.querySelector('.knowledge-overview-trigger');
+    trigger?.classList.remove('is-active');
+    trigger?.setAttribute('aria-pressed', 'false');
+    if (notice) {
+        stage.querySelector('.card-replica .links-section')?.insertAdjacentHTML('beforeend',
+            `<div class="pin-mode-hint is-notice" role="status">${notice}</div>`);
+        later(3500, () => stage.querySelectorAll('.pin-mode-hint.is-notice').forEach(el => el.remove()));
+    }
+    positionRing();
+}
+
+function toggleDemoPin(pin) {
+    const pinned = !pin.classList.contains('is-pinned');
+    setDemoPinState(pin, pinned);
+    updateDemoFlagCount();
+    if (demoPinModeOpen()) endDemoPinMode(pinned ? 'Swipe right if you know the rest.' : '');
 }
 
 // Pin the second meaning, the way a learner marks one to practice.
@@ -1346,8 +1384,7 @@ function tickReviewRow() {
     const pin = document.querySelector('#cardTutorialStage .sense-pin-btn[data-demo-pin="1"]')
         || document.querySelector('#cardTutorialStage .sense-pin-btn[data-demo-pin="0"]');
     if (!pin) return;
-    setDemoPinState(pin, true);
-    updateDemoFlagCount();
+    toggleDemoPin(pin);
 }
 
 function openLookupDemo({ arm = false } = {}) {
@@ -1466,14 +1503,24 @@ function onStageClick(event) {
     const pin = target.closest('.sense-pin-btn[data-demo-pin]');
     if (pin) {
         event.stopPropagation();
-        setDemoPinState(pin, !pin.classList.contains('is-pinned'));
-        updateDemoFlagCount();
+        toggleDemoPin(pin);
+        return;
+    }
+    // While choosing, a tap off the word's rows cancels, as on the card.
+    if (demoPinModeOpen() && target.closest('.card-replica')
+        && !target.closest('.meanings-scroll, .knowledge-overview-trigger')) {
+        event.stopPropagation();
+        endDemoPinMode();
+        return;
+    }
+    if (target.closest('.pin-mode-hint.is-notice')) {
+        target.closest('.pin-mode-hint').remove();
         return;
     }
     if (target.closest('.tutorial-demo-sheet')) return;
     if (target.closest('.ref-rare-uses-btn')) { openDemoSheet('rare'); return; }
     if (target.closest('.knowledge-overview-trigger')) {
-        if (stage.querySelector('.sense-pin-btn[data-demo-pin]')) closeDemoSheet();
+        if (demoPinModeOpen()) endDemoPinMode();
         else openDemoSheet('review');
         return;
     }

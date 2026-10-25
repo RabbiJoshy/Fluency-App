@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-25T22:12:00+00:00",
+      "date": "2026-10-25 22:12 GMT",
+      "agent": "Claude",
+      "summary": "Tutorial: the See again step now shows the real pin flow.",
+      "detail": [
+        "On the tutorial card, tapping See again fades everything but the word and its meanings and shows the same instruction as the app.",
+        "Pinning a meaning brings the card back with 'Swipe right if you know the rest.'; earlier pins are kept when the step reopens.",
+        "Tapping elsewhere on the tutorial card cancels, as on a real card."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T20:10:00+00:00",
       "date": "2026-10-25 20:10 GMT",
       "agent": "Claude",
@@ -365,18 +377,6 @@
         "#/about never reads your account or starts sign-in, so it looks the same signed in or not.",
         "Removed 'Back to the app (name)', the 'Back to app' pill, and the × that showed for visitors even though it did nothing.",
         "The 'Welcome back / Continue session' box is no longer built on the About page."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:00:55+01:00",
-      "date": "2026-10-22 01:00 BST",
-      "agent": "Claude",
-      "summary": "Practise is hidden until you've answered your first card; Learn alone before that",
-      "detail": [
-        "Never answered anything: the home screen is Learn only (no Practise column on desktop, no folded Practise row on phones). Removes the 'Nothing to practise yet' text.",
-        "After any answer, Practise appears and stays, showing 'All caught up' and the next due time when empty.",
-        "Desktop (1360px+): Learn alone is centred at 980px instead of stretched across the screen."
       ],
       "commit": "pending"
     }
