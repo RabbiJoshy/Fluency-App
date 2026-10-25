@@ -27036,7 +27036,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .pos-collapsible:has(.meaning-row:is(.selected, .is-current-sense)) > .pos-section-head:not(#_) {
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.09), rgba(var(--sense-match-rgb), 0.09)), color-mix(in srgb, var(--text-primary) 5%, transparent) !important;
 }
-.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group):is(.selected, .is-current-sense):not(.has-hoisted-shared-cell, #_) {
+.meanings-scroll.inline-sense-rows .pos-collapsible > .pos-section-head.is-pos-selected:not(#_) {
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.24), rgba(var(--sense-match-rgb), 0.24)), color-mix(in srgb, var(--text-primary) 5%, transparent) !important;
+    border-left: 4px solid rgb(var(--sense-match-rgb)) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group, .meaning-row-cycle):is(.selected, .is-current-sense):not(.has-hoisted-shared-cell, #_) {
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.24), rgba(var(--sense-match-rgb), 0.24)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
 }
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell:is(.selected, .is-current-sense) .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_),
@@ -27173,7 +27177,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     text-align: center !important;
     justify-content: center !important;
 }
-.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.is-current-sense:not(.has-hoisted-shared-cell):has(.is-active-subsense):not(#_) {
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.is-current-sense:not(.has-hoisted-shared-cell):not(.is-group-selected):has(.is-active-subsense):not(#_) {
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.07), rgba(var(--sense-match-rgb), 0.07)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
     border-left-color: color-mix(in srgb, var(--text-primary) 16%, transparent);
 }
