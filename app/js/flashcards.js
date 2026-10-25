@@ -740,18 +740,36 @@ function senseSummaryText(value) {
         .trim();
 }
 
-// Folded word types read as one list: every translation starts where the
-// one after the widest word-type label starts, so the eye runs straight down.
+// A folded word type's translations sit on the row's centre line, the line
+// the word and the open rows use, so a card with every word type folded
+// reads as one list down the middle. A pill with its lemma ("Verb from ser")
+// can leave too little room for that: the translation then sits as near the
+// centre as it can, and when it would not fit beside the pill at all it takes
+// a centred line of its own under it, as shared words do on an open row.
 function alignPosSectionSummaries(root) {
-    root?.querySelectorAll('.meanings-scroll').forEach(scroll => {
-        const summaries = [...scroll.querySelectorAll('.pos-collapsible:not(.is-open) > .pos-section-head > .pos-section-summary')];
-        summaries.forEach(el => { el.style.marginLeft = ''; });
-        if (summaries.length < 2) return;
-        const starts = summaries.map(el => el.offsetLeft);
-        const column = Math.max(...starts);
-        summaries.forEach((el, i) => {
-            if (column > starts[i]) el.style.marginLeft = `${column - starts[i]}px`;
-        });
+    root?.querySelectorAll('.pos-collapsible:not(.is-open) > .pos-section-head > .pos-section-summary').forEach(summary => {
+        const head = summary.parentElement;
+        head.classList.remove('has-summary-below');
+        summary.style.paddingLeft = '';
+        if (summary.clientWidth <= 0) return;
+        summary.querySelectorAll('.pos-summary-sense').forEach(sense => { sense.hidden = false; });
+        const more = summary.querySelector('.pos-pill-more');
+        if (more) more.hidden = true;
+        // The summary stretches to fill the row, so its own width says
+        // nothing; its words are the visible children. Layout widths, not the
+        // on-screen box: a card still flipping is rotated in 3D, which
+        // distorts getBoundingClientRect.
+        const width = [...summary.children].filter(el => !el.hidden)
+            .reduce((sum, el) => sum + el.offsetWidth, 0);
+        const room = summary.clientWidth;
+        if (width > room + 1) {
+            head.classList.add('has-summary-below');
+            return;
+        }
+        const left = summary.offsetParent === head ? summary.offsetLeft : summary.offsetLeft - head.offsetLeft;
+        const ideal = head.offsetWidth / 2 - width / 2 - left;
+        const pad = Math.max(0, Math.min(ideal, room - width));
+        if (pad > 0) summary.style.paddingLeft = `${Math.round(pad)}px`;
     });
 }
 
@@ -1344,29 +1362,28 @@ function fitSharedContextInline(root) {
 
 // A word type drawn as one grouped row sends its shared words up to the
 // word-type row (hombre: "man" over "adult male" and "human species"). When
-// every sub-sense fits on one line with them, they go into each row instead
-// ("man · adult male"), leaving the word-type row bare, so each row reads on
-// its own. Past four sub-senses the repetition shows, and a row that would
-// wrap keeps the shared words above.
+// they are a translation and every sub-sense fits on one line with it, it
+// goes into each row instead ("man · adult male"), leaving the word-type row
+// bare, so each row reads on its own. A shared context stays up, in brackets:
+// the translations already tell así's rows apart, and "in a certain way" four
+// times over adds nothing. Past four sub-senses the repetition shows, and a
+// row that would wrap keeps the translation above.
 function fitLoneSharedInline(root) {
     root?.querySelectorAll('.pos-collapsible.has-hoisted-shared').forEach(section => {
         const group = section.querySelector(':scope > .meaning-pos-rows > .meaning-row-group.has-hoisted-shared-cell');
         const shared = section.querySelector(':scope > .pos-section-head .pos-section-shared');
         if (!group || !shared) return;
+        if ([...shared.children].some(piece => !piece.classList.contains('pos-shared-gloss'))) return;
         const cells = [...group.querySelectorAll('.group-card-varying-cell')];
         if (cells.length < 2 || cells.length > 4) return;
         const hostOf = cell => cell.querySelector('.meaning-context-cell, .row-adaptive-text') || cell;
         cells.forEach(cell => {
             if (cell.querySelector('.lone-shared-inline')) return;
             const host = hostOf(cell);
-            [...shared.children].forEach(piece => {
-                const isGloss = piece.classList.contains('pos-shared-gloss');
-                const span = document.createElement('span');
-                span.className = `lone-shared-inline ${isGloss ? 'is-gloss' : 'is-context'}`;
-                span.textContent = piece.textContent;
-                if (isGloss) host.prepend(span);
-                else host.append(span);
-            });
+            const span = document.createElement('span');
+            span.className = 'lone-shared-inline is-gloss';
+            span.textContent = shared.textContent;
+            host.prepend(span);
         });
         section.classList.add('shared-inline');
         const wraps = cells.some(cell => {

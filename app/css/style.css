@@ -27463,8 +27463,8 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .merged-forms-list .is-displayed { font-weight: 700; }
 @media (pointer: coarse) { .merged-forms-trigger { min-height: 44px; } }
 
-/* A lone grouped row's shared words, written into each sub-sense when every
-   one fits on a line ("man · adult male"); the word-type row is then bare. */
+/* A lone grouped row's shared translation, written into each sub-sense when
+   every one fits on a line ("man · adult male"); the word-type row is then bare. */
 .lone-shared-inline { display: none; }
 .pos-collapsible.shared-inline .lone-shared-inline { display: inline; }
 .pos-collapsible.shared-inline .pos-section-head .pos-section-shared { display: none; }
@@ -27472,6 +27472,14 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
    cell's own lead-in dot would sit before the gloss, so it goes. */
 .pos-collapsible.shared-inline .lone-shared-inline.is-gloss:not(#_) { font-weight: 700 !important; color: var(--text-primary) !important; }
 .pos-collapsible.shared-inline .lone-shared-inline.is-gloss::after { content: '·'; margin: 0 6px; font-weight: 400; color: var(--text-secondary); }
-.pos-collapsible.shared-inline .lone-shared-inline.is-context:not(#_) { font-weight: 400 !important; color: var(--text-secondary) !important; }
 .pos-collapsible.shared-inline .meaning-context-cell:has(> .lone-shared-inline.is-gloss)::before { content: none !important; }
-.pos-collapsible.shared-inline .lone-shared-inline.is-context::before { content: '·'; margin: 0 6px; }
+/* A folded word type whose translation cannot sit beside its pill and lemma
+   gives it a centred line of its own, as shared words do on an open row. */
+.pos-collapsible .pos-section-head.has-summary-below { flex-wrap: wrap; }
+.pos-collapsible .pos-section-head.has-summary-below .pos-section-summary {
+    order: 9;
+    flex: 1 0 100%;
+    justify-content: center;
+    padding: 0 0 3px;
+}
+.pos-collapsible .pos-section-head.has-summary-below .pos-section-summary + * { margin-left: auto; }

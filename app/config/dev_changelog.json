@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-25T23:52:00+00:00",
+      "date": "2026-10-25 23:52 GMT",
+      "agent": "Claude",
+      "summary": "Folded word types: translations sit on the row's centre line; shared contexts stay in the word-type row.",
+      "detail": [
+        "A folded word type's translation is centred on the whole row, not on the space after the pill, so a fully folded card reads as one line down the middle (claro: clear / sure · of course / of course).",
+        "When a pill with its lemma leaves too little room ('Verb from acordarse'), the translation takes a centred line of its own under it, as shared words already do on an open row; the meter stays at the right.",
+        "A shared context goes back to the word-type row in brackets (así: 'Adverb (in a certain way)' over like this / like that / this way / that way); only a shared translation is written into each row ('man · adult male')."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T23:16:00+00:00",
       "date": "2026-10-25 23:16 GMT",
       "agent": "Claude",
@@ -361,22 +373,6 @@
         "Sidebar, Settings and Help open about.html in a new tab. Old links (#/about, #/walkthrough, ?about=) forward to it before the app loads.",
         "The meaning-frequency bars moved into their own small module so the About page draws them without the study engine.",
         "Service worker: About is cached under its own address and never as the app's offline page."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:31:56+01:00",
-      "date": "2026-10-22 01:31 BST",
-      "agent": "Claude",
-      "summary": "Walkthrough labels point at the right parts; demo card front matches the real card; About text up to date",
-      "detail": [
-        "'Every meaning, separated' frames the meaning rows, not just the heading; on desktop its line no longer crosses 'How often each is used'.",
-        "Demo card front: capitalised 'Noun' pill, and no dictionary form when it equals the word (as on the real card). Label now 'Noun, verb and so on, each with its own colour.'",
-        "Phone: a tag with no room above its element goes below it instead of covering it (the 'What kind of word' pill).",
-        "Spotify button gets its ring back (it was clipped).",
-        "Desktop Music screen: the card shrinks slightly instead of cutting off the last meaning row.",
-        "About: 'Tap the Spotify button and the line plays…'; footnote no longer claims a built-in French playlist.",
-        "Tutorial: the 'dictionary form' note is skipped on cards that are their own dictionary form."
       ],
       "commit": "pending"
     }
