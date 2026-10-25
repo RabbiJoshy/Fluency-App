@@ -135,15 +135,15 @@ export async function openConjugationsScreen(targetVerb = null, targetView = nul
 
     try {
         if (!window.ConjugationProgress) {
-            await loadScript('conjugation/progress.js?v=24494fd1');
+            await loadScript('conjugation/progress.js?v=a14997ef');
         }
         if (!window.conjugationBoot) {
-            await loadScript('conjugation/app.js?v=24494fd1');
+            await loadScript('conjugation/app.js?v=a14997ef');
         }
         if (!window._conjugationDecks || !window._conjugationDecks[drillCode]) {
-            await loadScript(`conjugation/data/${drillCode}.js?v=24494fd1`);
+            await loadScript(`conjugation/data/${drillCode}.js?v=a14997ef`);
             try {
-                await loadScript(`conjugation/data/${drillCode}-not-verbs.js?v=24494fd1`);
+                await loadScript(`conjugation/data/${drillCode}-not-verbs.js?v=a14997ef`);
             } catch (_) {
                 // not-verbs is optional
             }

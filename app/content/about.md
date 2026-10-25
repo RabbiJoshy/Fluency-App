@@ -2,25 +2,25 @@
 
 Most vocabulary apps teach by theme (colours, at the airport, in the kitchen) and drill you on lists of words you have no reason to care about yet. You learn *la cuchara* (spoon) and forget it before you ever hear or use it in real life.
 
-This app takes the opposite approach: it starts with the words that occur most often, and teaches them through things you already watch and listen to. Learn from everyday speech, from a playlist of songs you love, or from the series you are watching right now.
+This app takes the opposite approach: it starts with the words that occur most often, and teaches them through things you already watch and listen to. Learn from everyday speech, from an artist or playlist you choose, or from the series you are watching right now.
 
-Choose a series and its dialogue becomes your vocabulary. In *La Casa de Papel*, *rehenes* (hostages) is the 120th most common word, where everyday Spanish puts it around 4,300th; *atraco* (heist) is 193rd, against nearly 9,000th. Music works the same way: on Bad Bunny's *YHLQMDLG*, *perreo* (reggaeton dancing) is among the 70 most common words, though it is rare in everyday Spanish.
+In everyday speech, common essentials like *mañana* (tomorrow) come first. But choose a series and its dialogue becomes your vocabulary: in *La Casa de Papel*, *rehenes* (hostages) is the 120th most common word, where everyday Spanish puts it around 4,300th; *atraco* (heist) is 193rd, against nearly 9,000th. Music works the same way: on Bad Bunny's *YHLQMDLG*, *perreo* (reggaeton dancing) is among the 70 most common words, though it is rare in everyday Spanish.
 
 ### Speech
 
 ![Speech: a flashcard flipping and cycling through senses](demo://normal)
 
-Learn Spanish as people actually speak it. Every word is ranked by frequency across millions of lines of film and TV dialogue, so everyday essentials like *mañana* (tomorrow) come first.
+Learn Spanish as people actually speak it, ranked across millions of lines of film and TV dialogue.
 
-Each card gives you clean, natural dialogue suited to your level, with multiple meanings split into their own clear context.
+Each card gives you clean, natural examples suited to your level, with multiple meanings split into their own clear context.
 
 ### Music
 
 ![Lyrics: a lyric card with the translated line](demo://artist)
 
-Bring any Spotify playlist or pick an artist to learn the exact words their songs use, most frequent first.
+Upload a playlist or select an artist to learn the exact words from their music, most frequent first.
 
-Each card pairs a real translated line with a Spotify button that jumps straight to that moment in the track, showing how each word is actually used in the music.
+Each card pairs a real translated line with a Spotify button that jumps straight to that moment in the track.
 
 ## What makes it different
 

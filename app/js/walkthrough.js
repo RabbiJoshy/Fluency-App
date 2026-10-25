@@ -23,7 +23,7 @@
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
     measureReplicaCard, fitReplicaCard,
-} from './card-replica.js?v=24494fd1';
+} from './card-replica.js?v=a14997ef';
 
 // ---------------------------------------------------------------------------
 // Content
@@ -57,6 +57,9 @@ const BACK_LABELS = [
     { face: 'back', anchor: '.example-word-highlight', pinAnchor: '.breakdown-trigger',
       title: 'A real sentence for it',
       text: 'Tap another meaning and the example changes with it.' },
+    { face: 'back', anchor: '.ref-lookup-btn', pinTitle: 'Dictionary',
+      title: 'Dictionary lookup',
+      text: 'One tap opens the full entry on SpanishDict or Reverso.' },
 ];
 
 const LYRICS_LABELS = [
@@ -494,7 +497,7 @@ function pinLabel(layer, label, rel, cardLeft, cardRight) {
     layer.appendChild(tag);
     const w = tag.offsetWidth;
     const h = tag.offsetHeight;
-    const alignRight = label.pin === 'below' || label.anchor.includes('prominence');
+    const alignRight = label.pin === 'below' || label.anchor.includes('prominence') || label.anchor.includes('lookup');
     let left = alignRight ? rel.right - w : rel.left;
     left = Math.max(cardLeft + 6, Math.min(left, cardRight - w - 6));
     // Above the element by default. `below` is for an element with text

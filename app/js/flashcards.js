@@ -1,42 +1,42 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=24494fd1';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=24494fd1';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=24494fd1';
-import { songCreditHTML } from './song-credit.js?v=24494fd1';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=24494fd1';
+import './state.js?v=a14997ef';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=a14997ef';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=a14997ef';
+import { songCreditHTML } from './song-credit.js?v=a14997ef';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=a14997ef';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=24494fd1';
+import { fitSenseRowText } from './card-row-layout.js?v=a14997ef';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=24494fd1';
-import { goToRoute, routeCodeFor } from './routes.js?v=24494fd1';
-import { memoryTipTileHTML } from './memory-tips.js?v=24494fd1';
+import './speech.js?v=a14997ef';
+import { goToRoute, routeCodeFor } from './routes.js?v=a14997ef';
+import { memoryTipTileHTML } from './memory-tips.js?v=a14997ef';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=24494fd1';
-import './side-dock.js?v=24494fd1';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=24494fd1';
+} from './function-word-card.js?v=a14997ef';
+import './side-dock.js?v=a14997ef';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=a14997ef';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=24494fd1';
+} from './example-personalisation.js?v=a14997ef';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=24494fd1';
+} from './spanishdict-usage.js?v=a14997ef';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=24494fd1';
+} from './reverse-cues.js?v=a14997ef';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -71,8 +71,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=24494fd1';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=24494fd1';
+} from './card-metadata-pills.js?v=a14997ef';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=a14997ef';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1222,6 +1222,7 @@ function hoistSharedRowText(scroll, card) {
         return [m?.translation, m?.meaning, swapped ? m?.context : ''].map(fold);
     }).filter(Boolean));
     scroll.querySelectorAll('.pos-collapsible').forEach(section => {
+        if (!section.classList.contains('is-open')) return;
         const rows = [...section.querySelectorAll(':scope > .meaning-pos-rows > .meaning-row')];
         const head = section.querySelector(':scope > .pos-section-head');
         if (!head || head.querySelector('.pos-section-shared')) return;
@@ -5114,9 +5115,14 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
 
     // If the section is closed, open it and focus on meaningIndex
     if (!isSectionOpen) {
-        card._expandedPos = card._expandedPos || new Set();
-        card._expandedPos.add(real);
-        card._backSectionsManuallySet = true;
+        if (inSection) {
+            card._expandedPos = card._expandedPos || new Set();
+            card._expandedPos.add(real);
+            card._backSectionsManuallySet = true;
+        } else {
+            card._expandedPos = new Set([real]);
+            card._backSectionsManuallySet = false;
+        }
         currentGroupSelection = null;
         currentMeaningIndex = meaningIndex;
         const selectedPos = meaning.pos === 'SENSE_CYCLE'
@@ -5132,6 +5138,8 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
 
     // If already open, but we were focused in a different section, switch to this section
     if (!inSection) {
+        card._expandedPos = new Set([real]);
+        card._backSectionsManuallySet = false;
         currentGroupSelection = null;
         currentMeaningIndex = meaningIndex;
         const selectedPos = meaning.pos === 'SENSE_CYCLE'
@@ -5161,16 +5169,6 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
         _explicitMeaningSelectionKey = meaningSelectionKey(card, meaningIndex);
         updateCard();
         return;
-    }
-
-    // A word-type row that carries the shared words of its lone group
-    // stands for that group: pressing it enters group selection for that group.
-    const section = event?.currentTarget?.closest?.('.meaning-pos-section');
-    const lone = section?.querySelector('.pos-section-shared')
-        ? section.querySelector('.meaning-row-group[data-anchor-idx]') : null;
-    if (lone && !currentGroupSelection) {
-        selectGroup(lone.dataset.axis, Number(lone.dataset.anchorIdx));
-        if (currentGroupSelection) return;
     }
 
     // Activate POS-wide selection across all meanings belonging to this POS
@@ -6939,19 +6937,29 @@ function updateCard({ announceHeadword = false } = {}) {
     // selection and fall back to per-meaning rendering.
     if (currentGroupSelection) {
         const sel = currentGroupSelection;
-        const inRange = card.isMultiMeaning && sel.members && sel.members.length >= 2
-            && sel.members.every(i => i >= 0
-                && i < card.meanings.length
-                && card.meanings[i].pos === sel.pos
-                && (card.meanings[i].headword || '') === (sel.headword || ''));
+        const minMembers = sel.axis === 'pos' ? 1 : 2;
+        const inRange = card.isMultiMeaning && sel.members && sel.members.length >= minMembers
+            && sel.members.every(i => {
+                if (i < 0 || i >= card.meanings.length) return false;
+                const m = card.meanings[i];
+                if (!m) return false;
+                const mPos = m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || 'X') : m.pos;
+                return mPos === sel.pos && (m.headword || '') === (sel.headword || '');
+            });
         if (!inRange) {
             currentGroupSelection = null;
+        } else if (sel.axis === 'pos') {
+            const expectedPosKey = `${sel.pos}\u0000${sel.headword || ''}`;
+            if (sel.groupKey !== expectedPosKey) {
+                currentGroupSelection = null;
+            }
         } else {
             const a = card.meanings[sel.members[0]];
-            const expectedKey = sel.axis === 'translation'
-                ? (a.meaning || '')
+            const groupedKey = card._grouping?.groupKeyOf?.get(sel.members[0]);
+            const rawKey = sel.axis === 'translation'
+                ? (a.meaning || a.translation || '')
                 : (a.context || '');
-            if (expectedKey !== sel.groupKey) {
+            if (sel.groupKey !== groupedKey && sel.groupKey !== rawKey) {
                 currentGroupSelection = null;
             }
         }
@@ -6959,7 +6967,7 @@ function updateCard({ announceHeadword = false } = {}) {
 
     // Get the current meaning for multi-meaning cards
     const currentMeaning = card.isMultiMeaning ? card.meanings[currentMeaningIndex] : null;
-    if (currentMeaning) {
+    if (currentMeaning && !card._backSectionsManuallySet) {
         // The sentence belongs to one active lemma/POS group. Keeping only
         // that group's detail rows visible makes the relationship explicit.
         card._expandedPos = new Set([lemmaPosGroupKeyForMeaning(currentMeaning)]);
@@ -8439,9 +8447,15 @@ function renderCardWikipediaBadge(card) {
                 const cycleTail = (cyclePinned || isPinningMode)
                     ? sensePinButtonHTML([idx], cyclePinned, cycleEdge)
                     : (m.isKnownSense ? knownSenseTagHTML(cycleEdge, [idx]) : '');
+                const isCyclePosSelected = currentGroupSelection?.axis === 'pos'
+                    && currentGroupSelection.pos === sectionPos
+                    && (currentGroupSelection.headword || '') === (m.headword || '');
+                const isCycleActive = isSelected || isCyclePosSelected;
+                const cycleStateClasses = (isCycleActive ? ' is-current-sense' : '')
+                    + meaningTierClass((m.allSenses || [m]).map(sense => card.meanings.indexOf(sense)));
                 target.push(`
-                <div class="meaning-row meaning-row-cycle ${cycleTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${m.isKnownSense ? ' meaning-row-known' : ''}" style="position: relative; display: flex; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px; opacity: 0.75;" onclick="selectMeaning(${idx})">
-                    ${renderRowCheckSlot(isSelected)}
+                <div class="meaning-row meaning-row-cycle ${cycleTextClass}${isCycleActive ? ' selected' : ''}${cycleStateClasses}${m.isKnownSense ? ' meaning-row-known' : ''}" style="position: relative; display: flex; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px; opacity: 0.75;" onclick="selectMeaning(${idx})">
+                    ${renderRowCheckSlot(isCycleActive)}
                     <span class="row-adaptive-text sense-cycle-notes" aria-label="Possible meanings" style="flex: 1; font-weight: 600; color: white; min-width: 0; text-align: center; line-height: 1.4; padding: 4px 8px;"><span class="sense-cycle-label" style="display: block; font-size: 11px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary);">Possible meanings</span>${hasCycleProgress ? `<span class="sense-cycle-choices">${cycleChoices}</span>` : `<span class="sense-cycle-short">${escapeCardText(joinedDisplay)}</span>`}${informationButton}</span>
                     ${cycleTail}
                 </div>
@@ -8567,6 +8581,7 @@ function renderCardWikipediaBadge(card) {
                     const groupIsCurrent = groupSelected || anyMemberSelected;
                     recordSectionMeanings(target, orderedMembers.map(i => card.meanings[i]));
                     const groupStateClasses = (groupIsCurrent ? ' is-current-sense' : '')
+                        + (groupSelected ? ' is-group-selected' : '')
                         + meaningTierClass(orderedMembers);
                     const cardBg = 'rgba(var(--sense-match-rgb), 0.08)';
                     // The outer row is the complete-family selection marker.
@@ -10376,22 +10391,21 @@ function selectGroup(axis, anchorIdx) {
     const card = flashcards[currentIndex];
     if (!card || !card.meanings || !card.meanings[anchorIdx]) return;
     const anchor = card.meanings[anchorIdx];
-    let groupKey;
-    let members;
-    if (axis === 'translation') {
-        groupKey = anchor.meaning || '';
-    } else {
-        groupKey = anchor.context || '';
-    }
+    const groupedKey = card._grouping?.groupKeyOf?.get(anchorIdx);
+    let groupKey = groupedKey !== undefined
+        ? groupedKey
+        : (axis === 'translation'
+            ? (anchor.meaning || anchor.translation || '')
+            : (anchor.context || ''));
     const effectiveKey = `${anchor.pos}\u0000${anchor.headword || ''}\u0000${axis}\u0000${groupKey}`;
-    members = card._grouping?.groupMembers?.get(effectiveKey);
+    let members = card._grouping?.groupMembers?.get(effectiveKey);
     if (!members) {
         const field = axis === 'translation' ? 'meaning' : 'context';
         members = card.meanings
             .map((mm, i) => ({ mm, i }))
             .filter(({ mm }) => mm.pos === anchor.pos
                 && (mm.headword || '') === (anchor.headword || '')
-                && (mm[field] || '') === groupKey)
+                && ((mm[field] || (axis === 'translation' ? mm.translation : '') || '') === groupKey))
             .map(({ i }) => i);
     }
     if (members.length < 2) return;
@@ -11686,8 +11700,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '24494fd1';
-const MODALS_ASSET_VERSION = '24494fd1';
+const ASSET_VERSION = 'a14997ef';
+const MODALS_ASSET_VERSION = 'a14997ef';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

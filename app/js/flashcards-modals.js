@@ -6,7 +6,7 @@
 // directly. State (flashcards, currentIndex, currentUser, etc.) and helpers
 // like flagWord and getPosColorClass come through the globalThis proxy
 // installed by state.js / auth.js / flashcards.js.
-import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=24494fd1';
+import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=a14997ef';
 
 // ---------------------------------------------------------------------------
 // Part-of-speech popup
@@ -333,6 +333,10 @@ let currentBreakdownResults = [];
 let currentBreakdownSentence = { target: '', english: '' };
 let breakdownRenderId = 0;
 
+function getBreakdownSentence() {
+    return window.currentBreakdownSentence || currentBreakdownSentence || { target: '', english: '' };
+}
+
 function escapeBreakdownText(value) {
     return String(value ?? '').replace(/[&<>"']/g, c => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -371,6 +375,125 @@ function breakdownCardFor(result) {
     return entry._breakdownCard;
 }
 
+// Disambiguate composite slash pronouns (he/she, he / she, he/she/it, his/her)
+// and 1sg/3sg alternations (I was / he/she was) against the reference English
+// translation, overt target-language pronouns, or an explicit clause subject.
+function disambiguatePronounsInGloss(gloss, targetSentence, englishSentence, explicitSubject = null) {
+    if (!gloss || typeof gloss !== 'string') return gloss;
+
+    const eng = String(englishSentence || '').toLowerCase();
+    const target = String(targetSentence || '').toLowerCase();
+
+    // Check overt subject pronouns in target sentence
+    const targetHasI = /(^|[^\p{L}])(yo|eu|je|j'|io|ich|ik)([^\p{L}]|$)/iu.test(target);
+    const targetHasShe = /(^|[^\p{L}])(ella|ela|elle|lei|sie|zij|ze)([^\p{L}]|$)/iu.test(target);
+    const targetHasHe = /(^|[^\p{L}])(él|ele|il|lui|er|hij)([^\p{L}]|$)/iu.test(target);
+
+    // Check pronouns in English reference sentence
+    const engHasI = /\b(i|my|mine|me)\b/i.test(eng);
+    const engHasShe = /\b(she|her|hers)\b/i.test(eng);
+    const engHasHe = /\b(he|him|his)\b/i.test(eng);
+    const engHasIt = /\b(it|its)\b/i.test(eng);
+
+    let chosenSubject = null;
+    let chosenPossessive = null;
+    let chosenObject = null;
+    let chosenReflexive = null;
+
+    if (explicitSubject) {
+        if (explicitSubject === 'she') {
+            chosenSubject = 'she';
+            chosenPossessive = 'her';
+            chosenObject = 'her';
+            chosenReflexive = 'herself';
+        } else if (explicitSubject === 'he') {
+            chosenSubject = 'he';
+            chosenPossessive = 'his';
+            chosenObject = 'him';
+            chosenReflexive = 'himself';
+        } else if (explicitSubject === 'it') {
+            chosenSubject = 'it';
+            chosenPossessive = 'its';
+            chosenObject = 'it';
+            chosenReflexive = 'itself';
+        } else if (explicitSubject === 'i') {
+            chosenSubject = 'i';
+            chosenPossessive = 'my';
+            chosenObject = 'me';
+            chosenReflexive = 'myself';
+        }
+    } else {
+        if (targetHasI && !targetHasShe && !targetHasHe) {
+            chosenSubject = 'i';
+            chosenPossessive = 'my';
+            chosenObject = 'me';
+            chosenReflexive = 'myself';
+        } else if (targetHasShe && !targetHasHe && !targetHasI) {
+            chosenSubject = 'she';
+            chosenPossessive = 'her';
+            chosenObject = 'her';
+            chosenReflexive = 'herself';
+        } else if (targetHasHe && !targetHasShe && !targetHasI) {
+            chosenSubject = 'he';
+            chosenPossessive = 'his';
+            chosenObject = 'him';
+            chosenReflexive = 'himself';
+        } else if (engHasI && !engHasShe && !engHasHe) {
+            chosenSubject = 'i';
+            chosenPossessive = 'my';
+            chosenObject = 'me';
+            chosenReflexive = 'myself';
+        } else if (engHasShe && !engHasHe && !engHasI) {
+            chosenSubject = 'she';
+            chosenPossessive = 'her';
+            chosenObject = 'her';
+            chosenReflexive = 'herself';
+        } else if (engHasHe && !engHasShe && !engHasI) {
+            chosenSubject = 'he';
+            chosenPossessive = 'his';
+            chosenObject = 'him';
+            chosenReflexive = 'himself';
+        } else if (engHasIt && !engHasShe && !engHasHe && !engHasI) {
+            chosenSubject = 'it';
+            chosenPossessive = 'its';
+            chosenObject = 'it';
+            chosenReflexive = 'itself';
+        }
+    }
+
+    let result = gloss;
+
+    // Handle 1sg vs 3sg alternation (e.g. "I was / he/she was" or "I take / he/she takes")
+    if (chosenSubject && result.includes('/')) {
+        const altMatch = result.match(/^(.+?)\s*\/\s*(.+)$/);
+        if (altMatch) {
+            const left = altMatch[1].trim();
+            const right = altMatch[2].trim();
+            const leftHas1 = /\bI\b/.test(left) || /\b(my|myself)\b/i.test(left);
+            const rightHas3 = /\b(he|she|it|he\/she)\b/i.test(right);
+            const leftHas3 = /\b(he|she|it|he\/she)\b/i.test(left);
+            const rightHas1 = /\bI\b/.test(right) || /\b(my|myself)\b/i.test(right);
+
+            if (leftHas1 && rightHas3 && !leftHas3 && !rightHas1) {
+                result = chosenSubject === 'i' ? left : right;
+            } else if (leftHas3 && rightHas1 && !leftHas1 && !rightHas3) {
+                result = chosenSubject === 'i' ? right : left;
+            }
+        }
+    }
+
+    if (!chosenSubject || chosenSubject === 'i') return result;
+
+    return result
+        .replace(/\bHe\s*\/\s*she(\s*\/\s*it)?\b/g, chosenSubject.charAt(0).toUpperCase() + chosenSubject.slice(1))
+        .replace(/\bhe\s*\/\s*she(\s*\/\s*it)?\b/gi, chosenSubject)
+        .replace(/\bHis\s*\/\s*her\b/g, chosenPossessive.charAt(0).toUpperCase() + chosenPossessive.slice(1))
+        .replace(/\bhis\s*\/\s*her\b/gi, chosenPossessive)
+        .replace(/\bHim\s*\/\s*her\b/g, chosenObject.charAt(0).toUpperCase() + chosenObject.slice(1))
+        .replace(/\bhim\s*\/\s*her\b/gi, chosenObject)
+        .replace(/\bhimself\s*\/\s*herself\b/gi, chosenReflexive);
+}
+
 // The English for one meaning as the sense rows show it: inflected for this
 // surface (es -> "is", tengo -> "I have") where the conjugation data supports
 // it, the dictionary gloss otherwise.
@@ -382,7 +505,8 @@ function breakdownMeaningGloss(result, meaning) {
         const cue = window.getProductionEnglishCue(card, meaning, {
             activeExample: { target: currentBreakdownSentence.target, english: currentBreakdownSentence.english },
         });
-        return String(cue || '').trim() || plain;
+        const raw = String(cue || '').trim() || plain;
+        return disambiguatePronounsInGloss(raw, currentBreakdownSentence.target, currentBreakdownSentence.english);
     } catch (_) {
         return plain;
     }
@@ -396,9 +520,16 @@ function breakdownGloss(result) {
     const meanings = card?.meanings || [];
     const isCurrent = result.source === 'deck' && result.deckIndex === currentIndex;
     const meaning = (isCurrent && meanings[currentMeaningIndex]) || meanings[0];
-    if (!meaning) return { gloss: result.entry.translation || '', pos: '' };
+    if (!meaning) {
+        const raw = result.entry.translation || '';
+        return {
+            gloss: disambiguatePronounsInGloss(raw, currentBreakdownSentence.target, currentBreakdownSentence.english),
+            pos: '',
+        };
+    }
+    const raw = breakdownMeaningGloss(result, meaning) || result.entry.translation || '';
     return {
-        gloss: breakdownMeaningGloss(result, meaning) || result.entry.translation || '',
+        gloss: disambiguatePronounsInGloss(raw, currentBreakdownSentence.target, currentBreakdownSentence.english),
         pos: meaning.pos || '',
     };
 }
@@ -439,18 +570,82 @@ function breakdownWords(text) {
     return String(text || '').toLocaleLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
 }
 
+// High-frequency English stopwords that should not confirm an MWE on their own
+// unless part of a multiword translation phrase.
+const MWE_MATCH_STOPWORDS = new Set([
+    'a', 'an', 'the', 'of', 'in', 'on', 'at', 'to', 'for', 'by', 'with',
+    'from', 'as', 'is', 'it', 'its', 'and', 'or', 'so', 'be', 'are', 'was', 'were',
+    'that', 'this', 'there', 'here', 'have', 'had', 'has', 'do', 'did', 'does',
+    'not', 'no', 'but', 'if', 'all', 'any', 'my', 'your', 'his', 'her', 'our', 'their',
+    'up', 'out', 'off', 'me', 'us', 'you', 'him', 'them', 'can', 'will', 'just', 'like',
+    'get', 'got', 'make',
+]);
+
+function candidateMweGlosses(evidence, meaning) {
+    const rawList = [];
+    if (evidence?.translation) rawList.push(evidence.translation);
+    if (Array.isArray(evidence?.additional_translations)) rawList.push(...evidence.additional_translations);
+    if (meaning?.pos === 'PHRASE') {
+        if (meaning?.meaning) rawList.push(meaning.meaning);
+        if (meaning?.translation) rawList.push(meaning.translation);
+    }
+
+    const candidates = [];
+    const seen = new Set();
+    for (const raw of rawList) {
+        if (!raw || typeof raw !== 'string') continue;
+        const parts = raw.split(/[,;/]/);
+        for (let part of parts) {
+            part = part.replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim();
+            if (!part) continue;
+            const variants = [part];
+            if (/^to\s+\p{L}/iu.test(part)) {
+                variants.push(part.replace(/^to\s+/i, '').trim());
+            }
+            for (const v of variants) {
+                const lower = v.toLowerCase();
+                if (!lower || seen.has(lower)) continue;
+                if (!lower.includes(' ') && (MWE_MATCH_STOPWORDS.has(lower) || lower.length < 3)) continue;
+                seen.add(lower);
+                candidates.push({ text: v, lower });
+            }
+        }
+    }
+    candidates.sort((a, b) => b.lower.length - a.lower.length);
+    return candidates;
+}
+
+function escapeBreakdownRegExp(string) {
+    return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function matchMweTranslation(evidence, meaning, englishSentence) {
+    if (!englishSentence || typeof englishSentence !== 'string') return null;
+    const candidates = candidateMweGlosses(evidence, meaning);
+    for (const cand of candidates) {
+        const regex = new RegExp(`(^|[^\\p{L}\\p{N}])${escapeBreakdownRegExp(cand.lower)}(?![\\p{L}\\p{N}])`, 'iu');
+        if (regex.test(englishSentence)) {
+            return cand;
+        }
+    }
+    return null;
+}
+
 // Fixed expressions reach the app as PHRASE meanings on their anchor word's
-// card, each carrying the expression and how it may vary. Only the ones the
-// expression inventory marks frozen and deterministic are merged: they read
-// the same wherever they occur, so the merge cannot be wrong. Head-inflecting
-// ones (tener que -> tengo que) would need the conjugation tables.
+// card, each carrying the expression and how it may vary. They are merged if
+// marked frozen and deterministic, OR if confirmed by the reference English
+// translation (e.g. "de nuevo" matching "again" in the human translation).
 function findFixedExpressions(results) {
     const words = results.map(r => (r.token.clean || '').toLocaleLowerCase());
     const found = [];
+    const englishSentence = getBreakdownSentence().english || '';
     results.forEach((result, anchorIdx) => {
-        (result.entry?.meanings || []).forEach((meaning, meaningIndex) => {
+        const meanings = result.entry?.meanings || [];
+        meanings.forEach((meaning, meaningIndex) => {
             for (const evidence of meaning.metadata?.multiword_evidence || []) {
-                if (evidence.flexibility !== 'frozen' || evidence.wsd_routing !== 'deterministic_bypass') continue;
+                const isDeterministic = evidence.flexibility === 'frozen' && evidence.wsd_routing === 'deterministic_bypass';
+                const matchedTranslation = matchMweTranslation(evidence, meaning, englishSentence);
+                if (!isDeterministic && !matchedTranslation) continue;
                 const parts = breakdownWords(evidence.expression);
                 if (parts.length < 2) continue;
                 for (let start = 0; start + parts.length <= words.length; start++) {
@@ -461,21 +656,162 @@ function findFixedExpressions(results) {
                     const broken = results.slice(start, end - 1).some(r => r.token.punctAfter)
                         || results.slice(start + 1, end).some(r => r.token.punctBefore);
                     if (broken) continue;
+                    const gloss = (matchedTranslation && matchedTranslation.text)
+                        || evidence.translation
+                        || meaning.meaning
+                        || meaning.translation
+                        || '';
                     found.push({
-                        start, end, anchorIdx, meaningIndex,
-                        gloss: evidence.translation || meaning.meaning || meaning.translation || '',
+                        start, end, anchorIdx, meaningIndex, gloss,
+                        isConfirmed: Boolean(matchedTranslation),
                     });
                 }
             }
         });
     });
-    found.sort((a, b) => (b.end - b.start) - (a.end - a.start) || a.start - b.start);
+    found.sort((a, b) =>
+        (b.end - b.start) - (a.end - a.start)
+        || (b.isConfirmed ? 1 : 0) - (a.isConfirmed ? 1 : 0)
+        || a.start - b.start
+    );
     const taken = new Set();
     return found.filter(group => {
         for (let i = group.start; i < group.end; i++) if (taken.has(i)) return false;
         for (let i = group.start; i < group.end; i++) taken.add(i);
         return true;
     });
+}
+
+const DEDUPLICABLE_PREFIXES = new Set([
+    'to', 'i', 'you', 'he', 'she', 'it', 'we', 'they',
+    'of', 'for', 'the', 'a', 'an', 'in', 'on', 'at',
+]);
+
+const CLAUSE_BOUNDARY_PUNCT = /[,;.!?:—–()]/;
+const CLAUSE_BOUNDARY_WORDS = new Set([
+    'que', 'porque', 'pero', 'mas', 'sino', 'y', 'e', 'o', 'u', 'si',
+    'quando', 'cuando', 'mientras', 'enquanto', 'mais', 'ou', 'porém',
+    'che', 'perché', 'ma', 'se', 'mentre',
+    'parce', 'quand',
+    'dat', 'omdat', 'maar', 'en', 'of', 'als', 'wanneer',
+    'dass', 'weil', 'aber', 'und', 'oder', 'wenn',
+]);
+
+const TARGET_SUBJECT_PRONOUNS = {
+    'yo': 'i', 'eu': 'i', 'je': 'i', "j'": 'i', 'io': 'i', 'ich': 'i', 'ik': 'i',
+    'tú': 'you', 'tu': 'you', 'usted': 'you', 'você': 'you', 'vous': 'you', 'du': 'you', 'jij': 'you',
+    'él': 'he', 'ele': 'he', 'il': 'he', 'lui': 'he', 'er': 'he', 'hij': 'he',
+    'ella': 'she', 'ela': 'she', 'elle': 'she', 'sie': 'she', 'zij': 'she',
+    'nosotros': 'we', 'nosotras': 'we', 'nós': 'we', 'nous': 'we', 'noi': 'we', 'wir': 'we', 'wij': 'we',
+    'ellos': 'they', 'ellas': 'they', 'eles': 'they', 'elas': 'they', 'ils': 'they', 'elles': 'they', 'loro': 'they',
+    'vosotros': 'you', 'vosotras': 'you', 'ustedes': 'you', 'vocês': 'you', 'ihr': 'you', 'jullie': 'you',
+};
+
+function deduplicateBreakdownGlosses(rows) {
+    if (!Array.isArray(rows) || rows.length === 0) return rows;
+
+    let currentClauseSubject = null;
+
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const prevRow = i > 0 ? rows[i - 1] : null;
+
+        // Reset clause subject on punctuation boundary before this row or after previous row
+        if (prevRow?.result?.token?.punctAfter && CLAUSE_BOUNDARY_PUNCT.test(prevRow.result.token.punctAfter)) {
+            currentClauseSubject = null;
+        }
+        if (row?.result?.token?.punctBefore && CLAUSE_BOUNDARY_PUNCT.test(row.result.token.punctBefore)) {
+            currentClauseSubject = null;
+        }
+
+        const rowCleanText = (row.text || '').toLowerCase().trim();
+
+        // Conjunctions / subordinators reset the clause subject
+        if (CLAUSE_BOUNDARY_WORDS.has(rowCleanText)) {
+            currentClauseSubject = null;
+            continue;
+        }
+
+        // If this row is an overt subject pronoun, record it for this clause
+        const overtPronoun = TARGET_SUBJECT_PRONOUNS[rowCleanText];
+        if (overtPronoun) {
+            currentClauseSubject = overtPronoun;
+            continue;
+        }
+
+        // Also check if the row's gloss itself is a standalone pronoun
+        const singleGlossWord = (row.gloss || '').toLowerCase().trim();
+        if (['i', 'you', 'he', 'she', 'it', 'we', 'they'].includes(singleGlossWord)) {
+            currentClauseSubject = singleGlossWord;
+            continue;
+        }
+
+        if (!row.gloss) continue;
+
+        // Disambiguate composite slash pronouns using the active clause subject if available
+        const sent = getBreakdownSentence();
+        let gloss = disambiguatePronounsInGloss(
+            row.gloss,
+            sent.target,
+            sent.english,
+            currentClauseSubject
+        );
+
+        // Check if the gloss has a leading word that can be deduplicated
+        const prefixMatch = gloss.match(/^([a-z]+)\s+(.+)$/i);
+        if (prefixMatch) {
+            const prefix = prefixMatch[1].toLowerCase();
+            const remainder = prefixMatch[2].trim();
+
+            if (DEDUPLICABLE_PREFIXES.has(prefix) && remainder.length > 0) {
+                let shouldStrip = false;
+
+                // 1. Preposition "to" preceding infinitive verbs (e.g. "a tratar" -> "to", "try")
+                if (prefix === 'to' && prevRow) {
+                    const prevText = (prevRow.text || '').toLowerCase().trim();
+                    const prevGloss = (prevRow.gloss || '').toLowerCase();
+                    if (
+                        prevText === 'a' || prevText === 'para' || prevText === 'à' || prevText === 'pour' ||
+                        prevText === 'per' || prevText === 'naar' || prevText === 'om' || prevText === 'zu' ||
+                        /\bto\b/i.test(prevGloss)
+                    ) {
+                        shouldStrip = true;
+                    }
+                }
+
+                // 2. Direct match with preceding word's gloss (e.g. "yo soy" -> "I", "am")
+                if (!shouldStrip && prevRow?.gloss) {
+                    const prevOptions = prevRow.gloss
+                        .split(/[,;/]/)
+                        .map(opt => opt.trim().toLowerCase())
+                        .filter(Boolean);
+                    if (prevOptions.some(opt => opt === prefix || opt.startsWith(`${prefix} `))) {
+                        shouldStrip = true;
+                    }
+                }
+
+                // 3. Clause subject pronoun (e.g. "ella no tiene" -> "she", "not", "has")
+                if (!shouldStrip && currentClauseSubject && prefix === currentClauseSubject) {
+                    shouldStrip = true;
+                }
+
+                if (shouldStrip) {
+                    // Strip the prefix cleanly from all comma/semicolon alternatives if they share it
+                    const parts = gloss.split(/([,;/]\s*)/);
+                    const strippedParts = parts.map((part, idx) => {
+                        if (idx % 2 === 1) return part; // delimiter
+                        const pMatch = part.match(new RegExp(`^${prefix}\\s+(.+)$`, 'i'));
+                        return pMatch && pMatch[1].trim().length > 0 ? pMatch[1].trim() : part;
+                    });
+                    gloss = strippedParts.join('');
+                }
+            }
+        }
+
+        row.gloss = gloss;
+    }
+
+    return rows;
 }
 
 function buildBreakdownRows(results) {
@@ -513,7 +849,7 @@ function buildBreakdownRows(results) {
             isCardWord: result.source === 'deck' && result.deckIndex === currentIndex,
         });
     }
-    return rows;
+    return deduplicateBreakdownGlosses(rows);
 }
 
 // The quick look: the word's meanings and one sentence, without leaving the
@@ -585,7 +921,9 @@ function openBreakdownRowCard(row) {
 }
 
 function saveBreakdownRow(row) {
-    const { gloss, pos } = breakdownGloss(row.result);
+    const fallback = row?.result ? breakdownGloss(row.result) : { gloss: '', pos: '' };
+    const gloss = row?.gloss || fallback.gloss || '';
+    const pos = row?.pos || fallback.pos || '';
     window.toggleSavedWord?.({
         surface: row.text,
         gloss,
@@ -764,6 +1102,7 @@ async function showLyricBreakdown(event) {
         target: sentence.target.replace(/<[^>]+>/g, ''),
         english: String(sentence.english || '').replace(/<[^>]+>/g, ''),
     };
+    window.currentBreakdownSentence = currentBreakdownSentence;
     currentBreakdownResults = tokenizeLyricLine(currentBreakdownSentence.target).map(t => resolveToken(t));
 
     const body = document.getElementById('lyricBreakdownBody');
@@ -2765,3 +3104,12 @@ window.peekHomograph = peekHomograph;
 window.showEndOfDeckOptions = showEndOfDeckOptions;
 window.hideDeckCompleteModal = hideDeckCompleteModal;
 window.restartAllCards = restartAllCards;
+
+window._breakdownInternals = {
+    disambiguatePronounsInGloss,
+    candidateMweGlosses,
+    matchMweTranslation,
+    deduplicateBreakdownGlosses,
+    findFixedExpressions,
+    buildBreakdownRows,
+};
