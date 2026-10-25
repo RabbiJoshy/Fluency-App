@@ -4020,7 +4020,7 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
     };
     if (references.every(reference => reference.relation === 'see')) {
         const links = references.map(reference => (
-            `<span class="sense-cross-reference-item"><span class="sense-cross-reference-prefix">Related</span>${link(reference)}</span>`
+            `<span class="sense-cross-reference-item"><span class="sense-cross-reference-prefix">See</span>${link(reference)}</span>`
         )).join('');
         return (resolvedGloss ? `<span class="sense-cross-reference-gloss">${escapeCardText(resolvedGloss)}</span>` : '')
             + `<span class="sense-cross-reference-related" aria-label="Related cards">${links}</span>`;
@@ -4028,7 +4028,8 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
     const labels = {
         indirect_object: 'Indirect form',
         after_prepositions: 'After prepositions',
-        see: 'Related',
+        // Wiktionary's own word for a pointer to another entry.
+        see: 'See',
     };
     const related = references.map(reference => (
         `<span class="sense-cross-reference-item"><span class="sense-cross-reference-prefix">${labels[reference.relation]}</span>${link(reference)}</span>`

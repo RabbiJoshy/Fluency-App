@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T00:34:00+00:00",
+      "date": "2026-10-26 00:34 GMT",
+      "agent": "Claude",
+      "summary": "Cross-references say 'See' again, not 'Related'.",
+      "detail": [
+        "A meaning that points to another entry reads 'See matar-se', Wiktionary's own wording, instead of 'Related matar-se'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T00:21:00+00:00",
       "date": "2026-10-26 00:21 GMT",
       "agent": "Claude",
@@ -359,17 +369,6 @@
         "About ignores the app's 'Bigger' text setting. It zoomed the page 15%, so the walkthrough's lines missed their elements and cards ran past the top and bottom banners.",
         "Mini demo cards: rows read tick, word, bars again (a card-back rule had squashed them into odd columns).",
         "Mini demo cards: 400px instead of 480px, content centred, so the back no longer has a big empty block under the example."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T08:43:08+01:00",
-      "date": "2026-10-22 08:43 BST",
-      "agent": "Claude",
-      "summary": "Grammar frames on sense rows match function-word patterns: bold connector word, coloured pill for the slot (começar: + a [inf] / por [inf])",
-      "detail": [
-        "The connecting word (a, por, em, que) is bold; a slot that names a word type (inf, ger, pp, subj = verb colour; adj) is a pill in that colour, as in the function-word cards.",
-        "Frame text and the tap-for-full-wording note are unchanged; the grey phrase pill on the row in use (contar que) is unchanged."
       ],
       "commit": "pending"
     }
