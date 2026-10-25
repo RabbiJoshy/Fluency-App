@@ -52,10 +52,20 @@ export async function buildSeriesLiveDeck({
     sourceId = 'subtitle-upload',
     coverage = null
 } = {}) {
-    const normalizeLines = values => (values || []).map(value => ({
-        text: typeof value === 'string' ? value.trim() : String(value?.spanish || value?.text || '').trim(),
-        english: typeof value === 'object' ? String(value?.english || '') : ''
-    })).filter(line => line.text);
+    const normalizeLines = values => (values || []).map(value => {
+        const text = typeof value === 'string' ? value.trim() : String(value?.spanish || value?.text || '').trim();
+        const translation = typeof value === 'object' && value?.translation?.spanish && value?.translation?.english
+            ? value.translation : null;
+        return {
+            text,
+            exampleText: translation ? String(translation.spanish) : text,
+            english: translation ? String(translation.english) : (typeof value === 'object' ? String(value?.english || '') : ''),
+            translationSource: translation?.source || '',
+            translationPolicy: translation?.policy || '',
+            start_ms: translation?.start_ms ?? value?.start_ms ?? null,
+            end_ms: translation?.end_ms ?? value?.end_ms ?? null
+        };
+    }).filter(line => line.text);
     const records = (Array.isArray(episodes) && episodes.length
         ? episodes : [{ episode, lines }]).map(ep => {
         const dialogueLines = normalizeLines(Array.isArray(ep.lines)

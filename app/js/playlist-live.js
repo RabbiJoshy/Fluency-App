@@ -13,7 +13,7 @@ const MAX_LINES_PER_SURFACE = 5;
 
 let _liveDeck = null;
 
-export const CASA_PRESET_REVISION = 'offline-30-episodes-v2-recognition';
+export const CASA_PRESET_REVISION = 'offline-30-episodes-v3-translations';
 
 export function validLiveDeck(deck) {
     return Boolean(deck && deck.language && deck.playlistId
@@ -285,10 +285,20 @@ async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, 
                     surfaces.set(token, entry);
                 }
                 entry.count += 1;
-                if (entry.lines.length < MAX_LINES_PER_SURFACE
-                    && !entry.lines.some(existing => existing.text === line)) {
-                    entry.lines.push({ text: line, english: dialogueLine.english || '', song: title, artist });
-                }
+                const example = {
+                    text: dialogueLine.exampleText || line,
+                    english: dialogueLine.english || '', song: title, artist,
+                    translationSource: dialogueLine.translationSource || '',
+                    translationPolicy: dialogueLine.translationPolicy || '',
+                    start_ms: dialogueLine.start_ms ?? null,
+                    end_ms: dialogueLine.end_ms ?? null
+                };
+                const existing = entry.lines.findIndex(item => item.text === example.text);
+                if (existing < 0) entry.lines.push(example);
+                else if (example.english && !entry.lines[existing].english) entry.lines[existing] = example;
+                // Count original cues above; full bilingual groups are examples only.
+                entry.lines.sort((a, b) => Number(Boolean(b.english)) - Number(Boolean(a.english)));
+                if (entry.lines.length > MAX_LINES_PER_SURFACE) entry.lines.length = MAX_LINES_PER_SURFACE;
             }
         }
     }
@@ -437,6 +447,7 @@ function lyricExample(line) {
         target: line.text,
         spanish: line.text,
         english: line.english || '',
+        complete_context: Boolean(line.translationPolicy && line.english),
         song: line.song || '',
         song_name: line.artist ? `${line.song} — ${line.artist}` : (line.song || ''),
         artist: line.artist || '',

@@ -48,7 +48,10 @@ class CasaSubtitleBuildTests(unittest.TestCase):
         self.assertEqual(deck["coverage"], dialogue["coverage"])
         self.assertFalse(deck["coverage"]["complete"])
         self.assertEqual(len(deck["coverage"]["missing"]), 11)
-        self.assertEqual(deck["coverage"]["exampleTranslations"], "unavailable")
+        self.assertEqual(deck["coverage"]["exampleTranslations"], "partial")
+        self.assertEqual(deck["coverage"]["translatedEpisodes"], 15)
+        self.assertGreater(deck["coverage"]["cardsWithTranslatedExamples"], 3500)
+        self.assertTrue(deck['surfaces']['profesor']['lines'][0].get('english'))
         self.assertEqual(deck["surfaces"]["profesor"]["count"], 299)
         self.assertEqual(deck["intake"]["mode"], "no-wsd")
         self.assertEqual(deck["intake"]["grouping"], "original-surface")
@@ -56,4 +59,43 @@ class CasaSubtitleBuildTests(unittest.TestCase):
         self.assertEqual(deck["intake"]["summary"]["additionalFrequencySurfaces"], 4233)
         self.assertEqual(deck["intake"]["summary"]["entityCandidates"], 13)
         self.assertEqual({e["song"][:3] for e in deck["surfaces"]["profesor"]["lines"]},
-                         {"S01", "S02", "S03", "S04"})
+                         {"S03", "S04"})
+
+    def test_translated_context_never_changes_occurrence_counts(self):
+        translation = {'spanish': 'El profesor. La casa.', 'english': 'The teacher. The house.',
+                       'start_ms': 1000, 'end_ms': 5000, 'source': 'checked-source',
+                       'policy': 'precision-timing-v1'}
+        lines = [{'spanish': 'Profesor.', 'start_ms': 0, 'end_ms': 500},
+                 {'spanish': 'El profesor.', 'start_ms': 1000, 'end_ms': 2000, 'translation': translation},
+                 {'spanish': 'La casa.', 'start_ms': 3000, 'end_ms': 5000, 'translation': translation}]
+        manifest = {'numbering': 'original', 'retrievedAt': '2026-10-25',
+                    'translationPolicy': 'precision-timing-v1'}
+        _, deck = casa.build([{'episode': 'S03E01', 'lines': lines}], {'profesor', 'casa'}, manifest)
+        self.assertEqual(deck['surfaces']['profesor']['count'], 2)
+        self.assertEqual(deck['surfaces']['casa']['count'], 1)
+        self.assertEqual(deck['tokenCount'], 5)
+        example = deck['surfaces']['profesor']['lines'][0]
+        self.assertEqual(example['text'], translation['spanish'])
+        self.assertEqual(example['english'], translation['english'])
+        self.assertEqual(example['start_ms'], 1000)
+        self.assertEqual(deck['coverage']['translatedGroups'], 1)
+
+    def test_bilingual_groups_match_full_source_span(self):
+        dialogue = json.loads((ROOT / 'app/data/series/casa-de-papel.json').read_text())
+        for episode in dialogue['episodes']:
+            by_start = {cue['start_ms']: i for i, cue in enumerate(episode['lines'])}
+            for cue in episode['lines']:
+                translation = cue.get('translation')
+                if not translation:
+                    continue
+                self.assertIn(episode['episode'][:3], {'S03', 'S04'})
+                start = by_start[translation['start_ms']]
+                group = []
+                for original in episode['lines'][start:]:
+                    if original['end_ms'] > translation['end_ms']:
+                        break
+                    group.append(original['spanish'])
+                self.assertEqual(' '.join(group), translation['spanish'])
+                self.assertTrue(translation['english'])
+                self.assertEqual(translation['policy'], 'precision-timing-v1')
+                self.assertNotIn('assigned', translation)

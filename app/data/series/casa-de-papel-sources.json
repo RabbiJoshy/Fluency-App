@@ -236,5 +236,207 @@
       "sha256": "d497df797ad430c4f5069daed00ed602dd3a9099a5e4b37cdc8082b082c434d8",
       "url": "https://subdl.com/s/info/0pMz9rda0N/money-heist"
     }
+  ],
+  "translationPolicy": "precision-timing-v1",
+  "translationSources": [
+    {
+      "episode": 1,
+      "page": "https://watchsomuch.tv/Subs/?e=1&l=en&mid=6468322&s=3",
+      "url": "https://a2.watchsomuch.tv/Subs/06468322-253269-S03E01-en.srt?title=La.casa.de.papel.S03E01.en.srt",
+      "file": "english-20261025/watch-S03E01-english.srt",
+      "sha256": "b2eb3ce48b766193c17b4bde07f658ec0b97576920e1892ba984712f01f72b3c",
+      "season": 3
+    },
+    {
+      "episode": 2,
+      "page": "https://watchsomuch.tv/Subs/?e=2&l=en&mid=6468322&s=3",
+      "url": "https://a2.watchsomuch.tv/Subs/06468322-253286-S03E02-en.srt?title=La.casa.de.papel.S03E02.en.srt",
+      "file": "english-20261025/watch-S03E02-english.srt",
+      "sha256": "5200d28248b1b75e57aa7ad5475c019ff971221d54e93396d7e7a1cd4e9bcab3",
+      "season": 3
+    },
+    {
+      "episode": 3,
+      "page": "https://watchsomuch.tv/Subs/?e=3&l=en&mid=6468322&s=3",
+      "url": "https://a2.watchsomuch.tv/Subs/06468322-253303-S03E03-en.srt?title=La.casa.de.papel.S03E03.en.srt",
+      "file": "english-20261025/watch-S03E03-english.srt",
+      "sha256": "c61d8332086d9906b9f70e8225190f32912a0159529aa802d80cade7e12c9d5f",
+      "season": 3
+    },
+    {
+      "episode": 4,
+      "page": "https://watchsomuch.tv/Subs/?e=4&l=en&mid=6468322&s=3",
+      "url": "https://a2.watchsomuch.tv/Subs/06468322-253320-S03E04-en.srt?title=La.casa.de.papel.S03E04.en.srt",
+      "file": "english-20261025/watch-S03E04-english.srt",
+      "sha256": "8a9f3bcb19f10a10c0a1a3d6d5525a7ef14169e081940dd69516d0425ddb00f2",
+      "season": 3
+    },
+    {
+      "episode": 5,
+      "page": "https://watchsomuch.tv/Subs/?e=5&l=en&mid=6468322&s=3",
+      "url": "https://a2.watchsomuch.tv/Subs/06468322-253337-S03E05-en.srt?title=La.casa.de.papel.S03E05.en.srt",
+      "file": "english-20261025/watch-S03E05-english.srt",
+      "sha256": "26e260bc11a9238fd1b61e77c0e9976a7709712dd1aed2a3d6501b0a941c6046",
+      "season": 3
+    },
+    {
+      "episode": 6,
+      "page": "https://watchsomuch.tv/Subs/?e=6&l=en&mid=6468322&s=3",
+      "url": "https://a2.watchsomuch.tv/Subs/06468322-253354-S03E06-en.srt?title=La.casa.de.papel.S03E06.en.srt",
+      "file": "english-20261025/watch-S03E06-english.srt",
+      "sha256": "2ad5496b11b544bcb9183024d79f5b230f09220f7f969baa60f7e28dcb112b99",
+      "season": 3
+    },
+    {
+      "episode": 7,
+      "page": "https://watchsomuch.tv/Subs/?e=7&l=en&mid=6468322&s=3",
+      "url": "https://a2.watchsomuch.tv/Subs/06468322-253371-S03E07-en.srt?title=La.casa.de.papel.S03E07.en.srt",
+      "file": "english-20261025/watch-S03E07-english.srt",
+      "sha256": "4f69b94ca5463a30d9117ccfbd5d86db9e6be736f6cfbe70fc62159a0301b05d",
+      "season": 3
+    },
+    {
+      "file": "english-20261025/subdl-s4-english-translated.zip",
+      "page": "https://subdl.com/subtitle/sd1300185/money-heist/fourth-season/english",
+      "url": "https://dl.subdl.com/subtitle/1578523-2207301.zip",
+      "sha256": "536a5c76f4ace1edfd2a5145878ca805b6d0e79ca5e5d378cc643f0be2ead36d",
+      "season": 4,
+      "episode": 1,
+      "member": "Money.Heist.S04E01.WEBRip.x264-ION10.srt"
+    },
+    {
+      "file": "english-20261025/subdl-s4-english-translated.zip",
+      "page": "https://subdl.com/subtitle/sd1300185/money-heist/fourth-season/english",
+      "url": "https://dl.subdl.com/subtitle/1578523-2207301.zip",
+      "sha256": "536a5c76f4ace1edfd2a5145878ca805b6d0e79ca5e5d378cc643f0be2ead36d",
+      "season": 4,
+      "episode": 2,
+      "member": "Money.Heist.S04E02.WEBRip.x264-ION10.srt"
+    },
+    {
+      "file": "english-20261025/subdl-s4-english-translated.zip",
+      "page": "https://subdl.com/subtitle/sd1300185/money-heist/fourth-season/english",
+      "url": "https://dl.subdl.com/subtitle/1578523-2207301.zip",
+      "sha256": "536a5c76f4ace1edfd2a5145878ca805b6d0e79ca5e5d378cc643f0be2ead36d",
+      "season": 4,
+      "episode": 3,
+      "member": "Money.Heist.S04E03.WEBRip.x264-ION10.srt"
+    },
+    {
+      "file": "english-20261025/subdl-s4-english-translated.zip",
+      "page": "https://subdl.com/subtitle/sd1300185/money-heist/fourth-season/english",
+      "url": "https://dl.subdl.com/subtitle/1578523-2207301.zip",
+      "sha256": "536a5c76f4ace1edfd2a5145878ca805b6d0e79ca5e5d378cc643f0be2ead36d",
+      "season": 4,
+      "episode": 4,
+      "member": "Money.Heist.S04E04.WEBRip.x264-ION10.srt"
+    },
+    {
+      "file": "english-20261025/subdl-s4-english-translated.zip",
+      "page": "https://subdl.com/subtitle/sd1300185/money-heist/fourth-season/english",
+      "url": "https://dl.subdl.com/subtitle/1578523-2207301.zip",
+      "sha256": "536a5c76f4ace1edfd2a5145878ca805b6d0e79ca5e5d378cc643f0be2ead36d",
+      "season": 4,
+      "episode": 5,
+      "member": "Money.Heist.S04E05.WEBRip.x264-ION10.srt"
+    },
+    {
+      "file": "english-20261025/subdl-s4-english-translated.zip",
+      "page": "https://subdl.com/subtitle/sd1300185/money-heist/fourth-season/english",
+      "url": "https://dl.subdl.com/subtitle/1578523-2207301.zip",
+      "sha256": "536a5c76f4ace1edfd2a5145878ca805b6d0e79ca5e5d378cc643f0be2ead36d",
+      "season": 4,
+      "episode": 6,
+      "member": "Money.Heist.S04E06.WEBRip.x264-ION10.srt"
+    },
+    {
+      "file": "english-20261025/subdl-s4-english-translated.zip",
+      "page": "https://subdl.com/subtitle/sd1300185/money-heist/fourth-season/english",
+      "url": "https://dl.subdl.com/subtitle/1578523-2207301.zip",
+      "sha256": "536a5c76f4ace1edfd2a5145878ca805b6d0e79ca5e5d378cc643f0be2ead36d",
+      "season": 4,
+      "episode": 7,
+      "member": "Money.Heist.S04E07.WEBRip.x264-ION10.srt"
+    },
+    {
+      "file": "english-20261025/subdl-s4-english-translated.zip",
+      "page": "https://subdl.com/subtitle/sd1300185/money-heist/fourth-season/english",
+      "url": "https://dl.subdl.com/subtitle/1578523-2207301.zip",
+      "sha256": "536a5c76f4ace1edfd2a5145878ca805b6d0e79ca5e5d378cc643f0be2ead36d",
+      "season": 4,
+      "episode": 8,
+      "member": "Money.Heist.S04E08.WEBRip.x264-ION10.srt"
+    }
+  ],
+  "translationExclusions": {
+    "seasons": [
+      1,
+      2
+    ],
+    "reason": "Original-length English packs contain literal mistranslations; Spanish dialogue remains in occurrence counts."
+  },
+  "blockedTranslations": [
+    {
+      "episode": "S04E01",
+      "start": 549,
+      "end": 552,
+      "reason": "Child/referent mistranslation",
+      "sourceSha256": "0f0af82ed30d619756b48fb39b37bdbcaa103584237fa59c195dbb5f8c45e95c"
+    },
+    {
+      "episode": "S04E02",
+      "start": 462,
+      "end": 463,
+      "reason": "Tense and meaning changed",
+      "sourceSha256": "0f0af82ed30d619756b48fb39b37bdbcaa103584237fa59c195dbb5f8c45e95c"
+    },
+    {
+      "episode": "S04E02",
+      "start": 451,
+      "end": 452,
+      "reason": "Negation/meaning changed",
+      "sourceSha256": "0f0af82ed30d619756b48fb39b37bdbcaa103584237fa59c195dbb5f8c45e95c"
+    },
+    {
+      "episode": "S04E04",
+      "start": 422,
+      "end": 424,
+      "reason": "CNI agency mistranslated as CIA",
+      "sourceSha256": "0f0af82ed30d619756b48fb39b37bdbcaa103584237fa59c195dbb5f8c45e95c"
+    },
+    {
+      "episode": "S04E05",
+      "start": 309,
+      "end": 310,
+      "reason": "Foundry translated as basement",
+      "sourceSha256": "0f0af82ed30d619756b48fb39b37bdbcaa103584237fa59c195dbb5f8c45e95c"
+    },
+    {
+      "episode": "S04E06",
+      "start": 240,
+      "end": 241,
+      "reason": "Subject changed",
+      "sourceSha256": "0f0af82ed30d619756b48fb39b37bdbcaa103584237fa59c195dbb5f8c45e95c"
+    },
+    {
+      "episode": "S04E07",
+      "start": 63,
+      "end": 64,
+      "reason": "Meaning changed",
+      "sourceSha256": "0f0af82ed30d619756b48fb39b37bdbcaa103584237fa59c195dbb5f8c45e95c"
+    },
+    {
+      "episode": "S03E01",
+      "start": 203,
+      "end": 204,
+      "sourceSha256": "b2eb3ce48b766193c17b4bde07f658ec0b97576920e1892ba984712f01f72b3c",
+      "reason": "Sampled translation changes one billion to ten million."
+    }
+  ],
+  "rejectedTranslationTracks": [
+    {
+      "sha256": "0f0af82ed30d619756b48fb39b37bdbcaa103584237fa59c195dbb5f8c45e95c",
+      "reason": "English US dub-caption track can contain extra asides and altered wording absent from the original Spanish captions. Replaced with translated English track."
+    }
   ]
 }

@@ -69,7 +69,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     // A server that never settles cannot hold the local preset or rebuild open.
     let deck = await context.loadCasaDePapelPreset();
     assert.equal(deck.matchedCount, 6102);
-    assert.equal(stored.presetRevision, 'offline-30-episodes-v2-recognition');
+    assert.equal(stored.presetRevision, 'offline-30-episodes-v3-translations');
     route = 'rebuild';
     w.config = {languages: {spanish: {indexPath: 'wrong-artist/vocabulary.index.json'}}};
     deck = await context.loadCasaDePapelPreset();
@@ -85,7 +85,12 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(deck.intake.surfaces.profesor.count, deck.surfaces.profesor.count);
     assert.equal(JSON.stringify(deck.intake.summary), JSON.stringify(preset.intake.summary));
     assert.equal(deck.surfaces.profesor.lines[0].text.length > 0, true);
-    assert.equal(deck.surfaces.profesor.lines[0].song.startsWith('S01E'), true);
+    assert.equal(deck.surfaces.profesor.lines[0].song.startsWith('S03E'), true);
+    assert.ok(deck.surfaces.profesor.lines[0].english);
+    assert.equal(deck.tokenCount, preset.tokenCount);
+    for (const [word, entry] of Object.entries(preset.surfaces)) {
+        assert.equal(deck.surfaces[word].count, entry.count, `Count changed for ${word}`);
+    }
     assert.equal(JSON.stringify(deck).includes('[object Object]'), false);
     assert.equal(invalidations > 0, true);
 
@@ -109,6 +114,8 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(refreshed.meanings[0].translation, 'teacher');
     assert.equal(refreshed.meanings[0].examples[0].unassigned, true);
     assert.equal(refreshed.meanings[0].examples[0].spanish.length > 0, true);
+    assert.ok(refreshed.meanings[0].examples[0].english);
+    assert.equal(refreshed.meanings[0].examples[0].complete_context, true);
     w.applyPlaylistLiveVocabulary([original]);
     assert.equal(w.playlistLiveDeck().matchedCount, 6102);
     assert.equal(original.meanings[0].examples, undefined);
@@ -273,6 +280,19 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(deck.matchedCount < 1000, true);
     assert.equal((await w.preparePlaylistLiveSession('spanish')).playlistId, 'subtitle-upload');
     assert.equal(saves >= 3, true);
+
+    // Whole bilingual groups are examples only; original fragments supply counts.
+    const translation = {spanish: 'El profesor. La casa.', english: 'The teacher. The house.',
+        start_ms: 1000, end_ms: 5000, source: 'checked', policy: 'precision-timing-v1'};
+    deck = await context.buildSeriesLiveDeck({lines: [
+        {spanish: 'Profesor.'}, {spanish: 'El profesor.', translation}, {spanish: 'La casa.', translation}
+    ]});
+    assert.equal(deck.surfaces.profesor.count, 2);
+    assert.equal(deck.surfaces.casa.count, 1);
+    assert.equal(deck.tokenCount, 5);
+    assert.equal(deck.surfaces.profesor.lines[0].text, translation.spanish);
+    assert.equal(deck.surfaces.profesor.lines[0].english, translation.english);
+    assert.equal(deck.surfaces.casa.lines[0].text, translation.spanish);
 
     // Entering live study from an artist route restores the Speech config
     // before the language tab loads definitions and renders setup.

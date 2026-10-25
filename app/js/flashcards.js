@@ -9291,9 +9291,11 @@ function renderCardWikipediaBadge(card) {
                 displayTargetSentence = highlightComplementFrameInSentence(
                     displayTargetSentence, currentMeaning, card);
             } else {
-            // Truncate sentences longer than 20 words
-            displayTargetSentence = truncateText(displayTargetSentence, 20);
-            displayEnglishSentence = truncateText(displayEnglishSentence, 20);
+            // Bilingual dialogue groups must display the complete paired passage.
+            if (!currentExample?.complete_context) {
+                displayTargetSentence = truncateText(displayTargetSentence, 20);
+                displayEnglishSentence = truncateText(displayEnglishSentence, 20);
+            }
 
             // Locate the studied word with the active POS colour. A low tint
             // plus underline keeps the sentence readable; related deck words
