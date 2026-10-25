@@ -3,6 +3,7 @@
 // ItemProgress records. The newest card-level or item-level event wins.
 import './state.js?v=20260825ak';
 import { sendOrQueue } from './sync-queue.js?v=20260825ak';
+import { getIsolatedSyncUser } from './env.js?v=20261010airlock';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -16,6 +17,76 @@ let knowledgeOverviewReturnFocus = null;
 let knowledgeSiblingsPendingCard = null;
 // Which section tab the open overview shows (Meanings / Expressions / …).
 let knowledgeOverviewTab = '';
+
+// Which meanings the learner pinned, per word. A pin saves the same item
+// progress as a missed answer, so this is the only record that a meaning was
+// chosen; it keeps the pins showing when every meaning is pinned. Kept on the
+// device and synced as one account metadata row per word (no empty deletes, so
+// an unpin is never undone by an older copy).
+const PINS_PREFIX = 'fluency_pinned_meanings_v1';
+const PINS_META_KEY = 'pinned-meanings';
+let pinsCache = null;
+let pinsAccount = null;
+
+function pinsAccountName() {
+    return currentUser && !currentUser.isGuest ? String(currentUser.initials) : 'guest';
+}
+
+function readPins() {
+    const account = pinsAccountName();
+    if (pinsCache && pinsAccount === account) return pinsCache;
+    pinsAccount = account;
+    try { pinsCache = JSON.parse(localStorage.getItem(`${PINS_PREFIX}|${account}`) || '{}') || {}; } catch (_) { pinsCache = {}; }
+    return pinsCache;
+}
+
+function pinnedItemIds(parentWordId) {
+    return new Set(readPins()[parentWordId]?.items || []);
+}
+
+function setPinnedItems(parentWordId, itemIds, pinned) {
+    if (!parentWordId || pinsAccountName() === 'guest') return;
+    const pins = readPins();
+    const ids = pinnedItemIds(parentWordId);
+    const before = ids.size;
+    itemIds.forEach(id => (pinned ? ids.add(id) : ids.delete(id)));
+    if (ids.size === before) return;
+    const entry = { items: [...ids], updatedAt: Date.now() };
+    pins[parentWordId] = entry;
+    try { localStorage.setItem(`${PINS_PREFIX}|${pinsAccount}`, JSON.stringify(pins)); } catch (_) {}
+    const syncUser = getIsolatedSyncUser(pinsAccountName());
+    sendOrQueue({
+        action: 'saveMeta', user: syncUser, metaKey: PINS_META_KEY, metaId: parentWordId,
+        mode: 'all', language: selectedLanguage, value: JSON.stringify(entry),
+        lastSeen: new Date(entry.updatedAt).toISOString()
+    }, `meta|${PINS_META_KEY}|${syncUser}|${parentWordId}`).catch(error =>
+        console.warn('Could not queue pinned meanings', error));
+}
+
+// Progress loads the account's metadata rows; the newer copy of each word wins.
+function applyRemotePinnedMeanings(rows) {
+    if (pinsAccountName() === 'guest' || !Array.isArray(rows)) return;
+    const pins = readPins();
+    let changed = false;
+    for (const row of rows) {
+        if (row?.metaKey !== PINS_META_KEY || !row.metaId) continue;
+        let remote = row.value;
+        try { if (typeof remote === 'string') remote = JSON.parse(remote); } catch (_) { continue; }
+        if (!remote || !Array.isArray(remote.items)) continue;
+        if ((Number(pins[row.metaId]?.updatedAt) || 0) >= (Number(remote.updatedAt) || 0)) continue;
+        pins[row.metaId] = { items: remote.items.filter(id => typeof id === 'string'), updatedAt: Number(remote.updatedAt) || 0 };
+        changed = true;
+    }
+    if (!changed) return;
+    try { localStorage.setItem(`${PINS_PREFIX}|${pinsAccount}`, JSON.stringify(pins)); } catch (_) {}
+    window.bumpProgressEpoch?.();
+}
+
+// Every meaning marked reads as a missed card, unless the learner pinned them.
+function everyMarkedMeaningPinned(card, items) {
+    const pinned = pinnedItemIds(card?.fullId);
+    return items.length > 0 && items.every(item => pinned.has(item.itemId));
+}
 
 function normalizeKnowledgeText(value) {
     return String(value || '')
@@ -656,6 +727,7 @@ async function saveKnowledgeProgress(card, items, isCorrect) {
         }, `saveItem|Progress|${existing.itemId}`);
     }
     cacheItemProgress();
+    if (isCorrect) setPinnedItems(card.fullId, items.map(item => item.itemId), false);
 
     // Completing every sense/expression explicitly is equivalent to knowing
     // the card. Persist one parent correct so setup progress, coverage, and
@@ -779,8 +851,10 @@ function getPracticeMeaningInfo(card) {
         known.clear();
     }
     // Pins mean "some of these, not the rest". A miss marks every meaning for
-    // practice, which is the whole card, so show it whole rather than pinned.
-    if (focusItems.length > 1 && practising >= focusItems.length) {
+    // practice, which is the whole card, so show it whole rather than pinned
+    // (unless the learner pinned every one of them).
+    if (focusItems.length > 1 && practising >= focusItems.length
+        && !everyMarkedMeaningPinned(card, focusItems)) {
         indices.clear();
         practising = 0;
     }
@@ -823,8 +897,10 @@ function getKnowledgeOverviewFraction(card) {
         const state = getKnowledgeItemState(card, item);
         return state.needsReview && state.reviewReason === 'incorrect';
     }).length;
-    // Every meaning marked is the whole card, not a pinned subset.
-    if (rows.length > 1 && flagged >= rows.length) return { flagged: 0, total: rows.length };
+    // Every meaning marked is the whole card, not a pinned subset (unless the
+    // learner pinned every one).
+    if (rows.length > 1 && flagged >= rows.length
+        && !everyMarkedMeaningPinned(card, rows.map(({ item }) => item))) return { flagged: 0, total: rows.length };
     return { flagged, total: rows.length };
 }
 
@@ -1031,7 +1107,9 @@ async function togglePinMeaningIndices(event, indices) {
     if (!currentlyPinned) {
         knowledgeSiblingsPendingCard = card;
         await saveKnowledgeProgress(card, items, false);
+        setPinnedItems(card.fullId, items.map(item => item.itemId), true);
     } else {
+        setPinnedItems(card.fullId, items.map(item => item.itemId), false);
         const targetIds = new Set(items.map(item => item.itemId));
         const otherItems = getKnowledgeFocusItems(card).filter(item => !targetIds.has(item.itemId));
         const othersUnseen = otherItems.every(item => !getKnowledgeItemState(card, item).seen);
@@ -1192,6 +1270,7 @@ window.showKnowledgeOverview = showKnowledgeOverview;
 window.togglePinMeaningIndices = togglePinMeaningIndices;
 window.findRareSenseKnowledgeItem = findRareSenseKnowledgeItem;
 window.closeKnowledgeOverview = closeKnowledgeOverview;
+window.applyRemotePinnedMeanings = applyRemotePinnedMeanings;
 window.dismissPinNotice = dismissPinNotice;
 window.focusKnowledgeOverviewItem = focusKnowledgeOverviewItem;
 window.markKnowledgeOverviewItem = markKnowledgeOverviewItem;

@@ -41,7 +41,7 @@ RUNNER = r"""
         currentMeaningIndex: 0,
         currentMWEIndex: 0,
         currentGroupSelection: null,
-        sendOrQueue: () => {},
+        sendOrQueue: () => Promise.resolve(), getIsolatedSyncUser: id => id,
         document: { addEventListener: () => {} },
     };
     vm.createContext(context);
@@ -216,6 +216,19 @@ RUNNER = r"""
         await context.togglePinMeaningIndices(null, [1]);
         out.unpinnedOnFreshRevertsUnseen = !context.getKnowledgeItemState(pinCard, pinItems[1]).seen;
 
+        // Pinning every meaning keeps the pins; missing every meaning shows the
+        // card whole, because a miss is not a choice of meanings.
+        const allPinCard = { ...fresh, fullId: 'es00005' };
+        const allPinItems = context.getKnowledgeOverviewItems(allPinCard);
+        context.beginKnowledgeCardVisit(allPinCard);
+        context.flashcards = [allPinCard];
+        for (let i = 0; i < allPinItems.length; i++) await context.togglePinMeaningIndices(null, [allPinItems[i].meaningIndex]);
+        out.allPinnedStayPinned = context.getPracticeMeaningInfo(allPinCard).indices.size === allPinItems.length;
+        out.allPinnedBadgeCounts = context.getKnowledgeOverviewFraction(allPinCard).flagged === allPinItems.length;
+        const missCard = { ...fresh, fullId: 'es00006' };
+        await context.saveKnowledgeProgress(missCard, context.getKnowledgeOverviewItems(missCard), false);
+        out.allMissedShowsWhole = context.getPracticeMeaningInfo(missCard).indices.size === 0;
+
         console.log(JSON.stringify(out));
     })().catch(error => { console.error(error); process.exit(1); });
 """
@@ -274,7 +287,8 @@ class KnownSenseTests(unittest.TestCase):
         for key in ["newRowsUnchecked", "duplicateSelectionIgnored", "checkboxReopensChecked",
                     "freshSwipeHandled", "freshSwipePreservesSelection", "deselectionResolves",
                     "dueIsNotSelected", "pinModeTurnedOn", "pinButtonLabel",
-                    "pinnedNeedsReview", "unpinnedOnFreshRevertsUnseen"]:
+                    "pinnedNeedsReview", "unpinnedOnFreshRevertsUnseen",
+                    "allPinnedStayPinned", "allPinnedBadgeCounts", "allMissedShowsWhole"]:
             with self.subTest(key=key):
                 self.assertTrue(self.out[key])
 
