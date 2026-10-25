@@ -677,6 +677,8 @@ function beginKnowledgeCardVisit(card) {
         commitPendingKnowledgeSiblings(knowledgeSiblingsPendingCard);
     }
     delete card._pinningMode;
+    if (card._pinNoticeTimer) clearTimeout(card._pinNoticeTimer);
+    delete card._pinNotice;
     card._knowledgeVisitStart = Date.now();
 }
 
@@ -844,7 +846,8 @@ function renderKnowledgeOverviewButton(card) {
             ${flagged > 0 ? `<span class="ref-tile-count-badge" aria-hidden="true">${flagged}</span>` : ''}
         </div>
         <span class="ref-tile-label">See again</span>
-    </button>${active ? '<div class="pin-mode-hint" role="status">Tap the pin on a meaning to see it again in Practise.</div>' : ''}`;
+    </button>${active ? '<div class="pin-mode-hint" role="status">Tap the pin on a meaning to see it again in Practise.</div>'
+        : (card?._pinNotice ? `<div class="pin-mode-hint is-notice" role="status" onclick="dismissPinNotice(event)">${escapeKnowledgeHTML(card._pinNotice)}</div>` : '')}`;
 }
 
 function ensureKnowledgeOverviewModal() {
@@ -1053,9 +1056,35 @@ async function togglePinMeaningIndices(event, indices) {
             await saveKnowledgeProgress(card, items, true);
         }
     }
-    // One pin is the whole job: the card comes straight back.
+    // One pin is the whole job: the card comes straight back, with a line on
+    // what to do next where the tiles were.
     card._pinningMode = false;
+    if (!currentlyPinned) {
+        const everyMeaning = getKnowledgeFocusItems(card).every(item => {
+            const state = getKnowledgeItemState(card, item);
+            return state.needsReview && state.reviewReason === 'incorrect';
+        });
+        showPinNotice(card, everyMeaning
+            ? 'That’s every meaning, so the whole word will come back in Practise.'
+            : 'Swipe right if you know the rest.');
+    }
     if (typeof flashcards !== 'undefined' && card === flashcards[currentIndex]) updateCard();
+}
+
+// The notice stands in for the tiles for a few seconds; a tap dismisses it.
+function showPinNotice(card, text) {
+    clearTimeout(card._pinNoticeTimer);
+    card._pinNotice = text;
+    card._pinNoticeTimer = setTimeout(() => dismissPinNotice(null, card), 3500);
+}
+
+function dismissPinNotice(event, card = null) {
+    event?.stopPropagation();
+    const target = card || (typeof flashcards !== 'undefined' ? flashcards[currentIndex] : null);
+    if (!target?._pinNotice) return;
+    clearTimeout(target._pinNoticeTimer);
+    delete target._pinNotice;
+    if (typeof flashcards !== 'undefined' && target === flashcards[currentIndex]) updateCard();
 }
 
 // While choosing, a tap anywhere but the word's rows cancels instead of
@@ -1163,6 +1192,7 @@ window.showKnowledgeOverview = showKnowledgeOverview;
 window.togglePinMeaningIndices = togglePinMeaningIndices;
 window.findRareSenseKnowledgeItem = findRareSenseKnowledgeItem;
 window.closeKnowledgeOverview = closeKnowledgeOverview;
+window.dismissPinNotice = dismissPinNotice;
 window.focusKnowledgeOverviewItem = focusKnowledgeOverviewItem;
 window.markKnowledgeOverviewItem = markKnowledgeOverviewItem;
 window.toggleKnowledgeOverviewReview = toggleKnowledgeOverviewReview;

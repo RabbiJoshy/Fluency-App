@@ -30,6 +30,7 @@ RUNNER = r"""
     const saved = [];
     const context = {
         window: {}, console, Date, Math, JSON, Map, Set, Number, String, Array, Object, Promise,
+        setTimeout: () => 0, clearTimeout: () => {},
         currentUser: { initials: 'JT' },
         progressData: {},
         itemProgressData: {},
