@@ -1,8 +1,9 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=42d6f5c2';
-import { sendOrQueue } from './sync-queue.js?v=42d6f5c2';
+import './state.js?v=3980bbca';
+import { sendOrQueue } from './sync-queue.js?v=3980bbca';
+import { getIsolatedSyncUser } from './env.js?v=3980bbca';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -16,6 +17,76 @@ let knowledgeOverviewReturnFocus = null;
 let knowledgeSiblingsPendingCard = null;
 // Which section tab the open overview shows (Meanings / Expressions / …).
 let knowledgeOverviewTab = '';
+
+// Which meanings the learner pinned, per word. A pin saves the same item
+// progress as a missed answer, so this is the only record that a meaning was
+// chosen; it keeps the pins showing when every meaning is pinned. Kept on the
+// device and synced as one account metadata row per word (no empty deletes, so
+// an unpin is never undone by an older copy).
+const PINS_PREFIX = 'fluency_pinned_meanings_v1';
+const PINS_META_KEY = 'pinned-meanings';
+let pinsCache = null;
+let pinsAccount = null;
+
+function pinsAccountName() {
+    return currentUser && !currentUser.isGuest ? String(currentUser.initials) : 'guest';
+}
+
+function readPins() {
+    const account = pinsAccountName();
+    if (pinsCache && pinsAccount === account) return pinsCache;
+    pinsAccount = account;
+    try { pinsCache = JSON.parse(localStorage.getItem(`${PINS_PREFIX}|${account}`) || '{}') || {}; } catch (_) { pinsCache = {}; }
+    return pinsCache;
+}
+
+function pinnedItemIds(parentWordId) {
+    return new Set(readPins()[parentWordId]?.items || []);
+}
+
+function setPinnedItems(parentWordId, itemIds, pinned) {
+    if (!parentWordId || pinsAccountName() === 'guest') return;
+    const pins = readPins();
+    const ids = pinnedItemIds(parentWordId);
+    const before = ids.size;
+    itemIds.forEach(id => (pinned ? ids.add(id) : ids.delete(id)));
+    if (ids.size === before) return;
+    const entry = { items: [...ids], updatedAt: Date.now() };
+    pins[parentWordId] = entry;
+    try { localStorage.setItem(`${PINS_PREFIX}|${pinsAccount}`, JSON.stringify(pins)); } catch (_) {}
+    const syncUser = getIsolatedSyncUser(pinsAccountName());
+    sendOrQueue({
+        action: 'saveMeta', user: syncUser, metaKey: PINS_META_KEY, metaId: parentWordId,
+        mode: 'all', language: selectedLanguage, value: JSON.stringify(entry),
+        lastSeen: new Date(entry.updatedAt).toISOString()
+    }, `meta|${PINS_META_KEY}|${syncUser}|${parentWordId}`).catch(error =>
+        console.warn('Could not queue pinned meanings', error));
+}
+
+// Progress loads the account's metadata rows; the newer copy of each word wins.
+function applyRemotePinnedMeanings(rows) {
+    if (pinsAccountName() === 'guest' || !Array.isArray(rows)) return;
+    const pins = readPins();
+    let changed = false;
+    for (const row of rows) {
+        if (row?.metaKey !== PINS_META_KEY || !row.metaId) continue;
+        let remote = row.value;
+        try { if (typeof remote === 'string') remote = JSON.parse(remote); } catch (_) { continue; }
+        if (!remote || !Array.isArray(remote.items)) continue;
+        if ((Number(pins[row.metaId]?.updatedAt) || 0) >= (Number(remote.updatedAt) || 0)) continue;
+        pins[row.metaId] = { items: remote.items.filter(id => typeof id === 'string'), updatedAt: Number(remote.updatedAt) || 0 };
+        changed = true;
+    }
+    if (!changed) return;
+    try { localStorage.setItem(`${PINS_PREFIX}|${pinsAccount}`, JSON.stringify(pins)); } catch (_) {}
+    window.bumpProgressEpoch?.();
+}
+
+// Every meaning marked reads as a missed card, unless the learner pinned them.
+function everyMarkedMeaningPinned(card, items) {
+    const pinned = pinnedItemIds(card?.fullId);
+    return items.length > 0 && items.every(item => pinned.has(item.itemId));
+}
 
 function normalizeKnowledgeText(value) {
     return String(value || '')
@@ -656,6 +727,7 @@ async function saveKnowledgeProgress(card, items, isCorrect) {
         }, `saveItem|Progress|${existing.itemId}`);
     }
     cacheItemProgress();
+    if (isCorrect) setPinnedItems(card.fullId, items.map(item => item.itemId), false);
 
     // Completing every sense/expression explicitly is equivalent to knowing
     // the card. Persist one parent correct so setup progress, coverage, and
@@ -677,6 +749,8 @@ function beginKnowledgeCardVisit(card) {
         commitPendingKnowledgeSiblings(knowledgeSiblingsPendingCard);
     }
     delete card._pinningMode;
+    if (card._pinNoticeTimer) clearTimeout(card._pinNoticeTimer);
+    delete card._pinNotice;
     card._knowledgeVisitStart = Date.now();
 }
 
@@ -777,8 +851,10 @@ function getPracticeMeaningInfo(card) {
         known.clear();
     }
     // Pins mean "some of these, not the rest". A miss marks every meaning for
-    // practice, which is the whole card, so show it whole rather than pinned.
-    if (focusItems.length > 1 && practising >= focusItems.length) {
+    // practice, which is the whole card, so show it whole rather than pinned
+    // (unless the learner pinned every one of them).
+    if (focusItems.length > 1 && practising >= focusItems.length
+        && !everyMarkedMeaningPinned(card, focusItems)) {
         indices.clear();
         practising = 0;
     }
@@ -821,24 +897,33 @@ function getKnowledgeOverviewFraction(card) {
         const state = getKnowledgeItemState(card, item);
         return state.needsReview && state.reviewReason === 'incorrect';
     }).length;
-    // Every meaning marked is the whole card, not a pinned subset.
-    if (rows.length > 1 && flagged >= rows.length) return { flagged: 0, total: rows.length };
+    // Every meaning marked is the whole card, not a pinned subset (unless the
+    // learner pinned every one).
+    if (rows.length > 1 && flagged >= rows.length
+        && !everyMarkedMeaningPinned(card, rows.map(({ item }) => item))) return { flagged: 0, total: rows.length };
     return { flagged, total: rows.length };
 }
+
+// "See again": three meaning rows with a pin pushed into the middle one, so
+// the icon says one meaning, not the whole word. The pin is the row pin's shape.
+const SEE_AGAIN_ICON = '<svg class="ref-tile-icon see-again-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5h12M2 19h12" opacity=".45"></path><path d="M2 12h8" stroke-width="2.6"></path><g transform="rotate(40 17 10) translate(10 2) scale(.5833)" stroke-width="3.8"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></g></svg>';
 
 function renderKnowledgeOverviewButton(card) {
     if (!getKnowledgeFocusItems(card).length) return '';
     const { flagged } = getKnowledgeOverviewFraction(card);
     const active = Boolean(card?._pinningMode);
-    const aria = flagged > 0 ? `Pin meaning, ${flagged} pinned` : 'Pin meaning';
-    // The number is blank until a meaning is pinned, then counts them.
+    const aria = flagged > 0 ? `See again, ${flagged} pinned` : 'See again';
+    // The number is blank until a meaning is pinned, then counts them. While
+    // choosing, the card keeps only the word and its rows, and this line sits
+    // where the tiles were.
     return `<button type="button" class="ref-tile knowledge-overview-trigger${active ? ' is-active' : ''}" aria-label="${aria}" aria-pressed="${active}" onclick="showKnowledgeOverview(event)">
         <div class="ref-tile-icon-wrap">
-            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg>
+            ${SEE_AGAIN_ICON}
             ${flagged > 0 ? `<span class="ref-tile-count-badge" aria-hidden="true">${flagged}</span>` : ''}
         </div>
-        <span class="ref-tile-label">Pin meaning</span>
-    </button>`;
+        <span class="ref-tile-label">See again</span>
+    </button>${active ? '<div class="pin-mode-hint" role="status">Tap the pin on a meaning to see it again in Practise.</div>'
+        : (card?._pinNotice ? `<div class="pin-mode-hint is-notice" role="status" onclick="dismissPinNotice(event)">${escapeKnowledgeHTML(card._pinNotice)}</div>` : '')}`;
 }
 
 function ensureKnowledgeOverviewModal() {
@@ -1022,7 +1107,9 @@ async function togglePinMeaningIndices(event, indices) {
     if (!currentlyPinned) {
         knowledgeSiblingsPendingCard = card;
         await saveKnowledgeProgress(card, items, false);
+        setPinnedItems(card.fullId, items.map(item => item.itemId), true);
     } else {
+        setPinnedItems(card.fullId, items.map(item => item.itemId), false);
         const targetIds = new Set(items.map(item => item.itemId));
         const otherItems = getKnowledgeFocusItems(card).filter(item => !targetIds.has(item.itemId));
         const othersUnseen = otherItems.every(item => !getKnowledgeItemState(card, item).seen);
@@ -1047,8 +1134,47 @@ async function togglePinMeaningIndices(event, indices) {
             await saveKnowledgeProgress(card, items, true);
         }
     }
+    // One pin is the whole job: the card comes straight back, with a line on
+    // what to do next where the tiles were.
+    card._pinningMode = false;
+    if (!currentlyPinned) {
+        const everyMeaning = getKnowledgeFocusItems(card).every(item => {
+            const state = getKnowledgeItemState(card, item);
+            return state.needsReview && state.reviewReason === 'incorrect';
+        });
+        showPinNotice(card, everyMeaning
+            ? 'That’s every meaning, so the whole word will come back in Practise.'
+            : 'Swipe right if you know the rest.');
+    }
     if (typeof flashcards !== 'undefined' && card === flashcards[currentIndex]) updateCard();
 }
+
+// The notice stands in for the tiles for a few seconds; a tap dismisses it.
+function showPinNotice(card, text) {
+    clearTimeout(card._pinNoticeTimer);
+    card._pinNotice = text;
+    card._pinNoticeTimer = setTimeout(() => dismissPinNotice(null, card), 3500);
+}
+
+function dismissPinNotice(event, card = null) {
+    event?.stopPropagation();
+    const target = card || (typeof flashcards !== 'undefined' ? flashcards[currentIndex] : null);
+    if (!target?._pinNotice) return;
+    clearTimeout(target._pinNoticeTimer);
+    delete target._pinNotice;
+    if (typeof flashcards !== 'undefined' && target === flashcards[currentIndex]) updateCard();
+}
+
+// While choosing, a tap anywhere but the word's rows cancels instead of
+// flipping the card.
+document.addEventListener('click', event => {
+    const card = typeof flashcards !== 'undefined' ? flashcards[currentIndex] : null;
+    if (!card?._pinningMode || !event.target.closest?.('.card-back')) return;
+    if (event.target.closest('.meanings-scroll, .knowledge-overview-trigger')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    closeKnowledgeOverview(event);
+}, true);
 
 function focusKnowledgeOverviewItem(event, index) {
     event?.stopPropagation();
@@ -1135,6 +1261,7 @@ window.beginKnowledgeCardVisit = beginKnowledgeCardVisit;
 window.saveWholeCardKnowledgeAnswer = saveWholeCardKnowledgeAnswer;
 window.renderKnowledgeControl = renderKnowledgeControl;
 window.renderKnowledgeOverviewButton = renderKnowledgeOverviewButton;
+window.SEE_AGAIN_ICON = SEE_AGAIN_ICON;
 window.getPracticeMeaningIndices = getPracticeMeaningIndices;
 window.getPracticeMeaningInfo = getPracticeMeaningInfo;
 window.getKnowledgeOverviewRows = getKnowledgeOverviewRows;
@@ -1143,6 +1270,8 @@ window.showKnowledgeOverview = showKnowledgeOverview;
 window.togglePinMeaningIndices = togglePinMeaningIndices;
 window.findRareSenseKnowledgeItem = findRareSenseKnowledgeItem;
 window.closeKnowledgeOverview = closeKnowledgeOverview;
+window.applyRemotePinnedMeanings = applyRemotePinnedMeanings;
+window.dismissPinNotice = dismissPinNotice;
 window.focusKnowledgeOverviewItem = focusKnowledgeOverviewItem;
 window.markKnowledgeOverviewItem = markKnowledgeOverviewItem;
 window.toggleKnowledgeOverviewReview = toggleKnowledgeOverviewReview;

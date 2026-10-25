@@ -1,42 +1,42 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=42d6f5c2';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=42d6f5c2';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=42d6f5c2';
-import { songCreditHTML } from './song-credit.js?v=42d6f5c2';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=42d6f5c2';
+import './state.js?v=3980bbca';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=3980bbca';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=3980bbca';
+import { songCreditHTML } from './song-credit.js?v=3980bbca';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=3980bbca';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=42d6f5c2';
+import { fitSenseRowText } from './card-row-layout.js?v=3980bbca';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=42d6f5c2';
-import { goToRoute, routeCodeFor } from './routes.js?v=42d6f5c2';
-import { memoryTipTileHTML } from './memory-tips.js?v=42d6f5c2';
+import './speech.js?v=3980bbca';
+import { goToRoute, routeCodeFor } from './routes.js?v=3980bbca';
+import { memoryTipTileHTML } from './memory-tips.js?v=3980bbca';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=42d6f5c2';
-import './side-dock.js?v=42d6f5c2';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=42d6f5c2';
+} from './function-word-card.js?v=3980bbca';
+import './side-dock.js?v=3980bbca';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=3980bbca';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=42d6f5c2';
+} from './example-personalisation.js?v=3980bbca';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=42d6f5c2';
+} from './spanishdict-usage.js?v=3980bbca';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=42d6f5c2';
+} from './reverse-cues.js?v=3980bbca';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -71,8 +71,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=42d6f5c2';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=42d6f5c2';
+} from './card-metadata-pills.js?v=3980bbca';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=3980bbca';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6765,7 +6765,7 @@ function knownSenseTagHTML(extraStyle = '', indices = null) {
     const list = (Array.isArray(indices) ? indices : (Number.isInteger(indices) ? [indices] : []))
         .filter(i => Number.isInteger(i) && i >= 0);
     const click = list.length
-        ? ` role="button" tabindex="0" title="Pin this meaning for practice" onclick="togglePinMeaningIndices(event, [${list.join(',')}])" onkeydown="if (event.key === 'Enter' || event.key === ' ') togglePinMeaningIndices(event, [${list.join(',')}])"`
+        ? ` role="button" tabindex="0" title="See this meaning again" onclick="togglePinMeaningIndices(event, [${list.join(',')}])" onkeydown="if (event.key === 'Enter' || event.key === ' ') togglePinMeaningIndices(event, [${list.join(',')}])"`
         : '';
     return `<span class="known-sense-tag"${style}${click}>Known</span>`;
 }
@@ -6773,7 +6773,7 @@ function knownSenseTagHTML(extraStyle = '', indices = null) {
 function sensePinButtonHTML(indices, isPinned, extraStyle = '') {
     const list = (Array.isArray(indices) ? indices : [indices]).filter(i => Number.isInteger(i) && i >= 0);
     const style = extraStyle ? ` style="${extraStyle}"` : '';
-    const label = isPinned ? 'Unpin this meaning' : 'Pin this meaning for practice';
+    const label = isPinned ? 'Unpin this meaning' : 'See this meaning again';
     return `<button type="button" class="sense-pin-btn${isPinned ? ' is-pinned' : ''}"${style} aria-pressed="${Boolean(isPinned)}" aria-label="${label}" title="${label}" onclick="togglePinMeaningIndices(event, [${list.join(',')}])"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="30" height="30" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
 }
 
@@ -11700,8 +11700,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '42d6f5c2';
-const MODALS_ASSET_VERSION = '42d6f5c2';
+const ASSET_VERSION = '3980bbca';
+const MODALS_ASSET_VERSION = '3980bbca';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

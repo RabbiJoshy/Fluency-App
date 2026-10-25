@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=42d6f5c2");
+@import url("./appearance.css?v=3980bbca");
 
 
         * {
@@ -2984,6 +2984,41 @@
         .ref-tile.knowledge-overview-trigger.is-active {
             background: rgba(var(--sense-match-rgb, 56, 189, 248), 0.16);
             border-color: rgba(var(--sense-match-rgb, 56, 189, 248), 0.45);
+        }
+        /* See again: while choosing, only the word and its rows stay. Everything
+           else fades where it stands, so nothing moves, and one line of
+           instructions takes the tiles' place. */
+        .card-back:has(.pin-mode-hint:not(.is-notice)) .card-details > :not(.back-header, .meanings-scroll, .links-section),
+        .card-back:has(.pin-mode-hint) .links-section > :not(.pin-mode-hint) {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s ease;
+        }
+        .card-back:has(.pin-mode-hint) .links-section {
+            position: relative;
+        }
+        .pin-mode-hint {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 14px;
+            border-radius: 12px;
+            background: rgba(var(--sense-match-rgb, 56, 189, 248), 0.14);
+            border: 1px solid rgba(var(--sense-match-rgb, 56, 189, 248), 0.4);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.35;
+            text-align: center;
+            animation: pinModeHintIn 0.18s ease;
+        }
+        .pin-mode-hint.is-notice {
+            cursor: pointer;
+        }
+        @keyframes pinModeHintIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: none; }
         }
         @keyframes rareSenseRowFadeIn {
             0% {

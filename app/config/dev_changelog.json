@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-25T22:12:00+00:00",
+      "date": "2026-10-25 22:12 GMT",
+      "agent": "Claude",
+      "summary": "Tutorial: the See again step now shows the real pin flow.",
+      "detail": [
+        "On the tutorial card, tapping See again fades everything but the word and its meanings and shows the same instruction as the app.",
+        "Pinning a meaning brings the card back with 'Swipe right if you know the rest.'; earlier pins are kept when the step reopens.",
+        "Tapping elsewhere on the tutorial card cancels, as on a real card."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T21:36:29+00:00",
       "date": "2026-10-25 21:36 GMT",
       "agent": "Codex",
@@ -10,6 +22,44 @@
         "Place the loading message inside the sign-in card, with account choices and provider attribution space reserved from the start.",
         "Reveal provider controls only after their markup and styles are ready, keeping the logo, guest button and account links stationary.",
         "Cover logout before account cleanup and suppress intermediate provider callbacks; open the first language picker before the next paint after sign-in."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-25T20:10:00+00:00",
+      "date": "2026-10-25 20:10 GMT",
+      "agent": "Claude",
+      "summary": "Pinning every meaning keeps the pins showing.",
+      "detail": [
+        "The app now remembers which meanings you pinned, per word, so a card with every meaning pinned keeps its pins and count instead of going blank.",
+        "A card with every meaning missed (not pinned) still shows plain, as before.",
+        "Pins sync with your account as one small row per word in the existing account settings store; no server change.",
+        "Answering a pinned meaning correctly later removes its pin."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-25T19:46:00+00:00",
+      "date": "2026-10-25 19:46 GMT",
+      "agent": "Claude",
+      "summary": "After a pin, the box says what to do next.",
+      "detail": [
+        "After pinning a meaning, the box where the tiles were says 'Swipe right if you know the rest.' for a few seconds.",
+        "Pinning the last unpinned meaning says 'That’s every meaning, so the whole word will come back in Practise.' The pins still clear in that case.",
+        "Tapping the message dismisses it early."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-25T19:15:00+00:00",
+      "date": "2026-10-25 19:15 GMT",
+      "agent": "Claude",
+      "summary": "'Pin meaning' is now 'See again', with a new icon and a guided pin step.",
+      "detail": [
+        "The tile is renamed 'See again' and its icon is three meaning rows with the pin pushed into the middle one.",
+        "Tapping it fades everything except the word and its meaning rows, in place, and shows 'Tap the pin on a meaning to see it again in Practise.' where the tiles were.",
+        "Pinning one meaning returns the card to normal straight away; tapping anywhere else on the card cancels without flipping it.",
+        "Row pin tooltips read 'See this meaning again'; the tutorial step is renamed to match."
       ],
       "commit": "pending"
     },
@@ -39,19 +89,6 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-10-24T18:07:00+01:00",
-      "date": "2026-10-24 18:07 BST",
-      "agent": "Antigravity",
-      "summary": "Flashcards: make chevron functional for collapse/expand and enable POS-wide selection.",
-      "detail": [
-        "Enabled the chevron (▾/▸) on POS section headers to cleanly toggle section expand and collapse.",
-        "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
-        "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
-        "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
-      ],
-      "commit": "pending"
-    },
-    {
       "timestamp": "2026-10-24T19:33:00+01:00",
       "date": "2026-10-24 19:33 BST",
       "agent": "Antigravity",
@@ -65,15 +102,15 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-10-24T16:00:00+01:00",
-      "date": "2026-10-24 16:00 BST",
-      "agent": "Claude",
-      "summary": "About page: replaced \"What's under the hood\" with a short features section, a Music mode section and a technical-details section.",
+      "timestamp": "2026-10-24T18:07:00+01:00",
+      "date": "2026-10-24 18:07 BST",
+      "agent": "Antigravity",
+      "summary": "Flashcards: make chevron functional for collapse/expand and enable POS-wide selection.",
       "detail": [
-        "New \"What makes it different\" section: skip words you already know (with a Skipped / Kept comparison and your chosen languages), examples worth learning from, and expressions.",
-        "New \"Music mode\" section: each artist's slang and learning what people, places and brands are.",
-        "\"How it works (technical details)\" now holds the NLP detail: cognate skipping, merged forms, sentence cleaning, dictionaries, bi-encoder and Jev meaning selection.",
-        "Every Spanish word on the page now has its English meaning in brackets."
+        "Enabled the chevron (▾/▸) on POS section headers to cleanly toggle section expand and collapse.",
+        "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
+        "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
+        "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
       ],
       "commit": "pending"
     },
@@ -87,6 +124,19 @@
         "Added Part of Speech filtering (Verbs, Nouns, Adjectives, Adverbs, Function words, Other).",
         "Added Jev Confidence & Gaps filtering (Lowest < 0.2, Marginal < 0.3, Moderate < 0.5, Unresolved gaps, High ≥ 0.8).",
         "Trigger button features an active filter count badge; Reset button restores defaults instantly."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-24T16:00:00+01:00",
+      "date": "2026-10-24 16:00 BST",
+      "agent": "Claude",
+      "summary": "About page: replaced \"What's under the hood\" with a short features section, a Music mode section and a technical-details section.",
+      "detail": [
+        "New \"What makes it different\" section: skip words you already know (with a Skipped / Kept comparison and your chosen languages), examples worth learning from, and expressions.",
+        "New \"Music mode\" section: each artist's slang and learning what people, places and brands are.",
+        "\"How it works (technical details)\" now holds the NLP detail: cognate skipping, merged forms, sentence cleaning, dictionaries, bi-encoder and Jev meaning selection.",
+        "Every Spanish word on the page now has its English meaning in brackets."
       ],
       "commit": "pending"
     },
@@ -325,54 +375,6 @@
       "detail": [
         "The open Learn or Practise section is the only card, with an ordinary border (no red outline; none for new users either).",
         "The folded section is one line, e.g. 'Practise · 12 waiting ›' or 'Learn · Level 1 · Words 1–100 ›', with no card around it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:20:58+01:00",
-      "date": "2026-10-22 01:20 BST",
-      "agent": "Claude",
-      "summary": "Level tiles: outline only on your level, dots on phones; readout and ? tweaks",
-      "detail": [
-        "Level tiles (everywhere): only the selected tile has an outline (red).",
-        "Phones: each tile shows one dot in its least-learned colour (any new → white, else any seen → yellow, else green) instead of a thin bar.",
-        "Phones: 'Level' and 'Words 1–100' a step larger; the ? sits at the right edge, level with the section title.",
-        "Example words and coverage line use the same font as the level readout (DM Sans), in the dimmer grey."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:02:28+01:00",
-      "date": "2026-10-22 01:02 BST",
-      "agent": "Claude",
-      "summary": "About is its own page: opens in a new tab, looks the same for everyone, never touches sign-in",
-      "detail": [
-        "Sidebar About, Settings → About and Help → More about this project open #/about in a new tab instead of over the app.",
-        "#/about never reads your account or starts sign-in, so it looks the same signed in or not.",
-        "Removed 'Back to the app (name)', the 'Back to app' pill, and the × that showed for visitors even though it did nothing.",
-        "The 'Welcome back / Continue session' box is no longer built on the About page."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:00:55+01:00",
-      "date": "2026-10-22 01:00 BST",
-      "agent": "Claude",
-      "summary": "Practise is hidden until you've answered your first card; Learn alone before that",
-      "detail": [
-        "Never answered anything: the home screen is Learn only (no Practise column on desktop, no folded Practise row on phones). Removes the 'Nothing to practise yet' text.",
-        "After any answer, Practise appears and stays, showing 'All caught up' and the next due time when empty.",
-        "Desktop (1360px+): Learn alone is centred at 980px instead of stretched across the screen."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T00:58:03+01:00",
-      "date": "2026-10-22 00:58 BST",
-      "agent": "Claude",
-      "summary": "Desktop sidebar: Tutorial and About icons are a plain ? and i (no circle)",
-      "detail": [
-        "Desktop sidebar only; the phone top bar keeps its circled ? beside the other line icons."
       ],
       "commit": "pending"
     }

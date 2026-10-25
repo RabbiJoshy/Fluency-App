@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=42d6f5c2';
-import { accountPermissions } from './account-permissions.js?v=42d6f5c2';
-import { readJsonWithTimeout } from './read-request.js?v=42d6f5c2';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=42d6f5c2';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=42d6f5c2';
-import { dbGet, dbPut } from './offline-db.js?v=42d6f5c2';
-import { consumeRouteNavigation } from './routes.js?v=42d6f5c2';
+import './state.js?v=3980bbca';
+import { accountPermissions } from './account-permissions.js?v=3980bbca';
+import { readJsonWithTimeout } from './read-request.js?v=3980bbca';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=3980bbca';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=3980bbca';
+import { dbGet, dbPut } from './offline-db.js?v=3980bbca';
+import { consumeRouteNavigation } from './routes.js?v=3980bbca';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=42d6f5c2';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=42d6f5c2';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=42d6f5c2';
+} from './sync-queue.js?v=3980bbca';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=3980bbca';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=3980bbca';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {
@@ -1120,6 +1120,7 @@ async function loadUserProgressFromSheetNow() {
             : levelEstimates;
         applyRemoteFastTrack(progressResult.data?.meta, { full: !gotDelta });
         window.applyRemoteLanguageProfile?.(progressResult.data?.meta, { full: !gotDelta });
+        window.applyRemotePinnedMeanings?.(progressResult.data?.meta);
 
         // Overlay any still-queued (un-synced) local writes on top of the
         // freshly-loaded sheet data — those answers are newer than what Sheets
