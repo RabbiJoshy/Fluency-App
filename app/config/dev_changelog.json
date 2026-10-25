@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T00:21:00+00:00",
+      "date": "2026-10-26 00:21 GMT",
+      "agent": "Claude",
+      "summary": "No more 'general use': the plain meaning reads as its translation, first.",
+      "detail": [
+        "Under a shared translation, a meaning with no context of its own used to read 'general use'; it now reads the translation alone and comes first (man / man · adult male).",
+        "The meanings sheet behind See again lists it the same way."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T23:52:00+00:00",
       "date": "2026-10-25 23:52 GMT",
       "agent": "Claude",
@@ -359,20 +370,6 @@
       "detail": [
         "The connecting word (a, por, em, que) is bold; a slot that names a word type (inf, ger, pp, subj = verb colour; adj) is a pill in that colour, as in the function-word cards.",
         "Frame text and the tap-for-full-wording note are unchanged; the grey phrase pill on the row in use (contar que) is unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T06:34:55+01:00",
-      "date": "2026-10-22 06:34 BST",
-      "agent": "Claude",
-      "summary": "About is now its own page with its own link (about.html), completely separate from the app",
-      "detail": [
-        "New page: about.html. It loads no sign-in, no language, no deck and no progress, so it is the same for everyone whatever language you study or whether you use the app at all.",
-        "The walkthrough lives on that page (about.html#walkthrough).",
-        "Sidebar, Settings and Help open about.html in a new tab. Old links (#/about, #/walkthrough, ?about=) forward to it before the app loads.",
-        "The meaning-frequency bars moved into their own small module so the About page draws them without the study engine.",
-        "Service worker: About is cached under its own address and never as the app's offline page."
       ],
       "commit": "pending"
     }

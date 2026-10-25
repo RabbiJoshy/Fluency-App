@@ -26970,7 +26970,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .meanings-scroll.inline-sense-rows .pos-section-head:not(:has(> :is(.sense-prominence-badge, .sense-pin-btn, .pct-column, .known-sense-tag))) > .pos-section-chevron,
 .meanings-scroll.inline-sense-rows .pos-collapsible.is-open.rows-carry-meters > .pos-section-head:not(:has(> :is(.sense-pin-btn, .pct-column, .known-sense-tag))) > .pos-section-chevron { margin-left: auto; }
-.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-context-cell :is(.meaning-context-cell, .meaning-context-cell *):not(.sense-inline-info, .sense-inline-info *, .lone-shared-inline.is-gloss, #_) {
+.meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-context-cell :is(.meaning-context-cell, .meaning-context-cell *):not(.sense-inline-info, .sense-inline-info *, .lone-shared-inline.is-gloss, .is-plain-gloss, #_) {
     font-weight: 400 !important;
     color: var(--text-secondary) !important;
 }
@@ -27483,3 +27483,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     padding: 0 0 3px;
 }
 .pos-collapsible .pos-section-head.has-summary-below .pos-section-summary + * { margin-left: auto; }
+/* The plain meaning under a shared translation reads as that translation,
+   bold, where a narrower use would show its context. */
+.meanings-scroll.inline-sense-rows .meaning-row-group .group-card-varying-cell .meaning-context-cell.is-plain-gloss:not(#_) {
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-context-cell.is-plain-gloss::before { content: none !important; }

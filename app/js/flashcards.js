@@ -1378,7 +1378,7 @@ function fitLoneSharedInline(root) {
         if (cells.length < 2 || cells.length > 4) return;
         const hostOf = cell => cell.querySelector('.meaning-context-cell, .row-adaptive-text') || cell;
         cells.forEach(cell => {
-            if (cell.querySelector('.lone-shared-inline')) return;
+            if (cell.querySelector('.lone-shared-inline, .is-plain-gloss')) return;
             const host = hostOf(cell);
             const span = document.createElement('span');
             span.className = 'lone-shared-inline is-gloss';
@@ -8778,6 +8778,10 @@ function renderCardWikipediaBadge(card) {
                         }
                         entry.memberIndices.push(memberIdx);
                     }
+                    // A meaning with nothing of its own beside the shared
+                    // translation is the plain one: it reads as the
+                    // translation alone, ahead of the narrower uses.
+                    displayMemberEntries.sort((a, b) => (b.label === 'general use') - (a.label === 'general use'));
                     for (const entry of displayMemberEntries) {
                         entry.representative = entry.memberIndices.includes(currentMeaningIndex)
                             ? currentMeaningIndex
@@ -8794,7 +8798,7 @@ function renderCardWikipediaBadge(card) {
 
                     const familyText = String(sharedText || '').replace(/<[^>]*>/g, '').replace(/&quot;/g, '"').trim();
                     for (const entry of displayMemberEntries) {
-                        const label = [entry.extra, entry.context].filter(Boolean).join(' · ') || 'general use';
+                        const label = [entry.extra, entry.context].filter(Boolean).join(' · ') || familyText;
                         for (const memberIdx of entry.memberIndices) {
                             recordSenseDisplay(memberIdx, {
                                 family: isTransAxis ? familyText : '',
@@ -8886,7 +8890,7 @@ function renderCardWikipediaBadge(card) {
                                 if (diffHTML) {
                                     varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${diffHTML}</span>`;
                                 } else {
-                                    varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor};">general use</span>`;
+                                    varyingHtml = `<span class="meaning-context-cell is-plain-gloss" style="font-weight: 700; color: var(--text-primary);">${escapeCardText(familyText)}</span>`;
                                 }
                                 // Keep the member's note; the row gathers it.
                                 if (metadataHTML) varyingHtml = varyingHtml.replace(/<\/span>$/, `${metadataHTML}</span>`);
