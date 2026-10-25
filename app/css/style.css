@@ -2715,12 +2715,6 @@
             border-left: 4px solid rgb(var(--sense-match-rgb));
             box-shadow: 0 0 10px rgba(var(--sense-match-rgb), 0.25);
         }
-        .meaning-row.is-sentence-source {
-            box-shadow: inset 3px 0 0 #fff, inset -3px 0 0 #fff !important;
-        }
-        .group-card-varying-cell.is-sentence-source {
-            box-shadow: inset 3px 0 0 #fff, inset -3px 0 0 #fff !important;
-        }
         .pos-collapsible .pos-section-label {
             flex-shrink: 0;
             display: inline-flex;
@@ -27036,7 +27030,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .meanings-scroll.inline-sense-rows .pos-collapsible:has(.meaning-row:is(.selected, .is-current-sense)) > .pos-section-head:not(#_) {
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.09), rgba(var(--sense-match-rgb), 0.09)), color-mix(in srgb, var(--text-primary) 5%, transparent) !important;
 }
-.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group):is(.selected, .is-current-sense):not(.has-hoisted-shared-cell, #_) {
+.meanings-scroll.inline-sense-rows .pos-collapsible > .pos-section-head.is-pos-selected:not(#_) {
+    background: linear-gradient(rgba(var(--sense-match-rgb), 0.24), rgba(var(--sense-match-rgb), 0.24)), color-mix(in srgb, var(--text-primary) 5%, transparent) !important;
+    border-left: 4px solid rgb(var(--sense-match-rgb)) !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row:is(.meaning-row-regular, .meaning-row-group, .meaning-row-cycle):is(.selected, .is-current-sense):not(.has-hoisted-shared-cell, #_) {
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.24), rgba(var(--sense-match-rgb), 0.24)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
 }
 .meanings-scroll.inline-sense-rows .meaning-row-group.has-hoisted-shared-cell:is(.selected, .is-current-sense) .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_),
@@ -27173,7 +27171,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     text-align: center !important;
     justify-content: center !important;
 }
-.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.is-current-sense:not(.has-hoisted-shared-cell):has(.is-active-subsense):not(#_) {
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.is-current-sense:not(.has-hoisted-shared-cell):not(.is-group-selected):has(.is-active-subsense):not(#_) {
     background: linear-gradient(rgba(var(--sense-match-rgb), 0.07), rgba(var(--sense-match-rgb), 0.07)), color-mix(in srgb, var(--text-primary) 3%, transparent) !important;
     border-left-color: color-mix(in srgb, var(--text-primary) 16%, transparent);
 }
@@ -27186,14 +27184,22 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 /* The active sub-meaning is its whole row, drawn as the same rounded
    rectangle as a sense row: a 0.24 fill and a 4px left edge, text unchanged
    (2026-10-21; it was a row wash plus a chip round the text). The left padding
-   gives back the 4px the edge takes, so the text stays on its column. */
-.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
+   gives back the 4px the edge takes, so the text stays on its column.
+   When the shared translation stays in the group row (:not(.has-hoisted-shared-cell))
+   and the whole group is selected (.is-group-selected), only the outer container
+   is highlighted — not each individual context line inside it. */
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell):not(.is-group-selected) .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
     background: rgba(var(--sense-match-rgb), 0.24) !important;
     border-left: 4px solid rgb(var(--sense-match-rgb));
     border-radius: 8px;
 }
-.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell):not(.is-group-selected)[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_),
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="translation"] .sense-cue-group > .group-card-varying-cell.is-active-subsense:not(#_) {
     padding-left: 20px !important;
+}
+.meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group:not(.has-hoisted-shared-cell).is-group-selected .sense-cue-group:not(#_) {
+    gap: 0 !important;
 }
 
 /* No outlines on rows that aren't chosen (2026-10-21): a resting sense row has

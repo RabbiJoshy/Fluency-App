@@ -14,6 +14,19 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-25T11:25:00+00:00",
+      "date": "2026-10-25 11:25 UTC",
+      "agent": "Antigravity",
+      "summary": "About page and walkthrough: label dictionary icon, move mañana to intro, and reframe music choice.",
+      "detail": [
+        "Added 'Dictionary lookup' callout and pin label in the walkthrough pointing to the dictionary tile in the bottom right corner.",
+        "Moved mañana (tomorrow) into the main intro paragraph to contrast standard speech essentials with series/music specific vocabulary.",
+        "Shortened the Speech and Music mode descriptions for direct parallelism.",
+        "Removed 'songs you love' and reframed music mode around uploading a playlist or selecting an artist."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-24T18:07:00+01:00",
       "date": "2026-10-24 18:07 BST",
       "agent": "Antigravity",
@@ -360,20 +373,6 @@
         "A function word's back lists every construction already, so its companion cards showed the same rows twice.",
         "Portuguese: 619 -> 612 cards; each of those words is now one card with its word-type pills on the front, like que.",
         "Spanish function words not checked."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T00:53:58+01:00",
-      "date": "2026-10-22 00:53 BST",
-      "agent": "Claude",
-      "summary": "Phone top bar tighter and larger; folded Learn shows only its level; plain ? help; 'Mistakes first' hint",
-      "detail": [
-        "Phone top bar: about 8px higher, the line 6px under the icons (was 18px); flag 25→29px, language name 16→18px, icons 26→29px.",
-        "Phone: with Practise open, folded Learn shows only 'Level N · Words X–Y' (no bar or counts).",
-        "Phone: leaf and clock icons sit beside 'Learn' and 'Practise'; the ? is small and raised after the title, and only on the open section.",
-        "Everywhere: the section help is a plain ? (no circle).",
-        "Practise hint: 'Mistakes first', shown only when there are both mistakes and words to review."
       ],
       "commit": "pending"
     }

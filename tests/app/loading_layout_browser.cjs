@@ -154,7 +154,7 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
                 delete document.getElementById('setupPanel').dataset.sourceChoice;
                 document.getElementById('step2').style.display = 'block';
                 document.body.classList.add('has-learning-context');
-                document.getElementById('step1').classList.add('source-speech-active');
+                document.getElementById('step1').classList.add('source-speech-active', 'context-ready');
                 window.setupRender = window.renderLevelSelector('spanish', {preferActionable:true});
             });
             await page.locator('#step2 .level-choosing[aria-busy="true"]').waitFor();
