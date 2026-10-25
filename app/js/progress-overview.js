@@ -1,3 +1,4 @@
+import { beginRegionLoading, boundedLoad } from './loading-ui.js?v=65eb4195';
 // A single local snapshot powers the coverage and card counts. No example
 // corpus is downloaded, and completed loads cannot reopen a closed dialog.
 export function summarizeProgress(cards, { getId, getState, getProgress }) {
@@ -98,7 +99,8 @@ export async function openProgressOverview(options) {
     const current = () => token === request && !modal.classList.contains('hidden') && options.isCurrent();
     const content = byId('progressOverviewContent');
     const refresh = byId('progressRefreshBtn');
-    content.hidden = true;
+    content.hidden = false;
+    const finishLoading = beginRegionLoading(content, { label: 'Loading your progress…' });
     const identity = byId('progressOverviewFlag');
     if (identity) {
         identity.classList.toggle('is-artist', Boolean(options.identity));
@@ -108,14 +110,14 @@ export async function openProgressOverview(options) {
             ? (options.identity.image ? '' : options.identity.fallback || '♫')
             : options.flag || '';
     }
-    setText('progressOverviewStatus', 'Loading your progress…');
+    setText('progressOverviewStatus', '');
     refresh.hidden = true;
     refresh.disabled = true;
     modal.setAttribute('aria-busy', 'true');
     modal.classList.remove('hidden');
     if (opening) byId('closeTotalStatsModal')?.focus();
     try {
-        const cards = await options.loadVocabulary();
+        const cards = await boundedLoad(options.loadVocabulary());
         if (!current()) {
             if (token === request && !options.isCurrent()) closeProgressOverview();
             return;
@@ -150,11 +152,13 @@ export async function openProgressOverview(options) {
             if (token === request && !options.isCurrent()) closeProgressOverview();
             return;
         }
+        content.hidden = true;
         setText('progressOverviewStatus', 'Progress could not be loaded. Your saved progress is unchanged. Try again.');
         refresh.textContent = 'Try again';
         refresh.hidden = false;
         console.warn('Progress overview could not load:', error);
     } finally {
+        finishLoading();
         if (token === request) {
             refresh.disabled = false;
             modal.removeAttribute('aria-busy');

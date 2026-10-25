@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=a14997ef';
-import { accountPermissions } from './account-permissions.js?v=a14997ef';
-import { readJsonWithTimeout } from './read-request.js?v=a14997ef';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=a14997ef';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=a14997ef';
-import { dbGet, dbPut } from './offline-db.js?v=a14997ef';
-import { consumeRouteNavigation } from './routes.js?v=a14997ef';
+import './state.js?v=65eb4195';
+import { accountPermissions } from './account-permissions.js?v=65eb4195';
+import { readJsonWithTimeout } from './read-request.js?v=65eb4195';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=65eb4195';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=65eb4195';
+import { dbGet, dbPut } from './offline-db.js?v=65eb4195';
+import { consumeRouteNavigation } from './routes.js?v=65eb4195';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=a14997ef';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=a14997ef';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=a14997ef';
+} from './sync-queue.js?v=65eb4195';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=65eb4195';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=65eb4195';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {
@@ -375,14 +375,23 @@ async function completeProfileLogin(user) {
         setTimeout(_openFirstRunTutorialUnlessLinked, 250);
     }
 
-    // Load user progress from Google Sheets
-    await loadUserProgressFromSheet();
+    // Apply the local cache synchronously, but never hold successful sign-in
+    // behind a remote progress or playlist request. Fresh sign-in must close
+    // the same surface as a restored session.
+    const progressRefresh = loadUserProgressFromSheet();
+    hideAuthModal();
     _markAuthReady();
+    progressRefresh.then(changed => {
+        if (currentUser !== user || !changed) return;
+        window.bumpProgressEpoch?.();
+        const studying = !document.getElementById('appContent')?.classList.contains('hidden');
+        if (!studying && selectedLanguage && selectedLevel) return window.refreshSetupAfterProgress?.();
+    }).catch(error => console.warn('Progress sync deferred after login:', error));
     setTimeout(() => window.checkAndShowAdminUpdateModal?.(), 300);
     // Artist/song metadata may have initialized while the login modal was
     // still open, when there was no named user to reconcile. Complete the
     // per-user playlist restore now that identity is known.
-    await window.reconcileRemoteSongSet?.().catch(error => {
+    window.reconcileRemoteSongSet?.().catch(error => {
         console.warn('Song-set sync deferred after login:', error);
     });
     if (window.playlistLiveActive?.()) {
@@ -924,6 +933,7 @@ function loadUserProgressFromSheet() {
     const run = loadUserProgressFromSheetNow();
     progressRefreshInFlight = run;
     run.finally(() => {
+        window.markProgressLoaded?.();
         if (progressRefreshInFlight === run) progressRefreshInFlight = null;
     }).catch(() => {});
     return run;

@@ -1,44 +1,46 @@
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=65eb4195';
+import { readJsonWithTimeout } from './read-request.js?v=65eb4195';
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=a14997ef';
-import { releaseUrl } from './release-host.js?v=a14997ef';
-import './theme.js?v=a14997ef';
-import './desktop-shell.js?v=a14997ef';
-import './extra-workspace.js?v=a14997ef';
-import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=a14997ef';
-import './ai-preference.js?v=a14997ef';
-import { installFlagRendering } from './flags.js?v=a14997ef';
-import { IS_STAGING } from './env.js?v=a14997ef';
-import './state.js?v=a14997ef';
-import './offline-db.js?v=a14997ef';
-import './sync-queue.js?v=a14997ef';
-import { initOfflineContent } from './offline-content.js?v=a14997ef';
-import './speech.js?v=a14997ef';
-import './artist-ui.js?v=a14997ef';
-import './auth.js?v=a14997ef';
-import './tutorial.js?v=a14997ef';
-import './estimation.js?v=a14997ef';
-import './config.js?v=a14997ef';
-import './progress.js?v=a14997ef';
-import './knowledge.js?v=a14997ef';
-import './session-plan.js?v=a14997ef';
-import './ui.js?v=a14997ef';
-import './vocab.js?v=a14997ef';
-import './language-profile.js?v=a14997ef';
-import './smart-skip-pairs.js?v=a14997ef';
-import './bridge.js?v=a14997ef';
-import './cognates.js?v=a14997ef';
-import './coverage.js?v=a14997ef';
-import './fast-mode.js?v=a14997ef';
-import './extras.js?v=a14997ef';
-import './review-home.js?v=a14997ef';
-import './song-sets.js?v=a14997ef';
-import './playlist-live.js?v=a14997ef';
-import './spotify-playlist-import.js?v=a14997ef';
-import './subtitle-import.js?v=a14997ef';
-import './vocabulary-import.js?v=a14997ef';
-import './flashcards.js?v=a14997ef';
-import { validateArtistCatalog } from './data-contracts.js?v=a14997ef';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=65eb4195';
+import { releaseUrl } from './release-host.js?v=65eb4195';
+import './theme.js?v=65eb4195';
+import './desktop-shell.js?v=65eb4195';
+import './extra-workspace.js?v=65eb4195';
+import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=65eb4195';
+import './ai-preference.js?v=65eb4195';
+import { installFlagRendering } from './flags.js?v=65eb4195';
+import { IS_STAGING } from './env.js?v=65eb4195';
+import './state.js?v=65eb4195';
+import './offline-db.js?v=65eb4195';
+import './sync-queue.js?v=65eb4195';
+import { initOfflineContent } from './offline-content.js?v=65eb4195';
+import './speech.js?v=65eb4195';
+import './artist-ui.js?v=65eb4195';
+import './auth.js?v=65eb4195';
+import './tutorial.js?v=65eb4195';
+import './estimation.js?v=65eb4195';
+import './config.js?v=65eb4195';
+import './progress.js?v=65eb4195';
+import './knowledge.js?v=65eb4195';
+import './session-plan.js?v=65eb4195';
+import './ui.js?v=65eb4195';
+import './vocab.js?v=65eb4195';
+import './language-profile.js?v=65eb4195';
+import './smart-skip-pairs.js?v=65eb4195';
+import './bridge.js?v=65eb4195';
+import './cognates.js?v=65eb4195';
+import './coverage.js?v=65eb4195';
+import './fast-mode.js?v=65eb4195';
+import './extras.js?v=65eb4195';
+import './review-home.js?v=65eb4195';
+import './song-sets.js?v=65eb4195';
+import './playlist-live.js?v=65eb4195';
+import './spotify-playlist-import.js?v=65eb4195';
+import './subtitle-import.js?v=65eb4195';
+import './vocabulary-import.js?v=65eb4195';
+import './flashcards.js?v=65eb4195';
+import { validateArtistCatalog } from './data-contracts.js?v=65eb4195';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -92,7 +94,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=a14997ef').catch(error => {
+    ? import('./spotify.js?v=65eb4195').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1729,22 +1731,25 @@ function closeChoiceSheet(id, immediate = false) {
 window.showChoiceSheet = showChoiceSheet;
 window.closeChoiceSheet = closeChoiceSheet;
 
+let artistCatalogFailed = false;
 async function ensureArtistCatalog() {
+    artistCatalogFailed = false;
     if (allArtistsConfig && Object.keys(allArtistsConfig).length > 0) {
         return allArtistsConfig;
     }
     try {
         let value = null;
         try {
-            const response = await fetch(artistCatalogUrl(), { cache: 'no-store' });
-            if (response.ok) value = await response.json();
+            const { response, data } = await readJsonWithTimeout(artistCatalogUrl(), { cache: 'no-store' }, 10000);
+            if (response.ok) value = data;
         } catch (_) {}
         if (!value || Object.keys(value).length === 0) {
             try {
-                const fallbackResp = await fetch(releaseUrl('releases/lyrics/lyrics-all-artists-v7-native-20260825b/app/config/artists.json'), { cache: 'no-store' });
-                if (fallbackResp.ok) value = await fallbackResp.json();
+                const { response, data } = await readJsonWithTimeout(releaseUrl('releases/lyrics/lyrics-all-artists-v7-native-20260825b/app/config/artists.json'), { cache: 'no-store' }, 10000);
+                if (response.ok) value = data;
             } catch (_) {}
         }
+        if (!value) throw new Error('Artist catalog unavailable.');
         allArtistsConfig = bindArtistCatalogToRelease(
             validateArtistCatalog(value || {}, { source: 'config/artists.json' }),
             requestedLyricsRelease()
@@ -1754,6 +1759,7 @@ async function ensureArtistCatalog() {
         }
         window._allArtistsConfig = allArtistsConfig;
     } catch (error) {
+        artistCatalogFailed = true;
         console.warn('Could not load lyric artists:', error);
         allArtistsConfig = {};
     }
@@ -1762,21 +1768,35 @@ async function ensureArtistCatalog() {
 
 // The music source choice is a persistent page, including song subsets and
 // study setup. Reloading a source carries a workspace handoff, never home.
+let artistPickerRequest = 0;
 async function showArtistPicker(anchorBtn, artists, targetLanguage = null, { stage = (activeArtist || window.playlistLiveActive?.() ? 'artists' : 'choices') } = {}) {
     if (!document.getElementById('appContent')?.classList.contains('hidden')) await window.goBackToSetup?.();
     const language = targetLanguage || Object.values(artists || {})[0]?.language || selectedLanguage || 'spanish';
-    const catalog = artists && Object.keys(artists).length ? artists : await ensureArtistCatalog();
-    const resolvedArtists = Object.fromEntries(Object.entries(catalog || {}).filter(([, cfg]) =>
-        (cfg.language || 'spanish') === language));
-    const entries = musicArtistEntries(resolvedArtists);
+    const request = ++artistPickerRequest;
     window.closeChoiceSheet?.('lyricsSourceSheet', true);
     window.closeChoiceSheet?.('artistChoiceSheet', true);
     window.closeChoiceSheet?.('learningSourceChoiceSheet', true);
     if (!activeArtist && !window.playlistLiveActive?.()) {
         replaceRoute({ kind: 'music', language: routeCodeFor(language, config.languages) });
     }
+    const cached = artists || (allArtistsConfig && Object.keys(allArtistsConfig).length ? allArtistsConfig : null);
+    if (!cached) openMusicWorkspace({ language, artists: [], loading: true, stage: 'artists',
+        query: document.getElementById('musicArtistSearch')?.value,
+        onLeave: () => goToRoute({ kind: 'language', language: routeCodeFor(language, config.languages) })
+    });
+    const catalog = cached || await ensureArtistCatalog();
+    if (request !== artistPickerRequest || (!cached && !window.musicWorkspaceActive?.())) return;
+    if (artistCatalogFailed && !cached) {
+        showRegionError(document.getElementById('musicArtistList'), 'Could not load artists. Check your connection and try again.',
+            () => showArtistPicker(anchorBtn, null, language, { stage }));
+        return;
+    }
+    const resolvedArtists = Object.fromEntries(Object.entries(catalog || {}).filter(([, cfg]) =>
+        (cfg.language || 'spanish') === language));
+    const entries = musicArtistEntries(resolvedArtists);
     openMusicWorkspace({
-        language, languageName: languageDisplayName(language), artists: entries, stage,
+        language, languageName: languageDisplayName(language), artists: entries, stage, focus: Boolean(cached),
+        query: !cached ? document.getElementById('musicArtistSearch')?.value : '',
         onSelectArtist: entry => selectMusicArtist(entry, language),
         onSelectPlaylist: () => window.openSpotifyPlaylistImport?.(resolvedArtists, language, { mode: 'choose' }),
         onLeave: () => {
@@ -1858,7 +1878,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=a14997ef')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=65eb4195')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
@@ -2006,10 +2026,7 @@ window.bestForList = bestForList;
 // the subsequent source choice. It loads only catalogue metadata until the
 // learner selects an exact artist or custom collection.
 async function showLyricsPicker(language, anchorBtn = null) {
-    const catalog = await ensureArtistCatalog();
-    const matchingArtists = Object.fromEntries(Object.entries(catalog || {}).filter(([, cfg]) =>
-        (cfg.language || 'spanish') === language));
-    return showArtistPicker(anchorBtn, matchingArtists, language);
+    return showArtistPicker(anchorBtn, null, language);
 }
 
 window.showLyricsPicker = showLyricsPicker;
@@ -2213,16 +2230,20 @@ async function buildFindWordIndex() {
             sourceEntry: item
         };
     });
+    if (key !== findWordCacheKey()) throw new Error('Vocabulary changed. Please search again.');
     _findWordIndex = idx;
     _findWordIndexKey = key;
     return idx;
 }
 
 let _findWordFilter = 'all';
+let findWordRequest = 0;
+let findWordLoading = false;
 
 function renderFindResults(query) {
     const resultsEl = document.getElementById('findWordResults');
     const statusEl = document.getElementById('findWordStatus');
+    if (findWordLoading) return;
     resultsEl.innerHTML = '';
     const q = normalizeForSearch(query).trim();
     if (!q) {
@@ -2410,6 +2431,8 @@ function isFindWordOpen() {
 let _findWordReturnsToSettings = false;
 
 function closeFindWord() {
+    findWordRequest++;
+    findWordLoading = false;
     document.getElementById('findWordModal')?.classList.add('hidden');
     if (_findWordReturnsToSettings) {
         _findWordReturnsToSettings = false;
@@ -2466,18 +2489,30 @@ function setupFindWord() {
                 b.classList.toggle('is-active', b.dataset.filter === 'all');
             });
         }
-        document.getElementById('findWordResults').innerHTML = '';
-        document.getElementById('findWordStatus').textContent = selectedLanguage
-            ? 'Loading vocabulary…'
-            : 'Choose a language first.';
-        setTimeout(() => input.focus(), 50);
-        try {
-            await buildFindWordIndex();
-            renderFindResults(input.value);
-        } catch (e) {
-            console.error('Find-word: failed to build index', e);
-            document.getElementById('findWordStatus').textContent = 'Could not load vocabulary.';
-        }
+        const results = document.getElementById('findWordResults');
+        const status = document.getElementById('findWordStatus');
+        const load = async () => {
+            const request = ++findWordRequest;
+            results.replaceChildren();
+            findWordLoading = Boolean(selectedLanguage);
+            status.textContent = selectedLanguage ? 'Loading vocabulary…' : 'Choose a language first.';
+            if (!selectedLanguage) return;
+            const finish = beginRegionLoading(results, { label: 'Loading vocabulary…' });
+            try {
+                await boundedLoad(buildFindWordIndex());
+                if (request !== findWordRequest) return;
+                finish();
+                findWordLoading = false;
+                renderFindResults(input.value);
+            } catch (error) {
+                if (request !== findWordRequest) return;
+                findWordLoading = false;
+                status.textContent = 'Could not load vocabulary.';
+                showRegionError(results, error.message || 'Please try again.', load);
+            } finally { finish(); }
+        };
+        setTimeout(() => { if (!modal.classList.contains('hidden')) input.focus(); }, 50);
+        await load();
     }
     window.openFindWord = openFindWord;
     window.closeFindWord = closeFindWord;

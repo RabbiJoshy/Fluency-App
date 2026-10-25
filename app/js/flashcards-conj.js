@@ -1,3 +1,4 @@
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=65eb4195';
 // Lazy-loaded conjugation table for js/flashcards.js. Loaded on first
 // click of the conjugation toggle. The data cache (window._conjugationData)
 // is populated by core's loadConjugationData on Speech boot; this module
@@ -16,7 +17,7 @@
 
 // Cells are matched to the card's word exactly as the sense-row English is,
 // so a -se table ("me siento") opens on the card's tense and marks its form.
-import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=a14997ef';
+import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=65eb4195';
 
 const CONJ_UI = {
     spanish: {
@@ -330,6 +331,7 @@ async function toggleConjugationTable() {
     if (!panel) return;
     if (panel.classList.contains('visible')) {
         panel.classList.remove('visible');
+        panel._loadRequest = (panel._loadRequest || 0) + 1;
         // Wait out the slide-out before re-parenting: moving it mid-transition
         // restarts layout inside the card and the panel jumps.
         setTimeout(() => {
@@ -337,49 +339,65 @@ async function toggleConjugationTable() {
         }, 260);
         return;
     }
-    if (!panel.firstChild) {
-        // Defensive: a fast click on a verb card before the boot-time
-        // prefetch completes should wait for the in-flight load instead
-        // of rendering an empty cache as "no data". loadConjugationData
-        // returns the in-flight promise so concurrent callers share it.
-        if (typeof window.loadConjugationData === 'function') {
-            await window.loadConjugationData();
-        }
-        const lemma = panel.dataset.lemma || '';
-        const related = panel.dataset.related || '';
-        const target = panel.dataset.target || '';
-        const data = window._conjugationData;
-        let conjEntry = lookupConjEntry(data, lemma);
-        let isRelated = false;
-        if (!conjEntry && related) {
-            conjEntry = lookupConjEntry(data, related);
-            isRelated = !!conjEntry;
-        }
-        const ownerLemma = isRelated ? (related || lemma) : lemma;
-        const cacheKey = `${ownerLemma}::${target}::${isRelated ? 1 : 0}`;
-        let inner = _builtPanelCache.get(cacheKey);
-        if (inner == null) {
-            const fullHtml = buildConjugationTableHTML(conjEntry, target, lemma,
-                { relatedLemma: related, isRelatedParadigm: isRelated });
-            // buildConjugationTableHTML returns a wrapper `<div id="conjugationTable">…</div>`.
-            // The existing placeholder IS the #conjugationTable element — strip the
-            // wrapper and inject just the inner content so we don't nest divs.
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = fullHtml;
-            const built = wrapper.firstElementChild;
-            inner = built ? built.innerHTML : fullHtml;
-            _builtPanelCache.set(cacheKey, inner);
-        }
-        panel.innerHTML = inner;
-        const drillLink = panel.querySelector('.conj-drill-link');
-        if (drillLink) {
-            drillLink.addEventListener('click', (e) => {
-                if (typeof window.openConjugationsScreen === 'function') {
-                    e.preventDefault();
-                    window.openConjugationsScreen(drillLink.dataset.verb || lemma);
-                }
-            });
-        }
+    if (!panel.firstChild || panel.querySelector('.region-load-error') || panel.classList.contains('region-loading')) {
+        const request = panel._loadRequest = (panel._loadRequest || 0) + 1;
+        hostConjPanel(panel);
+        panel.classList.add('visible');
+        const finish = beginRegionLoading(panel, { label: 'Loading conjugations…', onCancel: () => toggleConjugationTable() });
+        try {
+            // Defensive: a fast click on a verb card before the boot-time
+            // prefetch completes should wait for the in-flight load instead
+            // of rendering an empty cache as "no data". loadConjugationData
+            // returns the in-flight promise so concurrent callers share it.
+            if (typeof window.loadConjugationData === 'function') {
+                await boundedLoad(window.loadConjugationData());
+            }
+            if (request !== panel._loadRequest || !panel.isConnected || !panel.classList.contains('visible')) return;
+            const lemma = panel.dataset.lemma || '';
+            const related = panel.dataset.related || '';
+            const target = panel.dataset.target || '';
+            const data = window._conjugationData;
+            if (!data && config.languages[selectedLanguage]?.conjugationsPath) throw new Error('Could not load conjugations. Please try again.');
+            let conjEntry = lookupConjEntry(data, lemma);
+            let isRelated = false;
+            if (!conjEntry && related) {
+                conjEntry = lookupConjEntry(data, related);
+                isRelated = !!conjEntry;
+            }
+            const ownerLemma = isRelated ? (related || lemma) : lemma;
+            const cacheKey = `${ownerLemma}::${target}::${isRelated ? 1 : 0}`;
+            let inner = _builtPanelCache.get(cacheKey);
+            if (inner == null) {
+                const fullHtml = buildConjugationTableHTML(conjEntry, target, lemma,
+                    { relatedLemma: related, isRelatedParadigm: isRelated });
+                // buildConjugationTableHTML returns a wrapper `<div id="conjugationTable">…</div>`.
+                // The existing placeholder IS the #conjugationTable element — strip the
+                // wrapper and inject just the inner content so we don't nest divs.
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = fullHtml;
+                const built = wrapper.firstElementChild;
+                inner = built ? built.innerHTML : fullHtml;
+                _builtPanelCache.set(cacheKey, inner);
+            }
+            panel.innerHTML = inner;
+            const drillLink = panel.querySelector('.conj-drill-link');
+            if (drillLink) {
+                drillLink.addEventListener('click', (e) => {
+                    if (typeof window.openConjugationsScreen === 'function') {
+                        e.preventDefault();
+                        window.openConjugationsScreen(drillLink.dataset.verb || lemma);
+                    }
+                });
+            }
+        } catch (error) {
+            if (request === panel._loadRequest && panel.isConnected && panel.classList.contains('visible')) {
+                showRegionError(panel, error.message || 'Could not load conjugations.', () => {
+                    panel.classList.remove('visible');
+                    toggleConjugationTable();
+                });
+            }
+        } finally { finish(); }
+        return;
     }
     // A freshly moved node has no committed layout, so the slide-in would be
     // skipped. Reading a layout property commits the "from" state; unlike a

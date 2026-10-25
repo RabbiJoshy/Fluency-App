@@ -1,10 +1,11 @@
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=65eb4195';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=a14997ef';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=a14997ef';
-import { readFastTrack } from './fast-track-preferences.js?v=a14997ef';
-import './session-plan.js?v=a14997ef';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=a14997ef';
+import './state.js?v=65eb4195';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=65eb4195';
+import { readFastTrack } from './fast-track-preferences.js?v=65eb4195';
+import './session-plan.js?v=65eb4195';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=65eb4195';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -533,7 +534,13 @@ window.currentLearningMode = currentLearningMode;
 
 // Everything that belongs to a chosen deck. The mode choice shows none of it —
 // #reviewDeckSection sits outside #step4, so it has to be named here too.
+let speechSetupRequest = 0;
 function hideStudySurfaces() {
+    speechSetupRequest++;
+    const setup = document.getElementById('setupPanel');
+    if (setup) setup.dataset.sourceChoice = 'pending';
+    window.hideAppLoading?.();
+    document.getElementById('dataLoadingIndicator')?.classList.remove('visible');
     ['step2', 'step4', 'extrasDeckSection', 'lemmaToggleContainer', 'cognateToggleContainer']
         .forEach(id => {
             const el = document.getElementById(id);
@@ -964,6 +971,10 @@ function setupLanguageTabs() {
 
             const continueToSpeech = async () => {
                 if (selectedLanguage !== newLanguage) return;
+                const request = ++speechSetupRequest;
+                const isCurrent = () => request === speechSetupRequest && selectedLanguage === newLanguage;
+                const setup = document.getElementById('setupPanel');
+                if (setup) delete setup.dataset.sourceChoice;
                 document.getElementById('step1')?.classList.add('source-speech-active');
                 speechSourceButton?.classList.add('is-selected');
                 sourceCardButton?.classList.remove('is-selected');
@@ -1015,9 +1026,11 @@ function setupLanguageTabs() {
                     const langPpmPath = config.languages[selectedLanguage] && config.languages[selectedLanguage].ppmDataPath;
                     if (!ppmData && langPpmPath) {
                         await timePhase('loadPpmData', () => loadPpmData(selectedLanguage));
+                        if (!isCurrent()) return;
                     }
                     await timePhase('loadReleaseStudyStructure',
                         () => loadReleaseStudyStructure(selectedLanguage));
+                    if (!isCurrent()) return;
 
                     loadingIndicator.classList.remove('visible');
                     document.getElementById('step2').style.display = 'block';
@@ -1038,15 +1051,19 @@ function setupLanguageTabs() {
                     // the level selector can build behind it instead of ahead.
                     await timePhase('updateLemmaToggleVisibility',
                         () => updateLemmaToggleVisibility());
+                    if (!isCurrent()) return;
                     await timePhase('updateCognateToggleVisibility',
                         () => updateCognateToggleVisibility());
+                    if (!isCurrent()) return;
                     await timePhase('updateExclusionBars', () => updateExclusionBars());
+                    if (!isCurrent()) return;
                     deckOverviewHold = resumeEarly ? null : showDeckOverviewLoading();
                     // Everything below this marker runs while the wheel is up, so
                     // the table says how much of the hold covered real work.
                     _setupTimings.push({ phase: '-- deck wheel raised --', ms: 0 });
                     await timePhase('renderLevelSelector',
                         () => renderLevelSelector(selectedLanguage, { preferActionable: true }));
+                    if (!isCurrent()) return;
                     reportSetupTimings(performance.now() - speechSetupStarted);
                     updateIncorrectButtonVisibility();
                     document.getElementById('step1')?.classList.add('context-ready');
@@ -1060,17 +1077,20 @@ function setupLanguageTabs() {
 
                     progressRefresh.then(changed => {
                         const setupPanel = document.getElementById('setupPanel');
-                        if (changed && setupPanel && !setupPanel.classList.contains('hidden')) {
+                        if (isCurrent() && changed && setupPanel && !setupPanel.classList.contains('hidden')) {
                             window.refreshSetupAfterProgress?.();
                         }
                     }).catch(() => {});
                     updateTotalStatsButtonVisibility();
                 } finally {
-                    document.getElementById('dataLoadingIndicator')?.classList.remove('visible');
                     await deckOverviewHold;
                     markSetupReady();
-                    if (!resumeEarly) window.hideAppLoading?.();
+                    if (isCurrent()) {
+                        document.getElementById('dataLoadingIndicator')?.classList.remove('visible');
+                        if (!resumeEarly) window.hideAppLoading?.();
+                    }
                 }
+                if (!isCurrent()) return;
                 window.renderResumeLastSetCard?.();
                 if (!window.maybeShowKnownLanguagesIntro?.(newLanguage)) {
                     if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
@@ -1319,13 +1339,33 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
     return firstIncomplete || firstWithReview || lastAvailable || buttons[buttons.length - 1];
 }
 
-async function renderLevelSelector(language, { preferActionable = false } = {}) {
+async function renderLevelSelector(language, options = {}) {
+    const region = document.querySelector?.('#step2 .level-choosing');
+    const scope = typeof artistVocabularyScope !== 'undefined' ? artistVocabularyScope : '';
+    const context = `${language}|${activeArtist?.slug || ''}|${scope || ''}`;
+    const finish = typeof beginRegionLoading === 'function' ? beginRegionLoading(region, {
+        label: 'Loading levels and progress…', shape: 'levels',
+        preserve: region?.dataset?.loadedContext === context
+    }) : () => {};
+    try {
+        const result = await renderLevelSelectorNow(language, options);
+        if (region?.dataset) region.dataset.loadedContext = context;
+        return result;
+    } catch (error) {
+        if (typeof showRegionError === 'function') {
+            showRegionError(document.getElementById('levelSelector'), error.message || 'Could not load levels.',
+                () => renderLevelSelector(language, options));
+        } else throw error;
+    } finally { finish(); }
+}
+
+async function renderLevelSelectorNow(language, { preferActionable = false } = {}) {
     // `preferActionable` picks the level to land on from per-level seen/unseen
     // counts, which are read from progressData. Same race as
     // renderRangeSelector: answering it before progress arrives sends the
     // learner to level 1 regardless of where they actually are.
     if (currentUser && !currentUser.isGuest) {
-        await (window.whenProgressReady?.() ?? Promise.resolve(true));
+        if (!window.progressDataLoaded) await boundedLoad(window.progressReady, 20000);
     }
     resetSetupStateMemo();
     const container = document.getElementById('levelSelector');
@@ -1371,7 +1411,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             description: level.label,
         }));
     } else if (window.playlistLiveActive?.()) {
-        const samples = await _loadLevelSliderSamples(language);
+        const samples = await _loadLevelSliderSamples(language, { required: true });
         const totalCards = samples?.length || 0;
         const targetPerLevel = STUDY_LEVEL_TARGET_CARDS;
         const levelCount = Math.max(1, Math.ceil(totalCards / targetPerLevel));
@@ -1391,7 +1431,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
     } else {
         _smartLevelRangesCache = null;
     }
-    const preparedSamples = await _loadLevelSliderSamples(selectedLanguage);
+    const preparedSamples = await _loadLevelSliderSamples(selectedLanguage, { required: true });
     const cacheKey = activeArtist ? `artist:${activeArtist.slug || window._urlArtistSlug || selectedLanguage}` : selectedLanguage;
     const _raw = _levelSliderRawCache[cacheKey];
     if (_raw && !usingReleaseLevels) {
@@ -2009,7 +2049,7 @@ function _levelSliderSamplesSync(language) {
     return raw ? _samplesFromRaw(raw, language) : null;
 }
 
-async function _loadLevelSliderSamples(language) {
+async function _loadLevelSliderSamples(language, { required = false } = {}) {
     const cacheKey = activeArtist ? `artist:${activeArtist.slug || window._urlArtistSlug || language}` : language;
     let raw = _levelSliderRawCache[cacheKey];
     if (!raw) {
@@ -2021,6 +2061,7 @@ async function _loadLevelSliderSamples(language) {
             _levelSliderRawCache[cacheKey] = raw;
         } catch (err) {
             console.warn('Slider sample fetch failed:', err);
+            if (required) throw err;
             return null;
         }
     }
@@ -3098,7 +3139,25 @@ function getRecordedSetupState(item) {
     return memoise(recorded || { seen: false });
 }
 
-async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
+async function renderRangeSelector(options = {}) {
+    const region = document.getElementById('rangeSelector');
+    const context = JSON.stringify([selectedLanguage, selectedLevel, currentUser?.initials,
+        activeArtist?.slug, window.artistVocabularyScope, window.useLemmaMode, window.excludeCognates]);
+    const finish = typeof beginRegionLoading === 'function' ? beginRegionLoading(region, { label: 'Loading study sessions…',
+        preserve: region?.dataset?.loadedContext === context }) : () => {};
+    try {
+        const result = await renderRangeSelectorNow(options);
+        if (region?.dataset) region.dataset.loadedContext = context;
+        return result;
+    }
+    catch (error) {
+        if (typeof showRegionError === 'function') {
+            showRegionError(region, error.message || 'Could not load study sessions.', () => renderRangeSelector(options));
+        } else throw error;
+    } finally { finish(); }
+}
+
+async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     // Every set count below is computed from `progressData`, and an empty
     // `progressData` reads identically whether the learner has studied nothing
     // or the progress fetch simply has not landed. Rendering on the second
@@ -3107,7 +3166,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     // and then the boxes fill in" behaviour. Wait for the answer, with a cap
     // so an unreachable Sheets never leaves the screen empty.
     if (currentUser && !currentUser.isGuest) {
-        await (window.whenProgressReady?.() ?? Promise.resolve(true));
+        if (!window.progressDataLoaded) await boundedLoad(window.progressReady, 20000);
     }
     // This function is also called directly after progress refreshes and when
     // returning from a completed deck, without passing through the level
@@ -3881,7 +3940,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=a14997ef')
+        import('./spotify.js?v=65eb4195')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

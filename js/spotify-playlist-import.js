@@ -1,9 +1,10 @@
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=65eb4195';
 // Live playlist: look up lyrics on LRCLIB (six at a time), land each song in
 // the progress list, save tracks to Fluency, then build a study deck from
 // speech-inventory tokens plus unassigned song-line examples.
-import './state.js?v=a14997ef';
-import { combineSongCatalogs } from './song-sets-core.js?v=a14997ef';
-import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=a14997ef';
+import './state.js?v=65eb4195';
+import { combineSongCatalogs } from './song-sets-core.js?v=65eb4195';
+import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=65eb4195';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
 const LYRICS_DB_NAME = 'fluency-playlist-lyrics';
@@ -14,7 +15,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=a14997ef';
+const SPOTIFY_MODULE = './spotify.js?v=65eb4195';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
@@ -598,6 +599,18 @@ function choosePlaylistTracks(playlist, tracks, signal, language) {
 }
 
 async function openSpotifyPlaylistImport(matchingArtists, language, options = {}) {
+    const run = openSpotifyPlaylistImportNow(matchingArtists, language, options);
+    const request = _openGeneration;
+    const list = element('spotifyPlaylistList');
+    const finish = beginRegionLoading(list, { label: 'Loading Spotify playlists…' });
+    try { await run; }
+    catch (error) {
+        if (request === _openGeneration) showRegionError(list, error.message || 'Could not load playlists.',
+            () => openSpotifyPlaylistImport(matchingArtists, language, options));
+    } finally { finish(); }
+}
+
+async function openSpotifyPlaylistImportNow(matchingArtists, language, options = {}) {
     const generation = ++_openGeneration;
     const modal = element('spotifyPlaylistModal');
     const status = element('spotifyPlaylistStatus');
@@ -638,7 +651,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     modal.classList.remove('hidden');
     status.textContent = 'Connecting to Spotify…';
 
-    await ensureSpotifyModule();
+    await boundedLoad(ensureSpotifyModule());
     if (generation !== _openGeneration) return;
     if (!window.isSpotifyConnected) {
         status.textContent = 'Spotify sign-in is temporarily unavailable. Please reload the app and try again.';
@@ -657,12 +670,12 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     status.textContent = 'Loading your playlists…';
     let playlists;
     try {
-        playlists = await window.fetchSpotifyPlaylists();
+        playlists = await boundedLoad(window.fetchSpotifyPlaylists());
         if (generation !== _openGeneration) return;
     } catch (error) {
         if (generation !== _openGeneration) return;
         status.textContent = error?.message || 'Could not load your playlists.';
-        return;
+        throw error;
     }
     status.textContent = playlists.length
         ? (_importMode === 'filter' ? 'Choose a playlist you created to match.' : 'Choose a playlist you created.')
