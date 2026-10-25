@@ -24,6 +24,8 @@ const ASSET_VERSION = '20261014clarity';
 // With pre-cache, visit 2 hits the SW with a fully-warm cache and the app
 // boots offline-fast even on first reload after install.
 const urlsToCache = [
+  '/css/loading-ui.css?v=20261025',
+  '/js/loading-ui.js?v=20261025',
   '/',
   '/css/style.css?v=20261014clarity',
   '/css/appearance.css?v=20261011',

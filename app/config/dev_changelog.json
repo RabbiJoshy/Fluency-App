@@ -14,6 +14,18 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-25T21:36:29+00:00",
+      "date": "2026-10-25 21:36 GMT",
+      "agent": "Codex",
+      "summary": "Keep the login panel in place and make logout/login transitions clean.",
+      "detail": [
+        "Place the loading message inside the sign-in card, with account choices and provider attribution space reserved from the start.",
+        "Reveal provider controls only after their markup and styles are ready, keeping the logo, guest button and account links stationary.",
+        "Cover logout before account cleanup and suppress intermediate provider callbacks; open the first language picker before the next paint after sign-in."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T20:10:00+00:00",
       "date": "2026-10-25 20:10 GMT",
       "agent": "Claude",
@@ -52,6 +64,18 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-25T12:31:03+00:00",
+      "date": "2026-10-25 12:31 GMT",
+      "agent": "Codex",
+      "summary": "Fix sign-in getting stuck and keep loading layouts stable on mobile and desktop.",
+      "detail": [
+        "Successful sign-in opens the app without waiting for background progress or playlist sync; failed account requests can retry in place.",
+        "Reserve loading space across setup, search, music, song selection, progress and conjugation drawers; retain song checkbox focus.",
+        "Keep level and practice sections hidden while choosing Speech or Music, and ignore outdated Speech loads after switching languages."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T11:25:00+00:00",
       "date": "2026-10-25 11:25 UTC",
       "agent": "Antigravity",
@@ -61,19 +85,6 @@
         "Moved mañana (tomorrow) into the main intro paragraph to contrast standard speech essentials with series/music specific vocabulary.",
         "Shortened the Speech and Music mode descriptions for direct parallelism.",
         "Removed 'songs you love' and reframed music mode around uploading a playlist or selecting an artist."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T18:07:00+01:00",
-      "date": "2026-10-24 18:07 BST",
-      "agent": "Antigravity",
-      "summary": "Flashcards: make chevron functional for collapse/expand and enable POS-wide selection.",
-      "detail": [
-        "Enabled the chevron (▾/▸) on POS section headers to cleanly toggle section expand and collapse.",
-        "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
-        "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
-        "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
       ],
       "commit": "pending"
     },
@@ -91,15 +102,15 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-10-24T16:00:00+01:00",
-      "date": "2026-10-24 16:00 BST",
-      "agent": "Claude",
-      "summary": "About page: replaced \"What's under the hood\" with a short features section, a Music mode section and a technical-details section.",
+      "timestamp": "2026-10-24T18:07:00+01:00",
+      "date": "2026-10-24 18:07 BST",
+      "agent": "Antigravity",
+      "summary": "Flashcards: make chevron functional for collapse/expand and enable POS-wide selection.",
       "detail": [
-        "New \"What makes it different\" section: skip words you already know (with a Skipped / Kept comparison and your chosen languages), examples worth learning from, and expressions.",
-        "New \"Music mode\" section: each artist's slang and learning what people, places and brands are.",
-        "\"How it works (technical details)\" now holds the NLP detail: cognate skipping, merged forms, sentence cleaning, dictionaries, bi-encoder and Jev meaning selection.",
-        "Every Spanish word on the page now has its English meaning in brackets."
+        "Enabled the chevron (▾/▸) on POS section headers to cleanly toggle section expand and collapse.",
+        "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
+        "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
+        "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
       ],
       "commit": "pending"
     },
@@ -113,6 +124,19 @@
         "Added Part of Speech filtering (Verbs, Nouns, Adjectives, Adverbs, Function words, Other).",
         "Added Jev Confidence & Gaps filtering (Lowest < 0.2, Marginal < 0.3, Moderate < 0.5, Unresolved gaps, High ≥ 0.8).",
         "Trigger button features an active filter count badge; Reset button restores defaults instantly."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-24T16:00:00+01:00",
+      "date": "2026-10-24 16:00 BST",
+      "agent": "Claude",
+      "summary": "About page: replaced \"What's under the hood\" with a short features section, a Music mode section and a technical-details section.",
+      "detail": [
+        "New \"What makes it different\" section: skip words you already know (with a Skipped / Kept comparison and your chosen languages), examples worth learning from, and expressions.",
+        "New \"Music mode\" section: each artist's slang and learning what people, places and brands are.",
+        "\"How it works (technical details)\" now holds the NLP detail: cognate skipping, merged forms, sentence cleaning, dictionaries, bi-encoder and Jev meaning selection.",
+        "Every Spanish word on the page now has its English meaning in brackets."
       ],
       "commit": "pending"
     },
@@ -351,32 +375,6 @@
       "detail": [
         "The open Learn or Practise section is the only card, with an ordinary border (no red outline; none for new users either).",
         "The folded section is one line, e.g. 'Practise · 12 waiting ›' or 'Learn · Level 1 · Words 1–100 ›', with no card around it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:20:58+01:00",
-      "date": "2026-10-22 01:20 BST",
-      "agent": "Claude",
-      "summary": "Level tiles: outline only on your level, dots on phones; readout and ? tweaks",
-      "detail": [
-        "Level tiles (everywhere): only the selected tile has an outline (red).",
-        "Phones: each tile shows one dot in its least-learned colour (any new → white, else any seen → yellow, else green) instead of a thin bar.",
-        "Phones: 'Level' and 'Words 1–100' a step larger; the ? sits at the right edge, level with the section title.",
-        "Example words and coverage line use the same font as the level readout (DM Sans), in the dimmer grey."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:02:28+01:00",
-      "date": "2026-10-22 01:02 BST",
-      "agent": "Claude",
-      "summary": "About is its own page: opens in a new tab, looks the same for everyone, never touches sign-in",
-      "detail": [
-        "Sidebar About, Settings → About and Help → More about this project open #/about in a new tab instead of over the app.",
-        "#/about never reads your account or starts sign-in, so it looks the same signed in or not.",
-        "Removed 'Back to the app (name)', the 'Back to app' pill, and the × that showed for visitors even though it did nothing.",
-        "The 'Welcome back / Continue session' box is no longer built on the About page."
       ],
       "commit": "pending"
     }

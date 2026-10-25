@@ -77,6 +77,7 @@ const {createHarness} = require('./estimation_harness.cjs');
     let vocab=baseline.filter(item=>item.rank>10);
     let stateOf=item=>item.rank<=25?{seen:true,estimated:true}:item.rank<=30?{seen:true,needsReview:true,reviewReason:'due'}:item.rank<=50?{seen:true,needsReview:false}:{seen:false};
     const context={
+        beginRegionLoading:()=>()=>{}, showRegionError(){}, boundedLoad:promise=>Promise.resolve(promise),
         window:{isFastTrackOn:()=>true,SessionPlan:plan},config:{languages:{spanish:{}}},selectedLanguage:'spanish',
         activeArtist:null,currentUser:{isGuest:true},selectedLevel:'c100',percentageMode:true,ppmData:[{}],
         levelEstimates:{},STABLE_SET_SLOT_COUNT:25,STUDY_SESSION_LIMIT:20,QUICK_REVIEW_LIMIT:20,_studySessionStarting:false,

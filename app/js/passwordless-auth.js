@@ -1,3 +1,4 @@
+import { readJsonWithTimeout } from './read-request.js?v=1';
 import { IS_STAGING } from './env.js?v=20261010airlock';
 
 export const PASSWORDLESS_ENABLED = true;
@@ -8,8 +9,8 @@ const CLERK_DOMAIN = 'hardy-feline-9737.clerk.accounts.dev';
 const PUBLISHABLE_KEY = 'pk_test_aGFyZHktZmVsaW5lLTk3MzcuY2xlcmsuYWNjb3VudHMuZGV2JA';
 let loading;
 let mounted = false;
-let activeUserId = null;
-let resolvingUserId = null;
+let cancelSignInLayout = () => {};
+let resetSessionHandler = () => {};
 
 export function authenticatedSyncFetch(nativeFetch, getSession, endpoint) {
     const selectedEndpoint = new URL(endpoint).href;
@@ -42,7 +43,7 @@ function loadScript(src, attributes = {}) {
         script.src = src;
         script.crossOrigin = 'anonymous';
         Object.entries(attributes).forEach(([key, value]) => script.setAttribute(key, value));
-        const timer = setTimeout(() => reject(new Error('Sign-in is taking too long. Please retry.')), 15000);
+        const timer = setTimeout(() => { script.remove(); reject(new Error('Sign-in is taking too long. Please retry.')); }, 15000);
         script.onload = () => { clearTimeout(timer); resolve(); };
         script.onerror = () => { clearTimeout(timer); script.remove(); reject(new Error('Could not load sign-in. Check your connection and retry.')); };
         document.head.appendChild(script);
@@ -60,15 +61,16 @@ export function hideLegacyAuthChoices() {
 
 async function resolveProfile(user, container) {
     async function account(name) {
-        const response = await fetch(PASSWORDLESS_SYNC_URL, { method: 'POST',
+        const { response, data: result } = await readJsonWithTimeout(PASSWORDLESS_SYNC_URL, { method: 'POST',
             body: JSON.stringify({ action: 'account', ...(name ? { name } : {}) }),
-            signal: AbortSignal.timeout(15000) });
-        const result = await response.json();
-        if (!response.ok || !result.success) throw new Error(result.message || 'Could not load your account.');
+        }, 15000);
+        if (!response.ok || !result?.success) throw new Error(result?.message || 'Could not load your account.');
         return result.data.profile;
     }
     const existing = await account();
     if (existing) return existing;
+    cancelSignInLayout();
+    finishSignInLoading();
     document.getElementById('passwordlessMoreOptions')?.remove();
     document.getElementById('passwordlessAccountSwitch')?.remove();
     if (mounted) { window.Clerk.unmountSignIn(container); window.Clerk.unmountSignUp(container); mounted = false; }
@@ -97,12 +99,9 @@ async function resolveProfile(user, container) {
 }
 
 export async function signOutPasswordless() {
-    activeUserId = null;
-    resolvingUserId = null;
+    resetSessionHandler();
+    cancelSignInLayout();
     mounted = false;
-    if (loading) {
-        try { await loading; } catch (_) {}
-    }
     if (window.Clerk) {
         try {
             await window.Clerk.signOut();
@@ -142,41 +141,13 @@ function showAppleEmailDialog(container) {
     button.focus();
 }
 
-function mountSignInUI(container) {
-    if (mounted || !window.Clerk) return;
+function prepareAuthChoices(container) {
     const modal = document.getElementById('authModal');
-    const subtitle = modal?.querySelector('.auth-welcome-copy p');
-    if (subtitle) subtitle.style.display = '';
-    container.replaceChildren();
     const returnUrl = window.location.origin + window.location.pathname + window.location.hash;
     const signupUrl = new URL(window.location.href);
     signupUrl.searchParams.set('account', 'create');
     const isSignUp = new URLSearchParams(window.location.search).get('account') === 'create';
     const optionsLabel = isSignUp ? 'More sign-up options' : 'More sign-in options';
-    const props = {
-        routing: 'virtual', forceRedirectUrl: returnUrl,
-        signInForceRedirectUrl: returnUrl, signUpForceRedirectUrl: returnUrl,
-        signInUrl: returnUrl, signUpUrl: signupUrl.href,
-        appearance: { layout: { socialButtonsVariant: 'blockButton' }, elements: {
-            header: { display: 'none' },
-            socialButtons: { display: 'flex', flexDirection: 'column', gap: '10px' },
-            card: { boxShadow: 'none', background: 'transparent', border: 'none', padding: '0' },
-            cardBox: { boxShadow: 'none', width: '100%', borderRadius: '0' },
-            socialButtonsBlockButton: { minHeight: '48px', width: '100%', fontSize: '14px', fontWeight: '600' },
-            formButtonPrimary: { minHeight: '48px', fontSize: '14px', fontWeight: '600' },
-            formFieldInput: { minHeight: '48px', fontSize: '14px' }
-        }, variables: {
-            fontFamily: 'var(--font-reading, sans-serif)',
-            colorPrimary: '#a5b4fc', colorForeground: '#f8fafc', colorMutedForeground: '#cbd5e1',
-            colorBackground: '#1a222c', colorInputBackground: '#111827',
-            colorInputText: '#f8fafc', borderRadius: '12px'
-        } }
-    };
-    if (isSignUp) {
-        window.Clerk.mountSignUp(container, props);
-    } else {
-        window.Clerk.mountSignIn(container, props);
-    }
     modal.classList.add('passwordless-options-collapsed');
     let moreOptions = document.getElementById('passwordlessMoreOptions');
     if (!moreOptions) {
@@ -207,7 +178,181 @@ function mountSignInUI(container) {
     accountSwitch.replaceChildren(
         document.createTextNode(isSignUp ? 'Have an account? ' : 'New here? '), accountLink
     );
+    moreOptions.disabled = true;
+    moreOptions.hidden = false;
+    if (!document.getElementById('passwordlessAttributionSpace')) {
+        const space = document.createElement('div');
+        space.id = 'passwordlessAttributionSpace';
+        space.setAttribute('aria-hidden', 'true');
+        accountSwitch.after(space);
+    }
+}
+
+function showSignInLoading(container) {
+    const modal = document.getElementById('authModal');
+    modal.setAttribute('data-auth-loading', 'true');
+    container.setAttribute('aria-busy', 'true');
+    let status = document.getElementById('passwordlessLoadingStatus');
+    if (!status) {
+        status = document.createElement('div');
+        status.id = 'passwordlessLoadingStatus';
+        status.className = 'passwordless-loading-container';
+        status.setAttribute('role', 'status');
+        status.innerHTML = '<span class="passwordless-spinner" aria-hidden="true"></span><span class="passwordless-loading-text">Loading secure sign-in…</span>';
+        container.after(status);
+    }
+    status.hidden = false;
+}
+
+function finishSignInLoading() {
+    document.getElementById('authModal')?.removeAttribute('data-auth-loading');
+    document.getElementById('passwordlessSignIn')?.removeAttribute('aria-busy');
+    const status = document.getElementById('passwordlessLoadingStatus');
+    if (status) status.hidden = true;
+}
+
+function showAuthFailure(container, error, retryAction) {
+    cancelSignInLayout();
+    finishSignInLoading();
+    const more = document.getElementById('passwordlessMoreOptions');
+    if (more) { more.disabled = true; more.hidden = true; }
+    const feedback = document.createElement('div');
+    feedback.className = 'passwordless-auth-feedback';
+    const message = document.createElement('p');
+    message.setAttribute('role', 'alert'); message.textContent = error.message;
+    const retry = document.createElement('button');
+    retry.type = 'button'; retry.className = 'auth-submit-btn'; retry.textContent = 'Retry sign-in';
+    retry.onclick = () => {
+        retry.disabled = true; retry.textContent = 'Signing in…';
+        message.textContent = 'Loading your account…'; retryAction();
+    };
+    feedback.append(message, retry); container.replaceChildren(feedback);
+}
+
+function watchSignInLayout(container) {
+    cancelSignInLayout();
+    let frame = 0, cancelled = false;
+    const stop = () => {
+        cancelled = true; observer.disconnect(); styles.disconnect(); clearTimeout(timer);
+        document.removeEventListener('load', check, true);
+        cancelAnimationFrame(frame);
+    };
+    const check = () => {
+        if (frame || cancelled) return;
+        const control = container.querySelector('button:not([aria-hidden="true"]), input');
+        if (!control || parseFloat(getComputedStyle(control).minHeight) < 44) return;
+        const header = container.querySelector('.cl-header');
+        if (header && getComputedStyle(header).display !== 'none') return;
+        frame = requestAnimationFrame(() => {
+            frame = requestAnimationFrame(() => {
+                frame = 0;
+                if (cancelled || !control.isConnected || !control.getClientRects().length) return;
+                stop(); finishSignInLoading();
+                const more = document.getElementById('passwordlessMoreOptions');
+                if (more) more.disabled = false;
+            });
+        });
+    };
+    const observer = new MutationObserver(check);
+    observer.observe(container, { childList: true, subtree: true, attributes: true });
+    const styles = new MutationObserver(check);
+    styles.observe(document.head, { childList: true, subtree: true, characterData: true });
+    document.addEventListener('load', check, true);
+    const timer = setTimeout(() => {
+        stop();
+        showAuthFailure(container, new Error('Sign-in is taking too long. Please retry.'), () => {
+            window.Clerk.unmountSignIn(container); window.Clerk.unmountSignUp(container);
+            mounted = false; mountSignInUI(container);
+        });
+    }, 15000);
+    cancelSignInLayout = stop;
+    check();
+}
+
+function mountSignInUI(container) {
+    if (mounted || !window.Clerk) return;
+    const modal = document.getElementById('authModal');
+    const subtitle = modal?.querySelector('.auth-welcome-copy p');
+    if (subtitle) subtitle.style.display = '';
+    prepareAuthChoices(container);
+    showSignInLoading(container);
+    container.replaceChildren();
+    const returnUrl = window.location.origin + window.location.pathname + window.location.hash;
+    const signupUrl = new URL(window.location.href);
+    signupUrl.searchParams.set('account', 'create');
+    const isSignUp = new URLSearchParams(window.location.search).get('account') === 'create';
+    const optionsLabel = isSignUp ? 'More sign-up options' : 'More sign-in options';
+    const props = {
+        routing: 'virtual', forceRedirectUrl: returnUrl,
+        signInForceRedirectUrl: returnUrl, signUpForceRedirectUrl: returnUrl,
+        signInUrl: returnUrl, signUpUrl: signupUrl.href,
+        appearance: { layout: { socialButtonsVariant: 'blockButton' }, elements: {
+            header: { display: 'none' },
+            socialButtons: { display: 'flex', flexDirection: 'column', gap: '10px' },
+            card: { boxShadow: 'none', background: 'transparent', border: 'none', padding: '0' },
+            cardBox: { boxShadow: 'none', width: '100%', borderRadius: '0' },
+            socialButtonsBlockButton: { minHeight: '48px', width: '100%', fontSize: '14px', fontWeight: '600' },
+            formButtonPrimary: { minHeight: '48px', fontSize: '14px', fontWeight: '600' },
+            formFieldInput: { minHeight: '48px', fontSize: '14px' }
+        }, variables: {
+            fontFamily: 'var(--font-reading, sans-serif)',
+            colorPrimary: '#a5b4fc', colorForeground: '#f8fafc', colorMutedForeground: '#cbd5e1',
+            colorBackground: '#1a222c', colorInputBackground: '#111827',
+            colorInputText: '#f8fafc', borderRadius: '12px'
+        } }
+    };
+    if (isSignUp) {
+        window.Clerk.mountSignUp(container, props);
+    } else {
+        window.Clerk.mountSignIn(container, props);
+    }
     mounted = true;
+    watchSignInLayout(container);
+}
+
+export function createPasswordlessSessionHandler({ resolveUser, onSignedIn, onSignedOut,
+    mount, isGuest, hasSavedUser, onError }) {
+    let active = null, pending = null, generation = 0;
+    const reset = () => { generation++; active = null; pending = null; };
+    const handle = state => {
+        if (isGuest()) { reset(); return Promise.resolve(); }
+        const { user, session } = state;
+        if (!user || !session) {
+            const shouldSignOut = active || pending || hasSavedUser();
+            reset();
+            if (shouldSignOut) onSignedOut();
+            mount();
+            return Promise.resolve();
+        }
+        if (active === user.id) return Promise.resolve();
+        if (pending?.id === user.id) return pending.promise;
+        const token = ++generation;
+        const attempt = { id: user.id };
+        pending = attempt;
+        attempt.promise = (async () => {
+            try {
+                const profile = await resolveUser(user);
+                if (token !== generation || isGuest()) return;
+                await onSignedIn(profile);
+                if (token !== generation || isGuest()) return;
+                active = user.id;
+                window.dispatchEvent(new Event('fluency-auth-restored'));
+            } catch (error) {
+                if (token === generation && !isGuest()) onError(error, () => handle(state));
+            } finally {
+                if (pending === attempt) pending = null;
+            }
+        })();
+        return attempt.promise;
+    };
+    return { handle, reset };
+}
+
+function authStep(promise, timeoutMs = 15000) {
+    let timer;
+    return Promise.race([promise, new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Sign-in is taking too long. Please retry.')), timeoutMs);
+    })]).finally(() => clearTimeout(timer));
 }
 
 export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
@@ -246,14 +391,9 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
     const subtitle = modal?.querySelector('.auth-welcome-copy p');
     if (!mounted && !window.Clerk?.user) {
         if (subtitle) subtitle.style.display = 'none';
-        container.innerHTML = `
-            <div class="passwordless-loading-container" role="status">
-                <div class="passwordless-spinner" aria-hidden="true"></div>
-                <span class="passwordless-loading-text">Loading secure sign-in…</span>
-            </div>
-        `;
+        prepareAuthChoices(container);
+        showSignInLoading(container);
     }
-    container.style.display = 'flex';
     if (!loading) {
         loading = (async () => {
             await loadScript(`https://${CLERK_DOMAIN}/npm/@clerk/ui@1/dist/ui.browser.js`);
@@ -262,51 +402,39 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
             });
             const providerLabel = new URLSearchParams(window.location.search).get('account') === 'create'
                 ? 'Sign up with {{provider|titleize}}' : 'Sign in with {{provider|titleize}}';
-            await window.Clerk.load({
+            await authStep(window.Clerk.load({
                 ui: { ClerkUI: window.__internal_ClerkUICtor },
                 localization: {
                     socialButtonsBlockButton: providerLabel,
                     socialButtonsBlockButtonManyInView: providerLabel
                 }
-            });
-            const handle = async ({ user, session }) => {
-                // A visitor may choose guest while Clerk is still loading.
-                if (sessionStorage.getItem('flashcardGuestSession') === '1') return;
-                if (!user || !session) {
-                    if (activeUserId) {
-                        activeUserId = null;
-                        onSignedOut();
-                    } else if (localStorage.getItem('flashcardUser')) {
-                        onSignedOut();
+            }));
+            const coordinator = createPasswordlessSessionHandler({
+                isGuest: () => sessionStorage.getItem('flashcardGuestSession') === '1',
+                hasSavedUser: () => Boolean(localStorage.getItem('flashcardUser')),
+                onSignedOut, onSignedIn,
+                mount: () => { if (!mounted) mountSignInUI(container); },
+                resolveUser: async user => {
+                    const profile = await resolveProfile(user, container);
+                    return {
+                        initials: IS_STAGING ? profile.id.replace(/^stg_/, '') : profile.id,
+                        profileId: profile.id, authProvider: 'clerk',
+                        username: profile.name, isGuest: false, isNew: Boolean(profile?.isNew)
+                    };
+                },
+                onError: (error, retryAction) => {
+                    if (subtitle) subtitle.style.display = 'none';
+                    if (mounted) {
+                        window.Clerk.unmountSignIn(container);
+                        window.Clerk.unmountSignUp(container);
+                        mounted = false;
                     }
-                    if (!mounted && window.Clerk) {
-                        mountSignInUI(container);
-                    }
-                    return;
+                    showAuthFailure(container, error, retryAction);
                 }
-                if (activeUserId === user.id || resolvingUserId === user.id) return;
-                resolvingUserId = user.id;
-                let profile;
-                try { profile = await resolveProfile(user, container); }
-                finally { resolvingUserId = null; }
-                if (sessionStorage.getItem('flashcardGuestSession') === '1') return;
-                activeUserId = user.id;
-                await onSignedIn({
-                    initials: IS_STAGING ? profile.id.replace(/^stg_/, '') : profile.id,
-                    profileId: profile.id, authProvider: 'clerk',
-                    username: profile.name, isGuest: false,
-                    isNew: Boolean(profile?.isNew)
-                });
-                window.dispatchEvent(new Event('fluency-auth-restored'));
-            };
-            window.Clerk.addListener(state => { handle(state).catch(error => {
-                if (subtitle) subtitle.style.display = 'none';
-                container.replaceChildren();
-                const message = document.createElement('p'); message.textContent = error.message;
-                const retry = document.createElement('button'); retry.className = 'auth-submit-btn'; retry.textContent = 'Retry sign-in';
-                retry.onclick = () => window.location.reload(); container.append(message, retry);
-            }); });
-            await handle(window.Clerk);
+            });
+            resetSessionHandler = coordinator.reset;
+            window.Clerk.addListener(state => { coordinator.handle(state); });
+            await coordinator.handle(window.Clerk);
         })().catch(error => { loading = null; throw error; });
     }
     try {
@@ -316,13 +444,6 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
         }
     } catch (error) {
         if (subtitle) subtitle.style.display = 'none';
-        container.replaceChildren();
-        const message = document.createElement('p');
-        message.textContent = error.message;
-        const retry = document.createElement('button');
-        retry.className = 'auth-submit-btn';
-        retry.textContent = 'Retry sign-in';
-        retry.onclick = () => startPasswordlessAuth(onSignedIn, onSignedOut);
-        container.append(message, retry);
+        showAuthFailure(container, error, () => startPasswordlessAuth(onSignedIn, onSignedOut));
     }
 }
