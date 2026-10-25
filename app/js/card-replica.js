@@ -193,6 +193,7 @@ export const REPLICA_CARDS = {
     bancoSpeech: {
         mode: 'speech', word: 'banco', pos: 'NOUN', lemma: 'banco', rank: 1057, vocabSize: 10000, corpusCount: 84,
         defaultMeaningIndex: 1,
+        lookup: ['spanishDict', 'reverso'],
         meanings: [
             {
                 pos: 'NOUN', translation: 'bench', context: 'seat', pct: 13,
@@ -792,6 +793,27 @@ export function wireReplicaBack(root, { onSelectMeaning, onCycleExample, onLayou
             if (e.target.closest('.spotify-btn')) return;
             e.stopPropagation();
             onCycleExample?.(sentence);
+        });
+    });
+
+    root.querySelectorAll('.ref-lookup-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const sheet = btn.closest('.ref-lookup-wrap')?.querySelector('.lookup-sheet');
+            if (sheet) sheet.hidden = !sheet.hidden;
+        });
+    });
+
+    root.querySelectorAll('[data-replica-lookup]').forEach(item => {
+        item.addEventListener('click', e => {
+            e.stopPropagation();
+            const label = item.getAttribute('title') || '';
+            const domain = label.toLowerCase().includes('reverso') ? 'reverso.net' : 'spanishdict.com';
+            const word = root.querySelector('.back-headword')?.textContent?.trim() || '';
+            const url = domain === 'spanishdict.com'
+                ? `https://www.spanishdict.com/translate/${encodeURIComponent(word)}`
+                : `https://context.reverso.net/translation/spanish-english/${encodeURIComponent(word)}`;
+            window.open(url, '_blank', 'noopener');
         });
     });
 
