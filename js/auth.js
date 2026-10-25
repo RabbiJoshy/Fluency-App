@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=65eb4195';
-import { accountPermissions } from './account-permissions.js?v=65eb4195';
-import { readJsonWithTimeout } from './read-request.js?v=65eb4195';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=65eb4195';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=65eb4195';
-import { dbGet, dbPut } from './offline-db.js?v=65eb4195';
-import { consumeRouteNavigation } from './routes.js?v=65eb4195';
+import './state.js?v=42d6f5c2';
+import { accountPermissions } from './account-permissions.js?v=42d6f5c2';
+import { readJsonWithTimeout } from './read-request.js?v=42d6f5c2';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=42d6f5c2';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=42d6f5c2';
+import { dbGet, dbPut } from './offline-db.js?v=42d6f5c2';
+import { consumeRouteNavigation } from './routes.js?v=42d6f5c2';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=65eb4195';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=65eb4195';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=65eb4195';
+} from './sync-queue.js?v=42d6f5c2';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=42d6f5c2';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=42d6f5c2';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {
@@ -138,6 +138,7 @@ function _openFirstRunTutorialUnlessLinked() {
 //   - new tab at app URL   → no session → landing
 //   - new tab at #/about   → no session → landing + About on top
 function onPasswordlessSignedOut() {
+    if (window.authLogoutInFlight) return;
     if (currentUser?.isGuest) return;
     if (currentUser?.initials) {
         localStorage.removeItem(`progress_cache_${currentUser.initials}`);
@@ -365,12 +366,13 @@ async function completeProfileLogin(user) {
         && (localStorage.getItem('fluencyPreferredLanguageV1') || activeLangTab)
     );
     if (!hasEstablishedLanguage) {
-        setTimeout(() => {
+        Promise.resolve().then(() => {
+            if (currentUser !== user) return;
             const step1 = document.getElementById('step1');
             if (!step1?.classList.contains('language-summary-active')) {
                 window.showLanguagePicker?.(config.languages, { fromMainScreen: true });
             }
-        }, 150);
+        });
     } else {
         setTimeout(_openFirstRunTutorialUnlessLinked, 250);
     }
@@ -534,6 +536,13 @@ function wireAccountPassword() {
 // the prompt since they might have unsaved progress in flight.
 async function logout() {
     if (PASSWORDLESS_ENABLED) {
+        if (window.authLogoutInFlight) return;
+        window.authLogoutInFlight = true;
+        // Cover account cleanup before its first await. Provider signed-out
+        // callbacks must not expose a half-mounted login panel before reload.
+        document.body.classList.remove('auth-active');
+        document.body.classList.add('auth-logging-out');
+        window.showAppLoading?.('Signing out', 'Returning to sign-in…', true);
         await window.flushQueue?.().catch(() => {});
         if (currentUser?.initials) {
             localStorage.removeItem(`progress_cache_${currentUser.initials}`);
