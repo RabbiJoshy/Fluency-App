@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-25T21:36:29+00:00",
+      "date": "2026-10-25 21:36 GMT",
+      "agent": "Codex",
+      "summary": "Keep the login panel in place and make logout/login transitions clean.",
+      "detail": [
+        "Place the loading message inside the sign-in card, with account choices and provider attribution space reserved from the start.",
+        "Reveal provider controls only after their markup and styles are ready, keeping the logo, guest button and account links stationary.",
+        "Cover logout before account cleanup and suppress intermediate provider callbacks; open the first language picker before the next paint after sign-in."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T12:31:03+00:00",
       "date": "2026-10-25 12:31 GMT",
       "agent": "Codex",
@@ -361,18 +373,6 @@
       "summary": "Desktop sidebar: Tutorial and About icons are a plain ? and i (no circle)",
       "detail": [
         "Desktop sidebar only; the phone top bar keeps its circled ? beside the other line icons."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T00:55:28:z",
-      "date": "2026-10-22 00:55 BST",
-      "agent": "Claude",
-      "summary": "Function words no longer split into companion cards (a, se, os, as, nos, pela): one card per word",
-      "detail": [
-        "A function word's back lists every construction already, so its companion cards showed the same rows twice.",
-        "Portuguese: 619 -> 612 cards; each of those words is now one card with its word-type pills on the front, like que.",
-        "Spanish function words not checked."
       ],
       "commit": "pending"
     }

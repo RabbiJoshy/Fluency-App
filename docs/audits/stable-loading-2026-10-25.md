@@ -52,3 +52,21 @@ another language, then releases the older request. It verifies that the source
 choices remain visible and Learn/Practice/Extra sections remain hidden on both
 mobile and desktop, including after forced stale display updates. The 135-test
 suite and expanded browser checks passed. The fix remains local and undeployed.
+
+
+## Follow-up: sign-in shell and repeated logout/login
+
+Slow loading of the real Clerk widget put the status below the card and moved
+Guest by approximately 100 pixels when the widget arrived. The shell now lays out
+its header, provider slot, disclosure, account choices and attribution slot from
+the start. Provider markup remains masked until its controls have loaded their
+styles and completed layout. Both mobile and desktop measurements now show zero
+movement of the header, Guest, disclosure and account links.
+
+Logout raises a cover before its first asynchronous operation and suppresses
+intermediate signed-out callbacks until reload. The first language picker after
+login is prepared before the next paint instead of appearing after a 150 ms gap.
+`tests/app/auth_layout_browser.cjs` checks delayed widget markup/styles and two
+logout/login cycles on both mobile and desktop, including transition stacking and
+no bare-setup frame after login. Provider loading and loaded screenshots were also
+checked with the real unauthenticated Clerk widget; no real account was used.

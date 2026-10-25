@@ -52,9 +52,11 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
                             user: localStorage.getItem('flashcardUser') ? {id:'loading_test'} : null,
                             session: localStorage.getItem('flashcardUser') ? session : null,
                             load: async()=>{}, addListener(fn){this.listener=fn; fn(this);},
-                            mountSignIn(container){ const b=document.createElement('button'); b.textContent='Test sign-in';
+                            mountSignIn(container){ const b=document.createElement('button'); b.textContent='Test sign-in'; b.style.minHeight='48px';
                                 b.onclick=()=>{this.user={id:'loading_test'};this.session=session;this.listener(this);this.listener(this);};
-                                container.replaceChildren(b); },
+                                const box=document.createElement('div');box.className='cl-cardBox';
+                                const card=document.createElement('div');card.className='cl-card';card.appendChild(b);box.appendChild(card);
+                                container.replaceChildren(box); },
                             mountSignUp(container){this.mountSignIn(container)},
                             unmountSignIn(){}, unmountSignUp(){}, signOut:async()=>{}
                         };` });

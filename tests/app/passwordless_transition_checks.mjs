@@ -69,3 +69,33 @@ for (const rejects of [false, true]) {
     assert.equal(calls.includes('refresh'), !rejects);
 }
 console.log('Fresh login, duplicate callbacks, sign-out/Guest races, background failure and retry passed.');
+
+// Logout must cover the old account before any asynchronous cleanup, and
+// provider signed-out callbacks cannot paint an intermediate login panel.
+{
+    const calls = [], flush = deferred(), signOut = deferred();
+    const ctx = vm.createContext({
+        PASSWORDLESS_ENABLED:true,currentUser:{initials:'clerk_test'},
+        document:{body:{classList:{remove:()=>calls.push('body'),add:()=>calls.push('cover-class')}}},
+        window:{showAppLoading:()=>calls.push('cover'),flushQueue:()=>{calls.push('flush');return flush.promise},
+            location:{reload:()=>calls.push('reload')}},
+        localStorage:{removeItem(){}}, getIsolatedSyncUser:value=>value,
+        clearDeviceSessionState:()=>calls.push('clear'),showUserInfo:()=>calls.push('badge'),
+        showAuthModal:()=>calls.push('unexpected-auth'),
+        signOutPasswordless:()=>{calls.push('sign-out');return signOut.promise}
+    });
+    vm.runInContext(source.slice(source.indexOf('function onPasswordlessSignedOut()'),source.indexOf('function checkAuthentication()')),ctx);
+    vm.runInContext(source.slice(source.indexOf('async function logout()'),source.indexOf('// ========== ID MIGRATION')),ctx);
+    const logout = vm.runInContext('logout()',ctx);
+    assert.ok(calls.indexOf('cover') < calls.indexOf('flush'));
+    assert.equal(calls.includes('badge'),false,'Account cleanup starts only under the transition cover');
+    await vm.runInContext('logout()',ctx); // A repeated click shares the transition.
+    vm.runInContext('onPasswordlessSignedOut()',ctx);
+    assert.equal(calls.includes('unexpected-auth'),false);
+    flush.resolve(); await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(calls.includes('sign-out'),true);
+    signOut.resolve();await logout;
+    assert.equal(calls.filter(call=>call==='reload').length,1);
+    assert.equal(calls.includes('unexpected-auth'),false);
+}
+console.log('Logout cover, callback suppression and repeated-click protection passed.');
