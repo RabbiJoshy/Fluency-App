@@ -826,19 +826,25 @@ function getKnowledgeOverviewFraction(card) {
     return { flagged, total: rows.length };
 }
 
+// "See again": three meaning rows with a pin pushed into the middle one, so
+// the icon says one meaning, not the whole word. The pin is the row pin's shape.
+const SEE_AGAIN_ICON = '<svg class="ref-tile-icon see-again-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5h12M2 19h12" opacity=".45"></path><path d="M2 12h8" stroke-width="2.6"></path><g transform="rotate(40 17 10) translate(10 2) scale(.5833)" stroke-width="3.8"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></g></svg>';
+
 function renderKnowledgeOverviewButton(card) {
     if (!getKnowledgeFocusItems(card).length) return '';
     const { flagged } = getKnowledgeOverviewFraction(card);
     const active = Boolean(card?._pinningMode);
-    const aria = flagged > 0 ? `Pin meaning, ${flagged} pinned` : 'Pin meaning';
-    // The number is blank until a meaning is pinned, then counts them.
+    const aria = flagged > 0 ? `See again, ${flagged} pinned` : 'See again';
+    // The number is blank until a meaning is pinned, then counts them. While
+    // choosing, the card keeps only the word and its rows, and this line sits
+    // where the tiles were.
     return `<button type="button" class="ref-tile knowledge-overview-trigger${active ? ' is-active' : ''}" aria-label="${aria}" aria-pressed="${active}" onclick="showKnowledgeOverview(event)">
         <div class="ref-tile-icon-wrap">
-            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg>
+            ${SEE_AGAIN_ICON}
             ${flagged > 0 ? `<span class="ref-tile-count-badge" aria-hidden="true">${flagged}</span>` : ''}
         </div>
-        <span class="ref-tile-label">Pin meaning</span>
-    </button>`;
+        <span class="ref-tile-label">See again</span>
+    </button>${active ? '<div class="pin-mode-hint" role="status">Tap the pin on a meaning to see it again in Practise.</div>' : ''}`;
 }
 
 function ensureKnowledgeOverviewModal() {
@@ -1047,8 +1053,21 @@ async function togglePinMeaningIndices(event, indices) {
             await saveKnowledgeProgress(card, items, true);
         }
     }
+    // One pin is the whole job: the card comes straight back.
+    card._pinningMode = false;
     if (typeof flashcards !== 'undefined' && card === flashcards[currentIndex]) updateCard();
 }
+
+// While choosing, a tap anywhere but the word's rows cancels instead of
+// flipping the card.
+document.addEventListener('click', event => {
+    const card = typeof flashcards !== 'undefined' ? flashcards[currentIndex] : null;
+    if (!card?._pinningMode || !event.target.closest?.('.card-back')) return;
+    if (event.target.closest('.meanings-scroll, .knowledge-overview-trigger')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    closeKnowledgeOverview(event);
+}, true);
 
 function focusKnowledgeOverviewItem(event, index) {
     event?.stopPropagation();
@@ -1135,6 +1154,7 @@ window.beginKnowledgeCardVisit = beginKnowledgeCardVisit;
 window.saveWholeCardKnowledgeAnswer = saveWholeCardKnowledgeAnswer;
 window.renderKnowledgeControl = renderKnowledgeControl;
 window.renderKnowledgeOverviewButton = renderKnowledgeOverviewButton;
+window.SEE_AGAIN_ICON = SEE_AGAIN_ICON;
 window.getPracticeMeaningIndices = getPracticeMeaningIndices;
 window.getPracticeMeaningInfo = getPracticeMeaningInfo;
 window.getKnowledgeOverviewRows = getKnowledgeOverviewRows;

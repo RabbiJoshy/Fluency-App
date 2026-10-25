@@ -233,8 +233,8 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         demo: 'openReview',
                         anchor: '.knowledge-overview-trigger',
-                        title: 'Pin meaning',
-                        text: 'Know the word, but not every meaning? Tap to show pins on each row; pin the ones to practice and future reviews put them at the top.',
+                        title: 'See again',
+                        text: 'Know the word, but not every meaning? Tap, then tap the pin on a meaning to see it again in Practise.',
                     },
                     {
                         side: 'right',
@@ -1287,7 +1287,7 @@ function reviewSheetHTML(card) {
 }
 
 function demoPinBtnHTML(index, pinned = false) {
-    const label = pinned ? 'Unpin this meaning' : 'Pin this meaning for practice';
+    const label = pinned ? 'Unpin this meaning' : 'See this meaning again';
     return `<button type="button" class="sense-pin-btn${pinned ? ' is-pinned' : ''}" data-demo-pin="${index}" aria-pressed="${pinned}" aria-label="${label}" title="${label}" style="position: absolute; left: 4px; top: 50%; transform: translateY(-50%);"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="22" height="22" fill="${pinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
 }
 

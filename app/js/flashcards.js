@@ -6765,7 +6765,7 @@ function knownSenseTagHTML(extraStyle = '', indices = null) {
     const list = (Array.isArray(indices) ? indices : (Number.isInteger(indices) ? [indices] : []))
         .filter(i => Number.isInteger(i) && i >= 0);
     const click = list.length
-        ? ` role="button" tabindex="0" title="Pin this meaning for practice" onclick="togglePinMeaningIndices(event, [${list.join(',')}])" onkeydown="if (event.key === 'Enter' || event.key === ' ') togglePinMeaningIndices(event, [${list.join(',')}])"`
+        ? ` role="button" tabindex="0" title="See this meaning again" onclick="togglePinMeaningIndices(event, [${list.join(',')}])" onkeydown="if (event.key === 'Enter' || event.key === ' ') togglePinMeaningIndices(event, [${list.join(',')}])"`
         : '';
     return `<span class="known-sense-tag"${style}${click}>Known</span>`;
 }
@@ -6773,7 +6773,7 @@ function knownSenseTagHTML(extraStyle = '', indices = null) {
 function sensePinButtonHTML(indices, isPinned, extraStyle = '') {
     const list = (Array.isArray(indices) ? indices : [indices]).filter(i => Number.isInteger(i) && i >= 0);
     const style = extraStyle ? ` style="${extraStyle}"` : '';
-    const label = isPinned ? 'Unpin this meaning' : 'Pin this meaning for practice';
+    const label = isPinned ? 'Unpin this meaning' : 'See this meaning again';
     return `<button type="button" class="sense-pin-btn${isPinned ? ' is-pinned' : ''}"${style} aria-pressed="${Boolean(isPinned)}" aria-label="${label}" title="${label}" onclick="togglePinMeaningIndices(event, [${list.join(',')}])"><svg class="sense-pin-icon" viewBox="0 0 24 24" width="30" height="30" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 1 1 0 0 1 1 1z"></path></svg></button>`;
 }
 
@@ -11700,7 +11700,7 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '20260922mod';
+const ASSET_VERSION = '20261025loading';
 const MODALS_ASSET_VERSION = '20261013saved';
 
 let _modalsModulePromise = null;

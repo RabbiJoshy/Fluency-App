@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-25T19:15:00+00:00",
+      "date": "2026-10-25 19:15 GMT",
+      "agent": "Claude",
+      "summary": "'Pin meaning' is now 'See again', with a new icon and a guided pin step.",
+      "detail": [
+        "The tile is renamed 'See again' and its icon is three meaning rows with the pin pushed into the middle one.",
+        "Tapping it fades everything except the word and its meaning rows, in place, and shows 'Tap the pin on a meaning to see it again in Practise.' where the tiles were.",
+        "Pinning one meaning returns the card to normal straight away; tapping anywhere else on the card cancels without flipping it.",
+        "Row pin tooltips read 'See this meaning again'; the tutorial step is renamed to match."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T11:25:00+00:00",
       "date": "2026-10-25 11:25 UTC",
       "agent": "Antigravity",
@@ -361,105 +374,6 @@
         "A function word's back lists every construction already, so its companion cards showed the same rows twice.",
         "Portuguese: 619 -> 612 cards; each of those words is now one card with its word-type pills on the front, like que.",
         "Spanish function words not checked."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T00:53:58+01:00",
-      "date": "2026-10-22 00:53 BST",
-      "agent": "Claude",
-      "summary": "Phone top bar tighter and larger; folded Learn shows only its level; plain ? help; 'Mistakes first' hint",
-      "detail": [
-        "Phone top bar: about 8px higher, the line 6px under the icons (was 18px); flag 25→29px, language name 16→18px, icons 26→29px.",
-        "Phone: with Practise open, folded Learn shows only 'Level N · Words X–Y' (no bar or counts).",
-        "Phone: leaf and clock icons sit beside 'Learn' and 'Practise'; the ? is small and raised after the title, and only on the open section.",
-        "Everywhere: the section help is a plain ? (no circle).",
-        "Practise hint: 'Mistakes first', shown only when there are both mistakes and words to review."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T00:39:36+01:00",
-      "date": "2026-10-22 00:39 BST",
-      "agent": "Claude",
-      "summary": "Function-word cards: pattern and meaning read left to right on one row, and the function word is just bold (no grey highlight)",
-      "detail": [
-        "Each pattern row is left-aligned: the pattern (e.g. 'verb + de') on the left, its meaning ('of, about') on the right of the same row.",
-        "When a pattern and its meaning don't fit on one line, the meaning drops beneath, left-aligned. If any row on a card needs that, all rows on that card do, so the card stays uniform.",
-        "The grey wash behind the function word in the pattern rows and the example sentence is gone; it is bold white only."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T23:39:10+01:00",
-      "date": "2026-10-21 23:39 BST",
-      "agent": "Claude",
-      "summary": "Card back: a word whose shown senses cover little of its usage now shows more of them, instead of a '6 rarer senses' line (novo)",
-      "detail": [
-        "Hidden senses are promoted, biggest first, until the shown ones cover 60% of the word's sense usage. Each must be at least 10% of that usage and have an example; at most three are added.",
-        "Portuguese, first 619 cards: six change (por +1, bem +2, ficar +1, qualquer +1, novo +2, sério +1). novo now reads 'new' with two contexts, and 'young'.",
-        "The '6 rarer senses' row stays in the code for cards that still qualify for it, which should now be very few.",
-        "Checked in the app on novo (dark mode); the other five were counted, not viewed. Spanish and the other languages were not scanned."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T23:01:26+01:00",
-      "date": "2026-10-21 23:01 BST",
-      "agent": "Claude",
-      "summary": "Card back: a shared translation's rows no longer repeat the shared context (daqui: 'of' over two rows, no 'in relation to ·' prefix)",
-      "detail": [
-        "When the rows under a shared translation also shared a context, each row still started with it. A row now shows only its own context; a row with nothing of its own shows the shared words, so none is empty.",
-        "daqui: 'of' over '· introduces the name of a place following its hypernym' and '· in relation to'.",
-        "Checked in the app on daqui (dark mode). Not re-checked: só, other languages."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T22:55:33+01:00",
-      "date": "2026-10-21 22:55 BST",
-      "agent": "Claude",
-      "summary": "Card back: a card opens with only the word type in use expanded; contexts under a shared translation take a bullet",
-      "detail": [
-        "The other word types open as their word-type row (translation beside the pill), the same way they look after you tap a sub-meaning, instead of opening fully expanded and then folding on the first tap.",
-        "Each context row under a shared translation starts with the same dot that sits between translation and context elsewhere; a wrapped line hangs under the text.",
-        "A shared grammar frame ('+ a / para' on deu) stays beside the heading rather than repeating on every row.",
-        "Checked in the app on merda, sé, una, daqui and deu (dark mode). Light mode and phone width not checked."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T22:48:51+01:00",
-      "date": "2026-10-21 22:48 BST",
-      "agent": "Claude",
-      "summary": "Card back: an empty word-type row is small again; the coloured edge shows only on the word type in use",
-      "detail": [
-        "A word-type row is the taller, larger-text size only when it holds the shared translation; otherwise it is back to its 36px size.",
-        "The coloured left edge on a word-type row you are not on is no longer drawn.",
-        "Checked in the app on una (dark mode): 36px rows, edge only on the verb. The taller size on a row with a shared translation was not re-checked."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T22:42:34+01:00",
-      "date": "2026-10-21 22:42 BST",
-      "agent": "Claude",
-      "summary": "Card back: the word-type row you are not on has no grey tint",
-      "detail": [
-        "The faint grey band on a word-type row (Adjective on una while you are on the verb) is gone, so only the word type in use looks marked. Its coloured left edge and pill stay.",
-        "Checked in the app on una (dark mode). Light mode and phone width not checked."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-21T22:40:58+01:00",
-      "date": "2026-10-21 22:40 BST",
-      "agent": "Claude",
-      "summary": "Card back: a shared translation shows alone until it is chosen; a family shares a translation or a context, not both",
-      "detail": [
-        "An unchosen shared translation (daqui: 'of') is one line; its contexts open when you choose it. This applies within one word type too, not only between word types.",
-        "When sub-rows shared a translation and also a context (daqui: 'of' and 'in relation to'), the context is no longer lifted into the heading. Each row keeps it: 'in relation to · introduces the name of a place…' and 'in relation to', instead of a leftover reading 'general use'.",
-        "Checked in the app on daqui (dark mode). Not checked: light mode, phone width, the Spanish shared-context groups, or cards with several shared translations in one word type."
       ],
       "commit": "pending"
     }
