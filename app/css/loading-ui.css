@@ -1,0 +1,46 @@
+/* Geometry belongs to the real section; skeletons only occupy its content. */
+.region-loading { position: relative; min-block-size: 180px; }
+.region-loading > :not(.region-loading-placeholder):not(.region-loading-cancel) { visibility: hidden; pointer-events: none; }
+.region-loading-cancel { z-index: 1; }
+.region-loading-placeholder {
+    position: absolute; inset: 16px; display: flex; flex-direction: column;
+    justify-content: center; gap: 16px; min-width: 0; pointer-events: none;
+}
+.region-loading-line {
+    display: block; flex: none; width: 100%; height: 44px; border-radius: 10px;
+    background: var(--bg-tertiary, #1a222c);
+    animation: region-loading-pulse 1.8s ease-in-out infinite;
+}
+.region-loading-line:nth-child(3) { width: 75%; }
+.region-loading-line:nth-child(4) { width: 90%; }
+.region-loading-levels .region-loading-line:nth-child(2) { width: 96px; height: 96px; align-self: center; border-radius: 20px; }
+.region-loading-artists { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 120px)); justify-content: start; align-content: start; gap: 24px; }
+.region-loading-artists .region-loading-line { width: 100%; height: auto; aspect-ratio: 1; border-radius: 50%; }
+.region-load-error { padding: 16px; color: var(--text-secondary); overflow-wrap: anywhere; }
+.region-retry { min-height: 44px; padding: 8px 16px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-tertiary); color: var(--text-primary); font: inherit; cursor: pointer; }
+.region-retry:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+/* Search's centred dialog must not shrink to just its input while loading. */
+#findWordResults { min-height: min(260px, 36dvh); }
+#findWordStatus { min-height: 1.5em; }
+#musicArtistList { min-height: 220px; }
+#musicArtistList.region-loading > .region-loading-placeholder { grid-column: 1 / -1; }
+#spotifyPlaylistList { min-height: min(240px, 32dvh); }
+#totalStatsModal .total-progress-modal-content { height: min(90dvh, 760px); }
+#totalStatsModal .total-progress-body { flex: 1; min-height: 0; }
+#progressOverviewContent.region-loading { min-height: min(460px, 56dvh); }
+#progressOverviewContent.region-loading > .region-loading-placeholder { gap: 24px; }
+#progressOverviewContent.region-loading .region-loading-line { height: 100px; }
+/* Keep the level, example and action region laid out before data arrives. */
+#step2 .level-choosing { min-height: 300px; position: relative; }
+#lswExamples { min-height: 3.2em; }
+.home-level-words { min-height: 1.4em; }
+.home-level-stats { min-height: 1.5em; font-variant-numeric: tabular-nums; }
+#passwordlessSignIn { min-height: 180px; }
+.music-artist-image img { display: block; aspect-ratio: 1; }
+@keyframes region-loading-pulse { 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) {
+    .region-loading-line, .passwordless-spinner { animation: none !important; }
+}
+@media (min-width: 1024px) {
+    #step2 .level-choosing.region-loading { min-height: 360px; }
+}

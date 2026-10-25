@@ -1,3 +1,4 @@
+import { readJsonWithTimeout } from './read-request.js?v=1';
 import './state.js?v=20260825ak';
 import { sendOrQueue } from './sync-queue.js?v=20260825ak';
 import { validateExamplesSplit } from './data-contracts.js?v=20260825ak';
@@ -10,6 +11,7 @@ import {
 
 const STORAGE_PREFIX = 'fluency_song_set_v1:';
 let draftSongIds = new Set();
+let albumRequest = 0;
 let albumOf = null;      // normalised song title -> album name
 let albumFilter = '';
 let remoteLoaded = false;
@@ -201,14 +203,19 @@ const titleKey = title => String(title || '').trim().toLocaleLowerCase();
 
 // albums.json maps album -> song titles; songs.json carries no album field.
 async function loadAlbums() {
+    const request = ++albumRequest;
     albumOf = null;
     const select = document.getElementById('songSetAlbum');
     if (select) select.hidden = true;
-    if (!activeArtist?.albumsDictionary || activeArtist.customSongSource) return;
+    if (!activeArtist?.albumsDictionary || activeArtist.customSongSource || !select) return;
+    select.hidden = false;
+    select.disabled = true;
+    select.setAttribute('aria-busy', 'true');
+    select.replaceChildren(new Option('Loading albums…', ''));
     try {
-        const response = await fetch(activeArtist.albumsDictionary);
-        if (!response.ok) return;
-        const albums = await response.json();
+        const { response, data: albums } = await readJsonWithTimeout(activeArtist.albumsDictionary, {}, 10000);
+        if (request !== albumRequest) return;
+        if (!response.ok) throw new Error('Albums unavailable');
         const map = new Map();
         const counts = new Map();
         for (const [album, titles] of Object.entries(albums || {})) {
@@ -218,13 +225,17 @@ async function loadAlbums() {
             const album = map.get(titleKey(song.title));
             if (album) counts.set(album, (counts.get(album) || 0) + 1);
         }
-        if (!counts.size || !select) return;
+        if (!counts.size) { select.replaceChildren(new Option('No albums available', '')); return; }
         albumOf = map;
         select.replaceChildren(new Option('All albums', ''));
         for (const [album, count] of counts) select.appendChild(new Option(`${album} (${count})`, album));
         select.value = albumFilter = '';
-        select.hidden = false;
-    } catch (_) { /* albums are a convenience; the list still works without them */ }
+        select.disabled = false;
+    } catch (_) {
+        if (request === albumRequest) select.replaceChildren(new Option('Albums unavailable', ''));
+    } finally {
+        if (request === albumRequest) select.removeAttribute('aria-busy');
+    }
 }
 
 function visibleSongs() {
@@ -298,9 +309,12 @@ export function showSongSetPicker({ focusAlbums = false } = {}) {
     window.showMusicSongPicker?.();
     updatePickerCount();
     modal?.classList.remove('hidden');
+    // The album lookup only changes its own control. Rebuilding the list here
+    // used to discard a checkbox's focus while someone was choosing songs.
+    const previousFocus = document.activeElement;
     loadAlbums().then(() => {
-        renderSongOptions();
-        if (focusAlbums && albumOf) document.getElementById('songSetAlbum')?.focus();
+        if (focusAlbums && albumOf && !modal?.classList.contains('hidden')
+            && document.activeElement === previousFocus) document.getElementById('songSetAlbum')?.focus();
     });
     if (!focusAlbums) search?.focus();
 }

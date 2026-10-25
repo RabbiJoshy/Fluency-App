@@ -19,3 +19,11 @@ class PasswordlessAuthTests(unittest.TestCase):
             cwd=root, text=True, capture_output=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_fresh_login_transition_and_races(self):
+        root = Path(__file__).resolve().parents[2]
+        result = subprocess.run(
+            ["node", "tests/app/passwordless_transition_checks.mjs"],
+            cwd=root, text=True, capture_output=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

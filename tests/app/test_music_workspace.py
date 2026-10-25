@@ -14,3 +14,10 @@ class MusicWorkspaceTests(unittest.TestCase):
             cwd=ROOT, capture_output=True, text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_artist_catalogue_loading_and_retry(self):
+        result = subprocess.run(
+            ["node", "tests/app/artist_loading_checks.mjs"],
+            cwd=ROOT, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)

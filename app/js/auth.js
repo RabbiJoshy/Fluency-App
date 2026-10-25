@@ -375,14 +375,23 @@ async function completeProfileLogin(user) {
         setTimeout(_openFirstRunTutorialUnlessLinked, 250);
     }
 
-    // Load user progress from Google Sheets
-    await loadUserProgressFromSheet();
+    // Apply the local cache synchronously, but never hold successful sign-in
+    // behind a remote progress or playlist request. Fresh sign-in must close
+    // the same surface as a restored session.
+    const progressRefresh = loadUserProgressFromSheet();
+    hideAuthModal();
     _markAuthReady();
+    progressRefresh.then(changed => {
+        if (currentUser !== user || !changed) return;
+        window.bumpProgressEpoch?.();
+        const studying = !document.getElementById('appContent')?.classList.contains('hidden');
+        if (!studying && selectedLanguage && selectedLevel) return window.refreshSetupAfterProgress?.();
+    }).catch(error => console.warn('Progress sync deferred after login:', error));
     setTimeout(() => window.checkAndShowAdminUpdateModal?.(), 300);
     // Artist/song metadata may have initialized while the login modal was
     // still open, when there was no named user to reconcile. Complete the
     // per-user playlist restore now that identity is known.
-    await window.reconcileRemoteSongSet?.().catch(error => {
+    window.reconcileRemoteSongSet?.().catch(error => {
         console.warn('Song-set sync deferred after login:', error);
     });
     if (window.playlistLiveActive?.()) {
@@ -924,6 +933,7 @@ function loadUserProgressFromSheet() {
     const run = loadUserProgressFromSheetNow();
     progressRefreshInFlight = run;
     run.finally(() => {
+        window.markProgressLoaded?.();
         if (progressRefreshInFlight === run) progressRefreshInFlight = null;
     }).catch(() => {});
     return run;

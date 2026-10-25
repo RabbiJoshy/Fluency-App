@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 const source = await readFile(new URL('../../app/js/progress-overview.js', import.meta.url), 'utf8');
-const { summarizeProgress, openProgressOverview, closeProgressOverview } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+const { summarizeProgress, openProgressOverview, closeProgressOverview } = await import('../../app/js/progress-overview.js');
 const cards = [
     {id:'known',corpus_count:60,state:{known:true,seen:true},record:{correct:3}},
     {id:'due',corpus_count:20,state:{known:true,seen:true,needsReview:true,isDue:true},record:{correct:2}},
@@ -18,8 +18,12 @@ assert.equal(granular.coverage,50,'An unresolved sense must not count as covered
 assert.equal(summarizeProgress([{id:'bad',corpus_count:-1},{id:'nan',corpus_count:'bad'}],methods).new,2);
 
 class Element {
-    constructor(id) { this.id=id; this.hidden=false; this.disabled=false; this.textContent=''; this.isConnected=true; this.listeners={}; this.attrs={}; this.classes=new Set(); this.classList={contains:c=>this.classes.has(c),add:c=>this.classes.add(c),remove:c=>this.classes.delete(c),toggle:(c,on)=>on?this.classes.add(c):this.classes.delete(c)}; this.style={setProperty:(k,v)=>this.attrs[k]=v}; }
+    constructor(id) { this.children=[]; this.id=id; this.hidden=false; this.disabled=false; this.textContent=''; this.isConnected=true; this.listeners={}; this.attrs={}; this.classes=new Set(); this.classList={contains:c=>this.classes.has(c),add:c=>this.classes.add(c),remove:c=>this.classes.delete(c),toggle:(c,on)=>on?this.classes.add(c):this.classes.delete(c)}; this.style={setProperty:(k,v)=>this.attrs[k]=v}; }
     addEventListener(k,fn) { (this.listeners[k] ||= []).push(fn); }
+    appendChild(child) { child.parent = this; this.children.push(child); return child; }
+    getAttribute(name) { return this.attrs[name] ?? null; }
+    getBoundingClientRect() { return {height: 0}; }
+    remove() { if (this.parent) this.parent.children = this.parent.children.filter(child => child !== this); }
     setAttribute(k,v) { this.attrs[k]=v; }
     removeAttribute(k) { delete this.attrs[k]; }
     focus() { document.activeElement=this; }
@@ -31,7 +35,7 @@ class Element {
 }
 const ids=['totalStatsModal','closeTotalStatsModal','progressRefreshBtn','progressOverviewContent','progressOverviewFlag','progressCoverageNote','progressSkippedCard','progressSkippedCount','progressOverviewStatus','totalStatsCoverage','totalStatsCoverageLabel','progressCoverageDescription','progressCoverageRing','totalStatsWords','progressKnownCount','progressPracticeCount','progressNewCount','progressPracticeDetail','progressWordTrack','progressScopeNote','.is-known','.is-practice','.is-new','trigger'];
 const elements=new Map(ids.map(id=>[id,new Element(id)]));
-globalThis.document={getElementById:id=>elements.get(id),activeElement:elements.get('trigger')};
+globalThis.document={createElement:tag=>new Element(tag),getElementById:id=>elements.get(id),activeElement:elements.get('trigger')};
 const modal=elements.get('totalStatsModal');modal.classList.add('hidden');
 const options={...methods,source:'Spanish',mode:'Everyday speech',coverageLabel:'Estimated speech coverage',isCurrent:()=>true,canImport:true,loadVocabulary:async()=>cards};
 await openProgressOverview(options);

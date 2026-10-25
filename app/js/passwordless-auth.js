@@ -1,3 +1,4 @@
+import { readJsonWithTimeout } from './read-request.js?v=1';
 import { IS_STAGING } from './env.js?v=20261010airlock';
 
 export const PASSWORDLESS_ENABLED = true;
@@ -8,8 +9,7 @@ const CLERK_DOMAIN = 'hardy-feline-9737.clerk.accounts.dev';
 const PUBLISHABLE_KEY = 'pk_test_aGFyZHktZmVsaW5lLTk3MzcuY2xlcmsuYWNjb3VudHMuZGV2JA';
 let loading;
 let mounted = false;
-let activeUserId = null;
-let resolvingUserId = null;
+let resetSessionHandler = () => {};
 
 export function authenticatedSyncFetch(nativeFetch, getSession, endpoint) {
     const selectedEndpoint = new URL(endpoint).href;
@@ -42,7 +42,7 @@ function loadScript(src, attributes = {}) {
         script.src = src;
         script.crossOrigin = 'anonymous';
         Object.entries(attributes).forEach(([key, value]) => script.setAttribute(key, value));
-        const timer = setTimeout(() => reject(new Error('Sign-in is taking too long. Please retry.')), 15000);
+        const timer = setTimeout(() => { script.remove(); reject(new Error('Sign-in is taking too long. Please retry.')); }, 15000);
         script.onload = () => { clearTimeout(timer); resolve(); };
         script.onerror = () => { clearTimeout(timer); script.remove(); reject(new Error('Could not load sign-in. Check your connection and retry.')); };
         document.head.appendChild(script);
@@ -60,11 +60,10 @@ export function hideLegacyAuthChoices() {
 
 async function resolveProfile(user, container) {
     async function account(name) {
-        const response = await fetch(PASSWORDLESS_SYNC_URL, { method: 'POST',
+        const { response, data: result } = await readJsonWithTimeout(PASSWORDLESS_SYNC_URL, { method: 'POST',
             body: JSON.stringify({ action: 'account', ...(name ? { name } : {}) }),
-            signal: AbortSignal.timeout(15000) });
-        const result = await response.json();
-        if (!response.ok || !result.success) throw new Error(result.message || 'Could not load your account.');
+        }, 15000);
+        if (!response.ok || !result?.success) throw new Error(result?.message || 'Could not load your account.');
         return result.data.profile;
     }
     const existing = await account();
@@ -97,12 +96,8 @@ async function resolveProfile(user, container) {
 }
 
 export async function signOutPasswordless() {
-    activeUserId = null;
-    resolvingUserId = null;
+    resetSessionHandler();
     mounted = false;
-    if (loading) {
-        try { await loading; } catch (_) {}
-    }
     if (window.Clerk) {
         try {
             await window.Clerk.signOut();
@@ -210,6 +205,51 @@ function mountSignInUI(container) {
     mounted = true;
 }
 
+export function createPasswordlessSessionHandler({ resolveUser, onSignedIn, onSignedOut,
+    mount, isGuest, hasSavedUser, onError }) {
+    let active = null, pending = null, generation = 0;
+    const reset = () => { generation++; active = null; pending = null; };
+    const handle = state => {
+        if (isGuest()) { reset(); return Promise.resolve(); }
+        const { user, session } = state;
+        if (!user || !session) {
+            const shouldSignOut = active || pending || hasSavedUser();
+            reset();
+            if (shouldSignOut) onSignedOut();
+            mount();
+            return Promise.resolve();
+        }
+        if (active === user.id) return Promise.resolve();
+        if (pending?.id === user.id) return pending.promise;
+        const token = ++generation;
+        const attempt = { id: user.id };
+        pending = attempt;
+        attempt.promise = (async () => {
+            try {
+                const profile = await resolveUser(user);
+                if (token !== generation || isGuest()) return;
+                await onSignedIn(profile);
+                if (token !== generation || isGuest()) return;
+                active = user.id;
+                window.dispatchEvent(new Event('fluency-auth-restored'));
+            } catch (error) {
+                if (token === generation && !isGuest()) onError(error, () => handle(state));
+            } finally {
+                if (pending === attempt) pending = null;
+            }
+        })();
+        return attempt.promise;
+    };
+    return { handle, reset };
+}
+
+function authStep(promise, timeoutMs = 15000) {
+    let timer;
+    return Promise.race([promise, new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Sign-in is taking too long. Please retry.')), timeoutMs);
+    })]).finally(() => clearTimeout(timer));
+}
+
 export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
     hideLegacyAuthChoices();
     let container = document.getElementById('passwordlessSignIn');
@@ -262,51 +302,51 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
             });
             const providerLabel = new URLSearchParams(window.location.search).get('account') === 'create'
                 ? 'Sign up with {{provider|titleize}}' : 'Sign in with {{provider|titleize}}';
-            await window.Clerk.load({
+            await authStep(window.Clerk.load({
                 ui: { ClerkUI: window.__internal_ClerkUICtor },
                 localization: {
                     socialButtonsBlockButton: providerLabel,
                     socialButtonsBlockButtonManyInView: providerLabel
                 }
-            });
-            const handle = async ({ user, session }) => {
-                // A visitor may choose guest while Clerk is still loading.
-                if (sessionStorage.getItem('flashcardGuestSession') === '1') return;
-                if (!user || !session) {
-                    if (activeUserId) {
-                        activeUserId = null;
-                        onSignedOut();
-                    } else if (localStorage.getItem('flashcardUser')) {
-                        onSignedOut();
+            }));
+            const coordinator = createPasswordlessSessionHandler({
+                isGuest: () => sessionStorage.getItem('flashcardGuestSession') === '1',
+                hasSavedUser: () => Boolean(localStorage.getItem('flashcardUser')),
+                onSignedOut, onSignedIn,
+                mount: () => { if (!mounted) mountSignInUI(container); },
+                resolveUser: async user => {
+                    const profile = await resolveProfile(user, container);
+                    return {
+                        initials: IS_STAGING ? profile.id.replace(/^stg_/, '') : profile.id,
+                        profileId: profile.id, authProvider: 'clerk',
+                        username: profile.name, isGuest: false, isNew: Boolean(profile?.isNew)
+                    };
+                },
+                onError: (error, retryAction) => {
+                    if (subtitle) subtitle.style.display = 'none';
+                    if (mounted) {
+                        window.Clerk.unmountSignIn(container);
+                        window.Clerk.unmountSignUp(container);
+                        mounted = false;
                     }
-                    if (!mounted && window.Clerk) {
-                        mountSignInUI(container);
-                    }
-                    return;
+                    container.replaceChildren();
+                    const message = document.createElement('p');
+                    message.setAttribute('role', 'alert');
+                    message.textContent = error.message;
+                    const retry = document.createElement('button');
+                    retry.type = 'button'; retry.className = 'auth-submit-btn';
+                    retry.textContent = 'Retry sign-in';
+                    retry.onclick = () => {
+                        retry.disabled = true; retry.textContent = 'Signing in…';
+                        message.textContent = 'Loading your account…';
+                        retryAction();
+                    };
+                    container.append(message, retry);
                 }
-                if (activeUserId === user.id || resolvingUserId === user.id) return;
-                resolvingUserId = user.id;
-                let profile;
-                try { profile = await resolveProfile(user, container); }
-                finally { resolvingUserId = null; }
-                if (sessionStorage.getItem('flashcardGuestSession') === '1') return;
-                activeUserId = user.id;
-                await onSignedIn({
-                    initials: IS_STAGING ? profile.id.replace(/^stg_/, '') : profile.id,
-                    profileId: profile.id, authProvider: 'clerk',
-                    username: profile.name, isGuest: false,
-                    isNew: Boolean(profile?.isNew)
-                });
-                window.dispatchEvent(new Event('fluency-auth-restored'));
-            };
-            window.Clerk.addListener(state => { handle(state).catch(error => {
-                if (subtitle) subtitle.style.display = 'none';
-                container.replaceChildren();
-                const message = document.createElement('p'); message.textContent = error.message;
-                const retry = document.createElement('button'); retry.className = 'auth-submit-btn'; retry.textContent = 'Retry sign-in';
-                retry.onclick = () => window.location.reload(); container.append(message, retry);
-            }); });
-            await handle(window.Clerk);
+            });
+            resetSessionHandler = coordinator.reset;
+            window.Clerk.addListener(state => { coordinator.handle(state); });
+            await coordinator.handle(window.Clerk);
         })().catch(error => { loading = null; throw error; });
     }
     try {
@@ -318,6 +358,7 @@ export async function startPasswordlessAuth(onSignedIn, onSignedOut) {
         if (subtitle) subtitle.style.display = 'none';
         container.replaceChildren();
         const message = document.createElement('p');
+        message.setAttribute('role', 'alert');
         message.textContent = error.message;
         const retry = document.createElement('button');
         retry.className = 'auth-submit-btn';

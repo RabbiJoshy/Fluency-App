@@ -9,6 +9,7 @@ function createHarness(overrides = {}) {
         click() { context.clickedLevel = index + 1; }
     }));
     const context = {
+        beginRegionLoading: () => () => {}, showRegionError() {}, boundedLoad: promise => Promise.resolve(promise),
         console, URL, URLSearchParams, AbortController, setTimeout, clearTimeout, addEventListener() {},
         localStorage: { getItem() { return null; }, setItem() {} },
         selectedLanguage: 'spanish', activeArtist: null, hideSingleOccurrence: false,

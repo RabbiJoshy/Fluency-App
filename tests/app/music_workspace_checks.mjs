@@ -23,6 +23,9 @@ class Element {
             elements.set(button.id, button); this.appendChild(button); return button;
         });
     }
+    getAttribute(name) { return this.attrs[name] ?? null; }
+    getBoundingClientRect() { return {height: 0}; }
+    remove() { if (this.parent) this.parent.children = this.parent.children.filter(child => child !== this); }
     setAttribute(name, value) { this.attrs[name] = value; }
     removeAttribute(name) { delete this.attrs[name]; }
     addEventListener(name, handler) { (this.listeners[name] ||= []).push(handler); }
@@ -66,7 +69,7 @@ window.activeArtist = { name: 'Artist', language: 'spanish' };
 window.artistSongCatalog = { songs: [{ id: 'one', title: 'One' }, { id: 'two', title: 'Two' }] };
 window.selectedSongIds = ['one'];
 const source = await readFile(new URL('../../app/js/music-workspace.js', import.meta.url), 'utf8');
-const module = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+const module = await import('../../app/js/music-workspace.js');
 
 module.openMusicWorkspace({ language: 'spanish', artists: [{ name: 'Artist', slug: 'artist' }],
     onSelectPlaylist: () => { playlistOpens++; }, onLeave: () => { left++; } });

@@ -1,3 +1,4 @@
+import { beginRegionLoading } from './loading-ui.js?v=20261025';
 // Music owns its browsing, song selection and study setup. Existing deck
 // loaders still own vocabulary/progress; route handoffs reopen this workspace.
 const HANDOFF_KEY = 'fluency_music_workspace_v1';
@@ -179,11 +180,11 @@ export function showChoices() {
     showArtists();
 }
 
-export function showArtists() {
+export function showArtists({ focus = true } = {}) {
     sourceMode = 'music';
     enter();
     closePickers();
-    showStage('artists');
+    showStage('artists', { focus });
 }
 
 export function openPlaylists() {
@@ -233,7 +234,7 @@ export function openMusicWorkspace(nextOptions = {}) {
     mixBtn.hidden = !mixEntry;
     mixBtn.onclick = () => { playlistReturn = false; options.onSelectArtist?.(mixEntry); };
     const search = document.getElementById('musicArtistSearch');
-    search.value = '';
+    search.value = nextOptions.query || '';
     search.oninput = () => {
         const query = search.value.trim().toLocaleLowerCase();
         list.querySelectorAll('.music-artist-option').forEach(tile => {
@@ -266,17 +267,27 @@ export function openMusicWorkspace(nextOptions = {}) {
         });
         list.appendChild(button);
     }
-    if (!entries.length) {
+    workspace.querySelectorAll('[data-music-stage]').forEach(button => {
+        button.disabled = Boolean(nextOptions.loading) || (button.dataset.musicStage === 'setup' && !hasDeck());
+    });
+    if (nextOptions.loading) {
+        beginRegionLoading(list, { label: 'Loading artists…', shape: 'artists' });
+    } else {
+        // Clear a previous request's loading owner before publishing real tiles.
+        beginRegionLoading(list, { preserve: true })();
+    }
+    if (!entries.length && !nextOptions.loading) {
         const empty = document.createElement('p');
         empty.textContent = 'No artists are available for this language yet. You can build from a Spotify playlist.';
         list.appendChild(empty);
     }
+    search.oninput();
     const requested = nextOptions.stage || 'artists';
     if (requested === 'setup') showMusicStudySetup();
     else if (requested === 'songs') window.showSongSetPicker?.();
     else if (requested === 'playlists') openPlaylists();
-    else if (requested === 'artists') showArtists();
-    else showChoices();
+    else if (requested === 'artists') showArtists({ focus: nextOptions.focus !== false });
+    else showArtists({ focus: nextOptions.focus !== false });
 }
 
 export function showMusicSongPicker() {

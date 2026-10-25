@@ -517,8 +517,8 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 29px; height: 29px; 
     }
     #setupPanel.file-upload { align-items: stretch; }
     #setupPanel .home-section { margin: 0; width: 100%; max-width: none; align-self: stretch; box-sizing: border-box; }
-    #setupPanel #step2:not(.hidden):not([style*="none"]),
-    #setupPanel #reviewDeckSection:not(.hidden):not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
+    #setupPanel:not([data-source-choice="pending"]) #step2:not(.hidden):not([style*="none"]),
+    #setupPanel:not([data-source-choice="pending"]) #reviewDeckSection:not(.hidden):not([hidden]):not([style*="none"]) { display: flex !important; flex-direction: column; }
     /* Desktop has the height to spare, so the two names read as titles. */
     #setupPanel .home-section > .step-header { padding: 2.4vh 2vw 0.6vh; }
     #setupPanel .home-section > .step-header > .step-title-trigger { font-size: clamp(28px, 2.5vw, 42px); letter-spacing: -0.01em; }
@@ -541,7 +541,7 @@ body:not(.desktop-workspace) #topBar .gear-btn svg { width: 29px; height: 29px; 
     #setupPanel #step2 #levelSelector > .level-slider-wrap { display: contents; }
     #setupPanel #step2 #homeLevelStepper { grid-column: 1; grid-row: 1 / span 2; padding: 4px 0 14px; }
     #setupPanel #step2 #lswExamples { grid-column: 2; grid-row: 1; align-self: end; justify-content: flex-start; align-items: flex-start; margin: 0 0 1.4vh; padding: 0 3vw 0 1vw; text-align: left; }
-    #setupPanel #step4:not(.hidden):not([style*="none"]) { display: contents !important; }
+    #setupPanel:not([data-source-choice="pending"]) #step4:not(.hidden):not([style*="none"]) { display: contents !important; }
     #setupPanel #step2 #rangeSelector { grid-column: 2; grid-row: 2; align-self: start; }
     #setupPanel #step2 .home-section-footer { grid-column: 1 / -1; grid-row: 3; }
     #setupPanel #step2 .home-level-progress { padding: 0 3vw 0 1vw; }
@@ -1570,4 +1570,9 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 .admin-filter-reset-btn:hover {
     color: var(--text-primary);
     text-decoration: underline;
+}
+
+/* Source selection owns visibility, even if an older deck render finishes. */
+#setupPanel[data-source-choice="pending"] > :is(#step2, #step4, #reviewDeckSection, #extrasDeckSection) {
+    display: none !important;
 }
