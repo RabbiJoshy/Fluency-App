@@ -2545,7 +2545,7 @@ function updateLevelSliderReadout(i) {
             ? `<div class="lsw-freq-sentence"><strong>${wordLabel}</strong> appear${displayedWordCount === 1 ? 's' : ''} <strong>${freqValue.toLocaleString()}</strong> ${freqUnit}</div>`
             : '';
         const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
-        const coverageSubject = activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'everyday speech');
+        const coverageSubject = activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'speech');
         const covHTML = coverageRounded
             ? `<span class="lsw-coverage-inline">Complete Level ${i + 1} to recognise <strong>${coverageRounded}</strong> of ${coverageSubject}</span>`
             : '';
@@ -3208,7 +3208,9 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     const container = document.getElementById('rangeSelector');
     window.__studySessionContext = null;
     const reviewSection = document.getElementById('reviewDeckSection');
-    if (reviewSection) reviewSection.hidden = true;
+    // Practise stays on screen while the level is re-rendered; hiding it here made Learn jump to full
+    // width for a moment on every level change. Early exits below still hide it.
+    const hideReview = () => { if (reviewSection) reviewSection.hidden = true; };
     let minWord, maxWord;
     let rankBasis = 'source';
 
@@ -3232,7 +3234,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
         rankBasis = 'category';
     } else if (percentageMode && ppmData && ppmData.length > 0) {
         const selectedBtn = selectedLevelBtn;
-        if (!selectedBtn) return;
+        if (!selectedBtn) { hideReview(); return; }
         minWord = parseInt(selectedBtn.dataset.startRank);
         maxWord = parseInt(selectedBtn.dataset.endRank);
         rankBasis = selectedBtn.dataset.rankBasis || 'source';
@@ -3245,7 +3247,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
         } else {
             const ranges = getActiveLevelRanges();
             const found = ranges.find(item => String(item.level) === String(selectedLevel)) || ranges[0];
-            if (!found) return;
+            if (!found) { hideReview(); return; }
             minWord = found.startRank;
             maxWord = found.endRank;
             rankBasis = found.rankBasis || 'source';
@@ -3253,7 +3255,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     } else {
         const ranges = getActiveLevelRanges();
         const found = ranges.find(item => String(item.level) === String(selectedLevel)) || ranges[0];
-        if (!found) return;
+        if (!found) { hideReview(); return; }
         minWord = found.startRank;
         maxWord = found.endRank;
         rankBasis = found.rankBasis || 'source';
@@ -3261,7 +3263,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     if (!Number.isFinite(minWord) || !Number.isFinite(maxWord)) {
         console.warn('renderRangeSelector: bad level boundary', { minWord, maxWord, selectedLevel });
         container.innerHTML = '';
-        return;
+        { hideReview(); return; }
     }
 
     let vocabularyData = [];
@@ -3283,7 +3285,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     if (wordsInLevel.length === 0 && baselineInLevel.length === 0) {
         container.innerHTML = '<div class="study-set-empty">No cards remain in this level with the current settings.</div>';
         document.getElementById('step4').style.display = 'block';
-        return;
+        { hideReview(); return; }
     }
 
     const estimate = levelEstimates[selectedLanguage] || 0;

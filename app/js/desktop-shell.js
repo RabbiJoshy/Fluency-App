@@ -367,6 +367,15 @@ function initDesktopShell() {
     let installHidden = false;
     try { installHidden = localStorage.getItem(INSTALL_TIP_KEY) === '1'; } catch (_) { /* storage blocked: show it */ }
     if (installCard) installCard.hidden = installHidden;
+    // If the sidebar has no room for the tip at this window height, hide it rather than show it cut off.
+    const fitInstallCard = () => {
+        if (!installCard || installCard.hidden) return;
+        installCard.classList.remove('is-clipped');
+        if (installCard.getBoundingClientRect().bottom > window.innerHeight - 4) installCard.classList.add('is-clipped');
+    };
+    fitInstallCard();
+    window.addEventListener('resize', fitInstallCard);
+    setTimeout(fitInstallCard, 1500);
     document.getElementById('installAppClose')?.addEventListener('click', () => {
         if (installCard) installCard.hidden = true;
         try { localStorage.setItem(INSTALL_TIP_KEY, '1'); } catch (_) { /* remembered for this visit only */ }

@@ -184,3 +184,13 @@ body.desktop-workspace #topBar .install-app-close { position: absolute; top: 6px
 .install-app-row { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 8px; padding: 7px 10px; border-radius: 10px; background: color-mix(in srgb, var(--text-primary) 8%, transparent); color: var(--text-primary); font-size: 13px; }
 .install-app-row svg { stroke: var(--text-primary); }
 body.desktop-workspace #topBar .install-app-card p { margin: 0; }
+
+/* Short windows: only the title and the mock toolbar, and no card at all if even that would be clipped. */
+@media (max-height: 900px) {
+    body.desktop-workspace #topBar .install-app-card { margin-top: 2px; padding: 6px 10px 6px; }
+    body.desktop-workspace #topBar .install-app-card strong { font-size: 12px; }
+    body.desktop-workspace #topBar .install-app-card .install-app-row,
+    body.desktop-workspace #topBar .install-app-card p { display: none; }
+    .install-app-bar { margin: 4px 0 0; padding: 3px 8px; }
+}
+body.desktop-workspace #topBar .install-app-card.is-clipped { visibility: hidden; }

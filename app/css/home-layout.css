@@ -281,10 +281,10 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
     gap: 8px;
     padding: 6px 6px 6px 10px;
     border-radius: 10px;
-    background: var(--bg-tertiary);
+    background: color-mix(in srgb, var(--accent-primary) 36%, #000);
     transition: background .15s ease;
 }
-.home-smart-skip.is-on { background: color-mix(in srgb, var(--accent-primary) 18%, var(--bg-tertiary)); }
+.home-smart-skip.is-on { background: color-mix(in srgb, var(--accent-primary) 48%, #000); }
 .home-smart-skip-icon {
     width: 16px;
     height: 16px;
@@ -347,7 +347,7 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
     min-height: 50px;
     border-radius: 12px;
     overflow: hidden;
-    background: color-mix(in srgb, var(--accent-primary) 45%, #000);
+    background: color-mix(in srgb, var(--accent-primary) 62%, #000);
     color: #fff;
 }
 .home-cta.is-disabled { opacity: .45; }
