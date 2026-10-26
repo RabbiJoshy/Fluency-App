@@ -95,3 +95,11 @@ alignment and existing Casa ingestion. These include correct offset fitting,
 start/end evidence, weak-episode rejection, isolated coincidence rejection,
 short-reply exclusion, no cue reuse, omissions and timing-jump safeguards.
 No translation service, embedding, external LLM or WSD request is made by the audit.
+
+## App integration (2026-10-26)
+
+The Season 1 sample is now a selectable TV Series preset. All 4,482 observed
+forms receive cards (45 study levels), including words outside the 10k inventory.
+English examples are available on 3,817 cards; the reviewed bad phone passage
+is excluded. No WSD assignments are added. See
+[Complete series decks](complete-series-decks.md) for the build and limitations.

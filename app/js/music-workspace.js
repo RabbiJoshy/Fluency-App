@@ -58,6 +58,10 @@ function init() {
                         <span class="music-artist-image" aria-hidden="true">LCDP</span>
                         <span><strong>La Casa de Papel</strong><small>30 episodes · Seasons 1–4 sample · Spanish dialogue</small></span>
                     </button>
+                    <button type="button" id="eliteSeriesBtn" class="music-artist-option">
+                        <span class="music-artist-image" aria-hidden="true">É</span>
+                        <span><strong>Élite</strong><small>8 episodes · Season 1 sample · Spanish with English examples</small></span>
+                    </button>
                 </div>
                 <div id="musicPickerHost"></div>
                 <div id="musicStudySetup" hidden></div>
@@ -81,17 +85,20 @@ function init() {
         });
     });
     document.getElementById('musicBackBtn').addEventListener('click', back);
-    document.getElementById('casaSeriesBtn').addEventListener('click', async () => {
+    for (const [buttonId, seriesId, title] of [
+        ['casaSeriesBtn', 'la-casa-de-papel', 'La Casa de Papel'],
+        ['eliteSeriesBtn', 'elite', 'Élite']
+    ]) document.getElementById(buttonId).addEventListener('click', async () => {
         if (busy || options.language !== 'spanish') return;
         window.setMusicWorkspaceBusy?.(true);
-        window.showAppLoading?.('Loading La Casa de Papel', 'Preparing your series vocabulary…');
+        window.showAppLoading?.(`Loading ${title}`, 'Preparing your series vocabulary…');
         try {
-            await window.loadCasaDePapelPreset();
+            await window.loadSeriesPreset(seriesId);
             dismissMusicWorkspace();
             window.activatePlaylistLiveStudy('spanish');
         } catch (error) {
             window.hideAppLoading?.();
-            alert(error.message || 'Could not load La Casa de Papel.');
+            alert(error.message || `Could not load ${title}.`);
         } finally { window.setMusicWorkspaceBusy?.(false); }
     });
     document.getElementById('musicEditSongsBtn').addEventListener('click', () => {
@@ -311,7 +318,7 @@ export function updateMusicSelection(songs = null, sourceName = '') {
     const live = window.playlistLiveDeck?.();
     const selected = songs || (window.artistSongCatalog?.songs || []).filter(song =>
         (window.selectedSongIds || []).map(String).includes(String(song.id)));
-    const isSeries = Boolean(live?.playlistId === 'la-casa-de-papel' || (live?.playlistName && /casa de papel|series|show|tv/i.test(live.playlistName)));
+    const isSeries = isSeriesDeck(live);
     const liveUnit = isSeries ? (live?.trackCount === 1 ? 'episode' : 'episodes') : (live?.trackCount === 1 ? 'song' : 'songs');
     const tokenPart = live?.tokenCount ? `${Number(live.tokenCount).toLocaleString()} ${isSeries ? 'dialogue' : 'lyric'} words · ` : '';
     document.getElementById('musicSelectionTitle').textContent = sourceName || artist?.name || live?.playlistName || 'Choose some music';

@@ -3,7 +3,7 @@
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
 import './state.js?v=20260825ak';
-import { CASA_PRESET_REVISION, validLiveDeck } from './playlist-live.js?v=20261019stg8';
+import { SERIES_PRESETS, validLiveDeck } from './playlist-live.js?v=20261019stg8';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
@@ -96,7 +96,8 @@ export async function buildSeriesLiveDeck({
         language,
         records,
         onProgress,
-        skipWsd: true
+        skipWsd: true,
+        includeAllForms: true
     });
 
     if (!deck || !deck.matchedCount) {
@@ -105,7 +106,7 @@ export async function buildSeriesLiveDeck({
 
     deck.sourceKind = 'series';
     if (coverage) deck.coverage = coverage;
-    if (sourceId === 'la-casa-de-papel') deck.presetRevision = CASA_PRESET_REVISION;
+    if (SERIES_PRESETS[sourceId]) deck.presetRevision = SERIES_PRESETS[sourceId].revision;
     await window.cacheLiveDeck(deck);
     saveSeriesInBackground(deck);
     return deck;
@@ -117,34 +118,40 @@ function saveSeriesInBackground(deck) {
 }
 
 export async function loadCasaDePapelPreset(onProgress = null) {
-    onProgress?.({ stage: 'fetching', message: 'Loading La Casa de Papel dialogue sample…' });
+    return loadSeriesPreset('la-casa-de-papel', onProgress);
+}
+
+export async function loadSeriesPreset(seriesId, onProgress = null) {
+    const preset = SERIES_PRESETS[seriesId];
+    if (!preset) throw new Error('Unknown TV series.');
+    onProgress?.({ stage: 'fetching', message: `Loading ${preset.title} dialogue sample…` });
     const appRoot = new URL('../', import.meta.url);
     try {
-        const response = await fetch(new URL(`data/series/casa-de-papel-deck.json?preset=${CASA_PRESET_REVISION}`, appRoot), { cache: 'no-store' });
+        const response = await fetch(new URL(`data/series/${preset.file}-deck.json?preset=${preset.revision}`, appRoot), { cache: 'no-store' });
         const deck = response.ok ? await response.json() : null;
-        if (validLiveDeck(deck) && deck.playlistId === 'la-casa-de-papel'
-            && deck.language === 'spanish' && deck.presetRevision === CASA_PRESET_REVISION) {
+        if (validLiveDeck(deck) && deck.playlistId === seriesId
+            && deck.language === 'spanish' && deck.presetRevision === preset.revision) {
             await window.cacheLiveDeck(deck);
             saveSeriesInBackground(deck);
             return deck;
         }
     } catch (_) {}
     try {
-        const response = await fetch(new URL('data/series/casa-de-papel.json', appRoot), { cache: 'no-store' });
+        const response = await fetch(new URL(`data/series/${preset.file}.json`, appRoot), { cache: 'no-store' });
         if (!response.ok) throw new Error(`Dialogue HTTP ${response.status}`);
         const dialogue = await response.json();
         const deck = await buildSeriesLiveDeck({
-            title: dialogue.title || 'La Casa de Papel', artist: 'La Casa de Papel',
+            title: dialogue.title || preset.title, artist: preset.title,
             episodes: dialogue.episodes, lines: dialogue.lines,
-            sourceId: 'la-casa-de-papel', language: 'spanish', onProgress,
+            sourceId: seriesId, language: 'spanish', onProgress,
             coverage: dialogue.coverage
         });
         return deck;
     } catch (error) {
         await window.preparePlaylistLiveSession?.('spanish');
         const cached = window.playlistLiveDeck?.();
-        if (validLiveDeck(cached) && cached.playlistId === 'la-casa-de-papel') return cached;
-        throw new Error(`Could not load the Casa de Papel sample. ${error.message}`);
+        if (validLiveDeck(cached) && cached.playlistId === seriesId) return cached;
+        throw new Error(`Could not load the ${preset.title} sample. ${error.message}`);
     }
 }
 
@@ -300,4 +307,5 @@ if (document.readyState === 'loading') {
 window.openSubtitleImport = openSubtitleImport;
 window.closeSubtitleImport = closeSubtitleImport;
 window.loadCasaDePapelPreset = loadCasaDePapelPreset;
+window.loadSeriesPreset = loadSeriesPreset;
 window.parseSubtitlesToLines = parseSubtitlesToLines;

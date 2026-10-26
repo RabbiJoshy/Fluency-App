@@ -1553,7 +1553,7 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
         const deckTotalEl = document.getElementById('step2DeckTotal');
         if (deckTotalEl) {
             const liveDeck = window.playlistLiveActive?.() ? window.playlistLiveDeck?.() : null;
-            const isSeries = Boolean(liveDeck?.playlistId === 'la-casa-de-papel' || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName)));
+            const isSeries = Boolean(liveDeck?.sourceKind === 'series' || liveDeck?.playlistId === 'la-casa-de-papel' || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName)));
             const deckWords = percentageRanges.reduce((sum, lv) => sum + (_levelBandMetrics(lv).count || 0), 0);
             if (isSeries && liveDeck) {
                 deckTotalEl.textContent = `This series deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'} from ${Number(liveDeck.tokenCount || 0).toLocaleString()} dialogue tokens across ${liveDeck.trackCount || 1} episode${liveDeck.trackCount === 1 ? '' : 's'} in ${liveDeck.playlistName}.`;

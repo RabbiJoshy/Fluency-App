@@ -9,13 +9,14 @@ S04E01–08. Missing: S03E08 and all ten season 5 episodes. The original first
 two seasons were recut into 22 Netflix episodes; these credits use the original
 9+6 numbering. This sample is not a complete-show transcript collection.
 
-The generated assets contain 22,755 cleaned dialogue cues and 6,102 vocabulary
-inventory matches, giving 62 study levels of up to 100 cards. Word occurrences
+The generated assets contain 22,755 cleaned dialogue cues and 12,706 observed word forms, giving 128 study
+levels of up to 100 cards. All forms are admitted, including the 6,102 matches
+in the original Speech inventory and forms absent from both frequency lists. Word occurrences
 retain repetitions; example text is deduplicated and spread across available
 seasons. Definitions still use canonical Speech ranks. Dialogue examples remain
-unassigned. The v4 preset includes conservative English matches in 21 original-numbered
-episodes across Seasons 1, 3 and 4: 5,495 full bilingual groups supply 11,459
-selected word examples across 4,443 cards.
+unassigned. The v5 preset includes conservative English matches in 21 original-numbered
+episodes across Seasons 1, 3 and 4: 5,495 full bilingual groups supply selected translated examples across 7,929
+cards when all observed forms are included.
 Translations are preferred when selecting examples. Original Spanish cues alone
 supply occurrence counts; expanding an example to its complete bilingual group
 never adds occurrences. Cards without a matching English passage retain Spanish
@@ -53,13 +54,18 @@ Node adapter. It recognises 10,335 forms on the frequency list, including 4,233
 outside the current study inventory, and finds 13 curated entity candidates.
 All 12,706 observed forms remain in `deck.intake.surfaces`, including unknowns;
 each retains a count and up to three examples with original character offsets.
+Repeated line text is stored once in `intake.exampleLines`; card projection
+expands the line references without losing the original offsets.
 
-This is recognition, not a new source of definitions or a grouping policy.
-Lemma hints do not merge forms, especially attached clitics/pronominal verbs.
-The 6,102-card study inventory is unchanged while the separate clitic work is
-in progress. Missing definitions never become blank study cards. Entity tagging
-uses Turbo's local curated registry only; it makes no Wikipedia requests and
-does not claim ambiguous names are sense-resolved. Older cached playlists must
+Recognition and admission are separate. Lemma hints do not merge forms, especially
+attached clitics/pronominal verbs. The separate clitic work and canonical Speech
+inventory remain unchanged. Every observed form now gets a series card; missing
+definitions are explicitly pending instead of excluding the word. Additional
+forms receive local Wiktionary menus where published entries or form-of paths
+exist; the 50k rank is recognition metadata, not a claim that a definition exists. Entity tagging uses the shared Turbo curated registry plus retained build-time
+Wikipedia candidates. The optional separate entity acquisition was throttled
+after 132 queries, so remaining uncurated entity lookups are pending. Opening
+the preset makes no Wikipedia requests and never claims a name is sense-resolved. Older cached playlists must
 be rebuilt from their original lyrics to recover words filtered out previously.
 Unsupported languages or unavailable local recognition assets leave existing
 study imports usable; a later build retries failed asset loading.
@@ -103,7 +109,10 @@ files fail the build. Partial coverage requires the explicit flag and is
 recorded in both generated assets. A future dataset revision must also update
 `CASA_PRESET_REVISION` in `app/js/playlist-live.js` to refresh browser caches.
 
-Both the bundled preset and its browser fallback preserve full Spanish/English groups. The preset revision is `offline-30-episodes-v4-recut-translations`, so reopening refreshes older caches while failed refreshes retain usable decks. No source matching or WSD calls are made when opening the preset.
+Both the bundled preset and its browser fallback preserve full Spanish/English groups. The preset revision is `offline-30-episodes-v5-all-forms`, so reopening refreshes older caches while failed refreshes retain usable decks. No source matching or WSD calls are made when opening the preset.
 
 The Netflix bridge diagnostic sample and unchanged-count comparison are saved
 locally under `Fluency-Workspace/audits/casa-netflix-bridge-20261026/`.
+
+See [Complete series decks](complete-series-decks.md) for the shared build,
+Wiktionary source, entity limitations and Élite preset.

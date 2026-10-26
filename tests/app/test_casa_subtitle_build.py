@@ -73,7 +73,7 @@ class CasaSubtitleBuildTests(unittest.TestCase):
         self.assertEqual(dialogue["total_lines_count"], 22755)
         self.assertEqual(sum(len(ep["lines"]) for ep in dialogue["episodes"]), 22755)
         self.assertEqual(deck["matchedCount"], len(deck["surfaces"]))
-        self.assertEqual(deck["matchedCount"], 6102)
+        self.assertEqual(deck["matchedCount"], 12706)
         self.assertEqual(deck["coverage"], dialogue["coverage"])
         self.assertFalse(deck["coverage"]["complete"])
         self.assertEqual(len(deck["coverage"]["missing"]), 11)

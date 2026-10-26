@@ -2,8 +2,9 @@
 // speech inventory, and study those cards with unassigned song-line examples.
 import { clearRoute, parseRoute } from './routes.js?v=20261013music';
 import { releaseUrl } from './release-host.js?v=20260921rh';
-import { enrichOfflineDeck } from './offline-intake.js?v=20261022';
+import { enrichOfflineDeck, loadOfflineIntakeAssets } from './offline-intake.js?v=20261022';
 import { standaloneWordMeanings } from './lexical-guards.js?v=20261022';
+import { completeSeriesVocabulary, loadSeriesLexicon } from './series-vocabulary.js?v=all-forms-v1';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -13,7 +14,11 @@ const MAX_LINES_PER_SURFACE = 5;
 
 let _liveDeck = null;
 
-export const CASA_PRESET_REVISION = 'offline-30-episodes-v4-recut-translations';
+export const CASA_PRESET_REVISION = 'offline-30-episodes-v5-all-forms';
+export const SERIES_PRESETS = {
+    'la-casa-de-papel': { title: 'La Casa de Papel', file: 'casa-de-papel', revision: CASA_PRESET_REVISION },
+    elite: { title: 'Élite', file: 'elite', revision: 'offline-season1-v1-all-forms' }
+};
 
 export function validLiveDeck(deck) {
     return Boolean(deck && deck.language && deck.playlistId
@@ -153,7 +158,7 @@ async function runTurboWorkerIntake(songs, onProgress = null) {
     });
 }
 
-async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, skipWsd = true }) {
+async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, skipWsd = true, includeAllForms = false }) {
     const isSpanish = (language === 'spanish' || language === 'es');
 
     // Shared live imports default to no WSD. Turbo callers must opt in explicitly.
@@ -278,7 +283,7 @@ async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, 
             const tokens = naiveLyricTokens(line);
             tokenCount += tokens.length;
             for (const token of tokens) {
-                if (!speechSurfaces.has(token)) continue;
+                if (!includeAllForms && !speechSurfaces.has(token)) continue;
                 let entry = surfaces.get(token);
                 if (!entry) {
                     entry = { count: 0, lines: [] };
@@ -322,6 +327,15 @@ async function buildPlaylistLiveDeck({ playlist, language, records, onProgress, 
     } catch (error) {
         // Optional local metadata must not destroy an otherwise usable deck.
         console.warn('Offline recognition assets unavailable; keeping study deck:', error);
+    }
+    if (includeAllForms) {
+        let loaded = {}, lexicon = {};
+        try { loaded = await loadOfflineIntakeAssets(language) || {}; } catch (_) {}
+        if (isSpanish) {
+            try { lexicon = await loadSeriesLexicon(); } catch (_) {}
+        }
+        completeSeriesVocabulary(deck, { ...loaded, lexicon });
+        deck.sourceKind = 'series';
     }
     const db = await openLiveDb();
     try {
@@ -402,12 +416,13 @@ async function preparePlaylistLiveSession(language) {
     }
     // The named sample is authoritative online; cached experiments may have
     // been saved under the same id before all episodes were included.
-    if (deck.playlistId === 'la-casa-de-papel') {
+    const preset = SERIES_PRESETS[deck.playlistId];
+    if (preset) {
         try {
-            const response = await fetch(new URL(`data/series/casa-de-papel-deck.json?preset=${CASA_PRESET_REVISION}`, new URL('../', import.meta.url)), { cache: 'no-store' });
+            const response = await fetch(new URL(`data/series/${preset.file}-deck.json?preset=${preset.revision}`, new URL('../', import.meta.url)), { cache: 'no-store' });
             const fresh = response.ok ? await response.json() : null;
             if (validLiveDeck(fresh) && fresh.playlistId === deck.playlistId
-                && fresh.language === deck.language && fresh.presetRevision === CASA_PRESET_REVISION) {
+                && fresh.language === deck.language && fresh.presetRevision === preset.revision) {
                 deck = fresh;
             } else {
                 throw new Error('The published Casa sample is unavailable or has an unexpected revision.');
@@ -464,11 +479,18 @@ function projectPlaylistLiveEntry(item) {
     if (!entry) return { ...item };
     const isTurbo = Boolean(_liveDeck?.isTurboEngine);
     const lyricExamples = entry.lines.map(lyricExample);
+    const baseMeanings = item.meanings || _liveDeck.dictionaryMenus?.[item.meaningMenu] || [];
+    const withGrammar = item.surfaceGrammar ? baseMeanings.map(meaning => ({ ...meaning,
+        metadata: { ...meaning.metadata, features: [...(meaning.metadata?.features || []),
+            ...(item.surfaceGrammar[`${meaning.headword}:${meaning.pos}`] || [])] }
+    })) : baseMeanings;
+    const recognition = _liveDeck?.intake?.surfaces[normalizeSurface(item.word)];
     const next = {
         ...item,
-        offlineRecognition: _liveDeck?.intake?.surfaces[normalizeSurface(item.word)] || null,
+        offlineRecognition: recognition ? { ...recognition, examples: (recognition.examples || []).map(example =>
+            example.line ? { ..._liveDeck.intake.exampleLines?.[example.line], ...example } : example) } : null,
         sourceRank: item.sourceRank || item.rank,
-        meanings: standaloneWordMeanings(item.word, [...(item.meanings || [])], _liveDeck.language),
+        meanings: standaloneWordMeanings(item.word, [...withGrammar], _liveDeck.language),
         playlist_count: entry.count,
         corpusCount: entry.count,
         corpus_count: entry.count,
@@ -489,7 +511,8 @@ function projectPlaylistLiveEntry(item) {
             };
         });
     } else {
-        const kept = next.meanings.filter(keepCommonOrUncommon);
+        const kept = _liveDeck.admissionPolicy === 'all-forms-v1'
+            ? next.meanings : next.meanings.filter(keepCommonOrUncommon);
         const meanings = kept.length ? kept : next.meanings.slice(0, 4);
         if (meanings.length) {
             next.meanings = meanings.map(m => ({
@@ -514,7 +537,8 @@ function projectPlaylistLiveEntry(item) {
 // after hydration, keeping study order separate from the source's shard rank.
 function refreshPlaylistLiveEntry(item) {
     if (!playlistLiveActive()) return item;
-    const canonical = window._cachedJoinedIndex?.find(card => card.id === item.id) || item;
+    const inline = _liveDeck?.surfaces[normalizeSurface(item.word)]?.card;
+    const canonical = window._cachedJoinedIndex?.find(card => card.id === item.id) || inline || item;
     const next = projectPlaylistLiveEntry(canonical);
     for (const key of ['rank', 'displayRank', 'stableRank', 'categoryRank']) next[key] = item[key];
     next.sourceRank = item.sourceRank || canonical.sourceRank || canonical.rank;
@@ -525,6 +549,16 @@ function applyPlaylistLiveVocabulary(items) {
     if (!playlistLiveActive() || !Array.isArray(items)) return items;
     const ranked = items.filter(item => _liveDeck.surfaces[normalizeSurface(item.word)])
         .map(projectPlaylistLiveEntry);
+    if (_liveDeck.admissionPolicy === 'all-forms-v1') {
+        const represented = new Set(ranked.map(item => normalizeSurface(item.word)));
+        for (const [word, entry] of Object.entries(_liveDeck.surfaces)) {
+            if (represented.has(word)) continue;
+            ranked.push(projectPlaylistLiveEntry(entry.card || {
+                id: `series:es:${word}`, word, lemma: word, sourceRank: -1,
+                definitionSource: 'inline', definitionStatus: 'pending', meanings: []
+            }));
+        }
+    }
     ranked.sort((a, b) => (b.playlist_count || 0) - (a.playlist_count || 0)
         || String(a.word || '').localeCompare(String(b.word || '')));
     ranked.forEach((item, index) => {

@@ -24,7 +24,7 @@ EXPECTED = {(season, episode) for season, count in enumerate((9, 6, 8, 8, 10), 1
             for episode in range(1, count + 1)}
 TIME = re.compile(r"(\d\d):(\d\d):(\d\d)[,.](\d{3})")
 TOKEN = re.compile(r"[^\W_]+(?:['’\-][^\W_]+)*", re.UNICODE)
-REVISION = "offline-30-episodes-v4-recut-translations"
+REVISION = "offline-30-episodes-v5-all-forms"
 
 
 def milliseconds(value):
@@ -196,20 +196,22 @@ def add_recut_translations(episodes, manifest, raw_root, matcher):
     return episodes
 
 
-def build(episodes, inventory, manifest):
+def build(episodes, inventory, manifest, *, include_all=False):
+    title = manifest.get('title', 'La Casa de Papel')
+    series_id = manifest.get('seriesId', 'la-casa-de-papel')
     surfaces, candidates, token_count = {}, {}, 0
     for ep in episodes:
         for line in ep["lines"]:
             tokens = TOKEN.findall(line["spanish"].lower().replace("’", "'"))
             token_count += len(tokens)
             for word, count in Counter(tokens).items():
-                if word not in inventory:
+                if not include_all and word not in inventory:
                     continue
                 entry = surfaces.setdefault(word, {"count": 0, "lines": []})
                 entry["count"] += count
                 translated = line.get('translation')
                 example = {"text": translated['spanish'] if translated else line["spanish"],
-                           "song": ep["episode"], "artist": "La Casa de Papel"}
+                           "song": ep["episode"], "artist": title}
                 if translated:
                     example.update(english=translated['english'], start_ms=translated['start_ms'],
                                    end_ms=translated['end_ms'], translationSource=translated['source'],
@@ -243,11 +245,11 @@ def build(episodes, inventory, manifest):
         coverage.update(exampleTranslations='partial', translatedEpisodes=len({g[0] for g in translated_groups}),
                         translatedGroups=len(translated_groups), translationPolicy=manifest['translationPolicy'],
                         cardsWithTranslatedExamples=sum(any(e.get('english') for e in row['lines']) for row in surfaces.values()))
-    dialogue = {"series_id": "la-casa-de-papel", "title": "La Casa de Papel", "language": "spanish",
+    dialogue = {"series_id": series_id, "title": title, "language": "spanish",
                 "episodes_count": len(episodes), "total_lines_count": sum(len(e["lines"]) for e in episodes),
                 "coverage": coverage, "episodes": episodes}
     deck = {"id": "live", "presetRevision": REVISION, "sourceKind": "series",
-            "playlistId": "la-casa-de-papel", "playlistName": "La Casa de Papel", "language": "spanish",
+            "playlistId": series_id, "playlistName": title, "language": "spanish",
             "builtAt": manifest["retrievedAt"], "trackCount": len(episodes), "lyricsTrackCount": len(episodes),
             "tokenCount": token_count, "matchedCount": len(surfaces), "coverage": coverage, "surfaces": surfaces}
     return dialogue, deck
@@ -263,13 +265,16 @@ def main():
     episodes = load_episodes(manifest, args.raw_root, args.allow_partial)
     episodes = add_translations(episodes, manifest, args.raw_root)
     inventory = json.loads((ROOT / "app/data/speech-frequency/es-literal-ground-r6-fw1.json").read_text())["values"]
-    dialogue, deck = build(episodes, inventory, manifest)
+    dialogue, deck = build(episodes, inventory, manifest, include_all=True)
     records = [{"title": ep["episode"], "artist": "La Casa de Papel",
                 "dialogueLines": [{"text": line["spanish"]} for line in ep["lines"]]} for ep in episodes]
     annotation = subprocess.run(["node", str(ROOT / "scripts/annotate_offline_intake.mjs")],
                                 input=json.dumps({"records": records, "speechSurfaces": list(inventory)}),
                                 text=True, capture_output=True, check=True)
     deck["intake"] = json.loads(annotation.stdout)
+    completed = subprocess.run(["node", str(ROOT / "scripts/complete_series_deck.mjs")],
+                               input=json.dumps(deck), text=True, capture_output=True, check=True)
+    deck = json.loads(completed.stdout)
     for name, value in [("casa-de-papel.json", dialogue), ("casa-de-papel-deck.json", deck)]:
         (ROOT / "app/data/series" / name).write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n")
     print(f"{len(episodes)} episodes, {dialogue['total_lines_count']} cues, {deck['matchedCount']} words, {(deck['matchedCount'] + 99) // 100} levels")

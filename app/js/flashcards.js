@@ -7588,7 +7588,8 @@ function renderCardWikipediaBadge(card) {
         const isLive = Boolean(window.playlistLiveActive?.() || card.playlist_count != null || card.playlistId || card.playlistName);
         const liveDeck = isLive ? window.playlistLiveDeck?.() : null;
         const isSeries = Boolean(
-            liveDeck?.playlistId === 'la-casa-de-papel'
+            liveDeck?.sourceKind === 'series'
+            || liveDeck?.playlistId === 'la-casa-de-papel'
             || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName))
             || card.playlistId === 'la-casa-de-papel'
             || (card.playlistName && /casa de papel|series|show|tv/i.test(card.playlistName))

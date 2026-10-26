@@ -14,7 +14,7 @@ class Element {
     set innerHTML(_html) {
         // The workspace template is static. Only these buttons need selectors.
         for (const id of ['musicBackBtn', 'musicWorkspaceTitle', 'musicArtistSearch', 'musicMixBtn', 'musicArtistBrowser', 'musicArtistList', 'musicPickerHost', 'musicStudySetup',
-            'seriesBrowser', 'casaSeriesBtn', 'musicSelectionTitle', 'musicSelectionCount', 'musicSelectionPreview', 'musicEditSongsBtn']) {
+            'seriesBrowser', 'casaSeriesBtn', 'eliteSeriesBtn', 'musicSelectionTitle', 'musicSelectionCount', 'musicSelectionPreview', 'musicEditSongsBtn']) {
             const element = new Element(id); elements.set(id, element); this.appendChild(element);
         }
         this.nav = ['artists', 'playlists', 'setup'].map(next => {
@@ -132,11 +132,14 @@ assert.equal(elements.get('musicEditSongsBtn').hidden, true);
 module.showSeriesChoices('french');
 assert.equal(window.seriesWorkspaceActive(), true, 'an unsupported language cannot replace the picker');
 let casaLoads = 0, activations = 0;
-window.loadCasaDePapelPreset = async () => { casaLoads++; };
+const seriesLoads = [];
+window.loadSeriesPreset = async id => { seriesLoads.push(id); if (id === 'la-casa-de-papel') casaLoads++; };
 window.activatePlaylistLiveStudy = language => { assert.equal(language, 'spanish'); activations++; };
 await elements.get('casaSeriesBtn').listeners.click[0]();
 assert.equal(casaLoads, 1);
-assert.equal(activations, 1);
+await elements.get('eliteSeriesBtn').listeners.click[0]();
+assert.deepEqual(seriesLoads, ['la-casa-de-papel', 'elite']);
+assert.equal(activations, 2);
 assert.equal(window.musicWorkspaceActive(), false);
 window.activeArtist = null;
 window.playlistLiveActive = () => true;
