@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T23:20:00+00:00",
+      "date": "2026-10-26 23:20 GMT",
+      "agent": "Claude",
+      "summary": "Home tabs on phones keep their icons.",
+      "detail": [
+        "Each phone tab shows its icon and name on the top line, the level or waiting count beneath."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T23:10:00+00:00",
       "date": "2026-10-26 23:10 GMT",
       "agent": "Claude",
@@ -344,18 +354,6 @@
       "detail": [
         "Under a shared translation, a meaning with no context of its own used to read 'general use'; it now reads the translation alone and comes first (man / man · adult male).",
         "The meanings sheet behind See again lists it the same way."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T23:52:00+00:00",
-      "date": "2026-10-25 23:52 GMT",
-      "agent": "Claude",
-      "summary": "Folded word types: translations sit on the row's centre line; shared contexts stay in the word-type row.",
-      "detail": [
-        "A folded word type's translation is centred on the whole row, not on the space after the pill, so a fully folded card reads as one line down the middle (claro: clear / sure · of course / of course).",
-        "When a pill with its lemma leaves too little room ('Verb from acordarse'), the translation takes a centred line of its own under it, as shared words already do on an open row; the meter stays at the right.",
-        "A shared context goes back to the word-type row in brackets (así: 'Adverb (in a certain way)' over like this / like that / this way / that way); only a shared translation is written into each row ('man · adult male')."
       ],
       "commit": "pending"
     }

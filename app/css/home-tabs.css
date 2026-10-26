@@ -97,10 +97,10 @@
 /* Phones: tighter tabs, and the size of the existing home type. */
 @media (max-width: 1023px) {
     #setupPanel > #homeTabs:not([hidden]) { margin: 0 0 10px; padding: 4px; gap: 4px; }
-    .home-tab { flex-direction: column; align-items: center; justify-content: center; padding: 8px 10px; gap: 2px; font-size: var(--home-text-small); text-align: center; }
+    /* Icon and name on the top line, the count beneath. */
+    .home-tab { display: grid; grid-template-columns: auto auto; justify-content: center; align-items: center; padding: 8px 10px; gap: 2px 6px; font-size: var(--home-text-small); }
     .home-tab strong { font-size: var(--home-text); }
-    .home-tab-icon { display: none; }
-    .home-tab-meta { margin-left: 0; gap: 6px; }
+    .home-tab-meta { grid-column: 1 / -1; justify-self: center; margin-left: 0; gap: 6px; }
     #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header { padding: 10px 10px 0 0; }
     #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger > .home-section-help { width: 24px; height: 24px; }
     #setupPanel:has(> #homeTabs:not([hidden])) > #step2 > .level-choosing { padding-top: 14px; }
