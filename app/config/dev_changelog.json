@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T20:58:16+00:00",
+      "date": "2026-10-26 20:58 GMT",
+      "agent": "Codex",
+      "summary": "Larger level arrows, a slimmer desktop sidebar and roomier study panels.",
+      "detail": [
+        "Level arrow targets increase to 64px on mobile and 72px on desktop.",
+        "The desktop sidebar is 10% narrower; Practise receives all 23.6px of recovered width while Learn keeps its previous width.",
+        "Desktop Learn and Practise panel gutters and inner control padding are reduced by 20%."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T20:58:00+00:00",
       "date": "2026-10-26 20:58 GMT",
       "agent": "Claude",
@@ -11,6 +23,17 @@
         "Saved is a single row in Settings → Your words (hidden until you save something) that opens a Saved popup; the list no longer sits inside Settings.",
         "Progress's Saved button opens the same popup.",
         "Languages-you-know flags are bigger."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T20:55:49+00:00",
+      "date": "2026-10-26 20:55 GMT",
+      "agent": "Codex",
+      "summary": "Brighter language-tinted level details and darker Learn and Practise buttons.",
+      "detail": [
+        "Coverage, percentage digits and every example word use a pale language colour in dark mode, with a darker equivalent in light mode.",
+        "Learn and Practise use a darker language-coloured fill to keep white button text readable."
       ],
       "commit": "pending"
     },
@@ -341,31 +364,6 @@
         "Tapping it fades everything except the word and its meaning rows, in place, and shows 'Tap the pin on a meaning to see it again in Practise.' where the tiles were.",
         "Pinning one meaning returns the card to normal straight away; tapping anywhere else on the card cancels without flipping it.",
         "Row pin tooltips read 'See this meaning again'; the tutorial step is renamed to match."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T12:31:03+00:00",
-      "date": "2026-10-25 12:31 GMT",
-      "agent": "Codex",
-      "summary": "Fix sign-in getting stuck and keep loading layouts stable on mobile and desktop.",
-      "detail": [
-        "Successful sign-in opens the app without waiting for background progress or playlist sync; failed account requests can retry in place.",
-        "Reserve loading space across setup, search, music, song selection, progress and conjugation drawers; retain song checkbox focus.",
-        "Keep level and practice sections hidden while choosing Speech or Music, and ignore outdated Speech loads after switching languages."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T11:25:00+00:00",
-      "date": "2026-10-25 11:25 UTC",
-      "agent": "Antigravity",
-      "summary": "About page and walkthrough: label dictionary icon, move mañana to intro, and reframe music choice.",
-      "detail": [
-        "Added 'Dictionary lookup' callout and pin label in the walkthrough pointing to the dictionary tile in the bottom right corner.",
-        "Moved mañana (tomorrow) into the main intro paragraph to contrast standard speech essentials with series/music specific vocabulary.",
-        "Shortened the Speech and Music mode descriptions for direct parallelism.",
-        "Removed 'songs you love' and reframed music mode around uploading a playlist or selecting an artist."
       ],
       "commit": "pending"
     }
