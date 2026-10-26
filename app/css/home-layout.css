@@ -1580,16 +1580,15 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 
 /* Larger level controls and a clearer coverage-first readout. */
 #setupPanel #homeLevelStepper .home-level-step { width: 64px; height: 64px; font-size: 56px; }
-/* Apply the tint to nested sample words and percentage digits too: the older
-   descendant rule gave them their own muted grey instead of inheriting. */
+/* Keep every sample word and percentage digit white, including nested spans. */
 #setupPanel #lswExamples .lsw-egs,
 #setupPanel #lswExamples .lsw-egs * {
-    color: color-mix(in srgb, var(--accent-primary) 25%, #fff);
+    color: #fff;
     opacity: 1;
 }
 :root[data-theme="light"] #setupPanel #lswExamples .lsw-egs,
 :root[data-theme="light"] #setupPanel #lswExamples .lsw-egs * {
-    color: color-mix(in srgb, var(--accent-primary) 45%, #000);
+    color: var(--text-primary);
 }
 #setupPanel #lswExamples .lsw-egs :is(.lsw-coverage-inline, .lsw-example-words) {
     display: block;
