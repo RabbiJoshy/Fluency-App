@@ -2,6 +2,30 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T23:45:00+00:00",
+      "date": "2026-10-26 23:45 GMT",
+      "agent": "Claude",
+      "summary": "Home tabs on phones keep their icons.",
+      "detail": [
+        "Each phone tab shows its icon and name on the top line, the level or waiting count beneath.",
+        "Practise's button stays full width inside its panel at every width, and the ? no longer overlaps the first row."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T23:10:00+00:00",
+      "date": "2026-10-26 23:10 GMT",
+      "agent": "Claude",
+      "summary": "Home: Learn and Practise are now two tabs, one open at a time, on desktop and phone.",
+      "detail": [
+        "Each tab shows one fact: Learn its level, Practise how many words are waiting (red dot when there are mistakes).",
+        "Home opens on Practise when words are waiting, otherwise Learn; your own choice holds for the visit.",
+        "The open section keeps its ? in the top-right corner; the title moved into the tab. The phone fold rows are gone.",
+        "Before anything is in Practise there are no tabs, just Learn."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T22:59:53+00:00",
       "date": "2026-10-26 22:59 GMT",
       "agent": "Claude",
@@ -9,6 +33,18 @@
       "detail": [
         "Replaces the small install card: a sidebar button under Account opens a popup with four mock iPhone screens (Share, View More, Add to Home Screen, Add).",
         "Highlights use the language colour; the popup closes with ✕, a click outside, or Escape."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T22:46:00+00:00",
+      "date": "2026-10-26 22:46 GMT",
+      "agent": "Antigravity",
+      "summary": "Sense head no longer overlaps its translation; expression rows cleaned up; conjugation drill opens full screen and returns to the card.",
+      "detail": [
+        "A word type's shared translation (e.g. será: \"will be\") drops to its own row when it would collide with \"verb from ser\" or the meter.",
+        "Expressions no longer show a gold star on every row, and the Example pill drops its stray quotation marks.",
+        "\"All tenses in conjugation mode\" from a card closes the card's panel, opens the drill full screen, and Back/✕ return to the card."
       ],
       "commit": "pending"
     },
@@ -308,43 +344,6 @@
         "Spanish and Portuguese current releases receive release-bound companions: 282,808 Spanish and 139,859 Portuguese selected examples, all scored. Only the active set’s score files load.",
         "Higher-scored Speech examples appear first. Ties retain the existing ordering; unscored examples remain available. The temporary length/number heuristic is removed.",
         "Selection, frequency, progress identity and published deck assets stay unchanged. Verified on local mobile cards: assim 0.964 and esa 0.977, with example cycling intact."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T15:12:03+00:00",
-      "date": "2026-10-26 15:12 GMT",
-      "agent": "Claude",
-      "summary": "Portuguese: expressions found in any verb form (tomou conta, vale a pena, dou cabo, faz ideia) now get their own meaning rows.",
-      "detail": [
-        "New release pt-speech-v25-decide-1-expr-10000-slim: DECIDE-1 plus 857 re-asked sentences with inflected expressions on the menu.",
-        "519 sentences moved from a plain verb meaning to the expression (vale a pena: worthwhile, not 'to be worth'); 107 previously unassigned sentences are now shown.",
-        "Every other card is identical to DECIDE-1; companion files (cognates, merge rule, placement pool, filters) rebuilt for the new release."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T14:35:46+00:00",
-      "date": "2026-10-26 14:35 GMT",
-      "agent": "Claude",
-      "summary": "Bad Bunny, Rosalía and Young Miko: dropped-s spellings now show inflected meanings (seguimo' = we follow, queda' = you are).",
-      "detail": [
-        "Artist decks load lyrics release lyrics-all-artists-v20-1, derived from v20 with only display glosses changed.",
-        "1,010 cards whose lyric spelling drops a final s (seguimo', tiene', estamo') get person-inflected glosses instead of the infinitive.",
-        "Examples, meanings and WSD assignments are unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T14:32:01+00:00",
-      "date": "2026-10-26 14:32 GMT",
-      "agent": "Codex",
-      "summary": "Mobile grammar-word rows fit again; grading reveals expressions, rarer-use paging works, and closer translation pairs appear first.",
-      "detail": [
-        "Restore compact function-word typography, stack only the row that needs it, and show até without a redundant + ….",
-        "Keep expressions follow-ups out of the function-word renderer and repair the missing escaping helper that left old card content on screen.",
-        "Cycle rarer-use examples in the visible sheet, preserving open examples, scroll position and pager focus.",
-        "Order selected Speech examples using conservative translation length and digit mismatch checks before WSD confidence; example membership, frequencies and artist playback priorities stay unchanged."
       ],
       "commit": "pending"
     }

@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=496d34a9';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=496d34a9';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=496d34a9';
-import { songCreditHTML } from './song-credit.js?v=496d34a9';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=496d34a9';
+import './state.js?v=6bb9bd0b';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=6bb9bd0b';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=6bb9bd0b';
+import { songCreditHTML } from './song-credit.js?v=6bb9bd0b';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=6bb9bd0b';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=496d34a9';
-import { fitSenseRowText } from './card-row-layout.js?v=496d34a9';
+import { exampleTranslationAlignment } from './example-alignment.js?v=6bb9bd0b';
+import { fitSenseRowText } from './card-row-layout.js?v=6bb9bd0b';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=496d34a9';
-import { goToRoute, routeCodeFor } from './routes.js?v=496d34a9';
-import { memoryTipTileHTML } from './memory-tips.js?v=496d34a9';
+import './speech.js?v=6bb9bd0b';
+import { goToRoute, routeCodeFor } from './routes.js?v=6bb9bd0b';
+import { memoryTipTileHTML } from './memory-tips.js?v=6bb9bd0b';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=496d34a9';
-import './side-dock.js?v=496d34a9';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=496d34a9';
+} from './function-word-card.js?v=6bb9bd0b';
+import './side-dock.js?v=6bb9bd0b';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=6bb9bd0b';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=496d34a9';
+} from './example-personalisation.js?v=6bb9bd0b';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=496d34a9';
+} from './spanishdict-usage.js?v=6bb9bd0b';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=496d34a9';
+} from './reverse-cues.js?v=6bb9bd0b';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=496d34a9';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=496d34a9';
+} from './card-metadata-pills.js?v=6bb9bd0b';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=6bb9bd0b';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1405,7 +1405,19 @@ function fitHoistedShared(root) {
         const line = parseFloat(getComputedStyle(shared).lineHeight) || 20;
         // Layout height, not the on-screen box: a card still flipping is
         // rotated in 3D, which distorts getBoundingClientRect.
-        if (shared.offsetHeight > line * 1.4) head.classList.add('has-shared-below');
+        if (shared.offsetHeight > line * 1.4) { head.classList.add('has-shared-below'); return; }
+        // A lone shared gloss is centred over the whole head (absolute), so
+        // it never wraps; it drops to its own row when it is cut off or would
+        // sit on top of the word type, "from <lemma>" or the meter.
+        if (getComputedStyle(shared).position !== 'absolute') return;
+        const left = shared.offsetLeft;
+        const right = left + shared.offsetWidth;
+        const clipped = shared.scrollWidth > shared.clientWidth + 1;
+        const overlaps = [...head.children].some(el => {
+            if (el === shared || !el.offsetWidth || getComputedStyle(el).position === 'absolute') return false;
+            return el.offsetLeft < right + 8 && el.offsetLeft + el.offsetWidth > left - 8;
+        });
+        if (clipped || overlaps) head.classList.add('has-shared-below');
     });
 }
 
@@ -5963,14 +5975,13 @@ function renderPhraseRow(item, index) {
             <div class="expression-row-text">
                 <div class="expression-row-headword-wrap">
                     <span class="expression-row-headword">${escapeCardText(item.expression)}</span>
-                    <span class="expression-saved-indicator${isSaved ? ' is-visible' : ''}" data-saved-indicator="${escapeCardText(item.expression)}" title="${isSaved ? 'Saved in your collection' : ''}" aria-label="Saved" ${isSaved ? '' : 'hidden'}>${SAVE_STAR_ICON}</span>
                 </div>
                 ${item.translation ? `<div class="expression-row-translation">${escapeCardText(item.translation)}</div>` : ''}
                 ${item.context ? `<div class="expression-row-context">${escapeCardText(item.context)}</div>` : ''}
             </div>
             ${sourcePill ? `<div class="expression-badge-slot">${sourcePill}</div>` : ''}
             <div class="expression-row-affordance">
-                ${hasExample ? `<span class="expression-example-pill"><span class="expression-example-quotes" aria-hidden="true">“ ”</span>Example</span>` : ''}
+                ${hasExample ? `<span class="expression-example-pill">Example</span>` : ''}
                 <svg class="expression-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </div>
         </div>
@@ -11892,8 +11903,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '496d34a9';
-const MODALS_ASSET_VERSION = '496d34a9';
+const ASSET_VERSION = '6bb9bd0b';
+const MODALS_ASSET_VERSION = '6bb9bd0b';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

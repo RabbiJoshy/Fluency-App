@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=496d34a9");
+@import url("./appearance.css?v=6bb9bd0b");
 
 
         * {
@@ -21146,20 +21146,6 @@ body.rare-uses-open { overflow: hidden; }
     font-size: 20px;
   }
 }
-.expression-saved-indicator {
-  display: inline-flex;
-  align-items: center;
-  color: #f59e0b;
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-.expression-saved-indicator svg {
-  width: 15px;
-  height: 15px;
-  fill: currentColor;
-  stroke: none;
-}
 .expression-row-translation {
   font: 500 16px/1.3 var(--font-reading);
   color: var(--text-secondary);
@@ -21190,13 +21176,6 @@ body.rare-uses-open { overflow: hidden; }
   background: color-mix(in srgb, var(--accent-phrases) 14%, transparent);
   color: var(--accent-phrases);
   border: 1px solid color-mix(in srgb, var(--accent-phrases) 32%, transparent);
-}
-.expression-example-quotes {
-  font-family: var(--font-data);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1;
-  opacity: 0.85;
 }
 .expression-chevron {
   color: var(--text-muted);
@@ -27156,6 +27135,19 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     text-overflow: ellipsis;
     padding: 0;
     order: 0;
+}
+/* When the centred gloss would collide with the word type, "from <lemma>" or
+   the meter, it takes a row of its own under them. */
+.pos-collapsible .pos-section-head.has-shared-below .pos-section-shared:has(.pos-shared-gloss):not(#_) {
+    position: static;
+    transform: none;
+    flex: 1 0 100%;
+    max-width: 100%;
+    order: 9;
+    text-align: center;
+    white-space: normal;
+    overflow: visible;
+    padding: 0 0 3px;
 }
 .meanings-scroll.inline-sense-rows .meaning-row.meaning-row-group.has-hoisted-shared-cell[data-axis="translation"] .sense-cue-group > .group-card-varying-cell:not(#_) {
     padding: 3px 8px 3px 24px !important;
