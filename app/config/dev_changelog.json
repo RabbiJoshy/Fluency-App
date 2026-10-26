@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T14:01:52+00:00",
+      "date": "2026-10-26 14:01 GMT",
+      "agent": "Claude",
+      "summary": "Merged lemmas: grammar never splits a card. teu/tua, outro/outra, muito/muita, claro/clara now share one card.",
+      "detail": [
+        "A form keeps its own card only if it is also another word (fui, foi, mato), has a meaning the dictionary ties to some forms (há, tem, faz, dá), or has a meaning on its own dictionary page (vamos \"let's\", digamos, Spanish hay).",
+        "Part-of-speech labels for the same meaning (determiner vs pronoun, Spanish transitive vs reflexive verb) no longer split cards: 252 Portuguese and 483 Spanish forms join their word.",
+        "Placement pools rebuilt."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T13:26:05+00:00",
       "date": "2026-10-26 13:26 GMT",
       "agent": "Claude",
@@ -356,18 +368,6 @@
       "detail": [
         "Roll back only Portuguese release paths after decks failed to load.",
         "Keep saved progress, account data, all other languages and app changes untouched."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T20:47:33.095708+01:00",
-      "date": "2026-10-22 20:47 BST",
-      "agent": "Codex",
-      "summary": "Portuguese verb forms show real inflected meanings and conjugation tables.",
-      "detail": [
-        "Correct 100 grammatical-reading rows on 99 Portuguese cards; foram shows they went / they were.",
-        "Resolve the correct verb tables while preserving card and meaning IDs, example assignments and progress namespace.",
-        "Keep original dictionary grammar and correction provenance; no new lexical WSD assignments are claimed."
       ],
       "commit": "pending"
     }

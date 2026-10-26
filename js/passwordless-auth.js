@@ -1,5 +1,5 @@
-import { readJsonWithTimeout } from './read-request.js?v=b1ed7d13';
-import { IS_STAGING } from './env.js?v=b1ed7d13';
+import { readJsonWithTimeout } from './read-request.js?v=fa6cd049';
+import { IS_STAGING } from './env.js?v=fa6cd049';
 
 export const PASSWORDLESS_ENABLED = true;
 export const PASSWORDLESS_SYNC_URL = IS_STAGING

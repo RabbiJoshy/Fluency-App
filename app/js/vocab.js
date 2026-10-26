@@ -1,16 +1,16 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=b1ed7d13';
-import { readJsonWithTimeout } from './read-request.js?v=b1ed7d13';
-import { validateVocabularyIndex } from './data-contracts.js?v=b1ed7d13';
-import { formatRoute } from './routes.js?v=b1ed7d13';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=b1ed7d13';
-import { releaseUrl } from './release-host.js?v=b1ed7d13';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=b1ed7d13';
-import { getGrammarWordDefinition } from './function-word-card.js?v=b1ed7d13';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=b1ed7d13';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=b1ed7d13';
+import './state.js?v=fa6cd049';
+import { readJsonWithTimeout } from './read-request.js?v=fa6cd049';
+import { validateVocabularyIndex } from './data-contracts.js?v=fa6cd049';
+import { formatRoute } from './routes.js?v=fa6cd049';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=fa6cd049';
+import { releaseUrl } from './release-host.js?v=fa6cd049';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=fa6cd049';
+import { getGrammarWordDefinition } from './function-word-card.js?v=fa6cd049';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=fa6cd049';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=fa6cd049';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1099,19 +1099,17 @@ function lemmaStudyGroupKey(item) {
     return signature ? `${lemma}\u001f${signature}` : '';
 }
 
-// Decision 0033: every form of a word shares one card unless the form is
-// privileged, i.e. a meaning that is not the plain word carries real usage on
-// it: another word or part of speech, a sense the dictionary restricts to some
-// forms (impersonal, third-person, imperative), or a sense concentrated on
-// this form and nearly absent from its siblings. Expressions never count:
-// they are their own study items. Reflexive headwords (irse, matar-se) are
-// the base word. Works on Wiktionary and SpanishDict rows alike.
-const FORM_PRIVILEGE_RULE = 'form-privilege/v1';
+// Decision 0033: a card is a thing to learn once. Every form of a word shares
+// one card unless, in real use, the form carries something the word's card
+// does not teach: it is also another word (fui: ser and ir), or it has a
+// meaning the dictionary ties to some forms (impersonal há "ago", imperative)
+// or files on the form's own page (SpanishDict hay). Grammar never splits a
+// card: inflection, or a part-of-speech label for the same meaning.
+// Expressions are their own study items. Reflexive headwords (irse,
+// matar-se) are the base word. Works on Wiktionary and SpanishDict rows alike.
+const FORM_PRIVILEGE_RULE = 'form-privilege/v2';
 const FORM_PRIVILEGE_MIN_EXAMPLES = 3;
 const FORM_PRIVILEGE_MIN_SHARE = 0.10;
-const FORM_PRIVILEGE_CONCENTRATED_SHARE = 0.30;
-const FORM_PRIVILEGE_CONCENTRATED_EXAMPLES = 5;
-const FORM_PRIVILEGE_SIBLING_SHARE = 0.05;
 const FORM_RESTRICTED_TAGS = new Set(['impersonal', 'third-person']);
 
 // matar-se, pôr-se; irse, darse, reírse. An unhyphenated -se is stripped
@@ -1173,10 +1171,13 @@ function formPrivilegeSensesMatch(a, b) {
     return Boolean(pa && pb && pa[1] === pb[1] && (pa[2].startsWith(pb[2]) || pb[2].startsWith(pa[2])));
 }
 
-// The dictionary page a sense was read from, when the reference names one
-// (spanishdict-menu:hay:449 -> hay).
+// The dictionary page a sense was read from, when the reference names one:
+// spanishdict-menu:hay:449 -> hay; kaikki:en-vamos-pt-verb-jT-zG51B -> vamos.
+const FORM_KAIKKI_PAGE = /^kaikki:en-(.+?)-[a-z]{2,3}-(?:verb|noun|adj|adv|intj|pron|det|prep|conj|num|article|contraction|phrase|name|particle)-/u;
 function formPrivilegeSourcePage(meaning) {
-    return normalizeLemmaToken(String(meaning?.source_reference || '').match(/^[\w-]+-menu:([^:]+):/u)?.[1]);
+    const reference = String(meaning?.source_reference || '');
+    return normalizeLemmaToken(reference.match(/^[\w-]+-menu:([^:]+):/u)?.[1]
+        || reference.match(FORM_KAIKKI_PAGE)?.[1]);
 }
 
 const FORM_INFLECTION_MARK = /^(mood|tense|person|number)=/u;
@@ -1185,11 +1186,12 @@ const FORM_INFLECTION_MARK = /^(mood|tense|person|number)=/u;
 const FORM_OBJECT_GLOSS = /\b(me|it|him|her|them|us|myself|yourself|himself|herself|itself|ourselves|yourselves|themselves)\b/iu;
 
 // A sense filed on the form's own page that is not just the base word
-// re-glossed for that form: SpanishDict's hay "there is", but not pensé
-// "I thought; preterite indicative; first person singular".
+// re-glossed for that form: SpanishDict's hay "there is", Wiktionary's vamos
+// "let's", but not pensé "I thought; preterite indicative; first person
+// singular".
 function formOwnPageSense(meaning, item, lemma) {
     const page = formPrivilegeSourcePage(meaning);
-    if (!page || page === lemma || page !== normalizeLemmaToken(item?.word)) return false;
+    if (page === lemma || !formOnOwnPage(meaning, item)) return false;
     if ((item?.meanings || []).some(other => formPrivilegeSourcePage(other) === page
         && FORM_OBJECT_GLOSS.test(String(other?.translation || '')))) return false;
     return !formPrivilegeFeatures(meaning).some(f => f?.kind === 'sense_mark'
@@ -1214,56 +1216,41 @@ function formRestrictedSenseFits(meaning, item) {
 }
 
 // siblingShares: senseKey -> share of that sense on the word's other forms,
-// or null when siblings are not known (the concentration test is then
-// skipped). Senses read from the form's own page have no sibling to compare
-// with, so only the own-page test applies to them.
+// or null when siblings cannot be compared. A part-of-speech label alone
+// (teu determiner vs pronoun, primeiro adjective vs noun) is grammar, not a
+// new thing to learn, and is never a reason by itself.
 function formPrivilegeReasons(item, lemma, siblingShares = null) {
     const rows = formPrivilegeCounts(item).filter(({ meaning }) => meaning?.headword
         && !isExpressionSenseForLemma(meaning, item));
     const total = rows.reduce((sum, row) => sum + row.n, 0);
     if (!lemma || !(total > 0)) return [];
-    const lemmaRows = rows.filter(({ meaning }) => formPrivilegeBaseHeadword(meaning.headword, item) === lemma);
-    const mainPos = formPrivilegePos(lemmaRows.slice().sort((a, b) => b.n - a.n)[0]?.meaning);
     const reasons = new Set();
     const passes = (n, counted) => n / total >= FORM_PRIVILEGE_MIN_SHARE - 1e-9
         && (!counted || n >= FORM_PRIVILEGE_MIN_EXAMPLES);
-    // Another word or part of speech is judged on all its senses together:
-    // fue's "went" is spread over several senses of ir.
-    const groups = new Map();
+    // Another word is judged on all its senses together: fue's "went" is
+    // spread over several senses of ir.
+    const others = new Map();
     for (const { meaning, n, counted } of rows) {
         const base = formPrivilegeBaseHeadword(meaning.headword, item);
-        const key = base !== lemma ? `other_word\u001f${base}`
-            : formPrivilegePos(meaning) !== mainPos ? `part_of_speech\u001f${formPrivilegePos(meaning)}` : '';
-        if (!key) continue;
-        const group = groups.get(key) || { n: 0, counted: true };
+        if (base === lemma) continue;
+        const group = others.get(base) || { n: 0, counted: true };
         group.n += n;
         group.counted &&= counted;
-        groups.set(key, group);
+        others.set(base, group);
     }
-    for (const [key, group] of groups) {
-        if (passes(group.n, group.counted)) reasons.add(key.split('\u001f')[0]);
+    for (const group of others.values()) {
+        if (passes(group.n, group.counted)) reasons.add('other_word');
     }
     for (const { meaning, n, counted } of rows) {
-        const share = n / total;
-        if (formPrivilegeBaseHeadword(meaning.headword, item) !== lemma
-            || formPrivilegePos(meaning) !== mainPos || !passes(n, counted)) continue;
+        if (formPrivilegeBaseHeadword(meaning.headword, item) !== lemma || !passes(n, counted)) continue;
         // A restricted sense that is the word's main use on every form
         // (haver "there is", acontecer) privileges no form in particular.
         if (formRestrictedSenseFits(meaning, item)) {
             if (!siblingShares || siblingShares(formPrivilegeSenseKey(meaning)) < FORM_PRIVILEGE_MIN_SHARE) {
                 reasons.add('form_restricted');
             }
-        }
-        else if (formOwnPageSense(meaning, item, lemma)) reasons.add('own_page');
-        else if (formPrivilegeSourcePage(meaning) === normalizeLemmaToken(item?.word)) continue;
-        // Reflexive senses are the -se companion rule's question, and noun
-        // number already has its own proof (decision 0029).
-        else if (normalizeLemmaToken(meaning.headword) !== lemma || mainPos === 'noun') continue;
-        else if (siblingShares && formPrivilegeSenseKey(meaning).startsWith('ref:')
-            && (!counted || n >= FORM_PRIVILEGE_CONCENTRATED_EXAMPLES)
-            && share >= FORM_PRIVILEGE_CONCENTRATED_SHARE - 1e-9
-            && siblingShares(formPrivilegeSenseKey(meaning)) < FORM_PRIVILEGE_SIBLING_SHARE) {
-            reasons.add('concentrated');
+        } else if (formOwnPageSense(meaning, item, lemma)) {
+            reasons.add('own_page');
         }
     }
     return [...reasons].sort();
@@ -1296,7 +1283,15 @@ function formPrivilegeEligible(item, lemma) {
 // stay out of the sibling comparison altogether.
 function formPrivilegeComparable(meaning, item) {
     return Boolean(meaning?.headword) && !isExpressionSenseForLemma(meaning, item)
-        && formPrivilegeSourcePage(meaning) !== normalizeLemmaToken(item?.word);
+        && !formOnOwnPage(meaning, item);
+}
+
+// Read from the form's own page but filed under another headword (vamos's
+// page, ir; hay's page, haber). The infinitive's page is its word's page.
+function formOnOwnPage(meaning, item) {
+    const page = formPrivilegeSourcePage(meaning);
+    return Boolean(page) && page === normalizeLemmaToken(item?.word)
+        && page !== formPrivilegeBaseHeadword(meaning?.headword, item);
 }
 
 // {surface: {lemma, reasons}} for a whole release: lemma is '' when the form
