@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T21:52:56+00:00",
+      "date": "2026-10-26 21:52 GMT",
+      "agent": "Claude",
+      "summary": "Settings on desktop: one centred column.",
+      "detail": [
+        "Title, tabs, rows and the close button now share one centred 720px column instead of a narrow strip beside a full-width title bar.",
+        "Removed the thin vertical lines around the selected tab."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T21:30:03+00:00",
       "date": "2026-10-26 21:30 GMT",
       "agent": "Claude",
@@ -349,19 +360,6 @@
         "After pinning a meaning, the box where the tiles were says 'Swipe right if you know the rest.' for a few seconds.",
         "Pinning the last unpinned meaning says 'That’s every meaning, so the whole word will come back in Practise.' The pins still clear in that case.",
         "Tapping the message dismisses it early."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T19:15:00+00:00",
-      "date": "2026-10-25 19:15 GMT",
-      "agent": "Claude",
-      "summary": "'Pin meaning' is now 'See again', with a new icon and a guided pin step.",
-      "detail": [
-        "The tile is renamed 'See again' and its icon is three meaning rows with the pin pushed into the middle one.",
-        "Tapping it fades everything except the word and its meaning rows, in place, and shows 'Tap the pin on a meaning to see it again in Practise.' where the tiles were.",
-        "Pinning one meaning returns the card to normal straight away; tapping anywhere else on the card cancels without flipping it.",
-        "Row pin tooltips read 'See this meaning again'; the tutorial step is renamed to match."
       ],
       "commit": "pending"
     }

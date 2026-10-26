@@ -62,7 +62,6 @@
 #savedWordsModal .settings-words-action[hidden] { display: none; }
 
 /* On a wide screen keep each row compact so a label stays near its control. */
-#settingsModal #studyTabContent { max-width: 560px; }
 #settingsModal #studyTabContent .settings-pane-tabs { width: 100%; }
 
 /* One surface: the title bar is the page colour, and every row shares one inset
@@ -75,3 +74,9 @@
     padding: 16px 0; margin: 0; border: 0; border-bottom: 1px solid var(--border-color); border-radius: 0; background: transparent; box-shadow: none;
 }
 #settingsModal #studyTabContent .settings-overview-links { border: 0; padding: 12px 0 0; }
+
+/* One centred column for the title bar, tabs and rows, so their edges line up. */
+#settingsModal .modal-content.settings-modal-content,
+body.desktop-workspace #settingsModal.desktop-workspace-page > .modal-content { max-width: 720px !important; margin-inline: auto !important; }
+#settingsModal .settings-pane-tab:not(:focus-visible) { outline: 0 !important; }
+#settingsModal .settings-pane-tab:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 4px; }
