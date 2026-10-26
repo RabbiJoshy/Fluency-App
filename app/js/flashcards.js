@@ -1,42 +1,42 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=3980bbca';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=3980bbca';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=3980bbca';
-import { songCreditHTML } from './song-credit.js?v=3980bbca';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=3980bbca';
+import './state.js?v=f75f0b41';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=f75f0b41';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=f75f0b41';
+import { songCreditHTML } from './song-credit.js?v=f75f0b41';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=f75f0b41';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=3980bbca';
+import { fitSenseRowText } from './card-row-layout.js?v=f75f0b41';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=3980bbca';
-import { goToRoute, routeCodeFor } from './routes.js?v=3980bbca';
-import { memoryTipTileHTML } from './memory-tips.js?v=3980bbca';
+import './speech.js?v=f75f0b41';
+import { goToRoute, routeCodeFor } from './routes.js?v=f75f0b41';
+import { memoryTipTileHTML } from './memory-tips.js?v=f75f0b41';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=3980bbca';
-import './side-dock.js?v=3980bbca';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=3980bbca';
+} from './function-word-card.js?v=f75f0b41';
+import './side-dock.js?v=f75f0b41';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=f75f0b41';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=3980bbca';
+} from './example-personalisation.js?v=f75f0b41';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=3980bbca';
+} from './spanishdict-usage.js?v=f75f0b41';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=3980bbca';
+} from './reverse-cues.js?v=f75f0b41';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -71,8 +71,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=3980bbca';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=3980bbca';
+} from './card-metadata-pills.js?v=f75f0b41';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=f75f0b41';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -740,12 +740,46 @@ function senseSummaryText(value) {
         .trim();
 }
 
+// A folded word type's translations sit on the row's centre line, the line
+// the word and the open rows use, so a card with every word type folded
+// reads as one list down the middle. A pill with its lemma ("Verb from ser")
+// can leave too little room for that: the translation then sits as near the
+// centre as it can, and when it would not fit beside the pill at all it takes
+// a centred line of its own under it, as shared words do on an open row.
+function alignPosSectionSummaries(root) {
+    root?.querySelectorAll('.pos-collapsible:not(.is-open) > .pos-section-head > .pos-section-summary').forEach(summary => {
+        const head = summary.parentElement;
+        head.classList.remove('has-summary-below');
+        summary.style.paddingLeft = '';
+        if (summary.clientWidth <= 0) return;
+        summary.querySelectorAll('.pos-summary-sense').forEach(sense => { sense.hidden = false; });
+        const more = summary.querySelector('.pos-pill-more');
+        if (more) more.hidden = true;
+        // The summary stretches to fill the row, so its own width says
+        // nothing; its words are the visible children. Layout widths, not the
+        // on-screen box: a card still flipping is rotated in 3D, which
+        // distorts getBoundingClientRect.
+        const width = [...summary.children].filter(el => !el.hidden)
+            .reduce((sum, el) => sum + el.offsetWidth, 0);
+        const room = summary.clientWidth;
+        if (width > room + 1) {
+            head.classList.add('has-summary-below');
+            return;
+        }
+        const left = summary.offsetParent === head ? summary.offsetLeft : summary.offsetLeft - head.offsetLeft;
+        const ideal = head.offsetWidth / 2 - width / 2 - left;
+        const pad = Math.max(0, Math.min(ideal, room - width));
+        if (pad > 0) summary.style.paddingLeft = `${Math.round(pad)}px`;
+    });
+}
+
 // A collapsed (POS, headword) row is a useful sense overview, not merely an
 // expand control. Show every short sense that genuinely fits in the available
 // width and collapse only the measured overflow behind +N. This deliberately
 // uses rendered width rather than a fixed item/character limit, so compact
 // glosses such as "to go · to leave" are not reduced to "to go +1".
 function fitPosSectionSummaries(root) {
+    alignPosSectionSummaries(root);
     root?.querySelectorAll('.pos-section-summary').forEach(summary => {
         const senses = Array.from(summary.querySelectorAll('.pos-summary-sense'));
         const more = summary.querySelector('.pos-pill-more');
@@ -1326,6 +1360,41 @@ function fitSharedContextInline(root) {
     });
 }
 
+// A word type drawn as one grouped row sends its shared words up to the
+// word-type row (hombre: "man" over "adult male" and "human species"). When
+// they are a translation and every sub-sense fits on one line with it, it
+// goes into each row instead ("man · adult male"), leaving the word-type row
+// bare, so each row reads on its own. A shared context stays up, in brackets:
+// the translations already tell así's rows apart, and "in a certain way" four
+// times over adds nothing. Past four sub-senses the repetition shows, and a
+// row that would wrap keeps the translation above.
+function fitLoneSharedInline(root) {
+    root?.querySelectorAll('.pos-collapsible.has-hoisted-shared').forEach(section => {
+        const group = section.querySelector(':scope > .meaning-pos-rows > .meaning-row-group.has-hoisted-shared-cell');
+        const shared = section.querySelector(':scope > .pos-section-head .pos-section-shared');
+        if (!group || !shared) return;
+        if ([...shared.children].some(piece => !piece.classList.contains('pos-shared-gloss'))) return;
+        const cells = [...group.querySelectorAll('.group-card-varying-cell')];
+        if (cells.length < 2 || cells.length > 4) return;
+        const hostOf = cell => cell.querySelector('.meaning-context-cell, .row-adaptive-text') || cell;
+        cells.forEach(cell => {
+            if (cell.querySelector('.lone-shared-inline, .is-plain-gloss')) return;
+            const host = hostOf(cell);
+            const span = document.createElement('span');
+            span.className = 'lone-shared-inline is-gloss';
+            span.textContent = shared.textContent;
+            host.prepend(span);
+        });
+        section.classList.add('shared-inline');
+        const wraps = cells.some(cell => {
+            const range = document.createRange();
+            range.selectNodeContents(hostOf(cell));
+            return new Set([...range.getClientRects()].map(rect => Math.round(rect.top / 4))).size > 1;
+        });
+        if (wraps) section.classList.remove('shared-inline');
+    });
+}
+
 // The shared words take the rest of the word type's line; when they would
 // wrap there, they move to a line of their own under it instead.
 function fitHoistedShared(root) {
@@ -1488,10 +1557,11 @@ function inlineSenseRows(root, card) {
     inlineRowFlags(scroll);
     fitHoistedShared(root);
     fitSharedContextInline(root);
+    fitLoneSharedInline(root);
     fitInlineRows(root);
     // Measured again once the card is laid out and its font has loaded: a
     // first pass on a card still opening can see every line as wrapped.
-    const refit = () => { fitHoistedShared(root); fitSharedContextInline(root); fitInlineRows(root); };
+    const refit = () => { fitHoistedShared(root); fitSharedContextInline(root); fitLoneSharedInline(root); fitInlineRows(root); };
     requestAnimationFrame(refit);
     document.fonts?.ready?.then(refit);
 }
@@ -1554,6 +1624,7 @@ function fitSenseRowLayouts(root) {
     fitRowInformationButtons(root);
     fitHoistedShared(root);
     fitSharedContextInline(root);
+    fitLoneSharedInline(root);
     fitInlineRows(root);
 }
 
@@ -3949,7 +4020,7 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
     };
     if (references.every(reference => reference.relation === 'see')) {
         const links = references.map(reference => (
-            `<span class="sense-cross-reference-item"><span class="sense-cross-reference-prefix">Related</span>${link(reference)}</span>`
+            `<span class="sense-cross-reference-item"><span class="sense-cross-reference-prefix">See</span>${link(reference)}</span>`
         )).join('');
         return (resolvedGloss ? `<span class="sense-cross-reference-gloss">${escapeCardText(resolvedGloss)}</span>` : '')
             + `<span class="sense-cross-reference-related" aria-label="Related cards">${links}</span>`;
@@ -3957,7 +4028,8 @@ function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
     const labels = {
         indirect_object: 'Indirect form',
         after_prepositions: 'After prepositions',
-        see: 'Related',
+        // Wiktionary's own word for a pointer to another entry.
+        see: 'See',
     };
     const related = references.map(reference => (
         `<span class="sense-cross-reference-item"><span class="sense-cross-reference-prefix">${labels[reference.relation]}</span>${link(reference)}</span>`
@@ -5062,6 +5134,7 @@ function toggleBackPosSection(key) {
     // Once the learner expresses a preference, preserve it. The automatic
     // "open everything if it fits" pass is only a first-presentation default.
     card._backSectionsManuallySet = true;
+    card._backSectionChosen = true;
     if (card._expandedPos.has(real)) card._expandedPos.delete(real);
     else card._expandedPos.add(real);
     updateCard();
@@ -5102,6 +5175,7 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
     const meaning = card?.meanings?.[meaningIndex];
     if (!card || !meaning) return;
     const real = String(key).replace(/~~/g, '\u0000');
+    card._backSectionChosen = true;
 
     // If the click is directly on or inside the chevron, toggle accordion collapse
     if (event?.target?.closest?.('.pos-section-chevron')) {
@@ -7514,7 +7588,8 @@ function renderCardWikipediaBadge(card) {
         const isLive = Boolean(window.playlistLiveActive?.() || card.playlist_count != null || card.playlistId || card.playlistName);
         const liveDeck = isLive ? window.playlistLiveDeck?.() : null;
         const isSeries = Boolean(
-            liveDeck?.playlistId === 'la-casa-de-papel'
+            liveDeck?.sourceKind === 'series'
+            || liveDeck?.playlistId === 'la-casa-de-papel'
             || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName))
             || card.playlistId === 'la-casa-de-papel'
             || (card.playlistName && /casa de papel|series|show|tv/i.test(card.playlistName))
@@ -8705,6 +8780,10 @@ function renderCardWikipediaBadge(card) {
                         }
                         entry.memberIndices.push(memberIdx);
                     }
+                    // A meaning with nothing of its own beside the shared
+                    // translation is the plain one: it reads as the
+                    // translation alone, ahead of the narrower uses.
+                    displayMemberEntries.sort((a, b) => (b.label === 'general use') - (a.label === 'general use'));
                     for (const entry of displayMemberEntries) {
                         entry.representative = entry.memberIndices.includes(currentMeaningIndex)
                             ? currentMeaningIndex
@@ -8721,7 +8800,7 @@ function renderCardWikipediaBadge(card) {
 
                     const familyText = String(sharedText || '').replace(/<[^>]*>/g, '').replace(/&quot;/g, '"').trim();
                     for (const entry of displayMemberEntries) {
-                        const label = [entry.extra, entry.context].filter(Boolean).join(' · ') || 'general use';
+                        const label = [entry.extra, entry.context].filter(Boolean).join(' · ') || familyText;
                         for (const memberIdx of entry.memberIndices) {
                             recordSenseDisplay(memberIdx, {
                                 family: isTransAxis ? familyText : '',
@@ -8813,7 +8892,7 @@ function renderCardWikipediaBadge(card) {
                                 if (diffHTML) {
                                     varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${diffHTML}</span>`;
                                 } else {
-                                    varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor};">general use</span>`;
+                                    varyingHtml = `<span class="meaning-context-cell is-plain-gloss" style="font-weight: 700; color: var(--text-primary);">${escapeCardText(familyText)}</span>`;
                                 }
                                 // Keep the member's note; the row gathers it.
                                 if (metadataHTML) varyingHtml = varyingHtml.replace(/<\/span>$/, `${metadataHTML}</span>`);
@@ -9048,13 +9127,18 @@ function renderCardWikipediaBadge(card) {
                 }
             }
         });
-        // A card opens with only the word type in use expanded; the others
-        // show as their word-type row (translation beside the pill). Choosing
-        // a row or a word type changes which one is open, so the card looks
-        // the same on opening as after you tap, and a heading you tap
-        // overrides it.
-        if (!card._backSectionsManuallySet) {
-            card._expandedPos = new Set(activeLemmaPosKey ? [activeLemmaPosKey] : []);
+        // A card with several word types opens with all of them folded to
+        // their translations, so no one meaning and its contexts reads as the
+        // answer before the rest are seen. A card with one word type opens
+        // it: there is nothing to choose between. Once the learner taps a
+        // word type or a row, the word type in use is the open one, and a
+        // heading they fold or unfold by hand overrides that. Picking
+        // meanings to see again needs every row in reach, so all open then.
+        if (card._pinningMode) {
+            scrollSections.forEach((_, key) => card._expandedPos.add(key));
+        } else if (!card._backSectionsManuallySet) {
+            const openActive = activeLemmaPosKey && (card._backSectionChosen || scrollSections.size < 2);
+            card._expandedPos = new Set(openActive ? [activeLemmaPosKey] : []);
         }
         // Emit the scroll region first, then the pinned tray underneath
         // (MWE/CLITIC rows that stay visible when the user scrolls).
@@ -9209,9 +9293,11 @@ function renderCardWikipediaBadge(card) {
                 displayTargetSentence = highlightComplementFrameInSentence(
                     displayTargetSentence, currentMeaning, card);
             } else {
-            // Truncate sentences longer than 20 words
-            displayTargetSentence = truncateText(displayTargetSentence, 20);
-            displayEnglishSentence = truncateText(displayEnglishSentence, 20);
+            // Bilingual dialogue groups must display the complete paired passage.
+            if (!currentExample?.complete_context) {
+                displayTargetSentence = truncateText(displayTargetSentence, 20);
+                displayEnglishSentence = truncateText(displayEnglishSentence, 20);
+            }
 
             // Locate the studied word with the active POS colour. A low tint
             // plus underline keeps the sentence readable; related deck words
@@ -10278,6 +10364,7 @@ function selectPartOfSpeech(event, meaningIndex, pos) {
     // accumulates.
     card._expandedPos = new Set([lemmaPosGroupKeyForMeaning(card.meanings[meaningIndex])]);
     card._backSectionsManuallySet = true;
+    card._backSectionChosen = true;
     updateCard();
 }
 
@@ -11700,8 +11787,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '3980bbca';
-const MODALS_ASSET_VERSION = '3980bbca';
+const ASSET_VERSION = 'f75f0b41';
+const MODALS_ASSET_VERSION = 'f75f0b41';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

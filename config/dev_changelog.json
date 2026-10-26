@@ -2,6 +2,77 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T00:30:00+00:00",
+      "date": "2026-10-26 00:30 GMT",
+      "agent": "Antigravity",
+      "summary": "Portuguese: 10,000-card DECIDE-1 release promotes mercury-decide and Jev assignments into production",
+      "detail": [
+        "Full 10,000-card release (pt-speech-v25-decide-1-10000-slim) with Mercury-Decide on top ranks and Jev 1.14 across remaining polysemous words.",
+        "Rebuilt sense menus with rescued verbal multiword phrases, letter-case lookups, and resolved pointer glosses.",
+        "Retires the interim client-side Jev UI sidecar; disambiguated meanings and recorded ties are native to the release artifact.",
+        "Regenerated release-bound cognates, bridge, speech-frequency, merge exceptions, dictionary examples, estimation pool, and assignment filters."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T00:35:03+00:00",
+      "date": "2026-10-26 00:35 GMT",
+      "agent": "Claude",
+      "summary": "A verb only gets a separate -se card when the -se meaning has at least 3 examples.",
+      "detail": [
+        "matar | matar-se and similar pairs no longer appear on the strength of one stray example.",
+        "Rows without example counts need 10% of usage for the -se half, as other companions do.",
+        "The app and the Python card rules apply the same threshold."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T00:34:00+00:00",
+      "date": "2026-10-26 00:34 GMT",
+      "agent": "Claude",
+      "summary": "Cross-references say 'See' again, not 'Related'.",
+      "detail": [
+        "A meaning that points to another entry reads 'See matar-se', Wiktionary's own wording, instead of 'Related matar-se'."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T00:21:00+00:00",
+      "date": "2026-10-26 00:21 GMT",
+      "agent": "Claude",
+      "summary": "No more 'general use': the plain meaning reads as its translation, first.",
+      "detail": [
+        "Under a shared translation, a meaning with no context of its own used to read 'general use'; it now reads the translation alone and comes first (man / man · adult male).",
+        "The meanings sheet behind See again lists it the same way."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-25T23:52:00+00:00",
+      "date": "2026-10-25 23:52 GMT",
+      "agent": "Claude",
+      "summary": "Folded word types: translations sit on the row's centre line; shared contexts stay in the word-type row.",
+      "detail": [
+        "A folded word type's translation is centred on the whole row, not on the space after the pill, so a fully folded card reads as one line down the middle (claro: clear / sure · of course / of course).",
+        "When a pill with its lemma leaves too little room ('Verb from acordarse'), the translation takes a centred line of its own under it, as shared words already do on an open row; the meter stays at the right.",
+        "A shared context goes back to the word-type row in brackets (así: 'Adverb (in a certain way)' over like this / like that / this way / that way); only a shared translation is written into each row ('man · adult male')."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-25T23:16:00+00:00",
+      "date": "2026-10-25 23:16 GMT",
+      "agent": "Claude",
+      "summary": "Card back: word types open folded, translations line up, and short shared glosses go into each row.",
+      "detail": [
+        "A card with several word types opens with all of them folded to their translations; tapping one opens it. A card with one word type opens as before.",
+        "Folded translations start at the same place on every word-type row, so they read down one column.",
+        "When a word type's sub-senses share a gloss and each fits on one line, every row reads 'gloss · context' (hombre: 'man · adult male') and the word-type row is bare; otherwise the gloss stays above.",
+        "See again still opens every word type so any meaning can be pinned."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-25T22:12:00+00:00",
       "date": "2026-10-25 22:12 GMT",
       "agent": "Claude",
@@ -297,84 +368,6 @@
         "Removed the bottom footer bar to reclaim ~80px of vertical space, preventing card scaling on laptops and desktops.",
         "Added a segmented control in the top bar (Everyday Speech / Music Mode) so visitors and hirers immediately see both modes.",
         "Next button and close button sit in the top-right header actions; arrow keys and direct tab clicks switch seamlessly."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T13:05:06+01:00",
-      "date": "2026-10-22 13:05 BST",
-      "agent": "Claude",
-      "summary": "About: new wording (series, playlist, everyday speech), hover tooltip on the demo cards, meanings most common first",
-      "detail": [
-        "Intro: 'in real life'; learn from everyday speech, a playlist or the series you're watching; La Casa de Papel (rehenes 120th vs ~4,300th, atraco 193rd vs ~9,000th) and YHLQMDLG (perreo among the top 70).",
-        "Speech: ranked across millions of conversations in films and TV; examples from film and TV plus professionally translated sentences; mañana and todavía instead of que.",
-        "Second column is Music, about playlists rather than one artist.",
-        "Demo cards: hovering shows 'Click to see every part explained'; a click opens the walkthrough (first tap shows it on phones). The button under the cards is gone.",
-        "Demo cards list the most common meaning first (bank, then bench)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T12:34:14+01:00",
-      "date": "2026-10-22 12:34 BST",
-      "agent": "Claude",
-      "summary": "About page: walkthrough lines point at the right places and fit between the banners; mini cards evenly spaced",
-      "detail": [
-        "About ignores the app's 'Bigger' text setting. It zoomed the page 15%, so the walkthrough's lines missed their elements and cards ran past the top and bottom banners.",
-        "Mini demo cards: rows read tick, word, bars again (a card-back rule had squashed them into odd columns).",
-        "Mini demo cards: 400px instead of 480px, content centred, so the back no longer has a big empty block under the example."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T08:43:08+01:00",
-      "date": "2026-10-22 08:43 BST",
-      "agent": "Claude",
-      "summary": "Grammar frames on sense rows match function-word patterns: bold connector word, coloured pill for the slot (começar: + a [inf] / por [inf])",
-      "detail": [
-        "The connecting word (a, por, em, que) is bold; a slot that names a word type (inf, ger, pp, subj = verb colour; adj) is a pill in that colour, as in the function-word cards.",
-        "Frame text and the tap-for-full-wording note are unchanged; the grey phrase pill on the row in use (contar que) is unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T06:34:55+01:00",
-      "date": "2026-10-22 06:34 BST",
-      "agent": "Claude",
-      "summary": "About is now its own page with its own link (about.html), completely separate from the app",
-      "detail": [
-        "New page: about.html. It loads no sign-in, no language, no deck and no progress, so it is the same for everyone whatever language you study or whether you use the app at all.",
-        "The walkthrough lives on that page (about.html#walkthrough).",
-        "Sidebar, Settings and Help open about.html in a new tab. Old links (#/about, #/walkthrough, ?about=) forward to it before the app loads.",
-        "The meaning-frequency bars moved into their own small module so the About page draws them without the study engine.",
-        "Service worker: About is cached under its own address and never as the app's offline page."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:31:56+01:00",
-      "date": "2026-10-22 01:31 BST",
-      "agent": "Claude",
-      "summary": "Walkthrough labels point at the right parts; demo card front matches the real card; About text up to date",
-      "detail": [
-        "'Every meaning, separated' frames the meaning rows, not just the heading; on desktop its line no longer crosses 'How often each is used'.",
-        "Demo card front: capitalised 'Noun' pill, and no dictionary form when it equals the word (as on the real card). Label now 'Noun, verb and so on, each with its own colour.'",
-        "Phone: a tag with no room above its element goes below it instead of covering it (the 'What kind of word' pill).",
-        "Spotify button gets its ring back (it was clipped).",
-        "Desktop Music screen: the card shrinks slightly instead of cutting off the last meaning row.",
-        "About: 'Tap the Spotify button and the line plays…'; footnote no longer claims a built-in French playlist.",
-        "Tutorial: the 'dictionary form' note is skipped on cards that are their own dictionary form."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T01:27:45+01:00",
-      "date": "2026-10-22 01:27 BST",
-      "agent": "Claude",
-      "summary": "Phones: no red outline on the open section; the folded one is a plain line",
-      "detail": [
-        "The open Learn or Practise section is the only card, with an ordinary border (no red outline; none for new users either).",
-        "The folded section is one line, e.g. 'Practise · 12 waiting ›' or 'Learn · Level 1 · Words 1–100 ›', with no card around it."
       ],
       "commit": "pending"
     }

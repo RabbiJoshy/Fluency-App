@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=3980bbca';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=f75f0b41';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=3980bbca';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=3980bbca';
-import { readFastTrack } from './fast-track-preferences.js?v=3980bbca';
-import './session-plan.js?v=3980bbca';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=3980bbca';
+import './state.js?v=f75f0b41';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=f75f0b41';
+import { readFastTrack } from './fast-track-preferences.js?v=f75f0b41';
+import './session-plan.js?v=f75f0b41';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=f75f0b41';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1553,7 +1553,7 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
         const deckTotalEl = document.getElementById('step2DeckTotal');
         if (deckTotalEl) {
             const liveDeck = window.playlistLiveActive?.() ? window.playlistLiveDeck?.() : null;
-            const isSeries = Boolean(liveDeck?.playlistId === 'la-casa-de-papel' || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName)));
+            const isSeries = Boolean(liveDeck?.sourceKind === 'series' || liveDeck?.playlistId === 'la-casa-de-papel' || (liveDeck?.playlistName && /casa de papel|series|show|tv/i.test(liveDeck.playlistName)));
             const deckWords = percentageRanges.reduce((sum, lv) => sum + (_levelBandMetrics(lv).count || 0), 0);
             if (isSeries && liveDeck) {
                 deckTotalEl.textContent = `This series deck has ${deckWords.toLocaleString()} words across ${percentageRanges.length.toLocaleString()} level${percentageRanges.length === 1 ? '' : 's'} from ${Number(liveDeck.tokenCount || 0).toLocaleString()} dialogue tokens across ${liveDeck.trackCount || 1} episode${liveDeck.trackCount === 1 ? '' : 's'} in ${liveDeck.playlistName}.`;
@@ -3940,7 +3940,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=3980bbca')
+        import('./spotify.js?v=f75f0b41')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

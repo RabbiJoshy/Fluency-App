@@ -1,0 +1,164 @@
+{
+  "title": "Élite",
+  "seriesId": "elite",
+  "retrievedAt": "2026-10-26",
+  "numbering": "Netflix Season 1 episodes 1–8; Season 1 sample.",
+  "translationPolicy": "precision-timing-v1",
+  "episodes": [
+    {
+      "file": "spanish-s1.zip",
+      "url": "https://dl.subdl.com/subtitle/2457152-2243025.zip",
+      "page": "https://subdl.com/s/info/2bZxKAX00z/elite",
+      "sha256": "8e07339f330fb426270d806b9a63d70b4d7d8a21e34cfcf3354971c2bc938ea2",
+      "member": "Élite - 01x01 - Bienvenidos.MZABI.Spanish (Spain).HI.C.orig.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 1
+    },
+    {
+      "file": "spanish-s1.zip",
+      "url": "https://dl.subdl.com/subtitle/2457152-2243025.zip",
+      "page": "https://subdl.com/s/info/2bZxKAX00z/elite",
+      "sha256": "8e07339f330fb426270d806b9a63d70b4d7d8a21e34cfcf3354971c2bc938ea2",
+      "member": "Élite - 01x02 - Deseo.MZABI.Spanish (Spain).C.updated.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 2
+    },
+    {
+      "file": "spanish-s1.zip",
+      "url": "https://dl.subdl.com/subtitle/2457152-2243025.zip",
+      "page": "https://subdl.com/s/info/2bZxKAX00z/elite",
+      "sha256": "8e07339f330fb426270d806b9a63d70b4d7d8a21e34cfcf3354971c2bc938ea2",
+      "member": "Élite - 01x03 - Sábado Noche.MZABI.Spanish (Spain).C.updated.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 3
+    },
+    {
+      "file": "spanish-s1.zip",
+      "url": "https://dl.subdl.com/subtitle/2457152-2243025.zip",
+      "page": "https://subdl.com/s/info/2bZxKAX00z/elite",
+      "sha256": "8e07339f330fb426270d806b9a63d70b4d7d8a21e34cfcf3354971c2bc938ea2",
+      "member": "Élite - 01x04 - El Amor es una Droga.MZABI.Spanish (Spain).C.updated.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 4
+    },
+    {
+      "file": "spanish-s1.zip",
+      "url": "https://dl.subdl.com/subtitle/2457152-2243025.zip",
+      "page": "https://subdl.com/s/info/2bZxKAX00z/elite",
+      "sha256": "8e07339f330fb426270d806b9a63d70b4d7d8a21e34cfcf3354971c2bc938ea2",
+      "member": "Élite - 01x05 - Todos Mienten.MZABI.Spanish (Spain).C.updated.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 5
+    },
+    {
+      "file": "spanish-s1.zip",
+      "url": "https://dl.subdl.com/subtitle/2457152-2243025.zip",
+      "page": "https://subdl.com/s/info/2bZxKAX00z/elite",
+      "sha256": "8e07339f330fb426270d806b9a63d70b4d7d8a21e34cfcf3354971c2bc938ea2",
+      "member": "Élite - 01x06 - Todo Va a Salir Bien.MZABI.Spanish (Spain).C.updated.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 6
+    },
+    {
+      "file": "spanish-s1.zip",
+      "url": "https://dl.subdl.com/subtitle/2457152-2243025.zip",
+      "page": "https://subdl.com/s/info/2bZxKAX00z/elite",
+      "sha256": "8e07339f330fb426270d806b9a63d70b4d7d8a21e34cfcf3354971c2bc938ea2",
+      "member": "Élite - 01x07 - Todo Estalla.MZABI.Spanish (Spain).C.updated.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 7
+    },
+    {
+      "file": "spanish-s1.zip",
+      "url": "https://dl.subdl.com/subtitle/2457152-2243025.zip",
+      "page": "https://subdl.com/s/info/2bZxKAX00z/elite",
+      "sha256": "8e07339f330fb426270d806b9a63d70b4d7d8a21e34cfcf3354971c2bc938ea2",
+      "member": "Élite - 01x08 - Assilah.MZABI.Spanish (Spain).C.updated.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 8
+    }
+  ],
+  "translationSources": [
+    {
+      "file": "english-s1-mzabi.zip",
+      "url": "https://dl.subdl.com/subtitle/2457146-1857077.zip",
+      "page": "https://subdl.com/subtitle/sd1300491/elite/first-season/english",
+      "sha256": "203783d6938790c310bcc89a709c8250c8e32760560187952fef8e071ea5cc75",
+      "member": "Elite - 01x01 - Episode 1.MZABI.English.HI.C.orig.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 1
+    },
+    {
+      "file": "english-s1-mzabi.zip",
+      "url": "https://dl.subdl.com/subtitle/2457146-1857077.zip",
+      "page": "https://subdl.com/subtitle/sd1300491/elite/first-season/english",
+      "sha256": "203783d6938790c310bcc89a709c8250c8e32760560187952fef8e071ea5cc75",
+      "member": "Elite - 01x02 - Episode 2.MZABI.English.HI.C.orig.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 2
+    },
+    {
+      "file": "english-s1-mzabi.zip",
+      "url": "https://dl.subdl.com/subtitle/2457146-1857077.zip",
+      "page": "https://subdl.com/subtitle/sd1300491/elite/first-season/english",
+      "sha256": "203783d6938790c310bcc89a709c8250c8e32760560187952fef8e071ea5cc75",
+      "member": "Elite - 01x03 - Episode 3.MZABI.English.HI.C.orig.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 3
+    },
+    {
+      "file": "english-s1-mzabi.zip",
+      "url": "https://dl.subdl.com/subtitle/2457146-1857077.zip",
+      "page": "https://subdl.com/subtitle/sd1300491/elite/first-season/english",
+      "sha256": "203783d6938790c310bcc89a709c8250c8e32760560187952fef8e071ea5cc75",
+      "member": "Elite - 01x04 - Episode 4.MZABI.English.C.orig.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 4
+    },
+    {
+      "file": "english-s1-mzabi.zip",
+      "url": "https://dl.subdl.com/subtitle/2457146-1857077.zip",
+      "page": "https://subdl.com/subtitle/sd1300491/elite/first-season/english",
+      "sha256": "203783d6938790c310bcc89a709c8250c8e32760560187952fef8e071ea5cc75",
+      "member": "Elite - 01x05 - Episode 5.MZABI.English.HI.C.orig.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 5
+    },
+    {
+      "file": "english-s1-mzabi.zip",
+      "url": "https://dl.subdl.com/subtitle/2457146-1857077.zip",
+      "page": "https://subdl.com/subtitle/sd1300491/elite/first-season/english",
+      "sha256": "203783d6938790c310bcc89a709c8250c8e32760560187952fef8e071ea5cc75",
+      "member": "Elite - 01x06 - Episode 6.MZABI.English.HI.C.orig.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 6
+    },
+    {
+      "file": "english-s1-mzabi.zip",
+      "url": "https://dl.subdl.com/subtitle/2457146-1857077.zip",
+      "page": "https://subdl.com/subtitle/sd1300491/elite/first-season/english",
+      "sha256": "203783d6938790c310bcc89a709c8250c8e32760560187952fef8e071ea5cc75",
+      "member": "Elite - 01x07 - Episode 7.MZABI.English.C.orig.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 7
+    },
+    {
+      "file": "english-s1-mzabi.zip",
+      "url": "https://dl.subdl.com/subtitle/2457146-1857077.zip",
+      "page": "https://subdl.com/subtitle/sd1300491/elite/first-season/english",
+      "sha256": "203783d6938790c310bcc89a709c8250c8e32760560187952fef8e071ea5cc75",
+      "member": "Elite - 01x08 - Episode 8.MZABI.English.C.orig.Addic7ed.com.srt",
+      "season": 1,
+      "episode": 8
+    }
+  ],
+  "blockedTranslations": [
+    {
+      "episode": "S01E08",
+      "start": 638,
+      "end": 641,
+      "sourceSha256": "203783d6938790c310bcc89a709c8250c8e32760560187952fef8e071ea5cc75",
+      "reason": "Spanish says the phone was thrown away; English says the listener has it."
+    }
+  ]
+}
