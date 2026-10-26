@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import re
 import subprocess
+import threading
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -134,9 +135,14 @@ def read_blobs_batch(shas: list[str]) -> dict[str, bytes]:
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
     )
-    proc.stdin.write("\n".join(unique_shas).encode("ascii") + b"\n")
-    proc.stdin.flush()
-    proc.stdin.close()
+    # Feed ids from a thread: git answers as it reads, so writing them all
+    # first deadlocks once both pipe buffers fill (64 KB on the Linux runner).
+    def feed():
+        proc.stdin.write("\n".join(unique_shas).encode("ascii") + b"\n")
+        proc.stdin.close()
+
+    writer = threading.Thread(target=feed, daemon=True)
+    writer.start()
     blobs = {}
     for sha in unique_shas:
         header = proc.stdout.readline()
@@ -150,6 +156,8 @@ def read_blobs_batch(shas: list[str]) -> dict[str, bytes]:
             blobs[sha] = data
         else:
             blobs[sha] = b""
+    writer.join()
+    proc.stdout.close()
     proc.wait()
     return blobs
 
