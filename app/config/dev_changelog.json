@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T20:12:15+00:00",
+      "date": "2026-10-26 20:12 GMT",
+      "agent": "Codex",
+      "summary": "Clearer level picker, tidier Smart Skip controls and focused meaning pinning.",
+      "detail": [
+        "Coverage now reads “By Level 4, you’ll recognise X% of everyday speech”, above brighter example words.",
+        "Larger level arrows and desktop progress legend; white Learn and Practise button text.",
+        "Smart Skip master switch and count move to the desktop left; mobile hides the total.",
+        "Meaning pinning hides scrubbers and other tools, keeps See again visible, and places instructions on the card with extra room for pins."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T20:08:14+00:00",
       "date": "2026-10-26 20:08 GMT",
       "agent": "Claude",
@@ -198,6 +211,16 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-26T00:34:00+00:00",
+      "date": "2026-10-26 00:34 GMT",
+      "agent": "Claude",
+      "summary": "Cross-references say 'See' again, not 'Related'.",
+      "detail": [
+        "A meaning that points to another entry reads 'See matar-se', Wiktionary's own wording, instead of 'Related matar-se'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T00:30:00+00:00",
       "date": "2026-10-26 00:30 GMT",
       "agent": "Antigravity",
@@ -207,16 +230,6 @@
         "Rebuilt sense menus with rescued verbal multiword phrases, letter-case lookups, and resolved pointer glosses.",
         "Retires the interim client-side Jev UI sidecar; disambiguated meanings and recorded ties are native to the release artifact.",
         "Regenerated release-bound cognates, bridge, speech-frequency, merge exceptions, dictionary examples, estimation pool, and assignment filters."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:34:00+00:00",
-      "date": "2026-10-26 00:34 GMT",
-      "agent": "Claude",
-      "summary": "Cross-references say 'See' again, not 'Related'.",
-      "detail": [
-        "A meaning that points to another entry reads 'See matar-se', Wiktionary's own wording, instead of 'Related matar-se'."
       ],
       "commit": "pending"
     },
@@ -353,19 +366,6 @@
         "Positioned the Music subtitle in the left channel beside both music features (The slang each artist uses and Learn what things are) with scroll reveal.",
         "Centered \"What makes it different\" and \"How it works\" in the main channel with table display matching the top title.",
         "Formatted all bullet points under \"What makes it different\" equally as feature rows."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T18:07:00+01:00",
-      "date": "2026-10-24 18:07 BST",
-      "agent": "Antigravity",
-      "summary": "Flashcards: make chevron functional for collapse/expand and enable POS-wide selection.",
-      "detail": [
-        "Enabled the chevron (▾/▸) on POS section headers to cleanly toggle section expand and collapse.",
-        "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
-        "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
-        "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
       ],
       "commit": "pending"
     }

@@ -289,7 +289,7 @@ function fitLegendFonts(root) {
             el.style.fontSize = '';
             el.style.flexWrap = 'nowrap';
             let size = parseFloat(getComputedStyle(el).fontSize) || 16;
-            while (el.scrollWidth > el.clientWidth + 1 && size > 11) {
+            while (el.scrollWidth > el.clientWidth + 1 && size > (window.innerWidth >= 1024 ? 16 : 11)) {
                 size -= 0.5;
                 el.style.fontSize = size + 'px';
             }
@@ -2536,8 +2536,7 @@ function updateLevelSliderReadout(i) {
     }
 
     const _renderLine = (examplesText) => {
-        // Frequency as a full sentence on its own line, then the example
-        // words with speech coverage directly after them.
+        // Lead with cumulative coverage, followed by this level's examples.
         const wordLabel = `${displayedWordCount.toLocaleString()} word${displayedWordCount === 1 ? '' : 's'}`;
         // Keep frequency calculations available for a future detail view.
         const showLevelFrequency = false;
@@ -2545,12 +2544,12 @@ function updateLevelSliderReadout(i) {
             ? `<div class="lsw-freq-sentence"><strong>${wordLabel}</strong> appear${displayedWordCount === 1 ? 's' : ''} <strong>${freqValue.toLocaleString()}</strong> ${freqUnit}</div>`
             : '';
         const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
-        const levelsLabel = i === 0 ? 'Level 1 makes' : `Levels 1–${i + 1} make`;
+        const coverageSubject = activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'everyday speech');
         const covHTML = coverageRounded
-            ? `<span class="lsw-coverage-inline">${levelsLabel} up <strong>${coverageRounded}</strong> of ${activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'speech')}</span>`
+            ? `<span class="lsw-coverage-inline">By Level ${i + 1}, you’ll recognise <strong>${coverageRounded}</strong> of ${coverageSubject}</span>`
             : '';
         const egHTML = (examplesText || covHTML)
-            ? `<div class="lsw-egs">${examplesText || ''}${covHTML}</div>`
+            ? `<div class="lsw-egs">${covHTML}${examplesText ? `<span class="lsw-example-words">${examplesText}</span>` : ''}</div>`
             : '';
         // Never let the line get shorter while the learner steps through levels:
         // the box would grow, shrink and grow again as each level's examples load.
