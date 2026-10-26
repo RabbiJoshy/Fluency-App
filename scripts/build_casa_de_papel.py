@@ -24,7 +24,7 @@ EXPECTED = {(season, episode) for season, count in enumerate((9, 6, 8, 8, 10), 1
             for episode in range(1, count + 1)}
 TIME = re.compile(r"(\d\d):(\d\d):(\d\d)[,.](\d{3})")
 TOKEN = re.compile(r"[^\W_]+(?:['’\-][^\W_]+)*", re.UNICODE)
-REVISION = "offline-30-episodes-v3-translations"
+REVISION = "offline-30-episodes-v4-recut-translations"
 
 
 def milliseconds(value):
@@ -96,7 +96,7 @@ def load_episodes(manifest, raw_root, allow_partial=False):
 
 def add_translations(episodes, manifest, raw_root):
     """Attach full bilingual example groups without changing Spanish count text."""
-    if not manifest.get('translationSources'):
+    if not manifest.get('translationSources') and not manifest.get('recutTranslationSources'):
         return episodes
     if manifest.get('translationPolicy') != 'precision-timing-v1':
         raise ValueError('Unknown translation matching policy')
@@ -105,7 +105,7 @@ def add_translations(episodes, manifest, raw_root):
     spec.loader.exec_module(matcher)
     by_key = {ep['episode']: ep for ep in episodes}
     seen = set()
-    for record in manifest['translationSources']:
+    for record in manifest.get('translationSources', []):
         key = f"S{record['season']:02}E{record['episode']:02}"
         if key in seen or key not in by_key:
             raise ValueError(f'Duplicate or absent translation episode: {key}')
@@ -128,6 +128,71 @@ def add_translations(episodes, manifest, raw_root):
                            'sourceSha256': record['sha256'], 'policy': manifest['translationPolicy']}
             for i in range(group['spanish_start'], group['spanish_end']):
                 episode['lines'][i]['translation'] = translation
+    return add_recut_translations(episodes, manifest, raw_root, matcher)
+
+
+def dialogue_key(text):
+    """Exact word identity; punctuation and subtitle wrapping may differ."""
+    return tuple(TOKEN.findall(text.lower().replace('’', "'")))
+
+
+def add_recut_translations(episodes, manifest, raw_root, matcher):
+    """Bridge Netflix examples onto unique whole-cue spans in the original cut.
+
+    Timing is checked within the Netflix bilingual pair, never between different
+    edits. Only an exact, unique Spanish word sequence can cross the cut boundary.
+    The original cues, occurrence counts and episode credits remain authoritative.
+    """
+    from collections import defaultdict
+    index = defaultdict(list)
+    for episode in episodes:
+        if episode['episode'][:3] not in ('S01', 'S02'):
+            continue
+        lines = episode['lines']
+        for start in range(len(lines)):
+            text = []
+            for end in range(start, min(start + 6, len(lines))):
+                text.append(lines[end]['spanish'])
+                key = dialogue_key(' '.join(text))
+                if 6 <= len(key) <= 80:
+                    index[key].append((episode, start, end + 1))
+    seen = set()
+    expected = {f'S{season:02}E{episode:02}' for season, count in ((1, 13), (2, 9))
+                for episode in range(1, count + 1)}
+    for record in manifest.get('recutTranslationSources', []):
+        identity = record['episode']
+        if identity in seen or identity not in expected or record['cut'] != 'netflix-13+9':
+            raise ValueError(f'Duplicate or unknown recut translation source: {identity}')
+        seen.add(identity)
+        spanish = parse_srt(read_source(raw_root, record['spanish']))
+        english = parse_srt(read_source(raw_root, record['english']))
+        if min(len(spanish), len(english)) < 200:
+            raise ValueError(f'Incomplete recut source: {identity}')
+        groups = matcher.accepted_groups(spanish, english, matcher.fit_episode(spanish, english))
+        for group in groups:
+            if any(group['spanish_start'] < span['end'] and group['spanish_end'] > span['start']
+                   for span in record.get('blockedSpans', [])):
+                continue
+            matches = index.get(dialogue_key(group['spanish']), [])
+            if len(matches) != 1:
+                continue
+            episode, start, end = matches[0]
+            lines = episode['lines'][start:end]
+            if any(line.get('translation') for line in lines):
+                continue
+            translation = {
+                'spanish': ' '.join(line['spanish'] for line in lines),
+                'english': group['english'],
+                'start_ms': lines[0]['start_ms'], 'end_ms': lines[-1]['end_ms'],
+                'source': record['english']['page'],
+                'sourceSha256': record['english']['sha256'],
+                'spanishSourceSha256': record['spanish']['sha256'],
+                'sourceEpisode': identity, 'sourceCut': record['cut'],
+                'source_start_ms': group['start_ms'], 'source_end_ms': group['end_ms'],
+                'policy': manifest['translationPolicy'], 'bridgePolicy': 'unique-exact-span-v1'
+            }
+            for line in lines:
+                line['translation'] = translation
     return episodes
 
 

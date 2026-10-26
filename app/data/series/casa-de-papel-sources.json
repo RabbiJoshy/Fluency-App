@@ -368,13 +368,6 @@
       "member": "Money.Heist.S04E08.WEBRip.x264-ION10.srt"
     }
   ],
-  "translationExclusions": {
-    "seasons": [
-      1,
-      2
-    ],
-    "reason": "Original-length English packs contain literal mistranslations; Spanish dialogue remains in occurrence counts."
-  },
   "blockedTranslations": [
     {
       "episode": "S04E01",
@@ -437,6 +430,167 @@
     {
       "sha256": "0f0af82ed30d619756b48fb39b37bdbcaa103584237fa59c195dbb5f8c45e95c",
       "reason": "English US dub-caption track can contain extra asides and altered wording absent from the original Spanish captions. Replaced with translated English track."
+    }
+  ],
+  "recutTranslationSources": [
+    {
+      "episode": "S01E01",
+      "cut": "netflix-13+9",
+      "spanish": {
+        "file": "netflix-20261025/spanish-S01E01.srt",
+        "url": "https://a2.watchsomuch.tv/Subs/06468322-253643-S01E01-es.srt?title=La.casa.de.papel.S01E01.es.srt",
+        "sha256": "ac46704c11dccada28a2353018474503e43991faa585a3eeb265055fc332dbec",
+        "season": 1,
+        "episode": 1,
+        "page": "https://watchsomuch.tv/Subs/?e=1&l=es&mid=6468322&s=1"
+      },
+      "english": {
+        "file": "netflix-20261025/english-s1-mooi.zip",
+        "url": "https://dl.subdl.com/subtitle/2034853-1781786.zip",
+        "sha256": "1accfc2cd7840f3471b326376292d5ee5528680e99e4a8e8c52e4ccd898ce3e3",
+        "member": "La.casa.de.papel.S01E01.WEBRip.Netflix.srt",
+        "page": "https://subdl.com/subtitle/sd1300185/money-heist/first-season/english"
+      }
+    },
+    {
+      "episode": "S01E02",
+      "cut": "netflix-13+9",
+      "spanish": {
+        "file": "netflix-20261025/spanish-S01E02.srt",
+        "url": "https://a2.watchsomuch.tv/Subs/06468322-253648-S01E02-es.srt?title=La.casa.de.papel.S01E02.es.srt",
+        "sha256": "692998c5ba5dcdbdefea0692ab6f4b605f4d3fe7a85583d169c363694515f827",
+        "season": 1,
+        "episode": 2,
+        "page": "https://watchsomuch.tv/Subs/?e=2&l=es&mid=6468322&s=1"
+      },
+      "english": {
+        "file": "netflix-20261025/english-s1-mooi.zip",
+        "url": "https://dl.subdl.com/subtitle/2034853-1781786.zip",
+        "sha256": "1accfc2cd7840f3471b326376292d5ee5528680e99e4a8e8c52e4ccd898ce3e3",
+        "member": "La.casa.de.papel.S01E02.WEBRip.Netflix.srt",
+        "page": "https://subdl.com/subtitle/sd1300185/money-heist/first-season/english"
+      }
+    },
+    {
+      "episode": "S01E03",
+      "cut": "netflix-13+9",
+      "spanish": {
+        "file": "netflix-20261025/spanish-S01E03.srt",
+        "url": "https://a2.watchsomuch.tv/Subs/06468322-253653-S01E03-es.srt?title=La.casa.de.papel.S01E03.es.srt",
+        "sha256": "1e8866d749d03a2b2995b3a359dacb550170659792b17c705c35d87293dd949d",
+        "season": 1,
+        "episode": 3,
+        "page": "https://watchsomuch.tv/Subs/?e=3&l=es&mid=6468322&s=1"
+      },
+      "english": {
+        "file": "netflix-20261025/english-s1-mooi.zip",
+        "url": "https://dl.subdl.com/subtitle/2034853-1781786.zip",
+        "sha256": "1accfc2cd7840f3471b326376292d5ee5528680e99e4a8e8c52e4ccd898ce3e3",
+        "member": "La.casa.de.papel.S01E03.WEBRip.Netflix.srt",
+        "page": "https://subdl.com/subtitle/sd1300185/money-heist/first-season/english"
+      }
+    },
+    {
+      "episode": "S01E04",
+      "cut": "netflix-13+9",
+      "spanish": {
+        "file": "netflix-20261025/spanish-S01E04.srt",
+        "url": "https://a2.watchsomuch.tv/Subs/06468322-253658-S01E04-es.srt?title=La.casa.de.papel.S01E04.es.srt",
+        "sha256": "3e0dab99e3c49dbf3c8f96258fd5121123acde715faa742a4191f819b11ee74c",
+        "season": 1,
+        "episode": 4,
+        "page": "https://watchsomuch.tv/Subs/?e=4&l=es&mid=6468322&s=1"
+      },
+      "english": {
+        "file": "netflix-20261025/english-s1-mooi.zip",
+        "url": "https://dl.subdl.com/subtitle/2034853-1781786.zip",
+        "sha256": "1accfc2cd7840f3471b326376292d5ee5528680e99e4a8e8c52e4ccd898ce3e3",
+        "member": "La.casa.de.papel.S01E04.WEBRip.Netflix.srt",
+        "page": "https://subdl.com/subtitle/sd1300185/money-heist/first-season/english"
+      }
+    },
+    {
+      "episode": "S01E05",
+      "cut": "netflix-13+9",
+      "spanish": {
+        "file": "netflix-20261025/spanish-S01E05.srt",
+        "url": "https://a2.watchsomuch.tv/Subs/06468322-253663-S01E05-es.srt?title=La.casa.de.papel.S01E05.es.srt",
+        "sha256": "cfa0e305991e47d6c1741c1785ee5a46ad6ddb9d2590a67c9c83bbf83d1c80ce",
+        "season": 1,
+        "episode": 5,
+        "page": "https://watchsomuch.tv/Subs/?e=5&l=es&mid=6468322&s=1"
+      },
+      "english": {
+        "file": "netflix-20261025/english-s1-mooi.zip",
+        "url": "https://dl.subdl.com/subtitle/2034853-1781786.zip",
+        "sha256": "1accfc2cd7840f3471b326376292d5ee5528680e99e4a8e8c52e4ccd898ce3e3",
+        "member": "La.casa.de.papel.S01E05.WEBRip.Netflix.srt",
+        "page": "https://subdl.com/subtitle/sd1300185/money-heist/first-season/english"
+      }
+    },
+    {
+      "episode": "S01E06",
+      "cut": "netflix-13+9",
+      "spanish": {
+        "file": "netflix-20261025/spanish-S01E06.srt",
+        "url": "https://a2.watchsomuch.tv/Subs/06468322-253668-S01E06-es.srt?title=La.casa.de.papel.S01E06.es.srt",
+        "sha256": "c926afec81171120107d4daaa30f34c1dfb575391a721ebc79476fdd4443a8b2",
+        "season": 1,
+        "episode": 6,
+        "page": "https://watchsomuch.tv/Subs/?e=6&l=es&mid=6468322&s=1"
+      },
+      "english": {
+        "file": "netflix-20261025/english-s1-mooi.zip",
+        "url": "https://dl.subdl.com/subtitle/2034853-1781786.zip",
+        "sha256": "1accfc2cd7840f3471b326376292d5ee5528680e99e4a8e8c52e4ccd898ce3e3",
+        "member": "La.casa.de.papel.S01E06.WEBRip.Netflix.srt",
+        "page": "https://subdl.com/subtitle/sd1300185/money-heist/first-season/english"
+      }
+    },
+    {
+      "episode": "S01E07",
+      "cut": "netflix-13+9",
+      "spanish": {
+        "file": "netflix-20261025/spanish-S01E07.srt",
+        "url": "https://a2.watchsomuch.tv/Subs/06468322-253674-S01E07-es.srt?title=La.casa.de.papel.S01E07.es.srt",
+        "sha256": "ff91067843de471ec1904c0c80b73798f5038adef51342e7ef60c5c4192fe0fd",
+        "season": 1,
+        "episode": 7,
+        "page": "https://watchsomuch.tv/Subs/?e=7&l=es&mid=6468322&s=1"
+      },
+      "english": {
+        "file": "netflix-20261025/english-s1-mooi.zip",
+        "url": "https://dl.subdl.com/subtitle/2034853-1781786.zip",
+        "sha256": "1accfc2cd7840f3471b326376292d5ee5528680e99e4a8e8c52e4ccd898ce3e3",
+        "member": "La.casa.de.papel.S01E07.WEBRip.Netflix.srt",
+        "page": "https://subdl.com/subtitle/sd1300185/money-heist/first-season/english"
+      },
+      "blockedSpans": [
+        {
+          "start": 384,
+          "end": 387,
+          "reason": "English changes It will be the most expensive fine to I will be."
+        }
+      ]
+    },
+    {
+      "episode": "S01E08",
+      "cut": "netflix-13+9",
+      "spanish": {
+        "file": "netflix-20261025/spanish-S01E08.srt",
+        "url": "https://a2.watchsomuch.tv/Subs/06468322-253679-S01E08-es.srt?title=La.casa.de.papel.S01E08.es.srt",
+        "sha256": "7c002a37e23c2c1aa8b29d3df23008b7b09756d88ef93e4b371c2af9854dea77",
+        "season": 1,
+        "episode": 8,
+        "page": "https://watchsomuch.tv/Subs/?e=8&l=es&mid=6468322&s=1"
+      },
+      "english": {
+        "file": "netflix-20261025/english-s1-mooi.zip",
+        "url": "https://dl.subdl.com/subtitle/2034853-1781786.zip",
+        "sha256": "1accfc2cd7840f3471b326376292d5ee5528680e99e4a8e8c52e4ccd898ce3e3",
+        "member": "La.casa.de.papel.S01E08.WEBRip.Netflix.srt",
+        "page": "https://subdl.com/subtitle/sd1300185/money-heist/first-season/english"
+      }
     }
   ]
 }

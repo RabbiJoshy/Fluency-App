@@ -3,7 +3,7 @@ import importlib.util
 import json
 from pathlib import Path
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("casa_build", ROOT / "scripts/build_casa_de_papel.py")
@@ -12,6 +12,35 @@ spec.loader.exec_module(casa)
 
 
 class CasaSubtitleBuildTests(unittest.TestCase):
+    def test_recut_bridge_requires_unique_exact_whole_cue_span(self):
+        phrase = 'El profesor no quiere salir de casa.'
+        def cue(text, start=1000):
+            return {'spanish': text, 'start_ms': start, 'end_ms': start + 500}
+        def run(lines, text=phrase, blocked=False):
+            episodes = [{'episode': 'S01E01', 'lines': lines}]
+            record = {'episode': 'S01E02', 'cut': 'netflix-13+9',
+                      'spanish': {'sha256': 'es'}, 'english': {'sha256': 'en', 'page': 'source'},
+                      'blockedSpans': [{'start': 0, 'end': 1}] if blocked else []}
+            matcher = Mock()
+            matcher.accepted_groups.return_value = [{'spanish': text, 'english': 'The professor does not want to leave home.',
+                'spanish_start': 0, 'spanish_end': 1, 'start_ms': 20000, 'end_ms': 22000}]
+            with patch.object(casa, 'read_source', return_value=b''), \
+                 patch.object(casa, 'parse_srt', return_value=[cue(phrase)] * 200):
+                return casa.add_recut_translations(episodes, {'recutTranslationSources': [record],
+                    'translationPolicy': 'precision-timing-v1'}, ROOT, matcher)[0]['lines']
+        lines = run([cue('El profesor no quiere'), cue('salir de casa.', 1500)],
+                    '¡El profesor no quiere salir de casa!')
+        self.assertEqual(lines[0]['translation']['spanish'], phrase)
+        self.assertEqual(lines[0]['translation']['start_ms'], 1000)
+        self.assertEqual(lines[0]['translation']['source_start_ms'], 20000)
+        self.assertEqual(lines[0]['translation']['sourceEpisode'], 'S01E02')
+        self.assertEqual(lines[0]['translation']['bridgePolicy'], 'unique-exact-span-v1')
+        self.assertEqual(lines[0]['translation'], lines[1]['translation'])
+        self.assertFalse(any(c.get('translation') for c in run([cue(phrase), cue(phrase, 3000)])))
+        self.assertFalse(any(c.get('translation') for c in run([cue(phrase)], text=phrase.replace('no ', ''))))
+        self.assertFalse(any(c.get('translation') for c in run([cue('Antes. ' + phrase)])))
+        self.assertFalse(any(c.get('translation') for c in run([cue(phrase)], blocked=True)))
+
     def test_wrapped_dialogue_repetitions_and_captions(self):
         data = ("1\n00:00:01,000 --> 00:00:03,000\n<i>Hola,</i>\nprofesor.\n\n"
                 "2\n00:00:04,000 --> 00:00:05,000\nHola, profesor.\n\n"
@@ -49,7 +78,7 @@ class CasaSubtitleBuildTests(unittest.TestCase):
         self.assertFalse(deck["coverage"]["complete"])
         self.assertEqual(len(deck["coverage"]["missing"]), 11)
         self.assertEqual(deck["coverage"]["exampleTranslations"], "partial")
-        self.assertEqual(deck["coverage"]["translatedEpisodes"], 15)
+        self.assertEqual(deck["coverage"]["translatedEpisodes"], 21)
         self.assertGreater(deck["coverage"]["cardsWithTranslatedExamples"], 3500)
         self.assertTrue(deck['surfaces']['profesor']['lines'][0].get('english'))
         self.assertEqual(deck["surfaces"]["profesor"]["count"], 299)
@@ -59,7 +88,7 @@ class CasaSubtitleBuildTests(unittest.TestCase):
         self.assertEqual(deck["intake"]["summary"]["additionalFrequencySurfaces"], 4233)
         self.assertEqual(deck["intake"]["summary"]["entityCandidates"], 13)
         self.assertEqual({e["song"][:3] for e in deck["surfaces"]["profesor"]["lines"]},
-                         {"S03", "S04"})
+                         {"S01", "S03", "S04"})
 
     def test_translated_context_never_changes_occurrence_counts(self):
         translation = {'spanish': 'El profesor. La casa.', 'english': 'The teacher. The house.',
@@ -88,7 +117,11 @@ class CasaSubtitleBuildTests(unittest.TestCase):
                 translation = cue.get('translation')
                 if not translation:
                     continue
-                self.assertIn(episode['episode'][:3], {'S03', 'S04'})
+                self.assertIn(episode['episode'][:3], {'S01', 'S03', 'S04'})
+                if episode['episode'].startswith('S01'):
+                    self.assertEqual(translation['bridgePolicy'], 'unique-exact-span-v1')
+                    self.assertEqual(translation['sourceCut'], 'netflix-13+9')
+                    self.assertTrue(translation['sourceEpisode'].startswith('S01'))
                 start = by_start[translation['start_ms']]
                 group = []
                 for original in episode['lines'][start:]:

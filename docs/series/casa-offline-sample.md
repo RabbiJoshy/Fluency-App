@@ -13,20 +13,38 @@ The generated assets contain 22,755 cleaned dialogue cues and 6,102 vocabulary
 inventory matches, giving 62 study levels of up to 100 cards. Word occurrences
 retain repetitions; example text is deduplicated and spread across available
 seasons. Definitions still use canonical Speech ranks. Dialogue examples remain
-unassigned. The v3 preset includes conservative English matches from Seasons 3–4:
-4,036 full bilingual groups supply 9,080 selected word examples across 3,754 cards.
+unassigned. The v4 preset includes conservative English matches in 21 original-numbered
+episodes across Seasons 1, 3 and 4: 5,495 full bilingual groups supply 11,459
+selected word examples across 4,443 cards.
 Translations are preferred when selecting examples. Original Spanish cues alone
 supply occurrence counts; expanding an example to its complete bilingual group
 never adds occurrences. Cards without a matching English passage retain Spanish
 examples and their existing English dictionary definitions.
 
-Seasons 1–2 remain in all Spanish counts but have no sentence translations: an
-alternative original-length English pack repeated problems found in the first
-pack, including literal idiom translations. The initial Season 4 English US dub
-caption track was rejected and replaced with the translated Hitchcock ION10
-track. One known numeric mistranslation in Season 3 is excluded by source cue
-span; seven historical exclusions remain tied to the rejected track hash. This
-prioritises correct pairing and permits missing translations.
+Early-season English examples use a separate Netflix-cut bilingual source.
+The 13+9 Netflix episodes cannot be aligned by timestamps against the original
+9+6 episode cut. Instead, Spanish and English are first paired within the Netflix
+cut using the same precision timing rules. A passage is then attached to an
+original episode only if its complete Spanish word sequence matches exactly one
+whole-cue span across the original first two seasons. Matches require at least
+six words and at most six original cues; punctuation, case and wrapping may
+vary, but words, accents and negation cannot. Ambiguous, partial and fuzzy text
+matches are rejected. This bridge does not change the Spanish count inputs or
+episode numbering. Provenance retains both the original timing and Netflix
+source episode/timing (`unique-exact-span-v1`). The current download contains
+Netflix S01E01–08, supplying 1,459 added groups across original S01E01–06. The
+provider throttled further acquisition even after backoff, so this is explicitly
+a partial sample. Original S01E07–09 and S02 still have no English examples; no
+claim is made that those episodes lack usable translations elsewhere.
+
+The first original-length English packs contained literal idiom translations,
+a mistranslated joke and duplicated wording. That diagnostic spot-check did not
+establish that every line was unusable. We prefer the separately checked Netflix
+pairs and reject known meaning errors individually; awkward but faithful English
+is acceptable. The initial Season 4 English US dub caption track was replaced
+with the translated Hitchcock ION10 track. One known numeric mistranslation in
+Season 3 is excluded; seven historical exclusions remain tied to the rejected
+Season 4 track hash.
 
 The shared offline importer now annotates every observed form with Turbo's local
 50k rank, exact dictionary membership, lemma suggestion, and any curated entity
@@ -50,13 +68,23 @@ The matching policy is `precision-timing-v1`: both outer boundaries within
 150 ms, up to three cues per language, at most 12 seconds, no internal silence
 longer than 1.2 seconds, strong episode timing support and independent neighbouring
 matches. This establishes timing acceptance, not a guarantee of semantic accuracy.
-A reproducible six-pair sample per translated episode (90 total) was read by the
-assistant; no wrong-passage matches were observed. This is not an independent
+A reproducible six-pair sample from each of the 15 later-season source episodes
+(90 total) was read by the assistant; no wrong-passage matches were observed. This is not an independent
 human accuracy benchmark. Known wording/meaning errors were blocked before build.
+A further reproducible
+four-passage sample from each of the eight Netflix source episodes (32 total)
+was read by the assistant with no wrong-passage matches observed. Targeted
+checks of numbers and idiomatic wording found one subject-changing English
+error, which was blocked individually. This remains a spot-check, not an
+exhaustive semantic review or an independent accuracy benchmark.
 
 Source URLs, local filenames, archive members, and SHA-256 hashes are recorded
-in `app/data/series/casa-de-papel-sources.json`. Raw sources remain outside Git. English sources are under `english-20261025/` in the same raw root; their episode mapping and exclusions are in the manifest.
-Seasons 1, 2, and 4 came from SubDL packs; season 3 came from WatchSoMuch.
+in `app/data/series/casa-de-papel-sources.json`. Raw sources remain outside Git. Later-season English sources are under `english-20261025/`; Netflix-cut sources
+are under `netflix-20261025/` in the same raw root. Their episode mapping and
+exclusions are in the manifest.
+The original Spanish Seasons 1, 2, and 4 came from SubDL packs; Season 3 came
+from WatchSoMuch. The added Netflix Spanish tracks came from WatchSoMuch and
+their English tracks from SubDL’s Mooi1990-labelled season pack.
 These files are separate from the original local OPUS v2018 bilingual store,
 whose full 61,434,251-row Spanish/English ID file had no Casa series/episode ID
 matches when checked on 2026-10-21.
@@ -75,4 +103,7 @@ files fail the build. Partial coverage requires the explicit flag and is
 recorded in both generated assets. A future dataset revision must also update
 `CASA_PRESET_REVISION` in `app/js/playlist-live.js` to refresh browser caches.
 
-Both the bundled preset and its browser fallback preserve full Spanish/English groups. The preset revision is `offline-30-episodes-v3-translations`, so reopening refreshes older caches while failed refreshes retain usable decks. No source matching or WSD calls are made when opening the preset.
+Both the bundled preset and its browser fallback preserve full Spanish/English groups. The preset revision is `offline-30-episodes-v4-recut-translations`, so reopening refreshes older caches while failed refreshes retain usable decks. No source matching or WSD calls are made when opening the preset.
+
+The Netflix bridge diagnostic sample and unchanged-count comparison are saved
+locally under `Fluency-Workspace/audits/casa-netflix-bridge-20261026/`.

@@ -69,7 +69,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     // A server that never settles cannot hold the local preset or rebuild open.
     let deck = await context.loadCasaDePapelPreset();
     assert.equal(deck.matchedCount, 6102);
-    assert.equal(stored.presetRevision, 'offline-30-episodes-v3-translations');
+    assert.equal(stored.presetRevision, 'offline-30-episodes-v4-recut-translations');
     route = 'rebuild';
     w.config = {languages: {spanish: {indexPath: 'wrong-artist/vocabulary.index.json'}}};
     deck = await context.loadCasaDePapelPreset();
@@ -85,7 +85,7 @@ w.savePlaylistLiveDeckToServer = () => { saves++; return new Promise(() => {}); 
     assert.equal(deck.intake.surfaces.profesor.count, deck.surfaces.profesor.count);
     assert.equal(JSON.stringify(deck.intake.summary), JSON.stringify(preset.intake.summary));
     assert.equal(deck.surfaces.profesor.lines[0].text.length > 0, true);
-    assert.equal(deck.surfaces.profesor.lines[0].song.startsWith('S03E'), true);
+    assert.equal(deck.surfaces.profesor.lines[0].song.startsWith('S01E'), true);
     assert.ok(deck.surfaces.profesor.lines[0].english);
     assert.equal(deck.tokenCount, preset.tokenCount);
     for (const [word, entry] of Object.entries(preset.surfaces)) {
