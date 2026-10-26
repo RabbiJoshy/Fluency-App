@@ -361,6 +361,16 @@ function initDesktopShell() {
     const modalAttributes = new Map(pages.map(el => [el, el.getAttribute('aria-modal')]));
     let activeNav = 'desktopStudyBtn';
 
+    // "Add to iPhone": a sidebar item that opens the install guide popup.
+    const installGuide = document.getElementById('installGuideModal');
+    const closeInstallGuide = () => installGuide?.classList.add('hidden');
+    document.getElementById('installGuideBtn')?.addEventListener('click', () => installGuide?.classList.remove('hidden'));
+    document.getElementById('closeInstallGuideModal')?.addEventListener('click', closeInstallGuide);
+    installGuide?.addEventListener('click', event => { if (event.target === installGuide) closeInstallGuide(); });
+    installGuide?.addEventListener('keydown', event => {
+        if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeInstallGuide(); }
+    });
+
     function closePages() {
         for (const page of pages.filter(el => !el.hidden && !el.classList.contains('hidden'))) {
             // Run the existing close handler so its cleanup/back behavior is kept.

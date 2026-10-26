@@ -168,3 +168,39 @@ body.desktop-workspace .desktop-trail[hidden] { display: none; }
    home screen: no circle, the glyph scaled up to fill the icon's box. */
 body.desktop-workspace #topBar :is(#helpBtn, #desktopAboutBtn) svg circle { display: none; }
 body.desktop-workspace #topBar :is(#helpBtn, #desktopAboutBtn) svg { transform: scale(1.75); stroke-width: 1.9; }
+
+/* "Add to iPhone": a sidebar item (desktop only) that opens a guide of four mock iPhone screens. */
+.install-guide-nav { display: none; }
+body.desktop-workspace #topBar .install-guide-nav { display: flex; order: 6; }
+#installGuideModal .install-guide-content { width: min(1180px, calc(100vw - 40px)); max-width: none; max-height: 92vh; overflow: auto; padding: 30px 34px 34px; }
+.install-guide-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+.install-guide-head h2 { margin: 0; font-size: 28px; letter-spacing: -.02em; }
+.install-guide-head p { margin: 6px 0 0; color: var(--text-muted); font-size: 16px; }
+.install-guide-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 26px; }
+.install-guide-step { display: flex; flex-direction: column; gap: 14px; }
+.install-guide-step h3 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; }
+.install-guide-step p, .install-guide-foot { margin: 0; color: var(--text-muted); font-size: 14px; }
+.install-guide-foot { margin-top: 20px; }
+.install-guide-num { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-primary); color: #fff; font-size: 14px; font-weight: 700; }
+.ig-screen { position: relative; display: flex; flex-direction: column; justify-content: flex-end; height: 250px; overflow: hidden; border-radius: 26px; border: 1px solid var(--border-color); background: #0f1013; }
+.ig-screen::before { content: ""; position: absolute; top: 10px; left: 50%; width: 74px; height: 20px; margin-left: -37px; border-radius: 12px; background: #000; border: 1px solid var(--border-color); }
+.ig-page { position: absolute; inset: 46px 18px 70px; display: grid; align-content: start; gap: 9px; }
+.ig-page i { display: block; height: 10px; border-radius: 6px; background: #1d1f24; }
+.ig-page i:nth-child(1) { width: 55%; height: 16px; } .ig-page i:nth-child(2) { width: 90%; } .ig-page i:nth-child(3) { width: 78%; } .ig-page i:nth-child(4) { width: 84%; }
+.ig-bar { display: flex; align-items: center; justify-content: space-around; margin: 0 10px 12px; padding: 9px 6px; border-radius: 20px; background: #2a2c31; }
+.ig-bar svg, .ig-row svg { width: 24px; height: 24px; fill: none; stroke: #a7abb5; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.ig-ring, .ig-btn { background: color-mix(in srgb, var(--accent-primary) 22%, transparent); box-shadow: 0 0 0 2px var(--accent-primary), 0 0 18px color-mix(in srgb, var(--accent-primary) 55%, transparent); }
+.ig-ring { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; }
+.ig-ring svg { stroke: #fff; }
+.ig-sheet { margin: 0 10px 12px; overflow: hidden; border-radius: 18px; background: #2a2c31; }
+.ig-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid #383a40; color: #e9eaee; font-size: 15px; }
+.ig-row:last-child { border-bottom: 0; }
+.ig-row.is-hot { color: #fff; font-weight: 600; background: color-mix(in srgb, var(--accent-primary) 22%, transparent); box-shadow: inset 0 0 0 2px var(--accent-primary); }
+.ig-row.is-hot svg { stroke: #fff; }
+.ig-add { display: flex; flex-direction: column; align-items: center; gap: 14px; margin: 0 10px 12px; padding: 20px 14px 16px; border-radius: 18px; background: #2a2c31; color: #e9eaee; }
+.ig-app { display: flex; align-items: center; gap: 12px; width: 100%; }
+.ig-icon { display: grid; place-items: center; flex: none; width: 54px; height: 54px; border-radius: 13px; background: #24235a; color: #fff; font-size: 22px; font-weight: 800; }
+.ig-app span { font-size: 15px; } .ig-app small { display: block; color: #8b93a1; font-size: 12px; }
+.ig-btn { align-self: flex-end; padding: 8px 22px; border-radius: 999px; color: #fff; font-size: 15px; font-weight: 700; }
+@media (max-width: 1000px) { .install-guide-steps { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .install-guide-steps { grid-template-columns: 1fr; } }
