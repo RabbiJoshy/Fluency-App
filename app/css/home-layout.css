@@ -348,7 +348,7 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
     border-radius: 12px;
     overflow: hidden;
     background: var(--accent-primary);
-    color: var(--accent-primary-text, #fff);
+    color: #fff;
 }
 .home-cta.is-disabled { opacity: .45; }
 .home-cta-length,
@@ -1575,4 +1575,21 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 /* Source selection owns visibility, even if an older deck render finishes. */
 #setupPanel[data-source-choice="pending"] > :is(#step2, #step4, #reviewDeckSection, #extrasDeckSection) {
     display: none !important;
+}
+
+/* Larger level controls and a clearer coverage-first readout. */
+#setupPanel #homeLevelStepper .home-level-step { width: 56px; height: 56px; font-size: 48px; }
+#setupPanel #lswExamples .lsw-egs { color: var(--text-primary); opacity: 1; }
+#setupPanel #lswExamples .lsw-egs :is(.lsw-coverage-inline, .lsw-example-words) {
+    display: block;
+    color: inherit;
+    opacity: 1;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+}
+#setupPanel #lswExamples .lsw-example-words { margin-top: 6px; }
+@media (min-width: 1024px) {
+    #setupPanel #homeLevelStepper .home-level-step { width: 64px; height: 64px; font-size: 54px; }
+    #setupPanel :is(#step2, .home-section-peek) .home-level-stats { font-size: max(18px, var(--home-text)); }
 }

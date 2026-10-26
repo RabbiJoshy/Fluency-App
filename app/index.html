@@ -1611,11 +1611,13 @@
             <div class="fast-mode-page-body smart-skip-body">
                 <header class="smart-skip-header-row">
                     <h2>Smart Skip</h2>
-                    <span class="smart-skip-summary" id="smartSkipHeroBadge"><span id="smartSkipHeroBadgeText"></span></span>
-                    <span class="smart-skip-master">
-                        <span class="smart-skip-master-state" id="smartSkipPageState" aria-hidden="true">Off</span>
-                        <button type="button" id="smartSkipPageSwitch" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Smart Skip"></button>
-                    </span>
+                    <div class="smart-skip-master-control">
+                        <span class="smart-skip-master">
+                            <button type="button" id="smartSkipPageSwitch" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Smart Skip"></button>
+                            <span class="smart-skip-master-state" id="smartSkipPageState" aria-hidden="true">Off</span>
+                        </span>
+                        <span class="smart-skip-summary" id="smartSkipHeroBadge"><span id="smartSkipHeroBadgeText"></span></span>
+                    </div>
                     <button class="modal-close fast-mode-close" id="closeFastModeModal" aria-label="Close">✕</button>
                 </header>
 

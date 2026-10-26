@@ -1653,8 +1653,8 @@ function availableHeightForMeaningScroll(backEl, scroll) {
         if (cs.display === 'none' || cs.position === 'absolute' || cs.position === 'fixed') continue;
         otherFlowChildren++;
         overhead += child.offsetHeight
-            // The links' auto margin is spare space, not occupied content.
-            + (child.classList.contains('links-section') ? 0 : (parseFloat(cs.marginTop) || 0))
+            // Auto margins below the meanings are spare space, not content.
+            + ((child.classList.contains('links-section') || child.classList.contains('pin-mode-hint')) ? 0 : (parseFloat(cs.marginTop) || 0))
             + (parseFloat(cs.marginBottom) || 0);
     }
     // With the scroller included, N other children create N gaps in the flex
@@ -9759,6 +9759,9 @@ function renderCardWikipediaBadge(card) {
         } else {
             renderedBack.innerHTML = backHTML;
             const actionTray = renderedBack.querySelector(':scope > .links-section');
+            // Keep the pin instruction on the card surface, above its tools.
+            const pinHint = actionTray?.querySelector('.pin-mode-hint:not(.is-notice)');
+            if (pinHint) renderedBack.append(pinHint);
             if (actionTray && backFace) renderedBack.after(actionTray);
             backFace?.classList.toggle('has-action-tray', Boolean(actionTray));
             placeRowInformationButtons(renderedBack);

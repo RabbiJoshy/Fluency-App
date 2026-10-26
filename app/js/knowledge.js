@@ -914,8 +914,8 @@ function renderKnowledgeOverviewButton(card) {
     const active = Boolean(card?._pinningMode);
     const aria = flagged > 0 ? `See again, ${flagged} pinned` : 'See again';
     // The number is blank until a meaning is pinned, then counts them. While
-    // choosing, the card keeps only the word and its rows, and this line sits
-    // where the tiles were.
+    // choosing, the hint sits above the tiles and See again stays available
+    // to leave pin mode.
     return `<button type="button" class="ref-tile knowledge-overview-trigger${active ? ' is-active' : ''}" aria-label="${aria}" aria-pressed="${active}" onclick="showKnowledgeOverview(event)">
         <div class="ref-tile-icon-wrap">
             ${SEE_AGAIN_ICON}
