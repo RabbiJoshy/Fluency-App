@@ -60,6 +60,8 @@ function speechSourceFrequencyOf(item, sourceData) {
     return speechSourceFrequencyForSurface(item?.word, sourceData);
 }
 
+const _cachedLemmaSourceFrequencies = new WeakMap();
+
 function currentWsdPublicationProjection() {
     const requested = new URLSearchParams(window.location.search).get('wsdPublication');
     if (requested === 'forced_leaf' || requested === 'supported_specificity') {
@@ -3568,8 +3570,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
 
     // Deck construction mutates the selected entries while attaching examples
     // and trimming artist senses. Force setup to rebuild its immutable view
-    // when the learner returns to the menu.
-    window.invalidatePreparedSetupVocabulary?.();
+    // if and when deck construction mutates entries below.
     const includeWordId = opts.includeWordId || null;
     let studyMode = opts.resumeSnapshot ? 'resume' : (opts.studyMode || 'new');
     const levelSession = Boolean(opts.levelSession || opts.resumeSnapshot?.levelSession);
@@ -3624,26 +3625,36 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // the committed deck see identical merged entries and examples.
         const vocabularyData = await fetchActiveVocabularyData(langConfig);
         const speechFrequency = await loadSpeechSourceFrequency(baseConfig);
-        const lemmaSourceFrequencies = new Map();
+        let lemmaSourceFrequencies = null;
         if (speechFrequency && useLemmaMode) {
-            for (const entry of vocabularyData) {
-                if (entry.is_english || entry.is_noise || entry.is_interjection || entry.duplicate) continue;
-                const lemmaKey = lemmaStudyGroupKey(entry);
-                const value = speechSourceFrequencyOf(entry, speechFrequency);
-                if (!lemmaKey || value === null) continue;
-                // Keep the individual surfaces, not just how many there were.
-                // "total across 5 source-listed forms" states a sum without
-                // saying what went into it, and the sum is the one number on
-                // this card a learner cannot check. Decision 0024 rule 4: the
-                // published per-surface figures are what the card shows when
-                // asked, because those are the only frequencies the source
-                // actually publishes.
-                const total = lemmaSourceFrequencies.get(lemmaKey) || { value: 0, forms: 0, breakdown: [] };
-                total.value += value;
-                total.forms += 1;
-                total.breakdown.push({ surface: entry.word, value });
-                lemmaSourceFrequencies.set(lemmaKey, total);
+            const cached = _cachedLemmaSourceFrequencies.get(vocabularyData);
+            if (cached && cached._source === speechFrequency) {
+                lemmaSourceFrequencies = cached;
+            } else {
+                lemmaSourceFrequencies = new Map();
+                lemmaSourceFrequencies._source = speechFrequency;
+                for (const entry of vocabularyData) {
+                    if (entry.is_english || entry.is_noise || entry.is_interjection || entry.duplicate) continue;
+                    const lemmaKey = lemmaStudyGroupKey(entry);
+                    const value = speechSourceFrequencyOf(entry, speechFrequency);
+                    if (!lemmaKey || value === null) continue;
+                    // Keep the individual surfaces, not just how many there were.
+                    // "total across 5 source-listed forms" states a sum without
+                    // saying what went into it, and the sum is the one number on
+                    // this card a learner cannot check. Decision 0024 rule 4: the
+                    // published per-surface figures are what the card shows when
+                    // asked, because those are the only frequencies the source
+                    // actually publishes.
+                    const total = lemmaSourceFrequencies.get(lemmaKey) || { value: 0, forms: 0, breakdown: [] };
+                    total.value += value;
+                    total.forms += 1;
+                    total.breakdown.push({ surface: entry.word, value });
+                    lemmaSourceFrequencies.set(lemmaKey, total);
+                }
+                _cachedLemmaSourceFrequencies.set(vocabularyData, lemmaSourceFrequencies);
             }
+        } else {
+            lemmaSourceFrequencies = new Map();
         }
         updateResumeLoading('Matching the saved cards to this exact release…');
         // Derived from the data we already hold, so it costs nothing to keep
@@ -3658,26 +3669,41 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // test asked for `most_frequent_lemma_instance`, a pipeline-stamped
         // election this app re-does at runtime anyway, which made the feature
         // unavailable on every deck the current pipeline builds.
-        lemmaFieldAvailable = vocabularyData.some(item => lemmaStudyGroupKey(item));
-        cognateFieldAvailable = vocabularyData.some(item =>
-            (item.cognate_score > 0) || item.cognate_scores || item.cognate_sense_map || item.cognet_cognate || item.is_transparent_cognate
-        );
+        if (vocabularyData._lemmaFieldAvailable === undefined) {
+            vocabularyData._lemmaFieldAvailable = vocabularyData.some(item => lemmaStudyGroupKey(item));
+        }
+        lemmaFieldAvailable = vocabularyData._lemmaFieldAvailable;
+        if (vocabularyData._cognateFieldAvailable === undefined) {
+            vocabularyData._cognateFieldAvailable = vocabularyData.some(item =>
+                (item.cognate_score > 0) || item.cognate_scores || item.cognate_sense_map || item.cognet_cognate || item.is_transparent_cognate
+            );
+        }
+        cognateFieldAvailable = vocabularyData._cognateFieldAvailable;
         if (useLemmaMode) await ensureLemmaPoolingData(langConfig);
         cachedVocabularyData = vocabularyData;
 
         // Store original index/rank from vocabulary file - this is the unique identifier
-        vocabularyData.forEach((item, index) => {
-            item.rank = index + 1; // Use original position as the rank (unique identifier)
-        });
+        if (!vocabularyData._ranksAssigned) {
+            vocabularyData.forEach((item, index) => {
+                item.rank = index + 1; // Use original position as the rank (unique identifier)
+            });
+            vocabularyData._ranksAssigned = true;
+        }
 
         let _baseVocab;
         let exCounts = { english: 0, cognates: 0, singleOcc: 0, lemma: 0 };
         if (window.playlistLiveActive?.()) {
             _baseVocab = vocabularyData;
         } else {
-            const built = buildFilteredVocab(vocabularyData);
-            _baseVocab = built.vocab;
-            exCounts = built.counts;
+            const prepared = window.getPreparedSetupVocabulary?.(selectedLanguage, vocabularyData);
+            if (prepared && !vocabularySourcesNeedingRestore.has(vocabularyData)) {
+                _baseVocab = prepared.vocab;
+                exCounts = prepared.counts;
+            } else {
+                const built = buildFilteredVocab(vocabularyData);
+                _baseVocab = built.vocab;
+                exCounts = built.counts;
+            }
         }
         let filteredData = window.applyPlaylistLiveVocabulary?.(_baseVocab) || _baseVocab;
         // This is the complete vocabulary after the active source + filter
@@ -3852,6 +3878,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // remain allocation-free.
         if (vocabularyData.some(item => Array.isArray(item._base_meanings))) {
             vocabularySourcesNeedingRestore.add(vocabularyData);
+            window.invalidatePreparedSetupVocabulary?.();
         }
 
         // Convert to flashcards format

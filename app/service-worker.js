@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v599';
+const CACHE_NAME = 'flashcards-v602';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = '20261025loading';
+const ASSET_VERSION = '20261026uitweaks';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -27,12 +27,12 @@ const urlsToCache = [
   '/css/loading-ui.css?v=20261025',
   '/js/loading-ui.js?v=20261025',
   '/',
-  '/css/style.css?v=20261014clarity',
+  '/css/style.css?v=20261026uitweaks',
   '/css/appearance.css?v=20261011',
-  '/css/ui-refinements.css?v=20261014clarity',
+  '/css/ui-refinements.css?v=20261026uitweaks',
   '/css/desktop-shell.css?v=1',
   '/css/black-palette.css?v=1',
-  '/css/home-layout.css?v=1',
+  '/css/home-layout.css?v=20261026uitweaks',
   '/css/music-workspace.css?v=20261019stg8',
   '/css/extra.css?v=20261016',
   '/css/series-mode.css?v=20261022',
@@ -57,7 +57,7 @@ const urlsToCache = [
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
   '/js/routes.js?v=20261013music',
-  '/js/main.js?v=20261026placement',
+  '/js/main.js?v=20261026extension',
   '/js/theme.js?v=20260922ui',
   '/js/state.js?v=20260921x',
   '/js/data-contracts.js?v=20260825ak',
@@ -65,7 +65,7 @@ const urlsToCache = [
   '/js/read-request.js?v=1',
   '/js/sync-queue.js?v=20260825ak',
   '/js/offline-content.js?v=20260825ak',
-  '/js/speech.js?v=20260914b',
+  '/js/speech.js?v=20261026speed',
   '/js/artist-ui.js?v=20260825ak',
   '/js/auth.js?v=20261025loading',
   '/js/learning-profiles.js?v=1',
@@ -75,7 +75,7 @@ const urlsToCache = [
   '/js/tutorial.js?v=20260929sense6',
   '/js/walkthrough.js?v=20260929sense6',
   '/js/spotify.js?v=20260923su',
-  '/js/estimation.js?v=20261026placement',
+  '/js/estimation.js?v=20261026extension',
   '/js/release-host.js?v=20260921rh',
   '/js/sense-gloss.js?v=1',
   '/js/env.js?v=20261010airlock',
@@ -87,9 +87,9 @@ const urlsToCache = [
   '/js/knowledge.js?v=20261014clarity',
   '/js/progress-overview.js?v=20261025loading',
   '/js/session-plan.js?v=1',
-  '/js/ui.js?v=20261025loading',
+  '/js/ui.js?v=20261026speed',
   '/js/fast-track-preferences.js?v=20260920a',
-  '/js/vocab.js?v=20261026placement',
+  '/js/vocab.js?v=20261026speed',
   '/js/wsd-ui-sidecar.js?v=1',
   '/js/assignment-filters.js?v=1',
   '/js/grammar-cards.js?v=20260923gn',
@@ -112,7 +112,7 @@ const urlsToCache = [
   '/js/reverse-cues.js?v=20260927v24',
   '/js/flags.js?v=20260929flags',
   '/js/card-metadata-pills.js?v=20261013rows',
-  '/js/flashcards.js?v=20261026placement',
+  '/js/flashcards.js?v=20261026speed',
   '/js/sense-reference-cards.js?v=1',
   '/data/see-references/pt-see-v1.json',
   '/js/card-row-layout.js?v=20261013rows',

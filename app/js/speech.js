@@ -92,6 +92,7 @@ function readVoicePrefs() {
 }
 
 function setVoice(nameFragment, langPrefix = 'en') {
+    _selectedVoiceCache.clear();
     const prefs = readVoicePrefs();
     if (nameFragment) prefs[langPrefix] = String(nameFragment);
     else delete prefs[langPrefix];
@@ -104,20 +105,32 @@ function setVoice(nameFragment, langPrefix = 'en') {
     return chosen?.name || null;
 }
 
+const _selectedVoiceCache = new Map();
+
 function selectVoice(voices, preferredLang) {
+    if (!voices || voices.length === 0) return null;
     const langPrefix = String(preferredLang || '').toLowerCase().split('-')[0];
     const pinned = readVoicePrefs()[langPrefix];
+    const cacheKey = `${preferredLang}:${pinned || ''}:${voices.length}`;
+    if (_selectedVoiceCache.has(cacheKey)) {
+        return _selectedVoiceCache.get(cacheKey);
+    }
     if (pinned) {
         const needle = pinned.toLowerCase();
         const match = voices.find(voice =>
             voiceIdentity(voice).includes(needle)
             && String(voice.lang || '').toLowerCase().startsWith(langPrefix));
-        if (match) return match;
+        if (match) {
+            _selectedVoiceCache.set(cacheKey, match);
+            return match;
+        }
     }
-    return voices
+    const winner = voices
         .map((voice, index) => ({ voice, index, score: scoreVoice(voice, preferredLang) }))
         .filter(entry => entry.score !== null)
         .sort((a, b) => b.score - a.score || a.index - b.index)[0]?.voice || null;
+    _selectedVoiceCache.set(cacheKey, winner);
+    return winner;
 }
 
 /**
@@ -218,10 +231,37 @@ window.setSpeechRate = setSpeechRate;
 if (window.speechSynthesis) {
     window.speechSynthesis.getVoices();
     window.speechSynthesis.onvoiceschanged = () => {
+        _selectedVoiceCache.clear();
         window.speechSynthesis.getVoices();
     };
 }
 
+let _speechEnginePrewarmed = false;
+function prewarmSpeechEngine(preferredLang = null) {
+    if (!speechEnabled || !window.speechSynthesis) return;
+    const voices = window.speechSynthesis.getVoices();
+    const lang = preferredLang
+        || config?.languages?.[selectedLanguage]?.speechLang
+        || speechLangCodes[selectedLanguage]
+        || 'es-ES';
+    if (voices.length > 0) {
+        selectVoice(voices, lang);
+    }
+    // On iOS and mobile browsers, synthesis is paused or cold until triggered
+    // in response to a user gesture. Speaking a micro-utterance at volume 0
+    // awakens the Web Audio / TTS backend without audible noise.
+    if (!_speechEnginePrewarmed) {
+        _speechEnginePrewarmed = true;
+        try {
+            const micro = new SpeechSynthesisUtterance('');
+            micro.volume = 0;
+            micro.rate = 2.0;
+            window.speechSynthesis.speak(micro);
+        } catch (_) {}
+    }
+}
+
+window.prewarmSpeechEngine = prewarmSpeechEngine;
 window.speakWord = speakWord;
 window.listVoices = listVoices;
 window.setVoice = setVoice;
