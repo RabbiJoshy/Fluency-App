@@ -3,7 +3,7 @@
  "release_id": "pt-speech-v25-decide-1-expr-10000-slim",
  "per_sense": 30,
  "index_sha256": "0ee50e0a0c71669b770278ba5682bba49f44112a3b33e5df404aec7591c4aa80",
- "merge_keys_from": "data/merge-exceptions/pt-literal-ground-r4-seam-v1-fw1-ds25-visible-v1-decide-expr-v1-fp3.json",
+ "merge_keys_from": "data/merge-exceptions/pt-literal-ground-r4-seam-v1-fw1-ds25-visible-v1-decide-expr-v1-nm3-fp3.json",
  "example_format": "slim-example/v1",
  "sources": {
   "opensubtitles": {
@@ -949,6 +949,12 @@
    "path": "level-039-set-03.json"
   },
   {
+   "set_id": "level-039-set-04",
+   "start_rank": 3876,
+   "end_rank": 3900,
+   "path": "level-039-set-04.json"
+  },
+  {
    "set_id": "level-040-set-01",
    "start_rank": 3901,
    "end_rank": 3925,
@@ -1387,6 +1393,12 @@
    "path": "level-058-set-01.json"
   },
   {
+   "set_id": "level-058-set-02",
+   "start_rank": 5726,
+   "end_rank": 5750,
+   "path": "level-058-set-02.json"
+  },
+  {
    "set_id": "level-058-set-03",
    "start_rank": 5751,
    "end_rank": 5775,
@@ -1549,6 +1561,12 @@
    "path": "level-065-set-04.json"
   },
   {
+   "set_id": "level-066-set-02",
+   "start_rank": 6526,
+   "end_rank": 6550,
+   "path": "level-066-set-02.json"
+  },
+  {
    "set_id": "level-066-set-03",
    "start_rank": 6551,
    "end_rank": 6575,
@@ -1667,6 +1685,12 @@
    "start_rank": 7126,
    "end_rank": 7150,
    "path": "level-072-set-02.json"
+  },
+  {
+   "set_id": "level-072-set-03",
+   "start_rank": 7151,
+   "end_rank": 7175,
+   "path": "level-072-set-03.json"
   },
   {
    "set_id": "level-073-set-01",
@@ -1843,6 +1867,12 @@
    "path": "level-083-set-04.json"
   },
   {
+   "set_id": "level-085-set-01",
+   "start_rank": 8401,
+   "end_rank": 8425,
+   "path": "level-085-set-01.json"
+  },
+  {
    "set_id": "level-086-set-04",
    "start_rank": 8576,
    "end_rank": 8600,
@@ -1907,6 +1937,24 @@
    "start_rank": 9151,
    "end_rank": 9175,
    "path": "level-092-set-03.json"
+  },
+  {
+   "set_id": "level-092-set-04",
+   "start_rank": 9176,
+   "end_rank": 9200,
+   "path": "level-092-set-04.json"
+  },
+  {
+   "set_id": "level-094-set-02",
+   "start_rank": 9326,
+   "end_rank": 9350,
+   "path": "level-094-set-02.json"
+  },
+  {
+   "set_id": "level-094-set-04",
+   "start_rank": 9376,
+   "end_rank": 9400,
+   "path": "level-094-set-04.json"
   },
   {
    "set_id": "level-095-set-02",

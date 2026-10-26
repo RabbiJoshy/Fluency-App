@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T20:08:14+00:00",
+      "date": "2026-10-26 20:08 GMT",
+      "agent": "Claude",
+      "summary": "Merged cards: singular and plural nouns (casa/casas) and gender forms (querido/querida) now share a card.",
+      "detail": [
+        "Noun proof noun-merge/v3: a feminine form counts as an inflection like a plural; another word on a noun's menu (casa: casar) no longer blocks it, and is judged by the 3-example, 10% bar instead; a noun and adjective of one headword are one word.",
+        "Portuguese: 1,073 forms join 813 cards (casa/casas, coisa/coisas, vida/vidas, querido/querida/queridos, conta/contas).",
+        "Spanish: six feminine forms join (profesora, compañera, secretaria…); most Spanish nouns still lack SpanishDict evidence.",
+        "Full list: docs/audits/noun-merge-v3-2026-10-26/README.md."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T19:24:35+00:00",
       "date": "2026-10-26 19:24 GMT",
       "agent": "Claude",
@@ -353,19 +366,6 @@
         "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
         "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
         "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T16:39:16.580689+01:00",
-      "date": "2026-10-24 16:39 BST",
-      "agent": "Antigravity",
-      "summary": "Consolidate admin deck filters into a popup modal, adding Part of Speech and Jev Confidence filters.",
-      "detail": [
-        "Grouped all admin setup filters into a dedicated modal opened by an Admin Filters button in the level chooser footer.",
-        "Added Part of Speech filtering (Verbs, Nouns, Adjectives, Adverbs, Function words, Other).",
-        "Added Jev Confidence & Gaps filtering (Lowest < 0.2, Marginal < 0.3, Moderate < 0.5, Unresolved gaps, High ≥ 0.8).",
-        "Trigger button features an active filter count badge; Reset button restores defaults instantly."
       ],
       "commit": "pending"
     }

@@ -81,6 +81,27 @@ a dictionary reference on the sense. Senses without one (lyrics glosses
 written per form: *tengo* "I have", *tiene* "he/she has") are not compared, and
 lyrics senses name no page for test 3, so on such decks only test 1 applies.
 
+## Noun proof v3 (`noun-merge/v3`, 26 October 2026)
+
+Noun- and adjective-led forms also need a dictionary proof that they are the
+same noun (`src/fluency/sense_menu/noun_merge.py`, decided on complete menus).
+v2 refused gender forms (*querida*) and any noun whose menu named a second
+word: *casa* ("ele casa", casar) kept *casa*/*casas* on two cards, and 1,769
+Portuguese forms were refused that way. v3:
+
+- a feminine form is an inflection like a plural; one whose senses differ is
+  refused alone (*prisionera*), without splitting the plural pair;
+- only the noun's own entries are compared; another word on the menu is
+  judged by this decision's 3-example, 10% bar on real use;
+- a noun and an adjective of the same headword are one word (*querido*).
+
+Result: 1,073 Portuguese forms join 813 cards (*casa*/*casas*,
+*querido*/*querida*/*queridos*, *conta*/*contas*); Spanish gains six feminine
+forms (*profesora*, *compañera*). Most Spanish nouns stay refused for missing
+SpanishDict evidence, which only a new fetch can supply. Czech, Finnish, Dutch
+and French keep their stricter v2 lists, which the app still accepts. Full
+list: `docs/audits/noun-merge-v3-2026-10-26/`.
+
 ## Provider parity
 
 The rule reads fields both providers fill: headword, part of speech,

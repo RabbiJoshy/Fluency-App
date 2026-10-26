@@ -59,13 +59,26 @@ class NounMergeTests(unittest.TestCase):
             stamp_noun_merge(cards)
             self.assertTrue(all(not c["noun_merge"]["allowed"] for c in cards))
 
-    def test_gender_form_is_not_a_number_pair(self):
+    def test_gender_form_joins_when_its_senses_match(self):
+        # v3: querida (feminine of querido) is an inflection like a plural.
         cards = [menu("gato"), menu("gatos"), menu("gata")]
         cards[2]["analyses"][0]["provider_metadata"]["surface_grammar"] = ["feminine", "singular"]
         stamp_noun_merge(cards)
-        self.assertTrue(cards[0]["noun_merge"]["allowed"])
-        self.assertTrue(cards[1]["noun_merge"]["allowed"])
-        self.assertFalse(cards[2]["noun_merge"]["allowed"])
+        self.assertTrue(all(c["noun_merge"]["allowed"] for c in cards))
+
+    def test_gender_form_with_other_senses_is_refused_alone(self):
+        # prisionera's own senses must not split prisionero from prisioneros.
+        cards = [menu("gato"), menu("gatos"), menu("gata", extra=True)]
+        cards[2]["analyses"][0]["provider_metadata"]["surface_grammar"] = ["feminine", "singular"]
+        stamp_noun_merge(cards)
+        self.assertEqual([c["noun_merge"]["allowed"] for c in cards], [True, True, False])
+        self.assertEqual(cards[2]["noun_merge"]["reason"], "different_sense_sets")
+
+    def test_a_diminutive_is_not_an_inflection(self):
+        cards = [menu("gato"), menu("gatinho")]
+        cards[1]["analyses"][0]["provider_metadata"]["surface_grammar"] = ["diminutive"]
+        stamp_noun_merge(cards)
+        self.assertFalse(cards[1]["noun_merge"]["allowed"])
 
     def test_reference_collision_does_not_hide_different_definition(self):
         cards = [menu("gato"), menu("gatos")]
@@ -73,26 +86,38 @@ class NounMergeTests(unittest.TestCase):
         stamp_noun_merge(cards)
         self.assertFalse(cards[0]["noun_merge"]["allowed"])
 
-    def test_unassigned_dictionary_phrase_also_participates(self):
+    def test_another_headword_on_the_menu_does_not_block(self):
+        # v3: only the noun's own entries are compared. A phrase (its own study
+        # item) or a participle's verb (querido: querer) is judged later, on real
+        # use, by decision 0033's bar.
         cards = [menu("gato"), menu("gatos")]
         phrase = {"headword": "phrase with gato", "part_of_speech": "PHRASE",
                   "source_adapter": "dictionary", "senses": [{
                       "source_reference": "dictionary:phrase", "translation": "special phrase",
                       "frequency": 0}]}
-        cards[0]["analyses"].append(phrase)
-        stamp_noun_merge(cards)
-        self.assertTrue(all(not c["noun_merge"]["allowed"] for c in cards))
-        cards[1]["analyses"].append(copy.deepcopy(phrase))
+        verb = {"headword": "gatar", "part_of_speech": "verb", "source_adapter": "dictionary",
+                "senses": [{"source_reference": "dictionary:gatar", "translation": "to crawl"}]}
+        cards[0]["analyses"] += [phrase, verb]
         stamp_noun_merge(cards)
         self.assertTrue(all(c["noun_merge"]["allowed"] for c in cards))
 
-    def test_ambiguous_plural_blocks_the_singular_group(self):
+    def test_noun_and_adjective_of_one_headword_are_one_word(self):
+        cards = [menu("gato"), menu("gatos")]
+        for card in cards:
+            adj = copy.deepcopy(card["analyses"][0])
+            adj["part_of_speech"] = "adj"
+            card["analyses"].append(adj)
+        stamp_noun_merge(cards)
+        self.assertTrue(all(c["noun_merge"]["allowed"] for c in cards))
+
+    def test_a_form_with_two_nouns_is_refused(self):
         cards = [menu("gato"), menu("gatos")]
         other = copy.deepcopy(cards[1]["analyses"][0])
         other["headword"] = "other"
         cards[1]["analyses"].append(other)
         stamp_noun_merge(cards)
-        self.assertTrue(all(not c["noun_merge"]["allowed"] for c in cards))
+        self.assertFalse(cards[1]["noun_merge"]["allowed"])
+        self.assertEqual(cards[1]["noun_merge"]["reason"], "ambiguous_headwords")
 
     def test_same_spelling_noun_and_verb_entries_block_whole_word_merge(self):
         for sides in ((0,), (1,), (0, 1)):
@@ -141,8 +166,8 @@ class NounMergeTests(unittest.TestCase):
             cards = [create_card_record("pt", surface).to_dict() for surface in ("ser", "seres")]
             payload, _ = adapter.build(cards, snapshot_id="test")
             self.assertTrue(all(not c["noun_merge"]["allowed"] for c in payload["cards"]))
-            self.assertEqual({c["noun_merge"]["reason"] for c in payload["cards"]},
-                             {"multiple_dictionary_entries"})
+            self.assertLessEqual({c["noun_merge"]["reason"] for c in payload["cards"]},
+                                 {"multiple_dictionary_entries", "not_an_inflection"})
 
     def test_wiktionary_real_form_of_rows_in_spanish_and_portuguese(self):
         for language in ("es", "pt"):
@@ -199,7 +224,8 @@ class NounMergeTests(unittest.TestCase):
                 cards = [{**create_card_record("es", s).to_dict(), "rank": i}
                          for i, s in enumerate(("gato", "gatos"), 1)]
                 payload, _ = adapter.build(cards, snapshot_id="test")
-                self.assertEqual([not special] * 2, [c["noun_merge"]["allowed"] for c in payload["cards"]])
+                # A separately defined plural (gatos "special meaning") stays its own card.
+                self.assertEqual([True, not special], [c["noun_merge"]["allowed"] for c in payload["cards"]])
 
 
 if __name__ == "__main__":

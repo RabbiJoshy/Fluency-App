@@ -12,6 +12,7 @@ import unicodedata
 import unittest
 from pathlib import Path
 
+from fluency.enrichments.card_rules import NOUN_MERGE_RULES
 from fluency.sense_menu.noun_merge import RULE_VERSION
 
 
@@ -26,8 +27,12 @@ REBUILD = (
 class MergeExceptionsCurrentTests(unittest.TestCase):
     def test_app_and_builder_agree_on_the_rule(self) -> None:
         vocab = (APP / "js/vocab.js").read_text(encoding="utf-8")
-        accepted = set(re.findall(r"noun_merge_rule === '([^']+)'", vocab))
-        self.assertEqual(accepted, {RULE_VERSION})
+        # The app accepts the current rule and the stricter v2 lists still
+        # shipped for cs/fi/nl/fr; the Python card rules accept the same set.
+        accepted = set(re.findall(r"'(noun-merge/v\d+)'",
+                                  re.search(r"NOUN_MERGE_RULES = new Set\(\[([^\]]*)\]\)", vocab).group(1)))
+        self.assertIn(RULE_VERSION, accepted)
+        self.assertEqual(accepted, NOUN_MERGE_RULES)
 
     def test_each_live_speech_deck_has_a_current_list(self) -> None:
         config = json.loads((APP / "config/config.json").read_text(encoding="utf-8"))
@@ -47,9 +52,9 @@ class MergeExceptionsCurrentTests(unittest.TestCase):
                     release and any(f"/{release}/" in value for value in live),
                     f"{path} was built for {release}, but {name} serves {index}; {REBUILD}",
                 )
-                self.assertEqual(
-                    payload.get("noun_merge_rule"), RULE_VERSION,
-                    f"{path} predates noun merge rule {RULE_VERSION}; {REBUILD}",
+                self.assertIn(
+                    payload.get("noun_merge_rule"), NOUN_MERGE_RULES,
+                    f"{path} predates the noun merge rules {sorted(NOUN_MERGE_RULES)}; {REBUILD}",
                 )
                 # Decision 0033: a form-privilege verdict for every release
                 # card replaces the visible-sense signatures.

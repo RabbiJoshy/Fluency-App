@@ -34,7 +34,7 @@ if (card.noun_merge !== original || lemmaGroupKey(card) !== '') throw new Error(
         import json
         cfg = json.loads((ROOT / 'app/config/config.json').read_text())
         for language, pair, kept in [('spanish', ('años', 'año'), ['fue', 'al', 'del']),
-                                     ('portuguese', ('horas', 'hora'), ['no', 'do', 'conta', 'poderes', 'seres'])]:
+                                     ('portuguese', ('horas', 'hora'), ['no', 'do', 'poderes', 'seres'])]:
             with self.subTest(language=language):
                 asset = json.loads((ROOT / 'app' / cfg['languages'][language]['mergeExceptionsPath']).read_text())
                 plural, singular = pair
@@ -43,8 +43,12 @@ if (card.noun_merge !== original || lemmaGroupKey(card) !== '') throw new Error(
                 for word in pair:
                     proof = asset['noun_verdicts'][word]
                     self.assertTrue(proof['allowed'])
-                    self.assertEqual(proof['rule_version'], 'noun-merge/v2')
+                    self.assertEqual(proof['rule_version'], 'noun-merge/v3')
                 self.assertEqual(asset['noun_verdicts'][plural]['sense_set'], asset['noun_verdicts'][singular]['sense_set'])
                 self.assertTrue(asset.get('evidence'))
                 for word in kept:
                     self.assertEqual(asset['keys'][word], '')
+                if language == 'portuguese':
+                    # noun-merge/v3: conta's one "ele conta" line no longer keeps
+                    # the bill/account noun apart from contas; it never joins contar.
+                    self.assertEqual((asset['keys']['conta'], asset['keys']['contas']), ('conta', 'conta'))

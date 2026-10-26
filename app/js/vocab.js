@@ -946,6 +946,8 @@ function mergeArtistExtraSupport(item, splitExamples) {
 }
 
 // lemma-merge-pure
+// Noun-merge proofs this app accepts (src/fluency/sense_menu/noun_merge.py).
+const NOUN_MERGE_RULES = new Set(['noun-merge/v2', 'noun-merge/v3']);
 // A lemma is the headword. Part of speech is not part of it. A spelling joins
 // that lemma only when every non-expression sense names that one headword.
 // Casó joins casar. Casado does not: it also names casado, so it stays its own
@@ -1035,7 +1037,7 @@ function lemmaGroupKey(item) {
     // Compare complete source menus before display inflection or WSD filtering.
     // A subset of shown meanings cannot approve a noun merge.
     const proof = item?.noun_merge;
-    if (proof && (proof.rule_version !== 'noun-merge/v2' || proof.allowed !== true)) return '';
+    if (proof && (!NOUN_MERGE_RULES.has(proof.rule_version) || proof.allowed !== true)) return '';
     const dictionarySenses = [...(item?.meanings || []), ...(item?.unused_menu_senses || []),
         ...(item?.meanings || []).flatMap(meaning => meaning.allSenses || [])];
     if (proof && dictionarySenses.some(meaning => {
@@ -1293,7 +1295,7 @@ function formPrivilegeEligible(item, lemma) {
         || !lead || FORM_CONTRACTION_PART_POS.has(formPrivilegePos(lead.meaning)))) return false;
     if (formPrivilegePos(lead?.meaning) === 'noun') {
         const proof = item?.noun_merge;
-        return proof?.rule_version === 'noun-merge/v2' && proof.allowed === true
+        return NOUN_MERGE_RULES.has(proof?.rule_version) && proof.allowed === true
             && normalizeLemmaToken(proof.lemma) === lemma;
     }
     return true;
@@ -2724,8 +2726,8 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
         const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
             .some(value => String(value || '').includes(`/${built}/`));
         stampMergeExceptionValues(vocabulary, contractions,
-            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.keys : null,
-            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.noun_verdicts : null,
+            sameRelease && NOUN_MERGE_RULES.has(payload?.noun_merge_rule) ? payload?.keys : null,
+            sameRelease && NOUN_MERGE_RULES.has(payload?.noun_merge_rule) ? payload?.noun_verdicts : null,
             built && String(langConfig?.indexPath || '').includes(`/${built}/`)
                 && payload?.visible_sense_rule === VISIBLE_SENSE_MERGE_RULE ? payload?.visible_sense_keys : null,
             built && String(langConfig?.indexPath || '').includes(`/${built}/`)
@@ -2752,9 +2754,9 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
                 _mergeKeysRelease = built;
                 const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
                     .some(value => String(value || '').includes(`/${built}/`));
-                _mergeKeys = (sameRelease && payload?.noun_merge_rule === 'noun-merge/v2'
+                _mergeKeys = (sameRelease && NOUN_MERGE_RULES.has(payload?.noun_merge_rule)
                     && payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
-                _nounMergeVerdicts = sameRelease && payload?.noun_merge_rule === 'noun-merge/v2'
+                _nounMergeVerdicts = sameRelease && NOUN_MERGE_RULES.has(payload?.noun_merge_rule)
                     ? payload?.noun_verdicts : null;
                 _visibleMergeSenses = payload?.visible_sense_rule === VISIBLE_SENSE_MERGE_RULE
                     ? payload?.visible_sense_keys : null;

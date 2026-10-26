@@ -23,6 +23,9 @@ import re
 import unicodedata
 from typing import Any, Iterable, Mapping
 
+# Noun-merge proofs the app accepts (vocab.js NOUN_MERGE_RULES).
+NOUN_MERGE_RULES = {"noun-merge/v2", "noun-merge/v3"}
+
 MIN_PRONOMINAL_EXAMPLES = 3
 EXPRESSION_ROUTES = frozenset({"deterministic_bypass", "invariant", "competitive_wsd", "ambiguous"})
 _TOKEN_SPLIT = re.compile(r"[^\w'’]+|[\d_]+")
@@ -85,7 +88,7 @@ def lemma_group_key(row: Mapping[str, Any], contractions: Iterable[str] = ()) ->
     if proof is not None and not isinstance(proof, dict):
         return ""
     if isinstance(proof, dict):
-        if proof.get("rule_version") != "noun-merge/v2" or proof.get("allowed") is not True:
+        if proof.get("rule_version") not in NOUN_MERGE_RULES or proof.get("allowed") is not True:
             return ""
     meanings = row.get("meanings") or []
     dictionary_senses = [*meanings, *(row.get("unused_menu_senses") or [])]
