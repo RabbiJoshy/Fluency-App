@@ -1,6 +1,6 @@
 // Decision 0033: precompute which forms share a word's card, with the app's
 // own rule (vocab.js formPrivilegeVerdicts), into each configured Speech
-// merge overlay. Writes a new overlay file (-fp1) and repoints config; the
+// merge overlay. Writes a new overlay file (-fp<rule version>) and repoints config; the
 // estimation pool must then be rebuilt (scripts/build_estimation_pools.cjs).
 //
 // Usage: node scripts/build_form_privilege_merges.cjs [language ...]
@@ -51,7 +51,7 @@ if (require.main === module) {
         // Cold rows read the same verdict through their merge key.
         payload.keys = {...payload.keys, ...payload.form_privilege_keys};
         const swap = (key, from) => {
-            const next = from.replace(/(?:-fp1)?\.json$/, '-fp1.json');
+            const next = from.replace(/(?:-fp\d+)?\.json$/, `-fp${RULE.split('/v')[1]}.json`);
             configText = configText.replace(JSON.stringify(from), JSON.stringify(next));
             cfg[key] = next;
             return next;

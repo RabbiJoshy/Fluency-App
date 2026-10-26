@@ -53,7 +53,7 @@ class MergeExceptionsCurrentTests(unittest.TestCase):
                 )
                 # Decision 0033: a form-privilege verdict for every release
                 # card replaces the visible-sense signatures.
-                if payload.get("form_privilege_rule") == "form-privilege/v1":
+                if str(payload.get("form_privilege_rule") or "").startswith("form-privilege/"):
                     verdicts = payload["form_privilege_keys"]
                     rows = json.loads((WORKSPACE / index).read_text(encoding="utf-8")) if (WORKSPACE / index).exists() else None
                     if rows is not None:

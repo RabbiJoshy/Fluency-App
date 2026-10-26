@@ -15,37 +15,43 @@ matar/mataria). Wiktionary also gives every form of a verb the whole lemma
 menu (all 16 meanings of *ter* on all 43 forms), so the menu itself rarely
 says which forms are special.
 
-## Rule
+## Rule (`form-privilege/v2`, 26 October 2026)
 
-Every form of a word shares one card. A form keeps its own card only when it
-is **privileged**: a meaning that is not the plain word carries real usage on
-it, at least 3 published examples and 10% of the form's examples (10% of its
-frequency when counts are absent), the same bar as the *-se* companion rule.
-A meaning counts as not the plain word when it is:
+**Principle.** A card is a thing to learn once. Two forms belong on one card
+when someone who has learned one can read the other: the difference is
+grammar (person, tense, gender, number, or a part-of-speech label for the
+same meaning), which conjugation practice teaches, not vocabulary cards. A
+form keeps its own card only when, in real use, it carries something the
+word's card does not teach.
+
+Real use means at least 3 published examples and 10% of the form's examples
+(10% of its frequency when counts are absent), the bar of the *-se* companion
+rule. Three things count:
 
 1. **Another word** spelled the same, judged over all that word's senses
-   together: *fui*/*foi* (ir and ser), *mato* "bush", *tá* "OK", *fue*.
-2. **Another part of speech** of the same headword: *feito* adjective,
-   *poder*/*poderes* noun, *obrigado* interjection.
-3. **Restricted by the dictionary to some forms**: a sense tagged impersonal
-   or third-person counts only on a third-person form, an imperative sense
-   only on an imperative form. It counts only when the word's other forms
-   rarely use it (under 10%), so *haver* "there is", the main use of every
-   form, privileges none. Portuguese: *há*, *tem*, *faz*, *dá*, *dava*.
-4. **Filed on the form's own dictionary page** and not merely the base word
-   re-glossed for that form. SpanishDict gives *hay* its own page ("there
-   is"); *pensé* also has one, but every sense carries tense and person marks
-   ("I thought; preterite indicative; first person singular"), and *dime*'s
-   glosses an attached pronoun ("tell me"), so neither counts.
-5. **Concentrated on this form**: at least 5 examples, 30% of the form, and
-   under 5% across the word's other forms (*vamos* "let's", *viene* "next",
-   *hacía* "ago"). This is the test most exposed to WSD noise; it does not
-   apply to reflexive senses (the *-se* companion rule decides those) or to
-   nouns (0029's proof decides number).
+   together: *fui*/*foi* (ir and ser), *mato* "bush", *tá* "OK", *feito*,
+   *espera* (Wiktionary's separate noun entry), Spanish *fue*.
+2. **A meaning the dictionary restricts to some forms**: a sense tagged
+   impersonal or third-person counts only on a third-person form, an
+   imperative sense only on an imperative form, and only when the word's
+   other forms rarely use it (under 10%), so *haver* "there is", the main use
+   of every form, privileges none. Portuguese: *há*, *tem*, *faz*, *dá*,
+   *dava*.
+3. **A meaning filed on the form's own dictionary page** under another
+   headword, and not merely the base word re-glossed for that form:
+   Wiktionary's *vamos* "let's" and *digamos* "let's say" (pages *vamos*,
+   *digamos*; headword *ir*, *dizer*), SpanishDict's *hay* "there is". *pensé*
+   has its own SpanishDict page too, but every sense carries tense and person
+   marks ("I thought; preterite indicative; first person singular"), and
+   *dime*'s glosses an attached pronoun ("tell me"), so neither counts.
 
-The reasons Wiktionary does not tag, politeness and mood forms (*queria*,
-*podría*), discourse words (*sabe?*, *digamos*) and imperative interjections,
-reach a card only through test 5.
+v1 also split on **another part of speech of the same headword** and on a
+sense **concentrated on one form**. Both are retired: a part-of-speech label is
+grammar (*teu* determiner/pronoun, *primeiro* adjective/noun, SpanishDict's
+"transitive verb" vs "reflexive verb"), and a form-specific use such as *muito*
+"very", *claro* "of course" or *mesmo* "really" is learned as a row on the
+shared card. Retiring them merged 252 Portuguese and 483 Spanish forms and
+split none.
 
 **Not privileges.** Expressions are their own study items: *há quanto tempo*,
 *está bem*, *no sé* no longer keep *há*, *está*, *sé* apart, which retires the
@@ -61,10 +67,10 @@ contraction therefore stays separate only when its examples lead to a
 function word (preposition, article, pronoun, determiner, conjunction) or to a
 word its spelling contains; *deu*, whose examples are all *dar*, joins *dar*.
 
-**Comparing forms.** Tests 3 and 5 compare a sense across a word's forms, which
-needs a dictionary reference on the sense. Senses without one (lyrics glosses
-written per form: *tengo* "I have", *tiene* "he/she has") are not compared, so
-on such decks only tests 1 and 2 apply.
+**Comparing forms.** Test 2 compares a sense across a word's forms, which needs
+a dictionary reference on the sense. Senses without one (lyrics glosses
+written per form: *tengo* "I have", *tiene* "he/she has") are not compared, and
+lyrics senses name no page for test 3, so on such decks only test 1 applies.
 
 ## Provider parity
 
@@ -82,10 +88,10 @@ out of test 5.
 
 | | Portuguese DECIDE-1 | Spanish r6 |
 |---|---|---|
-| Cards with more than one form | 1,264 | 1,016 |
-| Estimation groups (was) | 6,217 (7,393) | 7,005 (8,948) |
-| Kept apart: other word / part of speech | 289 / 195 | 339 / 394 |
-| Kept apart: restricted / own page / concentrated | 5 / – / 91 | 7 / 2 / 133 |
+| Cards with more than one form | 1,315 | 1,096 |
+| Estimation groups (was) | 6,088 (7,393) | 6,876 (8,948) |
+| Kept apart: another word | 289 | 339 |
+| Kept apart: restricted / own page | 5 / 2 | 9 / 2 |
 
 *ter*, *matar*, *fazer* are now one card each. 2,124 Portuguese and 3,155
 Spanish forms stay apart for the old reasons (unproven noun pairs,
@@ -96,7 +102,7 @@ contractions). *deu* joins *dar* (see Contractions).
 One implementation, in the app: `formPrivilegeVerdicts` in `app/js/vocab.js`
 (`lemma-merge-pure`). `scripts/build_form_privilege_merges.cjs` runs it over a
 release and writes `form_privilege_rule`, `form_privilege_keys` (surface → word,
-or empty) and `form_privilege_reasons` into a new `-fp1` merge overlay, and
+or empty) and `form_privilege_reasons` into a new `-fp<rule version>` merge overlay, and
 repoints config; rebuild the estimation pool afterwards. A release-bound
 verdict decides both `lemmaGroupKey` and `lemmaStudyGroupKey`. A deck without
 verdicts for its release (artist decks, a staging candidate release) runs the

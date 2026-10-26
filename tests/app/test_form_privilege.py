@@ -59,6 +59,14 @@ ROWS = [
     row('em', [(sense('em', 'prep', 'in', 'em2'), 30)]),
     {**row('aonde', [(sense('onde', 'adv', 'where', 'on1'), 20)]), 'is_contraction': True},
     row('onde', [(sense('onde', 'adv', 'where', 'on2'), 30)]),
+    # A part-of-speech label for the same meaning is grammar: teu stays on
+    # one card with tua. vamos "let's" comes from vamos's own page.
+    row('teu', [(sense('teu', 'det', 'your', 'teu1'), 25), (sense('teu', 'pron', 'yours', 'teu2'), 4)]),
+    row('tua', [(sense('teu', 'det', 'your', 'teu3'), 30)]),
+    row('vamos', [(sense('ir', 'verb', 'to go', 'ir1'), 10),
+                  (sense('ir', 'verb', "let's", 'ir2', ref='kaikki:en-vamos-pt-verb-jT-zG51B'), 13)]),
+    row('vou', [(sense('ir', 'verb', 'to go', 'ir3'), 30)]),
+    row('ir', [(sense('ir', 'verb', 'to go', 'ir4', ref='kaikki:en-ir-pt-verb-pt:to_go'), 30)]),
     # An expression on the form does not keep it apart.
     row('sé', [(sense('saber', 'VERB', 'to know', 's1'), 17),
                ({**sense('no sé', 'PHRASE', "I don't know", 's2'), 'pos': 'PHRASE'}, 13)]),
@@ -87,6 +95,9 @@ class FormPrivilegeTests(unittest.TestCase):
         self.assertEqual((lemma['pensé'], lemma['pienso']), ('pensar', 'pensar'))
         self.assertEqual((lemma['há'], lemma['havia']), ('haver', 'haver'))
         self.assertEqual((lemma['sé'], lemma['sabe']), ('saber', 'saber'))
+        self.assertEqual((lemma['teu'], lemma['tua']), ('teu', 'teu'))
+        self.assertEqual(verdicts['vamos'], {'lemma': '', 'reasons': ['own_page']})
+        self.assertEqual((lemma['vou'], lemma['ir']), ('ir', 'ir'))
         self.assertEqual(lemma['deu'], 'dar')
         self.assertEqual((lemma['no'], lemma['aonde']), ('', ''))
 
