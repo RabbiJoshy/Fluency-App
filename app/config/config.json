@@ -91,7 +91,8 @@
       "mergeExceptionsPath": "data/merge-exceptions/es-literal-ground-r6-seam-v1-fw1-visible-v1-fp2.json",
       "bridgePath": "data/bridge/es-fw1-ds25-finite-v1.json",
       "coveragePath": "coverage/es/coverage.json",
-      "dictionaryExamplesPath": "data/dictionary-examples/es-es-speech-v25-literal-ground-r6-10000x30-slim-v1-fw1.json"
+      "dictionaryExamplesPath": "data/dictionary-examples/es-es-speech-v25-literal-ground-r6-10000x30-slim-v1-fw1.json",
+      "exampleAlignmentPath": "data/example-alignment/es-speech-v25-literal-ground-r6-10000x30-fw1-slim/manifest.json"
     },
     "swedish": {
       "name": "Swedish",
@@ -593,7 +594,8 @@
       "mergeExceptionsPath": "data/merge-exceptions/pt-literal-ground-r4-seam-v1-fw1-ds25-visible-v1-decide-expr-v1-fp2.json",
       "bridgePath": "data/bridge/pt-fw1-ds25-decide-expr-v1.json",
       "coveragePath": "coverage/pt/coverage.json",
-      "dictionaryExamplesPath": "data/dictionary-examples/pt-pt-speech-v25-literal-ground-r4-10000x30-slim-v1-fw1-ds25-decide-expr-v1.json"
+      "dictionaryExamplesPath": "data/dictionary-examples/pt-pt-speech-v25-literal-ground-r4-10000x30-slim-v1-fw1-ds25-decide-expr-v1.json",
+      "exampleAlignmentPath": "data/example-alignment/pt-speech-v25-decide-1-10000-slim/manifest.json"
     },
     "portuguese_brazilian": {
       "name": "Brazilian Portuguese",

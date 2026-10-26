@@ -43,9 +43,11 @@ def _variants(examples: list[dict]) -> list[dict]:
     odd["source_url"] = "https://example.org/a"
     odd["sentence_url"] = "https://example.org/b"
     odd["metadata"]["source_title"] = {"title": "A Film", "series": "A Show"}
+    odd["metadata"]["translation_alignment"] = {"score": 0, "model": "LaBSE", "version": "v1"}
     bare = copy.deepcopy(base)
     bare.pop("provenance", None)
     bare["metadata"].pop("wsd", None)
+    bare["metadata"]["translation_alignment"] = None
     return [odd, bare]
 
 
@@ -97,6 +99,7 @@ class SlimExampleTests(unittest.TestCase):
                         urls: [x.source_url || '', x.sentence_url || ''],
                         provenance: normalizedExampleProvenance(x),
                         tier: exampleConfidenceTier(x),
+                        alignment: x.metadata?.translation_alignment ?? null,
                     };
                 }
                 this.project = project;

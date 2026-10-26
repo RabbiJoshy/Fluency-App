@@ -38,7 +38,7 @@ _KEPT_TOP = frozenset({
 })
 _KNOWN_METADATA = frozenset({
     "sentence_id", "source", "target", "translation", "wsd", "selection_metrics",
-    "selection_policy", "source_title", "function_word",
+    "selection_policy", "source_title", "function_word", "translation_alignment",
 })
 _SOURCE_DEFAULT_FIELDS = ("attribution", "license", "url")
 SHARD_DIRECTORY = "vocabulary.examples.shards"
@@ -100,6 +100,8 @@ def slim_example(example: dict[str, Any], defaults: dict[str, dict[str, str]]) -
     source_defaults = defaults.get(source, {})
     meta_source = metadata.get("source") or {}
     record: dict[str, Any] = {"t": example.get("target", ""), "e": example.get("english", ""), "s": source}
+    if "translation_alignment" in metadata:
+        record["ta"] = metadata["translation_alignment"]
     if example.get("assignment_method", source) != source:
         record["a"] = example.get("assignment_method")
     for key, field, prefix in (("x", example.get("example_id"), _EXAMPLE_PREFIX),

@@ -11,6 +11,14 @@ import { promoteSubglossTranslations } from './sense-gloss.js?v=1';
 import { getGrammarWordDefinition } from './function-word-card.js?v=20261016slots';
 import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=1';
 import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=1';
+import { createExampleAlignmentLoader } from './example-alignment.js?v=1';
+
+let exampleAlignmentLoader = null;
+function attachExampleAlignment(payload, langConfig) {
+    if (!langConfig?.exampleAlignmentPath) return payload;
+    exampleAlignmentLoader ||= createExampleAlignmentLoader({ readJson: readJsonWithTimeout, releaseUrl });
+    return exampleAlignmentLoader(payload, langConfig);
+}
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1957,6 +1965,7 @@ function expandSlimExample(record, sources) {
     if (license) source.license = license;
     if (record.r) source.source_record_id = record.r;
     const metadata = { source };
+    if (Object.hasOwn(record, 'ta')) metadata.translation_alignment = record.ta;
     if (Array.isArray(record.fw)) {
         const [kind, value, gloss] = record.fw;
         metadata.function_word = { kind, value, gloss };
@@ -1998,6 +2007,8 @@ function expandSlimExamplePayload(payload, manifest) {
         expanded[id] = {
             ...card,
             m: (card?.m || []).map(group => (group || []).map(record => expandSlimExample(record, sources))),
+            ...(card?.u ? { u: card.u.map(record => record.t !== undefined
+                ? expandSlimExample(record, sources) : record) } : {}),
         };
     }
     return expanded;
@@ -2040,6 +2051,7 @@ async function fetchExampleShard(langConfig, shard) {
         for (const [id, corrected] of Object.entries(overlay)) {
             expanded[id] = { ...expanded[id], ...corrected };
         }
+        await attachExampleAlignment(expanded, langConfig);
         mergeExamplePayload(expanded, examplesPath);
         loadedExampleShards.add(key);
     }).finally(() => exampleShardInflight.delete(key));
@@ -2091,6 +2103,7 @@ async function loadMonolithExamples(langConfig) {
     for (const [id, corrected] of Object.entries(overlay)) {
         examples[id] = { ...examples[id], ...corrected };
     }
+    await attachExampleAlignment(examples, langConfig);
     return window.setActiveExamplesData?.(examples, examplesPath)
         || (window._cachedExamplesData = examples);
 }

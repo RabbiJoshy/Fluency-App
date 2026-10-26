@@ -18,8 +18,10 @@ high enough to remove a useful number of pairs removes good idiom with them:
 in the 0.35-0.50 band roughly three of every four pairs are sound
 ("O fim esta se aproximando." / "The sands are running out."). The floor is
 therefore set low, where the model is unambiguous -- every pair below 0.30 read
-by hand was genuinely misaligned -- and it is a floor, not a ranking. Above it
-no preference is expressed, so the subtitle register survives intact.
+by hand was genuinely misaligned. Corpus selection uses it only as a floor;
+above that floor the subtitle register survives intact. The app can separately
+use the cached scores to put a literal teaching example first, while keeping
+every already-selected example available for cycling.
 
 This buys roughly 0.55% of candidates. That is a tenth of what a higher cut
 would take and it is the part that is actually wrong.

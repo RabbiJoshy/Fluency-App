@@ -38,7 +38,7 @@ function createHarness(overrides = {}) {
         if (file === 'ui.js') source = source.replace(/^applyGlobalStudyDefaults\(\);$/m, '');
         vm.runInContext(source, context, { filename: file });
     };
-    for (const file of ['read-request.js', 'wsd-ui-sidecar.js', 'assignment-filters.js', 'vocab.js', 'estimation.js']) context.loadModule(file);
+    for (const file of ['read-request.js', 'wsd-ui-sidecar.js', 'assignment-filters.js', 'example-alignment.js', 'vocab.js', 'estimation.js']) context.loadModule(file);
     context.elements = elements;
     context.run = code => vm.runInContext(code, context);
     return context;

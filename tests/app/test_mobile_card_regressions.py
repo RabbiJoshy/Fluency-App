@@ -102,11 +102,13 @@ const mod=await import('data:text/javascript;base64,'+Buffer.from(
 const source=fs.readFileSync('app/js/flashcards.js','utf8');
 const start=source.indexOf('function sortExamplesByRelevance(');
 const end=source.indexOf('\n}\n',start)+3;
-const poor={target:'Estava nervosa e agora não quero parecer desesperada nem louca.',
- english:"I got here very early for a date because I was nervous and now I don't want to look desperate or insane.",frequency:13};
-const good={target:'Uma publicidade desesperada como essa é o beijo da morte.',
- english:'You know, desperate advertising like this is the kiss of death.',frequency:7};
-const ctx={...mod,getReinforcementWords:()=>new Set(),activeArtist:null,
+const poor={target:'Um exemplo.',english:'An example.',frequency:13,
+ metadata:{translation_alignment:{score:0.45,model:'LaBSE',version:'v1'}}};
+const good={target:'Uma frase.',english:'A sentence.',frequency:7,
+ metadata:{translation_alignment:{score:0.95,model:'LaBSE',version:'v1'}}};
+const {exampleTranslationAlignment}=await import('data:text/javascript;base64,'+Buffer.from(
+ fs.readFileSync('app/js/example-alignment.js','utf8')).toString('base64'));
+const ctx={...mod,exampleTranslationAlignment,getReinforcementWords:()=>new Set(),activeArtist:null,
  exampleIsSingleSentence:()=>true,exampleConfidenceTier:()=>1,
  exampleReinforcementScore:()=>0,exampleSungByActiveArtist:ex=>ex===poor};
 vm.createContext(ctx);vm.runInContext(source.slice(start,end),ctx);
@@ -114,10 +116,12 @@ const selected=[poor,good],snapshot=JSON.stringify(selected);
 const ordered=ctx.sortExamplesByRelevance(selected);
 assert.equal(ordered[0],good);assert.equal(ordered[1],poor);
 assert.equal(JSON.stringify(selected),snapshot);assert.equal(ordered.length,selected.length);
-assert.equal(mod.translationMismatchPenalty({target:'Obrigado!',english:'Thank you very much!'}),0);
-assert.equal(mod.translationMismatchPenalty({target:'Tenho 3 livros.',english:'I have 30 books.'}),1);
-assert.equal(mod.translationMismatchPenalty({target:'Tenho três livros.',english:'I have 3 books.'}),0);
-assert.equal(mod.translationMismatchPenalty({target:'Quarenta por cento tem menos de 25 anos.',english:'40 percent are under 25 years old.'}),0);
+assert.equal(exampleTranslationAlignment({metadata:{translation_alignment:{score:0}}}),0);
+assert.equal(exampleTranslationAlignment({metadata:{translation_alignment:{score:null}}}),null);
+assert.equal(exampleTranslationAlignment({}),null);
+const unknown={target:'Unknown.',english:'Unknown.',frequency:3};
+assert.equal(ctx.sortExamplesByRelevance([unknown,good])[0],good);
+assert.equal(ctx.sortExamplesByRelevance([unknown,{...unknown}])[0],unknown);
 // Normal pairs tie stably, and the established artist priority is retained.
 assert.equal(ctx.sortExamplesByRelevance([good,{...good}])[0],good);
 ctx.activeArtist={};assert.equal(ctx.sortExamplesByRelevance(selected)[0],poor);

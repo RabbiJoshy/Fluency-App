@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T15:12:05+00:00",
+      "date": "2026-10-26 15:12 GMT",
+      "agent": "Codex",
+      "summary": "Use existing offline LaBSE alignment scores to show clearer teaching examples first.",
+      "detail": [
+        "Carry the cached sentence-pair score, model and version into example metadata; future releases retain it through compact shards.",
+        "Spanish and Portuguese current releases receive release-bound companions: 282,808 Spanish and 139,859 Portuguese selected examples, all scored. Only the active set’s score files load.",
+        "Higher-scored Speech examples appear first. Ties retain the existing ordering; unscored examples remain available. The temporary length/number heuristic is removed.",
+        "Selection, frequency, progress identity and published deck assets stay unchanged. Verified on local mobile cards: assim 0.964 and esa 0.977, with example cycling intact."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T15:12:03+00:00",
       "date": "2026-10-26 15:12 GMT",
       "agent": "Claude",
@@ -354,18 +367,6 @@
         "Use the infinitive only when it belongs to this merged group; otherwise show the most frequent member.",
         "Place +N other forms below the front word; open a centered Merged by Smart Skip panel listing the actual group.",
         "Keep existing lemma metadata, sense grouping, card identities and progress; verify phone and desktop layouts in both themes."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T22:57:00+01:00",
-      "date": "2026-10-22 22:57 BST",
-      "agent": "Antigravity",
-      "summary": "About & Walkthrough: centered title, subtle top and bottom app links, pure toggle walkthrough header",
-      "detail": [
-        "About page: centered the top title ('The problem with most vocabulary apps') so it aligns naturally with the page layout.",
-        "About page: added subtle 'Open app →' links at the top header and at the bottom before footnotes for visitors arriving from a CV.",
-        "Walkthrough modal: streamlined top bar down to just the centered Speech/Music toggle and the close button, eliminating layout shift and visual clutter."
       ],
       "commit": "pending"
     }

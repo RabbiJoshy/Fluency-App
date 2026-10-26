@@ -7,6 +7,7 @@ import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSav
 import { songCreditHTML } from './song-credit.js?v=1';
 import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=2';
 import { installCardTouch } from './card-touch.js';
+import { exampleTranslationAlignment } from './example-alignment.js?v=1';
 import { fitSenseRowText } from './card-row-layout.js?v=20261013rows';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
 import './speech.js?v=20260825ak';
@@ -25,7 +26,6 @@ import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-    translationMismatchPenalty,
 } from './example-personalisation.js?v=20260825ak';
 import {
     parseSpanishDictUsageContext,
@@ -2229,7 +2229,7 @@ function toggleExampleAutoplay(event) {
 
 // Example ordering. Compare the following keys in order:
 //   1. has an English translation  — an untranslated first line teaches nothing
-//   2. no obvious translation mismatch (length/digits; not semantic scoring)
+//   2. higher offline translation alignment — a clearer teaching pair
 //   3. is a single sentence        — 0.5% of corpus lines run to two
 //   4. WSD confidence tier         — cheap-agree > leaf > glosskey > tuple
 //   5. reinforces a recent mistake — local progress state, no pipeline data
@@ -2299,7 +2299,7 @@ function sortExamplesByRelevance(examples) {
         ex,
         index,
         hasEnglish: !!(ex.english && ex.english.trim()),
-        translationMismatch: translationMismatchPenalty(ex),
+        alignment: exampleTranslationAlignment(ex),
         singleSentence: exampleIsSingleSentence(ex),
         confidence: exampleConfidenceTier(ex),
         reinforcement: exampleReinforcementScore(ex, wrongWords),
@@ -2319,7 +2319,8 @@ function sortExamplesByRelevance(examples) {
             || (b.reinforcement - a.reinforcement)
             || (a.index - b.index))
         : ((Number(b.hasEnglish) - Number(a.hasEnglish))
-            || (a.translationMismatch - b.translationMismatch)
+            || (Number(b.alignment !== null) - Number(a.alignment !== null))
+            || ((b.alignment ?? 0) - (a.alignment ?? 0))
             || (Number(b.singleSentence) - Number(a.singleSentence))
             || (a.confidence - b.confidence)
             || (b.reinforcement - a.reinforcement)
@@ -11215,6 +11216,7 @@ function buildProvenancePanelHTML(card) {
                 ['Song', x.song_name || x.song],
                 ['Vocalists', Array.isArray(x.vocalists) ? x.vocalists.join(', ') : x.vocalists],
                 ['Alignment', x.alignment != null ? Number(x.alignment).toFixed(3) : null],
+                ['Translation alignment', exampleTranslationAlignment(x)?.toFixed(3)],
                 ['Source', x.source || pv.attribution || pv.contributor],
                 ['Run ID', x.run_id],
                 ['Example ID', x.example_id],

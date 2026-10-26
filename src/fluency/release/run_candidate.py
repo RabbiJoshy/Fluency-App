@@ -33,6 +33,7 @@ from fluency.core.io import atomic_write, json_bytes
 from fluency.release.study_structure import build_study_structure
 from fluency.release.assignment_store import AssignmentFile, SentenceFile
 from fluency.release.ranked_assigners import NORMAL, RankedAssignments
+from fluency.release.translation_alignment import load_translation_alignment, translation_alignment_metadata
 from fluency.release.validation import SPEECH_DECK_VERSION
 from fluency.pipeline.budget import display_examples_for_rank
 from fluency.sense_menu.canonical import choose as choose_canonical_example
@@ -368,6 +369,9 @@ def build_inactive_run_candidate(
         "sentence_bank": run / "stages/03_sentence_harvest/output/sentence-bank.jsonl",
     }
     inputs = {name: file_content_id(path) for name, path in paths.items()}
+    alignment_path = workspace.root / "embeddings" / "alignment" / f"{language}.json"
+    alignment_cache = load_translation_alignment(alignment_path)
+    alignment_content_id = alignment_cache.get("content_id")
     inventory = _object(paths["inventory"])
     menus = _object(paths["sense_menu"])
     candidates = _object(paths["candidates"])
@@ -735,6 +739,7 @@ def build_inactive_run_candidate(
                 "sentence_id": sentence_id,
                 "selection_policy": POLICY_VERSION,
                 "selection_metrics": item["metrics"],
+                "translation_alignment": translation_alignment_metadata(alignment_cache, sentence_id),
                 "source": sentence["source"],
                 "target": sentence["target"],
                 "translation": sentence["translation"],
@@ -976,6 +981,16 @@ def build_inactive_run_candidate(
             {"inventory": inputs["inventory"], "sentences": inputs["sentence_bank"]},
         ),
     }
+    if alignment_content_id is not None:
+        layers["translation_alignment"] = {
+            "selection_version": "layer-selection/v1",
+            "source_type": "snapshot",
+            "source_id": alignment_cache["alignment_version"],
+            "artifact_id": alignment_content_id,
+            "record_count": len(alignment_cache["scores"]),
+            "requires": {"sentences": inputs["sentence_bank"]},
+            "parameters": {"model": alignment_cache["model"]},
+        }
     if source_titles_path is not None:
         layers["source_titles"] = {
             "selection_version": "layer-selection/v1",
