@@ -361,6 +361,17 @@ function initDesktopShell() {
     const modalAttributes = new Map(pages.map(el => [el, el.getAttribute('aria-modal')]));
     let activeNav = 'desktopStudyBtn';
 
+    // The iPhone install tip stays until it is dismissed on this device.
+    const installCard = document.getElementById('installAppCard');
+    const INSTALL_TIP_KEY = 'fluency_install_tip_hidden_v1';
+    let installHidden = false;
+    try { installHidden = localStorage.getItem(INSTALL_TIP_KEY) === '1'; } catch (_) { /* storage blocked: show it */ }
+    if (installCard) installCard.hidden = installHidden;
+    document.getElementById('installAppClose')?.addEventListener('click', () => {
+        if (installCard) installCard.hidden = true;
+        try { localStorage.setItem(INSTALL_TIP_KEY, '1'); } catch (_) { /* remembered for this visit only */ }
+    });
+
     function closePages() {
         for (const page of pages.filter(el => !el.hidden && !el.classList.contains('hidden'))) {
             // Run the existing close handler so its cleanup/back behavior is kept.

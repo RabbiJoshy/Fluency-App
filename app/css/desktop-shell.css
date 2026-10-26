@@ -168,3 +168,19 @@ body.desktop-workspace .desktop-trail[hidden] { display: none; }
    home screen: no circle, the glyph scaled up to fill the icon's box. */
 body.desktop-workspace #topBar :is(#helpBtn, #desktopAboutBtn) svg circle { display: none; }
 body.desktop-workspace #topBar :is(#helpBtn, #desktopAboutBtn) svg { transform: scale(1.75); stroke-width: 1.9; }
+
+/* Install tip: only in the desktop sidebar, under the account block. */
+.install-app-card { display: none; }
+body.desktop-workspace #topBar .install-app-card {
+    display: block; order: 8; position: relative; margin: 14px 12px 0; padding: 12px 12px 10px;
+    border: 1px solid var(--border-color); border-radius: 14px; background: transparent; font-size: 12px; line-height: 1.4; color: var(--text-secondary);
+}
+body.desktop-workspace #topBar .install-app-card strong { display: block; padding-right: 22px; color: var(--text-primary); font-size: 14px; }
+body.desktop-workspace #topBar .install-app-close { position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; padding: 0; display: grid; place-items: center; border: 0; background: transparent; color: var(--text-muted); font-size: 13px; cursor: pointer; }
+.install-app-bar { display: flex; align-items: center; justify-content: space-between; margin: 10px 0 6px; padding: 5px 8px; border-radius: 12px; background: color-mix(in srgb, var(--text-primary) 8%, transparent); }
+.install-app-bar svg, .install-app-row svg { width: 20px; height: 20px; fill: none; stroke: var(--text-muted); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.install-app-share { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: color-mix(in srgb, var(--accent-primary) 22%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-primary) 60%, transparent); }
+.install-app-share svg { stroke: var(--text-primary); }
+.install-app-row { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 8px; padding: 7px 10px; border-radius: 10px; background: color-mix(in srgb, var(--text-primary) 8%, transparent); color: var(--text-primary); font-size: 13px; }
+.install-app-row svg { stroke: var(--text-primary); }
+body.desktop-workspace #topBar .install-app-card p { margin: 0; }
