@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T20:58:16+00:00",
+      "date": "2026-10-26 20:58 GMT",
+      "agent": "Codex",
+      "summary": "Larger level arrows, a slimmer desktop sidebar and roomier study panels.",
+      "detail": [
+        "Level arrow targets increase to 64px on mobile and 72px on desktop.",
+        "The desktop sidebar is 10% narrower; Practise receives all 23.6px of recovered width while Learn keeps its previous width.",
+        "Desktop Learn and Practise panel gutters and inner control padding are reduced by 20%."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T20:55:49+00:00",
       "date": "2026-10-26 20:55 GMT",
       "agent": "Codex",
@@ -352,19 +364,6 @@
         "Positioned the Music subtitle in the left channel beside both music features (The slang each artist uses and Learn what things are) with scroll reveal.",
         "Centered \"What makes it different\" and \"How it works\" in the main channel with table display matching the top title.",
         "Formatted all bullet points under \"What makes it different\" equally as feature rows."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T18:07:00+01:00",
-      "date": "2026-10-24 18:07 BST",
-      "agent": "Antigravity",
-      "summary": "Flashcards: make chevron functional for collapse/expand and enable POS-wide selection.",
-      "detail": [
-        "Enabled the chevron (▾/▸) on POS section headers to cleanly toggle section expand and collapse.",
-        "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
-        "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
-        "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
       ],
       "commit": "pending"
     }

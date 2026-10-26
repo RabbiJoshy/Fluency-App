@@ -1255,7 +1255,8 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 @media (min-width: 1360px) {
     body.desktop-workspace > .container:has(> #setupPanel > #step2:not([style*="none"])) { padding: 0; }
     body.desktop-workspace #setupPanel.file-upload:has(> #step2:not([style*="none"])):not(.hidden):not([style*="none"]) {
-        grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+        /* Keep Learn's previous width; all space saved in navigation goes to Practise. */
+        grid-template-columns: minmax(0, calc((100% - var(--desktop-nav-reclaimed, 23.6px)) * 0.6153846154)) minmax(0, 1fr);
         gap: 0;
         max-width: none;
         margin: 0;
@@ -1578,7 +1579,7 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 }
 
 /* Larger level controls and a clearer coverage-first readout. */
-#setupPanel #homeLevelStepper .home-level-step { width: 56px; height: 56px; font-size: 48px; }
+#setupPanel #homeLevelStepper .home-level-step { width: 64px; height: 64px; font-size: 56px; }
 /* Apply the tint to nested sample words and percentage digits too: the older
    descendant rule gave them their own muted grey instead of inheriting. */
 #setupPanel #lswExamples .lsw-egs,
@@ -1600,6 +1601,27 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 }
 #setupPanel #lswExamples .lsw-example-words { margin-top: 6px; }
 @media (min-width: 1024px) {
-    #setupPanel #homeLevelStepper .home-level-step { width: 64px; height: 64px; font-size: 54px; }
+    #setupPanel #homeLevelStepper .home-level-step { width: 72px; height: 72px; font-size: 62px; }
     #setupPanel :is(#step2, .home-section-peek) .home-level-stats { font-size: max(18px, var(--home-text)); }
+}
+
+/* Desktop panel gutters and control padding: 20% less space inside each box. */
+@media (min-width: 1024px) {
+    body.desktop-workspace #setupPanel .home-section > .step-header { padding: 1.92vh 1.6vw 0.48vh; }
+    body.desktop-workspace #setupPanel .home-section-footer { padding: 9.6px 1.6vw; }
+    body.desktop-workspace #setupPanel .home-practise { padding: 8px 1.6vw 11.2px; }
+    body.desktop-workspace #setupPanel .home-practise-row { padding-block: 6.4px; }
+    body.desktop-workspace #setupPanel .home-practise-total { padding: 3.2px 0 9.6px; }
+    body.desktop-workspace #setupPanel .home-smart-skip { padding: 6.4px 8px 6.4px 11.2px; }
+    body.desktop-workspace #setupPanel .home-cta-main { padding-inline: 0.8vw; }
+    body.desktop-workspace #setupPanel .home-cta-length { padding-inline: 11.2px; }
+    body.desktop-workspace #setupPanel .home-level-tile { padding: 0.88vh 4.8px 0.8vh; }
+}
+@media (min-width: 1360px) {
+    body.desktop-workspace #setupPanel .home-section > .step-header { padding: 3.2vh 2.8vw 1.92vh; }
+    body.desktop-workspace #setupPanel #step2 > .level-choosing { padding: 1.6vh 2.8vw 0; }
+    body.desktop-workspace #setupPanel :is(#step2, #reviewDeckSection) .home-section-footer { padding: 9.6px 2.8vw 4vh; }
+    body.desktop-workspace #setupPanel .home-practise { padding: 2.4vh 2.4vw; }
+    body.desktop-workspace #setupPanel #step2 :is(#lswExamples, .home-level-progress, #homeLevelTiles) { padding-inline: 0.8vw; }
+    body.desktop-workspace #setupPanel .home-section > .step-header .step-title-trigger > .home-section-help { top: calc(3.2vh - 2px); right: 2.4vw; }
 }

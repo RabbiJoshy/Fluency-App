@@ -1,6 +1,6 @@
 /* The sidebar exists only while picking a set on a roomy desktop. */
 .desktop-shell-brand, .desktop-shell-nav, .desktop-shell-label { display: none; }
-body.desktop-workspace { --desktop-nav-width: 236px; }
+body.desktop-workspace { --desktop-nav-width: 212.4px; --desktop-nav-reclaimed: 23.6px; }
 body.desktop-workspace > .container {
     width: calc(100% - var(--desktop-nav-width));
     max-width: none;
