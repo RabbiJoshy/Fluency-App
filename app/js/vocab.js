@@ -2571,6 +2571,12 @@ async function prepareEstimationCognates(vocabulary, langConfig) {
 
 async function fetchActiveVocabularyData(langConfig) {
     const vocabulary = await fetchActiveVocabularyIndex(langConfig);
+    const indexPath = langConfig?.indexPath || langConfig?.dataPath || '';
+    const artistKey = activeArtist?.slug || window._urlArtistSlug || '';
+    const stampKey = `${indexPath}:${artistKey}:${langConfig?.dictionaryExamplesPath || ''}:${langConfig?.mergeExceptionsPath || ''}`;
+    if (vocabulary && vocabulary._stampedKey === stampKey) {
+        return vocabulary;
+    }
     await prepareEstimationCognates(vocabulary, langConfig);
     // Corpus shares are per-language and tiny; load them on the same pass so
     // the level readout has them before the first render.
@@ -2582,6 +2588,7 @@ async function fetchActiveVocabularyData(langConfig) {
     await stampContractions(vocabulary, langConfig);
     await stampDictionaryExamples(vocabulary,
         activeArtist || window.playlistLiveActive?.() ? null : langConfig);
+    if (vocabulary) vocabulary._stampedKey = stampKey;
     return vocabulary;
 }
 
@@ -4431,6 +4438,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
             }
         }
 
+        window.beginPlacementStudySet?.(flashcards, stats);
         // Initialize card display
         initializeApp();
         window.updateSpeakIcons?.();

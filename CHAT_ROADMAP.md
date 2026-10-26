@@ -133,7 +133,7 @@ sentences. Full account in the archive.
 | Starting a production run | `--run-id` on an **existing named pool** (`fluency pools list`) |
 | Auditing WSD quality | Read **that run's** `stages/04_wsd_assignments/` and its frozen `prewsd/<run-id>/`, not the live app or a ledger another session touched |
 | Unsure whether to harvest | **Do not harvest.** Use the freeze already on disk. |
-| Building a new **Portuguese** release (fw2, a rebuild, anything) | Keep `--assigner-order raw/wsd/pt/assigners/deepseek-v25-20261014 NORMAL` (DEEPSEEK v25 > NORMAL v25, live 2026-10-14), or 13,486 DeepSeek sense fixes silently vanish. Check the build's skipped-row counts. `research/cascade/README.md` |
+| Building a new **Portuguese** release (fw2, a rebuild, anything) | Keep assigner order: `GEMINI_REVIEW v1` > `JEV_TARGETED v1.14` > `JEV_FIRST200 v1.14` > `DEEPSEEK v25` > `NORMAL v25`, or 13,486 DeepSeek sense fixes, 3,558 first-200 Jev corrections, and 448 targeted repairs silently vanish. Check the build's skipped-row counts. `research/cascade/README.md`; `research/pt_jev_sidecar/README.md` |
 
 - `--language` defaults to `fr` in the CLI. Pass it every time.
 - Audits grow a sample and sign off a **new** version file; plant chats run that

@@ -112,14 +112,27 @@ const {createHarness} = require('./estimation_harness.cjs');
     assert.equal(pool.items[0].meanings[0].translation, 'fast');
     assert.equal(pool.placementWords.length, 1);
 
-    // Fast-path in startEstimation skips loadEstimationVocabulary completely
+    // v1's baked-in cognate flags cannot represent the learner's current profile.
+    // Always prepare live metadata rather than accidentally asking a hidden cognate.
     let dynamicCalled = false;
-    precomputedHarness.loadEstimationVocabulary = () => { dynamicCalled = true; throw new Error('Should not be called'); };
+    precomputedHarness.loadEstimationVocabulary = async () => {
+        dynamicCalled = true;
+        return [{id:'live',word:'opaque',rank:1,meanings:[{pos:'NOUN',translation:'meaning'}]},
+            {id:'cognate',word:'hospital',rank:2,meanings:[{pos:'NOUN',translation:'hospital'}]}];
+    };
+    precomputedHarness.loadSpeechSourceFrequency = async () => null;
+    precomputedHarness.prepareEstimationCognates = async () => {};
+    precomputedHarness.finishCardMeanings = (_, meanings) => ({meanings});
+    precomputedHarness.buildSplitCardPair = () => null;
+    precomputedHarness.lemmaStudyGroupKey = () => null;
+    precomputedHarness.isCognateKnown = item => item.id === 'cognate';
     precomputedHarness.config.languages.spanish = poolConfig;
     await precomputedHarness.startEstimation();
-    assert.equal(dynamicCalled, false);
+    assert.equal(dynamicCalled, true);
     assert.equal(precomputedHarness.estimationState.active, true);
-    assert.equal(precomputedHarness.estimationState.currentWord.word, 'rápido');
+    assert.equal(precomputedHarness.estimationState.currentWord.word, 'opaque');
+    precomputedHarness.isCognateKnown = () => true;
+    assert.equal(precomputedHarness.isShowableWord(precomputedHarness.estimationState.currentWord), false);
     precomputedHarness.closeEstimationModal();
 
     // Shipped estimation pools contain valid, non-null stable ranks

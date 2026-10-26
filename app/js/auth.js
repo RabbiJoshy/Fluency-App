@@ -17,7 +17,7 @@ import {
     applyPendingMetaProgressOverlay
 } from './sync-queue.js?v=20260825ak';
 import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=20261010airlock';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=20261016auth';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=20261025loading';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {

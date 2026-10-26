@@ -78,8 +78,11 @@ class DutchLookupTests(unittest.TestCase):
             for card in menu["cards"]
         }
 
-    def test_a_capitalised_entry_is_not_read_without_a_ledger_licence(self):
-        self.assertEqual(self.menus("amerikaanse")["amerikaanse"], [])
+    def test_a_capitalised_entry_is_read_for_lowercase_surface(self):
+        self.assertEqual(
+            self.menus("amerikaanse")["amerikaanse"],
+            [("Amerikaanse", "noun", "a female American")],
+        )
 
     def test_the_ledger_licence_reads_the_title_case_entry_and_its_lemma(self):
         menu = self.menus(

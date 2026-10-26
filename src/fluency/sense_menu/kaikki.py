@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import re
 from typing import Any, Callable, Iterable, Iterator
+import unicodedata
 
 from fluency.features.parenthetical import leading_parenthetical, split_top_level_commas
 from fluency.core.hashing import canonical_content_id, file_content_id
@@ -29,6 +30,7 @@ from fluency.features.wiktionary import (
 from fluency.features.wiktionary_gloss import project_gloss
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
 from fluency.sense_menu.declared_menu import declared_entity_analyses, declared_gloss_analyses
+from fluency.sense_menu.equivalences import stamp_sense_equivalences
 from fluency.sense_menu.noun_merge import stamp_noun_merge
 from fluency.surfaces import trust as _trust
 from fluency.surfaces.resolver import (
@@ -50,6 +52,44 @@ FORM_TAGS = frozenset({"form-of", "alt-of"})
 # preposition's menu; read as a sense, it keeps "with it".
 PRONOMINAL_ADVERB_PREFIX = "pronominal adverb form of"
 _PRONOMINAL_ENGLISH = re.compile(r"[\u201c\"]([^\u201d\"]+)[\u201d\"]")
+
+SEMANTIC_FORM_OF_PREFIXES = re.compile(
+    r"^(?:(?:comparative|superlative)(?:\s+degree)?|female\s+equivalent|clipping|ellipsis|diminutive)\s+of\b",
+    re.IGNORECASE,
+)
+ABBREVIATION_TAGS = frozenset({"abbreviation", "acronym", "initialism"})
+
+
+def is_semantic_form_of_sense(sense: dict[str, Any]) -> bool:
+    """Return True if a form-of/alt-of sense carries lexical meaning after a colon or is a pronominal adverb.
+
+    Form-of senses are generally discarded because they encode inflectional grammar
+    (e.g. 'inflection of abrir: third-person...') or contractions ('contraction of de + a...').
+    When the text after the colon is an actual lexical meaning (comparative/superlative,
+    female equivalent, clipping, ellipsis, diminutive) or when the word is a Dutch pronominal
+    adverb, the sense has meaning of its own and must not be discarded or redirected.
+    """
+    for gloss in _glosses(sense):
+        if gloss.startswith(PRONOMINAL_ADVERB_PREFIX):
+            return True
+        if ":" in gloss:
+            before, after = gloss.split(":", 1)
+            if after.strip() and SEMANTIC_FORM_OF_PREFIXES.match(before.strip()):
+                return True
+    return False
+
+
+def _semantic_form_of_gloss_and_context(sense: dict[str, Any]) -> tuple[str, str] | None:
+    for gloss in _glosses(sense):
+        if ":" in gloss:
+            before, after = gloss.split(":", 1)
+            before = before.strip()
+            after = after.strip()
+            if after and SEMANTIC_FORM_OF_PREFIXES.match(before):
+                first_clause = before.split(",")[0].strip()
+                ctx = re.sub(r"\s*\([^)]*\)", "", first_clause).strip()
+                return after, ctx
+    return None
 
 
 def is_pronominal_adverb_sense(sense: dict[str, Any]) -> bool:
@@ -154,7 +194,7 @@ def _redirect_edges(
     edges: set[RedirectEdge] = set()
     for sense in _json_values(row.get("senses")):
         tags = _sense_tags(sense)
-        if not (tags & FORM_TAGS) or is_pronominal_adverb_sense(sense):
+        if not (tags & FORM_TAGS) or is_semantic_form_of_sense(sense):
             continue
         if tags & reject_tags and not tags & allow_if_tags:
             continue
@@ -182,7 +222,7 @@ def _surface_grammar(row: dict[str, Any], normalize: Callable[[str], str]) -> di
 
     grammar: dict[str, list[str]] = {}
     for sense in _json_values(row.get("senses")):
-        if not (_sense_tags(sense) & FORM_TAGS) or is_pronominal_adverb_sense(sense):
+        if not (_sense_tags(sense) & FORM_TAGS) or is_semantic_form_of_sense(sense):
             continue
         tags = sorted(tag for tag in _sense_tags(sense) if tag not in FORM_TAGS)
         if not tags:
@@ -223,7 +263,7 @@ def _semantic_senses(row: dict[str, Any]) -> list[dict[str, Any]]:
         if (
             (not (_sense_tags(sense) & FORM_TAGS) and not sense.get("form_of")
              and not sense.get("alt_of"))
-            or is_pronominal_adverb_sense(sense)
+            or is_semantic_form_of_sense(sense)
         )
         and _has_meaningful_gloss(sense)
     ]
@@ -304,6 +344,70 @@ def _iter_rows(path: Path, *, language_code: str) -> Iterator[dict[str, Any]]:
 
 
 _SEE_REFERENCE = re.compile(r"^See (?P<targets>[^.]+)\.$")
+_SPELLING_POINTER = re.compile(
+    r"^(?:(?:European\s+|Brazilian\s+)?Portuguese\s+)?(?:standard\s+|nonstandard\s+|alternative\s+|obsolete\s+|archaic\s+|superseded\s+|pre-reform\s+|eye\s+dialect\s+)?spelling\s+(?:\([^)]*\)\s+)?of\s+([^.]+?)(?:\s*\(.*?\))?\.?$",
+    re.I,
+)
+_FORM_POINTER = re.compile(
+    r"^(?:(?:European\s+|Brazilian\s+)?Portuguese\s+)?(?:standard\s+|nonstandard\s+|alternative\s+|obsolete\s+|archaic\s+|superseded\s+|syncopic\s+|informal\s+)?form\s+(?:\([^)]*\)\s+)?of\s+([^.]+?)(?:\s*\(.*?\))?\.?$",
+    re.I,
+)
+_MISSPELLING_POINTER = re.compile(
+    r"^(?:(?:European\s+|Brazilian\s+)?Portuguese\s+)?(?:common\s+)?misspelling\s+of\s+([^.]+?)(?:\s*\(.*?\))?\.?$",
+    re.I,
+)
+_SYNONYM_POINTER = re.compile(r"^synonym\s+of\s+([^.]+?)(?:\s*\(.*?\))?\.?$", re.I)
+
+
+def _extract_pointer_targets(sense: dict[str, Any]) -> list[str]:
+    """Extract headwords or phrases pointed to by a pointer gloss."""
+    xrefs = _cross_references(sense)
+    see_targets = [
+        x["target"] for x in xrefs
+        if x.get("relation") == "see" and isinstance(x.get("target"), str)
+    ]
+    if see_targets:
+        return see_targets
+    for gloss in _glosses(sense) or _glosses(sense, "raw_glosses"):
+        text = str(gloss).strip()
+        m = _SEE_REFERENCE.fullmatch(text)
+        if m:
+            return [t.strip() for t in m.group("targets").split(",") if t.strip()]
+        for pat in (_SPELLING_POINTER, _FORM_POINTER, _MISSPELLING_POINTER, _SYNONYM_POINTER):
+            m = pat.search(text)
+            if m:
+                target = m.group(1).split(";")[0].strip()
+                target = re.sub(r'^[“"]|[”"]$', '', target).strip()
+                if (
+                    target
+                    and not target.startswith("address for")
+                    and not target.startswith("garoto")
+                    and not target.startswith("que seja")
+                ):
+                    return [target]
+    return []
+
+
+def _resolve_pointer_gloss(
+    sense: dict[str, Any],
+    rows_by_word: dict[str, list[dict[str, Any]]],
+    normalize: Callable[[str], str] | None = None,
+) -> str | None:
+    """Resolve a pointer sense to the display gloss of the entry it points to."""
+    targets = _extract_pointer_targets(sense)
+    if not targets:
+        return None
+    norm_fn = normalize or (lambda s: unicodedata.normalize("NFC", s.strip().casefold()))
+    for target in targets:
+        for candidate_key in (target, norm_fn(target)):
+            rows = rows_by_word.get(candidate_key) or []
+            for r in rows:
+                semantic = _semantic_senses(r)
+                for s in semantic:
+                    disp = _display_gloss(s)
+                    if disp and not disp.startswith("Used other than") and not _extract_pointer_targets(s):
+                        return disp
+    return None
 
 
 def _cross_references(sense: dict[str, Any]) -> list[dict[str, str]]:
@@ -338,6 +442,9 @@ def _display_gloss(sense: dict[str, Any]) -> str:
         return ""
     if is_pronominal_adverb_sense(sense):
         return project_gloss(_pronominal_adverb_gloss(sense)).display_text
+    form_of_parts = _semantic_form_of_gloss_and_context(sense)
+    if form_of_parts is not None:
+        return project_gloss(form_of_parts[0]).display_text
     if len(glosses) > 1 and _JUNK_GLOSS_PATTERN.match(glosses[0].strip()):
         return project_gloss(glosses[1]).display_text
     return project_gloss(glosses[0]).display_text
@@ -381,6 +488,11 @@ def _context(sense: dict[str, Any], policy: dict[str, Any] | None = None) -> str
             if companions:
                 return f"+ {companions[0]}"
 
+    # 1b. Semantic form-of relationship (e.g. comparative of mau, female equivalent of dom)
+    form_of_parts = _semantic_form_of_gloss_and_context(sense)
+    if form_of_parts is not None and form_of_parts[1]:
+        return form_of_parts[1]
+
     # 2. Leading parenthetical in raw glosses: strip pure label tags
     construction_tags = set((policy or {}).get("construction_tags") or DEFAULT_CONSTRUCTION_TAGS) | {
         "transitive", "intransitive", "copulative", "auxiliary", "pronominal",
@@ -413,9 +525,17 @@ def _context(sense: dict[str, Any], policy: dict[str, Any] | None = None) -> str
     glosses = _glosses(sense)
     start_idx = 2 if (len(glosses) > 1 and _JUNK_GLOSS_PATTERN.match(glosses[0].strip())) else 1
     if len(glosses) > start_idx:
-        sub = " | ".join(glosses[start_idx:])
-        if len(sub) <= 60:
-            return sub
+        meaningful = [
+            g.strip()
+            for g in glosses[start_idx:]
+            if not (g.strip().startswith("[") and g.strip().endswith("]"))
+        ]
+        if meaningful:
+            sub = " | ".join(meaningful)
+            if len(sub) <= 60:
+                return sub
+            if len(meaningful[-1]) <= 60:
+                return meaningful[-1]
     return ""
 
 
@@ -502,6 +622,48 @@ def _sense_id(
     ).removeprefix("sha256:")
     fallback = f"sense_{identity[:32]}"
     return fallback, f"kaikki-content:{fallback}"
+
+
+def _check_form_restrictions(
+    sense: dict[str, Any],
+    surface_grammar_tags: set[str],
+) -> str | None:
+    """Return drop reason if Wiktionary tags a hard restriction that the form contradicts.
+
+    Restrictions:
+    - plural-only / in-plural: contradicted when form is singular (and not plural).
+    - impersonal: contradicted when form has person/number and is not 3sg.
+      (Untagged senses or senses also marked intransitive/auxiliary/transitive apply to all forms).
+    - imperative: contradicted when form has a finite non-imperative mood (indicative/subjunctive/conditional).
+    - with-definite-article: contradicted when form is explicitly indefinite.
+    """
+    tags = _sense_tags(sense)
+
+    # 1. plural-only / in-plural
+    if "plural-only" in tags or "in-plural" in tags:
+        if "singular" in surface_grammar_tags and "plural" not in surface_grammar_tags:
+            return "plural-only/in-plural restriction (form is singular)"
+
+    # 2. impersonal (not 3sg)
+    if "impersonal" in tags and not ({"intransitive", "transitive", "auxiliary"} & tags):
+        has_person = bool({"first-person", "second-person", "third-person"} & surface_grammar_tags)
+        has_number = bool({"singular", "plural"} & surface_grammar_tags)
+        if has_person or has_number:
+            is_3sg = ("third-person" in surface_grammar_tags) and ("singular" in surface_grammar_tags) and ("plural" not in surface_grammar_tags)
+            if not is_3sg:
+                return "impersonal restriction (form is not 3sg)"
+
+    # 3. imperative
+    if "imperative" in tags and not ("imperative" in surface_grammar_tags):
+        has_finite_mood = bool({"indicative", "subjunctive", "conditional"} & surface_grammar_tags)
+        if has_finite_mood:
+            return "imperative restriction (form is not imperative)"
+
+    # 4. with-definite-article
+    if "with-definite-article" in tags and "indefinite" in surface_grammar_tags:
+        return "with-definite-article restriction (form is indefinite)"
+
+    return None
 
 
 def _metadata(
@@ -650,18 +812,19 @@ class KaikkiSenseMenuAdapter:
         # están whenever están was also an inventory surface, because its rows
         # had been read in an earlier pass and were never looked at again.
         followed: dict[str, set[str]] = {surface: set() for surface in surfaces}
-        for _ in range(self.max_redirect_hops + 1):
+        pointer_targets: set[str] = set()
+        for _ in range(self.max_redirect_hops + 2):
             wanted = {
                 headword
                 for by_headword in paths.values()
                 for headword in by_headword
                 if headword not in scanned
-            }
+            } | {t for t in pointer_targets if t not in scanned}
             pending = any(
                 headword in scanned and headword not in followed[surface]
                 for surface, by_headword in paths.items()
                 for headword in by_headword
-            )
+            ) or any(t not in scanned for t in pointer_targets)
             if not wanted and not pending:
                 break
             found: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -672,6 +835,11 @@ class KaikkiSenseMenuAdapter:
                     word = _safe_surface(row.get("word"), self._normalize)
                     if word in wanted:
                         found[word].append(row)
+                        for s in _json_values(row.get("senses")):
+                            for tgt in _extract_pointer_targets(s):
+                                normalized_tgt = self._normalize(tgt)
+                                if normalized_tgt and normalized_tgt not in scanned:
+                                    pointer_targets.add(normalized_tgt)
                 for word in sorted(wanted):
                     rows_by_word[word].extend(found.get(word, []))
                 scanned.update(wanted)
@@ -736,6 +904,24 @@ class KaikkiSenseMenuAdapter:
                         allowed_positions[surface][target] = set(positions)
                     else:
                         previous.update(positions)
+
+        for surface in surfaces:
+            if surface == self._normalize(surface):
+                for row in rows_by_word.get(surface, []):
+                    raw = semantic_headword(row)
+                    if raw and raw != surface and self._normalize(raw) == surface:
+                        row_tags = set(row.get("tags") or [])
+                        if row_tags & ABBREVIATION_TAGS:
+                            continue
+                        non_abbr = [
+                            s for s in _semantic_senses(row)
+                            if not (_sense_tags(s) & ABBREVIATION_TAGS)
+                        ]
+                        if not non_abbr:
+                            continue
+                        if raw not in paths[surface]:
+                            paths[surface][raw] = (surface, raw)
+                            allowed_positions[surface][raw] = None
 
         return (
             dict(rows_by_word),
@@ -802,8 +988,9 @@ class KaikkiSenseMenuAdapter:
         analyses: list[MenuAnalysis] = []
         for (headword, part_of_speech), row_senses in sorted(grouped.items()):
             source_key = f"{self.language_code}:{headword}:{part_of_speech}"
+            analysis_grammar_raw = surface_grammar.get(surface, {}).get(headword, [])
             analysis_grammar = extract_surface_grammar(
-                surface_grammar.get(surface, {}).get(headword, []),
+                analysis_grammar_raw,
                 policy=self.language_policy,
             )
             provider_id_counts: Counter[str] = Counter(
@@ -814,11 +1001,25 @@ class KaikkiSenseMenuAdapter:
             sense_key_counts: Counter[tuple[str, ...]] = Counter(
                 _sense_keys(sense) for _, sense in row_senses
             )
+            is_inflected_card = (headword != surface)
+            form_grammar_tags = set(analysis_grammar_raw)
+            dropped_senses: list[dict[str, str]] = []
             leaves: dict[str, SenseLeaf] = {}
             seen_signatures: dict[tuple[str, str, tuple], str] = {}
             for row, sense in row_senses:
                 glosses = _glosses(sense)
                 raw_provider_id = sense.get("id")
+                if is_inflected_card:
+                    if _sense_tags(sense) & ABBREVIATION_TAGS:
+                        continue
+                    restriction_reason = _check_form_restrictions(sense, form_grammar_tags)
+                    if restriction_reason is not None:
+                        dropped_senses.append({
+                            "sense_id": raw_provider_id or "",
+                            "reason": restriction_reason,
+                        })
+                        continue
+
                 provider_id_collides = (
                     isinstance(raw_provider_id, str)
                     and provider_id_counts[raw_provider_id] > 1
@@ -833,6 +1034,26 @@ class KaikkiSenseMenuAdapter:
                 )
                 trans = _display_gloss(sense)
                 defn = _context(sense, self.language_policy)
+                resolved_trans = _resolve_pointer_gloss(sense, rows_by_word, getattr(self, "_normalize", None))
+                if resolved_trans:
+                    trans = resolved_trans
+
+                meaningful_subglosses = [
+                    g.strip()
+                    for g in glosses[1:]
+                    if not (g.strip().startswith("[") and g.strip().endswith("]"))
+                ]
+                if meaningful_subglosses and not resolved_trans:
+                    sub_def = meaningful_subglosses[-1]
+                    if not defn or defn in {"of things", "of a person", "said of people"}:
+                        defn = sub_def
+
+                if resolved_trans:
+                    raw_gloss_seq = tuple([f"({defn}) {trans}"] if defn else [trans])
+                else:
+                    raw_gloss_seq = tuple(
+                        _glosses(sense, "raw_glosses") or _glosses(sense, "glosses") or []
+                    )
                 spec_features = tuple(dict.fromkeys((
                     *_specialist_features(
                         sense,
@@ -842,14 +1063,16 @@ class KaikkiSenseMenuAdapter:
                     *analysis_grammar,
                 )))
                 sig = (trans, defn, spec_features)
-                if sig in seen_signatures:
+                if not is_inflected_card and sig in seen_signatures:
                     continue
                 leaf = SenseLeaf(
                     sense_id=sense_id,
                     translation=trans,
                     definition=defn,
                     source_reference=source_reference,
-                    provider_metadata={**_metadata(row, sense, self.language_policy),
+                    provider_metadata={
+                        **_metadata(row, sense, self.language_policy),
+                        "definition_path": list(raw_gloss_seq),
                         **({"source_headword": row.get("word"),
                             "lemma_correction": "wiktionary-row-form-of/v1"}
                            if row.get("word") != headword
@@ -870,6 +1093,8 @@ class KaikkiSenseMenuAdapter:
                     )
                 leaves[sense_id] = leaf
                 seen_signatures[sig] = sense_id
+            if not leaves:
+                continue
             analysis = MenuAnalysis(
                 menu_analysis_id=build_analysis_id(
                     card_id=card["card_id"],
@@ -886,6 +1111,7 @@ class KaikkiSenseMenuAdapter:
                 provider_metadata={
                     "resolution_path": list(paths.get(headword) or (surface, headword)),
                     "resolution": "direct" if headword == surface else "structured_form_of",
+                    "dropped_form_restrictions": dropped_senses,
                     # Declared for every analysis; empty when the surface is
                     # the headword or the dictionary offers no analysis.
                     "surface_grammar": surface_grammar.get(surface, {}).get(headword, []),
@@ -1013,6 +1239,7 @@ class KaikkiSenseMenuAdapter:
             per_surface.append(surface_report)
 
         stamp_noun_merge(menu_cards)
+        stamp_sense_equivalences(menu_cards)
         payload = {
             "menu_version": MENU_VERSION,
             "metadata_contract": METADATA_CONTRACT_VERSION,

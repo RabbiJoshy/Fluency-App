@@ -24,6 +24,11 @@ let estimationSequence = 0;
 function createEstimationState() {
     return {
         active: false,
+        answers: [],
+        placementHistory: [],
+        recheck: null,
+        profileKey: null,
+        ownerKey: null,
         vocabularyData: null,
         placementWords: [],
         placementBaseline: [],
@@ -63,16 +68,15 @@ function openEstimationModal() {
     const importLink = document.getElementById('estimationImportKnownBtn');
     if (importLink) importLink.hidden = !(currentUser && !currentUser.isGuest);
     estimationState = createEstimationState();
-    // Pre-warm estimation pool in background while user views intro
-    const langConfig = getEstimationLangConfig();
-    if (langConfig?.estimationPoolPath) {
-        window.loadPrecomputedEstimationPool?.(langConfig)?.catch(() => {});
-    }
+    document.getElementById('retryEstimationBtn').hidden = false;
+    const keep = document.getElementById('estimationKeepPosition');
+    if (keep) keep.hidden = true;
 }
 
 // Close estimation modal
 function closeEstimationModal() {
     document.getElementById('estimationModal').classList.add('hidden');
+    if (estimationState.recheck) finishPlacementRecheck();
     estimationState.active = false;
     estimationState.loading = false;
     estimationState.sequence = ++estimationSequence;
@@ -215,7 +219,7 @@ function buildEstimationPool(vocabulary, frequencyData = null, { includeAssumed 
                     .sort((a, b) => estimationSurfaceFrequency(b, frequencyData) - estimationSurfaceFrequency(a, frequencyData)
                         || Number(a.rank) - Number(b.rank));
                 const source = prompts[0];
-                if (source) Object.assign(item, { word: source.word, id: source.id, meanings: source.meanings,
+                if (source) Object.assign(item, { estimationPrompt: source, word: source.word, id: source.id, meanings: source.meanings,
                     lemma: source.lemma, rank: source.rank, stableRank: source.stableRank });
             }
         }
@@ -265,7 +269,7 @@ function mainSensePos(word) {
 
 // A candidate is ready once its meanings are loaded and it still qualifies.
 function isShowableWord(word) {
-    return word && !word.estimationAssumedKnown && (!word.splitInfo || Boolean(word.estimationExample)) && word._indexRowsPending !== true
+    return word && !word.estimationAssumedKnown && !estimationAssumesKnown(word) && (!word.splitInfo || Boolean(word.estimationExample)) && word._indexRowsPending !== true
         && hasTranslatedMeaning(word) && !isFunctionWord(word)
         && ESTIMATION_CONTENT_POS.has(mainSensePos(word));
 }
@@ -400,7 +404,7 @@ function chooseNextBandIndex() {
 
     // First cover the whole frequency distribution in a centre-out order. A
     // learner is never estimated from a narrow run of unusually easy/hard words.
-    const untested = estimationState.coverageOrder.find(index => bands[index] && bands[index].answers === 0 && bands[index].sampleSize !== 0);
+    const untested = !estimationState.recheck ? estimationState.coverageOrder.find(index => bands[index] && bands[index].answers === 0 && bands[index].sampleSize !== 0) : undefined;
     if (untested !== undefined) return untested;
 
     const fitted = getPosteriorBandProbabilities(bands);
@@ -408,31 +412,25 @@ function chooseNextBandIndex() {
         (band.known + ESTIMATION_PRIOR) /
         (band.answers + (2 * ESTIMATION_PRIOR))
     );
-    const firstMostlyUnknown = fitted.findIndex(probability => probability < 0.5);
-    let boundaryIndex;
-    if (firstMostlyUnknown < 0) {
-        boundaryIndex = fitted.length - 1;
-    } else if (firstMostlyUnknown === 0) {
-        boundaryIndex = 0;
-    } else {
-        const knownSide = firstMostlyUnknown - 1;
-        boundaryIndex = Math.abs(fitted[knownSide] - 0.5) <=
-            Math.abs(fitted[firstMostlyUnknown] - 0.5)
-            ? knownSide
-            : firstMostlyUnknown;
-    }
-
+    const targets = estimationState.recheck ? [estimationState.recheck.choice.target] : [0.9, 0.8];
+    const boundaries = targets.map(target => {
+        const index = fitted.findIndex(probability => probability < target);
+        return index < 0 ? bands.length - 1 : index;
+    });
+    const adaptiveCount = estimationState.wordsTestedCount - bands.filter(b => b.sampleSize > 0).length;
+    const gapCheck = !estimationState.recheck && adaptiveCount >= 0 && (adaptiveCount + 1) % 5 === 0;
+    const earlierBoundary = Math.min(...boundaries);
     let bestIndex = 0;
     let bestScore = -Infinity;
     bands.forEach((band, index) => {
-        if (band.sampleSize === 0) return;
+        if (band.sampleSize === 0 || (estimationState.recheck && !pickWordFromBand(index))) return;
         const alpha = band.known + ESTIMATION_PRIOR;
         const beta = (band.answers - band.known) + ESTIMATION_PRIOR;
         const total = alpha + beta;
         const variance = (alpha * beta) / ((total * total) * (total + 1));
         const probability = alpha / total;
-        const uncertainty = 1 + (1 - Math.min(1, Math.abs(probability - 0.5) * 2));
-        const boundaryProximity = 1 + (1.5 / (1 + Math.abs(index - boundaryIndex)));
+        const uncertainty = 1 + (1 - Math.min(1, Math.min(...targets.map(target => Math.abs(probability - target))) * 2));
+        const boundaryProximity = 1 + (1.5 / (1 + Math.min(...boundaries.map(boundary => Math.abs(index - boundary)))));
 
         // Recheck local reversals instead of allowing one anomalous response to
         // pull a whole stretch of the fitted curve in the wrong direction.
@@ -443,7 +441,8 @@ function chooseNextBandIndex() {
         const reversalBonus = (left < rawPosterior[index] || rawPosterior[index] < right)
             ? 1.35
             : 1;
-        const score = variance * uncertainty * boundaryProximity * reversalBonus * band.size;
+        if (gapCheck && index > earlierBoundary && reversalBonus === 1) return;
+        const score = variance * uncertainty * boundaryProximity * reversalBonus;
 
         if (score > bestScore) {
             bestScore = score;
@@ -458,12 +457,12 @@ function pickWordFromBand(bandIndex) {
     if (!band) return null;
 
     const prefetched = estimationState.prefetched.get(bandIndex);
-    if (prefetched && !estimationState.shownWordIds.has(getWordKey(prefetched))) {
+    if (prefetched && isShowableWord(prefetched) && recheckWordEligible(prefetched) && !estimationState.shownWordIds.has(getWordKey(prefetched))) {
         return prefetched;
     }
 
     const words = estimationState.validWords.slice(band.start, band.end);
-    const unused = words.filter(word => !word.estimationAssumedKnown && !estimationState.shownWordIds.has(getWordKey(word)));
+    const unused = words.filter(word => isShowableWord(word) && recheckWordEligible(word) && !estimationState.shownWordIds.has(getWordKey(word)));
     if (!unused.length) return null;
 
     return unused[Math.floor(Math.random() * unused.length)];
@@ -546,9 +545,11 @@ function getWordRankLabel(word) {
 }
 
 // Start the estimation test
-async function startEstimation() {
+async function startEstimation(recheck = null) {
     estimationState = createEstimationState();
     const state = estimationState;
+    state.recheck = recheck;
+    state.ownerKey = placementStorageKey();
     const sequence = state.sequence;
     state.langConfig = { ...getEstimationLangConfig() };
     state.loading = true;
@@ -564,25 +565,9 @@ async function startEstimation() {
     try {
         Promise.resolve(window.loadConjugationData?.()).catch(() => {});
 
-        // Fast-path: use precomputed estimation pool if available
-        if (state.langConfig.estimationPoolPath) {
-            const precomputed = await window.loadPrecomputedEstimationPool?.(state.langConfig);
-            if (precomputed && current()) {
-                state.validWords = precomputed.items;
-                state.placementWords = precomputed.placementWords;
-                state.placementBaseline = precomputed.placementWords;
-                state.placementLevels = getEstimationPlacementLevels(state.placementBaseline);
-                state.maxLevel = state.validWords.length;
-                state.bands = buildEstimationBands(state.validWords);
-                state.coverageOrder = buildCoverageOrder(state.bands.length);
-                if (!state.validWords.length) throw new Error('No eligible vocabulary groups');
-                state.active = true;
-                setEstimationLoading(false);
-                await showNextWord();
-                return;
-            }
-        }
-
+        // v1 pools bake in one cognate profile and omit source/sense metadata.
+        // They cannot safely answer for the current learner; use the cached
+        // detached vocabulary instead until a profile-independent format exists.
         const [vocabulary, frequency] = await Promise.all([
             window.loadEstimationVocabulary(state.langConfig, (done, total) =>
                 progress(`Preparing vocabulary groups · ${Math.round(done / total * 100)}%`)),
@@ -617,12 +602,15 @@ async function startEstimation() {
         state.bands = buildEstimationBands(state.validWords);
         state.coverageOrder = buildCoverageOrder(state.bands.length);
         if (!state.validWords.length) throw new Error('No eligible vocabulary groups');
+        state.profileKey = placementProfileKey();
+        if (recheck) seedPlacementRecheck(state, recheck);
         state.active = true;
         setEstimationLoading(false);
         await showNextWord();
     } catch (error) {
         if (!current()) return;
         console.warn('Level check preparation failed:', error);
+        if (recheck) finishPlacementRecheck();
         state.active = false;
         setEstimationLoading(false);
         document.getElementById('estimationTest').style.display = 'none';
@@ -699,7 +687,12 @@ function setEstimationLoading(loading, showPlaceholder = loading) {
 async function showNextWord() {
     if (!estimationState.active || estimationState.loading) return;
 
-    if (estimationState.wordsTestedCount >= ESTIMATION_QUESTION_LIMIT) {
+    if (estimationState.profileKey && (estimationState.profileKey !== placementProfileKey() || estimationState.ownerKey !== placementStorageKey())) {
+        closeEstimationModal();
+        alert('Your vocabulary settings changed. Please start a fresh level check.');
+        return;
+    }
+    if (estimationState.wordsTestedCount >= estimationQuestionLimit() || placementIsStable()) {
         showEstimationResult();
         return;
     }
@@ -794,7 +787,9 @@ function handleAnswer(known) {
 
     band.answers++;
     if (known) band.known++;
+    estimationState.answers.push({ key: getWordKey(estimationState.currentWord), known: Boolean(known) });
     estimationState.wordsTestedCount++;
+    estimationState.placementHistory.push(placementSignature());
     estimationState.translationRevealed = false;
     showNextWord();
 }
@@ -852,11 +847,11 @@ function updateEstimationProgress() {
     if (levelEl) levelEl.textContent = phase;
 
     const countEl = document.getElementById('estimationCount');
-    if (countEl) countEl.textContent = `${count}/${ESTIMATION_QUESTION_LIMIT}`;
+    if (countEl) countEl.textContent = `${count}/${estimationQuestionLimit()}`;
 
     const fillEl = document.getElementById('estimationProgressFill');
     if (fillEl) {
-        const pct = Math.min(100, Math.round((count / ESTIMATION_QUESTION_LIMIT) * 100));
+        const pct = Math.min(100, Math.round((count / estimationQuestionLimit()) * 100));
         fillEl.style.width = `${pct}%`;
     }
 }
@@ -909,7 +904,7 @@ function buildEstimationPlacementRegions(levels) {
 // inflections it has. Split siblings remain distinct groups. The recognition
 // curve is interpolated between sampled bands so a sparse sample cannot turn
 // a single answer into a sharp placement cliff.
-function calculateRecognitionPlacement(items, bands, levels, baseline) {
+function calculateRecognitionPlacement(items, bands, levels, baseline, targets = [0.9, 0.8]) {
     const regions = buildEstimationPlacementRegions(levels);
     const sampled = bands.filter(band => (band.sampleSize ?? band.size) > 0);
     const fitted = fitMonotonicProbabilities(sampled.map(band =>
@@ -943,7 +938,7 @@ function calculateRecognitionPlacement(items, bands, levels, baseline) {
     const levelAnchors = occupied.map((row, index) => ({ position: row.index, probability: probabilities[index] }));
     const profile = regions.map((level, index) => ({ ...level,
         probability: interpolateRecognition(levelAnchors, index), groups: perLevel[index].size }));
-    const choices = [0.9, 0.8].map(target => {
+    const choices = targets.map(target => {
         const index = profile.findIndex(level => level.probability + 1e-10 < target);
         const level = profile[index < 0 ? profile.length - 1 : index];
         if (!level) return null;
@@ -976,6 +971,7 @@ function estimationChoiceLocation(choice) {
 }
 
 function showEstimationResult() {
+    if (estimationState.recheck) return showPlacementRecheckResult();
     estimationState.active = false;
     estimationState.sequence = ++estimationSequence;
     const counts = calculateGroupEstimate(estimationState.bands, estimationState.maxLevel);
@@ -1033,11 +1029,16 @@ function levelButtonForRank(rank) {
 // Apply the point estimate. The interval remains explanatory UI; the existing
 // progress contract intentionally stores one backwards-compatible rank value.
 async function useEstimatedLevel(choiceIndex = 0) {
+    if (estimationState.ownerKey && estimationState.ownerKey !== placementStorageKey()) return closeEstimationModal();
+    if (estimationState.profileKey && estimationState.profileKey !== placementProfileKey()) return closeEstimationModal();
+    if (estimationState.recheck && !estimationState.placementChoices.length) return closeEstimationModal();
     const index = Number.isInteger(choiceIndex) ? choiceIndex : 0;
     const choice = estimationState.placementChoices[index];
     const level = choice?.sourceRank ?? estimationState.estimatedLevel;
     estimationState.estimatedLevel = level;
     if (choice) estimationState.estimatedLevelRank = Math.max(0, choice.startRank - 1);
+    if (estimationState.recheck) finishPlacementRecheck();
+    else if (choice) armPlacementChecker(choice);
     levelEstimates[selectedLanguage] = level;
     saveLevelEstimateToSheet(level);
     closeEstimationModal();
@@ -1051,6 +1052,7 @@ async function useEstimatedLevel(choiceIndex = 0) {
 }
 
 function retryEstimation() {
+    if (estimationState.recheck) return closeEstimationModal();
     estimationState = createEstimationState();
     document.getElementById('estimationResult').style.display = 'none';
     const fillEl = document.getElementById('estimationProgressFill');
@@ -1132,6 +1134,206 @@ window.showEstimationResult = showEstimationResult;
 window.useEstimatedLevel = useEstimatedLevel;
 window.retryEstimation = retryEstimation;
 window.selectLevelForRank = selectLevelForRank;
+
+// Placement evidence is local to an account, language, release and profile.
+// It never writes individual words into the learner's progress.
+function placementStorageKey() {
+    const account = currentUser && !currentUser.isGuest
+        ? `account:${currentUser.initials || currentUser.id || currentUser.email}` : 'guest';
+    return `fluency-placement-v1:${encodeURIComponent(account)}:${selectedLanguage}`;
+}
+function placementFastTrackProfile() {
+    try {
+        const account = currentUser && !currentUser.isGuest ? String(currentUser.initials) : 'guest';
+        const value = JSON.parse(localStorage.getItem(`fluency_fast_track_v1|${account}|${selectedLanguage.toLowerCase()}`) || 'null');
+        return value ? { enabled: value.enabled, skip: value.skip, bridge: value.bridge,
+            excludedKnownLanguages: value.excludedKnownLanguages } : null;
+    } catch (_) { return null; }
+}
+function placementProfileKey() {
+    const cfg = getEstimationLangConfig() || {};
+    return JSON.stringify({ release: cfg.indexPath || cfg.dataPath, pool: cfg.estimationPoolPath,
+        frequency: cfg.frequencyPath, cognates: cfg.cognatesPath, bridge: cfg.bridgePath,
+        languages: [...(window.activeKnownLanguages?.() || [])].sort(),
+        thresholds: window.getCognateAlgorithmInfo?.().thresholds || {},
+        threshold: globalThis.cognateThreshold, single: globalThis.hideSingleOccurrence,
+        fastTrack: placementFastTrackProfile() });
+}
+function writePlacementSession(session) {
+    try { localStorage.setItem(placementStorageKey(), JSON.stringify(session)); }
+    catch (error) { console.warn('Could not retain placement check:', error); }
+}
+function readPlacementSession() {
+    try {
+        const session = JSON.parse(localStorage.getItem(placementStorageKey()) || 'null');
+        if (!session || session.version !== 1 || session.profile !== placementProfileKey()
+            || session.choice.sourceRank !== levelEstimates[selectedLanguage]) return null;
+        return session;
+    } catch (_) { return null; }
+}
+function currentPlacementChoices(bands = estimationState.bands) {
+    const state = estimationState;
+    return calculateRecognitionPlacement(state.validWords, bands, state.placementLevels,
+        state.placementBaseline, state.recheck ? [state.recheck.choice.target] : [0.9, 0.8]).choices;
+}
+function placementSignature(bands) {
+    return JSON.stringify(currentPlacementChoices(bands).map(c => [c.startRank, c.rankBasis]));
+}
+function placementIsStable() {
+    const state = estimationState;
+    if (state.wordsTestedCount < (state.recheck ? 8 : 20) || !state.placementLevels.length) return false;
+    const signature = placementSignature();
+    if (state.placementHistory.length < 5 || !state.placementHistory.slice(-5).every(s => s === signature)) return false;
+    const fitted = getPosteriorBandProbabilities(state.bands);
+    const targets = state.recheck ? [state.recheck.choice.target] : [0.9, 0.8];
+    const indices = new Set(targets.map(target => {
+        const index = fitted.findIndex(p => p < target);
+        return index < 0 ? state.bands.length - 1 : index;
+    }));
+    for (const index of indices) {
+        for (const known of [0, 1]) {
+            const bands = state.bands.map(b => ({ ...b }));
+            if (!bands[index] || !bands[index].sampleSize) return false;
+            bands[index].answers++;
+            bands[index].known += known;
+            if (placementSignature(bands) !== signature) return false;
+        }
+    }
+    return true;
+}
+function estimationQuestionLimit() { return estimationState.recheck ? 15 : ESTIMATION_QUESTION_LIMIT; }
+function recheckWordEligible(word) {
+    const choice = estimationState.recheck?.choice;
+    if (!choice) return true;
+    return word.estimationMembers.every(({ source }) =>
+        (choice.rankBasis === 'stable' ? levelRankOf(source) : Number(source.rank)) < choice.startRank);
+}
+function armPlacementChecker(choice) {
+    const state = estimationState;
+    const members = [];
+    for (const item of state.validWords) {
+        if (item.estimationAssumedKnown) continue;
+        for (const { source } of item.estimationMembers) {
+            members.push({ rank: Number(source.rank), key: getWordKey(item),
+                id: String(item.splitInfo ? item.id : source.id || ''), split: Boolean(item.splitInfo) });
+        }
+    }
+    writePlacementSession({ version: 1, profile: placementProfileKey(), choice,
+        answers: state.answers, members, evidence: [], status: 'armed', set: null });
+}
+function placementStudyContextAllowed(context) {
+    return isSpeechMode() && !window.isSeriesStudy?.() && context?.studyMode === 'new'
+        && !context.isFastTrack && !context.isDailyReview;
+}
+function placementSetIdentity(cards, context) {
+    return JSON.stringify([context.rangeString, cards.map(c => c.fullId).sort()]);
+}
+function beginPlacementStudySet(cards, context) {
+    const session = readPlacementSession();
+    if (!session || !['armed', 'collecting'].includes(session.status) || !placementStudyContextAllowed(context)) return;
+    const identity = placementSetIdentity(cards, context);
+    if (session.status === 'collecting') {
+        if (identity !== session.set) { session.status = 'done'; writePlacementSession(session); }
+        else context.placementSet = identity;
+        return;
+    }
+    const [start, end] = String(context.rangeString).split('-').map(Number);
+    if (!(start <= session.choice.startRank && session.choice.startRank < end)
+        || (context.rangeBasis || 'source') !== (session.choice.rankBasis || 'source')) {
+        session.status = 'done'; writePlacementSession(session); return;
+    }
+    session.status = 'collecting'; session.set = identity;
+    context.placementSet = identity;
+    session.cards = {};
+    for (const card of cards) {
+        const matches = session.members.filter(m => m.rank === Number(card.rank));
+        const member = matches.find(m => m.split ? String(card.fullId).endsWith(m.id) || String(card.id) === m.id : !card.splitInfo);
+        if (!member || card.previewOnly || card.isChainChild || estimationAssumesKnown(card)
+            || window.getWordProgressState?.(card.fullId, card.targetWord)?.seen
+            || card.meanings?.some(m => m.isKnownSense)) continue;
+        session.cards[card.fullId] = member.key;
+    }
+    writePlacementSession(session);
+}
+function observePlacementStudyCard(card, recognition) {
+    if (recognition && !card?.previewOnly && !card?.isChainChild) return;
+    recordPlacementStudyAnswer(card, false, { recognition: false, exposed: true });
+}
+function recordPlacementStudyAnswer(card, known, { recognition = false, exposed = false } = {}) {
+    const session = readPlacementSession();
+    if (!session || session.status !== 'collecting' || !isSpeechMode() || window.isSeriesStudy?.()) return;
+    const key = session.cards?.[card?.fullId];
+    if (!key || session.evidence.some(a => a.key === key) || session.answers.some(a => a.key === key)) return;
+    // Consume the first encounter even when it cannot supply placement evidence.
+    for (const id of Object.keys(session.cards)) if (session.cards[id] === key) delete session.cards[id];
+    if (recognition && !exposed && !card.previewOnly && !card.isChainChild && !estimationAssumesKnown(card)
+        && !window.getWordProgressState?.(card.fullId, card.targetWord)?.seen) {
+        session.evidence.push({ key, known: Boolean(known) });
+    }
+    writePlacementSession(session);
+}
+function completePlacementStudySet(context) {
+    const panel = document.getElementById('placementRecheckOffer');
+    if (panel) panel.hidden = true;
+    const session = readPlacementSession();
+    if (!session || !placementStudyContextAllowed(context) || context.placementSet !== session.set) return;
+    if (session.status === 'collecting') {
+        const n = session.evidence.length;
+        session.status = n >= 10 && session.evidence.filter(a => a.known).length / n <= 0.2 ? 'offered' : 'done';
+        writePlacementSession(session);
+    }
+    if (panel) panel.hidden = session.status !== 'offered';
+}
+function finishPlacementRecheck() {
+    const session = readPlacementSession();
+    if (session) { session.status = 'done'; writePlacementSession(session); }
+    const panel = document.getElementById('placementRecheckOffer');
+    if (panel) panel.hidden = true;
+}
+async function startPlacementRecheck() {
+    const session = readPlacementSession();
+    if (!session || session.status !== 'offered') return;
+    session.status = 'rechecking'; writePlacementSession(session);
+    window.hideDeckCompleteModal?.();
+    openEstimationModal();
+    await startEstimation(session);
+}
+function seedPlacementRecheck(state, session) {
+    if (session.profile !== placementProfileKey()) throw new Error('Placement profile changed');
+    const answers = new Map([...session.answers, ...session.evidence].map(a => [a.key, a]));
+    state.answers = [];
+    state.validWords.forEach((word, index) => {
+        const answer = answers.get(getWordKey(word));
+        if (!answer || word.estimationAssumedKnown) return;
+        const band = state.bands.find(b => index >= b.start && index < b.end);
+        band.answers++; if (answer.known) band.known++;
+        state.answers.push(answer); state.shownWordIds.add(answer.key);
+    });
+}
+function showPlacementRecheckResult() {
+    const state = estimationState;
+    state.active = false;
+    const choice = currentPlacementChoices()[0];
+    const earlier = choice && choice.startRank < state.recheck.choice.startRank;
+    const supported = earlier && placementIsStable();
+    state.placementChoices = supported ? [choice] : [];
+    document.getElementById('estimationTest').style.display = 'none';
+    document.getElementById('estimationResult').style.display = 'block';
+    document.getElementById('estimationResultLevel').textContent = supported
+        ? `Try starting ${estimationChoiceLocation(choice)}` : 'Keep your current starting point';
+    document.getElementById('estimationResultDesc').textContent = supported
+        ? 'Your follow-up answers suggest more familiar vocabulary alongside new words. Your learning progress stays saved.'
+        : 'This short check did not establish a clearer earlier starting point. Your current position is unchanged.';
+    const options = document.getElementById('estimationPlacementOptions');
+    options.innerHTML = supported ? `<button type="button" class="estimation-placement-choice" onclick="useEstimatedLevel(0)">Start ${estimationChoiceLocation(choice)}</button>` : '';
+    document.getElementById('useEstimatedLevelBtn').hidden = true;
+    const keep = document.getElementById('estimationKeepPosition');
+    if (keep) keep.hidden = false;
+    document.getElementById('retryEstimationBtn').hidden = true;
+    finishPlacementRecheck();
+}
+Object.assign(window, { observePlacementStudyCard, beginPlacementStudySet, recordPlacementStudyAnswer, completePlacementStudySet,
+    startPlacementRecheck, finishPlacementRecheck });
 
 // Pure helpers are exported for lightweight regression checks without a DOM.
 export {

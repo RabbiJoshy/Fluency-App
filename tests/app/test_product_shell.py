@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v597"
+EXPECTED_CACHE_NAME = "flashcards-v599"
 
 
 
@@ -978,8 +978,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("error !== 'access_denied'", callback)
         self.assertIn("spotifyWebLogin", callback)
         self.assertIn("/js/spotify.js?v=20260923su", worker)
-        self.assertIn("/js/main.js?v=20261014clarity", worker)
-        self.assertIn("/js/ui.js?v=20261019stg8", worker)
+        self.assertIn("/js/main.js?v=20261026placement", worker)
+        self.assertIn("/js/ui.js?v=20261025loading", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -1002,9 +1002,9 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertIn("config?.publicServices?.progressSyncUrl", auth)
         self.assertIn("secrets.googleScriptUrl || GOOGLE_SCRIPT_URL", auth)
-        self.assertIn('js/auth.js?v=20260929sense6', html)
-        self.assertIn("auth.js?v=20260929sense6", main)
-        self.assertIn("/js/auth.js?v=20260929sense6", worker)
+        self.assertIn('js/auth.js?v=20261025loading', html)
+        self.assertIn("auth.js?v=20261025loading", main)
+        self.assertIn("/js/auth.js?v=20261025loading", worker)
 
     def test_practice_queue_is_browsable_prioritised_and_layered(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -1132,7 +1132,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("tracksHref", spotify)
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
-        self.assertIn("/js/spotify-playlist-import.js?v=20261013music", worker)
+        self.assertIn("/js/spotify-playlist-import.js?v=20261025loading", worker)
         self.assertIn('css/style.css?v=20261014clarity', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)

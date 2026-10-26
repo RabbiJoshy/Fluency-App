@@ -2060,6 +2060,7 @@ async function showEndOfDeckOptions() {
             : `${stats.setSize || stats.total || 0} cards in this session.${typeof currentUser !== 'undefined' && currentUser && !currentUser.isGuest
                 ? " They'll come back for review when they're due." : ''}`;
 
+    window.completePlacementStudySet?.(stats);
     // Show the modal
     const modal = document.getElementById('deckCompleteModal');
     modal.classList.remove('hidden');

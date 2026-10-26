@@ -6,13 +6,15 @@ the `mwe-merged/v1` contract.
 
 from __future__ import annotations
 
+from collections import defaultdict
 from datetime import datetime, timezone
 import json
 from pathlib import Path
 import re
-from typing import Any, Sequence
+from typing import Any, Mapping, Sequence
 
 from fluency.mwe.policy import classify_mwe
+from fluency.wsd.multiword import _compile_discontiguous_pattern
 
 
 _PROSE_FILTER = re.compile(
@@ -111,6 +113,80 @@ def build_spanish_overlay(
     return meta
 
 
+def count_mwe_occurrences(
+    raw_candidates: Mapping[str, Mapping[str, Any]],
+    targets: Sequence[str],
+    translations: Sequence[str] | None = None,
+    *,
+    lang: str = "pt",
+    max_examples_per_mwe: int = 6,
+) -> tuple[dict[str, int], dict[str, list[dict[str, Any]]]]:
+    """Count corpus frequency of MWE candidates and collect examples.
+
+    Counts both:
+    1. Exact contiguous n-grams for all expressions.
+    2. Inflected matches (e.g. 'temos que', 'acabei de') for verbal phrases
+       so that verbal phrases are not sieved off as zero_freq.
+    """
+    counts: dict[str, int] = {k: 0 for k in raw_candidates}
+    examples: dict[str, list[dict[str, Any]]] = {k: [] for k in raw_candidates}
+
+    # Precompile inflected patterns for verbal candidates, indexed by anchor token for performance
+    verbal_patterns_by_anchor: dict[str, list[tuple[str, re.Pattern]]] = defaultdict(list)
+    for expr, cand in raw_candidates.items():
+        pos = cand.get("pos", "")
+        is_verb = (
+            pos == "verb"
+            or (isinstance(pos, (list, tuple)) and "verb" in pos)
+            or cand.get("verbal_idiom")
+        )
+        if is_verb:
+            toks = expr.lower().split()
+            if len(toks) >= 2:
+                pat = _compile_discontiguous_pattern(expr, template_gap_limit=1)
+                if pat:
+                    verbal_patterns_by_anchor[toks[1]].append((expr, pat))
+
+    word_re = re.compile(r"\b[\w'-]+\b")
+    for i, target_text in enumerate(targets):
+        lowered = target_text.lower()
+        tokens = word_re.findall(lowered)
+        num_toks = len(tokens)
+        seen_in_sentence: set[str] = set()
+
+        # 1. Exact contiguous n-grams
+        for n in (2, 3, 4, 5):
+            for j in range(num_toks - n + 1):
+                ngram = " ".join(tokens[j:j+n])
+                if ngram in raw_candidates and ngram not in seen_in_sentence:
+                    seen_in_sentence.add(ngram)
+                    counts[ngram] += 1
+                    if len(examples[ngram]) < max_examples_per_mwe:
+                        en_text = translations[i] if translations and i < len(translations) else ""
+                        examples[ngram].append({
+                            lang: target_text,
+                            "en": en_text,
+                            "line": i,
+                        })
+
+        # 2. Inflected matches for verbal phrases
+        for anchor, expr_pats in verbal_patterns_by_anchor.items():
+            if anchor in lowered:
+                for expr, pat in expr_pats:
+                    if expr not in seen_in_sentence and pat.search(target_text):
+                        seen_in_sentence.add(expr)
+                        counts[expr] += 1
+                        if len(examples[expr]) < max_examples_per_mwe:
+                            en_text = translations[i] if translations and i < len(translations) else ""
+                            examples[expr].append({
+                                lang: target_text,
+                                "en": en_text,
+                                "line": i,
+                            })
+
+    return counts, examples
+
+
 def build_wiktionary_inventory(
     language: str,
     wiktionary_path: Path,
@@ -177,31 +253,18 @@ def build_wiktionary_inventory(
                                 "pos": existing.get("pos", "derived"),
                             }
 
-    # 2. Count frequency and collect examples from prewsd frozen examples
+    # 2. Count frequency and collect examples from prewsd frozen examples (including inflected verbal matches)
     examples_data = json.loads(prewsd_examples_path.read_text(encoding="utf-8"))
     targets = examples_data["columns"]["target"]
     translations = examples_data["columns"]["translation"]
 
-    counts: dict[str, int] = {k: 0 for k in raw_candidates}
-    examples: dict[str, list[dict[str, Any]]] = {k: [] for k in raw_candidates}
-
-    word_re = re.compile(r"\b[\w'-]+\b")
-    for i, target_text in enumerate(targets):
-        tokens = word_re.findall(target_text.lower())
-        num_toks = len(tokens)
-        seen_in_sentence: set[str] = set()
-        for n in (2, 3, 4, 5):
-            for j in range(num_toks - n + 1):
-                ngram = " ".join(tokens[j:j+n])
-                if ngram in raw_candidates and ngram not in seen_in_sentence:
-                    seen_in_sentence.add(ngram)
-                    counts[ngram] += 1
-                    if len(examples[ngram]) < max_examples_per_mwe:
-                        examples[ngram].append({
-                            lang: target_text,
-                            "en": translations[i],
-                            "line": i,
-                        })
+    counts, examples = count_mwe_occurrences(
+        raw_candidates,
+        targets,
+        translations,
+        lang=lang,
+        max_examples_per_mwe=max_examples_per_mwe,
+    )
 
     # 3. Classify with non-decomposition policy
     tagged_mwes: dict[str, Any] = {}

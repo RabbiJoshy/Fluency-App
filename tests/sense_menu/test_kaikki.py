@@ -174,6 +174,29 @@ class KaikkiSenseMenuTests(unittest.TestCase):
             [{"relation": "see", "target": "haver de"}],
         )
 
+    def test_pointer_glosses_resolve_to_target_entry_meaning(self):
+        from fluency.sense_menu.kaikki import _resolve_pointer_gloss
+        rows_by_word = {
+            "ter de": [{"pos": "verb", "senses": [{"glosses": ["to have to (indicates obligation)"]}]}],
+            "acabar de": [{"pos": "verb", "senses": [{"glosses": ["to have just (indicates recency)"]}]}],
+            "embaixo": [{"pos": "adv", "senses": [{"glosses": ["below, down"]}]}],
+        }
+        self.assertEqual(
+            _resolve_pointer_gloss({"glosses": ["See ter de, ter que."]}, rows_by_word),
+            "to have to",
+        )
+        self.assertEqual(
+            _resolve_pointer_gloss({"glosses": ["See acabar de."]}, rows_by_word),
+            "to have just",
+        )
+        self.assertEqual(
+            _resolve_pointer_gloss({"glosses": ["European Portuguese standard spelling of embaixo"]}, rows_by_word),
+            "below, down",
+        )
+        self.assertIsNone(
+            _resolve_pointer_gloss({"glosses": ["synonym of perfectum"]}, rows_by_word),
+        )
+
     def test_object_pronoun_gloss_exposes_typed_card_references(self):
         sense = {
             "glosses": [
@@ -380,6 +403,102 @@ class KaikkiSenseMenuTests(unittest.TestCase):
         )
         self.assertEqual(report["per_surface"][0]["strategy"], "no_menu")
         self.assertEqual(report["per_surface"][0]["reason"], "absent")
+
+    def test_semantic_form_of_senses_are_retained_and_do_not_redirect(self):
+        row_base = {
+            "word": "mau", "lang_code": "pt", "pos": "adj",
+            "senses": [{"id": "en-mau-pt-adj-bad", "glosses": ["bad"]}],
+        }
+        row_form = {
+            "word": "pior", "lang_code": "pt", "pos": "adj",
+            "senses": [
+                {
+                    "id": "en-pior-pt-adj-worse",
+                    "glosses": ["comparative degree of mau: worse"],
+                    "tags": ["comparative", "form-of"],
+                    "form_of": [{"word": "mau"}],
+                },
+                {
+                    "id": "en-pior-pt-adj-worst",
+                    "glosses": ["superlative degree of mau: worst"],
+                    "tags": ["superlative", "form-of"],
+                    "form_of": [{"word": "mau"}],
+                },
+            ],
+        }
+        snap = Path(self.temporary.name) / "kaikki-pt-form.jsonl"
+        snap.write_text(
+            json.dumps(row_base) + "\n" + json.dumps(row_form) + "\n",
+            encoding="utf-8",
+        )
+        pt_policy = load_sense_menu_language_policy(REPOSITORY_ROOT, policy_id="pt-v1", language="pt")
+        adapter = KaikkiSenseMenuAdapter(snap, language_code="pt", language_policy=pt_policy)
+        cards = [create_card_record("pt", "pior").to_dict()]
+        menu, _ = adapter.build(cards, snapshot_id="fixture-form-of")
+        analyses = menu["cards"][0]["analyses"]
+        self.assertEqual([(a["headword"], a["part_of_speech"]) for a in analyses], [("pior", "adj")])
+        senses = analyses[0]["senses"]
+        self.assertEqual([s["sense_id"] for s in senses], ["en-pior-pt-adj-worse", "en-pior-pt-adj-worst"])
+        self.assertEqual(
+            [(s["translation"], s["definition"]) for s in senses],
+            [("worse", "comparative degree of mau"), ("worst", "superlative degree of mau")],
+        )
+
+    def test_inflected_card_sub_senses_and_form_restrictions(self):
+        row_verb = {
+            "word": "dar", "lang_code": "pt", "pos": "verb",
+            "senses": [
+                {
+                    "id": "s-dar-give-1",
+                    "glosses": ["to give", "to transfer possession"],
+                    "tags": ["ditransitive"],
+                },
+                {
+                    "id": "s-dar-give-2",
+                    "glosses": ["to give", "to hand over"],
+                    "tags": ["ditransitive"],
+                },
+                {
+                    "id": "s-dar-impersonal",
+                    "glosses": ["to be possible, can"],
+                    "tags": ["impersonal"],
+                },
+            ],
+        }
+        row_form = {
+            "word": "dão", "lang_code": "pt", "pos": "verb",
+            "senses": [
+                {
+                    "id": "s-dao-form",
+                    "glosses": ["third-person plural present indicative of dar"],
+                    "tags": ["form-of", "indicative", "plural", "present", "third-person"],
+                    "form_of": [{"word": "dar"}],
+                }
+            ],
+        }
+        snap = Path(self.temporary.name) / "kaikki-pt-dar.jsonl"
+        snap.write_text(
+            json.dumps(row_verb) + "\n" + json.dumps(row_form) + "\n",
+            encoding="utf-8",
+        )
+        pt_policy = load_sense_menu_language_policy(REPOSITORY_ROOT, policy_id="pt-v1", language="pt")
+        adapter = KaikkiSenseMenuAdapter(snap, language_code="pt", language_policy=pt_policy)
+        cards = [create_card_record("pt", "dão").to_dict()]
+        menu, _ = adapter.build(cards, snapshot_id="fixture-dão")
+        analysis = menu["cards"][0]["analyses"][0]
+        self.assertEqual(analysis["headword"], "dar")
+        senses = analysis["senses"]
+        # Both "to give" senses preserved with their distinguishing definitions
+        self.assertEqual([s["sense_id"] for s in senses], ["s-dar-give-1", "s-dar-give-2"])
+        self.assertEqual(
+            [(s["translation"], s["definition"]) for s in senses],
+            [("to give", "to transfer possession"), ("to give", "to hand over")],
+        )
+        # Impersonal sense dropped because form is 3pl
+        dropped = analysis["provider_metadata"]["dropped_form_restrictions"]
+        self.assertEqual(len(dropped), 1)
+        self.assertEqual(dropped[0]["sense_id"], "s-dar-impersonal")
+        self.assertIn("not 3sg", dropped[0]["reason"])
 
 
 if __name__ == "__main__":

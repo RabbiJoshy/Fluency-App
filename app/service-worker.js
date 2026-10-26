@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v597';
+const CACHE_NAME = 'flashcards-v599';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = '20261014clarity';
+const ASSET_VERSION = '20261025loading';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -37,7 +37,7 @@ const urlsToCache = [
   '/css/extra.css?v=20261016',
   '/css/series-mode.css?v=20261022',
   '/css/passwordless-auth.css?v=20261016auth',
-  '/js/music-workspace.js?v=20261019stg8',
+  '/js/music-workspace.js?v=20261025loading',
   '/js/extra-workspace.js?v=20261016',
   '/js/saved-items.js?v=20261013saved',
   '/css/saved-items.css?v=20261013saved',
@@ -56,7 +56,7 @@ const urlsToCache = [
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
   '/js/routes.js?v=20261013music',
-  '/js/main.js?v=20261014clarity',
+  '/js/main.js?v=20261026placement',
   '/js/theme.js?v=20260922ui',
   '/js/state.js?v=20260921x',
   '/js/data-contracts.js?v=20260825ak',
@@ -66,7 +66,7 @@ const urlsToCache = [
   '/js/offline-content.js?v=20260825ak',
   '/js/speech.js?v=20260914b',
   '/js/artist-ui.js?v=20260825ak',
-  '/js/auth.js?v=20260929sense6',
+  '/js/auth.js?v=20261025loading',
   '/js/learning-profiles.js?v=1',
   '/js/swipe-onboarding.js?v=2',
   '/css/learning-profiles.css?v=1',
@@ -74,7 +74,7 @@ const urlsToCache = [
   '/js/tutorial.js?v=20260929sense6',
   '/js/walkthrough.js?v=20260929sense6',
   '/js/spotify.js?v=20260923su',
-  '/js/estimation.js?v=20261010pool',
+  '/js/estimation.js?v=20261026placement',
   '/js/release-host.js?v=20260921rh',
   '/js/sense-gloss.js?v=1',
   '/js/env.js?v=20261010airlock',
@@ -84,11 +84,11 @@ const urlsToCache = [
   '/js/account-permissions.js?v=1',
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20261014clarity',
-  '/js/progress-overview.js?v=20261013saved',
+  '/js/progress-overview.js?v=20261025loading',
   '/js/session-plan.js?v=1',
-  '/js/ui.js?v=20261019stg8',
+  '/js/ui.js?v=20261025loading',
   '/js/fast-track-preferences.js?v=20260920a',
-  '/js/vocab.js?v=20261019stg8',
+  '/js/vocab.js?v=20261026placement',
   '/js/wsd-ui-sidecar.js?v=1',
   '/js/assignment-filters.js?v=1',
   '/js/grammar-cards.js?v=20260923gn',
@@ -101,8 +101,8 @@ const urlsToCache = [
   '/js/fast-mode.js?v=20260923ft',
   '/js/extras.js?v=20261013saved',
   '/js/song-sets-core.js?v=20260825ak',
-  '/js/song-sets.js?v=20261013music',
-  '/js/spotify-playlist-import.js?v=20261013music',
+  '/js/song-sets.js?v=20261025loading',
+  '/js/spotify-playlist-import.js?v=20261025loading',
   '/js/playlist-live.js?v=20261019stg8',
   '/js/subtitle-import.js?v=20261019stg8',
   '/js/vocabulary-import-core.js?v=20260825ak',
@@ -111,7 +111,7 @@ const urlsToCache = [
   '/js/reverse-cues.js?v=20260927v24',
   '/js/flags.js?v=20260929flags',
   '/js/card-metadata-pills.js?v=20261013rows',
-  '/js/flashcards.js?v=20261019stg8',
+  '/js/flashcards.js?v=20261026placement',
   '/js/sense-reference-cards.js?v=1',
   '/data/see-references/pt-see-v1.json',
   '/js/card-row-layout.js?v=20261013rows',
@@ -123,8 +123,8 @@ const urlsToCache = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/js/example-personalisation.js?v=20260825ak',
-  '/js/flashcards-modals.js?v=20261013saved',
-  '/js/flashcards-conj.js?v=20260922mod',
+  '/js/flashcards-modals.js?v=20261026placement',
+  '/js/flashcards-conj.js?v=20261025loading',
   '/js/side-dock.js?v=20260927pa',
   '/js/review-home.js?v=20260927pa'
 ];

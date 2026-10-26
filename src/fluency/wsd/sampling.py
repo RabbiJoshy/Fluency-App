@@ -37,6 +37,7 @@ go into the run record.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 from typing import AbstractSet, Any, Iterable, Mapping, Sequence
 
 
@@ -235,3 +236,58 @@ def sole_leaf(analyses: Sequence[Any]) -> tuple[Any, Any] | None:
         return None
     analysis = next(item for item in analyses if item.senses)
     return analysis, analysis.senses[0]
+
+
+PORTUGUESE_CLITICS: frozenset[str] = frozenset({
+    "me", "te", "se", "nos", "vos", "o", "a", "os", "as",
+    "lhe", "lhes", "lo", "la", "los", "las", "no", "na", "nos", "nas",
+    "mo", "ma", "mos", "mas", "to", "ta", "tos", "tas", "lho", "lha", "lhos", "lhas",
+})
+
+
+def is_hyphenated_compound_occurrence(
+    sentence_text: str,
+    surface: str,
+    *,
+    clitics: frozenset[str] = PORTUGUESE_CLITICS,
+) -> bool:
+    """Check if target occurrence in sentence is joined by a hyphen into a compound.
+
+    Returns True if the target word only appears as part of a hyphenated compound
+    (e.g. 'guarda-chuva' for 'guarda', 'norte-americanos' for 'norte', 'meia-noite' for 'noite'),
+    meaning the sentence should be skipped for this card.
+
+    Enclitic pronoun attachments to verbs (e.g. 'diz-me' for 'diz', 'ouvi-a' for 'a')
+    are grammatical clitic attachments, not compounds, and are not treated as compounds.
+    If the sentence contains at least one genuine unhyphenated occurrence of the surface,
+    returns False (sentence is valid and kept).
+    """
+    surf_lower = surface.lower()
+    pattern = rf"(?i)(?:(\w+)-)?\b({re.escape(surface)})\b(?:-(\w+))?"
+    matches = list(re.finditer(pattern, sentence_text))
+    if not matches:
+        return False
+
+    has_clean = False
+    has_compound = False
+    for m in matches:
+        prefix, _, suffix = m.groups()
+        is_comp = False
+        if prefix:
+            if surf_lower in clitics:
+                is_comp = False
+            else:
+                is_comp = True
+        elif suffix:
+            if suffix.lower() in clitics:
+                is_comp = False
+            else:
+                is_comp = True
+
+        if is_comp:
+            has_compound = True
+        else:
+            has_clean = True
+
+    return has_compound and not has_clean
+

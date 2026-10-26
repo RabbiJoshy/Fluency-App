@@ -69,7 +69,7 @@
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
     <link rel="modulepreload" href="js/extra-workspace.js?v=20261016">
-    <link rel="modulepreload" href="js/main.js?v=20261014clarity">
+    <link rel="modulepreload" href="js/main.js?v=20261026placement">
     <link rel="modulepreload" href="js/routes.js?v=20261013music">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
@@ -79,33 +79,32 @@
     <link rel="modulepreload" href="js/offline-content.js?v=20260825ak">
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
-    <link rel="modulepreload" href="js/auth.js?v=20260929sense6">
+    <link rel="modulepreload" href="js/auth.js?v=20261025loading">
     <link rel="modulepreload" href="js/card-replica.js?v=20260929sense6">
     <link rel="modulepreload" href="js/tutorial.js?v=20260929sense6">
-    <link rel="modulepreload" href="js/walkthrough.js?v=20260929sense6">
-    <link rel="modulepreload" href="js/estimation.js?v=20261010pool">
+    <link rel="modulepreload" href="js/estimation.js?v=20261026placement">
     <link rel="modulepreload" href="js/release-host.js?v=20260921rh">
     <link rel="modulepreload" href="js/env.js?v=20261010airlock">
     <link rel="modulepreload" href="js/config.js?v=20260921rh">
     <link rel="modulepreload" href="js/progress.js?v=20260927pa">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20261014clarity">
-    <link rel="modulepreload" href="js/music-workspace.js?v=20261019stg8">
-    <link rel="modulepreload" href="js/ui.js?v=20261019stg8">
+    <link rel="modulepreload" href="js/music-workspace.js?v=20261025loading">
+    <link rel="modulepreload" href="js/ui.js?v=20261025loading">
     <link rel="modulepreload" href="js/review-home.js?v=20260927pa">
     <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
-    <link rel="modulepreload" href="js/vocab.js?v=20261019stg8">
+    <link rel="modulepreload" href="js/vocab.js?v=20261026placement">
     <link rel="modulepreload" href="js/grammar-cards.js?v=20260923gn">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
-    <link rel="modulepreload" href="js/song-sets.js?v=20261013music">
-    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20261013music">
+    <link rel="modulepreload" href="js/song-sets.js?v=20261025loading">
+    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20261025loading">
     <link rel="modulepreload" href="js/playlist-live.js?v=20261019stg8">
     <link rel="modulepreload" href="js/subtitle-import.js?v=20261019stg8">
     <link rel="modulepreload" href="js/vocabulary-import-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260923bk">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260927v24">
-    <link rel="modulepreload" href="js/flashcards.js?v=20261019stg8">
+    <link rel="modulepreload" href="js/flashcards.js?v=20261026placement">
     <link rel="modulepreload" href="js/keyboard-guide.js?v=20261005kb">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
@@ -992,6 +991,9 @@
             <!-- Embedded Conjugations Screen -->
             <div id="extraConjugationsView" class="extra-conjugations-view" hidden>
                 <div class="extra-conjugations-topbar">
+                    <button type="button" class="extra-back-btn" id="extraConjugationsBackBtn">
+                        <span aria-hidden="true">‹</span> Extra
+                    </button>
                     <h1 class="extra-conjugations-title">Verb drills</h1>
                     <button type="button" class="extra-close-btn" id="extraConjugationsCloseBtn" aria-label="Close">✕</button>
                 </div>
@@ -1569,6 +1571,12 @@
                     </div>
                 </div>
                 <div id="completeMessage" class="deck-complete-message"></div>
+                <section id="placementRecheckOffer" class="deck-complete-message" hidden aria-labelledby="placementRecheckTitle">
+                    <h3 id="placementRecheckTitle">Check your starting point?</h3>
+                    <p>Most words in this set were new to you. A short check can help find whether an earlier starting point would suit you better.</p>
+                    <button type="button" class="deck-complete-btn" onclick="startPlacementRecheck()">Recheck starting point</button>
+                    <button type="button" class="deck-complete-btn exit-btn" onclick="finishPlacementRecheck()">Keep studying</button>
+                </section>
                 <button class="deck-complete-btn exit-btn" id="markCompleteBtn">
                     <span class="btn-icon" id="markCompleteIcon">↩</span>
                     <span id="markCompleteLabel">Back to Menu</span>
@@ -1799,102 +1807,6 @@
         </div>
     </div>
 
-    <!-- Cognate Rules Modal -->
-    <div id="cognateRulesModal" class="modal hidden">
-        <div class="modal-content fullscreen-modal">
-            <div class="modal-header">
-                <h3>Cognate Detection Rules</h3>
-                <button class="modal-close" id="closeCognateRulesModal">✕</button>
-            </div>
-            <div class="cognate-rules-body">
-                <p class="rules-intro">A word is marked as a <strong>transparent cognate</strong> if it matches any of these patterns when comparing the Spanish word to its English translation:</p>
-
-                <div class="rule-section">
-                    <h4>Suffix Transformations</h4>
-                    <p>Spanish suffixes that map to English equivalents:</p>
-
-                    <div class="suffix-rule">
-                        <code>-ción → -tion</code>
-                        <div class="rule-examples">
-                            <span class="example">información → information</span>
-                            <span class="example">nación → nation</span>
-                            <span class="example">educación → education</span>
-                        </div>
-                    </div>
-
-                    <div class="suffix-rule">
-                        <code>-ista → -ist</code>
-                        <div class="rule-examples">
-                            <span class="example">artista → artist</span>
-                            <span class="example">pianista → pianist</span>
-                            <span class="example">terrorista → terrorist</span>
-                        </div>
-                    </div>
-
-                    <div class="suffix-rule">
-                        <code>-dad → -ty</code>
-                        <div class="rule-examples">
-                            <span class="example">universidad → university</span>
-                            <span class="example">realidad → reality</span>
-                            <span class="example">identidad → identity</span>
-                        </div>
-                    </div>
-
-                    <div class="suffix-rule">
-                        <code>-mente → -ly</code>
-                        <div class="rule-examples">
-                            <span class="example">normalmente → normally</span>
-                            <span class="example">exactamente → exactly</span>
-                            <span class="example">finalmente → finally</span>
-                        </div>
-                    </div>
-
-                    <div class="suffix-rule">
-                        <code>-oso/-osa → -ous</code>
-                        <div class="rule-examples">
-                            <span class="example">famoso → famous</span>
-                            <span class="example">nervioso → nervous</span>
-                            <span class="example">deliciosa → delicious</span>
-                        </div>
-                    </div>
-
-                    <div class="suffix-rule">
-                        <code>-ar → -ate</code>
-                        <div class="rule-examples">
-                            <span class="example">celebrar → celebrate</span>
-                            <span class="example">separar → separate</span>
-                        </div>
-                    </div>
-
-                    <div class="suffix-rule">
-                        <code>-ado/-ada → -ated / -ed</code>
-                        <div class="rule-examples">
-                            <span class="example">activado → activated</span>
-                            <span class="example">preparado → prepared</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="rule-section">
-                    <h4>Phonetic Matching</h4>
-                    <p>English digraphs are normalized to Spanish equivalents before comparing:</p>
-                    <div class="suffix-rule">
-                        <code>ph → f, th → t</code>
-                        <div class="rule-examples">
-                            <span class="example">euforia → euphoria</span>
-                            <span class="example">farmacia → pharmacy</span>
-                            <span class="example">teatro → theater</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="rule-section">
-                    <h4>Why Exclude Cognates?</h4>
-                    <p>Transparent cognates are "free" vocabulary - you likely already recognize them from English. Excluding them lets you focus study time on words that actually require memorization.</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Level Estimation Modal -->
     <div id="estimationModal" class="modal hidden">
@@ -1909,7 +1821,7 @@
                         Check up to 30 vocabulary groups sampled across the frequency range to find a useful starting level.
                     </p>
                     <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">
-                        Think of the meaning first, then reveal it and say whether you knew it beforehand. When a sentence is shown, judge the word's meaning in that sentence.
+                        Think of the meaning first, then reveal it and say whether you knew it beforehand. Recalling the main meaning slowly still counts as knowing. When a sentence is shown, judge the word's meaning in that sentence.
                     </p>
                     <button class="estimation-start-btn" id="startEstimationBtn">Start</button>
                     <button type="button" class="estimation-import-link" id="estimationImportKnownBtn" hidden>Already have a list of words you know? Import them ›</button>
@@ -1948,6 +1860,7 @@
                     </p>
                     <div class="estimation-placement-options" id="estimationPlacementOptions"></div>
                     <button class="estimation-start-btn" id="useEstimatedLevelBtn" hidden>Use Suggested Level</button>
+                    <button type="button" class="estimation-retry-btn" id="estimationKeepPosition" hidden onclick="closeEstimationModal()">Keep my current position</button>
                     <button class="estimation-retry-btn" id="retryEstimationBtn" onclick="retryEstimation()">Try Again</button>
                 </div>
             </div>
@@ -2678,6 +2591,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20261014clarity"></script>
+    <script type="module" src="js/main.js?v=20261026placement"></script>
 </body>
 </html>

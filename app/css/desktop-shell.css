@@ -77,13 +77,13 @@ body.desktop-workspace #topBarUserName.is-icon::after { content: 'Account'; }
 body.desktop-workspace #topBar :is(#envBadge, #syncStatusIndicator, #progressReadRetry) { order: 7; align-self: flex-start; margin: 4px 12px 0; }
 body.desktop-workspace #topBar [hidden] { display: none !important; }
 /* These views fill the workspace beside navigation instead of taking a gutter. */
-body.desktop-workspace .modal.desktop-workspace-page:is(#settingsModal, #totalStatsModal, #reviewHomeModal, #helpModal, #learningContextModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal, #extraModal):not(.hidden) {
+body.desktop-workspace .modal.desktop-workspace-page:is(#settingsModal, #totalStatsModal, #reviewHomeModal, #helpModal, #learningContextModal, #extrasModal, #fastModeModal, #vocabularyImportModal, #extraModal):not(.hidden) {
     left: var(--desktop-nav-width); right: 0; width: auto;
     height: calc(100dvh / var(--ui-zoom, 1));
     padding: 28px 32px; align-items: flex-start; justify-content: center;
     background: var(--bg-primary); backdrop-filter: none; -webkit-backdrop-filter: none;
 }
-body.desktop-workspace .modal.desktop-workspace-page:is(#settingsModal, #totalStatsModal, #reviewHomeModal, #helpModal, #learningContextModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal, #extraModal) > .modal-content {
+body.desktop-workspace .modal.desktop-workspace-page:is(#settingsModal, #totalStatsModal, #reviewHomeModal, #helpModal, #learningContextModal, #extrasModal, #fastModeModal, #vocabularyImportModal, #extraModal) > .modal-content {
     width: 100%; max-width: 1040px; max-height: none; min-height: 0;
     margin: 0; border: 0; border-radius: 0; box-shadow: none;
     background: transparent; animation: none;

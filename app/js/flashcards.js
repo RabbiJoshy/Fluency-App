@@ -3450,6 +3450,9 @@ function advanceToNextDeckCard() {
 
 function recordCardResult(result) {
     const isCorrect = result === 'correct';
+    if (cardNavStack.length === 0) {
+        window.recordPlacementStudyAnswer?.(flashcards[currentIndex], isCorrect, { recognition: !isFlipped });
+    }
 
     // Skip session stats for peek/stacked cards and phrase-chain children —
     // a phrase isn't a deck word, so it shouldn't inflate "X/Y correct".
@@ -6918,6 +6921,7 @@ function bindGrammarPairChips(root) {
 
 function updateCard({ announceHeadword = false } = {}) {
     const card = flashcards[currentIndex];
+    window.observePlacementStudyCard?.(card, !isFlipped);
     // Refresh sense state even when the word was opened from search or a set.
     const knowledgeInfo = window.getPracticeMeaningInfo?.(card);
     if (knowledgeInfo) {
@@ -11814,7 +11818,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20261025loading';
-const MODALS_ASSET_VERSION = '20261013saved';
+const MODALS_ASSET_VERSION = '20261026placement';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

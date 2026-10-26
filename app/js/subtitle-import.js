@@ -127,7 +127,7 @@ export async function loadSeriesPreset(seriesId, onProgress = null) {
     onProgress?.({ stage: 'fetching', message: `Loading ${preset.title} dialogue sample…` });
     const appRoot = new URL('../', import.meta.url);
     try {
-        const response = await fetch(new URL(`data/series/${preset.file}-deck.json?preset=${preset.revision}`, appRoot), { cache: 'no-store' });
+        const response = await fetch(new URL(`data/series/${preset.file}-deck.json?preset=${preset.revision}`, appRoot));
         const deck = response.ok ? await response.json() : null;
         if (validLiveDeck(deck) && deck.playlistId === seriesId
             && deck.language === 'spanish' && deck.presetRevision === preset.revision) {
@@ -137,7 +137,7 @@ export async function loadSeriesPreset(seriesId, onProgress = null) {
         }
     } catch (_) {}
     try {
-        const response = await fetch(new URL(`data/series/${preset.file}.json`, appRoot), { cache: 'no-store' });
+        const response = await fetch(new URL(`data/series/${preset.file}.json`, appRoot));
         if (!response.ok) throw new Error(`Dialogue HTTP ${response.status}`);
         const dialogue = await response.json();
         const deck = await buildSeriesLiveDeck({

@@ -187,6 +187,8 @@ def shard_app_examples(release_app_dir: Path, *, slim: bool = False) -> dict[str
                 if slim:
                     card = {**card, "m": [[slim_example(example, defaults) for example in group]
                                           for group in card.get("m") or []]}
+                    if "u" in card:
+                        card["u"] = [slim_example(example, defaults) for example in card.get("u") or []]
                 payload[app_id] = card
             filename = f"{set_id}.json"
             (shard_dir / filename).write_bytes(_json_bytes(payload))

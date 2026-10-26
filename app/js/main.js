@@ -7,7 +7,7 @@ import { releaseUrl } from './release-host.js?v=20260921rh';
 import './theme.js?v=20260922ui';
 import './desktop-shell.js?v=1';
 import './extra-workspace.js?v=20261016';
-import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=20261019stg8';
+import { openMusicWorkspace, consumeMusicHandoff, navigateMusicWorkspace } from './music-workspace.js?v=20261025loading';
 import './ai-preference.js?v=20261013';
 import { installFlagRendering } from './flags.js?v=20260929flags';
 import { IS_STAGING } from './env.js?v=20261010airlock';
@@ -17,15 +17,15 @@ import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
-import './auth.js?v=20260929sense6';
+import './auth.js?v=20261025loading';
 import './tutorial.js?v=20260929sense6';
-import './estimation.js?v=20261010pool';
+import './estimation.js?v=20261026placement';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260927pa';
 import './knowledge.js?v=20261014clarity';
 import './session-plan.js?v=1';
-import './ui.js?v=20261019stg8';
-import './vocab.js?v=20261019stg8';
+import './ui.js?v=20261025loading';
+import './vocab.js?v=20261026placement';
 import './language-profile.js?v=1';
 import './smart-skip-pairs.js?v=1';
 import './bridge.js?v=1';
@@ -34,12 +34,12 @@ import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260923ft';
 import './extras.js?v=20261013saved';
 import './review-home.js?v=20260927pa';
-import './song-sets.js?v=20261013music';
+import './song-sets.js?v=20261025loading';
 import './playlist-live.js?v=20261019stg8';
-import './spotify-playlist-import.js?v=20261013music';
+import './spotify-playlist-import.js?v=20261025loading';
 import './subtitle-import.js?v=20261019stg8';
 import './vocabulary-import.js?v=20260923bk';
-import './flashcards.js?v=20261019stg8';
+import './flashcards.js?v=20261026placement';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
@@ -126,9 +126,9 @@ perfMark('main.js top — module imports done');
 const APP_LOADING_MESSAGE_KEY = 'fluency_loading_message_v1';
 
 // How long the deck-progress ring stays up before the screen behind it is
-// revealed. Extended twice by 3 seconds per user request, for comfortable reading.
-// A tap always ends it early; the number is the ceiling, not the target.
-const MIN_DECK_LOADING_BEAT_MS = 6900;
+// revealed. Snappy 800ms beat allows the progress animation to settle without
+// unnecessarily delaying interactive study. A tap always ends it early.
+const MIN_DECK_LOADING_BEAT_MS = 800;
 const DECK_RING_CIRCUMFERENCE = 339.292;   // 2 * PI * r, r = 54 in the SVG
 // Once the arcs have settled, invite the tap. Earlier than this and the hint
 // would offer a way out of a screen that has not finished saying anything.
