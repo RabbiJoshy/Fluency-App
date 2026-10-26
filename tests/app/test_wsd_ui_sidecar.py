@@ -68,9 +68,10 @@ if(row.unused_menu_senses.length!==1||row.unused_menu_senses[0].sense_id!=='old'
 if(!row.meanings[1].unassigned||row.wsd_distribution.denominator!==30)throw Error('unresolved/distribution');
 ''')
 
-    def test_config_pins_overlay_and_hydration_reapplies_it(self):
-        cfg = json.loads((ROOT / 'app/config/config.json').read_text())['languages']['portuguese']
-        self.assertIn('/' + cfg['wsdSidecarRelease'] + '/', cfg['indexPath'])
+    def test_portuguese_overlay_retired_and_hydration_reapplies_any_overlay(self):
+        # DECIDE-1 carries its own assignments; no language may ship an overlay.
+        for cfg in json.loads((ROOT / 'app/config/config.json').read_text())['languages'].values():
+            self.assertNotIn('wsdSidecarPath', cfg)
         source = (ROOT / 'app/js/vocab.js').read_text()
         start = source.index('async function fetchIndexRowShard(')
         finish = source.index('async function ensureIndexRowsForRange(', start)

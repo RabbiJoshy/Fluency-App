@@ -1,4 +1,4 @@
-"""Admin assignment filters classify by Jev > DeepSeek > original, confidence, POS, and never alter cards."""
+"""Admin assignment filters classify by assigning model, confidence, gaps and POS, and never alter cards."""
 import json
 import shutil
 import subprocess
@@ -15,31 +15,14 @@ class AssignmentFilterTests(unittest.TestCase):
             line for line in (ROOT / 'app/js/assignment-filters.js').read_text().splitlines()
             if not line.startswith('import '))
         source = source.replace('export ', '')
-        sidecar = (ROOT / 'app/js/wsd-ui-sidecar.js').read_text()
-        sidecar = '\n'.join(l for l in sidecar.splitlines() if not l.startswith('import ')).replace('export ', '')
-        result = subprocess.run(['node', '-e', sidecar + '\n' + source + '\n' + script],
+        result = subprocess.run(['node', '-e', source + '\n' + script],
                                 capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_precedence_filters_and_identity(self):
         self.run_js(r'''
-const sidecar = {
-    cards: {
-        card_pt_j: {
-            examples: {
-                m: [[{ju: {confidence: 0.15, status: 'assigned'}}]]
-            }
-        },
-        card_pt_ju: {
-            counts: {missing_sense: 1},
-            examples: {
-                m: [[{ju: {confidence: 0.95, status: 'missing_sense'}}]]
-            }
-        }
-    },
-    card_ids: {j: 'card_pt_j', ju: 'card_pt_ju'}
-};
-const index = {single_sense: ['s', 'j'], deepseek: ['d', 'j']};
+const index = {single_sense: ['s', 'j'], sources: {decide: ['d'], jev: ['j', 'ju']},
+    min_confidence: {j: 0.15, ju: 0.95}, unresolved: ['ju']};
 const rows = [
     {id: 'j', surface_card_id: 'card_pt_j', rank: 1, meanings: [{pos: 'verb'}]},
     {id: 'ju', surface_card_id: 'card_pt_ju', rank: 2, meanings: [{pos: 'noun'}]},
@@ -47,9 +30,9 @@ const rows = [
     {id: 's', surface_card_id: 'card_pt_s', rank: 4, meanings: [{pos: 'adv'}]},
     {id: 'o', surface_card_id: 'card_pt_o', rank: 5, function_word: ['prep', 'de', 'of']}
 ];
-stampAssignmentFilters(rows, index, sidecar);
+stampAssignmentFilters(rows, index);
 const src = Object.fromEntries(rows.map(r => [r.id, r._assignSrc]));
-if (src.j !== 'jev' || src.ju !== 'jev' || src.d !== 'deepseek' || src.s !== 'original' || src.o !== 'original') {
+if (src.j !== 'jev' || src.ju !== 'jev' || src.d !== 'decide' || src.s !== 'original' || src.o !== 'original') {
     throw Error('precedence ' + JSON.stringify(src));
 }
 globalThis.isAuditAccount = () => true;
@@ -64,8 +47,8 @@ assignmentFilter.excludeSingleSense = false;
 // Source
 assignmentFilter.source = 'original';
 if (keep() !== 'so') throw Error('original ' + keep());
-assignmentFilter.source = 'deepseek';
-if (keep() !== 'd') throw Error('deepseek ' + keep());
+assignmentFilter.source = 'decide';
+if (keep() !== 'd') throw Error('decide ' + keep());
 assignmentFilter.source = 'jev';
 if (keep() !== 'jju') throw Error('jev ' + keep());
 assignmentFilter.source = 'all';
@@ -110,19 +93,20 @@ if (keep() !== 'jjudso') throw Error('non-admin must be unfiltered');
 
 if (rows.some(r => r.rank < 1 || !r.surface_card_id)) throw Error('identity integrity');
 const config = {indexPath: 'https://h/pt/speech/rel/app/vocabulary.index.json'};
-validateAssignmentFilterIndex({schema: 'assignment-filter-index/v1', release_id: 'rel', single_sense: [], deepseek: []}, config);
+validateAssignmentFilterIndex({schema: 'assignment-filter-index/v2', release_id: 'rel', single_sense: [], sources: {}, min_confidence: {}, unresolved: []}, config);
 let rejected = false;
-try { validateAssignmentFilterIndex({schema: 'assignment-filter-index/v1', release_id: 'other', single_sense: [], deepseek: []}, config); } catch (e) { rejected = true; }
+try { validateAssignmentFilterIndex({schema: 'assignment-filter-index/v2', release_id: 'other', single_sense: [], sources: {}, min_confidence: {}, unresolved: []}, config); } catch (e) { rejected = true; }
 if (!rejected) throw Error('release pin');
 ''')
 
-    def test_shipped_index_matches_sidecar_scope_and_config(self):
+    def test_shipped_index_matches_release_and_config(self):
         config = json.loads((ROOT / 'app/config/config.json').read_text())['languages']['portuguese']
         index = json.loads((ROOT / 'app' / config['assignmentFilterPath']).read_text())
-        self.assertEqual(index['schema'], 'assignment-filter-index/v1')
+        self.assertEqual(index['schema'], 'assignment-filter-index/v2')
         self.assertIn(f"/{index['release_id']}/", config['indexPath'])
-        self.assertEqual(index['release_id'], config['wsdSidecarRelease'])
-        self.assertEqual(len(set(index['deepseek'])), len(index['deepseek']))
+        ids = [card for cards in index['sources'].values() for card in cards]
+        self.assertEqual(len(set(ids)), len(ids))
+        self.assertLessEqual(set(index['min_confidence']) | set(index['unresolved']), set(ids))
 
 
 if __name__ == '__main__':

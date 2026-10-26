@@ -2079,7 +2079,7 @@ async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
 
     const wsdSidecar = await loadWsdUiSidecar(effectiveConfig);
     applyWsdUiIndex(data, wsdSidecar);
-    await prepareAssignmentFilters(data, effectiveConfig, wsdSidecar);
+    await prepareAssignmentFilters(data, effectiveConfig);
     validateVocabularyIndex(data, { source: indexPath });
     if (Array.isArray(data)) for (const card of data) promoteSubglossTranslations(card?.meanings);
 
@@ -2109,7 +2109,7 @@ async function fetchDetachedIndex(langConfig) {
     }
     const sidecar = await loadWsdUiSidecar(langConfig);
     applyWsdUiIndex(data, sidecar);
-    await prepareAssignmentFilters(data, langConfig, sidecar);
+    await prepareAssignmentFilters(data, langConfig);
     validateVocabularyIndex(data, { source: indexPath });
     joinedIndexCacheByPath.set(cacheKey, data);
     return data;

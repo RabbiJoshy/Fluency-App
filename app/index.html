@@ -1432,21 +1432,21 @@
                     <label for="assignmentSourceSelect" class="admin-filter-label">Assignment Source</label>
                     <select id="assignmentSourceSelect" class="admin-filter-select">
                         <option value="all">All sources</option>
-                        <option value="deepseek">DeepSeek (accepted corrections)</option>
-                        <option value="jev">Jev (sidecar)</option>
-                        <option value="original">No overlay (original WSD)</option>
+                        <option value="decide">Mercury-decide</option>
+                        <option value="jev">Jev</option>
+                        <option value="original">No model run</option>
                     </select>
                 </div>
 
                 <!-- 3. Jev / WSD Confidence & Gaps -->
                 <div class="admin-filter-group">
-                    <label for="assignmentConfidenceSelect" class="admin-filter-label">Jev Confidence &amp; Gaps</label>
+                    <label for="assignmentConfidenceSelect" class="admin-filter-label">Confidence &amp; Gaps</label>
                     <select id="assignmentConfidenceSelect" class="admin-filter-select">
                         <option value="all">All confidence levels</option>
                         <option value="lowest">Lowest confidence (&lt; 0.2)</option>
                         <option value="marginal">Marginal close-calls (&lt; 0.3)</option>
                         <option value="close">Moderate (&lt; 0.5)</option>
-                        <option value="unresolved">Unresolved gaps (missing sense / ambiguous / disagree)</option>
+                        <option value="unresolved">Gaps (a sentence fits no listed sense)</option>
                         <option value="high">High confidence (≥ 0.8)</option>
                     </select>
                 </div>
