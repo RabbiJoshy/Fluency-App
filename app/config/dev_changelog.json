@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T22:06:51+00:00",
+      "date": "2026-10-26 22:06 GMT",
+      "agent": "Claude",
+      "summary": "Settings scale with the window; level line reads “Complete Level N to recognise X% of everyday speech”.",
+      "detail": [
+        "Laptop Settings type, icons, close button and column now grow with the window width, so they fill a large screen.",
+        "Level picker coverage line: “Complete Level N to recognise X% of everyday speech” (was “By Level N, you’ll recognise …”)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T22:03:48+00:00",
       "date": "2026-10-26 22:03 GMT",
       "agent": "Claude",
@@ -346,19 +357,6 @@
         "Place the loading message inside the sign-in card, with account choices and provider attribution space reserved from the start.",
         "Reveal provider controls only after their markup and styles are ready, keeping the logo, guest button and account links stationary.",
         "Cover logout before account cleanup and suppress intermediate provider callbacks; open the first language picker before the next paint after sign-in."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T20:10:00+00:00",
-      "date": "2026-10-25 20:10 GMT",
-      "agent": "Claude",
-      "summary": "Pinning every meaning keeps the pins showing.",
-      "detail": [
-        "The app now remembers which meanings you pinned, per word, so a card with every meaning pinned keeps its pins and count instead of going blank.",
-        "A card with every meaning missed (not pinned) still shows plain, as before.",
-        "Pins sync with your account as one small row per word in the existing account settings store; no server change.",
-        "Answering a pinned meaning correctly later removes its pin."
       ],
       "commit": "pending"
     }
