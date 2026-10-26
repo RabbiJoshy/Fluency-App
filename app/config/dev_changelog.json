@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T21:52:56+00:00",
+      "date": "2026-10-26 21:52 GMT",
+      "agent": "Claude",
+      "summary": "Settings on desktop: one centred column.",
+      "detail": [
+        "Title, tabs, rows and the close button now share one centred 720px column instead of a narrow strip beside a full-width title bar.",
+        "Removed the thin vertical lines around the selected tab."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T21:30:03+00:00",
       "date": "2026-10-26 21:30 GMT",
       "agent": "Claude",
@@ -345,18 +356,6 @@
         "Folded translations start at the same place on every word-type row, so they read down one column.",
         "When a word type's sub-senses share a gloss and each fits on one line, every row reads 'gloss · context' (hombre: 'man · adult male') and the word-type row is bare; otherwise the gloss stays above.",
         "See again still opens every word type so any meaning can be pinned."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T22:12:00+00:00",
-      "date": "2026-10-25 22:12 GMT",
-      "agent": "Claude",
-      "summary": "Tutorial: the See again step now shows the real pin flow.",
-      "detail": [
-        "On the tutorial card, tapping See again fades everything but the word and its meanings and shows the same instruction as the app.",
-        "Pinning a meaning brings the card back with 'Swipe right if you know the rest.'; earlier pins are kept when the step reopens.",
-        "Tapping elsewhere on the tutorial card cancels, as on a real card."
       ],
       "commit": "pending"
     }
