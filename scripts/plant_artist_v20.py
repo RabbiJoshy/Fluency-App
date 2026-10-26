@@ -104,7 +104,13 @@ def card_surfaces(orig_card: dict[str, Any]) -> tuple[str, str]:
     if clitics and (word.endswith("se") or word.casefold() in {"guillar", "guillarse"}):
         orig_card["display_form"] = clitics[0]
         return word.casefold(), clitics[0]
-    return word.casefold(), orig_card.get("display_form") or word
+    display = orig_card.get("display_form") or word
+    # An elided lyric spelling (seguimo', queda', tiene') is how the word is
+    # shown, not a form the conjugation table knows: inflect the gloss for the
+    # restored word, or seguimos keeps "to follow" instead of "we follow".
+    if display.endswith(("'", "’")):
+        return word.casefold(), word
+    return word.casefold(), display
 
 
 def _source_of(adapter: str) -> str:

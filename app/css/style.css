@@ -3527,12 +3527,14 @@
             display: block;
         }
 
+        /* One "See <link>" per line: side by side they wrapped mid-pair
+           ("See ter de See" / "ter que") in narrow rows. */
         .sense-cross-reference-related {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 3px 10px;
+            gap: 0;
             width: 100%;
             margin-top: 3px;
             color: var(--text-muted);
@@ -3545,7 +3547,7 @@
             display: inline-flex;
             align-items: baseline;
             gap: 4px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             white-space: normal;
         }
 

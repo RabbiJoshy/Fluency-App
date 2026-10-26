@@ -321,9 +321,17 @@ assert(htmlTener.includes('sense-companion-lead'));
 assert(htmlTener.includes('<span class="sense-collocation-particle">+ que</span>'));
 assert(htmlTener.includes('Used with: tener que'));
 
+// A card for one form names that form, as its sentences do; a merged card
+// stands for the word.
 const htmlGosto = ui.senseCollocationHTML(gosto.meanings[0], gosto);
 assert(htmlGosto.includes('<span class="sense-collocation-particle">+ de</span>'));
-assert(htmlGosto.includes('Used with: gostar de'));
+assert(htmlGosto.includes('Used with: gosto de'));
+assert(ui.senseCollocationHTML(gosto.meanings[0], { ...gosto, mergedLemma: true }).includes('Used with: gostar de'));
+// Every listed partner, not just the first: ir "[with para or a or em; or até]".
+const goTo = { headword: 'ir', pos: 'verb', translation: 'to go', metadata: { sense_metadata: { features:
+    ['para', 'a', 'em', 'até'].map(value => ({ family: 'companion', kind: 'required_word', value })) } } };
+assert.deepEqual(ui.extractSenseCompanion(goTo).terms, ['para', 'a', 'em', 'até']);
+assert(ui.senseCollocationHTML(goTo, { targetWord: 'vou' }).includes('data-frame-phrase="vou para / a / em / até"'));
 
 const htmlOpt = ui.senseCollocationHTML(optMeaning, { targetWord: 'venir' });
 assert(htmlOpt.includes('is-optional'));

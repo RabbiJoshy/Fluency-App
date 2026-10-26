@@ -39,7 +39,8 @@ for(const [word,slot] of [['saber','infinitive'],['estamos','adjective']]) {
  const sense=card.meanings.find(m=>ui.extractSenseCompanion(m)?.frame===`+ ${slot}`);
  assert(sense,`${word}: grammar slot is extracted`);
  const html=ui.senseCollocationHTML(sense,card);
- assert.match(html,new RegExp(`data-frame-phrase="${sense.headword} \\+ ${slot}"`));
+ assert.match(html,new RegExp(`data-frame-phrase="${word} \\+ ${slot}"`));
+ assert.match(ui.senseCollocationHTML(sense,{...card,mergedLemma:true}),new RegExp(`data-frame-phrase="${sense.headword} \\+ ${slot}"`));
  const metadata=ui.senseMetadataHTML(sense,true,{excludeCompanion:true,ignoreBudget:true,gloss:sense.translation,cardMeanings:card.meanings});
  assert(!metadata.includes(`+ ${slot}`),'the slot already in the phrase pill is not repeated');
 }

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T14:21:26+00:00",
+      "date": "2026-10-26 14:21 GMT",
+      "agent": "Claude",
+      "summary": "Card rows: construction pills list every partner word and use the card's own form (vou para / a / em / até), and See links get a line each.",
+      "detail": [
+        "ir \"to go\" lists all of Wiktionary's partners (para, a, em, até), not just para, so vou ao cinema no longer looks like it matches no row.",
+        "A card for one form names that form in its pill (vou + infinitive, gosto de); merged cards keep the dictionary word (ir + infinitive).",
+        "\"See ter de\" and \"See ter que\" each sit on their own line instead of wrapping mid-pair."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T14:01:52+00:00",
       "date": "2026-10-26 14:01 GMT",
       "agent": "Claude",
@@ -357,17 +369,6 @@
         "Fizeram shows they did; made; foram shows they went / they were, with the correct verb tables.",
         "Verify all 10000 published cards and preserve card IDs, meaning IDs and example assignments.",
         "Bind merge keys, frequency, dictionary examples, placement and Smart Skip assets to the corrected release; preserve the previous release for rollback."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T20:51:26.577045+01:00",
-      "date": "2026-10-22 20:51 BST",
-      "agent": "Codex",
-      "summary": "Restore Portuguese decks using the previous published release.",
-      "detail": [
-        "Roll back only Portuguese release paths after decks failed to load.",
-        "Keep saved progress, account data, all other languages and app changes untouched."
       ],
       "commit": "pending"
     }

@@ -2170,7 +2170,10 @@ function withoutCompanionClauses(value) {
 export function extractSenseCompanion(meaning) {
     if (!meaning) return null;
     const items = senseMetadataItems(meaning);
-    const companionItem = items.find(i => i.family === 'companion');
+    // Every partner the dictionary lists: ir takes "para or a or em; or até",
+    // not just the first one.
+    const companionItems = items.filter(i => i.family === 'companion');
+    const companionItem = companionItems[0];
     const optCompanionItem = items.find(i => i.family === 'construction' && i.kind === 'optional_companion');
     const complement = items.find(item => item.family === 'construction' && item.kind === 'complement_form');
 
@@ -2179,7 +2182,7 @@ export function extractSenseCompanion(meaning) {
     let isOptional = false;
 
     if (companionItem) {
-        terms.push(String(companionItem.value || '').replace(/["“”]/g, '').trim());
+        terms.push(...companionItems.map(item => String(item.value || '').replace(/["“”]/g, '').trim()));
     } else if (optCompanionItem) {
         isOptional = true;
         const val = String(optCompanionItem.value || '').trim();
@@ -2233,7 +2236,9 @@ export function senseCollocationHTML(meaning, card = null) {
     if (!comp) return '';
     const baseWord = card?.targetWord || card?.word || meaning?.headword || '';
     const lemma = card?.citationForm || card?.lemma || meaning?.headword || baseWord;
-    const target = escapeCardText(lemma || baseWord);
+    // A card for one form names that form, as its sentences do ("vou +
+    // infinitive"); a merged card stands for the word ("ir + infinitive").
+    const target = escapeCardText((card && !card.mergedLemma && baseWord) || lemma || baseWord);
     if (!target) return '';
     const particle = escapeCardText(comp.terms.join(' / '));
     const isOptional = comp.isOptional;
