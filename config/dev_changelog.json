@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T00:49:00+00:00",
+      "date": "2026-10-26 00:49 GMT",
+      "agent": "Claude",
+      "summary": "Admin filters: Portuguese cards are labelled by the model that assigned them (mercury-decide or Jev), and confidence and gap filters work again.",
+      "detail": [
+        "The source filter no longer shows a stale 'DeepSeek' list; options are Mercury-decide (1,077 cards), Jev (6,709) and No model run.",
+        "Confidence comes from the lowest-scoring published sentence on each card; 664 cards are flagged as having a sentence that fits no listed sense.",
+        "The retired Jev overlay's leftover config pin is removed; the filters no longer read it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T00:30:00+00:00",
       "date": "2026-10-26 00:30 GMT",
       "agent": "Antigravity",
@@ -355,19 +367,6 @@
         "Removed the duplicate text exit button, keeping just the clean '✕' close button in the top right.",
         "Renamed segmented switcher tabs to 'Speech Example' and 'Music Example', removing emojis.",
         "Fixed the header and subtitle height so the horizontal line separator stays in the exact same position when toggling between tabs."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T13:38:00+01:00",
-      "date": "2026-10-22 13:38 BST",
-      "agent": "Antigravity",
-      "summary": "Walkthrough: top-bar segmented switcher, no bottom bar, cleaner card header",
-      "detail": [
-        "Removed the redundant summary sentence under 'This is a flashcard', giving full prominence to the card and leader lines.",
-        "Removed the bottom footer bar to reclaim ~80px of vertical space, preventing card scaling on laptops and desktops.",
-        "Added a segmented control in the top bar (Everyday Speech / Music Mode) so visitors and hirers immediately see both modes.",
-        "Next button and close button sit in the top-right header actions; arrow keys and direct tab clicks switch seamlessly."
       ],
       "commit": "pending"
     }

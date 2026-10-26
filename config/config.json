@@ -516,7 +516,6 @@
     },
     "portuguese": {
       "name": "Portuguese",
-      "wsdSidecarRelease": "pt-speech-v25-decide-1-10000-slim",
       "assignmentFilterPath": "data/assignment-filters/pt-v25-decide-1.json",
       "indexPath": "releases/pt/speech/pt-speech-v25-decide-1-10000-slim/app/vocabulary.index.json",
       "seeReferencesPath": "data/see-references/pt-see-v1.json",

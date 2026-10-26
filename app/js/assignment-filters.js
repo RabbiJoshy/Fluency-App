@@ -1,13 +1,12 @@
-// Admin-only setup filters: single-sense words, assignment layers, Jev confidence/gaps,
-// and parts of speech. Classification follows live precedence: Jev sidecar >
-// DeepSeek (at least one accepted correction) > original. Rows are stamped once
-// per loaded index; filtering never touches card IDs, progress or assignments.
-import { readJsonWithTimeout } from './read-request.js?v=f75f0b41';
-import { wsdUiCard } from './wsd-ui-sidecar.js?v=f75f0b41';
+// Admin-only setup filters: single-sense words, which model assigned a card
+// (mercury-decide, Jev, or none), its lowest published confidence, gaps (a
+// sentence kept NONE), and parts of speech. All of it comes from the release's
+// filter index; filtering never touches card IDs, progress or assignments.
+import { readJsonWithTimeout } from './read-request.js?v=41db6094';
 
 export const assignmentFilter = {
     excludeSingleSense: false,
-    source: 'all',       // 'all' | 'deepseek' | 'jev' | 'original'
+    source: 'all',       // 'all' | 'decide' | 'jev' | 'original'
     confidence: 'all',   // 'all' | 'lowest' | 'marginal' | 'close' | 'unresolved' | 'high'
     pos: 'all'           // 'all' | 'verb' | 'noun' | 'adj' | 'adv' | 'function' | 'other'
 };
@@ -25,9 +24,10 @@ export function activeFilterCount() {
 }
 
 export function validateAssignmentFilterIndex(payload, langConfig) {
-    if (payload?.schema !== 'assignment-filter-index/v1' || !payload.release_id
+    if (payload?.schema !== 'assignment-filter-index/v2' || !payload.release_id
         || !String(langConfig?.indexPath || '').includes(`/${payload.release_id}/`)
-        || !Array.isArray(payload.single_sense) || !Array.isArray(payload.deepseek)) {
+        || !Array.isArray(payload.single_sense) || !payload.sources
+        || !payload.min_confidence || !Array.isArray(payload.unresolved)) {
         throw new Error('Assignment filter index does not match this vocabulary release');
     }
     return payload;
@@ -62,48 +62,23 @@ export function getRowPosSet(row) {
     return set;
 }
 
-export function stampAssignmentFilters(rows, index, sidecar) {
+export function stampAssignmentFilters(rows, index) {
     if (!index || !Array.isArray(rows)) {
         activeFiltersAvailable = false;
         return rows;
     }
     const single = new Set(index.single_sense);
-    const deepseek = new Set(index.deepseek);
+    const unresolved = new Set(index.unresolved);
+    const source = new Map();
+    for (const [name, ids] of Object.entries(index.sources)) {
+        for (const id of ids) source.set(id, name);
+    }
     for (const row of rows) {
-        const patch = wsdUiCard(sidecar, row.id, row.surface_card_id);
-        row._assignSrc = patch ? 'jev'
-            : deepseek.has(row.id) ? 'deepseek' : 'original';
+        row._assignSrc = source.get(row.id) || 'original';
         row._singleSense = single.has(row.id);
         row._pos = getRowPosSet(row);
-
-        // Confidence & unresolved status from Jev
-        if (patch) {
-            let minConf = 1.0;
-            let hasUnres = false;
-            if (patch.counts) {
-                for (const [st, cnt] of Object.entries(patch.counts)) {
-                    if (st !== 'assigned' && cnt > 0) hasUnres = true;
-                }
-            }
-            if (patch.examples?.m) {
-                for (const bucket of patch.examples.m) {
-                    for (const ex of bucket || []) {
-                        const ju = ex.ju || {};
-                        if (ju.confidence !== undefined && ju.confidence !== null) {
-                            minConf = Math.min(minConf, Number(ju.confidence));
-                        }
-                        if (ju.status && ju.status !== 'assigned') {
-                            hasUnres = true;
-                        }
-                    }
-                }
-            }
-            row._minConfidence = minConf;
-            row._hasUnresolved = hasUnres;
-        } else {
-            row._minConfidence = null;
-            row._hasUnresolved = false;
-        }
+        row._minConfidence = index.min_confidence[row.id] ?? null;
+        row._hasUnresolved = unresolved.has(row.id);
     }
     activeFiltersAvailable = rows.length > 0 && Boolean(rows[0]._assignSrc);
     return rows;
@@ -111,10 +86,10 @@ export function stampAssignmentFilters(rows, index, sidecar) {
 
 // Failing to load the optional index must never block the deck: the filters
 // then simply stay unavailable.
-export async function prepareAssignmentFilters(rows, langConfig, sidecar) {
+export async function prepareAssignmentFilters(rows, langConfig) {
     try {
         const index = await loadAssignmentFilterIndex(langConfig);
-        stampAssignmentFilters(rows, index, sidecar);
+        stampAssignmentFilters(rows, index);
     } catch (error) {
         activeFiltersAvailable = false;
         console.warn('Assignment filters unavailable:', error);
@@ -141,7 +116,7 @@ export function passesAssignmentFilters(row) {
     // 2. Assignment source
     if (assignmentFilter.source !== 'all' && row._assignSrc !== assignmentFilter.source) return false;
 
-    // 3. Jev confidence / uncertainty
+    // 3. Model confidence / gaps
     if (assignmentFilter.confidence !== 'all') {
         const conf = assignmentFilter.confidence;
         if (conf === 'unresolved') {
