@@ -120,3 +120,21 @@ body.desktop-workspace #settingsModal.desktop-workspace-page > .modal-content { 
     #settingsModal #settingsPaneApp .appearance-settings-copy strong,
     #settingsModal #settingsPaneStudy .settings-row-label { font-size: clamp(22px, 1.9vw, 34px) !important; font-weight: 700; }
 }
+
+/* The close button stays a circle: the older sheet fixes its flex-basis at 40px, so size both axes together. */
+#settingsModal .modal-close { flex: 0 0 auto !important; aspect-ratio: 1 / 1; padding: 0; }
+@media (min-width: 900px) {
+    #settingsModal .modal-close { width: clamp(44px, 3.4vw, 64px) !important; height: clamp(44px, 3.4vw, 64px) !important; }
+}
+
+/* Centred tabs; the selected one is a soft pill that wraps the whole word. */
+#settingsModal .settings-pane-tabs { justify-content: center; gap: 8px; border-bottom: 0; margin-bottom: 8px; }
+#settingsModal .settings-pane-tab {
+    margin: 0; padding: .55em 1.2em; border: 0 !important; border-radius: 999px;
+    transition: background-color .15s ease, color .15s ease;
+}
+#settingsModal .settings-pane-tab:hover:not(.selected) { color: var(--text-primary); }
+#settingsModal .settings-pane-tab.selected,
+#settingsModal .settings-pane-tab[aria-selected="true"] {
+    border: 0 !important; background: color-mix(in srgb, var(--text-primary) 11%, transparent);
+}

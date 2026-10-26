@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T22:10:58+00:00",
+      "date": "2026-10-26 22:10 GMT",
+      "agent": "Claude",
+      "summary": "Settings: round close button, centred tabs with a pill highlight.",
+      "detail": [
+        "The close X is a true circle again (it had been squashed to 40×44).",
+        "Study / App / Your words are centred, and the selected tab has a soft pill around the whole word instead of an underline."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T22:06:51+00:00",
       "date": "2026-10-26 22:06 GMT",
       "agent": "Claude",
@@ -345,18 +356,6 @@
         "On the tutorial card, tapping See again fades everything but the word and its meanings and shows the same instruction as the app.",
         "Pinning a meaning brings the card back with 'Swipe right if you know the rest.'; earlier pins are kept when the step reopens.",
         "Tapping elsewhere on the tutorial card cancels, as on a real card."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T21:36:29+00:00",
-      "date": "2026-10-25 21:36 GMT",
-      "agent": "Codex",
-      "summary": "Keep the login panel in place and make logout/login transitions clean.",
-      "detail": [
-        "Place the loading message inside the sign-in card, with account choices and provider attribution space reserved from the start.",
-        "Reveal provider controls only after their markup and styles are ready, keeping the logo, guest button and account links stationary.",
-        "Cover logout before account cleanup and suppress intermediate provider callbacks; open the first language picker before the next paint after sign-in."
       ],
       "commit": "pending"
     }
