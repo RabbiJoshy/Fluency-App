@@ -2286,7 +2286,8 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
         const metrics = _levelBandMetrics(ranges[i]);
         // Phones show one dot per tile, the least-learned colour present:
         // any new word → white, else any seen → yellow, else green.
-        const dot = c.cards - c.seen > 0 ? 'new' : c.review > 0 ? 'seen' : 'known';
+        // A level with nothing answered yet has no dot at all.
+        const dot = c.seen === 0 ? 'none' : c.cards - c.seen > 0 ? 'new' : c.review > 0 ? 'seen' : 'known';
         return `<button type="button" class="home-level-tile${i === selectedIdx ? ' is-selected' : ''}" data-dot="${dot}" data-level-index="${i}" role="radio" aria-checked="${i === selectedIdx}" aria-label="Level ${i + 1}, words ${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}">
                 <span class="home-level-tile-num">${i + 1}</span>
                 <span class="home-level-tile-bar" aria-hidden="true">${segments}</span>
