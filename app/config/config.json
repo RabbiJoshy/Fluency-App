@@ -595,7 +595,7 @@
       "bridgePath": "data/bridge/pt-fw1-ds25-decide-expr-v1.json",
       "coveragePath": "coverage/pt/coverage.json",
       "dictionaryExamplesPath": "data/dictionary-examples/pt-pt-speech-v25-literal-ground-r4-10000x30-slim-v1-fw1-ds25-decide-expr-v1.json",
-      "exampleAlignmentPath": "data/example-alignment/pt-speech-v25-decide-1-10000-slim/manifest.json"
+      "exampleAlignmentPath": "data/example-alignment/pt-speech-v25-decide-1-expr-10000-slim/manifest.json"
     },
     "portuguese_brazilian": {
       "name": "Brazilian Portuguese",

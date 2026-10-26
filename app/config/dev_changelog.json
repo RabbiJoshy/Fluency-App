@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T15:14:43+00:00",
+      "date": "2026-10-26 15:14 GMT",
+      "agent": "Codex",
+      "summary": "Rank teaching examples by offline LaBSE scores, including the updated Portuguese release.",
+      "detail": [
+        "Replace the length/number heuristic with existing cached translation-pair scores. Selected examples carry score, model and version in their metadata; higher scores appear first.",
+        "Bind the score companion to the newly updated Portuguese DECIDE-1 expressions release: all 139,957 selected examples have cached scores. Spanish coverage remains 282,808 of 282,808.",
+        "Load only the relevant set’s score files. Selection and frequencies are untouched by the alignment change; ties keep the existing ordering and unscored examples stay available.",
+        "Local mobile verification: Portuguese assim opens at 0.964 and Spanish esa at 0.977; cycling keeps the example pool intact. All 436 app tests and 88 release tests passed."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T15:12:05+00:00",
       "date": "2026-10-26 15:12 GMT",
       "agent": "Codex",
@@ -355,18 +368,6 @@
         "Use a release-pinned UI sidecar above existing DeepSeek assignments, preserving card IDs, learner progress and the published release.",
         "Regroup all exported examples, update canonical examples and shares from the reviewed exported set, and keep unresolved decisions explicit.",
         "Leave grammar-word cards, companion splitting and the rest of the deck unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-23T00:32:06.246572+01:00",
-      "date": "2026-10-23 00:32 BST",
-      "agent": "Codex",
-      "summary": "Show actual merged forms on card fronts, with a Smart Skip disclosure.",
-      "detail": [
-        "Use the infinitive only when it belongs to this merged group; otherwise show the most frequent member.",
-        "Place +N other forms below the front word; open a centered Merged by Smart Skip panel listing the actual group.",
-        "Keep existing lemma metadata, sense grouping, card identities and progress; verify phone and desktop layouts in both themes."
       ],
       "commit": "pending"
     }
