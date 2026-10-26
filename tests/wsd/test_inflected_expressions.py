@@ -1,7 +1,8 @@
 """Decision 0034: verb-led expressions match in any inflection; frozen ones stay exact."""
 import unittest
 
-from fluency.wsd.multiword import ExpressionInflector, index_multiword_senses, multiword_matches
+from fluency.wsd.multiword import (ExpressionInflector, expression_already_on_menu, index_multiword_senses,
+                                   multiword_matches)
 
 PARADIGM = {
     form: [[lemma, "x", "x", "", ""]]
@@ -65,6 +66,15 @@ class InflectedExpressionTests(unittest.TestCase):
         self.assertIsNone(self.inflector.head("no sé"))
         self.assertEqual(self.found("quer", "Isso quer dizer sim."), {("quer dizer", "quer dizer")})
         self.assertEqual(self.found("quero", "Eu quero dizer sim."), set())
+
+    def test_expression_already_on_the_verbs_menu_is_not_offered(self):
+        # Measured relabels (pilot 2026-10-26) are skipped; idioms the menu lacks are kept.
+        self.assertTrue(expression_already_on_menu(["to have just"], ["to finish", "to have just"]))
+        self.assertTrue(expression_already_on_menu(["to have to; must"], ["to have", "to have to"]))
+        self.assertTrue(expression_already_on_menu(["to pay attention"], ["to pay (attention, respect etc.)"]))
+        self.assertFalse(expression_already_on_menu(["to be worthwhile"], ["to be worth, valid or acceptable"]))
+        self.assertFalse(expression_already_on_menu(["to mind; to look after; to take care"],
+                                                    ["to take; to receive", "to take into the body"]))
 
     def test_without_inflector_behaviour_is_unchanged(self):
         found = multiword_matches(surface_form="fico", sentence="Eu fico com sono.", index=self.index)

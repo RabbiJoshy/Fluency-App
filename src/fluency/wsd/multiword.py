@@ -410,6 +410,36 @@ class ExpressionInflector:
         return None
 
 
+_LIGHT_GLOSS_WORDS = frozenset((
+    "to", "a", "an", "the", "of", "in", "on", "at", "for", "with", "by", "from", "up", "out", "off", "into",
+    "and", "or", "etc", "be", "is", "have", "has", "take", "make", "get", "do", "go", "give", "put", "keep",
+    "let", "come", "set", "one", "oneself", "someone", "something", "somebody", "it", "s",
+))
+
+
+def _gloss_clauses(gloss: str) -> list[str]:
+    return [" ".join(re.findall(r"[a-z']+", clause.casefold())) for clause in re.split(r"[;,]", gloss or "")
+            if clause.strip()]
+
+
+def expression_already_on_menu(expression_glosses: Sequence[str], menu_glosses: Sequence[str]) -> bool:
+    """True when the word's own menu already has the expression's meaning.
+
+    Wiktionary often files a construction as a sense of the verb (acabar "to
+    have just", ter "to have to", prestar "to pay (attention)"); offering the
+    expression too only splits one meaning across two rows. Measured on the
+    2026-10-26 pilot, those were relabels; idioms the menu lacks (valer a pena
+    "worthwhile", tomar conta "to look after") are kept. A match is an identical
+    gloss clause, or a shared content word other than a light verb.
+    """
+    expression_clauses = {c for g in expression_glosses for c in _gloss_clauses(g)}
+    menu_clauses = {c for g in menu_glosses for c in _gloss_clauses(g)}
+    if expression_clauses & menu_clauses:
+        return True
+    content = lambda clauses: {w for c in clauses for w in c.split() if w not in _LIGHT_GLOSS_WORDS}
+    return bool(content(expression_clauses) & content(menu_clauses))
+
+
 def load_expression_inflector(path) -> ExpressionInflector:
     import hashlib
     import json
