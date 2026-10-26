@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T22:59:53+00:00",
+      "date": "2026-10-26 22:59 GMT",
+      "agent": "Claude",
+      "summary": "Desktop sidebar: “Add to iPhone” button opens a four-step guide.",
+      "detail": [
+        "Replaces the small install card: a sidebar button under Account opens a popup with four mock iPhone screens (Share, View More, Add to Home Screen, Add).",
+        "Highlights use the language colour; the popup closes with ✕, a click outside, or Escape."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T22:45:29+00:00",
       "date": "2026-10-26 22:45 GMT",
       "agent": "Claude",
@@ -334,18 +345,6 @@
         "Keep expressions follow-ups out of the function-word renderer and repair the missing escaping helper that left old card content on screen.",
         "Cycle rarer-use examples in the visible sheet, preserving open examples, scroll position and pager focus.",
         "Order selected Speech examples using conservative translation length and digit mismatch checks before WSD confidence; example membership, frequencies and artist playback priorities stay unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T14:21:26+00:00",
-      "date": "2026-10-26 14:21 GMT",
-      "agent": "Claude",
-      "summary": "Card rows: construction pills list every partner word and use the card's own form (vou para / a / em / até), and See links get a line each.",
-      "detail": [
-        "ir \"to go\" lists all of Wiktionary's partners (para, a, em, até), not just para, so vou ao cinema no longer looks like it matches no row.",
-        "A card for one form names that form in its pill (vou + infinitive, gosto de); merged cards keep the dictionary word (ir + infinitive).",
-        "\"See ter de\" and \"See ter que\" each sit on their own line instead of wrapping mid-pair."
       ],
       "commit": "pending"
     }
