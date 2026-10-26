@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T20:58:00+00:00",
+      "date": "2026-10-26 20:58 GMT",
+      "agent": "Claude",
+      "summary": "Flatter Settings, and Saved words now open in their own popup.",
+      "detail": [
+        "Settings tabs are one flat surface: underlined tabs, plain-text switches and hairline rows instead of boxes inside boxes.",
+        "Saved is a single row in Settings → Your words (hidden until you save something) that opens a Saved popup; the list no longer sits inside Settings.",
+        "Progress's Saved button opens the same popup.",
+        "Languages-you-know flags are bigger."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T20:12:15+00:00",
       "date": "2026-10-26 20:12 GMT",
       "agent": "Codex",
@@ -353,19 +366,6 @@
         "Moved mañana (tomorrow) into the main intro paragraph to contrast standard speech essentials with series/music specific vocabulary.",
         "Shortened the Speech and Music mode descriptions for direct parallelism.",
         "Removed 'songs you love' and reframed music mode around uploading a playlist or selecting an artist."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T19:33:00+01:00",
-      "date": "2026-10-24 19:33 BST",
-      "agent": "Antigravity",
-      "summary": "About page: repeat Music subtitle beside both music features and add roncar slang contrast.",
-      "detail": [
-        "Added *roncar* (to brag, not 'to snore') alongside *perreo* (reggaeton dancing) to contrast standard words given new meaning through slang vs slang-native words.",
-        "Positioned the Music subtitle in the left channel beside both music features (The slang each artist uses and Learn what things are) with scroll reveal.",
-        "Centered \"What makes it different\" and \"How it works\" in the main channel with table display matching the top title.",
-        "Formatted all bullet points under \"What makes it different\" equally as feature rows."
       ],
       "commit": "pending"
     }

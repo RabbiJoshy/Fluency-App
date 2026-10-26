@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=0fe6dbe1';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=0fe6dbe1';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=0fe6dbe1';
-import { songCreditHTML } from './song-credit.js?v=0fe6dbe1';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=0fe6dbe1';
+import './state.js?v=f6337cf7';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=f6337cf7';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=f6337cf7';
+import { songCreditHTML } from './song-credit.js?v=f6337cf7';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=f6337cf7';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=0fe6dbe1';
-import { fitSenseRowText } from './card-row-layout.js?v=0fe6dbe1';
+import { exampleTranslationAlignment } from './example-alignment.js?v=f6337cf7';
+import { fitSenseRowText } from './card-row-layout.js?v=f6337cf7';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=0fe6dbe1';
-import { goToRoute, routeCodeFor } from './routes.js?v=0fe6dbe1';
-import { memoryTipTileHTML } from './memory-tips.js?v=0fe6dbe1';
+import './speech.js?v=f6337cf7';
+import { goToRoute, routeCodeFor } from './routes.js?v=f6337cf7';
+import { memoryTipTileHTML } from './memory-tips.js?v=f6337cf7';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=0fe6dbe1';
-import './side-dock.js?v=0fe6dbe1';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=0fe6dbe1';
+} from './function-word-card.js?v=f6337cf7';
+import './side-dock.js?v=f6337cf7';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=f6337cf7';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=0fe6dbe1';
+} from './example-personalisation.js?v=f6337cf7';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=0fe6dbe1';
+} from './spanishdict-usage.js?v=f6337cf7';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=0fe6dbe1';
+} from './reverse-cues.js?v=f6337cf7';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=0fe6dbe1';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=0fe6dbe1';
+} from './card-metadata-pills.js?v=f6337cf7';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=f6337cf7';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -11835,8 +11835,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '0fe6dbe1';
-const MODALS_ASSET_VERSION = '0fe6dbe1';
+const ASSET_VERSION = 'f6337cf7';
+const MODALS_ASSET_VERSION = 'f6337cf7';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

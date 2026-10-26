@@ -1,7 +1,7 @@
 // Setup uses a persistent desktop navigation; studying gives the gutters
 // back to side-dock.js. Reuse the real header buttons and their handlers.
 const PAGE_IDS = [
-    'settingsModal', 'totalStatsModal', 'reviewHomeModal', 'helpModal',
+    'settingsModal', 'totalStatsModal', 'savedWordsModal', 'reviewHomeModal', 'helpModal',
     'learningContextModal', 'extrasModal',
     'fastModeModal', 'vocabularyImportModal',
     'extraModal',

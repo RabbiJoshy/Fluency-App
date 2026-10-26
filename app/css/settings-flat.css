@@ -1,0 +1,62 @@
+/* Settings: one flat surface per tab. Hairline rows, no boxes inside the sheet.
+   Loaded last so it wins over the older card styling in style.css. */
+#settingsModal .settings-pane-tabs {
+    display: flex; justify-content: flex-start; gap: 22px; width: 100%; margin: 0 0 4px; padding: 0;
+    border: 0; border-bottom: 1px solid var(--border-color); border-radius: 0; background: transparent; box-shadow: none;
+}
+#settingsModal .settings-pane-tab {
+    flex: 0 0 auto; padding: 8px 0 10px; margin: 0 0 -1px; min-height: 0;
+    border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; box-shadow: none; border-inline: 0; outline-offset: 2px;
+    color: var(--text-muted); font-weight: 600;
+}
+#settingsModal .settings-pane-tab::before, #settingsModal .settings-pane-tab::after { display: none; }
+#settingsModal .settings-pane-tab, #settingsModal .settings-pane-tab.selected, #settingsModal .settings-pane-tab:hover { box-shadow: none !important; }
+#settingsModal .settings-pane-tab.selected,
+#settingsModal .settings-pane-tab[aria-selected="true"] { color: var(--text-primary); border-bottom-color: var(--accent-primary); background: transparent; }
+
+#settingsModal #studyTabContent > .settings-pane { padding: 0; border: 0; background: transparent; box-shadow: none; }
+#settingsModal .settings-preference-group,
+#settingsModal .appearance-settings-card {
+    margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none;
+}
+#settingsModal .settings-default-row,
+#settingsModal .appearance-settings-card,
+#settingsModal .settings-link-row {
+    margin: 0; padding: 14px 0; border: 0; border-bottom: 1px solid var(--border-color); border-radius: 0; background: transparent; box-shadow: none;
+}
+#settingsModal #studyTabContent > .settings-pane > :first-child:not(.settings-defaults-heading),
+#settingsModal #studyTabContent > .settings-pane > .settings-defaults-heading + * { border-top: 1px solid var(--border-color); }
+#settingsModal .settings-link-row.settings-words-row[hidden] { display: none; }
+
+/* Two- and three-way switches read as text with an underline, not as boxed buttons. */
+#settingsModal .settings-toggle {
+    gap: 16px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none;
+}
+#settingsModal .settings-toggle .group-size-btn {
+    flex: 0 0 auto; min-height: 0; padding: 2px 0; border: 0; border-bottom: 2px solid transparent; border-radius: 0;
+    background: transparent; box-shadow: none; color: var(--text-muted); font-weight: 600;
+}
+#settingsModal .settings-toggle .group-size-btn:hover:not(.selected) { background: transparent; color: var(--text-primary); }
+#settingsModal .settings-toggle .group-size-btn.selected { background: transparent; color: var(--text-primary); border-bottom-color: var(--accent-primary); }
+
+#settingsModal .settings-words-count { color: var(--text-muted); font-size: 14px; white-space: nowrap; }
+#settingsModal .known-language-flags { gap: 8px; }
+#settingsModal .known-language-flag { min-width: 0; height: auto; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+#settingsModal .known-language-flag .flag-img { height: 26px; width: auto; border-radius: 4px; }
+#settingsModal .known-language-flag.is-code { font-size: 14px; }
+
+/* The Saved popup. */
+#savedWordsModal .modal-content { max-width: 480px; }
+#savedWordsModal .saved-words-header-actions { display: flex; align-items: center; gap: 4px; }
+#savedWordsModal .saved-words-empty { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+/* Row icons are bare, not circled buttons. */
+#settingsModal .settings-words-action,
+#settingsModal .settings-link-row.settings-words-row > span.settings-words-action {
+    width: auto; height: auto; border: 0; border-radius: 0; background: transparent; box-shadow: none; color: var(--text-muted);
+}
+#settingsModal button.settings-words-row:hover .settings-words-action { background: transparent; color: var(--text-primary); }
+#settingsModal .settings-words-row > span:first-child { flex: 1 1 auto; }
+#savedWordsModal .settings-words-action { display: inline-flex; align-items: center; padding: 6px; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; }
+#savedWordsModal .settings-words-action:hover { color: var(--text-primary); }
+#savedWordsModal .settings-words-action[hidden] { display: none; }
