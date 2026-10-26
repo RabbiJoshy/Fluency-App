@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T21:30:03+00:00",
+      "date": "2026-10-26 21:30 GMT",
+      "agent": "Claude",
+      "summary": "Settings on desktop: one surface, aligned rows.",
+      "detail": [
+        "The Settings title bar now matches the page instead of sitting on a darker panel.",
+        "Theme, Text size and Account rows share the same inset as the rest of the rows."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T21:20:00+00:00",
       "date": "2026-10-26 21:20 GMT",
       "agent": "Claude",
@@ -351,18 +362,6 @@
         "Tapping it fades everything except the word and its meaning rows, in place, and shows 'Tap the pin on a meaning to see it again in Practise.' where the tiles were.",
         "Pinning one meaning returns the card to normal straight away; tapping anywhere else on the card cancels without flipping it.",
         "Row pin tooltips read 'See this meaning again'; the tutorial step is renamed to match."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T12:31:03+00:00",
-      "date": "2026-10-25 12:31 GMT",
-      "agent": "Codex",
-      "summary": "Fix sign-in getting stuck and keep loading layouts stable on mobile and desktop.",
-      "detail": [
-        "Successful sign-in opens the app without waiting for background progress or playlist sync; failed account requests can retry in place.",
-        "Reserve loading space across setup, search, music, song selection, progress and conjugation drawers; retain song checkbox focus.",
-        "Keep level and practice sections hidden while choosing Speech or Music, and ignore outdated Speech loads after switching languages."
       ],
       "commit": "pending"
     }
