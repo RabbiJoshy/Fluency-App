@@ -15,6 +15,31 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-26T20:08:14+00:00",
+      "date": "2026-10-26 20:08 GMT",
+      "agent": "Claude",
+      "summary": "Merged cards: singular and plural nouns (casa/casas) and gender forms (querido/querida) now share a card.",
+      "detail": [
+        "Noun proof noun-merge/v3: a feminine form counts as an inflection like a plural; another word on a noun's menu (casa: casar) no longer blocks it, and is judged by the 3-example, 10% bar instead; a noun and adjective of one headword are one word.",
+        "Portuguese: 1,073 forms join 813 cards (casa/casas, coisa/coisas, vida/vidas, querido/querida/queridos, conta/contas).",
+        "Spanish: six feminine forms join (profesora, compañera, secretaria…); most Spanish nouns still lack SpanishDict evidence.",
+        "Full list: docs/audits/noun-merge-v3-2026-10-26/README.md."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T19:24:35+00:00",
+      "date": "2026-10-26 19:24 GMT",
+      "agent": "Claude",
+      "summary": "Merged cards: a noun spelled like its verb (o olhar \"gaze\", o poder \"power\") now gets its own card.",
+      "detail": [
+        "Rule form-privilege/v3 (decision 0033): a noun with the same headword as its verb's infinitive counts as another word, on the infinitive's spelling or its plural only.",
+        "Portuguese: olhar, olhares, poder and andar get their own cards; their other forms (olha, pode, anda…) stay merged. Spanish: no change.",
+        "Conjugated forms are never split by it: Spanish sean, where the name Sean had been filed under ser \"being\", stays on ser."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T18:20:00+00:00",
       "date": "2026-10-26 18:20 GMT",
       "agent": "Claude",
@@ -186,6 +211,16 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-26T00:34:00+00:00",
+      "date": "2026-10-26 00:34 GMT",
+      "agent": "Claude",
+      "summary": "Cross-references say 'See' again, not 'Related'.",
+      "detail": [
+        "A meaning that points to another entry reads 'See matar-se', Wiktionary's own wording, instead of 'Related matar-se'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T00:30:00+00:00",
       "date": "2026-10-26 00:30 GMT",
       "agent": "Antigravity",
@@ -195,16 +230,6 @@
         "Rebuilt sense menus with rescued verbal multiword phrases, letter-case lookups, and resolved pointer glosses.",
         "Retires the interim client-side Jev UI sidecar; disambiguated meanings and recorded ties are native to the release artifact.",
         "Regenerated release-bound cognates, bridge, speech-frequency, merge exceptions, dictionary examples, estimation pool, and assignment filters."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:34:00+00:00",
-      "date": "2026-10-26 00:34 GMT",
-      "agent": "Claude",
-      "summary": "Cross-references say 'See' again, not 'Related'.",
-      "detail": [
-        "A meaning that points to another entry reads 'See matar-se', Wiktionary's own wording, instead of 'Related matar-se'."
       ],
       "commit": "pending"
     },
@@ -341,32 +366,6 @@
         "Positioned the Music subtitle in the left channel beside both music features (The slang each artist uses and Learn what things are) with scroll reveal.",
         "Centered \"What makes it different\" and \"How it works\" in the main channel with table display matching the top title.",
         "Formatted all bullet points under \"What makes it different\" equally as feature rows."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T18:07:00+01:00",
-      "date": "2026-10-24 18:07 BST",
-      "agent": "Antigravity",
-      "summary": "Flashcards: make chevron functional for collapse/expand and enable POS-wide selection.",
-      "detail": [
-        "Enabled the chevron (▾/▸) on POS section headers to cleanly toggle section expand and collapse.",
-        "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
-        "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
-        "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T16:39:16.580689+01:00",
-      "date": "2026-10-24 16:39 BST",
-      "agent": "Antigravity",
-      "summary": "Consolidate admin deck filters into a popup modal, adding Part of Speech and Jev Confidence filters.",
-      "detail": [
-        "Grouped all admin setup filters into a dedicated modal opened by an Admin Filters button in the level chooser footer.",
-        "Added Part of Speech filtering (Verbs, Nouns, Adjectives, Adverbs, Function words, Other).",
-        "Added Jev Confidence & Gaps filtering (Lowest < 0.2, Marginal < 0.3, Moderate < 0.5, Unresolved gaps, High ≥ 0.8).",
-        "Trigger button features an active filter count badge; Reset button restores defaults instantly."
       ],
       "commit": "pending"
     }

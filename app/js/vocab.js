@@ -1,17 +1,17 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=c3533987';
-import { readJsonWithTimeout } from './read-request.js?v=c3533987';
-import { validateVocabularyIndex } from './data-contracts.js?v=c3533987';
-import { formatRoute } from './routes.js?v=c3533987';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=c3533987';
-import { releaseUrl } from './release-host.js?v=c3533987';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=c3533987';
-import { getGrammarWordDefinition } from './function-word-card.js?v=c3533987';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=c3533987';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=c3533987';
-import { createExampleAlignmentLoader } from './example-alignment.js?v=c3533987';
+import './state.js?v=0fe6dbe1';
+import { readJsonWithTimeout } from './read-request.js?v=0fe6dbe1';
+import { validateVocabularyIndex } from './data-contracts.js?v=0fe6dbe1';
+import { formatRoute } from './routes.js?v=0fe6dbe1';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=0fe6dbe1';
+import { releaseUrl } from './release-host.js?v=0fe6dbe1';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=0fe6dbe1';
+import { getGrammarWordDefinition } from './function-word-card.js?v=0fe6dbe1';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=0fe6dbe1';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=0fe6dbe1';
+import { createExampleAlignmentLoader } from './example-alignment.js?v=0fe6dbe1';
 
 let exampleAlignmentLoader = null;
 function attachExampleAlignment(payload, langConfig) {
@@ -946,6 +946,8 @@ function mergeArtistExtraSupport(item, splitExamples) {
 }
 
 // lemma-merge-pure
+// Noun-merge proofs this app accepts (src/fluency/sense_menu/noun_merge.py).
+const NOUN_MERGE_RULES = new Set(['noun-merge/v2', 'noun-merge/v3']);
 // A lemma is the headword. Part of speech is not part of it. A spelling joins
 // that lemma only when every non-expression sense names that one headword.
 // Casó joins casar. Casado does not: it also names casado, so it stays its own
@@ -1035,7 +1037,7 @@ function lemmaGroupKey(item) {
     // Compare complete source menus before display inflection or WSD filtering.
     // A subset of shown meanings cannot approve a noun merge.
     const proof = item?.noun_merge;
-    if (proof && (proof.rule_version !== 'noun-merge/v2' || proof.allowed !== true)) return '';
+    if (proof && (!NOUN_MERGE_RULES.has(proof.rule_version) || proof.allowed !== true)) return '';
     const dictionarySenses = [...(item?.meanings || []), ...(item?.unused_menu_senses || []),
         ...(item?.meanings || []).flatMap(meaning => meaning.allSenses || [])];
     if (proof && dictionarySenses.some(meaning => {
@@ -1115,7 +1117,7 @@ function lemmaStudyGroupKey(item) {
 // card: inflection, or a part-of-speech label for the same meaning.
 // Expressions are their own study items. Reflexive headwords (irse,
 // matar-se) are the base word. Works on Wiktionary and SpanishDict rows alike.
-const FORM_PRIVILEGE_RULE = 'form-privilege/v2';
+const FORM_PRIVILEGE_RULE = 'form-privilege/v3';
 const FORM_PRIVILEGE_MIN_EXAMPLES = 3;
 const FORM_PRIVILEGE_MIN_SHARE = 0.10;
 const FORM_RESTRICTED_TAGS = new Set(['impersonal', 'third-person']);
@@ -1236,15 +1238,27 @@ function formPrivilegeReasons(item, lemma, siblingShares = null) {
     const passes = (n, counted) => n / total >= FORM_PRIVILEGE_MIN_SHARE - 1e-9
         && (!counted || n >= FORM_PRIVILEGE_MIN_EXAMPLES);
     // Another word is judged on all its senses together: fue's "went" is
-    // spread over several senses of ir.
+    // spread over several senses of ir. A noun spelled like its verb (o olhar
+    // "gaze", o poder "power", o andar "floor") is another word too: the
+    // dictionary gives it its own entry, not just a part-of-speech label.
+    const isPos = (meaning, pos) => String(meaning?.pos || '').toLowerCase() === pos;
+    // Only the infinitive's spelling or its plural can be that noun (olhares,
+    // seres), so a conjugated form (Spanish sean, where WSD filed the name
+    // Sean under ser "being") is never split by it.
+    const surface = normalizeLemmaToken(item?.word);
+    const verbLemma = (surface === lemma || surface === `${lemma}es`)
+        && rows.some(({ meaning }) => isPos(meaning, 'verb')
+            && formPrivilegeBaseHeadword(meaning.headword, item) === lemma);
     const others = new Map();
     for (const { meaning, n, counted } of rows) {
         const base = formPrivilegeBaseHeadword(meaning.headword, item);
-        if (base === lemma) continue;
-        const group = others.get(base) || { n: 0, counted: true };
+        const nounOfVerb = base === lemma && verbLemma && isPos(meaning, 'noun');
+        if (base === lemma && !nounOfVerb) continue;
+        const key = nounOfVerb ? `${base}\u001fnoun` : base;
+        const group = others.get(key) || { n: 0, counted: true };
         group.n += n;
         group.counted &&= counted;
-        others.set(base, group);
+        others.set(key, group);
     }
     for (const group of others.values()) {
         if (passes(group.n, group.counted)) reasons.add('other_word');
@@ -1281,7 +1295,7 @@ function formPrivilegeEligible(item, lemma) {
         || !lead || FORM_CONTRACTION_PART_POS.has(formPrivilegePos(lead.meaning)))) return false;
     if (formPrivilegePos(lead?.meaning) === 'noun') {
         const proof = item?.noun_merge;
-        return proof?.rule_version === 'noun-merge/v2' && proof.allowed === true
+        return NOUN_MERGE_RULES.has(proof?.rule_version) && proof.allowed === true
             && normalizeLemmaToken(proof.lemma) === lemma;
     }
     return true;
@@ -2712,8 +2726,8 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
         const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
             .some(value => String(value || '').includes(`/${built}/`));
         stampMergeExceptionValues(vocabulary, contractions,
-            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.keys : null,
-            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.noun_verdicts : null,
+            sameRelease && NOUN_MERGE_RULES.has(payload?.noun_merge_rule) ? payload?.keys : null,
+            sameRelease && NOUN_MERGE_RULES.has(payload?.noun_merge_rule) ? payload?.noun_verdicts : null,
             built && String(langConfig?.indexPath || '').includes(`/${built}/`)
                 && payload?.visible_sense_rule === VISIBLE_SENSE_MERGE_RULE ? payload?.visible_sense_keys : null,
             built && String(langConfig?.indexPath || '').includes(`/${built}/`)
@@ -2740,9 +2754,9 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
                 _mergeKeysRelease = built;
                 const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
                     .some(value => String(value || '').includes(`/${built}/`));
-                _mergeKeys = (sameRelease && payload?.noun_merge_rule === 'noun-merge/v2'
+                _mergeKeys = (sameRelease && NOUN_MERGE_RULES.has(payload?.noun_merge_rule)
                     && payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
-                _nounMergeVerdicts = sameRelease && payload?.noun_merge_rule === 'noun-merge/v2'
+                _nounMergeVerdicts = sameRelease && NOUN_MERGE_RULES.has(payload?.noun_merge_rule)
                     ? payload?.noun_verdicts : null;
                 _visibleMergeSenses = payload?.visible_sense_rule === VISIBLE_SENSE_MERGE_RULE
                     ? payload?.visible_sense_keys : null;

@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=c3533987';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=0fe6dbe1';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=c3533987';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=c3533987';
-import { readFastTrack } from './fast-track-preferences.js?v=c3533987';
-import './session-plan.js?v=c3533987';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=c3533987';
+import './state.js?v=0fe6dbe1';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=0fe6dbe1';
+import { readFastTrack } from './fast-track-preferences.js?v=0fe6dbe1';
+import './session-plan.js?v=0fe6dbe1';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=0fe6dbe1';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3965,7 +3965,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=c3533987')
+        import('./spotify.js?v=0fe6dbe1')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

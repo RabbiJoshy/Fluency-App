@@ -3,7 +3,7 @@
  "release_id": "es-speech-v25-literal-ground-r6-10000x30-fw1-slim",
  "per_sense": 30,
  "index_sha256": "ded436fe0ac91e5aad29335bc622813a2f6e2394a94a53097d2300b22fd3612f",
- "merge_keys_from": "data/merge-exceptions/es-literal-ground-r6-seam-v1-fw1-visible-v1-fp2.json",
+ "merge_keys_from": "data/merge-exceptions/es-literal-ground-r6-seam-v1-fw1-visible-v1-nm3-fp3.json",
  "example_format": "slim-example/v1",
  "sources": {
   "tatoeba": {
@@ -1691,6 +1691,12 @@
    "start_rank": 8326,
    "end_rank": 8350,
    "path": "level-084-set-02.json"
+  },
+  {
+   "set_id": "level-085-set-01",
+   "start_rank": 8401,
+   "end_rank": 8425,
+   "path": "level-085-set-01.json"
   },
   {
    "set_id": "level-085-set-03",

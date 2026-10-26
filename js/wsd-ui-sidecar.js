@@ -1,5 +1,5 @@
 // Release-pinned assignment overlay. Source releases and progress IDs stay intact.
-import { readJsonWithTimeout } from './read-request.js?v=c3533987';
+import { readJsonWithTimeout } from './read-request.js?v=0fe6dbe1';
 
 const sidecars = new Map();
 
