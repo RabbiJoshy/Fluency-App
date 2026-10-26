@@ -51,7 +51,7 @@ const urlsToCache = [
   '/data/speech-frequency/es-literal-ground-r6-fw1.json',
   '/data/speech-frequency/fi.json',
   '/data/speech-frequency/fr.json',
-  '/data/speech-frequency/pt-literal-ground-r4-fw1-ds25-finite-v1.json',
+  '/data/speech-frequency/pt-literal-ground-r4-fw1-ds25-decide-v1.json',
   '/data/speech-frequency/cs-fw1.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',

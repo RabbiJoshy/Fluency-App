@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T00:30:00+00:00",
+      "date": "2026-10-26 00:30 GMT",
+      "agent": "Antigravity",
+      "summary": "Portuguese: 10,000-card DECIDE-1 release promotes mercury-decide and Jev assignments into production",
+      "detail": [
+        "Full 10,000-card release (pt-speech-v25-decide-1-10000-slim) with Mercury-Decide on top ranks and Jev 1.14 across remaining polysemous words.",
+        "Rebuilt sense menus with rescued verbal multiword phrases, letter-case lookups, and resolved pointer glosses.",
+        "Retires the interim client-side Jev UI sidecar; disambiguated meanings and recorded ties are native to the release artifact.",
+        "Regenerated release-bound cognates, bridge, speech-frequency, merge exceptions, dictionary examples, estimation pool, and assignment filters."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T00:35:03+00:00",
       "date": "2026-10-26 00:35 GMT",
       "agent": "Claude",
@@ -355,20 +368,6 @@
         "Removed the bottom footer bar to reclaim ~80px of vertical space, preventing card scaling on laptops and desktops.",
         "Added a segmented control in the top bar (Everyday Speech / Music Mode) so visitors and hirers immediately see both modes.",
         "Next button and close button sit in the top-right header actions; arrow keys and direct tab clicks switch seamlessly."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T13:05:06+01:00",
-      "date": "2026-10-22 13:05 BST",
-      "agent": "Claude",
-      "summary": "About: new wording (series, playlist, everyday speech), hover tooltip on the demo cards, meanings most common first",
-      "detail": [
-        "Intro: 'in real life'; learn from everyday speech, a playlist or the series you're watching; La Casa de Papel (rehenes 120th vs ~4,300th, atraco 193rd vs ~9,000th) and YHLQMDLG (perreo among the top 70).",
-        "Speech: ranked across millions of conversations in films and TV; examples from film and TV plus professionally translated sentences; mañana and todavía instead of que.",
-        "Second column is Music, about playlists rather than one artist.",
-        "Demo cards: hovering shows 'Click to see every part explained'; a click opens the walkthrough (first tap shows it on phones). The button under the cards is gone.",
-        "Demo cards list the most common meaning first (bank, then bench)."
       ],
       "commit": "pending"
     }
