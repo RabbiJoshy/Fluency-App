@@ -1,12 +1,12 @@
-/* Desktop home: Learn and Practise as two tabs (2026-10-26).
+/* Home: Learn and Practise as two tabs (2026-10-26), desktop and phone.
    One section is open at a time, chosen by #homeTabs; the tab carries the
-   name, so the open section keeps only its ? in the top-right corner. Phones
-   keep the fold rows in home-layout.css. Before anything is in Practise the
-   tabs stay hidden and Learn shows alone. */
+   name, so the open section keeps only its ? in the top-right corner and the
+   fold rows in home-layout.css go. Before anything is in Practise the tabs
+   stay hidden and Learn shows alone. */
 
 #homeTabs { display: none; }
 
-body.desktop-workspace #setupPanel:has(> #step2:not([style*="none"])) > #homeTabs:not([hidden]) {
+#setupPanel:has(> #step2:not([style*="none"])) > #homeTabs:not([hidden]) {
     display: flex;
     gap: 6px;
     padding: 5px;
@@ -62,14 +62,15 @@ body.desktop-workspace #setupPanel:has(> #step2:not([style*="none"])) > #homeTab
 .home-tab-dot[hidden] { display: none; }
 
 /* --- With tabs: only the open section shows -------------------------------- */
-body.desktop-workspace #setupPanel[data-home-open="learn"]:has(> #homeTabs:not([hidden])) > #reviewDeckSection,
-body.desktop-workspace #setupPanel[data-home-open="practise"]:has(> #homeTabs:not([hidden])) > #step2 {
+#setupPanel[data-home-open="learn"]:has(> #homeTabs:not([hidden])) > #reviewDeckSection,
+#setupPanel[data-home-open="practise"]:has(> #homeTabs:not([hidden])) > #step2 {
     display: none !important;
 }
-body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section { position: relative; }
+#setupPanel:has(> #homeTabs:not([hidden])) > .home-section { position: relative; }
+#setupPanel:has(> #homeTabs:not([hidden])) .home-section-toggle { display: none !important; }
 
 /* The tab names the section, so its title steps aside and the ? stays. */
-body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header {
+#setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header {
     position: absolute;
     top: 0;
     right: 0;
@@ -77,21 +78,34 @@ body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-sectio
     padding: 1.6vh 1.2vw 0 0;
     border: 0;
 }
-body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger {
+#setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger {
     position: static;
     font-size: 0;
     padding: 0;
     gap: 0;
 }
-body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger > .home-section-icon { display: none; }
-body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger > .home-section-help {
+#setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger > .home-section-icon { display: none; }
+#setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger > .home-section-help {
     position: static;
     display: block;
     width: 32px;
     height: 32px;
 }
-body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > #step2 > .level-choosing { padding-top: 4vh; }
-body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection > #reviewDeckBody { padding-top: 3vh; }
+#setupPanel:has(> #homeTabs:not([hidden])) > #step2 > .level-choosing { padding-top: 4vh; }
+#setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection > #reviewDeckBody { padding-top: 3vh; }
+
+/* Phones: tighter tabs, and the size of the existing home type. */
+@media (max-width: 1023px) {
+    #setupPanel > #homeTabs:not([hidden]) { margin: 0 0 10px; padding: 4px; gap: 4px; }
+    .home-tab { flex-direction: column; align-items: center; justify-content: center; padding: 8px 10px; gap: 2px; font-size: var(--home-text-small); text-align: center; }
+    .home-tab strong { font-size: var(--home-text); }
+    .home-tab-icon { display: none; }
+    .home-tab-meta { margin-left: 0; gap: 6px; }
+    #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header { padding: 10px 10px 0 0; }
+    #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger > .home-section-help { width: 24px; height: 24px; }
+    #setupPanel:has(> #homeTabs:not([hidden])) > #step2 > .level-choosing { padding-top: 14px; }
+    #setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection > #reviewDeckBody { padding-top: 14px; }
+}
 
 /* Wide screens: one full-width column under the tabs instead of two. */
 @media (min-width: 1360px) {

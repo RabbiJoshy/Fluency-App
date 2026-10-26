@@ -3716,10 +3716,9 @@ function wireLevelChoice() {
     });
 }
 
-// Learn and Practise share the home screen and one is open at a time. On a
-// phone Learn opens first; on desktop (tabs) Practise opens first when words
-// are waiting. The learner's own choice holds for the visit. `mistakes` is -1
-// when there is no Practise.
+// Learn and Practise share the home screen as two tabs, one open at a time.
+// Practise opens first when words are waiting, otherwise Learn; the learner's
+// own choice holds for the visit. `mistakes` is -1 when there is no Practise.
 let _homeSectionChosen = null;
 let _homeSectionWired = false;
 function applyHomeSection(mistakes, waiting = 0) {
@@ -3735,8 +3734,7 @@ function applyHomeSection(mistakes, waiting = 0) {
             setHomeSectionOpen(panel, _homeSectionChosen);
         });
     }
-    const wide = window.matchMedia?.('(min-width: 1024px)').matches;
-    const open = mistakes < 0 ? 'learn' : (_homeSectionChosen || (wide && waiting > 0 ? 'practise' : 'learn'));
+    const open = mistakes < 0 ? 'learn' : (_homeSectionChosen || (waiting > 0 ? 'practise' : 'learn'));
     setHomeSectionOpen(panel, open);
 }
 

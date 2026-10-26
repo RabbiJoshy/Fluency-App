@@ -2,15 +2,15 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
-      "timestamp": "2026-10-26T22:58:00+00:00",
-      "date": "2026-10-26 22:58 GMT",
+      "timestamp": "2026-10-26T23:10:00+00:00",
+      "date": "2026-10-26 23:10 GMT",
       "agent": "Claude",
-      "summary": "Desktop home: Learn and Practise are now two tabs, one open at a time.",
+      "summary": "Home: Learn and Practise are now two tabs, one open at a time, on desktop and phone.",
       "detail": [
         "Each tab shows one fact: Learn its level, Practise how many words are waiting (red dot when there are mistakes).",
-        "Desktop opens on Practise when words are waiting, otherwise Learn; your own choice holds for the visit.",
-        "The open section keeps its ? in the top-right corner; the title moved into the tab.",
-        "Before anything is in Practise there are no tabs, just Learn. Phones are unchanged."
+        "Home opens on Practise when words are waiting, otherwise Learn; your own choice holds for the visit.",
+        "The open section keeps its ? in the top-right corner; the title moved into the tab. The phone fold rows are gone.",
+        "Before anything is in Practise there are no tabs, just Learn."
       ],
       "commit": "pending"
     },
