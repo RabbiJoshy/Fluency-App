@@ -2546,7 +2546,7 @@ function updateLevelSliderReadout(i) {
         const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
         const coverageSubject = activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'everyday speech');
         const covHTML = coverageRounded
-            ? `<span class="lsw-coverage-inline">By Level ${i + 1}, you’ll recognise <strong>${coverageRounded}</strong> of ${coverageSubject}</span>`
+            ? `<span class="lsw-coverage-inline">Complete Level ${i + 1} to recognise <strong>${coverageRounded}</strong> of ${coverageSubject}</span>`
             : '';
         const egHTML = (examplesText || covHTML)
             ? `<div class="lsw-egs">${covHTML}${examplesText ? `<span class="lsw-example-words">${examplesText}</span>` : ''}</div>`
