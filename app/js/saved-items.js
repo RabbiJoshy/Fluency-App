@@ -129,13 +129,6 @@ export function renderSavedItems() {
             if (actionLabel) {
                 actionLabel.textContent = saved ? 'Saved' : 'Save expression';
             }
-            const cardItem = button.closest('.expression-card-item');
-            const indicator = cardItem?.querySelector('.expression-saved-indicator');
-            if (indicator) {
-                indicator.hidden = !saved;
-                indicator.classList.toggle('is-visible', saved);
-                indicator.title = saved ? 'Saved in your collection' : '';
-            }
         } catch (_) { /* Ignore an unrelated malformed control. */ }
     });
 }

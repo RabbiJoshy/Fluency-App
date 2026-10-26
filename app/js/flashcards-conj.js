@@ -385,7 +385,12 @@ async function toggleConjugationTable() {
                 drillLink.addEventListener('click', (e) => {
                     if (typeof window.openConjugationsScreen === 'function') {
                         e.preventDefault();
-                        window.openConjugationsScreen(drillLink.dataset.verb || lemma);
+                        // Leave the card's panel first, so the drill is the only
+                        // thing on screen, and return to the card afterwards.
+                        panel.classList.remove('visible');
+                        panel._loadRequest = (panel._loadRequest || 0) + 1;
+                        stowConjPanel(panel);
+                        window.openConjugationsScreen(drillLink.dataset.verb || lemma, null, { fromCard: true });
                     }
                 });
             }

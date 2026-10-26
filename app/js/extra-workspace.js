@@ -313,7 +313,18 @@ export async function openSongPickerScreen() {
     renderSongsList(songs);
 }
 
-export function backToExtraMenu() {
+// Verb drills opened from a study card return to that card, not to the Extra
+// menu: the menu is a page the learner never visited.
+let conjugationFromCard = false;
+
+function setConjugationFromCard(on) {
+    conjugationFromCard = on;
+    document.getElementById('extraModal')?.classList.toggle('is-from-card', on);
+    const label = document.querySelector('#extraConjugationsBackBtn .extra-back-label');
+    if (label) label.textContent = on ? 'Back to card' : 'Extra';
+}
+
+function showExtraMenuView() {
     const menuView = document.getElementById('extraMenuView');
     const conjView = document.getElementById('extraConjugationsView');
     const songPickerView = document.getElementById('extraSongPickerView');
@@ -328,9 +339,18 @@ export function backToExtraMenu() {
     } catch (_) {}
 }
 
+export function backToExtraMenu() {
+    if (conjugationFromCard) {
+        closeExtraModal();
+        return;
+    }
+    showExtraMenuView();
+}
+
 export function openExtraModal() {
     updateExtraUI();
-    backToExtraMenu();
+    setConjugationFromCard(false);
+    showExtraMenuView();
     const modal = document.getElementById('extraModal');
     if (modal) {
         modal.classList.remove('hidden');
@@ -338,6 +358,7 @@ export function openExtraModal() {
 }
 
 export function closeExtraModal() {
+    setConjugationFromCard(false);
     const modal = document.getElementById('extraModal');
     if (modal) {
         modal.classList.add('hidden');
@@ -386,7 +407,7 @@ export function initExtraWorkspace() {
     // conjugation menu → the Extra menu (not out of Extra altogether).
     const conjCloseBtn = document.getElementById('extraConjugationsCloseBtn');
     conjCloseBtn?.addEventListener('click', () => {
-        if (window.conjugationCloseStep?.()) return;
+        if (!conjugationFromCard && window.conjugationCloseStep?.()) return;
         backToExtraMenu();
     });
 
@@ -454,8 +475,9 @@ export function initExtraWorkspace() {
     }
 
     window.openExtraModal = openExtraModal;
-    window.openConjugationsScreen = (targetVerb = null, targetView = null) => {
+    window.openConjugationsScreen = (targetVerb = null, targetView = null, options = {}) => {
         openExtraModal();
+        if (options?.fromCard) setConjugationFromCard(true);
         openConjugationsScreen(targetVerb, targetView);
     };
     window.addEventListener('popstate', () => {

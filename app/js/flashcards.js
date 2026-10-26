@@ -1405,7 +1405,19 @@ function fitHoistedShared(root) {
         const line = parseFloat(getComputedStyle(shared).lineHeight) || 20;
         // Layout height, not the on-screen box: a card still flipping is
         // rotated in 3D, which distorts getBoundingClientRect.
-        if (shared.offsetHeight > line * 1.4) head.classList.add('has-shared-below');
+        if (shared.offsetHeight > line * 1.4) { head.classList.add('has-shared-below'); return; }
+        // A lone shared gloss is centred over the whole head (absolute), so
+        // it never wraps; it drops to its own row when it is cut off or would
+        // sit on top of the word type, "from <lemma>" or the meter.
+        if (getComputedStyle(shared).position !== 'absolute') return;
+        const left = shared.offsetLeft;
+        const right = left + shared.offsetWidth;
+        const clipped = shared.scrollWidth > shared.clientWidth + 1;
+        const overlaps = [...head.children].some(el => {
+            if (el === shared || !el.offsetWidth || getComputedStyle(el).position === 'absolute') return false;
+            return el.offsetLeft < right + 8 && el.offsetLeft + el.offsetWidth > left - 8;
+        });
+        if (clipped || overlaps) head.classList.add('has-shared-below');
     });
 }
 
@@ -5963,14 +5975,13 @@ function renderPhraseRow(item, index) {
             <div class="expression-row-text">
                 <div class="expression-row-headword-wrap">
                     <span class="expression-row-headword">${escapeCardText(item.expression)}</span>
-                    <span class="expression-saved-indicator${isSaved ? ' is-visible' : ''}" data-saved-indicator="${escapeCardText(item.expression)}" title="${isSaved ? 'Saved in your collection' : ''}" aria-label="Saved" ${isSaved ? '' : 'hidden'}>${SAVE_STAR_ICON}</span>
                 </div>
                 ${item.translation ? `<div class="expression-row-translation">${escapeCardText(item.translation)}</div>` : ''}
                 ${item.context ? `<div class="expression-row-context">${escapeCardText(item.context)}</div>` : ''}
             </div>
             ${sourcePill ? `<div class="expression-badge-slot">${sourcePill}</div>` : ''}
             <div class="expression-row-affordance">
-                ${hasExample ? `<span class="expression-example-pill"><span class="expression-example-quotes" aria-hidden="true">“ ”</span>Example</span>` : ''}
+                ${hasExample ? `<span class="expression-example-pill">Example</span>` : ''}
                 <svg class="expression-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </div>
         </div>
