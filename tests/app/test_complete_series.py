@@ -2,11 +2,24 @@
 import json
 from pathlib import Path
 import unittest
+import re
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 class CompleteSeriesTests(unittest.TestCase):
+    def test_available_english_passages_are_not_lost_during_selection(self):
+        token = re.compile(r"[^\W_]+(?:['’\-][^\W_]+)*", re.UNICODE)
+        for slug in ['casa-de-papel', 'elite']:
+            dialogue = json.loads((ROOT / f'app/data/series/{slug}.json').read_text())
+            deck = json.loads((ROOT / f'app/data/series/{slug}-deck.json').read_text())
+            available = {word for episode in dialogue['episodes'] for cue in episode['lines']
+                         if cue.get('translation', {}).get('english')
+                         for word in token.findall(cue['spanish'].lower().replace('’', "'"))}
+            selected = {word for word, row in deck['surfaces'].items()
+                        if any(example.get('english') for example in row['lines'])}
+            self.assertEqual(available, selected, slug)
+
     def test_every_observed_form_has_one_frequency_ranked_card(self):
         for slug, count, tokens, episodes in [('casa-de-papel', 12706, 136924, 30),
                                               ('elite', 4482, 35791, 8)]:

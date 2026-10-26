@@ -6,7 +6,7 @@ not mean all seasons were obtained or every line has an English translation.
 
 | Sample | Episodes | Dialogue tokens | Cards | Levels | Cards with English examples |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Casa | 30, original numbering across Seasons 1–4 | 136,924 | 12,706 | 128 | 7,929 |
+| Casa | 30, original numbering across Seasons 1–4 | 136,924 | 12,706 | 128 | 7,930 |
 | Élite | 8, Season 1 | 35,791 | 4,482 | 45 | 3,817 |
 
 Admission never depends on a frequency-list or dictionary hit. Names, numbers,
@@ -66,3 +66,21 @@ Checks cover every retained form and occurrence, inline menus and pending cards,
 original character offsets, translated examples, canonical and supplementary
 preview hydration, all 128 Casa levels, switching presets, rebuild fallbacks,
 failed saving, and zero WSD worker starts.
+
+## Missing-English audit
+
+Checked against every original cue and selected card example on 2026-10-26.
+After upgrading translated repetitions, every form with an accepted bilingual
+occurrence has at least one selected English example (guarded by a dataset test).
+
+Casa has 4,776 cards without English examples; 3,646 occur once. Of 2,151 forms
+occurring at least six times, 59 have no accepted English. Nine original-numbered
+episodes have no attached English: S01E07–09 and S02E01–06. For example, all 21
+occurrences of `camerún` are in untranslated S02E03. Accepted bilingual passages
+cover 56,315 of 136,924 word occurrences (41.1%).
+
+Élite has 665 cards without English; 602 occur once. Only one of the 633 forms
+occurring at least six times lacks English: `subtítulos`, from subtitle credits.
+Accepted bilingual passages cover 26,622 of 35,791 word occurrences (74.4%).
+These coverage figures reflect retained timing/quality rules and short-line
+exclusions, not whether English exists somewhere in the downloaded source files.

@@ -24,7 +24,7 @@ EXPECTED = {(season, episode) for season, count in enumerate((9, 6, 8, 8, 10), 1
             for episode in range(1, count + 1)}
 TIME = re.compile(r"(\d\d):(\d\d):(\d\d)[,.](\d{3})")
 TOKEN = re.compile(r"[^\W_]+(?:['’\-][^\W_]+)*", re.UNICODE)
-REVISION = "offline-30-episodes-v5-all-forms"
+REVISION = "offline-30-episodes-v6-example-reuse"
 
 
 def milliseconds(value):
@@ -218,11 +218,14 @@ def build(episodes, inventory, manifest, *, include_all=False):
                                    translationPolicy=translated['policy'])
                 by_season = candidates.setdefault(word, {})
                 choices = by_season.setdefault(ep["episode"][:3], [])
-                if not any(e["text"] == example["text"] for e in choices):
+                existing = next((i for i, e in enumerate(choices) if e['text'] == example['text']), None)
+                if existing is None:
                     choices.append(example)
-                    choices.sort(key=lambda e: (not bool(e.get('english')), not bool(re.search(r'[.!?…]["\u201d]?$' , e["text"])),
-                                                 not 4 <= len(TOKEN.findall(e["text"])) <= 35))
-                    del choices[5:]
+                elif example.get('english') and not choices[existing].get('english'):
+                    choices[existing] = example
+                choices.sort(key=lambda e: (not bool(e.get('english')), not bool(re.search(r'[.!?…]["\u201d]?$' , e["text"])),
+                                             not 4 <= len(TOKEN.findall(e["text"])) <= 35))
+                del choices[5:]
     # Translated examples first, with season diversity within each priority tier.
     for word, by_season in candidates.items():
         selected = surfaces[word]['lines']

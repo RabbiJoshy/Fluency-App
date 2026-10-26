@@ -90,6 +90,20 @@ class CasaSubtitleBuildTests(unittest.TestCase):
         self.assertEqual({e["song"][:3] for e in deck["surfaces"]["profesor"]["lines"]},
                          {"S01", "S03", "S04"})
 
+    def test_later_translated_repeat_replaces_untranslated_example(self):
+        text = 'Nunca más te buscaremos.'
+        translation = {'spanish': text, 'english': "We won't come after you.",
+                       'start_ms': 1000, 'end_ms': 2000, 'source': 'checked',
+                       'policy': 'precision-timing-v1'}
+        episodes = [{'episode': 'S04E03', 'lines': [{'spanish': text}]},
+                    {'episode': 'S04E08', 'lines': [{'spanish': text, 'translation': translation}]}]
+        _, deck = casa.build(episodes, {'buscaremos'}, {'numbering': 'original',
+            'retrievedAt': '2026-10-26', 'translationPolicy': 'precision-timing-v1'})
+        self.assertEqual(deck['surfaces']['buscaremos']['count'], 2)
+        self.assertEqual(len(deck['surfaces']['buscaremos']['lines']), 1)
+        self.assertEqual(deck['surfaces']['buscaremos']['lines'][0]['english'], translation['english'])
+        self.assertEqual(deck['surfaces']['buscaremos']['lines'][0]['song'], 'S04E08')
+
     def test_translated_context_never_changes_occurrence_counts(self):
         translation = {'spanish': 'El profesor. La casa.', 'english': 'The teacher. The house.',
                        'start_ms': 1000, 'end_ms': 5000, 'source': 'checked-source',

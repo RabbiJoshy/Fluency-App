@@ -14,8 +14,8 @@ levels of up to 100 cards. All forms are admitted, including the 6,102 matches
 in the original Speech inventory and forms absent from both frequency lists. Word occurrences
 retain repetitions; example text is deduplicated and spread across available
 seasons. Definitions still use canonical Speech ranks. Dialogue examples remain
-unassigned. The v5 preset includes conservative English matches in 21 original-numbered
-episodes across Seasons 1, 3 and 4: 5,495 full bilingual groups supply selected translated examples across 7,929
+unassigned. The v6 preset includes conservative English matches in 21 original-numbered
+episodes across Seasons 1, 3 and 4: 5,495 full bilingual groups supply selected translated examples across 7,930
 cards when all observed forms are included.
 Translations are preferred when selecting examples. Original Spanish cues alone
 supply occurrence counts; expanding an example to its complete bilingual group
@@ -109,7 +109,7 @@ files fail the build. Partial coverage requires the explicit flag and is
 recorded in both generated assets. A future dataset revision must also update
 `CASA_PRESET_REVISION` in `app/js/playlist-live.js` to refresh browser caches.
 
-Both the bundled preset and its browser fallback preserve full Spanish/English groups. The preset revision is `offline-30-episodes-v5-all-forms`, so reopening refreshes older caches while failed refreshes retain usable decks. No source matching or WSD calls are made when opening the preset.
+Both the bundled preset and its browser fallback preserve full Spanish/English groups. The preset revision is `offline-30-episodes-v6-example-reuse`, so reopening refreshes older caches while failed refreshes retain usable decks. No source matching or WSD calls are made when opening the preset.
 
 The Netflix bridge diagnostic sample and unchanged-count comparison are saved
 locally under `Fluency-Workspace/audits/casa-netflix-bridge-20261026/`.
