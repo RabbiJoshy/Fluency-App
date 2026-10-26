@@ -1624,3 +1624,20 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     body.desktop-workspace #setupPanel #step2 :is(#lswExamples, .home-level-progress, #homeLevelTiles) { padding-inline: 0.8vw; }
     body.desktop-workspace #setupPanel .home-section > .step-header .step-title-trigger > .home-section-help { top: calc(3.2vh - 2px); right: 2.4vw; }
 }
+
+/* Centre the secondary Practise action and the session-priority note. */
+#setupPanel #reviewDeckSection .home-practise-browse {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    margin-inline: auto;
+    grid-column: 1 / -1;
+    grid-row: auto;
+    justify-self: center;
+    text-align: center;
+}
+#setupPanel #reviewDeckSection .home-footer-hint {
+    width: 100%;
+    flex-basis: 100%;
+    text-align: center;
+}
