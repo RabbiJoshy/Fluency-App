@@ -93,8 +93,8 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-10-26T21:15:00+00:00",
-      "date": "2026-10-26 21:15 GMT",
+      "timestamp": "2026-10-26T21:20:00+00:00",
+      "date": "2026-10-26 21:20 GMT",
       "agent": "Claude",
       "summary": "Settings rows no longer stretch across a wide screen.",
       "detail": [
@@ -110,6 +110,16 @@
       "detail": [
         "Browse all is centred across the Practise content area, including the empty state.",
         "The Mistakes first note is centred above the Practise button."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T21:15:00+00:00",
+      "date": "2026-10-26 21:15 GMT",
+      "agent": "Claude",
+      "summary": "Settings rows no longer stretch across a wide screen.",
+      "detail": [
+        "On desktop the flat Settings rows are capped at 560px and line up under the title, so each label sits next to its switch."
       ],
       "commit": "pending"
     },
@@ -342,18 +352,6 @@
         "Forms keep their own card for another word (fui, foi, fue), another part of speech (feito, poderes), an impersonal or imperative meaning (há, tem, faz, dá), their own SpanishDict page (hay), or a meaning concentrated on that form (vamos).",
         "Expressions no longer keep a form apart: sé joins saber, está joins estar.",
         "Spanish and Portuguese placement pools rebuilt for the new grouping."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:49:00+00:00",
-      "date": "2026-10-26 00:49 GMT",
-      "agent": "Claude",
-      "summary": "Admin filters: Portuguese cards are labelled by the model that assigned them (mercury-decide or Jev), and confidence and gap filters work again.",
-      "detail": [
-        "The source filter no longer shows a stale 'DeepSeek' list; options are Mercury-decide (1,077 cards), Jev (6,709) and No model run.",
-        "Confidence comes from the lowest-scoring published sentence on each card; 664 cards are flagged as having a sentence that fits no listed sense.",
-        "The retired Jev overlay's leftover config pin is removed; the filters no longer read it."
       ],
       "commit": "pending"
     }

@@ -10047,6 +10047,63 @@ function renderCardWikipediaBadge(card) {
     }
 
     window.saveStudySessionSnapshot?.();
+    _schedulePrewarmNextCard();
+}
+
+let _prewarmTimer = null;
+function _schedulePrewarmNextCard() {
+    clearTimeout(_prewarmTimer);
+    _prewarmTimer = setTimeout(() => {
+        const nextIndex = currentIndex + 1;
+        if (!Array.isArray(flashcards) || nextIndex >= flashcards.length) return;
+        const next = flashcards[nextIndex];
+        if (!next || next._prewarmed) return;
+        next._prewarmed = true;
+
+        // 1. Pre-calculate buildCardChildren if applicable
+        if (!next.isChainChild && !next.splitInfo && typeof buildCardChildren === 'function') {
+            buildCardChildren(next).catch(() => {});
+        }
+
+        // 2. Pre-resolve dictionary cross-references
+        const langConfig = config?.languages?.[selectedLanguage];
+        for (const meaning of next.meanings || []) {
+            if (meaning._seeExpressionLoad || meaning._seeExpressionGloss) continue;
+            const references = typeof senseCrossReferences === 'function' ? senseCrossReferences(meaning) : [];
+            if (!references.length || !references.every(ref => isSeeExpressionReference(ref.target, ref.relation))) continue;
+            meaning._seeExpressionLoad = true;
+            Promise.all(references.map(ref => resolveSeeExpression(ref.target, langConfig,
+                window._cachedJoinedIndex || []))).then(entries => {
+                const glosses = [...new Set(entries.flatMap(entry => (entry?.senses || [])
+                    .map(sense => sense.translation).filter(Boolean)))];
+                if (!glosses.length) return;
+                meaning._seeExpressionGloss = glosses.join('; ');
+            }).catch(() => {
+                delete meaning._seeExpressionLoad;
+            });
+        }
+
+        // 3. Pre-calculate primary POS tab for multi-meaning cards
+        if (next.isMultiMeaning && next.meanings?.length && !next._activePosTab) {
+            const posWeights = new Map();
+            next.meanings.forEach((meaning, index) => {
+                const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
+                if (!pos || ['MWE', 'CLITIC', 'EXAMPLE_ONLY'].includes(pos)) return;
+                if (typeof isHiddenExpressionOnParent === 'function' && isHiddenExpressionOnParent(next, meaning)) return;
+                if (meaning.isKnownSense) return;
+                const weight = Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
+                const entry = posWeights.get(pos) || { pos, weight: 0, firstIndex: index };
+                entry.weight += weight;
+                posWeights.set(pos, entry);
+            });
+            const primaryPos = [...posWeights.values()].sort((a, b) =>
+                (b.weight - a.weight) || (a.firstIndex - b.firstIndex)
+            )[0];
+            if (primaryPos) {
+                next._activePosTab = primaryPos.pos;
+            }
+        }
+    }, 60);
 }
 
 // A learner prompt into the tutorial (tutorial.js), not the visitor walkthrough.

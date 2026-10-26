@@ -458,12 +458,15 @@ function showDeckOverviewLoading() {
 }
 
 async function startDailyReview(opts = {}) {
+    window.prewarmSpeechEngine?.();
     const loadingMessage = document.getElementById('loadingMessage');
-    if (loadingMessage) {
-        loadingMessage.style.display = 'block';
-        loadingMessage.textContent = 'Collecting cards ready to practise…';
-    }
-    window.showAppLoading?.('Loading practice', 'Preparing your cards…');
+    const loadingTimer = setTimeout(() => {
+        if (loadingMessage) {
+            loadingMessage.style.display = 'block';
+            loadingMessage.textContent = 'Collecting cards ready to practise…';
+        }
+        window.showAppLoading?.('Loading practice', 'Preparing your cards…');
+    }, 120);
     try {
         await window.loadDailyReviewDeck?.({
             limit: opts.limit || 100,
@@ -472,6 +475,7 @@ async function startDailyReview(opts = {}) {
     } catch (err) {
         console.error('Error starting daily review:', err);
     } finally {
+        clearTimeout(loadingTimer);
         window.hideAppLoading?.();
         if (loadingMessage) loadingMessage.style.display = 'none';
     }
@@ -1581,7 +1585,9 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
     // Add click handlers for level buttons
     document.querySelectorAll('.level-btn').forEach(btn => {
         btn.addEventListener('click', function(event) {
+            window.prewarmSpeechEngine?.();
             if (event.isTrusted) _setupLevelSelectionWasManual = true;
+            if (_setupLevelSelectionWasManual) window.placementLevelSelected?.(this.dataset.startRank, this.dataset.endRank);
             // Reset all buttons to short text
             document.querySelectorAll('.level-btn').forEach(b => {
                 b.classList.remove('selected');
@@ -3639,16 +3645,22 @@ async function runLevelSession(button, studyMode) {
     if (_studySessionStarting) return;
     _studySessionStarting = true;
     if (button) button.disabled = true;
-    window.showAppLoading?.('Preparing your session', 'Loading your cards…');
+    window.prewarmSpeechEngine?.();
+    const loadingTimer = setTimeout(() => {
+        window.showAppLoading?.('Preparing your session', 'Loading your cards…');
+    }, 120);
     try {
-        await window.progressRefreshSettled?.(5000);
-        await renderRangeSelector();
+        const syncChanged = await window.progressRefreshSettled?.(5000);
+        if (syncChanged || !window.__studySessionContext) {
+            await renderRangeSelector();
+        }
         const fresh = window.__studySessionContext;
         if (!fresh) return;
         if (studyMode === 'new' && !(fresh.unseenCount > 0)) return;
         if (studyMode === 'review' && !(fresh.reviewCount > 0)) return;
         await startSelectedStudySession({ studyMode });
     } finally {
+        clearTimeout(loadingTimer);
         _studySessionStarting = false;
         const current = document.getElementById('studySetStartBtn');
         if (current && window.__studySessionContext) current.disabled = !(window.__studySessionContext.cardCount > 0);

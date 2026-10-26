@@ -59,7 +59,7 @@
         })();
     </script>
     <link rel="stylesheet" href="css/appearance.css?v=20261011">
-    <link rel="stylesheet" href="css/style.css?v=20261014clarity">
+    <link rel="stylesheet" href="css/style.css?v=20261026uitweaks">
     <link rel="stylesheet" href="css/progress-overview.css?v=20260927pa">
     <link rel="stylesheet" href="css/light-theme.css?v=20261011style">
     <link rel="stylesheet" href="css/extra.css?v=20261016">
@@ -69,7 +69,7 @@
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
     <link rel="modulepreload" href="js/extra-workspace.js?v=20261016">
-    <link rel="modulepreload" href="js/main.js?v=20261026placement">
+    <link rel="modulepreload" href="js/main.js?v=20261026extension">
     <link rel="modulepreload" href="js/routes.js?v=20261013music">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
@@ -77,12 +77,12 @@
     <link rel="modulepreload" href="js/offline-db.js?v=20260825ak">
     <link rel="modulepreload" href="js/sync-queue.js?v=20260825ak">
     <link rel="modulepreload" href="js/offline-content.js?v=20260825ak">
-    <link rel="modulepreload" href="js/speech.js?v=20260914b">
+    <link rel="modulepreload" href="js/speech.js?v=20261026speed">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20261025loading">
     <link rel="modulepreload" href="js/card-replica.js?v=20260929sense6">
     <link rel="modulepreload" href="js/tutorial.js?v=20260929sense6">
-    <link rel="modulepreload" href="js/estimation.js?v=20261026placement">
+    <link rel="modulepreload" href="js/estimation.js?v=20261026extension">
     <link rel="modulepreload" href="js/release-host.js?v=20260921rh">
     <link rel="modulepreload" href="js/env.js?v=20261010airlock">
     <link rel="modulepreload" href="js/config.js?v=20260921rh">
@@ -90,10 +90,10 @@
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20261014clarity">
     <link rel="modulepreload" href="js/music-workspace.js?v=20261025loading">
-    <link rel="modulepreload" href="js/ui.js?v=20261025loading">
+    <link rel="modulepreload" href="js/ui.js?v=20261026speed">
     <link rel="modulepreload" href="js/review-home.js?v=20260927pa">
     <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
-    <link rel="modulepreload" href="js/vocab.js?v=20261026placement">
+    <link rel="modulepreload" href="js/vocab.js?v=20261026speed">
     <link rel="modulepreload" href="js/grammar-cards.js?v=20260923gn">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20261025loading">
@@ -104,7 +104,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260923bk">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260927v24">
-    <link rel="modulepreload" href="js/flashcards.js?v=20261026placement">
+    <link rel="modulepreload" href="js/flashcards.js?v=20261026speed">
     <link rel="modulepreload" href="js/keyboard-guide.js?v=20261005kb">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
@@ -191,14 +191,14 @@
         };
     </script>
     <link rel="stylesheet" href="css/learning-profiles.css?v=1">
-    <link rel="stylesheet" href="css/ui-refinements.css?v=20261014clarity">
+    <link rel="stylesheet" href="css/ui-refinements.css?v=20261026uitweaks">
     <link rel="stylesheet" href="css/desktop-shell.css?v=1">
     <link rel="stylesheet" href="css/music-workspace.css?v=20261019stg8">
     <link rel="stylesheet" href="css/series-mode.css?v=20261022">
     <link rel="stylesheet" href="css/saved-items.css?v=20261013saved">
     <link rel="stylesheet" href="css/passwordless-auth.css?v=20261016auth">
     <link rel="stylesheet" href="css/black-palette.css?v=1">
-    <link rel="stylesheet" href="css/home-layout.css?v=1">
+    <link rel="stylesheet" href="css/home-layout.css?v=20261026uitweaks">
     <link rel="stylesheet" href="css/loading-ui.css?v=20261025">
     <link rel="stylesheet" href="css/settings-flat.css?v=1">
 </head>
@@ -1589,8 +1589,8 @@
                 <section id="placementRecheckOffer" class="deck-complete-message" hidden aria-labelledby="placementRecheckTitle">
                     <h3 id="placementRecheckTitle">Check your starting point?</h3>
                     <p>Most words in this set were new to you. A short check can help find whether an earlier starting point would suit you better.</p>
-                    <button type="button" class="deck-complete-btn" onclick="startPlacementRecheck()">Recheck starting point</button>
-                    <button type="button" class="deck-complete-btn exit-btn" onclick="finishPlacementRecheck()">Keep studying</button>
+                    <button type="button" class="deck-complete-btn exit-btn" onclick="startPlacementRecheck()">Recheck starting point</button>
+                    <button type="button" class="deck-complete-btn menu-btn" onclick="finishPlacementRecheck()">Keep studying</button>
                 </section>
                 <button class="deck-complete-btn exit-btn" id="markCompleteBtn">
                     <span class="btn-icon" id="markCompleteIcon">↩</span>
@@ -1876,6 +1876,10 @@
                         A short check gives a useful range rather than an exact score.
                     </p>
                     <div class="estimation-placement-options" id="estimationPlacementOptions"></div>
+                    <section id="estimationExtensionOffer" hidden aria-labelledby="estimationExtensionTitle">
+                        <p id="estimationExtensionTitle">Your starting point is still uncertain. You can start with a suggestion above, or answer up to 15 more questions to narrow it down.</p>
+                        <button type="button" class="estimation-retry-btn" onclick="extendEstimation()">Answer a few more questions</button>
+                    </section>
                     <button class="estimation-start-btn" id="useEstimatedLevelBtn" hidden>Use Suggested Level</button>
                     <button type="button" class="estimation-retry-btn" id="estimationKeepPosition" hidden onclick="closeEstimationModal()">Keep my current position</button>
                     <button class="estimation-retry-btn" id="retryEstimationBtn" onclick="retryEstimation()">Try Again</button>
@@ -2515,10 +2519,6 @@
     </div>
 
     <!-- Surface-keyed Speech vocabulary import -->
-    <div id="vocabularyImportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="vocabularyImportTitle">
-        <div class="modal-content vocabulary-import-modal-content">
-            <div class="modal-header">
-                <div>
     <!-- Saved words and phrases: the only place the list is shown. Opened from Settings → Your words or Progress. -->
     <div id="savedWordsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="savedWordsTitle">
         <div class="modal-content saved-words-modal-content">
@@ -2537,6 +2537,10 @@
         </div>
     </div>
 
+    <div id="vocabularyImportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="vocabularyImportTitle">
+        <div class="modal-content vocabulary-import-modal-content">
+            <div class="modal-header">
+                <div>
                     <span class="progress-modal-eyebrow">Account progress</span>
                     <h3 id="vocabularyImportTitle">Import known words</h3>
                 </div>
@@ -2621,6 +2625,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20261026placement"></script>
+    <script type="module" src="js/main.js?v=20261026extension"></script>
 </body>
 </html>
