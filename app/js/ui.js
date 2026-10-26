@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=2168b372';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=ab280381';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=2168b372';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=2168b372';
-import { readFastTrack } from './fast-track-preferences.js?v=2168b372';
-import './session-plan.js?v=2168b372';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=2168b372';
+import './state.js?v=ab280381';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=ab280381';
+import { readFastTrack } from './fast-track-preferences.js?v=ab280381';
+import './session-plan.js?v=ab280381';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=ab280381';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2546,7 +2546,7 @@ function updateLevelSliderReadout(i) {
         const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
         const coverageSubject = activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'everyday speech');
         const covHTML = coverageRounded
-            ? `<span class="lsw-coverage-inline">By Level ${i + 1}, you’ll recognise <strong>${coverageRounded}</strong> of ${coverageSubject}</span>`
+            ? `<span class="lsw-coverage-inline">Complete Level ${i + 1} to recognise <strong>${coverageRounded}</strong> of ${coverageSubject}</span>`
             : '';
         const egHTML = (examplesText || covHTML)
             ? `<div class="lsw-egs">${covHTML}${examplesText ? `<span class="lsw-example-words">${examplesText}</span>` : ''}</div>`
@@ -3965,7 +3965,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=2168b372')
+        import('./spotify.js?v=ab280381')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

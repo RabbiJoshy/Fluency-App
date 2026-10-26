@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T21:32:10+00:00",
+      "date": "2026-10-26 21:32 GMT",
+      "agent": "Codex",
+      "summary": "Clarify that level coverage follows completing the level.",
+      "detail": [
+        "The level picker now says “Complete Level 4 to recognise X% of everyday speech”, with the selected level and coverage filled in."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T21:15:23+00:00",
       "date": "2026-10-26 21:15 GMT",
       "agent": "Codex",
@@ -348,19 +358,6 @@
         "Place the loading message inside the sign-in card, with account choices and provider attribution space reserved from the start.",
         "Reveal provider controls only after their markup and styles are ready, keeping the logo, guest button and account links stationary.",
         "Cover logout before account cleanup and suppress intermediate provider callbacks; open the first language picker before the next paint after sign-in."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T20:10:00+00:00",
-      "date": "2026-10-25 20:10 GMT",
-      "agent": "Claude",
-      "summary": "Pinning every meaning keeps the pins showing.",
-      "detail": [
-        "The app now remembers which meanings you pinned, per word, so a card with every meaning pinned keeps its pins and count instead of going blank.",
-        "A card with every meaning missed (not pinned) still shows plain, as before.",
-        "Pins sync with your account as one small row per word in the existing account settings store; no server change.",
-        "Answering a pinned meaning correctly later removes its pin."
       ],
       "commit": "pending"
     }
