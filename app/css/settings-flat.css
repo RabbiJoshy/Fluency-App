@@ -24,8 +24,6 @@
 #settingsModal .settings-link-row {
     margin: 0; padding: 14px 0; border: 0; border-bottom: 1px solid var(--border-color); border-radius: 0; background: transparent; box-shadow: none;
 }
-#settingsModal #studyTabContent > .settings-pane > :first-child:not(.settings-defaults-heading),
-#settingsModal #studyTabContent > .settings-pane > .settings-defaults-heading + * { border-top: 1px solid var(--border-color); }
 #settingsModal .settings-link-row.settings-words-row[hidden] { display: none; }
 
 /* Two- and three-way switches read as text with an underline, not as boxed buttons. */
@@ -80,3 +78,39 @@
 body.desktop-workspace #settingsModal.desktop-workspace-page > .modal-content { max-width: 720px !important; margin-inline: auto !important; }
 #settingsModal .settings-pane-tab:not(:focus-visible) { outline: 0 !important; }
 #settingsModal .settings-pane-tab:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 4px; }
+
+/* Laptop and up: a larger type scale and a wider column, so the page isn't a small strip in empty space.
+   Phones keep the compact sizes above. */
+@media (min-width: 900px) {
+    #settingsModal .modal-content.settings-modal-content,
+    body.desktop-workspace #settingsModal.desktop-workspace-page > .modal-content { max-width: 860px !important; }
+    #settingsModal #settingsTitle { font-size: 38px; letter-spacing: -.02em; }
+    #settingsModal .settings-tabs-header { padding-top: 36px; padding-bottom: 22px; }
+    #settingsModal .settings-pane-tabs { gap: 36px; margin-top: 10px; }
+    #settingsModal .settings-pane-tab { font-size: 20px; padding: 12px 0 14px; }
+    #settingsModal .settings-label,
+    #settingsModal .settings-row-label,
+    #settingsModal .appearance-settings-copy strong,
+    #settingsModal .settings-link-row strong,
+    #settingsModal .settings-words-row strong,
+    #settingsModal .settings-default-row .settings-row-label { font-size: 22px; }
+    #settingsModal .settings-row-explanation,
+    #settingsModal .settings-link-row small,
+    #settingsModal .settings-words-row small { font-size: 17px; line-height: 1.5; margin-top: 6px; }
+    #settingsModal #studyTabContent .appearance-settings-card,
+    #settingsModal #studyTabContent .settings-default-row,
+    #settingsModal #studyTabContent .settings-link-row { padding: 24px 0; }
+    #settingsModal .settings-toggle { gap: 26px; }
+    #settingsModal .settings-toggle .group-size-btn { font-size: 18px; padding: 4px 0; }
+    #settingsModal .settings-words-count { font-size: 18px; }
+    #settingsModal .settings-words-action svg { width: 24px; height: 24px; }
+    #settingsModal .known-language-flag .flag-img { height: 32px; }
+    #settingsModal #studyTabContent .settings-link-row > span:last-child { font-size: 28px; }
+}
+#settingsModal .settings-tabs-header { border-bottom: 0 !important; }
+#settingsModal #studyTabContent > .settings-pane > * { border-top: 0 !important; }
+#settingsModal #studyTabContent > .settings-pane > .settings-pane-note { border-top: 0; }
+@media (min-width: 900px) {
+    #settingsModal #settingsPaneApp .appearance-settings-copy strong,
+    #settingsModal #settingsPaneStudy .settings-row-label { font-size: 22px !important; font-weight: 700; }
+}

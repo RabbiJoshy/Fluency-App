@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T22:03:48+00:00",
+      "date": "2026-10-26 22:03 GMT",
+      "agent": "Claude",
+      "summary": "Settings on laptop: bigger type and a wider column.",
+      "detail": [
+        "From 900px up: 38px title, 20px tabs, 22px row labels, 17px descriptions and larger switches, in an 860px centred column.",
+        "Removed the doubled rules under the title and tabs. Phone sizes are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T21:52:56+00:00",
       "date": "2026-10-26 21:52 GMT",
       "agent": "Claude",
@@ -348,18 +359,6 @@
         "A card with every meaning missed (not pinned) still shows plain, as before.",
         "Pins sync with your account as one small row per word in the existing account settings store; no server change.",
         "Answering a pinned meaning correctly later removes its pin."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T19:46:00+00:00",
-      "date": "2026-10-25 19:46 GMT",
-      "agent": "Claude",
-      "summary": "After a pin, the box says what to do next.",
-      "detail": [
-        "After pinning a meaning, the box where the tiles were says 'Swipe right if you know the rest.' for a few seconds.",
-        "Pinning the last unpinned meaning says 'That’s every meaning, so the whole word will come back in Practise.' The pins still clear in that case.",
-        "Tapping the message dismisses it early."
       ],
       "commit": "pending"
     }
