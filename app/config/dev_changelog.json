@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T14:32:01+00:00",
+      "date": "2026-10-26 14:32 GMT",
+      "agent": "Codex",
+      "summary": "Mobile grammar-word rows fit again; grading reveals expressions, rarer-use paging works, and closer translation pairs appear first.",
+      "detail": [
+        "Restore compact function-word typography, stack only the row that needs it, and show até without a redundant + ….",
+        "Keep expressions follow-ups out of the function-word renderer and repair the missing escaping helper that left old card content on screen.",
+        "Cycle rarer-use examples in the visible sheet, preserving open examples, scroll position and pager focus.",
+        "Order selected Speech examples using conservative translation length and digit mismatch checks before WSD confidence; example membership, frequencies and artist playback priorities stay unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T14:21:26+00:00",
       "date": "2026-10-26 14:21 GMT",
       "agent": "Claude",
@@ -357,18 +370,6 @@
         "Keep the whole ir para phrase inside its capsule; prevent compact rows clipping construction cues.",
         "Resolve explicit expression references such as acabar de into English on the sense row, retaining the link to the full definition and example.",
         "Verify the reported records at 320, 390 and 1440 pixel widths, plus app regression checks."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T20:59:15.648074+01:00",
-      "date": "2026-10-22 20:59 BST",
-      "agent": "Codex",
-      "summary": "Restore corrected Portuguese verb meanings with verified deck loading.",
-      "detail": [
-        "Fizeram shows they did; made; foram shows they went / they were, with the correct verb tables.",
-        "Verify all 10000 published cards and preserve card IDs, meaning IDs and example assignments.",
-        "Bind merge keys, frequency, dictionary examples, placement and Smart Skip assets to the corrected release; preserve the previous release for rollback."
       ],
       "commit": "pending"
     }
