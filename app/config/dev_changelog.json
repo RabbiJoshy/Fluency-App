@@ -2,12 +2,13 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
-      "timestamp": "2026-10-26T23:20:00+00:00",
-      "date": "2026-10-26 23:20 GMT",
+      "timestamp": "2026-10-26T23:45:00+00:00",
+      "date": "2026-10-26 23:45 GMT",
       "agent": "Claude",
       "summary": "Home tabs on phones keep their icons.",
       "detail": [
-        "Each phone tab shows its icon and name on the top line, the level or waiting count beneath."
+        "Each phone tab shows its icon and name on the top line, the level or waiting count beneath.",
+        "Practise's button stays full width inside its panel at every width, and the ? no longer overlaps the first row."
       ],
       "commit": "pending"
     },

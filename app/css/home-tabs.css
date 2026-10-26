@@ -68,6 +68,11 @@
 }
 #setupPanel:has(> #homeTabs:not([hidden])) > .home-section { position: relative; }
 #setupPanel:has(> #homeTabs:not([hidden])) .home-section-toggle { display: none !important; }
+/* Practise's footer stacks its note over a full-width button, as Learn's does. */
+#setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection .home-section-footer { flex-direction: column; flex-wrap: nowrap; align-items: stretch; }
+#setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection .home-footer-hint { flex-basis: auto; }
+#setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection .home-section-footer > .home-cta { align-self: stretch; width: auto; }
+#setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection .home-cta-main { flex: 1 1 auto; justify-content: center; text-align: center; }
 
 /* The tab names the section, so its title steps aside and the ? stays. */
 #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header {
@@ -91,8 +96,9 @@
     width: 32px;
     height: 32px;
 }
-#setupPanel:has(> #homeTabs:not([hidden])) > #step2 > .level-choosing { padding-top: 4vh; }
-#setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection > #reviewDeckBody { padding-top: 3vh; }
+/* Room for the ? above the content. */
+#setupPanel:has(> #homeTabs:not([hidden])) > #step2 > .level-choosing { padding-top: max(4vh, 52px); }
+#setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection > #reviewDeckBody { padding-top: max(3vh, 44px); }
 
 /* Phones: tighter tabs, and the size of the existing home type. */
 @media (max-width: 1023px) {
