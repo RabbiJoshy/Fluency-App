@@ -1,0 +1,117 @@
+/* Desktop home: Learn and Practise as two tabs (2026-10-26).
+   One section is open at a time, chosen by #homeTabs; the tab carries the
+   name, so the open section keeps only its ? in the top-right corner. Phones
+   keep the fold rows in home-layout.css. Before anything is in Practise the
+   tabs stay hidden and Learn shows alone. */
+
+#homeTabs { display: none; }
+
+body.desktop-workspace #setupPanel:has(> #step2:not([style*="none"])) > #homeTabs:not([hidden]) {
+    display: flex;
+    gap: 6px;
+    padding: 5px;
+    margin: 0;
+    border-radius: 14px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+}
+.home-tab {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 1.6vw;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: var(--home-text);
+    cursor: pointer;
+    text-align: left;
+}
+.home-tab:hover { color: var(--text-primary); background: var(--bg-card-hover); }
+.home-tab[aria-selected="true"] {
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border-color: var(--border-light, var(--border-color));
+}
+.home-tab strong { font-weight: 600; font-size: var(--home-title); }
+.home-tab-icon {
+    flex: none;
+    width: 1.1em;
+    height: 1.1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.home-tab-meta {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+.home-tab[aria-selected="true"] .home-tab-meta { color: var(--text-secondary); }
+.home-tab-dot { width: 9px; height: 9px; border-radius: 50%; background: #e5484d; }
+.home-tab-dot[hidden] { display: none; }
+
+/* --- With tabs: only the open section shows -------------------------------- */
+body.desktop-workspace #setupPanel[data-home-open="learn"]:has(> #homeTabs:not([hidden])) > #reviewDeckSection,
+body.desktop-workspace #setupPanel[data-home-open="practise"]:has(> #homeTabs:not([hidden])) > #step2 {
+    display: none !important;
+}
+body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section { position: relative; }
+
+/* The tab names the section, so its title steps aside and the ? stays. */
+body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    padding: 1.6vh 1.2vw 0 0;
+    border: 0;
+}
+body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger {
+    position: static;
+    font-size: 0;
+    padding: 0;
+    gap: 0;
+}
+body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger > .home-section-icon { display: none; }
+body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > .home-section > .step-header .step-title-trigger > .home-section-help {
+    position: static;
+    display: block;
+    width: 32px;
+    height: 32px;
+}
+body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > #step2 > .level-choosing { padding-top: 4vh; }
+body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > #reviewDeckSection > #reviewDeckBody { padding-top: 3vh; }
+
+/* Wide screens: one full-width column under the tabs instead of two. */
+@media (min-width: 1360px) {
+    body.desktop-workspace #setupPanel.file-upload:has(> #homeTabs:not([hidden])):has(> #step2:not([style*="none"])):not(.hidden):not([style*="none"]) {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+        align-content: stretch;
+        padding: 3vh 3.5vw;
+        box-sizing: border-box;
+    }
+    body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > #homeTabs { grid-row: 1; grid-column: 1; }
+    body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > :is(#step2, #reviewDeckSection) {
+        grid-row: 2;
+        grid-column: 1;
+        min-height: 0;
+        margin-top: 2vh;
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        background: var(--bg-card);
+    }
+    :root:not([data-theme="light"]) body.desktop-workspace #setupPanel:has(> #homeTabs:not([hidden])) > :is(#step2, #reviewDeckSection) { background: var(--bg-card); }
+}

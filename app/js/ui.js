@@ -3596,7 +3596,18 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
         practisePeek.innerHTML = '';
         practisePeek.hidden = !practisePeek.innerHTML;
     }
-    applyHomeSection(reviewHTML ? practiseMistakes : -1);
+    // Desktop tabs: one fact each, the level and how many are waiting.
+    const homeTabs = document.getElementById('homeTabs');
+    if (homeTabs) {
+        homeTabs.hidden = !reviewHTML;
+        const learnTabMeta = document.getElementById('learnTabMeta');
+        if (learnTabMeta) learnTabMeta.textContent = levelNumber > 0 ? `Level ${levelNumber}` : '';
+        const practiseTabCount = document.getElementById('practiseTabCount');
+        if (practiseTabCount) practiseTabCount.textContent = practiseTotal > 0 ? `${practiseTotal.toLocaleString()} waiting` : 'All caught up';
+        const practiseTabDot = document.getElementById('practiseTabDot');
+        if (practiseTabDot) practiseTabDot.hidden = !(practiseMistakes > 0);
+    }
+    applyHomeSection(reviewHTML ? practiseMistakes : -1, practiseTotal);
     document.getElementById('step4').style.display = 'block';
     setActiveSetupStep('step4');
     document.getElementById('studySetStartBtn').addEventListener('click', async function() {
@@ -3705,25 +3716,27 @@ function wireLevelChoice() {
     });
 }
 
-// Learn and Practise share the home screen and one is open at a time. Learn
-// opens first; Practise stays folded (with its short version) until the
-// learner opens it this visit. `mistakes` is -1 when there is no Practise.
+// Learn and Practise share the home screen and one is open at a time. On a
+// phone Learn opens first; on desktop (tabs) Practise opens first when words
+// are waiting. The learner's own choice holds for the visit. `mistakes` is -1
+// when there is no Practise.
 let _homeSectionChosen = null;
 let _homeSectionWired = false;
-function applyHomeSection(mistakes) {
+function applyHomeSection(mistakes, waiting = 0) {
     const panel = document.getElementById('setupPanel');
     if (!panel?.querySelectorAll) return;
     if (!_homeSectionWired) {
         _homeSectionWired = true;
         panel.addEventListener('click', event => {
-            const toggle = event.target.closest('.home-section-toggle');
+            const toggle = event.target.closest('.home-section-toggle, .home-tab');
             if (!toggle) return;
             if (event.target.closest('.home-section-info')) return; // opens its info sheet instead
             _homeSectionChosen = toggle.dataset.homeSection;
             setHomeSectionOpen(panel, _homeSectionChosen);
         });
     }
-    const open = mistakes < 0 ? 'learn' : (_homeSectionChosen || 'learn');
+    const wide = window.matchMedia?.('(min-width: 1024px)').matches;
+    const open = mistakes < 0 ? 'learn' : (_homeSectionChosen || (wide && waiting > 0 ? 'practise' : 'learn'));
     setHomeSectionOpen(panel, open);
 }
 
@@ -3731,6 +3744,8 @@ function setHomeSectionOpen(panel, open) {
     panel.dataset.homeOpen = open;
     panel.querySelectorAll('.home-section-toggle').forEach(toggle =>
         toggle.setAttribute('aria-expanded', String(toggle.dataset.homeSection === open)));
+    panel.querySelectorAll('.home-tab').forEach(tab =>
+        tab.setAttribute('aria-selected', String(tab.dataset.homeSection === open)));
 }
 
 // The screen Go opens when a level has little or nothing new to give.

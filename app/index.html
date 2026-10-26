@@ -199,6 +199,7 @@
     <link rel="stylesheet" href="css/passwordless-auth.css?v=20261016auth">
     <link rel="stylesheet" href="css/black-palette.css?v=1">
     <link rel="stylesheet" href="css/home-layout.css?v=20261026uitweaks">
+    <link rel="stylesheet" href="css/home-tabs.css?v=1">
     <link rel="stylesheet" href="css/loading-ui.css?v=20261025">
     <link rel="stylesheet" href="css/settings-flat.css?v=1">
 </head>
@@ -560,6 +561,17 @@
                 <div class="coverage-bar-container">
                     <div id="personalCoverageFill" class="coverage-bar-fill personal-coverage-fill"></div>
                 </div>
+            </div>
+
+            <!-- Desktop: Learn and Practise as two tabs, one open at a time. Shown
+                 once there is something in Practise; ui.js fills the meta. -->
+            <div id="homeTabs" class="home-tabs" role="tablist" aria-label="Learn or Practise" hidden>
+                <button type="button" class="home-tab" role="tab" data-home-section="learn" aria-selected="true">
+                    <svg class="home-tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"/><path d="M12 20l0 -10"/></svg><strong>Learn</strong><span class="home-tab-meta" id="learnTabMeta"></span>
+                </button>
+                <button type="button" class="home-tab" role="tab" data-home-section="practise" aria-selected="false">
+                    <svg class="home-tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg><strong>Practise</strong><span class="home-tab-meta" id="practiseTabMeta"><i class="home-tab-dot" id="practiseTabDot" hidden aria-hidden="true"></i><span id="practiseTabCount"></span></span>
+                </button>
             </div>
 
             <!-- Step 2: Level Selection -->

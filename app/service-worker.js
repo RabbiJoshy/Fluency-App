@@ -33,6 +33,7 @@ const urlsToCache = [
   '/css/desktop-shell.css?v=1',
   '/css/black-palette.css?v=1',
   '/css/home-layout.css?v=20261026uitweaks',
+  '/css/home-tabs.css?v=1',
   '/css/music-workspace.css?v=20261019stg8',
   '/css/extra.css?v=20261016',
   '/css/series-mode.css?v=20261022',

@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T22:58:00+00:00",
+      "date": "2026-10-26 22:58 GMT",
+      "agent": "Claude",
+      "summary": "Desktop home: Learn and Practise are now two tabs, one open at a time.",
+      "detail": [
+        "Each tab shows one fact: Learn its level, Practise how many words are waiting (red dot when there are mistakes).",
+        "Desktop opens on Practise when words are waiting, otherwise Learn; your own choice holds for the visit.",
+        "The open section keeps its ? in the top-right corner; the title moved into the tab.",
+        "Before anything is in Practise there are no tabs, just Learn. Phones are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T22:46:00+00:00",
       "date": "2026-10-26 22:46 GMT",
       "agent": "Antigravity",
@@ -343,19 +356,6 @@
         "A folded word type's translation is centred on the whole row, not on the space after the pill, so a fully folded card reads as one line down the middle (claro: clear / sure · of course / of course).",
         "When a pill with its lemma leaves too little room ('Verb from acordarse'), the translation takes a centred line of its own under it, as shared words already do on an open row; the meter stays at the right.",
         "A shared context goes back to the word-type row in brackets (así: 'Adverb (in a certain way)' over like this / like that / this way / that way); only a shared translation is written into each row ('man · adult male')."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T23:16:00+00:00",
-      "date": "2026-10-25 23:16 GMT",
-      "agent": "Claude",
-      "summary": "Card back: word types open folded, translations line up, and short shared glosses go into each row.",
-      "detail": [
-        "A card with several word types opens with all of them folded to their translations; tapping one opens it. A card with one word type opens as before.",
-        "Folded translations start at the same place on every word-type row, so they read down one column.",
-        "When a word type's sub-senses share a gloss and each fits on one line, every row reads 'gloss · context' (hombre: 'man · adult male') and the word-type row is bare; otherwise the gloss stays above.",
-        "See again still opens every word type so any meaning can be pinned."
       ],
       "commit": "pending"
     }
