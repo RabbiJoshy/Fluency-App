@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T22:10:58+00:00",
+      "date": "2026-10-26 22:10 GMT",
+      "agent": "Claude",
+      "summary": "Settings: round close button, centred tabs with a pill highlight.",
+      "detail": [
+        "The close X is a true circle again (it had been squashed to 40×44).",
+        "Study / App / Your words are centred, and the selected tab has a soft pill around the whole word instead of an underline."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T22:06:51+00:00",
       "date": "2026-10-26 22:06 GMT",
       "agent": "Claude",
@@ -342,17 +353,6 @@
         "Rebuilt sense menus with rescued verbal multiword phrases, letter-case lookups, and resolved pointer glosses.",
         "Retires the interim client-side Jev UI sidecar; disambiguated meanings and recorded ties are native to the release artifact.",
         "Regenerated release-bound cognates, bridge, speech-frequency, merge exceptions, dictionary examples, estimation pool, and assignment filters."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:21:00+00:00",
-      "date": "2026-10-26 00:21 GMT",
-      "agent": "Claude",
-      "summary": "No more 'general use': the plain meaning reads as its translation, first.",
-      "detail": [
-        "Under a shared translation, a meaning with no context of its own used to read 'general use'; it now reads the translation alone and comes first (man / man · adult male).",
-        "The meanings sheet behind See again lists it the same way."
       ],
       "commit": "pending"
     }
