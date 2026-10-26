@@ -1257,8 +1257,8 @@ function detectSplitCardTuples(item, lang = 'es') {
         return result('homograph', tuples);
     }
 
-    // No four-sense or usage-share minimum for pronominal companions. Both
-    // constructions must actually be represented for the same base lemma.
+    // No four-sense minimum for pronominal companions. Both constructions
+    // must actually be represented for the same base lemma.
     if (!['es', 'pt'].includes(lang) || groups.size !== 1) return null;
     const root = [...groups.keys()][0];
     const plain = lex.filter(m => {
@@ -1271,6 +1271,11 @@ function detectSplitCardTuples(item, lang = 'es') {
     });
     if (!plain.length || !pron.length) return null;
     if (pron.every(m => plain.some(b => companionSameDefinition(m, b)))) return null;
+    // One stray assignment must not create a -se card: 3 published examples,
+    // or 10% of usage on rows without counts.
+    if (item?.wsd_distribution?.published_leaf_counts) {
+        if (weight(pron) < 3) return null;
+    } else if (weight(pron) / total < 0.10 - 1e-9) return null;
     const pronHeadword = normalizeLemmaToken(pron[0].headword) || root;
     const displayPron = pronHeadword !== root ? pronHeadword
         : lang === 'pt' ? `${root}-se` : `${root}se`;

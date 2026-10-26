@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T00:35:03+00:00",
+      "date": "2026-10-26 00:35 GMT",
+      "agent": "Claude",
+      "summary": "A verb only gets a separate -se card when the -se meaning has at least 3 examples.",
+      "detail": [
+        "matar | matar-se and similar pairs no longer appear on the strength of one stray example.",
+        "Rows without example counts need 10% of usage for the -se half, as other companions do.",
+        "The app and the Python card rules apply the same threshold."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T00:34:00+00:00",
       "date": "2026-10-26 00:34 GMT",
       "agent": "Claude",
@@ -357,18 +369,6 @@
         "Second column is Music, about playlists rather than one artist.",
         "Demo cards: hovering shows 'Click to see every part explained'; a click opens the walkthrough (first tap shows it on phones). The button under the cards is gone.",
         "Demo cards list the most common meaning first (bank, then bench)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T12:34:14+01:00",
-      "date": "2026-10-22 12:34 BST",
-      "agent": "Claude",
-      "summary": "About page: walkthrough lines point at the right places and fit between the banners; mini cards evenly spaced",
-      "detail": [
-        "About ignores the app's 'Bigger' text setting. It zoomed the page 15%, so the walkthrough's lines missed their elements and cards ran past the top and bottom banners.",
-        "Mini demo cards: rows read tick, word, bars again (a card-back rule had squashed them into odd columns).",
-        "Mini demo cards: 400px instead of 480px, content centred, so the back no longer has a big empty block under the example."
       ],
       "commit": "pending"
     }

@@ -18,7 +18,8 @@ def sense(hw, gloss, weight=1, *, tags=(), context='', pos='VERB', **extra):
 
 CASES = [
     ('two senses can split pronominally', 'es', 'va', [sense('ir', 'to go'), sense('irse', 'to leave')], 'reflexive', 2),
-    ('small pronominal share still splits', 'es', 'va', [sense('ir', 'to go', 99), sense('irse', 'to leave', 1)], 'reflexive', 2),
+    ('small pronominal share does not split', 'es', 'va', [sense('ir', 'to go', 99), sense('irse', 'to leave', 1)], None, 0),
+    ('ten percent pronominal share splits', 'es', 'va', [sense('ir', 'to go', 90), sense('irse', 'to leave', 10)], 'reflexive', 2),
     ('Portuguese shared headword tags', 'pt', 'fica', [sense('ficar', 'to stay'), sense('ficar', 'to become', tags=['pronominal'])], 'reflexive', 2),
     ('Portuguese reflexive also counts', 'pt', 'lembra', [sense('lembrar', 'to remind'), sense('lembrar', 'to remember', tags=['reflexive'])], 'reflexive', 2),
     ('Portuguese hyphenated headword', 'pt', 'lembra', [sense('lembrar', 'to remind'), sense('lembrar-se', 'to remember')], 'reflexive', 2),
@@ -91,6 +92,14 @@ class CompanionRuleTests(unittest.TestCase):
         row['wsd_distribution']['published_leaf_counts']['c'] = 0
         self.assertIsNone(detect_split_card_tuples(row))
 
+    def test_pronominal_side_needs_three_published_examples(self):
+        row = {'word': 'matou', 'meanings': [sense('matar', 'to kill', sense_id='a'),
+            sense('matar', 'to commit suicide', tags=['reflexive'], sense_id='b')],
+            'wsd_distribution': {'published_leaf_counts': {'a': 27, 'b': 3}}}
+        self.assertEqual(detect_split_card_tuples(row, 'pt')['tuple2']['headword'], 'matar-se')
+        row['wsd_distribution']['published_leaf_counts'] = {'a': 29, 'b': 2}
+        self.assertIsNone(detect_split_card_tuples(row, 'pt'))
+
     @unittest.skipUnless(shutil.which('node'), 'Node.js needed for card builder')
     def test_card_builder_keeps_rare_and_unused_senses_on_their_companion(self):
         script = r"""
@@ -102,8 +111,8 @@ class CompanionRuleTests(unittest.TestCase):
             const context = { console }; context.window = context; context.globalThis = context;
             vm.createContext(context); vm.runInContext(pure + low + builder, context);
             const item = { id: 'go', word: 'va', meanings: [
-                { sense_id: 'a', headword: 'ir', pos: 'VERB', translation: 'to go', frequency: .99 },
-                { sense_id: 'b', headword: 'irse', pos: 'VERB', translation: 'to leave', frequency: .01 }
+                { sense_id: 'a', headword: 'ir', pos: 'VERB', translation: 'to go', frequency: .9 },
+                { sense_id: 'b', headword: 'irse', pos: 'VERB', translation: 'to leave', frequency: .1 }
             ], unused_menu_senses: [
                 { sense_id: 'c', headword: 'ir', pos: 'VERB', translation: 'to attend' },
                 { sense_id: 'd', headword: 'irse', pos: 'VERB', translation: 'to disappear' }

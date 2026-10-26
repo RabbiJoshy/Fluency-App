@@ -23,6 +23,7 @@ import re
 import unicodedata
 from typing import Any, Iterable, Mapping
 
+MIN_PRONOMINAL_EXAMPLES = 3
 EXPRESSION_ROUTES = frozenset({"deterministic_bypass", "invariant", "competitive_wsd", "ambiguous"})
 _TOKEN_SPLIT = re.compile(r"[^\w'’]+|[\d_]+")
 _PARENTHETICAL = re.compile(r"\([^)]*\)")
@@ -243,8 +244,9 @@ def detect_split_card_tuples(row: Mapping[str, Any], language: str = "es") -> di
     """Assigned senses only: substantial distinct lemmas, or two constructions.
 
     Polysemy: four lexical sense rows and >=10% assigned usage per major lemma.
-    Pronominal: both constructions, independent of sense count/share, unless all
-    represented pronominal definitions are shared with an ordinary reading.
+    Pronominal: both constructions, independent of sense count, unless all
+    represented pronominal definitions are shared with an ordinary reading; the
+    pronominal side needs MIN_PRONOMINAL_EXAMPLES published examples (10% without counts).
     Three major lemmas produce three cards. HEADWAY owns provider lemma cleanup.
     """
     word = normal_token(row.get("word") or row.get("targetWord"))
@@ -297,6 +299,13 @@ def detect_split_card_tuples(row: Mapping[str, Any], language: str = "es") -> di
     if not plain or not pron:
         return None
     if all(any(companion_same_definition(m, b) for b in plain) for m in pron):
+        return None
+    # One stray assignment must not create a -se card: 3 published examples,
+    # or 10% of usage on rows without counts.
+    if (row.get("wsd_distribution") or {}).get("published_leaf_counts"):
+        if weight(pron) < MIN_PRONOMINAL_EXAMPLES:
+            return None
+    elif weight(pron) / total < 0.10 - 1e-9:
         return None
     pron_hw = normal_token(pron[0].get("headword")) or root
     display_pron = pron_hw if pron_hw != root else f"{root}-se" if language == "pt" else f"{root}se"
