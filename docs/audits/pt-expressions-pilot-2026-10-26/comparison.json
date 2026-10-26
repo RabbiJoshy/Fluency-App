@@ -1,0 +1,4191 @@
+{
+ "stats": {
+  "unmatched:same": 244,
+  "matched:same": 21,
+  "matched:expression_chosen": 137,
+  "matched:changed": 138,
+  "unmatched:changed": 15
+ },
+ "rows": [
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não sei, parece apenas que acaba sempre mal para os dois.",
+   "english": "I don't know. It just seems like it always ends badly for you two.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.77
+  },
+  {
+   "card": "acaba",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Ele acaba de entrar, mas já está para sair.",
+   "english": "He has just entered, but is already leaving.",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.71
+  },
+  {
+   "card": "acaba",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Você faz alguma ideia do que acaba de acontecer?",
+   "english": "Do you have any idea what just happened?",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.52
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Acaba isso e vem ter comigo ao escritório.",
+   "english": "Finish this up and come see me in my office.",
+   "before": "acabar: to complete; to finish (to make done)",
+   "after": "acabar: to complete; to finish (to make done)",
+   "conf": 0.99
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Filha isto é uma luta. Três desculpas e a luta acaba.",
+   "english": "Child, this is Wrestling, three sorry and the game is over.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.96
+  },
+  {
+   "card": "acaba",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Parabéns! Você acaba de ganhar um milhão de dólares!",
+   "english": "Congratulations! You just won a million dollars!",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.61
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Foi o que a minha mãe ensinou, \"Acaba a tua comida.\"",
+   "english": "That's what my mom tell me, \"Finish your food.",
+   "before": "acabar: to complete; to finish (to make done)",
+   "after": "acabar: to complete; to finish (to make done)",
+   "conf": 1.0
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "- Pois. Parece tudo um circo de merda que nunca mais acaba, não parece?",
+   "english": "It does seem to be a sort of never-ending shit show, doesn't it?",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.96
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Porque a mancha de sangue acaba bem aqui.",
+   "english": "Because the bloodstain on the inner lining cuts off right here.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.68
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O homicídio de sete mil milhões de inocentes acaba aqui.",
+   "english": "The murder of 7 billion innocent people ends right now.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.59
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Qualquer reencontro de pai e filha não acaba com o pai preso?",
+   "english": "Doesn't every long-awaited father-daughter reunion end with the dad being taken away in handcuffs.",
+   "before": "acabar: to break up; to put an end to (to make",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.38
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Suponho que sim. O diário acaba logo depois do julgamento dela.",
+   "english": "The journal ended right after her trial.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.97
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Como nos certificamos de que isto continua e não acaba aqui?",
+   "english": "How do we make sure this continues and doesn't end here?",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.94
+  },
+  {
+   "card": "acaba",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Meu pai acaba de voltar para casa.",
+   "english": "My father has just come home.",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.65
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Diz a verdade e tudo isto acaba.",
+   "english": "Tell the truth, all this stops.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.74
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Com aquele narigão, ele acaba com o ar em volta.",
+   "english": "With that big nose, he finishes the air around.",
+   "before": "acabar: to destroy completely, to defeat thoro",
+   "after": "acabar: to destroy completely, to defeat thoro",
+   "conf": 0.64
+  },
+  {
+   "card": "acaba",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "O Tom acaba de começar a trabalhar aqui.",
+   "english": "Tom has just started working here.",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.68
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Só quero saber se isso acaba aí, ou se devo preocupar-me.",
+   "english": "I just want to know if it ends there, or if I should be worried.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.97
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Será que essa loucura um dia acaba?",
+   "english": "Will this madness ever end?",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 1.0
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Reúne os inimigos dele e acaba com todos de uma vez.",
+   "english": "Gather his enemies and obliterate them all at once.",
+   "before": "acabar: to destroy completely, to defeat thoro",
+   "after": "acabar: to destroy completely, to defeat thoro",
+   "conf": 0.94
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Está a surgir um padrão. E acaba sempre mal.",
+   "english": "There's a pattern emerging, and it always ends badly.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.79
+  },
+  {
+   "card": "acaba",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Onde está tua prima? \"Acaba de sair.\"",
+   "english": "Where's your cousin? \"She's just left.\"",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.55
+  },
+  {
+   "card": "acaba",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Eu passei, mas a parede acaba de colapsar.",
+   "english": "Hey! I'm through, but the wall just collapsed.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.48
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Se o poeta sair, a festa acaba.",
+   "english": "If the poet leaves, the party's over.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 1.0
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Acaba primeiro o curso, e depois falamos.",
+   "english": "Graduate college first, then we'll talk.",
+   "before": "acabar: to complete; to finish (to make done)",
+   "after": "acabar: to complete; to finish (to make done)",
+   "conf": 0.79
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Aprender vocabulário é um esforço que nunca acaba.",
+   "english": "Learning vocabulary is a neverending struggle.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.89
+  },
+  {
+   "card": "acaba",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A guerra só acaba bem se a perderes.",
+   "english": "A war can only end well if it's lost.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.92
+  },
+  {
+   "card": "acaba",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "A água acaba de ser trazida do poço.",
+   "english": "The water has just been brought from the well.",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.59
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Você gostaria de ver o que eu acabei de fazer?",
+   "english": "Would you like to see what I just made?",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.57
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Sim, mas não posso porque acabei de te conhecer.",
+   "english": "Uh, yes, but I can't 'cause I just met you.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.66
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Você não vai acreditar no que eu acabei de ver!",
+   "english": "You won't believe what I just saw!",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.47
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de me mudar para o andar de cima.",
+   "english": "And I just moved in upstairs.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.79
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Eu acabei de descobrir isso há uma hora atrás.",
+   "english": "I just found out about that an hour ago.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.7
+  },
+  {
+   "card": "acabei",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Acabei o trabalho em menos de uma hora.",
+   "english": "I finished the work in less than an hour.",
+   "before": "acabar: to complete; to finish (to make done)",
+   "after": "acabar: to complete; to finish (to make done)",
+   "conf": 1.0
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Não posso acreditar no que acabei de ver.",
+   "english": "I can't believe what I just saw.",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.51
+  },
+  {
+   "card": "acabei",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu acabei fazendo uma coisa que eu não queria.",
+   "english": "I ended up doing something I didn't want to do.",
+   "before": "acabar: to end up (to eventually do)",
+   "after": "acabar: to end up (to eventually do)",
+   "conf": 0.99
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de me mudar e não conheço muita gente.",
+   "english": "I just moved here and don't know many people.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.86
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Eu vou te mostrar o carro que acabei de comprar.",
+   "english": "I'll show you the car I've just bought.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.6
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de ler o seu livro sobre a guerra.",
+   "english": "I just read your book about the war.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.49
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de falar por telefone com meu advogado.",
+   "english": "I just got off the phone with my lawyer.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.72
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Eu acabei de comer, então não estou com fome.",
+   "english": "I've just eaten so I'm not hungry.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.56
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de me lembrar de algo que tenho que fazer.",
+   "english": "I just remembered something I have to do.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.6
+  },
+  {
+   "card": "acabei",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "É impossível ela ter feito isto. Portanto, acho que já acabei.",
+   "english": "There's no way she did this, so, yeah, I think I'm done.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.84
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de ter uma conversa com seu advogado.",
+   "english": "I just had a talk with your lawyer.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.77
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de comer o chocolate que você me deu.",
+   "english": "I've just eaten the chocolate you gave me.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.57
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Não podes enganar o tempo, eu acabei de o tentar.",
+   "english": "You can't cheat time, I've just tried.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.66
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de ver o livro que você comprou.",
+   "english": "I've just seen the book you bought.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.53
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de receber uma ligação da sua escola.",
+   "english": "I just got a call from your school.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.67
+  },
+  {
+   "card": "acabei",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O mês terminou e acabei não fazendo nada.",
+   "english": "This month really flew by without me doing anything at all.",
+   "before": "acabar: to end up (to eventually do)",
+   "after": "acabar: to end up (to eventually do)",
+   "conf": 0.56
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "E que acabei de cometer um grande erro.",
+   "english": "And... That I just made a big mistake.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.6
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Eu acabei de mandar o meu namorado passar o dia com o seu primeiro amor.",
+   "english": "I just sent my boyfriend to spend the day with his first love.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.76
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de comprar uma nova planta para o meu quarto. Está tão bonito!",
+   "english": "I just bought a new plant for my room. It looks so nice!",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.6
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabei de falar com ela ao telefone e está inconsolável.",
+   "english": "I just got off the phone with her. She's... she's heartbroken.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.82
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acho que acabei de fazer o número 2.",
+   "english": "I think I just went W.W. Two.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.64
+  },
+  {
+   "card": "acabei",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Eu não sei. Acabei de chegar aqui.",
+   "english": "I don't know. I just got here.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.82
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de conhecer um lado dele que não conhecia antes.",
+   "english": "I just saw a side of him that I didn't know before.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.53
+  },
+  {
+   "card": "acabo",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não tenho mais ninguém com quem falar. E acabo a falar com toda a gente.",
+   "english": "I have nobody left to talk to, so I just kind of... talk to everybody.",
+   "before": "acabar: to end up (to eventually do)",
+   "after": "acabar: to end up (to eventually do)",
+   "conf": 0.3
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de vir do aeroporto de ir buscar a nova senhora.",
+   "english": "I just come from airport to pick up new lady.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.68
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de estar no aeroporto para me despedir dele.",
+   "english": "I have just been to the airport to see him off.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.66
+  },
+  {
+   "card": "acabo",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "E eu acabo por acertar nos olhos deles.",
+   "english": "And sometimes it lands in people's eyes.",
+   "before": "acabar: to end up (to eventually do)",
+   "after": "acabar: to end up (to eventually do)",
+   "conf": 0.69
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Eu acabo de te dar uma colher de chá.",
+   "english": "I've just given you a teaspoon.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.46
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de sair de uma reunião com o Chefe de Departamento. O que decidiram?",
+   "english": "I have just come from the briefing with the Commissioner.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.66
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de terminar o seu artigo mais recente.",
+   "english": "I just finished your most recent piece.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.46
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de perceber que cometemos um erro grave.",
+   "english": "I just realized we made a serious mistake.",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.57
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Vou ficar rico. Acabo de ganhar na loteria.",
+   "english": "I'm going to be rich. I just won the lottery.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.53
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Creio que os ovos que acabo de comer estavam podres.",
+   "english": "I think the eggs that I just ate were rotten.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.59
+  },
+  {
+   "card": "acabo",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Sempre acabo procurando as mesmas palavras no dicionário.",
+   "english": "I always end up looking up the same words in the dictionary.",
+   "before": "acabar: to end up (to eventually do)",
+   "after": "acabar: to end up (to eventually do)",
+   "conf": 0.98
+  },
+  {
+   "card": "acabo",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quebro uma única regra na vida e acabo a caminho da lua!",
+   "english": "I break one rule in my whole life and I end up in a rocket heading to the Moon!",
+   "before": "acabar: to end up (to eventually do)",
+   "after": "acabar: to end up; to turn out (to become, at ",
+   "conf": 0.74
+  },
+  {
+   "card": "acabo",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Metes-te no nosso caminho, e desta vez acabo mesmo contigo.",
+   "english": "If you continue to do stupid things, you'll be dead.",
+   "before": "acabar: to destroy completely, to defeat thoro",
+   "after": "acabar: to destroy completely, to defeat thoro",
+   "conf": 0.93
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Eu acabo de comprar outro suéter; agora eu tenho 21!",
+   "english": "I just bought another sweater. Now I have 21!",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.48
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de falar com a chefe da segurança na AMQ.",
+   "english": "I just got off the phone with the head of security at the CMA.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.64
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de tomar o café da manhã.",
+   "english": "I've just finished breakfast.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.68
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de descobrir que ela estava grávida.",
+   "english": "I just found out she was pregnant.",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.55
+  },
+  {
+   "card": "acabo",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Acaba tu com essa, eu acabo com esta.",
+   "english": "All right, you finish that. I'll finish this.",
+   "before": "acabar: to complete; to finish (to make done)",
+   "after": "acabar: to complete; to finish (to make done)",
+   "conf": 0.89
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Eu acabo de receber a sua mensagem.",
+   "english": "I just got your message.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.58
+  },
+  {
+   "card": "acabo",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Acabo tentando inconscientemente entrar em forma quando o verão se aproxima.",
+   "english": "I end up unconsciously trying to get fit as summer draws near.",
+   "before": "acabar: to end up (to eventually do)",
+   "after": "acabar: to end up (to eventually do)",
+   "conf": 0.97
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de voltar de um evento familiar, também.",
+   "english": "I just got back from a family event myself.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.72
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de adquirir alguns livros interessantes sobre religião.",
+   "english": "I just got a few interesting books on religion.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.46
+  },
+  {
+   "card": "acabo",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabo de completar meu álbum da Copa do Mundo.",
+   "english": "I just completed my World Cup album.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.54
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "O que você acabou de dizer não é importante.",
+   "english": "What you just said isn't relevant.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.77
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Ele acabou de sair, ele nem disse \"Te vejo mais tarde\".",
+   "english": "He just left, he didn't even say \"See you later\".",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.76
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tu e eu, isto... seja lá o que isto for... acabou.",
+   "english": "You and me, this... whatever this is... it's over.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.96
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Não acredito que você acabou de fazer isso.",
+   "english": "I can't believe you just did this.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.76
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Parece que você acabou de perder o seu melhor amigo.",
+   "english": "You look like you've just lost your best friend.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.63
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu sei como você se sente, mas acabou.",
+   "english": "I know how you feel, but it's over.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.99
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "É verdade que você acabou de sair da prisão?",
+   "english": "Is it true that you just got out of prison?",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.69
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Então, acho que esta conversa acabou... por enquanto.",
+   "english": "So I guess this little talk is over... for now.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 1.0
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Acabou que o que ele tinha dito a polícia não era verdade.",
+   "english": "It came out that what he had told the police was not true.",
+   "before": "acabar: to end up; to turn out (to become, at ",
+   "after": "acabar: to end up; to turn out (to become, at ",
+   "conf": 0.52
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Acabou de por em descanso a pessoa mais importante da sua vida.",
+   "english": "You just laid to rest the most important person in your life.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.75
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Onde a sua prima está? \"Ela acabou de ir embora.\"",
+   "english": "Where's your cousin? \"She's just left.\"",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.79
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "E agora, graças à minha irmã, o teu plano acabou.",
+   "english": "And now, thanks to my sister, your plan is over.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.9
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "O homem que você acabou de ver é um grande músico.",
+   "english": "The man you just saw is a great musician.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.79
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Com licença, você poderia repetir o que acabou de dizer?",
+   "english": "Excuse me, could you repeat what you've just said?",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.76
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Foi o tipo que acabou de ser liberto?",
+   "english": "It's the guy who was just released?",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.35
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Você vai embora? Mas você acabou de chegar.",
+   "english": "You're leaving? But you just got here.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.81
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Como é que acabou por se envolver nisto tudo?",
+   "english": "So how'd you come to all this?",
+   "before": "acabar: to end up (to eventually do)",
+   "after": "acabar: to end up (to eventually do)",
+   "conf": 0.38
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Meu irmão acabou de chegar do hospital.",
+   "english": "My brother just arrived from the hospital.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.85
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele acabou por se casar com ela.",
+   "english": "He eventually married her.",
+   "before": "acabar: to end up (to eventually do)",
+   "after": "acabar: to end up (to eventually do)",
+   "conf": 0.43
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Um homem acabou de entrar no bar.",
+   "english": "A man just entered the bar.",
+   "before": "acabar: to have just",
+   "after": "acabar de: to have just",
+   "conf": 0.85
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Ele acabou de pôr os papéis em ordem.",
+   "english": "He finished sorting the papers.",
+   "before": "acabar: to complete; to finish (to make done)",
+   "after": "acabar: to complete; to finish (to make done)",
+   "conf": 0.77
+  },
+  {
+   "card": "acabou",
+   "kind": "matched",
+   "expr": "acabar de",
+   "sentence": "Toda esta situação acabou de se tornar... muito estranha.",
+   "english": "I mean, this whole thing just got... very weird.",
+   "before": "acabar: to end up; to turn out (to become, at ",
+   "after": "acabar: to end up; to turn out (to become, at ",
+   "conf": 0.59
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu só estava tentando ajudar. \"Mas acabou atrapalhando.\"",
+   "english": "I was only trying to help. \"Except you just got in the way.\"",
+   "before": "acabar: to have just",
+   "after": "acabar: to have just",
+   "conf": 0.5
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Acabou que nós recebemos um milhão de dólares.",
+   "english": "It turned out that we received a million dollars.",
+   "before": "acabar: to end up; to turn out (to become, at ",
+   "after": "acabar: to end up; to turn out (to become, at ",
+   "conf": 0.7
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Que ela acabou com as críticas dela.",
+   "english": "Who she hurt with her reviews.",
+   "before": "acabar: to destroy completely, to defeat thoro",
+   "after": "acabar: to destroy completely, to defeat thoro",
+   "conf": 0.48
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Depois que a festa de Natal acabou, todos saímos para cantar.",
+   "english": "After the Christmas party was over, we all went out caroling.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 1.0
+  },
+  {
+   "card": "acabou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Acho que isto ainda não acabou.",
+   "english": "I don't think this is over yet.",
+   "before": "acabar: to finish (to be over, completed)",
+   "after": "acabar: to finish (to be over, completed)",
+   "conf": 0.99
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Parece que queres conhecer tudo o que ele deixou para trás.",
+   "english": "It feels like you're trying to tap into whatever it is he left behind.",
+   "before": "deixar: to leave, to leave behind (to cause to",
+   "after": "deixar: to leave, to leave behind (to cause to",
+   "conf": 0.87
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Alguém me disse que você deixou seu marido.",
+   "english": "Someone told me you left your husband.",
+   "before": "deixar: to leave (to end one’s connection, aff",
+   "after": "deixar: to leave (to end one’s connection, aff",
+   "conf": 1.0
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Por que você me deixou dormir por tanto tempo?",
+   "english": "Why did you let me sleep so long?",
+   "before": "deixar: to let; to allow to (to give permissio",
+   "after": "deixar: to let; to allow to (to give permissio",
+   "conf": 0.89
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Isso é provavelmente porque ele deixou nos fazer o casamento aqui.",
+   "english": "That's probably why he let us do the wedding here.",
+   "before": "deixar: to let; to allow to (to give permissio",
+   "after": "deixar: to let; to allow to (to give permissio",
+   "conf": 0.87
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quando a polícia voltou horas mais tarde, o carro estava onde o deixou.",
+   "english": "Patrol came back six hours later, found her car right where she left it.",
+   "before": "deixar: to leave; to exit (to go out of or awa",
+   "after": "deixar: to leave; to exit (to go out of or awa",
+   "conf": 0.75
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Você deixou a porta aberta ontem à noite?",
+   "english": "Did you leave the door open last night?",
+   "before": "deixar: to leave (to cause to be in a state)",
+   "after": "deixar: to leave (to cause to be in a state)",
+   "conf": 1.0
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O pai morreu há 3 anos, deixou vários milhões.",
+   "english": "Her father died three years ago, left her mega millions.",
+   "before": "deixar: to leave; to bequeath (to give somethi",
+   "after": "deixar: to leave; to bequeath (to give somethi",
+   "conf": 0.94
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O cheiro de comida me deixou com fome.",
+   "english": "The smell of food made me hungry.",
+   "before": "deixar: to make someone feel a certain way",
+   "after": "deixar: to make someone feel a certain way",
+   "conf": 0.89
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Deixou cair um motor em cima do pé?",
+   "english": "He dropped a traction motor on his toe?",
+   "before": "deixar: to leave, to leave behind (to cause to",
+   "after": "NONE",
+   "conf": 0.37
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ela deixou claro que não gostava dele.",
+   "english": "She made it clear that she didn't like him.",
+   "before": "deixar: to leave (to cause to be in a state)",
+   "after": "deixar: to leave (to cause to be in a state)",
+   "conf": 0.47
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Que é que deixou hoje a minha querida irmã assim tão carrancuda?",
+   "english": "What in the world upset my adorable sister so?",
+   "before": "deixar: to make someone feel a certain way",
+   "after": "deixar: to make someone feel a certain way",
+   "conf": 0.93
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Talvez estivesse drogado e deixou para resolver depois.",
+   "english": "Maybe he was high and figured he'd fix it in the morning.",
+   "before": "deixar: to postpone; to put off (to reschedule",
+   "after": "deixar: to postpone; to put off (to reschedule",
+   "conf": 0.97
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Espera, o Erik não te deixou também, ou deixou?",
+   "english": "Wait, Erik didn't bail on you as well, did he?",
+   "before": "deixar: to leave (to end one’s connection, aff",
+   "after": "deixar: to leave (to end one’s connection, aff",
+   "conf": 0.95
+  },
+  {
+   "card": "deixou",
+   "kind": "matched",
+   "expr": "deixar em paz",
+   "sentence": "Sei por que Tom me deixou em paz.",
+   "english": "I know why Tom left me alone.",
+   "before": "deixar: to leave alone (to not bother)",
+   "after": "deixar em paz: to leave alone",
+   "conf": 0.52
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A esposa de Tom o deixou há três meses.",
+   "english": "Tom's wife left him three months ago.",
+   "before": "deixar: to leave (to end one’s connection, aff",
+   "after": "deixar: to leave (to end one’s connection, aff",
+   "conf": 0.99
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O Tom me deixou fazer o que eu queria.",
+   "english": "Tom let me do what I wanted.",
+   "before": "deixar: to let; to allow to (to give permissio",
+   "after": "deixar: to let; to allow to (to give permissio",
+   "conf": 0.91
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Talvez seja melhor... apenas, deixou ter esperança que ela ainda poderá aparecer.",
+   "english": "Maybe it's just... better to let him hope she might still be coming.",
+   "before": "deixar: to let; to allow to (to give permissio",
+   "after": "deixar: to let; to allow to (to give permissio",
+   "conf": 0.74
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele deixou a sua função por causa de doença.",
+   "english": "He left his position because of illness.",
+   "before": "deixar: to leave (to end one’s connection, aff",
+   "after": "deixar: to leave (to end one’s connection, aff",
+   "conf": 1.0
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele deixou a minha amiga Sharon quatro dias antes do Natal.",
+   "english": "He dumped my friend Sharon four days before Christmas.",
+   "before": "deixar: to leave (to end one’s connection, aff",
+   "after": "deixar: to leave (to end one’s connection, aff",
+   "conf": 0.99
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele deixou uma nota de 20 na mesa, que é muito mais do que precisava.",
+   "english": "He left a 20 on the table, which is way too much.",
+   "before": "deixar: to leave (to refrain from taking)",
+   "after": "deixar: to leave (to refrain from taking)",
+   "conf": 0.65
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O pai deixou todo o dinheiro às filhas.",
+   "english": "The father left all his money to his daughters.",
+   "before": "deixar: to leave; to bequeath (to give somethi",
+   "after": "deixar: to leave; to bequeath (to give somethi",
+   "conf": 1.0
+  },
+  {
+   "card": "deixou",
+   "kind": "matched",
+   "expr": "deixar de",
+   "sentence": "Ele deixou de fumar para melhorar a sua saúde.",
+   "english": "He stopped smoking for the improvement of his health.",
+   "before": "deixar: to quit (to stop doing something habit",
+   "after": "deixar: to quit (to stop doing something habit",
+   "conf": 0.73
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Porque é que ele deixou o barril?",
+   "english": "Why would he leave the barrel?",
+   "before": "deixar: to leave; to exit (to go out of or awa",
+   "after": "deixar: to leave; to exit (to go out of or awa",
+   "conf": 0.98
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Creio que isso lhe deixou marcas muito profundas.",
+   "english": "That, I think, marked him very, very powerfully.",
+   "before": "deixar: to make someone feel a certain way",
+   "after": "deixar: to make someone feel a certain way",
+   "conf": 0.63
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Então, tentei fugir. O Matt não me deixou.",
+   "english": "Matt wouldn't let me.",
+   "before": "deixar: to let; to allow to (to give permissio",
+   "after": "deixar: to let; to allow to (to give permissio",
+   "conf": 0.68
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Sem dúvida alguém deixou a porta aberta.",
+   "english": "Someone must have left the door open.",
+   "before": "deixar: to leave (to cause to be in a state)",
+   "after": "deixar: to leave (to cause to be in a state)",
+   "conf": 0.96
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele não a deixou fazer nada.",
+   "english": "He didn't let her do anything.",
+   "before": "deixar: to let; to allow to (to give permissio",
+   "after": "deixar: to let; to allow to (to give permissio",
+   "conf": 0.87
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele deixou o filho na escola.",
+   "english": "He dropped his kid off at school.",
+   "before": "deixar: to leave; to exit (to go out of or awa",
+   "after": "deixar: to leave; to exit (to go out of or awa",
+   "conf": 0.67
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tom deixou o prédio por volta das 6 da tarde.",
+   "english": "Tom left the building at about 6 p.m.",
+   "before": "deixar: to leave; to exit (to go out of or awa",
+   "after": "deixar: to leave; to exit (to go out of or awa",
+   "conf": 0.99
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele deixou um maço de cigarros na mesa.",
+   "english": "He left a pack of cigarettes on the table.",
+   "before": "deixar: to leave (to refrain from taking)",
+   "after": "deixar: to leave (to refrain from taking)",
+   "conf": 0.5
+  },
+  {
+   "card": "deixou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Achamos que ela foi embora, ou que ele deixou-a ir.",
+   "english": "- We think she got away or he let her go.",
+   "before": "deixar: to let; to allow to (to give permissio",
+   "after": "deixar: to let; to allow to (to give permissio",
+   "conf": 0.94
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "E fico sempre feliz em encontrar uma razão.",
+   "english": "And I'm always happy to find a reason.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.9
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico muito feliz de poder fazer parte da sua história.",
+   "english": "I'm very happy to be part of your story.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.91
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico feliz por a gente não ter que fazer isso.",
+   "english": "I'm glad that we don't have to do that.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.96
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico feliz em ajudar com a sua mãe.",
+   "english": "I'd be happy to help you with your mother.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.89
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu só fico aqui no fim de semana.",
+   "english": "I'm only here for the weekend.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.63
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Essa é uma boa pergunta. Fico feliz que você a fez.",
+   "english": "That's a good question. I'm glad that you asked it.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.96
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu fico pensando se é ou não seguro fazer aquilo aqui.",
+   "english": "I wonder whether or not it's safe to do that here.",
+   "before": "ficar: forms the habitual aspect [with gerund",
+   "after": "ficar: forms the habitual aspect [with gerund",
+   "conf": 0.97
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu fico pensando em você dia e noite.",
+   "english": "I keep thinking night and day about you.",
+   "before": "ficar: forms the habitual aspect [with gerund",
+   "after": "ficar: forms the habitual aspect [with gerund",
+   "conf": 0.98
+  },
+  {
+   "card": "fico",
+   "kind": "matched",
+   "expr": "ficar de olho",
+   "sentence": "Apenas fico de olho em cada um de vocês.",
+   "english": "I merely keep a little eye on each and everyone of you.",
+   "before": "ficar: forms the habitual aspect [with gerund",
+   "after": "ficar de olho em: to keep an eye on",
+   "conf": 0.54
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico feliz que alguém me disse o que precisava ser feito.",
+   "english": "I'm glad someone told me what needed to be done.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.97
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico feliz em ouvir que você sabe como a chamam.",
+   "english": "I am glad to hear that you know how she is called.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.92
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não é sempre que fico em casa no domingo.",
+   "english": "I'm not always home on Sundays.",
+   "before": "ficar: to stay (at); to remain (in)",
+   "after": "ficar: to stay (at); to remain (in)",
+   "conf": 0.71
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não, é assim que eu fico quando faço as malas.",
+   "english": "No, this is just what it looks like when I pack. What happened?",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.74
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Esse é o garoto sobre o qual eu fico pensando.",
+   "english": "This is the boy I think about.",
+   "before": "ficar: forms the habitual aspect [with gerund",
+   "after": "ficar: forms the habitual aspect [with gerund",
+   "conf": 0.82
+  },
+  {
+   "card": "fico",
+   "kind": "matched",
+   "expr": "ficar com",
+   "sentence": "Eu fico com sono depois de comer muito.",
+   "english": "I get sleepy after eating a big meal.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.82
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico feliz em responder à sua última carta.",
+   "english": "I am happy to reply to your last letter.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.87
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico feliz em saber que ela é solteira.",
+   "english": "I'm glad to hear that she is unmarried.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.91
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico a tomar conta das coisas na sua ausência.",
+   "english": "I will hold down the fort while you're gone.",
+   "before": "ficar: forms the habitual aspect [with gerund",
+   "after": "ficar: forms the habitual aspect [with gerund",
+   "conf": 0.63
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quando ouço sua voz por apenas 5 minutos, fico feliz depois por 23 horas e 55 minutos.",
+   "english": "When I hear your voice for only 5 minutes, I am happy afterwards for 23 hours and 55 minutes.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.97
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico feliz que o senhor tenha gostado de nossa casa.",
+   "english": "I'm glad you like our house.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.94
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico muito contente por teres vindo esta noite, amor.",
+   "english": "I'm really glad that you could make it tonight, baby.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.86
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico contente de que vocês estejam todos aqui.",
+   "english": "I'm glad you are all here.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.98
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu fico imaginando o que ela tem em mente.",
+   "english": "I wonder what's on her mind.",
+   "before": "ficar: forms the habitual aspect [with gerund",
+   "after": "ficar: forms the habitual aspect [with gerund",
+   "conf": 0.91
+  },
+  {
+   "card": "fico",
+   "kind": "matched",
+   "expr": "ficar com",
+   "sentence": "Eu não fico com raiva tão rápido quanto costumava ficar.",
+   "english": "I don't get angry as quickly as I used to.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.96
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico feliz que você ainda esteja aqui.",
+   "english": "I'm happy you're still here.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.94
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fico feliz em ver que estão bem.",
+   "english": "Glad to see you're all right.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.81
+  },
+  {
+   "card": "fico",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Aquela é a casa onde eu fico.",
+   "english": "That is the house that I stay in.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.39
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tenho de ver quem ficou para ver se ainda há equipa.",
+   "english": "I gotta see who's left to make sure you'll have a team.",
+   "before": "ficar: to remain (to be left over)",
+   "after": "ficar: to remain (to be left over)",
+   "conf": 0.99
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O importante é que ela ficou do meu lado.",
+   "english": "What's important is that she stayed at my side.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.57
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O homem ficou sem falar com a esposa durante três dias.",
+   "english": "The man had not spoken to his wife in three days.",
+   "before": "NONE",
+   "after": "NONE",
+   "conf": 0.33
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "No ano passado, ele ficou três meses no mar.",
+   "english": "Last year, he spent three months at sea.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.83
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Penso só que ele não... não ficou muito contente com isto.",
+   "english": "I just think he's not, not so happy about this.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.99
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Então, com que impressão ficou até agora da nossa cidade?",
+   "english": "- So... what are your impressions of our little town so far?",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.8
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Meu chefe ficou satisfeito com o que eu fiz.",
+   "english": "My boss was satisfied with what I did.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.98
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Onde ficou a parte de cima do meu boné?",
+   "english": "What happened to the top of my hat?",
+   "before": "ficar: to be, to be located",
+   "after": "ficar: to remain (to be left over)",
+   "conf": 0.36
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Para piorar ainda mais as coisas, ele ficou doente.",
+   "english": "To make things even worse, he got sick.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 1.0
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não sabemos quanto tempo ele ficou a sangrar na estrada.",
+   "english": "Don't know how long he was bleeding on the side of the road.",
+   "before": "ficar: forms the habitual aspect [with gerund",
+   "after": "ficar: forms the habitual aspect [with gerund",
+   "conf": 0.49
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tive um caso que ficou ao meu cuidado, que se podia enquadrar.",
+   "english": "I've had a case come back across my desk that could be a very good fit.",
+   "before": "NONE",
+   "after": "NONE",
+   "conf": 0.37
+  },
+  {
+   "card": "ficou",
+   "kind": "matched",
+   "expr": "ficar para trás",
+   "sentence": "Ela ficou para trás com alguns amigos.",
+   "english": "She stayed behind with some friends.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar para trás: to stay behind; to be superseded",
+   "conf": 0.92
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ela ficou em casa e fingiu estar doente.",
+   "english": "She stayed home and pretended to be sick.",
+   "before": "ficar: to stay (at); to remain (in)",
+   "after": "ficar: to stay (at); to remain (in)",
+   "conf": 0.77
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O Tom ficou na minha casa por três semanas.",
+   "english": "Tom stayed at my place for three weeks.",
+   "before": "ficar: to stay (at); to remain (in)",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.54
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Sami nunca ficou na mesma escola por mais de um ano.",
+   "english": "Sami never stayed at the same school more than one year.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.71
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "E ficou uma dívida. Agora, essa dívida foi paga.",
+   "english": "For that, a debt was issued and now that debt has been repaid.",
+   "before": "ficar: to remain (to be left over)",
+   "after": "ficar: to remain (to be left over)",
+   "conf": 0.66
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A polícia disse que ninguém ficou ferido.",
+   "english": "The police said nobody was injured.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.73
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O assassino ficou ali a rir-se de nós!",
+   "english": "Their murderer stood right there, and he laughed at us.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.28
+  },
+  {
+   "card": "ficou",
+   "kind": "matched",
+   "expr": "ficar com",
+   "sentence": "Eu fiquei com Tom e ele ficou comigo.",
+   "english": "I've stood by Tom and he's stood by me.",
+   "before": "ficar: to make out (to share kisses and physi",
+   "after": "ficar com: to keep, to stay with, to catch",
+   "conf": 0.76
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quando fiz isso, o repórter ficou muito zangado.",
+   "english": "When I did, the reporter got very angry.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 1.0
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele ficou tão triste, por sair de São Francisco.",
+   "english": "He was so sad about leaving San Francisco.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.98
+  },
+  {
+   "card": "ficou",
+   "kind": "matched",
+   "expr": "ficar com",
+   "sentence": "Ele ia telefonar para ela, mas ficou com frio na barriga.",
+   "english": "He was going to ring her, but then got cold feet.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.59
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O Tom ficou rico da noite para o dia.",
+   "english": "Tom got rich overnight.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 1.0
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele está furioso porque ficou sem velas de tarde.",
+   "english": "He's furious, because he ran out of candles this afternoon.",
+   "before": "ficar: to remain (to be left over)",
+   "after": "NONE",
+   "conf": 0.33
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O céu ficou escuro e começou a chover.",
+   "english": "The sky got dark, and it started raining.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 1.0
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele ficou lá todo o tempo.",
+   "english": "He stayed there all the time.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.88
+  },
+  {
+   "card": "ficou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O mundo ficou melhor sem ti.",
+   "english": "The world has been better without you.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.79
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Você tem certeza de que não quer que eu fique?",
+   "english": "Are you sure you don't want me to stay?",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.82
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não, é melhor que, por agora, fique aqui.",
+   "english": "No, it's best you stay right here for now.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.79
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não espere que eu fique feliz com isso.",
+   "english": "Don't expect me to be happy about this.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.99
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Porque quero que o meu amigo fique tão bom como novo.",
+   "english": "'Cause I want my friend to look good as new.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.82
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Se você quiser que eu fique, então me diga.",
+   "english": "If you want me to stay, then tell me.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.77
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Por favor, faça com que o cão fique lá fora.",
+   "english": "Please make sure the dog stays outside.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.76
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Espero que você fique bem o mais breve possível.",
+   "english": "I hope you get well as soon as possible.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.99
+  },
+  {
+   "card": "fique",
+   "kind": "matched",
+   "expr": "ficar de olho",
+   "sentence": "Eu quero que você fique de olho nas coisas.",
+   "english": "I want you to keep an eye on things.",
+   "before": "NONE",
+   "after": "ficar de olho: to keep an eye on, to watch closely",
+   "conf": 1.0
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fique calma, é normal, isso também acontece comigo.",
+   "english": "Stay calm, it's normal, it happens to me too.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.92
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não fique assim. Isso não é tão grave quanto parece.",
+   "english": "Don't be like that. It's not as bad as it looks.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.93
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fique em casa para poder atender o telefone.",
+   "english": "Stay home so that you can answer the phone.",
+   "before": "ficar: to stay (at); to remain (in)",
+   "after": "ficar: to stay (at); to remain (in)",
+   "conf": 0.58
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quero que esta divisão fique como aquela lá fora.",
+   "english": "I want this room to look like out there.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.89
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fique na cama até a segunda-feira que vem.",
+   "english": "Stay in bed until next Monday.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.73
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A minha mãe não quer que fique deprimido.",
+   "english": "Mom doesn't want me getting depressed.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.93
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "- E para que fique registado... é ela que tem sorte em te conhecer.",
+   "english": "Yes. And for the record, she's the one who's lucky to meet you.",
+   "before": "NONE",
+   "after": "NONE",
+   "conf": 0.48
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fique à vontade se você quiser atender o telefone.",
+   "english": "If you want to answer the phone, stay home.",
+   "before": "ficar: to stay (at); to remain (in)",
+   "after": "ficar: to stay (at); to remain (in)",
+   "conf": 0.68
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não fique aqui esperando para que isso aconteça.",
+   "english": "Don't stay here waiting for that to happen.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.88
+  },
+  {
+   "card": "fique",
+   "kind": "matched",
+   "expr": "ficar com",
+   "sentence": "Se não quer comer batatas, então fique com fome.",
+   "english": "If you don't want to eat potatoes, then sit hungry.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.77
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Mas que fique bem claro... Que os tempos mudaram.",
+   "english": "But let it be clear, that times have changed.",
+   "before": "NONE",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.6
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Posso usar o seu dicionário? \"Fique à vontade.\"",
+   "english": "May I use your dictionary? \"By all means.\"",
+   "before": "NONE",
+   "after": "NONE",
+   "conf": 0.84
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Que fique claro que não sou teu amigo.",
+   "english": "Just to be clear, I am not your friend.",
+   "before": "NONE",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.57
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quanto tempo você espera que eu fique?",
+   "english": "How long do you expect me to stay?",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.79
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fique à vontade para usar esta sala.",
+   "english": "You are free to use this room.",
+   "before": "NONE",
+   "after": "NONE",
+   "conf": 0.78
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Preciso que ela fique contigo uns tempos.",
+   "english": "I need her to stay with you for a while.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.43
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Vá com calma! Não fique tão nervoso.",
+   "english": "Take it easy! Don't be so nervous.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.94
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fique longe de pessoas que estão doentes.",
+   "english": "Stay away from people who are sick.",
+   "before": "ficar: to stay (to remain in a particular pla",
+   "after": "ficar: to stay (to remain in a particular pla",
+   "conf": 0.46
+  },
+  {
+   "card": "fique",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Apenas no caso de alguma coisa acontecer, há algo que quero dizer antes que fique mau.",
+   "english": "Just in case, there's something I want to say before it gets bad.",
+   "before": "ficar: to become; to get; to end up",
+   "after": "ficar: to become; to get; to end up",
+   "conf": 0.98
+  },
+  {
+   "card": "presta",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quase toda a gente da aldeia presta um serviço.",
+   "english": "Nearly everyone in the village provides a service.",
+   "before": "prestar: to render, to provide, to offer (a ser",
+   "after": "prestar: to render, to provide, to offer (a ser",
+   "conf": 1.0
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Ele nunca presta muita atenção no que o professor diz.",
+   "english": "He never pays much attention to what his teacher says.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.7
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Queres crescer e ser um Homem, Presta atenção a ele e não a mim.",
+   "english": "You want to grow up and be a man, you pay attention to him and not me.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.89
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Presta atenção se é o mesmo carro amanhã.",
+   "english": "Keep track if it's the same car tomorrow.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.87
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Ela sempre presta atenção no comportamento de seus filhos.",
+   "english": "She always pays attention to her children's behavior.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.7
+  },
+  {
+   "card": "presta",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O seu informador não presta, foi isso que aconteceu.",
+   "english": "Your informant sucks is what happened.",
+   "before": "prestar: to be useful; to be suitable; to be go",
+   "after": "prestar: to be useful; to be suitable; to be go",
+   "conf": 0.95
+  },
+  {
+   "card": "presta",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quero dizer que sinto muito por ter dito que o teu programa não presta.",
+   "english": "I just want to say I'm sorry about what I said about your show sucking.",
+   "before": "prestar: to be useful; to be suitable; to be go",
+   "after": "prestar: to be useful; to be suitable; to be go",
+   "conf": 0.97
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Tom nunca presta atenção ao que eu digo.",
+   "english": "Tom never pays attention to what I say.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.69
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Ninguém mais presta atenção ao que o Tom diz.",
+   "english": "No one pays attention to anything Tom says anymore.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.63
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Tom não presta muita atenção a como se veste.",
+   "english": "Tom doesn't pay much attention to how he dresses.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.51
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Vamos, presta bem atenção, para não deixares que eu erre.",
+   "english": "Come on, be attentive, so you don’t let me go wrong.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.94
+  },
+  {
+   "card": "presta",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele acha que esse filme não presta.",
+   "english": "Believe it or not, he thinks that movie sucks.",
+   "before": "prestar: to be useful; to be suitable; to be go",
+   "after": "prestar: to be useful; to be suitable; to be go",
+   "conf": 0.97
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Ela presta muita atenção a coisas irrelevantes.",
+   "english": "She pays too much attention to irrelevant things.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.5
+  },
+  {
+   "card": "presta",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "- Nada disto serve a ninguém e não presta para dar, portanto, porque estás tão chateada?",
+   "english": "- What? None of it fits anyone, and it's too shitty for Goodwill, so what're you getting so mad for?",
+   "before": "prestar: to be useful; to be suitable; to be go",
+   "after": "prestar: to be useful; to be suitable; to be go",
+   "conf": 0.92
+  },
+  {
+   "card": "presta",
+   "kind": "matched",
+   "expr": "prestar atenção",
+   "sentence": "Tom não presta atenção aos seus professores.",
+   "english": "Tom doesn't pay attention to his teachers.",
+   "before": "prestar: to pay (attention, respect etc.)",
+   "after": "prestar atenção: to pay attention",
+   "conf": 0.77
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Você e eu não temos muito em comum.",
+   "english": "You and I don't have a lot in common.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.82
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Parece que não temos mais nada para discutir.",
+   "english": "It seems we have nothing further to discuss.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.34
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Ainda há coisas que temos de fazer.",
+   "english": "There are still things that we need to do.",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.64
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O problema é que nós não temos nenhum dinheiro.",
+   "english": "The trouble is that we have no money.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.9
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Temos de seguir em frente, a vida é assim.",
+   "english": "Got to look forward, that's what life is.",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.78
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não temos medo de pessoas como você.",
+   "english": "We aren't scared of people like you.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.59
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Bem, façamos o que temos a fazer.",
+   "english": "Alright, let's get this damn thing over with, then.",
+   "before": "ter: to have to",
+   "after": "ter: to have to",
+   "conf": 0.51
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Não há como voltar atrás. Temos que continuar.",
+   "english": "There's no way back. We have to keep going.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.88
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Por que temos de fazer isso?",
+   "english": "Why do we have to do it?",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.74
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Nós temos que descobrir por que isso aconteceu.",
+   "english": "We have to find out why this happened.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.83
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu diria que nós temos um problema.",
+   "english": "I'd say we have a problem.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.48
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Nós temos realmente que ir agora?",
+   "english": "Do we really need to leave now?",
+   "before": "ter: to have to",
+   "after": "ter: to have to",
+   "conf": 0.99
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Bem... temos que começar a reunir as pessoas.",
+   "english": "Well... we need to start corralling the herd.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.67
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Nós temos que contar a ele.",
+   "english": "We've got to tell him.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.86
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não temos mais nada a perder.",
+   "english": "We have nothing else to lose.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.39
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Temos de passar a noite aqui.",
+   "english": "- We gotta camp here tonight, y'all.",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.89
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Temos que encontrar uma maneira de corrigir isso.",
+   "english": "We have to find a way to correct that.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.89
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Temos de vos levar ao nosso pai.",
+   "english": "We need to find a way to bring you together with my father.",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.61
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O verdadeiro problema é que você nem sequer sabe que temos um problema.",
+   "english": "The real problem is that you don't even know that we have a problem.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.47
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Agora, vejamos o que temos aqui.",
+   "english": "Now. Now, let's see what we got in here.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.53
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Nós temos muitas outras coisas para fazer.",
+   "english": "We have lots of other things to do.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.46
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Temos de fazer tudo isto?",
+   "english": "Do we have to do all this?",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.72
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Está bem, já te temos.",
+   "english": "Okay, we got you.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.25
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Nós temos que fazer isso.",
+   "english": "We have to do it.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.81
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Nós temos mais alguma coisa?",
+   "english": "Do we have anything else?",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.37
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "E nós temos de nos comprometer.",
+   "english": "And we have to be committed.",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.56
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Nós não temos dinheiro suficiente para comprar um carro novo.",
+   "english": "We don't have enough money to buy a new car.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.8
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Agora, temos que confiar uns nos outros.",
+   "english": "We have to trust each other now.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.84
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não temos condições de comprar um carro novo.",
+   "english": "We can't afford to buy a new car.",
+   "before": "ter: to have to",
+   "after": "ter: to have",
+   "conf": 0.42
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O que temos é suficiente.",
+   "english": "What we have is enough.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.67
+  },
+  {
+   "card": "temos",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Então parece que temos de contentar-nos contigo.",
+   "english": "Guess we'll have to settle for you, then.",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.85
+  },
+  {
+   "card": "temos",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Realmente, nós temos muito em comum.",
+   "english": "We really have a lot in common.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.86
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Isso não é tudo o que eu tenho aqui.",
+   "english": "That's not at all what I have here.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.36
+  },
+  {
+   "card": "tenho",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Isso é tudo o que eu tenho de fazer.",
+   "english": "That's all I have to do.",
+   "before": "ter: to have to",
+   "after": "ter: to have to",
+   "conf": 0.85
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Já te disse, não tenho mais nada para contar.",
+   "english": "I told you already, I don't have anything else to say.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.25
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu tenho certeza de que não preciso fazer isso.",
+   "english": "I'm sure I don't need to do that.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.54
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tenho um trabalho para ti. Não me parece.",
+   "english": "Got a job for you.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.38
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu tenho pensado muito sobre o que você disse.",
+   "english": "I've thought a lot about what you said.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.96
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tenho certeza de que você está muito ocupado.",
+   "english": "I'm sure you're very busy.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.52
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu só tenho tempo para o café.",
+   "english": "I only have time for coffee.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.31
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Porque tenho uma proposta que é mesmo para vocês.",
+   "english": "'Cause I got a little business proposition that's right up your alley.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.79
+  },
+  {
+   "card": "tenho",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Eu tenho que chegar em casa antes das 2:30.",
+   "english": "I have to get home before 2:30.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.79
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Vou lhe contar o que tenho em mente.",
+   "english": "I'll tell you what's on my mind.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.52
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "\"Não tenho nada aqui em cima.",
+   "english": "\"There's nothing up here.",
+   "before": "ter: there be (to exist, physically or abst",
+   "after": "ter: there be (to exist, physically or abst",
+   "conf": 0.46
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Com o dinheiro que eu tenho dá para comprar.",
+   "english": "I have enough money to buy it.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.55
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tu não tens amigos? \"Tenho, é claro.\"",
+   "english": "Don't you have friends? \"Of course.\"",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.68
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tenho um \"A\" em Biologia, tu tens um \"A\" menos.",
+   "english": "I'm getting an \"A\" in biology, and you're getting an \"A\" minus.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.42
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu acho que ela está do nosso lado, mas não tenho certeza.",
+   "english": "I think she's on our side, but I'm not sure.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.69
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu ainda não tenho certeza do porquê.",
+   "english": "I'm still not sure why.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.65
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tenho a certeza de que estás cansado.",
+   "english": "I'm sure you're tired.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.62
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não tenho nada a dizer.",
+   "english": "I got nothing to say.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.37
+  },
+  {
+   "card": "tenho",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Eu tenho que fazer os cálculos.",
+   "english": "I have to do the maths.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.66
+  },
+  {
+   "card": "tenho",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Tenho de o devolver para ajudar a família.",
+   "english": "But I need to return it to help my family.",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.76
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tenho trabalho para fazer agora.",
+   "english": "I have work to do now.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.37
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu só tenho uma hora",
+   "english": "I only have an hour.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.82
+  },
+  {
+   "card": "tenho",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Tenho de parar de fazer isso.",
+   "english": "I have to stop doing that.",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.64
+  },
+  {
+   "card": "tenho",
+   "kind": "matched",
+   "expr": "ter como",
+   "sentence": "Tenho saudades de te ter como minha secretária.",
+   "english": "I miss having you as my secretary.",
+   "before": "NONE",
+   "after": "NONE",
+   "conf": 0.34
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu tenho uma casa grande.",
+   "english": "I have a big house.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.99
+  },
+  {
+   "card": "tenho",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Eu tenho que terminar isso.",
+   "english": "I've got to finish this.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.86
+  },
+  {
+   "card": "tenho",
+   "kind": "matched",
+   "expr": "ter que",
+   "sentence": "Só tenho que pensar como consigo 6 mil.",
+   "english": "Just gotta figure out a way to come up with 6 grand.",
+   "before": "ter: to have to",
+   "after": "ter que: to have to",
+   "conf": 0.7
+  },
+  {
+   "card": "tenho",
+   "kind": "matched",
+   "expr": "ter de",
+   "sentence": "Não tenho de me defender!",
+   "english": "I do not need to defend myself!",
+   "before": "ter: to have to",
+   "after": "ter de: to have to",
+   "conf": 0.57
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não tenho notícias dele há um ano.",
+   "english": "I haven't heard from him in a year.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.48
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu também tenho um irmão.",
+   "english": "I also have a brother.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.87
+  },
+  {
+   "card": "tenho",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Fique à vontade, já que não tenho nenhuma.",
+   "english": "\"They\" are more than welcome to, considering I don't have one.",
+   "before": "ter: to have",
+   "after": "ter: to have",
+   "conf": 0.56
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não há nada que possa fazer aqui. Toma.",
+   "english": "There's nothing more you can do here.",
+   "before": "NONE",
+   "after": "NONE",
+   "conf": 0.38
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele sempre toma o café da manhã aqui.",
+   "english": "He always eats breakfast here.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.47
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Você sempre toma café no seu café da manhã?",
+   "english": "Do you always drink coffee with your breakfast?",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.98
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Enquanto espera, por que não toma um café?",
+   "english": "While you're waiting, why don't you have a cup of coffee?",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.97
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A que horas você toma café da manhã?",
+   "english": "What time do you have breakfast?",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.35
+  },
+  {
+   "card": "toma",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "E quem toma conta de tudo o resto?",
+   "english": "And who takes care of everything else?",
+   "before": "NONE",
+   "after": "tomar conta de: to take care of; to seize = to have a ",
+   "conf": 0.74
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O meu pai toma banho antes de comer.",
+   "english": "My father bathes before eating.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.98
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele toma banho todos os dias de manhã.",
+   "english": "He takes a bath every morning.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.99
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O que você normalmente toma no café da manhã?",
+   "english": "What do you usually eat for breakfast?",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take into the body",
+   "conf": 0.43
+  },
+  {
+   "card": "toma",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "Toma conta deles à noite, como a natureza diz.",
+   "english": "He takes care of them at night, as nature dictates.",
+   "before": "NONE",
+   "after": "tomar conta: to mind; to look after; to take care; ",
+   "conf": 0.98
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Minha irmã mais velha toma banho todo dia.",
+   "english": "My older sister takes a shower every day.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.97
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Eu vou preparar algo pra você comer enquanto você toma banho.",
+   "english": "I'll fix you something to eat while you take a shower.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.96
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Como é que você toma café, com ou sem açúcar?",
+   "english": "How do you take your coffee, with or without sugar?",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.93
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Mas é como uma decisão que se toma num sonho.",
+   "english": "But it's like decisions you make in a dream, you know?",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.6
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele toma café da manhã lá com frequência.",
+   "english": "He eats breakfast there often.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.49
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Toma este remédio, você irá se sentir muito melhor.",
+   "english": "Take this medicine, and you'll feel a lot better.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.93
+  },
+  {
+   "card": "toma",
+   "kind": "matched",
+   "expr": "tomar uma",
+   "sentence": "Ele toma uma xícara de café antes de ir trabalhar.",
+   "english": "He drinks a cup of coffee before going to work.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.99
+  },
+  {
+   "card": "toma",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "Então o governo toma conta de vocês, hem?",
+   "english": "So the government's taking care of you?",
+   "before": "NONE",
+   "after": "tomar conta de: to take care of; to seize = to have a ",
+   "conf": 0.81
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A família toma café da manhã na sacada.",
+   "english": "The family eats breakfast on the balcony.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.4
+  },
+  {
+   "card": "toma",
+   "kind": "matched",
+   "expr": "tomar cuidado",
+   "sentence": "Por favor, toma cuidado para não deixar o cachorro escapar.",
+   "english": "Please be careful not to let the dog loose.",
+   "before": "NONE",
+   "after": "tomar cuidado: to watch out; to take care",
+   "conf": 1.0
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "\"Rapaz, eu disse: 'Toma, pega no meu prato.'\"",
+   "english": "\"Boy, I said, 'Here, hold my plate.'\"",
+   "before": "tomar: to take (to get something into one’s p",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.42
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Meu marido toma café da manhã enquanto lê o jornal.",
+   "english": "My husband has his breakfast while reading the newspaper.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.43
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A maioria dos japoneses toma banho todo dia.",
+   "english": "Most Japanese take a bath every day.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.99
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele é uma pessoa que toma decisões rapidamente.",
+   "english": "He is a man of quick decisions.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.64
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ela toma o café com muito leite.",
+   "english": "She drinks her coffee with a lot of milk.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.99
+  },
+  {
+   "card": "toma",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "O meu treino toma conta de mim.",
+   "english": "My training, it just takes over.",
+   "before": "NONE",
+   "after": "tomar conta de: to take care of; to seize = to have a ",
+   "conf": 0.83
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quantas vezes por semana você toma banho?",
+   "english": "How often, in a week, do you take a bath?",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.97
+  },
+  {
+   "card": "toma",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Você toma café? Se sim, quantas xícaras toma por dia?",
+   "english": "Do you drink coffee? If so, how many cups of coffee do you drink every day?",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.98
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "Não preciso que você tome conta de mim.",
+   "english": "I don't need you to take care of me.",
+   "before": "NONE",
+   "after": "tomar conta de: to take care of; to seize = to have a ",
+   "conf": 0.88
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "Queres que tome conta dela até ela aqui chegar?",
+   "english": "You want me to babysit till she gets here?",
+   "before": "NONE",
+   "after": "tomar conta: to mind; to look after; to take care; ",
+   "conf": 0.98
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tome um banho e então vá para a cama.",
+   "english": "Take a bath and then go to bed.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.98
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tome mais cuidado com o que fala ou você vai apanhar.",
+   "english": "Watch your mouth or you'll get it.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "NONE",
+   "conf": 0.63
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não tome cerveja antes de ir para a cama!",
+   "english": "Don't drink beer before going to bed!",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.65
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Deixa o helicóptero ir, que outro tome o teu lugar.",
+   "english": "Let the helicopter go. Let somebody else take a ride.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.27
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "É absolutamente necessário que você tome o remédio antes de dormir.",
+   "english": "It is absolutely necessary that you drink the medicine before sleeping.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.75
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar cuidado",
+   "sentence": "Tome cuidado. Eu não quero que você se machuque.",
+   "english": "Be careful. I don't want you to hurt yourself.",
+   "before": "NONE",
+   "after": "tomar cuidado: to watch out; to take care",
+   "conf": 0.99
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar uma",
+   "sentence": "A não ser que você tome uma decisão rápida, a oportunidade será perdida.",
+   "english": "Unless you make a decision quickly, the opportunity will be lost.",
+   "before": "tomar: to put into practice",
+   "after": "tomar: to put into practice",
+   "conf": 0.39
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tome isto, apanhe um táxi, e vá para casa.",
+   "english": "Take this, grab a cab, take yourself home.",
+   "before": "tomar: to take (to get something into one’s p",
+   "after": "tomar: to take (to get something into one’s p",
+   "conf": 0.61
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Por favor, tome o meu lugar na recepção por mais ou menos uma hora.",
+   "english": "Please cover for me at the reception desk for about one hour.",
+   "before": "tomar: to take (to get something into one’s p",
+   "after": "tomar: to take (to get something into one’s p",
+   "conf": 0.46
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tome este remédio se você não estiver se sentindo bem.",
+   "english": "Take this medicine if you don't feel well.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.99
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar cuidado",
+   "sentence": "Ao jogar xadrez, tome cuidado para não perder a dama.",
+   "english": "When playing chess, be careful not to lose your queen.",
+   "before": "NONE",
+   "after": "tomar cuidado: to watch out; to take care",
+   "conf": 0.98
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "É tudo o que vão dizer-me? Tome, vai precisar disto.",
+   "english": "Here, you'll need these.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.52
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar cuidado",
+   "sentence": "Tome cuidado para não cair no mar.",
+   "english": "Be careful not to fall overboard.",
+   "before": "NONE",
+   "after": "tomar cuidado: to watch out; to take care",
+   "conf": 1.0
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Estamos esperando que ele tome outra decisão.",
+   "english": "We are waiting for him to make another decision.",
+   "before": "NONE",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.31
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar cuidado",
+   "sentence": "Tome cuidado com qualquer coisa que fizer.",
+   "english": "Take care in whatever you do.",
+   "before": "NONE",
+   "after": "tomar cuidado: to watch out; to take care",
+   "conf": 1.0
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tome isto enquanto tiver dores de costas e deve ficar bom dentro de alguns dias.",
+   "english": "Take these until your back pain subsides, and, um, you should be fine in a few days.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.98
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tome este remédio a cada seis horas.",
+   "english": "Take this medicine every six hours.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.98
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "Por favor tome conta da minha bagagem.",
+   "english": "Please look after my luggage.",
+   "before": "NONE",
+   "after": "tomar conta: to mind; to look after; to take care; ",
+   "conf": 0.92
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tenho algumas instruções, Por favor, tome notas de algumas preocupações.",
+   "english": "I have some instructions, so please take notes of some concerns.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.64
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar cuidado",
+   "sentence": "Tome cuidado para não quebrar os ovos.",
+   "english": "Be careful not to break the eggs.",
+   "before": "NONE",
+   "after": "tomar cuidado: to watch out; to take care",
+   "conf": 1.0
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tome a sopa antes que fique fria.",
+   "english": "Eat your soup before it gets cold.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.55
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "Por favor tome conta dele. Ok.",
+   "english": "Please keep him well / Okay.",
+   "before": "NONE",
+   "after": "tomar conta: to mind; to look after; to take care; ",
+   "conf": 0.97
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar cuidado",
+   "sentence": "Tome cuidado para que ninguém entre.",
+   "english": "Make sure that nobody enters.",
+   "before": "NONE",
+   "after": "tomar cuidado: to watch out; to take care",
+   "conf": 0.98
+  },
+  {
+   "card": "tome",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tome o meu número de telefone.",
+   "english": "Here is my phone number.",
+   "before": "tomar: to take (to get something into one’s p",
+   "after": "tomar: to take (to get something into one’s p",
+   "conf": 0.42
+  },
+  {
+   "card": "tome",
+   "kind": "matched",
+   "expr": "tomar cuidado",
+   "sentence": "Tome cuidado com as suas costas.",
+   "english": "Take care of your back.",
+   "before": "NONE",
+   "after": "tomar cuidado: to watch out; to take care",
+   "conf": 0.97
+  },
+  {
+   "card": "tomou",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "Todos aqueles anos em que tomou conta de ti?",
+   "english": "All of those years that he took care of you?",
+   "before": "NONE",
+   "after": "tomar conta de: to take care of; to seize = to have a ",
+   "conf": 0.77
+  },
+  {
+   "card": "tomou",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "Ela não tomou conta de mim ou do meu pequeno irmão.",
+   "english": "She didn't take care of me or my little brother.",
+   "before": "NONE",
+   "after": "tomar conta de: to take care of; to seize = to have a ",
+   "conf": 0.73
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Você já tomou o café da manhã, não tomou?",
+   "english": "You've already had breakfast, haven't you?",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.74
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele tomou o controle da empresa após a morte de seu pai.",
+   "english": "He took charge of the firm after his father's death.",
+   "before": "tomar: to take (to get something into one’s p",
+   "after": "tomar: to take (to get something into one’s p",
+   "conf": 0.34
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Mas a História quase tomou um caminho diferente.",
+   "english": "But history almost took a different path.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.83
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "É verdade que Rosa tomou um copo de vinho.",
+   "english": "It is true that Rosa had a glass of wine.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.94
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Quando foi a última vez que você tomou banho?",
+   "english": "When was the last time you took a shower?",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 1.0
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A sério, este urso matou alguém e tomou o lugar dele!",
+   "english": "I'm telling you, this bear killed someone and took over his life!",
+   "before": "tomar: to take (to get something into one’s p",
+   "after": "tomar: to take (to get something into one’s p",
+   "conf": 0.44
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O mar tomou a terra de nós, agora tomamos que queremos do mar.",
+   "english": "The sea took the land from us, and now we take what we want from the sea.",
+   "before": "tomar: to take (to get something into one’s p",
+   "after": "tomar: to take (to get something into one’s p",
+   "conf": 0.52
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Por que raios você não tomou seus remédios?",
+   "english": "Why on earth didn't you take your meds?",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 1.0
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Parece que este tipo tomou banho em lixo tóxico.",
+   "english": "Looks like this guy took a bath in toxic waste.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.97
+  },
+  {
+   "card": "tomou",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "O departamento do Xerife é que tomou conta da ocorrência.",
+   "english": "Sheriff's department took over.",
+   "before": "NONE",
+   "after": "tomar conta: to mind; to look after; to take care; ",
+   "conf": 0.89
+  },
+  {
+   "card": "tomou",
+   "kind": "matched",
+   "expr": "tomar uma",
+   "sentence": "O seu corpo tomou uma decisão que a sua consciência se recusa a fazer.",
+   "english": "Your body has made a decision your conscious mind refused to make.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to put into practice",
+   "conf": 0.38
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Parece coisa pequena para quem tomou café com o Hitler.",
+   "english": "Sounds pretty small-time for a guy who's had coffee with Hitler.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.82
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Depois de se levantar, Maria tomou um banho.",
+   "english": "After getting up, Mary took a bath.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 1.0
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "- E quem é que tomou essa decisão?",
+   "english": "- And who made that call?",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.54
+  },
+  {
+   "card": "tomou",
+   "kind": "matched",
+   "expr": "tomar conta",
+   "sentence": "Parece que você tomou conta do problema.",
+   "english": "It looks like you took care of the problem.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar conta: to mind; to look after; to take care; ",
+   "conf": 0.9
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele já tomou a minha vida, a minha liberdade.",
+   "english": "He's already taken my life, my freedom.",
+   "before": "tomar: to take (to get something into one’s p",
+   "after": "tomar: to take (to get something into one’s p",
+   "conf": 0.64
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A Callie tomou alguns comprimidos acerca de um mês.",
+   "english": "Callie took some pills about a month back.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 1.0
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Pintar aquela sala me tomou várias horas.",
+   "english": "It took me several hours to paint that room.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.72
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele tomou um gole de sua bebida.",
+   "english": "He took a sip of his drink.",
+   "before": "tomar: to take into the body",
+   "after": "tomar: to take into the body",
+   "conf": 0.97
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Tua reputação profissional tomou um pequeno mergulho.",
+   "english": "Your professional reputation has taken a bit of a dive.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.77
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ele a tomou em seus braços e a beijou apaixonadamente.",
+   "english": "He took her into his arms and kissed her passionately.",
+   "before": "tomar: to take; to experience, undergo (to pu",
+   "after": "tomar: to take; to experience, undergo (to pu",
+   "conf": 0.49
+  },
+  {
+   "card": "tomou",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A musa... Acho que ela tomou pó.",
+   "english": "The muse... guess she took a powder.",
+   "before": "NONE",
+   "after": "NONE",
+   "conf": 0.45
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Não vale a pena falar com ela outra vez.",
+   "english": "There's no point talking to her again.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.98
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Não vale a pena tirar o nosso tempo para fazer isso.",
+   "english": "It's not worth our time to do that.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.95
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Não vale a pena pedir algo que ele não tem.",
+   "english": "You can't squeeze blood out of a turnip.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.68
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Não sei se ainda vale de alguma coisa.",
+   "english": "I don't know if it's still any good.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 0.9
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Vale a pena ver o filme pelo menos duas ou três vezes.",
+   "english": "The movie is worth seeing at least two or three times.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.93
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Ela deve pensar que você continua no Vale.",
+   "english": "Apparently, she thinks you're still in the Vale.",
+   "before": "vale: valley",
+   "after": "vale: valley",
+   "conf": 0.65
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Mais vale ser linda por dentro do que por fora.",
+   "english": "Beauty inside is better than outside beauty.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 0.93
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Sentir é mais importante que saber. O coração vale mais que a mente.",
+   "english": "Feeling is more important than knowing. The heart is worth more than the mind.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 0.99
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O que vale não é a roupa, mas o que está dentro dela.",
+   "english": "It's not the clothes that count, but who's inside them.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 0.98
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Acho que vale a pena tentar, mas, primeiro, ela tem de aceitar.",
+   "english": "I think it's worth giving a shot. But she has to decide first.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.97
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "O alvo é grande e vale muito a pena.",
+   "english": "The target is large and very worth it.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.68
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Não vale a pena se preocupar com isso.",
+   "english": "It's not worth worrying about it.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.94
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Dizem que um olhar vale mais que mil palavras.",
+   "english": "They say that one look is worth more than thousand words.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 0.98
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Vale a pena ler esse livro duas vezes.",
+   "english": "This book is worth reading twice.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.89
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Este livro vale a pena ler mais de uma vez.",
+   "english": "This book is worth reading more than once.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.68
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Mais vale um amigo à mão do que dois à distância.",
+   "english": "A friend in hand is worth two in the bush!",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 0.89
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Creio que vale a pena ver este filme duas vezes.",
+   "english": "I think it is worthwhile to see this film twice.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.97
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Tudo vale a pena se a alma não é pequena.",
+   "english": "Everything is worth it if the soul is not small.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.47
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "O meu pai diz que esta vila não vale nada.",
+   "english": "My pa said this town ain't worth spit.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 1.0
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Sem a música, o mundo é um vale de lágrimas.",
+   "english": "Without music, the world is a valley of tears.",
+   "before": "vale: valley",
+   "after": "vale: valley",
+   "conf": 1.0
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Você acha que vale a pena assistir a este filme?",
+   "english": "Do you think this movie is worth watching?",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.91
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A menos que cheguem ao fim do vale.",
+   "english": "- Unless... you can make it to the end of the valley.",
+   "before": "vale: valley",
+   "after": "vale: valley",
+   "conf": 1.0
+  },
+  {
+   "card": "vale",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "E nem um deles vale um tostão de amor.",
+   "english": "And not one of them is worth a spit of love.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 0.95
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Vale a pena dar uma passada neste museu.",
+   "english": "It is worthwhile visiting that museum.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.97
+  },
+  {
+   "card": "vale",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Não vale a pena estar em guerra.",
+   "english": "No point being at war.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.91
+  },
+  {
+   "card": "valeu",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "A parte final valeu o dinheiro do bilhete.",
+   "english": "What? We need to make sure this is done properly.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 0.9
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Valeu a pena fazeres o que fizeste por eles?",
+   "english": "Was it worth it, selling your soul to them?",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.93
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "O esforço valeu a pena porque eu passei no teste.",
+   "english": "The hard work was worthwhile because I passed the exam.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.93
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Ele deve ter sentido que valeu a pena.",
+   "english": "He must have felt it was worth it.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.89
+  },
+  {
+   "card": "valeu",
+   "kind": "unmatched",
+   "expr": null,
+   "sentence": "Meu tempo consigo... valeu o castigo que estou prestes a receber.",
+   "english": "My time with you... it was worth the punishment I'm about to receive.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer: to be worth, valid or acceptable",
+   "conf": 0.96
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "O que tiveste de fazer para salvar aquelas pessoas, valeu a pena.",
+   "english": "Whatever you had to do to save my people, it was worth it.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.93
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Valeu a pena, para ver um animal tão lindo.",
+   "english": "Worth it to see such a fine animal like this.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.93
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "O curso valeu a pena só por causa deste momento.",
+   "english": "Law school was worth it just for this moment.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.91
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Valeu a pena, toda a dor e miséria que trouxeste daquela ilha?",
+   "english": "Was it worth it, all the pain and misery you brought back from that island?",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.92
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "O trabalho duro de Tom valeu a pena.",
+   "english": "Tom's hard work has paid off.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.88
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Se você empresta $20 e nunca mais vê essa pessoa, provavelmente valeu a pena.",
+   "english": "If you lend someone $20 and never see that person again, it was probably worth it.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.89
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Valeu ou não valeu a pena o esforço?",
+   "english": "~ There you are, little one. ~ Is it a boy?",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.61
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Eu acho que tudo valeu a pena.",
+   "english": "I think it's all been worth it.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.92
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "E valeu a pena todo o trabalho?",
+   "english": "Was it worth all the trouble?",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.92
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Não valeu muito a pena, foi isso?",
+   "english": "Not really worth it, huh?",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.91
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Fiquei um bocado magoado, não vou dizer que não, mas valeu a pena, pela surpresa!",
+   "english": "And it hurt my feelings a little bit, I'm not going to lie, but it's worth it, because it was for the surprise!",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.89
+  },
+  {
+   "card": "valeu",
+   "kind": "matched",
+   "expr": "valer a pena",
+   "sentence": "Valeu a pena teres comprado esse carro.",
+   "english": "It was worth it for you to have bought that car.",
+   "before": "valer: to be worth, valid or acceptable",
+   "after": "valer a pena: to be worthwhile",
+   "conf": 0.92
+  }
+ ]
+}
