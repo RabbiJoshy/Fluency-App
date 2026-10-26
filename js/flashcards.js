@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=ab280381';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=ab280381';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=ab280381';
-import { songCreditHTML } from './song-credit.js?v=ab280381';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=ab280381';
+import './state.js?v=c9c3ad96';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=c9c3ad96';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=c9c3ad96';
+import { songCreditHTML } from './song-credit.js?v=c9c3ad96';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=c9c3ad96';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=ab280381';
-import { fitSenseRowText } from './card-row-layout.js?v=ab280381';
+import { exampleTranslationAlignment } from './example-alignment.js?v=c9c3ad96';
+import { fitSenseRowText } from './card-row-layout.js?v=c9c3ad96';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=ab280381';
-import { goToRoute, routeCodeFor } from './routes.js?v=ab280381';
-import { memoryTipTileHTML } from './memory-tips.js?v=ab280381';
+import './speech.js?v=c9c3ad96';
+import { goToRoute, routeCodeFor } from './routes.js?v=c9c3ad96';
+import { memoryTipTileHTML } from './memory-tips.js?v=c9c3ad96';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=ab280381';
-import './side-dock.js?v=ab280381';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=ab280381';
+} from './function-word-card.js?v=c9c3ad96';
+import './side-dock.js?v=c9c3ad96';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=c9c3ad96';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=ab280381';
+} from './example-personalisation.js?v=c9c3ad96';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=ab280381';
+} from './spanishdict-usage.js?v=c9c3ad96';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=ab280381';
+} from './reverse-cues.js?v=c9c3ad96';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=ab280381';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=ab280381';
+} from './card-metadata-pills.js?v=c9c3ad96';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=c9c3ad96';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -10047,6 +10047,63 @@ function renderCardWikipediaBadge(card) {
     }
 
     window.saveStudySessionSnapshot?.();
+    _schedulePrewarmNextCard();
+}
+
+let _prewarmTimer = null;
+function _schedulePrewarmNextCard() {
+    clearTimeout(_prewarmTimer);
+    _prewarmTimer = setTimeout(() => {
+        const nextIndex = currentIndex + 1;
+        if (!Array.isArray(flashcards) || nextIndex >= flashcards.length) return;
+        const next = flashcards[nextIndex];
+        if (!next || next._prewarmed) return;
+        next._prewarmed = true;
+
+        // 1. Pre-calculate buildCardChildren if applicable
+        if (!next.isChainChild && !next.splitInfo && typeof buildCardChildren === 'function') {
+            buildCardChildren(next).catch(() => {});
+        }
+
+        // 2. Pre-resolve dictionary cross-references
+        const langConfig = config?.languages?.[selectedLanguage];
+        for (const meaning of next.meanings || []) {
+            if (meaning._seeExpressionLoad || meaning._seeExpressionGloss) continue;
+            const references = typeof senseCrossReferences === 'function' ? senseCrossReferences(meaning) : [];
+            if (!references.length || !references.every(ref => isSeeExpressionReference(ref.target, ref.relation))) continue;
+            meaning._seeExpressionLoad = true;
+            Promise.all(references.map(ref => resolveSeeExpression(ref.target, langConfig,
+                window._cachedJoinedIndex || []))).then(entries => {
+                const glosses = [...new Set(entries.flatMap(entry => (entry?.senses || [])
+                    .map(sense => sense.translation).filter(Boolean)))];
+                if (!glosses.length) return;
+                meaning._seeExpressionGloss = glosses.join('; ');
+            }).catch(() => {
+                delete meaning._seeExpressionLoad;
+            });
+        }
+
+        // 3. Pre-calculate primary POS tab for multi-meaning cards
+        if (next.isMultiMeaning && next.meanings?.length && !next._activePosTab) {
+            const posWeights = new Map();
+            next.meanings.forEach((meaning, index) => {
+                const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
+                if (!pos || ['MWE', 'CLITIC', 'EXAMPLE_ONLY'].includes(pos)) return;
+                if (typeof isHiddenExpressionOnParent === 'function' && isHiddenExpressionOnParent(next, meaning)) return;
+                if (meaning.isKnownSense) return;
+                const weight = Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
+                const entry = posWeights.get(pos) || { pos, weight: 0, firstIndex: index };
+                entry.weight += weight;
+                posWeights.set(pos, entry);
+            });
+            const primaryPos = [...posWeights.values()].sort((a, b) =>
+                (b.weight - a.weight) || (a.firstIndex - b.firstIndex)
+            )[0];
+            if (primaryPos) {
+                next._activePosTab = primaryPos.pos;
+            }
+        }
+    }, 60);
 }
 
 // A learner prompt into the tutorial (tutorial.js), not the visitor walkthrough.
@@ -11835,8 +11892,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'ab280381';
-const MODALS_ASSET_VERSION = 'ab280381';
+const ASSET_VERSION = 'c9c3ad96';
+const MODALS_ASSET_VERSION = 'c9c3ad96';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

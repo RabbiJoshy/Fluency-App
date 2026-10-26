@@ -24,8 +24,6 @@
 #settingsModal .settings-link-row {
     margin: 0; padding: 14px 0; border: 0; border-bottom: 1px solid var(--border-color); border-radius: 0; background: transparent; box-shadow: none;
 }
-#settingsModal #studyTabContent > .settings-pane > :first-child:not(.settings-defaults-heading),
-#settingsModal #studyTabContent > .settings-pane > .settings-defaults-heading + * { border-top: 1px solid var(--border-color); }
 #settingsModal .settings-link-row.settings-words-row[hidden] { display: none; }
 
 /* Two- and three-way switches read as text with an underline, not as boxed buttons. */
@@ -60,3 +58,83 @@
 #savedWordsModal .settings-words-action { display: inline-flex; align-items: center; padding: 6px; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; }
 #savedWordsModal .settings-words-action:hover { color: var(--text-primary); }
 #savedWordsModal .settings-words-action[hidden] { display: none; }
+
+/* On a wide screen keep each row compact so a label stays near its control. */
+#settingsModal #studyTabContent .settings-pane-tabs { width: 100%; }
+
+/* One surface: the title bar is the page colour, and every row shares one inset
+   (ui-refinements.css gave the Theme and Text size rows their own padding). */
+#settingsModal .settings-tabs-header { background: var(--bg-primary); border: 0; box-shadow: none; backdrop-filter: none; }
+#settingsModal .settings-overview-footer .appearance-settings-card,
+#settingsModal #studyTabContent .appearance-settings-card,
+#settingsModal #studyTabContent .settings-default-row,
+#settingsModal #studyTabContent .settings-link-row {
+    padding: 16px 0; margin: 0; border: 0; border-bottom: 1px solid var(--border-color); border-radius: 0; background: transparent; box-shadow: none;
+}
+#settingsModal #studyTabContent .settings-overview-links { border: 0; padding: 12px 0 0; }
+
+/* One centred column for the title bar, tabs and rows, so their edges line up. */
+#settingsModal .modal-content.settings-modal-content,
+body.desktop-workspace #settingsModal.desktop-workspace-page > .modal-content { max-width: 720px !important; margin-inline: auto !important; }
+#settingsModal .settings-pane-tab:not(:focus-visible) { outline: 0 !important; }
+#settingsModal .settings-pane-tab:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 4px; }
+
+/* Laptop and up: the type, icons and column grow with the window (down to the sizes below on a 900px screen),
+   so a big monitor isn't a small strip in empty space. Phones keep the compact sizes above. */
+@media (min-width: 900px) {
+    #settingsModal .modal-content.settings-modal-content,
+    body.desktop-workspace #settingsModal.desktop-workspace-page > .modal-content { max-width: clamp(780px, 66vw, 1240px) !important; }
+    #settingsModal #settingsTitle { font-size: clamp(38px, 3.4vw, 60px); letter-spacing: -.02em; }
+    #settingsModal .settings-tabs-header { padding-top: clamp(36px, 3vw, 56px); padding-bottom: clamp(22px, 2vw, 34px); }
+    #settingsModal .settings-pane-tabs { gap: clamp(36px, 3vw, 56px); margin-top: 10px; }
+    #settingsModal .settings-pane-tab { font-size: clamp(20px, 1.7vw, 30px); padding: 12px 0 14px; }
+    #settingsModal .settings-label,
+    #settingsModal .settings-row-label,
+    #settingsModal .appearance-settings-copy strong,
+    #settingsModal .settings-link-row strong,
+    #settingsModal .settings-words-row strong,
+    #settingsModal .settings-default-row .settings-row-label { font-size: clamp(22px, 1.9vw, 34px); }
+    #settingsModal .settings-row-explanation,
+    #settingsModal .settings-link-row small,
+    #settingsModal .settings-words-row small { font-size: clamp(17px, 1.4vw, 24px); line-height: 1.5; margin-top: 6px; }
+    #settingsModal #studyTabContent .appearance-settings-card,
+    #settingsModal #studyTabContent .settings-default-row,
+    #settingsModal #studyTabContent .settings-link-row { padding: clamp(24px, 2.2vw, 38px) 0; }
+    #settingsModal .settings-toggle { gap: clamp(26px, 2.2vw, 40px); }
+    #settingsModal .settings-toggle .group-size-btn { font-size: clamp(18px, 1.5vw, 26px); padding: 4px 0; }
+    #settingsModal .settings-words-count { font-size: clamp(18px, 1.5vw, 26px); }
+    #settingsModal .settings-words-action { width: clamp(44px, 3.2vw, 60px); height: clamp(44px, 3.2vw, 60px); display: inline-flex; align-items: center; justify-content: center; }
+    #settingsModal .settings-words-action svg,
+    #settingsModal .settings-link-row.settings-words-row > span.settings-words-action svg { width: clamp(28px, 2.3vw, 42px); height: clamp(28px, 2.3vw, 42px); }
+    #settingsModal .known-language-flag .flag-img { height: clamp(32px, 2.6vw, 48px); }
+    #settingsModal #studyTabContent .settings-link-row > span:last-child { font-size: clamp(28px, 2.4vw, 42px); }
+    #settingsModal .settings-pane-tabs + * { margin-top: 0; }
+    #settingsModal .modal-close { width: clamp(44px, 3.4vw, 64px); height: clamp(44px, 3.4vw, 64px); }
+    #settingsModal .modal-close { font-size: clamp(22px, 1.8vw, 32px); }
+    #settingsModal .modal-close svg { width: 50%; height: 50%; }
+}
+#settingsModal .settings-tabs-header { border-bottom: 0 !important; }
+#settingsModal #studyTabContent > .settings-pane > * { border-top: 0 !important; }
+#settingsModal #studyTabContent > .settings-pane > .settings-pane-note { border-top: 0; }
+@media (min-width: 900px) {
+    #settingsModal #settingsPaneApp .appearance-settings-copy strong,
+    #settingsModal #settingsPaneStudy .settings-row-label { font-size: clamp(22px, 1.9vw, 34px) !important; font-weight: 700; }
+}
+
+/* The close button stays a circle: the older sheet fixes its flex-basis at 40px, so size both axes together. */
+#settingsModal .modal-close { flex: 0 0 auto !important; aspect-ratio: 1 / 1; padding: 0; }
+@media (min-width: 900px) {
+    #settingsModal .modal-close { width: clamp(44px, 3.4vw, 64px) !important; height: clamp(44px, 3.4vw, 64px) !important; }
+}
+
+/* Centred tabs; the selected one is a soft pill that wraps the whole word. */
+#settingsModal .settings-pane-tabs { justify-content: center; gap: 8px; border-bottom: 0; margin-bottom: 8px; }
+#settingsModal .settings-pane-tab {
+    margin: 0; padding: .55em 1.2em; border: 0 !important; border-radius: 999px;
+    transition: background-color .15s ease, color .15s ease;
+}
+#settingsModal .settings-pane-tab:hover:not(.selected) { color: var(--text-primary); }
+#settingsModal .settings-pane-tab.selected,
+#settingsModal .settings-pane-tab[aria-selected="true"] {
+    border: 0 !important; background: color-mix(in srgb, var(--text-primary) 11%, transparent);
+}

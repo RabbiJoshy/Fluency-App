@@ -281,10 +281,10 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
     gap: 8px;
     padding: 6px 6px 6px 10px;
     border-radius: 10px;
-    background: var(--bg-tertiary);
+    background: color-mix(in srgb, var(--accent-primary) 36%, #000);
     transition: background .15s ease;
 }
-.home-smart-skip.is-on { background: color-mix(in srgb, var(--accent-primary) 18%, var(--bg-tertiary)); }
+.home-smart-skip.is-on { background: color-mix(in srgb, var(--accent-primary) 48%, #000); }
 .home-smart-skip-icon {
     width: 16px;
     height: 16px;
@@ -347,7 +347,8 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
     min-height: 50px;
     border-radius: 12px;
     overflow: hidden;
-    background: color-mix(in srgb, var(--accent-primary) 45%, #000);
+    background: color-mix(in srgb, var(--accent-primary) 80%, #000);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 2px 8px rgba(0,0,0,.28);
     color: #fff;
 }
 .home-cta.is-disabled { opacity: .45; }
@@ -1350,6 +1351,7 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     .home-level-tile-dot { display: block; align-self: center; width: 7px; height: 7px; border-radius: 50%; background: var(--set-new, #fff); }
     .home-level-tile[data-dot="seen"] .home-level-tile-dot { background: var(--set-review, #ffcc00); }
     .home-level-tile[data-dot="known"] .home-level-tile-dot { background: var(--set-known, #06a557); }
+    .home-level-tile[data-dot="none"] .home-level-tile-dot { display: none; }
     /* Phones: the readout's words a step larger. */
     #setupPanel #homeLevelStepper .home-level-eyebrow,
     #setupPanel #homeLevelStepper .home-level-words { font-size: calc(var(--home-text) * 1.12); }
@@ -1641,3 +1643,33 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     flex-basis: 100%;
     text-align: center;
 }
+
+/* Phones: the section you are not in is the alternative to the one you are in, so its one line is centred
+   (name, "· 12 waiting" and the arrow stay together in the middle instead of the arrow at the far edge). */
+@media (max-width: 1023px) {
+    body:not(.desktop-workspace) #setupPanel .home-section-toggle[aria-expanded="false"] { justify-content: center; text-align: center; }
+    body:not(.desktop-workspace) #setupPanel .home-section-toggle[aria-expanded="false"] .home-section-toggle-caret { margin-left: 0; }
+    body:not(.desktop-workspace) #setupPanel .home-section-toggle[aria-expanded="false"] .home-section-peek:not(:empty) { flex: 0 1 auto; justify-content: center; text-align: center; }
+}
+
+/* Short phones (a browser tab with its URL and toolbar showing, not the installed app): squeeze the home
+   screen vertically so it still fits. Taller phones and the installed app are unchanged. */
+@media (max-width: 1023px) and (max-height: 740px) {
+    #setupPanel .lsw-egs .lsw-example-words { display: none !important; }
+    #setupPanel #homeLevelStepper .home-level-readout strong { font-size: calc(var(--home-number) * .92); }
+    #setupPanel #step2 .home-level-readout { padding-block: 6px; }
+    #setupPanel .home-section-toggle { padding-block: 6px; }
+    #setupPanel .step-header { padding-block: 4px; }
+    #setupPanel .home-section-footer { gap: 8px; padding-top: 8px; padding-bottom: calc(max(8px, env(safe-area-inset-bottom)) + 4px); }
+    #setupPanel[data-home-open] { padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+}
+
+/* Learn and Practise are the two things to press: equal, larger, and the brightest blocks on the screen.
+   A soft glow in the language colour lifts them off the page; neither is made to lead. */
+.home-cta {
+    min-height: 58px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 0 0 1px color-mix(in srgb, var(--accent-primary) 70%, transparent), 0 6px 20px color-mix(in srgb, var(--accent-primary) 32%, transparent);
+}
+.home-cta-main { font-size: calc(var(--home-text) * 1.12); font-weight: 700; }
+.home-cta.is-disabled { box-shadow: none; }
+@media (min-width: 1024px) { .home-cta { min-height: 64px; } }

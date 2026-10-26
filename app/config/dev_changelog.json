@@ -2,12 +2,134 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T22:45:29+00:00",
+      "date": "2026-10-26 22:45 GMT",
+      "agent": "Claude",
+      "summary": "Learn and Practise: larger buttons with a soft glow.",
+      "detail": [
+        "Both buttons are taller (58px, 64px on desktop) with bolder, larger labels and a soft glow in the language colour, so they read as the two things to press. Neither leads."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T22:41:22+00:00",
+      "date": "2026-10-26 22:41 GMT",
+      "agent": "Claude",
+      "summary": "Learn and Practise buttons brighter, with a raised edge.",
+      "detail": [
+        "Fill is now 80% of the language accent (was 62%), white text contrast about 4.8:1 on green and 6.8:1 on red.",
+        "A faint top highlight and soft shadow make them read as pressable. Smart Skip is unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T22:30:55+00:00",
+      "date": "2026-10-26 22:30 GMT",
+      "agent": "Claude",
+      "summary": "Desktop: no more Learn box jump on level change; lighter Learn, Practise and Smart Skip fills; “…of speech”.",
+      "detail": [
+        "Changing level no longer hides Practise for a moment, which made the Learn box jump to full width and bounce back.",
+        "Learn and Practise buttons are lighter (62% accent, was 45%); Smart Skip is lighter too (36% accent on black, was near-black grey), still the darker of the three.",
+        "Level line now reads “Complete Level N to recognise X% of speech” (no “everyday”).",
+        "Install tip shrinks to its title and mock toolbar on short windows, and hides if it would still be cut off."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T22:22:31+00:00",
+      "date": "2026-10-26 22:22 GMT",
+      "agent": "Claude",
+      "summary": "Desktop sidebar: “Add to iPhone” install tip.",
+      "detail": [
+        "A small card at the bottom of the sidebar shows mock iPhone Safari icons (Share, Add to Home Screen) and “In Safari, tap Share, then Add to Home Screen.”",
+        "The ✕ hides it on that device."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T22:20:24+00:00",
+      "date": "2026-10-26 22:20 GMT",
+      "agent": "Claude",
+      "summary": "Phone home: centred folded row, no dot on unstarted levels, squeezes onto short screens.",
+      "detail": [
+        "The section you are not in (Learn or Practise) is now centred on phones.",
+        "A level tile shows a dot only once you have answered a card in that level; unstarted levels have none.",
+        "On phones under 740px tall (a browser tab with its URL bar showing) the home screen drops the example-words line and tightens spacing so Learn, Practise and the buttons fit without scrolling."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T22:10:58+00:00",
+      "date": "2026-10-26 22:10 GMT",
+      "agent": "Claude",
+      "summary": "Settings: round close button, centred tabs with a pill highlight.",
+      "detail": [
+        "The close X is a true circle again (it had been squashed to 40×44).",
+        "Study / App / Your words are centred, and the selected tab has a soft pill around the whole word instead of an underline."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T22:06:51+00:00",
+      "date": "2026-10-26 22:06 GMT",
+      "agent": "Claude",
+      "summary": "Settings scale with the window; level line reads “Complete Level N to recognise X% of everyday speech”.",
+      "detail": [
+        "Laptop Settings type, icons, close button and column now grow with the window width, so they fill a large screen.",
+        "Level picker coverage line: “Complete Level N to recognise X% of everyday speech” (was “By Level N, you’ll recognise …”)."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T22:03:48+00:00",
+      "date": "2026-10-26 22:03 GMT",
+      "agent": "Claude",
+      "summary": "Settings on laptop: bigger type and a wider column.",
+      "detail": [
+        "From 900px up: 38px title, 20px tabs, 22px row labels, 17px descriptions and larger switches, in an 860px centred column.",
+        "Removed the doubled rules under the title and tabs. Phone sizes are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T21:52:56+00:00",
+      "date": "2026-10-26 21:52 GMT",
+      "agent": "Claude",
+      "summary": "Settings on desktop: one centred column.",
+      "detail": [
+        "Title, tabs, rows and the close button now share one centred 720px column instead of a narrow strip beside a full-width title bar.",
+        "Removed the thin vertical lines around the selected tab."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T21:32:10+00:00",
       "date": "2026-10-26 21:32 GMT",
       "agent": "Codex",
       "summary": "Clarify that level coverage follows completing the level.",
       "detail": [
         "The level picker now says “Complete Level 4 to recognise X% of everyday speech”, with the selected level and coverage filled in."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T21:30:03+00:00",
+      "date": "2026-10-26 21:30 GMT",
+      "agent": "Claude",
+      "summary": "Settings on desktop: one surface, aligned rows.",
+      "detail": [
+        "The Settings title bar now matches the page instead of sitting on a darker panel.",
+        "Theme, Text size and Account rows share the same inset as the rest of the rows."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T21:20:00+00:00",
+      "date": "2026-10-26 21:20 GMT",
+      "agent": "Claude",
+      "summary": "Settings rows no longer stretch across a wide screen.",
+      "detail": [
+        "On desktop the flat Settings rows are capped at 560px and line up under the title, so each label sits next to its switch."
       ],
       "commit": "pending"
     },
@@ -19,6 +141,16 @@
       "detail": [
         "Browse all is centred across the Practise content area, including the empty state.",
         "The Mistakes first note is centred above the Practise button."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T21:15:00+00:00",
+      "date": "2026-10-26 21:15 GMT",
+      "agent": "Claude",
+      "summary": "Settings rows no longer stretch across a wide screen.",
+      "detail": [
+        "On desktop the flat Settings rows are capped at 560px and line up under the title, so each label sits next to its switch."
       ],
       "commit": "pending"
     },
@@ -214,150 +346,6 @@
         "ir \"to go\" lists all of Wiktionary's partners (para, a, em, até), not just para, so vou ao cinema no longer looks like it matches no row.",
         "A card for one form names that form in its pill (vou + infinitive, gosto de); merged cards keep the dictionary word (ir + infinitive).",
         "\"See ter de\" and \"See ter que\" each sit on their own line instead of wrapping mid-pair."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T14:01:52+00:00",
-      "date": "2026-10-26 14:01 GMT",
-      "agent": "Claude",
-      "summary": "Merged lemmas: grammar never splits a card. teu/tua, outro/outra, muito/muita, claro/clara now share one card.",
-      "detail": [
-        "A form keeps its own card only if it is also another word (fui, foi, mato), has a meaning the dictionary ties to some forms (há, tem, faz, dá), or has a meaning on its own dictionary page (vamos \"let's\", digamos, Spanish hay).",
-        "Part-of-speech labels for the same meaning (determiner vs pronoun, Spanish transitive vs reflexive verb) no longer split cards: 252 Portuguese and 483 Spanish forms join their word.",
-        "Placement pools rebuilt."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T13:26:05+00:00",
-      "date": "2026-10-26 13:26 GMT",
-      "agent": "Claude",
-      "summary": "Merged lemmas: artist decks now use the same one-card-per-word rule, and deu joins dar.",
-      "detail": [
-        "Bad Bunny and other artist decks run the form rule in the app: tengo, tiene, tenía and 18 more forms share the tener card.",
-        "Wiktionary's rare contraction readings (deu = de + eu, mas = me + as) no longer keep a common word apart; real contractions (no, do, aonde) still do.",
-        "Senses without a dictionary reference are no longer compared across forms, which stopped lyrics glosses splitting every verb form."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T01:49:35+00:00",
-      "date": "2026-10-26 01:49 GMT",
-      "agent": "Claude",
-      "summary": "Merged lemmas: every form of a word now shares one card unless that form has a meaning of its own (decision 0033).",
-      "detail": [
-        "Portuguese ter, matar and fazer are one card each (ter was split into 18 groups).",
-        "Forms keep their own card for another word (fui, foi, fue), another part of speech (feito, poderes), an impersonal or imperative meaning (há, tem, faz, dá), their own SpanishDict page (hay), or a meaning concentrated on that form (vamos).",
-        "Expressions no longer keep a form apart: sé joins saber, está joins estar.",
-        "Spanish and Portuguese placement pools rebuilt for the new grouping."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:49:00+00:00",
-      "date": "2026-10-26 00:49 GMT",
-      "agent": "Claude",
-      "summary": "Admin filters: Portuguese cards are labelled by the model that assigned them (mercury-decide or Jev), and confidence and gap filters work again.",
-      "detail": [
-        "The source filter no longer shows a stale 'DeepSeek' list; options are Mercury-decide (1,077 cards), Jev (6,709) and No model run.",
-        "Confidence comes from the lowest-scoring published sentence on each card; 664 cards are flagged as having a sentence that fits no listed sense.",
-        "The retired Jev overlay's leftover config pin is removed; the filters no longer read it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:35:03+00:00",
-      "date": "2026-10-26 00:35 GMT",
-      "agent": "Claude",
-      "summary": "A verb only gets a separate -se card when the -se meaning has at least 3 examples.",
-      "detail": [
-        "matar | matar-se and similar pairs no longer appear on the strength of one stray example.",
-        "Rows without example counts need 10% of usage for the -se half, as other companions do.",
-        "The app and the Python card rules apply the same threshold."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:34:00+00:00",
-      "date": "2026-10-26 00:34 GMT",
-      "agent": "Claude",
-      "summary": "Cross-references say 'See' again, not 'Related'.",
-      "detail": [
-        "A meaning that points to another entry reads 'See matar-se', Wiktionary's own wording, instead of 'Related matar-se'."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:30:00+00:00",
-      "date": "2026-10-26 00:30 GMT",
-      "agent": "Antigravity",
-      "summary": "Portuguese: 10,000-card DECIDE-1 release promotes mercury-decide and Jev assignments into production",
-      "detail": [
-        "Full 10,000-card release (pt-speech-v25-decide-1-10000-slim) with Mercury-Decide on top ranks and Jev 1.14 across remaining polysemous words.",
-        "Rebuilt sense menus with rescued verbal multiword phrases, letter-case lookups, and resolved pointer glosses.",
-        "Retires the interim client-side Jev UI sidecar; disambiguated meanings and recorded ties are native to the release artifact.",
-        "Regenerated release-bound cognates, bridge, speech-frequency, merge exceptions, dictionary examples, estimation pool, and assignment filters."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:21:00+00:00",
-      "date": "2026-10-26 00:21 GMT",
-      "agent": "Claude",
-      "summary": "No more 'general use': the plain meaning reads as its translation, first.",
-      "detail": [
-        "Under a shared translation, a meaning with no context of its own used to read 'general use'; it now reads the translation alone and comes first (man / man · adult male).",
-        "The meanings sheet behind See again lists it the same way."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T23:52:00+00:00",
-      "date": "2026-10-25 23:52 GMT",
-      "agent": "Claude",
-      "summary": "Folded word types: translations sit on the row's centre line; shared contexts stay in the word-type row.",
-      "detail": [
-        "A folded word type's translation is centred on the whole row, not on the space after the pill, so a fully folded card reads as one line down the middle (claro: clear / sure · of course / of course).",
-        "When a pill with its lemma leaves too little room ('Verb from acordarse'), the translation takes a centred line of its own under it, as shared words already do on an open row; the meter stays at the right.",
-        "A shared context goes back to the word-type row in brackets (así: 'Adverb (in a certain way)' over like this / like that / this way / that way); only a shared translation is written into each row ('man · adult male')."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T23:16:00+00:00",
-      "date": "2026-10-25 23:16 GMT",
-      "agent": "Claude",
-      "summary": "Card back: word types open folded, translations line up, and short shared glosses go into each row.",
-      "detail": [
-        "A card with several word types opens with all of them folded to their translations; tapping one opens it. A card with one word type opens as before.",
-        "Folded translations start at the same place on every word-type row, so they read down one column.",
-        "When a word type's sub-senses share a gloss and each fits on one line, every row reads 'gloss · context' (hombre: 'man · adult male') and the word-type row is bare; otherwise the gloss stays above.",
-        "See again still opens every word type so any meaning can be pinned."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T22:12:00+00:00",
-      "date": "2026-10-25 22:12 GMT",
-      "agent": "Claude",
-      "summary": "Tutorial: the See again step now shows the real pin flow.",
-      "detail": [
-        "On the tutorial card, tapping See again fades everything but the word and its meanings and shows the same instruction as the app.",
-        "Pinning a meaning brings the card back with 'Swipe right if you know the rest.'; earlier pins are kept when the step reopens.",
-        "Tapping elsewhere on the tutorial card cancels, as on a real card."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T21:36:29+00:00",
-      "date": "2026-10-25 21:36 GMT",
-      "agent": "Codex",
-      "summary": "Keep the login panel in place and make logout/login transitions clean.",
-      "detail": [
-        "Place the loading message inside the sign-in card, with account choices and provider attribution space reserved from the start.",
-        "Reveal provider controls only after their markup and styles are ready, keeping the logo, guest button and account links stationary.",
-        "Cover logout before account cleanup and suppress intermediate provider callbacks; open the first language picker before the next paint after sign-in."
       ],
       "commit": "pending"
     }

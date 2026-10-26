@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=ab280381';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=c9c3ad96';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=ab280381';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=ab280381';
-import { readFastTrack } from './fast-track-preferences.js?v=ab280381';
-import './session-plan.js?v=ab280381';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=ab280381';
+import './state.js?v=c9c3ad96';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=c9c3ad96';
+import { readFastTrack } from './fast-track-preferences.js?v=c9c3ad96';
+import './session-plan.js?v=c9c3ad96';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=c9c3ad96';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -458,12 +458,15 @@ function showDeckOverviewLoading() {
 }
 
 async function startDailyReview(opts = {}) {
+    window.prewarmSpeechEngine?.();
     const loadingMessage = document.getElementById('loadingMessage');
-    if (loadingMessage) {
-        loadingMessage.style.display = 'block';
-        loadingMessage.textContent = 'Collecting cards ready to practise…';
-    }
-    window.showAppLoading?.('Loading practice', 'Preparing your cards…');
+    const loadingTimer = setTimeout(() => {
+        if (loadingMessage) {
+            loadingMessage.style.display = 'block';
+            loadingMessage.textContent = 'Collecting cards ready to practise…';
+        }
+        window.showAppLoading?.('Loading practice', 'Preparing your cards…');
+    }, 120);
     try {
         await window.loadDailyReviewDeck?.({
             limit: opts.limit || 100,
@@ -472,6 +475,7 @@ async function startDailyReview(opts = {}) {
     } catch (err) {
         console.error('Error starting daily review:', err);
     } finally {
+        clearTimeout(loadingTimer);
         window.hideAppLoading?.();
         if (loadingMessage) loadingMessage.style.display = 'none';
     }
@@ -1581,7 +1585,9 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
     // Add click handlers for level buttons
     document.querySelectorAll('.level-btn').forEach(btn => {
         btn.addEventListener('click', function(event) {
+            window.prewarmSpeechEngine?.();
             if (event.isTrusted) _setupLevelSelectionWasManual = true;
+            if (_setupLevelSelectionWasManual) window.placementLevelSelected?.(this.dataset.startRank, this.dataset.endRank);
             // Reset all buttons to short text
             document.querySelectorAll('.level-btn').forEach(b => {
                 b.classList.remove('selected');
@@ -2286,7 +2292,8 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
         const metrics = _levelBandMetrics(ranges[i]);
         // Phones show one dot per tile, the least-learned colour present:
         // any new word → white, else any seen → yellow, else green.
-        const dot = c.cards - c.seen > 0 ? 'new' : c.review > 0 ? 'seen' : 'known';
+        // A level with nothing answered yet has no dot at all.
+        const dot = c.seen === 0 ? 'none' : c.cards - c.seen > 0 ? 'new' : c.review > 0 ? 'seen' : 'known';
         return `<button type="button" class="home-level-tile${i === selectedIdx ? ' is-selected' : ''}" data-dot="${dot}" data-level-index="${i}" role="radio" aria-checked="${i === selectedIdx}" aria-label="Level ${i + 1}, words ${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}">
                 <span class="home-level-tile-num">${i + 1}</span>
                 <span class="home-level-tile-bar" aria-hidden="true">${segments}</span>
@@ -2544,7 +2551,7 @@ function updateLevelSliderReadout(i) {
             ? `<div class="lsw-freq-sentence"><strong>${wordLabel}</strong> appear${displayedWordCount === 1 ? 's' : ''} <strong>${freqValue.toLocaleString()}</strong> ${freqUnit}</div>`
             : '';
         const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
-        const coverageSubject = activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'everyday speech');
+        const coverageSubject = activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'speech');
         const covHTML = coverageRounded
             ? `<span class="lsw-coverage-inline">Complete Level ${i + 1} to recognise <strong>${coverageRounded}</strong> of ${coverageSubject}</span>`
             : '';
@@ -3207,7 +3214,9 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     const container = document.getElementById('rangeSelector');
     window.__studySessionContext = null;
     const reviewSection = document.getElementById('reviewDeckSection');
-    if (reviewSection) reviewSection.hidden = true;
+    // Practise stays on screen while the level is re-rendered; hiding it here made Learn jump to full
+    // width for a moment on every level change. Early exits below still hide it.
+    const hideReview = () => { if (reviewSection) reviewSection.hidden = true; };
     let minWord, maxWord;
     let rankBasis = 'source';
 
@@ -3231,7 +3240,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
         rankBasis = 'category';
     } else if (percentageMode && ppmData && ppmData.length > 0) {
         const selectedBtn = selectedLevelBtn;
-        if (!selectedBtn) return;
+        if (!selectedBtn) { hideReview(); return; }
         minWord = parseInt(selectedBtn.dataset.startRank);
         maxWord = parseInt(selectedBtn.dataset.endRank);
         rankBasis = selectedBtn.dataset.rankBasis || 'source';
@@ -3244,7 +3253,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
         } else {
             const ranges = getActiveLevelRanges();
             const found = ranges.find(item => String(item.level) === String(selectedLevel)) || ranges[0];
-            if (!found) return;
+            if (!found) { hideReview(); return; }
             minWord = found.startRank;
             maxWord = found.endRank;
             rankBasis = found.rankBasis || 'source';
@@ -3252,7 +3261,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     } else {
         const ranges = getActiveLevelRanges();
         const found = ranges.find(item => String(item.level) === String(selectedLevel)) || ranges[0];
-        if (!found) return;
+        if (!found) { hideReview(); return; }
         minWord = found.startRank;
         maxWord = found.endRank;
         rankBasis = found.rankBasis || 'source';
@@ -3260,7 +3269,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     if (!Number.isFinite(minWord) || !Number.isFinite(maxWord)) {
         console.warn('renderRangeSelector: bad level boundary', { minWord, maxWord, selectedLevel });
         container.innerHTML = '';
-        return;
+        { hideReview(); return; }
     }
 
     let vocabularyData = [];
@@ -3282,7 +3291,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     if (wordsInLevel.length === 0 && baselineInLevel.length === 0) {
         container.innerHTML = '<div class="study-set-empty">No cards remain in this level with the current settings.</div>';
         document.getElementById('step4').style.display = 'block';
-        return;
+        { hideReview(); return; }
     }
 
     const estimate = levelEstimates[selectedLanguage] || 0;
@@ -3636,16 +3645,22 @@ async function runLevelSession(button, studyMode) {
     if (_studySessionStarting) return;
     _studySessionStarting = true;
     if (button) button.disabled = true;
-    window.showAppLoading?.('Preparing your session', 'Loading your cards…');
+    window.prewarmSpeechEngine?.();
+    const loadingTimer = setTimeout(() => {
+        window.showAppLoading?.('Preparing your session', 'Loading your cards…');
+    }, 120);
     try {
-        await window.progressRefreshSettled?.(5000);
-        await renderRangeSelector();
+        const syncChanged = await window.progressRefreshSettled?.(5000);
+        if (syncChanged || !window.__studySessionContext) {
+            await renderRangeSelector();
+        }
         const fresh = window.__studySessionContext;
         if (!fresh) return;
         if (studyMode === 'new' && !(fresh.unseenCount > 0)) return;
         if (studyMode === 'review' && !(fresh.reviewCount > 0)) return;
         await startSelectedStudySession({ studyMode });
     } finally {
+        clearTimeout(loadingTimer);
         _studySessionStarting = false;
         const current = document.getElementById('studySetStartBtn');
         if (current && window.__studySessionContext) current.disabled = !(window.__studySessionContext.cardCount > 0);
@@ -3965,7 +3980,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=ab280381')
+        import('./spotify.js?v=c9c3ad96')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
