@@ -64,3 +64,14 @@
 /* On a wide screen keep each row compact so a label stays near its control. */
 #settingsModal #studyTabContent { max-width: 560px; }
 #settingsModal #studyTabContent .settings-pane-tabs { width: 100%; }
+
+/* One surface: the title bar is the page colour, and every row shares one inset
+   (ui-refinements.css gave the Theme and Text size rows their own padding). */
+#settingsModal .settings-tabs-header { background: var(--bg-primary); border: 0; box-shadow: none; backdrop-filter: none; }
+#settingsModal .settings-overview-footer .appearance-settings-card,
+#settingsModal #studyTabContent .appearance-settings-card,
+#settingsModal #studyTabContent .settings-default-row,
+#settingsModal #studyTabContent .settings-link-row {
+    padding: 16px 0; margin: 0; border: 0; border-bottom: 1px solid var(--border-color); border-radius: 0; background: transparent; box-shadow: none;
+}
+#settingsModal #studyTabContent .settings-overview-links { border: 0; padding: 12px 0 0; }
