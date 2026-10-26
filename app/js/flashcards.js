@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=2235d554';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=2235d554';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=2235d554';
-import { songCreditHTML } from './song-credit.js?v=2235d554';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=2235d554';
+import './state.js?v=183eb417';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=183eb417';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=183eb417';
+import { songCreditHTML } from './song-credit.js?v=183eb417';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=183eb417';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=2235d554';
-import { fitSenseRowText } from './card-row-layout.js?v=2235d554';
+import { exampleTranslationAlignment } from './example-alignment.js?v=183eb417';
+import { fitSenseRowText } from './card-row-layout.js?v=183eb417';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=2235d554';
-import { goToRoute, routeCodeFor } from './routes.js?v=2235d554';
-import { memoryTipTileHTML } from './memory-tips.js?v=2235d554';
+import './speech.js?v=183eb417';
+import { goToRoute, routeCodeFor } from './routes.js?v=183eb417';
+import { memoryTipTileHTML } from './memory-tips.js?v=183eb417';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=2235d554';
-import './side-dock.js?v=2235d554';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=2235d554';
+} from './function-word-card.js?v=183eb417';
+import './side-dock.js?v=183eb417';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=183eb417';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=2235d554';
+} from './example-personalisation.js?v=183eb417';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=2235d554';
+} from './spanishdict-usage.js?v=183eb417';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=2235d554';
+} from './reverse-cues.js?v=183eb417';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=2235d554';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=2235d554';
+} from './card-metadata-pills.js?v=183eb417';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=183eb417';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2326,7 +2326,30 @@ function sortExamplesByRelevance(examples) {
             || (b.reinforcement - a.reinforcement)
             || (a.index - b.index))
     );
-    return scored.map(s => s.ex);
+    return interleavePooledForms(scored.map(s => s.ex));
+
+    // A merged card (ser) pools its forms' sentences (é, foi, era…). Take them in
+    // turn, each form keeping its own relevance order, so cycling the card shows
+    // the word's forms rather than thirty lines of its commonest one. Lines with
+    // an English translation still all come first.
+    function interleavePooledForms(examples) {
+        if (!examples.some(ex => ex?.pooledFrom)) return examples;
+        const tier = list => {
+            const lanes = new Map();
+            for (const ex of list) {
+                const form = ex?.pooledFrom || '';
+                if (!lanes.has(form)) lanes.set(form, []);
+                lanes.get(form).push(ex);
+            }
+            const out = [];
+            for (let depth = 0; out.length < list.length; depth++) {
+                for (const lane of lanes.values()) if (depth < lane.length) out.push(lane[depth]);
+            }
+            return out;
+        };
+        const translated = examples.filter(ex => ex?.english && ex.english.trim());
+        return [...tier(translated), ...tier(examples.filter(ex => !(ex?.english && ex.english.trim())))];
+    }
 }
 
 function dedupeExamples(examples) {
@@ -11817,8 +11840,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '2235d554';
-const MODALS_ASSET_VERSION = '2235d554';
+const ASSET_VERSION = '183eb417';
+const MODALS_ASSET_VERSION = '183eb417';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

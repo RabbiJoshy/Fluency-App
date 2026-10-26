@@ -2,6 +2,30 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T18:20:00+00:00",
+      "date": "2026-10-26 18:20 GMT",
+      "agent": "Claude",
+      "summary": "Deploy fix: the production build no longer hangs while reading the app's files.",
+      "detail": [
+        "The site builder wrote every file id to git before reading any back; past ~4,000 files both pipes filled and the Linux deploy hung for an hour.",
+        "It now feeds the ids from a separate thread. No change to the app itself."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T17:00:03+00:00",
+      "date": "2026-10-26 17:00 GMT",
+      "agent": "Claude",
+      "summary": "Merged word cards now show sentences from all their forms, taken in turn, instead of mostly their commonest form.",
+      "detail": [
+        "Each study set loaded only its own 25 cards' sentences, so a merged card like ser showed 30 of its 808 sentences, all with \"é\".",
+        "New per-set pool files (lemma-pool/v1, Portuguese and Spanish) carry a sample of every other form's sentences: up to 30 per meaning, a form at a time.",
+        "Cards cycle through the forms (foi, é, era, …); lines with an English translation still come first.",
+        "Level 1 Portuguese: ser now has 195 sentences from 28 forms, estar 265 from 34."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T15:40:34+00:00",
       "date": "2026-10-26 15:40 GMT",
       "agent": "Claude",
@@ -343,30 +367,6 @@
         "New \"Music mode\" section: each artist's slang and learning what people, places and brands are.",
         "\"How it works (technical details)\" now holds the NLP detail: cognate skipping, merged forms, sentence cleaning, dictionaries, bi-encoder and Jev meaning selection.",
         "Every Spanish word on the page now has its English meaning in brackets."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T15:53:50+01:00",
-      "date": "2026-10-24 15:53 BST",
-      "agent": "Antigravity",
-      "summary": "Highlight all subsenses immediately when selecting a grouped sense row.",
-      "detail": [
-        "Clicking the sense row (whole-group selection) marks every member subsense active, immediately highlighting all subsenses.",
-        "Selecting an individual subsense continues to pin and highlight only that specific member.",
-        "Subsense groups with active members use clean spacing between highlighted items."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-23T20:32:33.705058+01:00",
-      "date": "2026-10-23 20:32 BST",
-      "agent": "Antigravity",
-      "summary": "Add admin-only setup filters for single-sense words and assignment source (All / DeepSeek / Jev / No overlay).",
-      "detail": [
-        "Each card is classified by its highest-priority applied overlay: Jev, then DeepSeek (at least one accepted correction), then original.",
-        "Filtering happens on the stable-ranked vocabulary before deck creation; card IDs, ranks, progress and assignments are unchanged.",
-        "Portuguese only for now; a compact card-ID index supplies the single-sense and DeepSeek lists."
       ],
       "commit": "pending"
     }
