@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=183eb417';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=dab0dce2';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=183eb417';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=183eb417';
-import { readFastTrack } from './fast-track-preferences.js?v=183eb417';
-import './session-plan.js?v=183eb417';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=183eb417';
+import './state.js?v=dab0dce2';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=dab0dce2';
+import { readFastTrack } from './fast-track-preferences.js?v=dab0dce2';
+import './session-plan.js?v=dab0dce2';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=dab0dce2';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1160,6 +1160,47 @@ function updateStep5Tooltip() {
     description.innerHTML = 'Words you know are marked <strong>Known</strong>. Words you don\'t know yet go to <strong>Practise</strong> for review.';
 }
 
+function _findRangeSlice(items, rankOf, minRank, maxRank) {
+    if (!items || items.length === 0) return [];
+    const len = items.length;
+    const rFn = typeof rankOf === 'function' ? rankOf : (it => it?.rank);
+    const firstRank = rFn(items[0]);
+    const lastRank = rFn(items[len - 1]);
+    if (firstRank != null && lastRank != null && firstRank <= lastRank) {
+        let low = 0, high = len - 1;
+        let startIdx = len;
+        while (low <= high) {
+            const mid = (low + high) >> 1;
+            const r = rFn(items[mid]);
+            if (r >= minRank) {
+                startIdx = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        if (startIdx >= len || rFn(items[startIdx]) >= maxRank) return [];
+        low = startIdx;
+        high = len - 1;
+        let endIdx = startIdx;
+        while (low <= high) {
+            const mid = (low + high) >> 1;
+            const r = rFn(items[mid]);
+            if (r < maxRank) {
+                endIdx = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return items.slice(startIdx, endIdx + 1);
+    }
+    return items.filter(item => {
+        const rank = rFn(item);
+        return rank >= minRank && rank < maxRank;
+    });
+}
+
 // Annotates every level control with its completion percentage and returns
 // the first level that still has work. The visible scrubber gets a small
 // partial-progress bar; its hidden .level-btn keeps the same data for setup
@@ -1213,58 +1254,15 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         } else {
             continue;
         }
+        const rankFn = _levelRankAccessor(rankBasis);
         parsedButtons.push({
             btn,
             buttonIndex,
             minWord,
             maxWord,
-            rankFn: _levelRankAccessor(rankBasis),
-            words: []
+            rankFn,
+            words: _findRangeSlice(filteredVocab, rankFn, minWord, maxWord)
         });
-    }
-
-    if (parsedButtons.length > 0) {
-        const rankFn = parsedButtons[0].rankFn;
-        const btnCount = parsedButtons.length;
-        let isSorted = true;
-        for (let k = 1; k < btnCount; k++) {
-            if (parsedButtons[k].minWord < parsedButtons[k - 1].minWord) {
-                isSorted = false;
-                break;
-            }
-        }
-        if (isSorted) {
-            for (let i = 0; i < filteredVocab.length; i++) {
-                const it = filteredVocab[i];
-                const rank = rankFn(it);
-                let low = 0;
-                let high = btnCount - 1;
-                while (low <= high) {
-                    const mid = (low + high) >> 1;
-                    const p = parsedButtons[mid];
-                    if (rank < p.minWord) {
-                        high = mid - 1;
-                    } else if (rank >= p.maxWord) {
-                        low = mid + 1;
-                    } else {
-                        p.words.push(it);
-                        break;
-                    }
-                }
-            }
-        } else {
-            for (let i = 0; i < filteredVocab.length; i++) {
-                const it = filteredVocab[i];
-                const rank = rankFn(it);
-                for (let j = 0; j < btnCount; j++) {
-                    const p = parsedButtons[j];
-                    if (rank >= p.minWord && rank < p.maxWord) {
-                        p.words.push(it);
-                        break;
-                    }
-                }
-            }
-        }
     }
 
     for (let i = 0; i < parsedButtons.length; i++) {
@@ -1291,24 +1289,32 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         const allGreen = wordsInLevel.length > 0 && isComplete && reviewCount === 0;
         const hasYellow = hasReview;
         const isWhite = hasStarted && !allGreen && !hasYellow;
-        btn.classList.toggle('is-auto-complete', autoCompleted);
-        btn.dataset.autoCompleted = String(autoCompleted);
-        btn.dataset.progressPct = String(completion);
-        btn.dataset.reviewCount = String(reviewCount);
-        btn.classList.toggle('has-progress', hasProgress);
-        btn.classList.toggle('has-partial-progress', isPartial);
-        btn.classList.toggle('has-review', hasReview);
-        btn.classList.toggle('is-complete', isComplete);
-        btn.classList.toggle('dot-green', allGreen);
-        btn.classList.toggle('dot-yellow', hasYellow);
-        btn.classList.toggle('dot-white', isWhite);
-        btn.style.setProperty('--level-progress', `${completion}%`);
+
+        const autoCompletedStr = String(autoCompleted);
+        const completionStr = String(completion);
+        const reviewCountStr = String(reviewCount);
+
+        if (btn.dataset.autoCompleted !== autoCompletedStr || btn.dataset.progressPct !== completionStr || btn.dataset.reviewCount !== reviewCountStr) {
+            btn.classList.toggle('is-auto-complete', autoCompleted);
+            btn.dataset.autoCompleted = autoCompletedStr;
+            btn.dataset.progressPct = completionStr;
+            btn.dataset.reviewCount = reviewCountStr;
+            btn.classList.toggle('has-progress', hasProgress);
+            btn.classList.toggle('has-partial-progress', isPartial);
+            btn.classList.toggle('has-review', hasReview);
+            btn.classList.toggle('is-complete', isComplete);
+            btn.classList.toggle('dot-green', allGreen);
+            btn.classList.toggle('dot-yellow', hasYellow);
+            btn.classList.toggle('dot-white', isWhite);
+            btn.style.setProperty('--level-progress', `${completion}%`);
+        }
 
         const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
-        if (visibleSegment) {
+        if (visibleSegment && (visibleSegment.dataset.autoCompleted !== autoCompletedStr || visibleSegment.dataset.progressPct !== completionStr || visibleSegment.dataset.reviewCount !== reviewCountStr)) {
             visibleSegment.classList.toggle('is-auto-complete', autoCompleted);
-            visibleSegment.dataset.autoCompleted = String(autoCompleted);
-            visibleSegment.dataset.progressPct = String(completion);
+            visibleSegment.dataset.autoCompleted = autoCompletedStr;
+            visibleSegment.dataset.progressPct = completionStr;
+            visibleSegment.dataset.reviewCount = reviewCountStr;
             visibleSegment.classList.toggle('has-progress', hasProgress);
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
             visibleSegment.classList.toggle('has-review', hasReview);
@@ -1363,7 +1369,8 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
     if (currentUser && !currentUser.isGuest) {
         if (!window.progressDataLoaded) await boundedLoad(window.progressReady, 20000);
     }
-    resetSetupStateMemo();
+    if (typeof ensureCurrentSetupStateMemo === 'function') ensureCurrentSetupStateMemo();
+    else if (typeof resetSetupStateMemo === 'function') resetSetupStateMemo();
     const container = document.getElementById('levelSelector');
     if (preferActionable) _setupLevelSelectionWasManual = false;
 
@@ -1519,8 +1526,16 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
         const initialCoverage = initial.threshold != null
             ? `${(initial.threshold * 100).toFixed(1)}%`
             : (releaseCoverage != null ? `${(releaseCoverage * 100).toFixed(1)}%` : '');
-        container.classList.add('level-selector--slider');
-        container.innerHTML = `
+        const artistScope = typeof artistVocabularyScope !== 'undefined' ? artistVocabularyScope : '';
+        const renderedContext = `${language}|${activeArtist?.slug || ''}|${artistScope}|${Boolean(window.playlistLiveActive?.())}|${Boolean(useLemmaMode)}|${percentageRanges.length}`;
+        const isAlreadyRendered = container?.dataset?.renderedContext === renderedContext
+            && container?.querySelector?.('#lswSlider')
+            && container?.querySelectorAll?.('.level-btn')?.length === percentageRanges.length;
+
+        if (!isAlreadyRendered) {
+            if (container?.dataset) container.dataset.renderedContext = renderedContext;
+            container.classList.add('level-selector--slider');
+            container.innerHTML = `
             <div class="level-slider-wrap">
                 <div class="home-level-tiles" id="homeLevelTiles" role="radiogroup" aria-label="Levels" hidden></div>
                 <div class="home-level-stepper" id="homeLevelStepper">
@@ -1628,6 +1643,7 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
         requestAnimationFrame(() =>
             _scrollLevelSegToCenter(parseInt(segBar.dataset.value || '0', 10), false));
     }
+    } // end if (!isAlreadyRendered)
 
     const levelButtons = Array.from(document.querySelectorAll('.level-btn'));
     const levelProgressPromise = levelButtons.length > 0
@@ -1659,8 +1675,12 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
         }
     } else {
         const matchingBtn = levelButtons.find(b => b.dataset.level === selectedLevel);
-        if (matchingBtn && !document.querySelector('.level-btn.selected')) {
-            matchingBtn.click();
+        if (matchingBtn) {
+            if (!matchingBtn.classList.contains('selected')) {
+                matchingBtn.click();
+            } else {
+                matchingBtn._rangeRenderPromise = renderRangeSelector();
+            }
             await matchingBtn._rangeRenderPromise;
             const matchIdx = levelButtons.indexOf(matchingBtn);
             if (matchIdx >= 0) {
@@ -3257,14 +3277,10 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     // figure now so there is one of it.
 
     const rankOf = _levelRankAccessor(rankBasis);
-    const wordsInLevel = filteredVocab.filter(item => {
-        const rank = rankOf(item);
-        return rank >= minWord && rank < maxWord;
-    });
-    if (wordsInLevel.length === 0 && !(preparedVocabulary?.stableBaseline || []).some(item => {
-        const rank = rankOf(item);
-        return rank >= minWord && rank < maxWord;
-    })) {
+    const sliceFn = typeof _findRangeSlice === 'function' ? _findRangeSlice : (items, rFn, minR, maxR) => (items || []).filter(item => { const r = rFn ? rFn(item) : item?.rank; return r >= minR && r < maxR; });
+    const wordsInLevel = sliceFn(filteredVocab, rankOf, minWord, maxWord);
+    const baselineInLevel = sliceFn(preparedVocabulary?.stableBaseline, rankOf, minWord, maxWord);
+    if (wordsInLevel.length === 0 && baselineInLevel.length === 0) {
         container.innerHTML = '<div class="study-set-empty">No cards remain in this level with the current settings.</div>';
         document.getElementById('step4').style.display = 'block';
         return;
@@ -3302,8 +3318,8 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     // Cards Smart Skip set aside, per slot: what the unfiltered baseline holds
     // in the slot that the filtered deck does not.
     const baselineSlotCounts = new Array(slotCount).fill(0);
-    for (const item of (preparedVocabulary?.stableBaseline || [])) {
-        const slotIdx = Math.floor((rankOf(item) - minWord) / STABLE_SET_SLOT_COUNT);
+    for (let i = 0; i < baselineInLevel.length; i++) {
+        const slotIdx = Math.floor((rankOf(baselineInLevel[i]) - minWord) / STABLE_SET_SLOT_COUNT);
         if (slotIdx >= 0 && slotIdx < slotCount) baselineSlotCounts[slotIdx]++;
     }
     const ranges = [];
@@ -3950,7 +3966,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=183eb417')
+        import('./spotify.js?v=dab0dce2')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
