@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=abebf139';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=abebf139';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=abebf139';
-import { songCreditHTML } from './song-credit.js?v=abebf139';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=abebf139';
+import './state.js?v=7ae50939';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=7ae50939';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=7ae50939';
+import { songCreditHTML } from './song-credit.js?v=7ae50939';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=7ae50939';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=abebf139';
+import { exampleTranslationAlignment } from './example-alignment.js?v=7ae50939';
+import { fitSenseRowText } from './card-row-layout.js?v=7ae50939';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=abebf139';
-import { goToRoute, routeCodeFor } from './routes.js?v=abebf139';
-import { memoryTipTileHTML } from './memory-tips.js?v=abebf139';
+import './speech.js?v=7ae50939';
+import { goToRoute, routeCodeFor } from './routes.js?v=7ae50939';
+import { memoryTipTileHTML } from './memory-tips.js?v=7ae50939';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=abebf139';
-import './side-dock.js?v=abebf139';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=abebf139';
+} from './function-word-card.js?v=7ae50939';
+import './side-dock.js?v=7ae50939';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=7ae50939';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-    translationMismatchPenalty,
-} from './example-personalisation.js?v=abebf139';
+} from './example-personalisation.js?v=7ae50939';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=abebf139';
+} from './spanishdict-usage.js?v=7ae50939';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=abebf139';
+} from './reverse-cues.js?v=7ae50939';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=abebf139';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=abebf139';
+} from './card-metadata-pills.js?v=7ae50939';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=7ae50939';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2229,7 +2229,7 @@ function toggleExampleAutoplay(event) {
 
 // Example ordering. Compare the following keys in order:
 //   1. has an English translation  — an untranslated first line teaches nothing
-//   2. no obvious translation mismatch (length/digits; not semantic scoring)
+//   2. higher offline translation alignment — a clearer teaching pair
 //   3. is a single sentence        — 0.5% of corpus lines run to two
 //   4. WSD confidence tier         — cheap-agree > leaf > glosskey > tuple
 //   5. reinforces a recent mistake — local progress state, no pipeline data
@@ -2299,7 +2299,7 @@ function sortExamplesByRelevance(examples) {
         ex,
         index,
         hasEnglish: !!(ex.english && ex.english.trim()),
-        translationMismatch: translationMismatchPenalty(ex),
+        alignment: exampleTranslationAlignment(ex),
         singleSentence: exampleIsSingleSentence(ex),
         confidence: exampleConfidenceTier(ex),
         reinforcement: exampleReinforcementScore(ex, wrongWords),
@@ -2319,7 +2319,8 @@ function sortExamplesByRelevance(examples) {
             || (b.reinforcement - a.reinforcement)
             || (a.index - b.index))
         : ((Number(b.hasEnglish) - Number(a.hasEnglish))
-            || (a.translationMismatch - b.translationMismatch)
+            || (Number(b.alignment !== null) - Number(a.alignment !== null))
+            || ((b.alignment ?? 0) - (a.alignment ?? 0))
             || (Number(b.singleSentence) - Number(a.singleSentence))
             || (a.confidence - b.confidence)
             || (b.reinforcement - a.reinforcement)
@@ -11215,6 +11216,7 @@ function buildProvenancePanelHTML(card) {
                 ['Song', x.song_name || x.song],
                 ['Vocalists', Array.isArray(x.vocalists) ? x.vocalists.join(', ') : x.vocalists],
                 ['Alignment', x.alignment != null ? Number(x.alignment).toFixed(3) : null],
+                ['Translation alignment', exampleTranslationAlignment(x)?.toFixed(3)],
                 ['Source', x.source || pv.attribution || pv.contributor],
                 ['Run ID', x.run_id],
                 ['Example ID', x.example_id],
@@ -11811,8 +11813,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'abebf139';
-const MODALS_ASSET_VERSION = 'abebf139';
+const ASSET_VERSION = '7ae50939';
+const MODALS_ASSET_VERSION = '7ae50939';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

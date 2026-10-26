@@ -2,6 +2,44 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T15:14:43+00:00",
+      "date": "2026-10-26 15:14 GMT",
+      "agent": "Codex",
+      "summary": "Rank teaching examples by offline LaBSE scores, including the updated Portuguese release.",
+      "detail": [
+        "Replace the length/number heuristic with existing cached translation-pair scores. Selected examples carry score, model and version in their metadata; higher scores appear first.",
+        "Bind the score companion to the newly updated Portuguese DECIDE-1 expressions release: all 139,957 selected examples have cached scores. Spanish coverage remains 282,808 of 282,808.",
+        "Load only the relevant set’s score files. Selection and frequencies are untouched by the alignment change; ties keep the existing ordering and unscored examples stay available.",
+        "Local mobile verification: Portuguese assim opens at 0.964 and Spanish esa at 0.977; cycling keeps the example pool intact. All 436 app tests and 88 release tests passed."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T15:12:05+00:00",
+      "date": "2026-10-26 15:12 GMT",
+      "agent": "Codex",
+      "summary": "Use existing offline LaBSE alignment scores to show clearer teaching examples first.",
+      "detail": [
+        "Carry the cached sentence-pair score, model and version into example metadata; future releases retain it through compact shards.",
+        "Spanish and Portuguese current releases receive release-bound companions: 282,808 Spanish and 139,859 Portuguese selected examples, all scored. Only the active set’s score files load.",
+        "Higher-scored Speech examples appear first. Ties retain the existing ordering; unscored examples remain available. The temporary length/number heuristic is removed.",
+        "Selection, frequency, progress identity and published deck assets stay unchanged. Verified on local mobile cards: assim 0.964 and esa 0.977, with example cycling intact."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T15:12:03+00:00",
+      "date": "2026-10-26 15:12 GMT",
+      "agent": "Claude",
+      "summary": "Portuguese: expressions found in any verb form (tomou conta, vale a pena, dou cabo, faz ideia) now get their own meaning rows.",
+      "detail": [
+        "New release pt-speech-v25-decide-1-expr-10000-slim: DECIDE-1 plus 857 re-asked sentences with inflected expressions on the menu.",
+        "519 sentences moved from a plain verb meaning to the expression (vale a pena: worthwhile, not 'to be worth'); 107 previously unassigned sentences are now shown.",
+        "Every other card is identical to DECIDE-1; companion files (cognates, merge rule, placement pool, filters) rebuilt for the new release."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T14:35:46+00:00",
       "date": "2026-10-26 14:35 GMT",
       "agent": "Claude",
@@ -330,44 +368,6 @@
         "Use a release-pinned UI sidecar above existing DeepSeek assignments, preserving card IDs, learner progress and the published release.",
         "Regroup all exported examples, update canonical examples and shares from the reviewed exported set, and keep unresolved decisions explicit.",
         "Leave grammar-word cards, companion splitting and the rest of the deck unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-23T00:32:06.246572+01:00",
-      "date": "2026-10-23 00:32 BST",
-      "agent": "Codex",
-      "summary": "Show actual merged forms on card fronts, with a Smart Skip disclosure.",
-      "detail": [
-        "Use the infinitive only when it belongs to this merged group; otherwise show the most frequent member.",
-        "Place +N other forms below the front word; open a centered Merged by Smart Skip panel listing the actual group.",
-        "Keep existing lemma metadata, sense grouping, card identities and progress; verify phone and desktop layouts in both themes."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T22:57:00+01:00",
-      "date": "2026-10-22 22:57 BST",
-      "agent": "Antigravity",
-      "summary": "About & Walkthrough: centered title, subtle top and bottom app links, pure toggle walkthrough header",
-      "detail": [
-        "About page: centered the top title ('The problem with most vocabulary apps') so it aligns naturally with the page layout.",
-        "About page: added subtle 'Open app →' links at the top header and at the bottom before footnotes for visitors arriving from a CV.",
-        "Walkthrough modal: streamlined top bar down to just the centered Speech/Music toggle and the close button, eliminating layout shift and visual clutter."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T21:51:58.244631+01:00",
-      "date": "2026-10-22 21:51 BST",
-      "agent": "Codex",
-      "summary": "Clarify grammar-slot pills and enlarge function-word patterns and translations.",
-      "detail": [
-        "Retain + before grammatical slots: saber + infinitive, começar a + infinitive and estar + adjective; literal partners such as querer que keep no extra +.",
-        "Give complement-only frames the same complete, readable phrase pill; prevent slot labels inheriting hanging indents or collapsing into inline backgrounds.",
-        "Increase function-word patterns and English meanings to 20px; make translations bold and align contraction parts beside the headword.",
-        "Verify phone and desktop rendering; leave foram and companion thresholds unchanged.",
-        "Check Portuguese DeepSeek corrections against published release data; record loading evidence for the separate WSD accuracy pass."
       ],
       "commit": "pending"
     }
