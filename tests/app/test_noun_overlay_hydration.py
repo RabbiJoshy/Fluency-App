@@ -33,7 +33,7 @@ if (card.noun_merge !== original || lemmaGroupKey(card) !== '') throw new Error(
     def test_default_decks_retain_checked_noun_pairs_and_exceptions(self):
         import json
         cfg = json.loads((ROOT / 'app/config/config.json').read_text())
-        for language, pair, kept in [('spanish', ('años', 'año'), ['sé', 'fue', 'al', 'del']),
+        for language, pair, kept in [('spanish', ('años', 'año'), ['fue', 'al', 'del']),
                                      ('portuguese', ('horas', 'hora'), ['no', 'do', 'conta', 'poderes', 'seres'])]:
             with self.subTest(language=language):
                 asset = json.loads((ROOT / 'app' / cfg['languages'][language]['mergeExceptionsPath']).read_text())

@@ -1,5 +1,7 @@
 # Decision 0031 — Merge only matching visible lexical sense sets
 
+**Superseded for study grouping by [0033](0033-form-privilege-merging.md) (26 October 2026).**
+
 22 October 2026. Adds a study-equivalence condition to decisions 0028 and 0029;
 their ambiguity, contraction, frozen-expression and complete noun-menu
 protections remain necessary.

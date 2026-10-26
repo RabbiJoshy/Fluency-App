@@ -8,6 +8,7 @@ this test, so a deck cannot go live without its list.
 
 import json
 import re
+import unicodedata
 import unittest
 from pathlib import Path
 
@@ -15,6 +16,7 @@ from fluency.sense_menu.noun_merge import RULE_VERSION
 
 
 APP = Path(__file__).resolve().parents[2] / "app"
+WORKSPACE = APP.parents[1] / "Fluency-Workspace"
 REBUILD = (
     "rebuild it: python scripts/build_merge_exceptions.py --language <code> "
     "[--extract <kaikki dump>] --release-index <workspace release>/app/vocabulary.index.json"
@@ -49,6 +51,17 @@ class MergeExceptionsCurrentTests(unittest.TestCase):
                     payload.get("noun_merge_rule"), RULE_VERSION,
                     f"{path} predates noun merge rule {RULE_VERSION}; {REBUILD}",
                 )
+                # Decision 0033: a form-privilege verdict for every release
+                # card replaces the visible-sense signatures.
+                if payload.get("form_privilege_rule") == "form-privilege/v1":
+                    verdicts = payload["form_privilege_keys"]
+                    rows = json.loads((WORKSPACE / index).read_text(encoding="utf-8")) if (WORKSPACE / index).exists() else None
+                    if rows is not None:
+                        self.assertEqual(set(verdicts), {unicodedata.normalize("NFC", row["word"]).lower().strip()
+                                                         for row in rows if row.get("word")})
+                    self.assertTrue(all(payload["keys"].get(word) == lemma for word, lemma in verdicts.items()))
+                    self.assertTrue(all(payload["form_privilege_reasons"].get(word) for word, lemma in verdicts.items() if not lemma))
+                    continue
                 self.assertEqual(payload.get("visible_sense_rule"), "visible-senses/v1")
                 signatures = payload.get("visible_sense_keys")
                 self.assertIsInstance(signatures, dict)
