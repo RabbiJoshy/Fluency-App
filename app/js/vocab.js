@@ -1259,7 +1259,8 @@ function formPrivilegeReasons(item, lemma, siblingShares = null) {
         // Reflexive senses are the -se companion rule's question, and noun
         // number already has its own proof (decision 0029).
         else if (normalizeLemmaToken(meaning.headword) !== lemma || mainPos === 'noun') continue;
-        else if (siblingShares && (!counted || n >= FORM_PRIVILEGE_CONCENTRATED_EXAMPLES)
+        else if (siblingShares && formPrivilegeSenseKey(meaning).startsWith('ref:')
+            && (!counted || n >= FORM_PRIVILEGE_CONCENTRATED_EXAMPLES)
             && share >= FORM_PRIVILEGE_CONCENTRATED_SHARE - 1e-9
             && siblingShares(formPrivilegeSenseKey(meaning)) < FORM_PRIVILEGE_SIBLING_SHARE) {
             reasons.add('concentrated');
@@ -1268,12 +1269,21 @@ function formPrivilegeReasons(item, lemma, siblingShares = null) {
     return [...reasons].sort();
 }
 
+// A contraction must not fold into one of its parts (pt no = em + o stays off
+// em's card, aonde = a + onde off onde's). A listed contraction whose examples belong to another kind of
+// word is that word: Wiktionary lists deu (de + eu, nonstandard) and mas
+// (me + as), but the cards are dar and "but".
+const FORM_CONTRACTION_PART_POS = new Set(['prep', 'preposition', 'article', 'det', 'determiner',
+    'pron', 'pronoun', 'conj', 'conjunction', 'contraction', 'adp']);
+
 // Contractions and unproven noun merges stay separate as before (decision
 // 0029). An expression built on the form no longer keeps it apart.
 function formPrivilegeEligible(item, lemma) {
-    if (!lemma || isContractionForLemma(item)) return false;
+    if (!lemma) return false;
     const lead = formPrivilegeCounts(item).filter(({ meaning }) =>
         formPrivilegeBaseHeadword(meaning?.headword, item) === lemma).sort((a, b) => b.n - a.n)[0];
+    if (isContractionForLemma(item) && (normalizeLemmaToken(item?.word).includes(lemma)
+        || !lead || FORM_CONTRACTION_PART_POS.has(formPrivilegePos(lead.meaning)))) return false;
     if (formPrivilegePos(lead?.meaning) === 'noun') {
         const proof = item?.noun_merge;
         return proof?.rule_version === 'noun-merge/v2' && proof.allowed === true
@@ -1326,7 +1336,7 @@ function formPrivilegeVerdicts(rows) {
         }
         const pool = pooled.get(lemma);
         const rest = pool.total - ownTotal;
-        const siblingShares = rest > 0 ? key => {
+        let siblingShares = rest > 0 ? key => {
             let n = 0;
             for (const [other, count] of pool.senses) {
                 if (formPrivilegeSensesMatch(key, other)) n += count;
@@ -1336,6 +1346,13 @@ function formPrivilegeVerdicts(rows) {
             }
             return Math.max(0, n) / rest;
         } : null;
+        // Only senses with a dictionary reference can be compared across
+        // forms. Lyrics glosses are written per form (tengo "I have", tiene
+        // "he/she has"), so without references the sibling tests are skipped
+        // rather than firing on every form.
+        if (siblingShares && ![...own.keys()].some(key => key.startsWith('ref:') && siblingShares(key) > 0)) {
+            siblingShares = null;
+        }
         const reasons = formPrivilegeReasons(item, lemma, siblingShares);
         verdicts[surface] = { lemma: reasons.length ? '' : lemma, reasons };
     }
@@ -2710,6 +2727,22 @@ function stampMergeExceptionValues(vocabulary, contractions, keys, nounVerdicts 
         const key = keys?.[surface];
         if (typeof key === 'string') item.merge_key = key;
         else delete item.merge_key;
+    }
+    // Decks with no release-bound verdicts (artist decks, a staging candidate
+    // release) run the same rule here, but only when nearly every row has its
+    // senses: verdicts from a partly loaded deck would change as rows arrive.
+    if (!privilegeKeys) {
+        const loaded = vocabulary.filter(item => item?.meanings?.length && !item._indexRowsPending);
+        if (loaded.length && loaded.length >= 0.9 * vocabulary.length) {
+            const verdicts = formPrivilegeVerdicts(loaded);
+            for (const item of loaded) {
+                const verdict = verdicts[normalizeLemmaToken(item?.word)];
+                // No usage to weigh: leave the row to the older rules.
+                if (verdict && verdict.reasons[0] !== 'no_word') {
+                    item._formPrivilegeOverlay = { rule: FORM_PRIVILEGE_RULE, lemma: verdict.lemma };
+                }
+            }
+        }
     }
 }
 

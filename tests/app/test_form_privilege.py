@@ -52,6 +52,13 @@ ROWS = [
     # haver: the impersonal sense is the main use of every form.
     row('há', [(sense('haver', 'verb', 'there be', 'x1', tags=['impersonal'], marks=['person=3']), 25)]),
     row('havia', [(sense('haver', 'verb', 'there be', 'x2', tags=['impersonal'], marks=['person=3']), 25)]),
+    # Wiktionary lists deu as a contraction (de + eu, nonstandard), but its
+    # examples are dar's; real contractions stay off their parts' cards.
+    {**row('deu', [(GIVE(6), 30)]), 'is_contraction': True},
+    {**row('no', [(sense('em', 'prep', 'in', 'em1'), 27)]), 'is_contraction': True},
+    row('em', [(sense('em', 'prep', 'in', 'em2'), 30)]),
+    {**row('aonde', [(sense('onde', 'adv', 'where', 'on1'), 20)]), 'is_contraction': True},
+    row('onde', [(sense('onde', 'adv', 'where', 'on2'), 30)]),
     # An expression on the form does not keep it apart.
     row('sé', [(sense('saber', 'VERB', 'to know', 's1'), 17),
                ({**sense('no sé', 'PHRASE', "I don't know", 's2'), 'pos': 'PHRASE'}, 13)]),
@@ -80,6 +87,27 @@ class FormPrivilegeTests(unittest.TestCase):
         self.assertEqual((lemma['pensé'], lemma['pienso']), ('pensar', 'pensar'))
         self.assertEqual((lemma['há'], lemma['havia']), ('haver', 'haver'))
         self.assertEqual((lemma['sé'], lemma['sabe']), ('saber', 'saber'))
+        self.assertEqual(lemma['deu'], 'dar')
+        self.assertEqual((lemma['no'], lemma['aonde']), ('', ''))
+
+    def test_fully_loaded_deck_without_verdicts_runs_the_rule_in_the_app(self):
+        source = (ROOT / 'app/js/vocab.js').read_text()
+        blocks = []
+        for name in ('lemma-merge-pure', 'low-share-pure'):
+            start, end = source.index(f'// {name}\n'), source.index(f'// /{name}')
+            blocks.append(source[start:end])
+        start = source.index('function stampMergeExceptionValues(')
+        end = source.index('\nasync function fetchActiveVocabularyIndex(', start)
+        script = '\n'.join(blocks) + '\n' + source[start:end] + (
+            "\nconst rows = " + json.dumps(ROWS) + ";"
+            "stampMergeExceptionValues(rows, new Set(), null);"
+            "const key = w => lemmaStudyGroupKey(rows.find(r => r.word === w)).split('\\u001f')[0];"
+            "if (key('dou') !== 'dar' || key('dá') !== '' || key('fue') !== '') throw Error('full deck');"
+            "const partial = JSON.parse(JSON.stringify(rows)); partial.slice(3).forEach(r => { r.meanings = []; });"
+            "stampMergeExceptionValues(partial, new Set(), null);"
+            "if (partial.some(r => r._formPrivilegeOverlay)) throw Error('partly loaded deck must not run it');")
+        result = subprocess.run(['node', '-e', script], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr[-2000:])
 
 
 if __name__ == '__main__':

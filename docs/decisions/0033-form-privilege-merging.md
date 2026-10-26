@@ -54,6 +54,18 @@ stay sub-rows of the shared card. Reflexive headwords are the base word
 (*irse* is *ir*, *matar-se* is *matar*); an unhyphenated *-se* is stripped
 only when the base headword is on the same menu.
 
+**Contractions.** A listed contraction stays off its parts' cards (*no* = em +
+o, *aonde* = a + onde). Wiktionary also lists common words through a rare
+contraction reading: *deu* (nonstandard *de + eu*), *mas* (*me + as*). A listed
+contraction therefore stays separate only when its examples lead to a
+function word (preposition, article, pronoun, determiner, conjunction) or to a
+word its spelling contains; *deu*, whose examples are all *dar*, joins *dar*.
+
+**Comparing forms.** Tests 3 and 5 compare a sense across a word's forms, which
+needs a dictionary reference on the sense. Senses without one (lyrics glosses
+written per form: *tengo* "I have", *tiene* "he/she has") are not compared, so
+on such decks only tests 1 and 2 apply.
+
 ## Provider parity
 
 The rule reads fields both providers fill: headword, part of speech,
@@ -70,15 +82,14 @@ out of test 5.
 
 | | Portuguese DECIDE-1 | Spanish r6 |
 |---|---|---|
-| Cards with more than one form | 1,262 | 993 |
-| Estimation groups (was) | 6,220 (7,393) | 7,027 (8,948) |
+| Cards with more than one form | 1,264 | 1,016 |
+| Estimation groups (was) | 6,217 (7,393) | 7,005 (8,948) |
 | Kept apart: other word / part of speech | 289 / 195 | 339 / 394 |
-| Kept apart: restricted / own page / concentrated | 5 / – / 107 | 7 / 2 / 274 |
+| Kept apart: restricted / own page / concentrated | 5 / – / 91 | 7 / 2 / 133 |
 
-*ter*, *matar*, *fazer* are now one card each. 2,125 Portuguese and 3,155
+*ter*, *matar*, *fazer* are now one card each. 2,124 Portuguese and 3,155
 Spanish forms stay apart for the old reasons (unproven noun pairs,
-contractions). Known data fault: the Portuguese contraction list includes
-*deu*, which keeps it off the *dar* card.
+contractions). *deu* joins *dar* (see Contractions).
 
 ## Implementation
 
@@ -87,7 +98,20 @@ One implementation, in the app: `formPrivilegeVerdicts` in `app/js/vocab.js`
 release and writes `form_privilege_rule`, `form_privilege_keys` (surface → word,
 or empty) and `form_privilege_reasons` into a new `-fp1` merge overlay, and
 repoints config; rebuild the estimation pool afterwards. A release-bound
-verdict decides both `lemmaGroupKey` and `lemmaStudyGroupKey`. Decks without
-an `-fp1` overlay (artist decks, other releases) keep 0031's behaviour until
-built. Thresholds are constants beside the rule; changing one is a rule
+verdict decides both `lemmaGroupKey` and `lemmaStudyGroupKey`. A deck without
+verdicts for its release (artist decks, a staging candidate release) runs the
+same rule in the app when at least 90% of its rows have their senses; a partly
+loaded deck keeps 0031's behaviour, because verdicts would change as rows
+arrive. On the Bad Bunny deck this puts *tengo*, *tiene*, *tenía* and 18 more
+forms on *tener*; *hay* joins *haber* there, because lyrics senses carry no
+dictionary page to show it is its own entry.
+
+Other Speech decks were measured but not switched: French (its index rows
+carry no senses, so every form would stand alone), and Czech, Finnish and
+Dutch (*jsem*/*je*/*byl* → *být*, *ben*/*is*/*was* → *zijn*; 840, 193 and 857
+cards with more than one form), pending review.
+
+Dictionary sentences: a meaning's dictionary example appears on a separate
+card only when it contains that card's form, and on a merged card for any
+form (`canonicalOccurrenceSurface`); this already held and is unchanged. Thresholds are constants beside the rule; changing one is a rule
 version bump and an overlay rebuild.
