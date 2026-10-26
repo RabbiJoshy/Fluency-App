@@ -15,7 +15,7 @@ matar/mataria). Wiktionary also gives every form of a verb the whole lemma
 menu (all 16 meanings of *ter* on all 43 forms), so the menu itself rarely
 says which forms are special.
 
-## Rule (`form-privilege/v2`, 26 October 2026)
+## Rule (`form-privilege/v3`, 26 October 2026)
 
 **Principle.** A card is a thing to learn once. Two forms belong on one card
 when someone who has learned one can read the other: the difference is
@@ -30,7 +30,16 @@ rule. Three things count:
 
 1. **Another word** spelled the same, judged over all that word's senses
    together: *fui*/*foi* (ir and ser), *mato* "bush", *tá* "OK", *feito*,
-   *espera* (Wiktionary's separate noun entry), Spanish *fue*.
+   *espera* (Wiktionary's separate noun entry), Spanish *fue*. Since v3 this
+   includes a noun spelled like its verb's infinitive: *o olhar* "gaze",
+   *o poder* "power", *o andar* "floor". The dictionary gives it its own
+   entry, so it is not just a part-of-speech label. It counts only on the
+   infinitive's spelling or its plural (*olhar*, *olhares*), never on a
+   conjugated form: Spanish *sean* had the name Sean filed under *ser*
+   "being". v2 missed these because the headword is spelled the same as the
+   verb's. v3 splits *olhar*, *olhares*, *poder*, *andar* in Portuguese and
+   nothing in Spanish. Participle adjectives (*cansado*, *errado*) were never
+   affected: Wiktionary files them under their own headword.
 2. **A meaning the dictionary restricts to some forms**: a sense tagged
    impersonal or third-person counts only on a third-person form, an
    imperative sense only on an imperative form, and only when the word's
@@ -71,6 +80,27 @@ word its spelling contains; *deu*, whose examples are all *dar*, joins *dar*.
 a dictionary reference on the sense. Senses without one (lyrics glosses
 written per form: *tengo* "I have", *tiene* "he/she has") are not compared, and
 lyrics senses name no page for test 3, so on such decks only test 1 applies.
+
+## Noun proof v3 (`noun-merge/v3`, 26 October 2026)
+
+Noun- and adjective-led forms also need a dictionary proof that they are the
+same noun (`src/fluency/sense_menu/noun_merge.py`, decided on complete menus).
+v2 refused gender forms (*querida*) and any noun whose menu named a second
+word: *casa* ("ele casa", casar) kept *casa*/*casas* on two cards, and 1,769
+Portuguese forms were refused that way. v3:
+
+- a feminine form is an inflection like a plural; one whose senses differ is
+  refused alone (*prisionera*), without splitting the plural pair;
+- only the noun's own entries are compared; another word on the menu is
+  judged by this decision's 3-example, 10% bar on real use;
+- a noun and an adjective of the same headword are one word (*querido*).
+
+Result: 1,073 Portuguese forms join 813 cards (*casa*/*casas*,
+*querido*/*querida*/*queridos*, *conta*/*contas*); Spanish gains six feminine
+forms (*profesora*, *compañera*). Most Spanish nouns stay refused for missing
+SpanishDict evidence, which only a new fetch can supply. Czech, Finnish, Dutch
+and French keep their stricter v2 lists, which the app still accepts. Full
+list: `docs/audits/noun-merge-v3-2026-10-26/`.
 
 ## Provider parity
 

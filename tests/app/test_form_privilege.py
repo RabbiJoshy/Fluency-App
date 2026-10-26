@@ -67,6 +67,13 @@ ROWS = [
                   (sense('ir', 'verb', "let's", 'ir2', ref='kaikki:en-vamos-pt-verb-jT-zG51B'), 13)]),
     row('vou', [(sense('ir', 'verb', 'to go', 'ir3'), 30)]),
     row('ir', [(sense('ir', 'verb', 'to go', 'ir4', ref='kaikki:en-ir-pt-verb-pt:to_go'), 30)]),
+    # A noun spelled like its verb is another word (o olhar "gaze"); the verb's
+    # other forms still share the verb's card.
+    row('olhar', [(sense('olhar', 'verb', 'to look', 'ol1'), 15), (sense('olhar', 'noun', 'gaze', 'ol2'), 4)]),
+    row('olha', [(sense('olhar', 'verb', 'to look', 'ol3'), 30)]),
+    row('olhe', [(sense('olhar', 'verb', 'to look', 'ol4'), 29), (sense('olhar', 'noun', 'gaze', 'ol5'), 1)]),
+    # A conjugated form is never that noun: WSD filed the name Sean under ser "being".
+    row('sean', [(sense('ser', 'VERB', 'to be', 'be3'), 23), (sense('ser', 'NOUN', 'being', 'be4'), 7)]),
     # An expression on the form does not keep it apart.
     row('sé', [(sense('saber', 'VERB', 'to know', 's1'), 17),
                ({**sense('no sé', 'PHRASE', "I don't know", 's2'), 'pos': 'PHRASE'}, 13)]),
@@ -100,6 +107,8 @@ class FormPrivilegeTests(unittest.TestCase):
         self.assertEqual((lemma['vou'], lemma['ir']), ('ir', 'ir'))
         self.assertEqual(lemma['deu'], 'dar')
         self.assertEqual((lemma['no'], lemma['aonde']), ('', ''))
+        self.assertEqual(verdicts['olhar'], {'lemma': '', 'reasons': ['other_word']})
+        self.assertEqual((lemma['olha'], lemma['olhe'], lemma['sean']), ('olhar', 'olhar', 'ser'))
 
     def test_fully_loaded_deck_without_verdicts_runs_the_rule_in_the_app(self):
         source = (ROOT / 'app/js/vocab.js').read_text()

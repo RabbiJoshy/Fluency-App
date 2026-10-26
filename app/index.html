@@ -200,6 +200,7 @@
     <link rel="stylesheet" href="css/black-palette.css?v=1">
     <link rel="stylesheet" href="css/home-layout.css?v=1">
     <link rel="stylesheet" href="css/loading-ui.css?v=20261025">
+    <link rel="stylesheet" href="css/settings-flat.css?v=1">
 </head>
 <body>
     <div id="appLoadingScreen" class="app-loading-screen" role="status" aria-live="polite" aria-busy="true">
@@ -2233,16 +2234,11 @@
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         </span>
                     </button>
-                    <section class="settings-words-saved" id="savedItemsSection" aria-labelledby="savedWordsTitle" hidden>
-                        <div class="settings-words-row settings-words-saved-head">
-                            <span><strong id="savedWordsTitle" tabindex="-1">Saved</strong><small>Words and phrases you’ve kept for later. Saving doesn’t add them to review.</small></span>
-                            <button type="button" class="settings-words-action" id="downloadSavedWordsBtn" title="Export Saved" aria-label="Export saved words and phrases" hidden>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            </button>
-                        </div>
-                        <p class="saved-device-note">Stored on this device. Export to keep a copy.</p>
-                        <div class="settings-words-saved-list" id="savedWordsBody"></div>
-                    </section>
+                    <button type="button" class="settings-link-row settings-words-row" id="settingsSavedBtn" hidden>
+                        <span><strong>Saved</strong><small>Words and phrases you’ve kept for later.</small></span>
+                        <span class="settings-words-count" id="settingsSavedCount"></span>
+                        <span aria-hidden="true">›</span>
+                    </button>
                     <!-- Hidden for everyone for now; may come back. -->
                     <section class="settings-feature-card" id="chatgptPromptCard" aria-labelledby="chatgptPromptTitle" hidden>
                         <span class="settings-feature-icon" aria-hidden="true">💬</span>
@@ -2509,6 +2505,24 @@
         <div class="modal-content vocabulary-import-modal-content">
             <div class="modal-header">
                 <div>
+    <!-- Saved words and phrases: the only place the list is shown. Opened from Settings → Your words or Progress. -->
+    <div id="savedWordsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="savedWordsTitle">
+        <div class="modal-content saved-words-modal-content">
+            <div class="modal-header">
+                <h3 id="savedWordsTitle" tabindex="-1">Saved</h3>
+                <div class="saved-words-header-actions">
+                    <button type="button" class="settings-words-action" id="downloadSavedWordsBtn" title="Export Saved" aria-label="Export saved words and phrases" hidden>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </button>
+                    <button class="modal-close" id="closeSavedWordsModal" type="button" aria-label="Close Saved">✕</button>
+                </div>
+            </div>
+            <p class="saved-device-note">Words and phrases you’ve kept for later. Saving doesn’t add them to review. Stored on this device; export to keep a copy.</p>
+            <div class="settings-words-saved-list" id="savedWordsBody"></div>
+            <p class="saved-words-empty" id="savedWordsEmpty" hidden>Nothing saved yet.</p>
+        </div>
+    </div>
+
                     <span class="progress-modal-eyebrow">Account progress</span>
                     <h3 id="vocabularyImportTitle">Import known words</h3>
                 </div>

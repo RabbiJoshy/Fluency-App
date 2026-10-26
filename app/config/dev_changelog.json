@@ -14,6 +14,19 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-26T20:58:00+00:00",
+      "date": "2026-10-26 20:58 GMT",
+      "agent": "Claude",
+      "summary": "Flatter Settings, and Saved words now open in their own popup.",
+      "detail": [
+        "Settings tabs are one flat surface: underlined tabs, plain-text switches and hairline rows instead of boxes inside boxes.",
+        "Saved is a single row in Settings → Your words (hidden until you save something) that opens a Saved popup; the list no longer sits inside Settings.",
+        "Progress's Saved button opens the same popup.",
+        "Languages-you-know flags are bigger."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T20:55:49+00:00",
       "date": "2026-10-26 20:55 GMT",
       "agent": "Codex",
@@ -34,6 +47,31 @@
         "Larger level arrows and desktop progress legend; white Learn and Practise button text.",
         "Smart Skip master switch and count move to the desktop left; mobile hides the total.",
         "Meaning pinning hides scrubbers and other tools, keeps See again visible, and places instructions on the card with extra room for pins."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T20:08:14+00:00",
+      "date": "2026-10-26 20:08 GMT",
+      "agent": "Claude",
+      "summary": "Merged cards: singular and plural nouns (casa/casas) and gender forms (querido/querida) now share a card.",
+      "detail": [
+        "Noun proof noun-merge/v3: a feminine form counts as an inflection like a plural; another word on a noun's menu (casa: casar) no longer blocks it, and is judged by the 3-example, 10% bar instead; a noun and adjective of one headword are one word.",
+        "Portuguese: 1,073 forms join 813 cards (casa/casas, coisa/coisas, vida/vidas, querido/querida/queridos, conta/contas).",
+        "Spanish: six feminine forms join (profesora, compañera, secretaria…); most Spanish nouns still lack SpanishDict evidence.",
+        "Full list: docs/audits/noun-merge-v3-2026-10-26/README.md."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T19:24:35+00:00",
+      "date": "2026-10-26 19:24 GMT",
+      "agent": "Claude",
+      "summary": "Merged cards: a noun spelled like its verb (o olhar \"gaze\", o poder \"power\") now gets its own card.",
+      "detail": [
+        "Rule form-privilege/v3 (decision 0033): a noun with the same headword as its verb's infinitive counts as another word, on the infinitive's spelling or its plural only.",
+        "Portuguese: olhar, olhares, poder and andar get their own cards; their other forms (olha, pode, anda…) stay merged. Spanish: no change.",
+        "Conjugated forms are never split by it: Spanish sean, where the name Sean had been filed under ser \"being\", stays on ser."
       ],
       "commit": "pending"
     },
@@ -209,6 +247,16 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-26T00:34:00+00:00",
+      "date": "2026-10-26 00:34 GMT",
+      "agent": "Claude",
+      "summary": "Cross-references say 'See' again, not 'Related'.",
+      "detail": [
+        "A meaning that points to another entry reads 'See matar-se', Wiktionary's own wording, instead of 'Related matar-se'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T00:30:00+00:00",
       "date": "2026-10-26 00:30 GMT",
       "agent": "Antigravity",
@@ -218,16 +266,6 @@
         "Rebuilt sense menus with rescued verbal multiword phrases, letter-case lookups, and resolved pointer glosses.",
         "Retires the interim client-side Jev UI sidecar; disambiguated meanings and recorded ties are native to the release artifact.",
         "Regenerated release-bound cognates, bridge, speech-frequency, merge exceptions, dictionary examples, estimation pool, and assignment filters."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:34:00+00:00",
-      "date": "2026-10-26 00:34 GMT",
-      "agent": "Claude",
-      "summary": "Cross-references say 'See' again, not 'Related'.",
-      "detail": [
-        "A meaning that points to another entry reads 'See matar-se', Wiktionary's own wording, instead of 'Related matar-se'."
       ],
       "commit": "pending"
     },
@@ -326,44 +364,6 @@
         "Tapping it fades everything except the word and its meaning rows, in place, and shows 'Tap the pin on a meaning to see it again in Practise.' where the tiles were.",
         "Pinning one meaning returns the card to normal straight away; tapping anywhere else on the card cancels without flipping it.",
         "Row pin tooltips read 'See this meaning again'; the tutorial step is renamed to match."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T12:31:03+00:00",
-      "date": "2026-10-25 12:31 GMT",
-      "agent": "Codex",
-      "summary": "Fix sign-in getting stuck and keep loading layouts stable on mobile and desktop.",
-      "detail": [
-        "Successful sign-in opens the app without waiting for background progress or playlist sync; failed account requests can retry in place.",
-        "Reserve loading space across setup, search, music, song selection, progress and conjugation drawers; retain song checkbox focus.",
-        "Keep level and practice sections hidden while choosing Speech or Music, and ignore outdated Speech loads after switching languages."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-25T11:25:00+00:00",
-      "date": "2026-10-25 11:25 UTC",
-      "agent": "Antigravity",
-      "summary": "About page and walkthrough: label dictionary icon, move mañana to intro, and reframe music choice.",
-      "detail": [
-        "Added 'Dictionary lookup' callout and pin label in the walkthrough pointing to the dictionary tile in the bottom right corner.",
-        "Moved mañana (tomorrow) into the main intro paragraph to contrast standard speech essentials with series/music specific vocabulary.",
-        "Shortened the Speech and Music mode descriptions for direct parallelism.",
-        "Removed 'songs you love' and reframed music mode around uploading a playlist or selecting an artist."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T19:33:00+01:00",
-      "date": "2026-10-24 19:33 BST",
-      "agent": "Antigravity",
-      "summary": "About page: repeat Music subtitle beside both music features and add roncar slang contrast.",
-      "detail": [
-        "Added *roncar* (to brag, not 'to snore') alongside *perreo* (reggaeton dancing) to contrast standard words given new meaning through slang vs slang-native words.",
-        "Positioned the Music subtitle in the left channel beside both music features (The slang each artist uses and Learn what things are) with scroll reveal.",
-        "Centered \"What makes it different\" and \"How it works\" in the main channel with table display matching the top title.",
-        "Formatted all bullet points under \"What makes it different\" equally as feature rows."
       ],
       "commit": "pending"
     }

@@ -41,6 +41,7 @@ const urlsToCache = [
   '/js/extra-workspace.js?v=20261016',
   '/js/saved-items.js?v=20261013saved',
   '/css/saved-items.css?v=20261013saved',
+  '/css/settings-flat.css?v=1',
   '/js/desktop-shell.js?v=1',
   '/js/ai-preference.js?v=20261013',
   '/js/appearance-bootstrap.js?v=20261011',
