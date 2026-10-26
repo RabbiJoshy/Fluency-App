@@ -1,12 +1,12 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=fa6cd049';
-import { accountPermissions } from './account-permissions.js?v=fa6cd049';
-import { readJsonWithTimeout } from './read-request.js?v=fa6cd049';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=fa6cd049';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=fa6cd049';
-import { dbGet, dbPut } from './offline-db.js?v=fa6cd049';
-import { consumeRouteNavigation } from './routes.js?v=fa6cd049';
+import './state.js?v=abebf139';
+import { accountPermissions } from './account-permissions.js?v=abebf139';
+import { readJsonWithTimeout } from './read-request.js?v=abebf139';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=abebf139';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=abebf139';
+import { dbGet, dbPut } from './offline-db.js?v=abebf139';
+import { consumeRouteNavigation } from './routes.js?v=abebf139';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -15,9 +15,9 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=fa6cd049';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=fa6cd049';
-import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=fa6cd049';
+} from './sync-queue.js?v=abebf139';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=abebf139';
+import { PASSWORDLESS_ENABLED, PASSWORDLESS_SYNC_URL, startPasswordlessAuth, signOutPasswordless, hideLegacyAuthChoices } from './passwordless-auth.js?v=abebf139';
 
 // Shared with the server; names and retired initials do not grant access.
 function userPermissions(user = currentUser) {

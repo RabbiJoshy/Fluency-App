@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=fa6cd049");
+@import url("./appearance.css?v=abebf139");
 
 
         * {
@@ -3527,12 +3527,14 @@
             display: block;
         }
 
+        /* One "See <link>" per line: side by side they wrapped mid-pair
+           ("See ter de See" / "ter que") in narrow rows. */
         .sense-cross-reference-related {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 3px 10px;
+            gap: 0;
             width: 100%;
             margin-top: 3px;
             color: var(--text-muted);
@@ -3545,7 +3547,7 @@
             display: inline-flex;
             align-items: baseline;
             gap: 4px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             white-space: normal;
         }
 
@@ -27381,12 +27383,12 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   white-space: nowrap; vertical-align: baseline;
 }
 
-/* Patterns and their English meanings carry the same reading hierarchy as
-   ordinary sense rows. Slots remain distinct without shrinking their text. */
-.fw-relation-box .fw-relation-formula { font-size: 20px; white-space: normal; overflow: visible; }
-.fw-relation-box .fw-relation-meaning { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+/* Restore the compact function-word hierarchy (00352ead): a clear pattern,
+   a quieter English meaning, and room for both on a phone row. */
+.fw-relation-box .fw-relation-formula { font-size: 17px; white-space: normal; overflow: visible; }
+.fw-relation-box .fw-relation-meaning { font-size: 15px; font-weight: 400; color: var(--text-secondary); }
 .fw-relation-formula .fw-slot-pill { font-size: inherit; }
-.fw-sentence-translation { font-size: 20px; font-weight: 700; }
+.fw-sentence-translation { font-size: 16px; font-weight: 500; }
 .fw-heading-word { display: block; line-height: 1; }
 .fw-heading-parts { display: inline-flex; align-items: center; align-self: center; line-height: 1; transform: translateY(-0.1em); }
 .fw-heading { flex-wrap: wrap; }

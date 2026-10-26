@@ -2,6 +2,43 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T14:35:46+00:00",
+      "date": "2026-10-26 14:35 GMT",
+      "agent": "Claude",
+      "summary": "Bad Bunny, Rosalía and Young Miko: dropped-s spellings now show inflected meanings (seguimo' = we follow, queda' = you are).",
+      "detail": [
+        "Artist decks load lyrics release lyrics-all-artists-v20-1, derived from v20 with only display glosses changed.",
+        "1,010 cards whose lyric spelling drops a final s (seguimo', tiene', estamo') get person-inflected glosses instead of the infinitive.",
+        "Examples, meanings and WSD assignments are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T14:32:01+00:00",
+      "date": "2026-10-26 14:32 GMT",
+      "agent": "Codex",
+      "summary": "Mobile grammar-word rows fit again; grading reveals expressions, rarer-use paging works, and closer translation pairs appear first.",
+      "detail": [
+        "Restore compact function-word typography, stack only the row that needs it, and show até without a redundant + ….",
+        "Keep expressions follow-ups out of the function-word renderer and repair the missing escaping helper that left old card content on screen.",
+        "Cycle rarer-use examples in the visible sheet, preserving open examples, scroll position and pager focus.",
+        "Order selected Speech examples using conservative translation length and digit mismatch checks before WSD confidence; example membership, frequencies and artist playback priorities stay unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T14:21:26+00:00",
+      "date": "2026-10-26 14:21 GMT",
+      "agent": "Claude",
+      "summary": "Card rows: construction pills list every partner word and use the card's own form (vou para / a / em / até), and See links get a line each.",
+      "detail": [
+        "ir \"to go\" lists all of Wiktionary's partners (para, a, em, até), not just para, so vou ao cinema no longer looks like it matches no row.",
+        "A card for one form names that form in its pill (vou + infinitive, gosto de); merged cards keep the dictionary word (ir + infinitive).",
+        "\"See ter de\" and \"See ter que\" each sit on their own line instead of wrapping mid-pair."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T14:01:52+00:00",
       "date": "2026-10-26 14:01 GMT",
       "agent": "Claude",
@@ -331,43 +368,6 @@
         "Increase function-word patterns and English meanings to 20px; make translations bold and align contraction parts beside the headword.",
         "Verify phone and desktop rendering; leave foram and companion thresholds unchanged.",
         "Check Portuguese DeepSeek corrections against published release data; record loading evidence for the separate WSD accuracy pass."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T21:17:01.290640+01:00",
-      "date": "2026-10-22 21:17 BST",
-      "agent": "Codex",
-      "summary": "Fix Portuguese verb sense English, construction pills and linked cards.",
-      "detail": [
-        "Show existential ter as to exist instead of there be; link distinct merged-lemma cards without changing progress identities.",
-        "Render tratar, procurar and começar construction frames as full-size phrase pills, preserve optional de/por, and clarify the adverb examples bem/mal.",
-        "Keep the whole ir para phrase inside its capsule; prevent compact rows clipping construction cues.",
-        "Resolve explicit expression references such as acabar de into English on the sense row, retaining the link to the full definition and example.",
-        "Verify the reported records at 320, 390 and 1440 pixel widths, plus app regression checks."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T20:59:15.648074+01:00",
-      "date": "2026-10-22 20:59 BST",
-      "agent": "Codex",
-      "summary": "Restore corrected Portuguese verb meanings with verified deck loading.",
-      "detail": [
-        "Fizeram shows they did; made; foram shows they went / they were, with the correct verb tables.",
-        "Verify all 10000 published cards and preserve card IDs, meaning IDs and example assignments.",
-        "Bind merge keys, frequency, dictionary examples, placement and Smart Skip assets to the corrected release; preserve the previous release for rollback."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T20:51:26.577045+01:00",
-      "date": "2026-10-22 20:51 BST",
-      "agent": "Codex",
-      "summary": "Restore Portuguese decks using the previous published release.",
-      "detail": [
-        "Roll back only Portuguese release paths after decks failed to load.",
-        "Keep saved progress, account data, all other languages and app changes untouched."
       ],
       "commit": "pending"
     }

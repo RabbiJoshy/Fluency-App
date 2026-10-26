@@ -110,7 +110,10 @@ function fwSlotHTML(html, relation, inPattern = false) {
     // A slot the pattern no longer names (e.g. the clause after "think + que")
     // stays plain text in the example rather than taking a colour.
     const formula = relation?.formulaHTML;
-    let out = String(html || '').replace(/<span class=['"]fw-token-([vc])['"]>/g, (tag, side) => {
+    // An unnamed continuation adds no information to a pattern (até + …).
+    const pattern = inPattern ? String(html || '').replace(
+        /\s*\+\s*(?:<span\b[^>]*>\s*(?:…|\.{3})\s*<\/span>|…|\.{3})/g, '') : String(html || '');
+    let out = pattern.replace(/<span class=['"]fw-token-([vc])['"]>/g, (tag, side) => {
         if (formula && !new RegExp(`fw-token-${side}['"]`).test(formula)) return '<span>';
         const type = fwSlotType(relation, side);
         const rgb = type ? fwPresentation.posRgb?.(type) : null;
@@ -152,7 +155,8 @@ function meaningOf(obj) {
 
 /** Lookup a deterministic grammar-word definition for a card in the given language. */
 export function getGrammarWordDefinition(cardOrWord, lang) {
-    if (!cardOrWord || (typeof cardOrWord === 'object' && cardOrWord.playlistId)) return null;
+    if (!cardOrWord || (typeof cardOrWord === 'object'
+        && (cardOrWord.playlistId || cardOrWord.isChainChild))) return null;
     const wordKey = typeof cardOrWord === 'string'
         ? cardOrWord.trim().toLowerCase()
         : (cardOrWord.targetWord || cardOrWord.word || '').trim().toLowerCase();
@@ -183,7 +187,7 @@ export function getPortugueseGrammarDefinition(cardOrWord, lang) {
 
 /** Determine if a card is a function word. */
 export function isFunctionWordCard(card, lang) {
-    if (!card || card.playlistId) return false;
+    if (!card || card.playlistId || card.isChainChild) return false;
     if (card.partOfSpeech === 'FW' || card.pos === 'FW' || card.functionWord) return true;
     return Boolean(getGrammarWordDefinition(card, lang));
 }
@@ -589,13 +593,13 @@ export function fitFunctionWordRows(root = document) {
     root.querySelectorAll?.('.fw-relations-list').forEach(list => {
         const boxes = [...list.querySelectorAll('.fw-relation-box')];
         boxes.forEach(box => box.classList.remove('is-stacked'));
-        // One card, one arrangement: if any row has to wrap, they all do.
-        const anyWraps = boxes.some(box => {
+        // Only the row that needs the space stacks; short neighbours stay inline.
+        boxes.forEach(box => {
             const f = box.querySelector('.fw-relation-formula');
             const m = box.querySelector('.fw-relation-meaning');
-            return f && m && m.offsetTop > f.offsetTop + f.offsetHeight / 2;
+            box.classList.toggle('is-stacked', Boolean(f && m
+                && m.offsetTop > f.offsetTop + f.offsetHeight / 2));
         });
-        if (anyWraps) boxes.forEach(box => box.classList.add('is-stacked'));
     });
 }
 if (typeof window !== 'undefined' && typeof MutationObserver !== 'undefined') {
@@ -630,7 +634,7 @@ export function functionWordBlockHTML(card, lang) {
     // Live source examples have no assigned grammatical construction. Keep
     // their dialogue/song lines on the ordinary card instead of replacing
     // them with the Speech deck's fixed dictionary illustrations.
-    if (card?.playlistId) return '';
+    if (card?.playlistId || card?.isChainChild) return '';
     const fwData = getGrammarWordDefinition(card, lang) || (card?.functionWord?.uses ? card.functionWord : null);
 
     // 1. Deterministic layout for Portuguese and Spanish focus grammar words

@@ -1,42 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=fa6cd049';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=fa6cd049';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=fa6cd049';
-import { songCreditHTML } from './song-credit.js?v=fa6cd049';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=fa6cd049';
+import './state.js?v=abebf139';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=abebf139';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=abebf139';
+import { songCreditHTML } from './song-credit.js?v=abebf139';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=abebf139';
 import { installCardTouch } from './card-touch.js';
-import { fitSenseRowText } from './card-row-layout.js?v=fa6cd049';
+import { fitSenseRowText } from './card-row-layout.js?v=abebf139';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=fa6cd049';
-import { goToRoute, routeCodeFor } from './routes.js?v=fa6cd049';
-import { memoryTipTileHTML } from './memory-tips.js?v=fa6cd049';
+import './speech.js?v=abebf139';
+import { goToRoute, routeCodeFor } from './routes.js?v=abebf139';
+import { memoryTipTileHTML } from './memory-tips.js?v=abebf139';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=fa6cd049';
-import './side-dock.js?v=fa6cd049';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=fa6cd049';
+} from './function-word-card.js?v=abebf139';
+import './side-dock.js?v=abebf139';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=abebf139';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=fa6cd049';
+    translationMismatchPenalty,
+} from './example-personalisation.js?v=abebf139';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=fa6cd049';
+} from './spanishdict-usage.js?v=abebf139';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=fa6cd049';
+} from './reverse-cues.js?v=abebf139';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -71,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=fa6cd049';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=fa6cd049';
+} from './card-metadata-pills.js?v=abebf139';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=abebf139';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2226,11 +2227,12 @@ function toggleExampleAutoplay(event) {
     playExampleAutoplayStep(runId);
 }
 
-// Example ordering. Four keys, compared in order, with no arithmetic score:
+// Example ordering. Compare the following keys in order:
 //   1. has an English translation  — an untranslated first line teaches nothing
-//   2. is a single sentence        — 0.5% of corpus lines run to two
-//   3. WSD confidence tier         — cheap-agree > leaf > glosskey > tuple
-//   4. reinforces a recent mistake — local progress state, no pipeline data
+//   2. no obvious translation mismatch (length/digits; not semantic scoring)
+//   3. is a single sentence        — 0.5% of corpus lines run to two
+//   4. WSD confidence tier         — cheap-agree > leaf > glosskey > tuple
+//   5. reinforces a recent mistake — local progress state, no pipeline data
 // Ties keep deck order, so the result is stable.
 //
 // Confidence RANKS, it does not gate. Measured on the live v15 deck:
@@ -2297,6 +2299,7 @@ function sortExamplesByRelevance(examples) {
         ex,
         index,
         hasEnglish: !!(ex.english && ex.english.trim()),
+        translationMismatch: translationMismatchPenalty(ex),
         singleSentence: exampleIsSingleSentence(ex),
         confidence: exampleConfidenceTier(ex),
         reinforcement: exampleReinforcementScore(ex, wrongWords),
@@ -2316,6 +2319,7 @@ function sortExamplesByRelevance(examples) {
             || (b.reinforcement - a.reinforcement)
             || (a.index - b.index))
         : ((Number(b.hasEnglish) - Number(a.hasEnglish))
+            || (a.translationMismatch - b.translationMismatch)
             || (Number(b.singleSentence) - Number(a.singleSentence))
             || (a.confidence - b.confidence)
             || (b.reinforcement - a.reinforcement)
@@ -5787,14 +5791,19 @@ function cycleRarerShade(event, clusterKey, count, delta) {
     event?.stopPropagation?.();
     const card = flashcards?.[currentIndex];
     if (!card || !count) return;
-    const scroller = document.querySelector('#backContent .phrase-summary-scroll');
+    const modal = document.getElementById('rareUsesModal');
+    const inSheet = modal && !modal.hidden;
+    const scroller = inSheet ? document.getElementById('rareUsesBody')
+        : document.querySelector('#backContent .phrase-summary-scroll');
     const top = scroller?.scrollTop || 0;
     if (!card._rarerShade) card._rarerShade = {};
     const cur = Number(card._rarerShade[clusterKey] || 0);
     card._rarerShade[clusterKey] = ((cur + Number(delta || 1)) % count + count) % count;
-    updateCard();
+    if (inSheet) renderRareUsesBody({ preserveExamples: true });
+    else updateCard();
     requestAnimationFrame(() => {
-        const again = document.querySelector('#backContent .phrase-summary-scroll');
+        const again = inSheet ? document.getElementById('rareUsesBody')
+            : document.querySelector('#backContent .phrase-summary-scroll');
         if (again) again.scrollTop = top;
     });
 }
@@ -5935,7 +5944,7 @@ function renderPhraseRow(item, index) {
             <div class="expression-row-text">
                 <div class="expression-row-headword-wrap">
                     <span class="expression-row-headword">${escapeCardText(item.expression)}</span>
-                    <span class="expression-saved-indicator${isSaved ? ' is-visible' : ''}" data-saved-indicator="${escapeSavedText(item.expression)}" title="${isSaved ? 'Saved in your collection' : ''}" aria-label="Saved" ${isSaved ? '' : 'hidden'}>${SAVE_STAR_ICON}</span>
+                    <span class="expression-saved-indicator${isSaved ? ' is-visible' : ''}" data-saved-indicator="${escapeCardText(item.expression)}" title="${isSaved ? 'Saved in your collection' : ''}" aria-label="Saved" ${isSaved ? '' : 'hidden'}>${SAVE_STAR_ICON}</span>
                 </div>
                 ${item.translation ? `<div class="expression-row-translation">${escapeCardText(item.translation)}</div>` : ''}
                 ${item.context ? `<div class="expression-row-context">${escapeCardText(item.context)}</div>` : ''}
@@ -6379,16 +6388,31 @@ function openRareAndExpressionsCard(event) {
 window.openRareAndExpressionsCard = openRareAndExpressionsCard;
 
 // Re-rendered in place after a Known/Review mark, keeping the scroll position.
-function renderRareUsesBody() {
+function renderRareUsesBody({ preserveExamples = false } = {}) {
     const modal = document.getElementById('rareUsesModal');
     if (!modal || !_rareUsesItems.length) return;
     const { onlyExpressions, bodyHTML } = phraseSummaryContent(_rareUsesItems);
     modal.querySelector('#rareUsesTitle').innerHTML = `${onlyExpressions ? 'Expressions with' : 'Less common uses of'} <span class="rare-uses-word">${escapeCardText(modal.dataset.word || '')}</span>`;
     const body = modal.querySelector('#rareUsesBody');
     const top = body.scrollTop;
+    const openPanels = preserveExamples
+        ? [...body.querySelectorAll('.rare-ex-panel')].map(panel => !panel.hidden) : null;
+    const focusedIndex = preserveExamples
+        ? [...body.querySelectorAll('[aria-label]')].indexOf(document.activeElement) : -1;
     body.innerHTML = bodyHTML;
+    if (openPanels) {
+        body.querySelectorAll('.rare-ex-panel').forEach((panel, index) => {
+            panel.hidden = !openPanels[index];
+            const btn = panel.previousElementSibling?.querySelector('.rare-ex-btn');
+            if (btn && openPanels[index]) {
+                btn.setAttribute('aria-expanded', 'true');
+                btn.setAttribute('aria-label', 'Hide examples');
+            }
+        });
+        if (focusedIndex >= 0) body.querySelectorAll('[aria-label]')[focusedIndex]?.focus({ preventScroll: true });
+    }
     body.scrollTop = top;
-    fitRareExamples(body);
+    if (!preserveExamples) fitRareExamples(body);
 }
 
 function canonicalRecord(meaning) {
@@ -11787,8 +11811,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'fa6cd049';
-const MODALS_ASSET_VERSION = 'fa6cd049';
+const ASSET_VERSION = 'abebf139';
+const MODALS_ASSET_VERSION = 'abebf139';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

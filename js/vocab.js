@@ -1,16 +1,16 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=fa6cd049';
-import { readJsonWithTimeout } from './read-request.js?v=fa6cd049';
-import { validateVocabularyIndex } from './data-contracts.js?v=fa6cd049';
-import { formatRoute } from './routes.js?v=fa6cd049';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=fa6cd049';
-import { releaseUrl } from './release-host.js?v=fa6cd049';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=fa6cd049';
-import { getGrammarWordDefinition } from './function-word-card.js?v=fa6cd049';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=fa6cd049';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=fa6cd049';
+import './state.js?v=abebf139';
+import { readJsonWithTimeout } from './read-request.js?v=abebf139';
+import { validateVocabularyIndex } from './data-contracts.js?v=abebf139';
+import { formatRoute } from './routes.js?v=abebf139';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=abebf139';
+import { releaseUrl } from './release-host.js?v=abebf139';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=abebf139';
+import { getGrammarWordDefinition } from './function-word-card.js?v=abebf139';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=abebf139';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=abebf139';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
