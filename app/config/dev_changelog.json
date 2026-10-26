@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T20:55:49+00:00",
+      "date": "2026-10-26 20:55 GMT",
+      "agent": "Codex",
+      "summary": "Brighter language-tinted level details and darker Learn and Practise buttons.",
+      "detail": [
+        "Coverage, percentage digits and every example word use a pale language colour in dark mode, with a darker equivalent in light mode.",
+        "Learn and Practise use a darker language-coloured fill to keep white button text readable."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T20:12:15+00:00",
       "date": "2026-10-26 20:12 GMT",
       "agent": "Codex",
@@ -354,19 +365,6 @@
         "Tapping an open POS header activates POS-wide selection (axis: 'pos'), highlighting all sense rows and member subsenses under that part of speech.",
         "Pooled all example sentences across all meanings belonging to that POS so learners can cycle through all usage examples.",
         "Added sentence-attribution indicator (is-sentence-source) highlighting the exact row or subsense that provides the currently displayed example sentence."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T16:39:16.580689+01:00",
-      "date": "2026-10-24 16:39 BST",
-      "agent": "Antigravity",
-      "summary": "Consolidate admin deck filters into a popup modal, adding Part of Speech and Jev Confidence filters.",
-      "detail": [
-        "Grouped all admin setup filters into a dedicated modal opened by an Admin Filters button in the level chooser footer.",
-        "Added Part of Speech filtering (Verbs, Nouns, Adjectives, Adverbs, Function words, Other).",
-        "Added Jev Confidence & Gaps filtering (Lowest < 0.2, Marginal < 0.3, Moderate < 0.5, Unresolved gaps, High ≥ 0.8).",
-        "Trigger button features an active filter count badge; Reset button restores defaults instantly."
       ],
       "commit": "pending"
     }
