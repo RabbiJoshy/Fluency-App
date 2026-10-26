@@ -51,7 +51,7 @@ fw.fitFunctionWordRows(root);
 assert.equal(long.classes.has('is-stacked'),false);
 ''')
 
-    def test_expression_followup_renders_its_saved_indicator(self):
+    def test_expression_followup_renders_without_a_star_on_every_row(self):
         self.run_js(r'''
 import fs from 'node:fs';
 import vm from 'node:vm';
@@ -64,7 +64,8 @@ const ctx={savedPhraseEntry:()=>({}),isItemSaved:()=>false,
  escapeCardText:s=>String(s).replaceAll('"','&quot;'),SAVE_STAR_ICON:'star',saveItemButtonHTML:()=>''};
 vm.createContext(ctx);vm.runInContext(source.slice(start,end),ctx);
 const html=ctx.renderPhraseRow({expression:'tener "que"',translation:'have to'},0);
-assert(html.includes('data-saved-indicator="tener &quot;que&quot;"'));
+// The per-row saved star was dropped (2026-10-26): it showed on every row.
+assert(!html.includes('data-saved-indicator'));
 assert(html.includes('have to'));
 ''')
 
