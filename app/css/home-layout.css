@@ -1663,3 +1663,13 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     #setupPanel .home-section-footer { gap: 8px; padding-top: 8px; padding-bottom: calc(max(8px, env(safe-area-inset-bottom)) + 4px); }
     #setupPanel[data-home-open] { padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
 }
+
+/* Learn and Practise are the two things to press: equal, larger, and the brightest blocks on the screen.
+   A soft glow in the language colour lifts them off the page; neither is made to lead. */
+.home-cta {
+    min-height: 58px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 0 0 1px color-mix(in srgb, var(--accent-primary) 70%, transparent), 0 6px 20px color-mix(in srgb, var(--accent-primary) 32%, transparent);
+}
+.home-cta-main { font-size: calc(var(--home-text) * 1.12); font-weight: 700; }
+.home-cta.is-disabled { box-shadow: none; }
+@media (min-width: 1024px) { .home-cta { min-height: 64px; } }

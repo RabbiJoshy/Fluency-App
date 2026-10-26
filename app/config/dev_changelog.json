@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T22:45:29+00:00",
+      "date": "2026-10-26 22:45 GMT",
+      "agent": "Claude",
+      "summary": "Learn and Practise: larger buttons with a soft glow.",
+      "detail": [
+        "Both buttons are taller (58px, 64px on desktop) with bolder, larger labels and a soft glow in the language colour, so they read as the two things to press. Neither leads."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T22:41:22+00:00",
       "date": "2026-10-26 22:41 GMT",
       "agent": "Claude",
@@ -336,18 +346,6 @@
         "ir \"to go\" lists all of Wiktionary's partners (para, a, em, até), not just para, so vou ao cinema no longer looks like it matches no row.",
         "A card for one form names that form in its pill (vou + infinitive, gosto de); merged cards keep the dictionary word (ir + infinitive).",
         "\"See ter de\" and \"See ter que\" each sit on their own line instead of wrapping mid-pair."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T14:01:52+00:00",
-      "date": "2026-10-26 14:01 GMT",
-      "agent": "Claude",
-      "summary": "Merged lemmas: grammar never splits a card. teu/tua, outro/outra, muito/muita, claro/clara now share one card.",
-      "detail": [
-        "A form keeps its own card only if it is also another word (fui, foi, mato), has a meaning the dictionary ties to some forms (há, tem, faz, dá), or has a meaning on its own dictionary page (vamos \"let's\", digamos, Spanish hay).",
-        "Part-of-speech labels for the same meaning (determiner vs pronoun, Spanish transitive vs reflexive verb) no longer split cards: 252 Portuguese and 483 Spanish forms join their word.",
-        "Placement pools rebuilt."
       ],
       "commit": "pending"
     }
