@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=dab0dce2");
+@import url("./appearance.css?v=c3533987");
 
 
         * {
@@ -2985,13 +2985,12 @@
             background: rgba(var(--sense-match-rgb, 56, 189, 248), 0.16);
             border-color: rgba(var(--sense-match-rgb, 56, 189, 248), 0.45);
         }
-        /* See again: while choosing, only the word and its rows stay. Everything
-           else fades where it stands, so nothing moves, and one line of
-           instructions takes the tiles' place. */
-        .card-back:has(.pin-mode-hint:not(.is-notice)) .card-details > :not(.back-header, .meanings-scroll, .links-section),
-        .card-back:has(.pin-mode-hint) .links-section > :not(.pin-mode-hint) {
+        /* Pin mode keeps the word, meanings and See again control available. */
+        .card-back:has(.pin-mode-hint:not(.is-notice)) .card-details > :not(.back-header, .meanings-scroll, .links-section, .pin-mode-hint),
+        .card-back:has(.pin-mode-hint:not(.is-notice)) .links-section > :not(.pin-mode-hint, .knowledge-overview-trigger) {
             opacity: 0;
             pointer-events: none;
+            visibility: hidden;
             transition: opacity 0.18s ease;
         }
         .card-back:has(.pin-mode-hint) .links-section {
@@ -27492,3 +27491,41 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     color: var(--text-primary) !important;
 }
 .meanings-scroll.inline-sense-rows .meaning-context-cell.is-plain-gloss::before { content: none !important; }
+
+/* Pin instructions sit inside the card above the action tiles. Keep the tray's
+   normal columns, so See again remains in the same place and can exit mode. */
+.card-back:has(.pin-mode-hint:not(.is-notice)) > .links-section {
+    display: flex !important;
+    visibility: visible;
+    overflow: visible;
+}
+.card-back .card-details > .pin-mode-hint:not(.is-notice) {
+    position: static;
+    inset: auto;
+    flex: 0 0 auto;
+    margin-top: auto;
+    min-height: 52px;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+.card-back .links-section > .pin-mode-hint:not(.is-notice) {
+    inset: auto 0 calc(100% + 8px);
+    min-height: 52px;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+body:has(.card-back .pin-mode-hint:not(.is-notice)) :is(#deckProgressTrack, #cardBackScrubber) {
+    visibility: hidden;
+    pointer-events: none;
+}
+/* Reserve the complete pin target plus a text gap, including inline rows. */
+.card-back .meanings-scroll .meaning-row:is(.meaning-row-regular, .meaning-row-group):has(.sense-pin-btn) {
+    padding-left: 56px !important;
+}
+.card-back .meaning-row:has(.sense-pin-btn) > .row-lead-marks { left: 56px; }
+
+.card-back:has(.pin-mode-hint:not(.is-notice)) .knowledge-overview-trigger {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}

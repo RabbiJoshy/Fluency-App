@@ -1517,3 +1517,15 @@
         transform: none !important;
     }
 }
+
+/* Keep the master switch beside its total, above the settings column. */
+#fastModeModal .smart-skip-master-control { display: flex; align-items: center; gap: 12px; margin-left: auto; min-width: 0; }
+#fastModeModal .smart-skip-master-control .smart-skip-summary { text-align: left; }
+@media (max-width: 899px) {
+  #fastModeModal .smart-skip-master-control .smart-skip-summary { display: none; }
+}
+@media (min-width: 900px) {
+  #fastModeModal .smart-skip-master-control { margin-left: 0; max-width: calc(var(--ss-side-w) - 44px); }
+  #fastModeModal .smart-skip-master-state { display: none; }
+  #fastModeModal .smart-skip-header-row .fast-mode-close { margin-left: auto; }
+}

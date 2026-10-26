@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=dab0dce2';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=dab0dce2';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=dab0dce2';
-import { songCreditHTML } from './song-credit.js?v=dab0dce2';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=dab0dce2';
+import './state.js?v=c3533987';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=c3533987';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=c3533987';
+import { songCreditHTML } from './song-credit.js?v=c3533987';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=c3533987';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=dab0dce2';
-import { fitSenseRowText } from './card-row-layout.js?v=dab0dce2';
+import { exampleTranslationAlignment } from './example-alignment.js?v=c3533987';
+import { fitSenseRowText } from './card-row-layout.js?v=c3533987';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=dab0dce2';
-import { goToRoute, routeCodeFor } from './routes.js?v=dab0dce2';
-import { memoryTipTileHTML } from './memory-tips.js?v=dab0dce2';
+import './speech.js?v=c3533987';
+import { goToRoute, routeCodeFor } from './routes.js?v=c3533987';
+import { memoryTipTileHTML } from './memory-tips.js?v=c3533987';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=dab0dce2';
-import './side-dock.js?v=dab0dce2';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=dab0dce2';
+} from './function-word-card.js?v=c3533987';
+import './side-dock.js?v=c3533987';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=c3533987';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=dab0dce2';
+} from './example-personalisation.js?v=c3533987';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=dab0dce2';
+} from './spanishdict-usage.js?v=c3533987';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=dab0dce2';
+} from './reverse-cues.js?v=c3533987';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=dab0dce2';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=dab0dce2';
+} from './card-metadata-pills.js?v=c3533987';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=c3533987';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1653,8 +1653,8 @@ function availableHeightForMeaningScroll(backEl, scroll) {
         if (cs.display === 'none' || cs.position === 'absolute' || cs.position === 'fixed') continue;
         otherFlowChildren++;
         overhead += child.offsetHeight
-            // The links' auto margin is spare space, not occupied content.
-            + (child.classList.contains('links-section') ? 0 : (parseFloat(cs.marginTop) || 0))
+            // Auto margins below the meanings are spare space, not content.
+            + ((child.classList.contains('links-section') || child.classList.contains('pin-mode-hint')) ? 0 : (parseFloat(cs.marginTop) || 0))
             + (parseFloat(cs.marginBottom) || 0);
     }
     // With the scroller included, N other children create N gaps in the flex
@@ -9759,6 +9759,9 @@ function renderCardWikipediaBadge(card) {
         } else {
             renderedBack.innerHTML = backHTML;
             const actionTray = renderedBack.querySelector(':scope > .links-section');
+            // Keep the pin instruction on the card surface, above its tools.
+            const pinHint = actionTray?.querySelector('.pin-mode-hint:not(.is-notice)');
+            if (pinHint) renderedBack.append(pinHint);
             if (actionTray && backFace) renderedBack.after(actionTray);
             backFace?.classList.toggle('has-action-tray', Boolean(actionTray));
             placeRowInformationButtons(renderedBack);
@@ -11832,8 +11835,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'dab0dce2';
-const MODALS_ASSET_VERSION = 'dab0dce2';
+const ASSET_VERSION = 'c3533987';
+const MODALS_ASSET_VERSION = 'c3533987';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

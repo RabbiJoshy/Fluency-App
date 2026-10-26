@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=dab0dce2';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=c3533987';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=dab0dce2';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=dab0dce2';
-import { readFastTrack } from './fast-track-preferences.js?v=dab0dce2';
-import './session-plan.js?v=dab0dce2';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=dab0dce2';
+import './state.js?v=c3533987';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=c3533987';
+import { readFastTrack } from './fast-track-preferences.js?v=c3533987';
+import './session-plan.js?v=c3533987';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=c3533987';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -289,7 +289,7 @@ function fitLegendFonts(root) {
             el.style.fontSize = '';
             el.style.flexWrap = 'nowrap';
             let size = parseFloat(getComputedStyle(el).fontSize) || 16;
-            while (el.scrollWidth > el.clientWidth + 1 && size > 11) {
+            while (el.scrollWidth > el.clientWidth + 1 && size > (window.innerWidth >= 1024 ? 16 : 11)) {
                 size -= 0.5;
                 el.style.fontSize = size + 'px';
             }
@@ -2536,8 +2536,7 @@ function updateLevelSliderReadout(i) {
     }
 
     const _renderLine = (examplesText) => {
-        // Frequency as a full sentence on its own line, then the example
-        // words with speech coverage directly after them.
+        // Lead with cumulative coverage, followed by this level's examples.
         const wordLabel = `${displayedWordCount.toLocaleString()} word${displayedWordCount === 1 ? '' : 's'}`;
         // Keep frequency calculations available for a future detail view.
         const showLevelFrequency = false;
@@ -2545,12 +2544,12 @@ function updateLevelSliderReadout(i) {
             ? `<div class="lsw-freq-sentence"><strong>${wordLabel}</strong> appear${displayedWordCount === 1 ? 's' : ''} <strong>${freqValue.toLocaleString()}</strong> ${freqUnit}</div>`
             : '';
         const coverageRounded = coveragePct ? `${Math.round(parseFloat(coveragePct))}%` : '';
-        const levelsLabel = i === 0 ? 'Level 1 makes' : `Levels 1–${i + 1} make`;
+        const coverageSubject = activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'everyday speech');
         const covHTML = coverageRounded
-            ? `<span class="lsw-coverage-inline">${levelsLabel} up <strong>${coverageRounded}</strong> of ${activeArtist ? 'lyric words' : (window.playlistLiveActive?.() ? (window.isSeriesStudy?.() ? 'series dialogue' : 'playlist words') : 'speech')}</span>`
+            ? `<span class="lsw-coverage-inline">By Level ${i + 1}, you’ll recognise <strong>${coverageRounded}</strong> of ${coverageSubject}</span>`
             : '';
         const egHTML = (examplesText || covHTML)
-            ? `<div class="lsw-egs">${examplesText || ''}${covHTML}</div>`
+            ? `<div class="lsw-egs">${covHTML}${examplesText ? `<span class="lsw-example-words">${examplesText}</span>` : ''}</div>`
             : '';
         // Never let the line get shorter while the learner steps through levels:
         // the box would grow, shrink and grow again as each level's examples load.
@@ -3966,7 +3965,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=dab0dce2')
+        import('./spotify.js?v=c3533987')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
