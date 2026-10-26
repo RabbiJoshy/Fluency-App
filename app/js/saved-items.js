@@ -88,8 +88,12 @@ export function saveItemButtonHTML(entry) {
 
 export function renderSavedItems() {
     const items = loadSavedItems();
-    const section = document.getElementById('savedItemsSection');
-    if (section) section.hidden = items.length === 0;
+    const row = document.getElementById('settingsSavedBtn');
+    if (row) row.hidden = items.length === 0;
+    const rowCount = document.getElementById('settingsSavedCount');
+    if (rowCount) rowCount.textContent = items.length ? String(items.length) : '';
+    const empty = document.getElementById('savedWordsEmpty');
+    if (empty) empty.hidden = items.length > 0;
     const body = document.getElementById('savedWordsBody');
     if (body) {
         body.hidden = items.length === 0;
@@ -139,11 +143,34 @@ export function renderSavedItems() {
 export function openSavedItems() {
     document.getElementById('savedItemsToast')?.setAttribute('hidden', '');
     window.hideTotalStatsModal?.();
-    window.showSettingsModalWithTab?.('vocabulary');
     renderSavedItems();
-    const section = document.getElementById('savedItemsSection');
-    section?.scrollIntoView({ block: 'start' });
+    const modal = document.getElementById('savedWordsModal');
+    if (!modal) return;
+    returnFocus = document.activeElement;
+    modal.classList.remove('hidden');
     document.getElementById('savedWordsTitle')?.focus({ preventScroll: true });
+}
+
+let returnFocus = null;
+export function closeSavedItems() {
+    document.getElementById('savedWordsModal')?.classList.add('hidden');
+    if (returnFocus?.isConnected) returnFocus.focus();
+    returnFocus = null;
+}
+
+if (typeof document !== 'undefined') {
+    const wire = () => {
+        const modal = document.getElementById('savedWordsModal');
+        if (!modal || modal.dataset.wired) return;
+        modal.dataset.wired = '1';
+        document.getElementById('closeSavedWordsModal')?.addEventListener('click', closeSavedItems);
+        document.getElementById('settingsSavedBtn')?.addEventListener('click', openSavedItems);
+        modal.addEventListener('click', event => { if (event.target === modal) closeSavedItems(); });
+        modal.addEventListener('keydown', event => {
+            if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeSavedItems(); }
+        });
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
 }
 
 let toastTimer;
@@ -229,7 +256,7 @@ if (typeof document !== 'undefined') {
                 removeSavedItem(JSON.parse(remove.dataset.removeSaved));
                 renderSavedItems();
                 const remaining = [...document.querySelectorAll('[data-remove-saved]')];
-                (remaining[Math.min(index, remaining.length - 1)] || document.querySelector('.settings-pane-tab[data-settings-pane="words"]'))?.focus();
+                (remaining[Math.min(index, remaining.length - 1)] || document.getElementById('closeSavedWordsModal'))?.focus();
                 notifySaved('Removed from Saved.');
             } catch (_) { notifySaved('Could not remove this item. Please try again.'); }
         }

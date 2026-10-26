@@ -627,7 +627,10 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="settingsExportMistakesBtn"', overview)
         self.assertIn('id="settingsFindWordBtn"', overview)
         self.assertIn('data-open-find-word', overview)
-        self.assertIn('id="savedWordsBody"', overview)
+        # Saved is a row that opens its own popup; the list is never inline.
+        self.assertIn('id="settingsSavedBtn"', overview)
+        self.assertNotIn('id="savedWordsBody"', overview)
+        self.assertIn('id="savedWordsModal"', html)
         self.assertIn('id="settingsAccountBtn"', overview)
         self.assertIn('id="appearanceSettingsTitle">Theme', overview)
         # Progress repeats the two word actions at its foot, beside the counts.
