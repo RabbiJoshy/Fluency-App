@@ -2326,7 +2326,30 @@ function sortExamplesByRelevance(examples) {
             || (b.reinforcement - a.reinforcement)
             || (a.index - b.index))
     );
-    return scored.map(s => s.ex);
+    return interleavePooledForms(scored.map(s => s.ex));
+
+    // A merged card (ser) pools its forms' sentences (é, foi, era…). Take them in
+    // turn, each form keeping its own relevance order, so cycling the card shows
+    // the word's forms rather than thirty lines of its commonest one. Lines with
+    // an English translation still all come first.
+    function interleavePooledForms(examples) {
+        if (!examples.some(ex => ex?.pooledFrom)) return examples;
+        const tier = list => {
+            const lanes = new Map();
+            for (const ex of list) {
+                const form = ex?.pooledFrom || '';
+                if (!lanes.has(form)) lanes.set(form, []);
+                lanes.get(form).push(ex);
+            }
+            const out = [];
+            for (let depth = 0; out.length < list.length; depth++) {
+                for (const lane of lanes.values()) if (depth < lane.length) out.push(lane[depth]);
+            }
+            return out;
+        };
+        const translated = examples.filter(ex => ex?.english && ex.english.trim());
+        return [...tier(translated), ...tier(examples.filter(ex => !(ex?.english && ex.english.trim())))];
+    }
 }
 
 function dedupeExamples(examples) {

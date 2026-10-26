@@ -1656,7 +1656,15 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
     }
     if (hosts.size === 0) return;
 
-    for (const sib of allVocabData) {
+    const pool = window._lemmaPool;
+    for (const loadedSib of allVocabData) {
+        // A form whose own set is not loaded has no rows or sentences here;
+        // the lemma pool for the host's set carries a sample of both.
+        const pooled = pool?.rows?.[loadedSib.id];
+        const ownLoaded = loadedSib.meanings?.length && !loadedSib._indexRowsPending && examplesData?.[loadedSib.id];
+        const usePool = Boolean(pooled && pool.examples?.[loadedSib.id] && !ownLoaded);
+        const sib = usePool ? { ...loadedSib, meanings: pooled.meanings, _indexRowsPending: false } : loadedSib;
+        const sibExamplesData = usePool ? pool.examples : examplesData;
         // An ambiguous spelling never donates its examples or its sense rows.
         if (lemmaHeadwordsOf(sib).length !== 1) continue;
         const host = hosts.get(lemmaStudyGroupKey(sib));
@@ -1668,7 +1676,7 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
             const sm = sib.meanings[i];
             // Prefer inline examples (multi-artist merged entries carry the
             // cross-artist union); fall back to the split examples file.
-            const sibExamples = examplesForMeaning(sib, sm, i, examplesData);
+            const sibExamples = examplesForMeaning(sib, sm, i, sibExamplesData);
             if (sibExamples.length === 0) continue;
 
             // Match on the sense itself first. Each form's gloss is inflected
@@ -1700,7 +1708,7 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
         // One-off surface forms can carry their unclassified artist line in
         // the compact `r` bucket rather than a master-sense `m` bucket. They
         // still belong in the recurring lemma host's example pool.
-        const rawSiblingExamples = examplesData?.[sib.id]?.r || [];
+        const rawSiblingExamples = sibExamplesData?.[sib.id]?.r || [];
         const rawTarget = host.meanings.find(meaning => meaning.examples?.length)
             || host.meanings[0];
         if (rawTarget && rawSiblingExamples.length > 0) {
@@ -2081,6 +2089,52 @@ function prefetchExampleShardsForRangeString(langConfig, rangeString) {
     const [rangeStart, rangeEnd] = String(rangeString).split('-').map(Number);
     if (!Number.isFinite(rangeStart) || !Number.isFinite(rangeEnd)) return;
     prefetchExampleShardsForRange(langConfig, rangeStart, rangeEnd);
+}
+
+// lemma-pool/v1 (scripts/build_lemma_pools.py). A merged card's forms rank in
+// other sets, whose sentences are not loaded with this one: ser's set held 30
+// of its 808 lines, all "é". Each set's pool file carries a form-balanced
+// sample of the other forms' sentences, with those forms' sense rows.
+const LEMMA_POOL_RULE = 'lemma-pool/v1';
+const lemmaPoolShards = new Map();
+let lemmaPoolManifest = null;
+let lemmaPoolManifestFor = null;
+
+async function ensureLemmaPoolForRanks(langConfig, ranks) {
+    const path = langConfig?.lemmaPoolPath;
+    if (!path || !langConfig.indexPath) return;
+    if (lemmaPoolManifestFor !== path) {
+        const { response, data } = await readJsonWithTimeout(path);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (data?.rule !== LEMMA_POOL_RULE || !String(langConfig.indexPath).includes(`/${data.release_id}/`)) {
+            throw new Error('Lemma pool does not match this release');
+        }
+        lemmaPoolManifest = data;
+        lemmaPoolManifestFor = path;
+        lemmaPoolShards.clear();
+        window._lemmaPool = { rows: {}, examples: {} };
+    }
+    const manifest = lemmaPoolManifest;
+    const directory = path.slice(0, path.lastIndexOf('/') + 1);
+    const sidecar = await loadWsdUiSidecar(langConfig).catch(() => null);
+    await Promise.all(exampleShardsForRanks(manifest, ranks).map(shard => {
+        if (!lemmaPoolShards.has(shard.path)) {
+            lemmaPoolShards.set(shard.path, readJsonWithTimeout(`${directory}${shard.path}`)
+                .then(async ({ response, data }) => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const examples = expandSlimExamplePayload(data.examples || {}, manifest);
+                    // A corrected card keeps its own corrected lines.
+                    for (const id of Object.keys(examples)) {
+                        if (sidecar && wsdUiCard(sidecar, id)) delete examples[id];
+                    }
+                    await attachExampleAlignment(examples, langConfig);
+                    Object.assign(window._lemmaPool.rows, data.rows || {});
+                    Object.assign(window._lemmaPool.examples, examples);
+                })
+                .catch(error => { lemmaPoolShards.delete(shard.path); throw error; }));
+        }
+        return lemmaPoolShards.get(shard.path);
+    }));
 }
 
 async function loadMonolithExamples(langConfig) {
@@ -3873,6 +3927,10 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // Lemma mode: dropped sibling forms contribute their example lines to
         // the surviving one-card-per-lemma card (deduped inside the helper).
         if (useLemmaMode && lemmaFieldAvailable) {
+            if (!activeArtist && !window.playlistLiveActive?.()) {
+                await ensureLemmaPoolForRanks(langConfig, ranks)
+                    .catch(error => console.warn('Lemma pool unavailable:', error));
+            }
             poolLemmaSiblingExamples(filteredData, vocabularyData, window._cachedExamplesData);
         }
 
