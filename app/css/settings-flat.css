@@ -60,3 +60,7 @@
 #savedWordsModal .settings-words-action { display: inline-flex; align-items: center; padding: 6px; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; }
 #savedWordsModal .settings-words-action:hover { color: var(--text-primary); }
 #savedWordsModal .settings-words-action[hidden] { display: none; }
+
+/* On a wide screen keep each row compact so a label stays near its control. */
+#settingsModal #studyTabContent { max-width: 560px; }
+#settingsModal #studyTabContent .settings-pane-tabs { width: 100%; }
