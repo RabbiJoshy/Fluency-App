@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T15:40:34+00:00",
+      "date": "2026-10-26 15:40 GMT",
+      "agent": "Claude",
+      "summary": "Fix: the level picker no longer shows \"Cannot read properties of undefined (reading 'url')\" after a fresh load.",
+      "detail": [
+        "A level render could run during start-up before a language was chosen; it failed and its Try again kept the missing language.",
+        "The picker now uses the chosen language and waits when none is chosen yet."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T15:14:43+00:00",
       "date": "2026-10-26 15:14 GMT",
       "agent": "Codex",
@@ -356,18 +367,6 @@
         "Each card is classified by its highest-priority applied overlay: Jev, then DeepSeek (at least one accepted correction), then original.",
         "Filtering happens on the stable-ranked vocabulary before deck creation; card IDs, ranks, progress and assignments are unchanged.",
         "Portuguese only for now; a compact card-ID index supplies the single-sense and DeepSeek lists."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-23T18:39:01.084546+01:00",
-      "date": "2026-10-23 18:39 BST",
-      "agent": "Codex",
-      "summary": "Apply Jev assignments above the Portuguese deck for ordinary words in the first 200 cards.",
-      "detail": [
-        "Use a release-pinned UI sidecar above existing DeepSeek assignments, preserving card IDs, learner progress and the published release.",
-        "Regroup all exported examples, update canonical examples and shares from the reviewed exported set, and keep unresolved decisions explicit.",
-        "Leave grammar-word cards, companion splitting and the rest of the deck unchanged."
       ],
       "commit": "pending"
     }

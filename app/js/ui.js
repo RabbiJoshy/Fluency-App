@@ -1340,6 +1340,13 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
 }
 
 async function renderLevelSelector(language, options = {}) {
+    // A caller can fire during boot before a language is chosen. Rendering an
+    // empty config used to fail and leave "Cannot read properties of undefined
+    // (reading 'url')" on the level picker, with a retry bound to the same
+    // missing language. Use the chosen language; with none yet, wait for the
+    // render that follows the choice.
+    language = language || selectedLanguage;
+    if (!language || !config?.languages?.[language]) return;
     const region = document.querySelector?.('#step2 .level-choosing');
     const scope = typeof artistVocabularyScope !== 'undefined' ? artistVocabularyScope : '';
     const context = `${language}|${activeArtist?.slug || ''}|${scope || ''}`;
