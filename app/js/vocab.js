@@ -1,16 +1,16 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=41db6094';
-import { readJsonWithTimeout } from './read-request.js?v=41db6094';
-import { validateVocabularyIndex } from './data-contracts.js?v=41db6094';
-import { formatRoute } from './routes.js?v=41db6094';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=41db6094';
-import { releaseUrl } from './release-host.js?v=41db6094';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=41db6094';
-import { getGrammarWordDefinition } from './function-word-card.js?v=41db6094';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=41db6094';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=41db6094';
+import './state.js?v=b1ed7d13';
+import { readJsonWithTimeout } from './read-request.js?v=b1ed7d13';
+import { validateVocabularyIndex } from './data-contracts.js?v=b1ed7d13';
+import { formatRoute } from './routes.js?v=b1ed7d13';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=b1ed7d13';
+import { releaseUrl } from './release-host.js?v=b1ed7d13';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=b1ed7d13';
+import { getGrammarWordDefinition } from './function-word-card.js?v=b1ed7d13';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=b1ed7d13';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=b1ed7d13';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1013,6 +1013,9 @@ function hasFrozenFormExpression(item, lemma) {
 }
 
 function lemmaGroupKey(item) {
+    // A release-bound form-privilege verdict names the word directly.
+    const privilege = item?._formPrivilegeOverlay;
+    if (privilege?.rule === FORM_PRIVILEGE_RULE) return privilege.lemma || '';
     // Derived, not shipped. Identity stays the surface card. This key only
     // decides which unambiguous spellings share a merged card.
     //
@@ -1083,12 +1086,277 @@ function visibleSenseMergeSignature(item) {
 }
 
 function lemmaStudyGroupKey(item) {
+    // A release-bound form-privilege verdict decides alone (decision 0033).
+    const privilege = item?._formPrivilegeOverlay;
+    if (privilege?.rule === FORM_PRIVILEGE_RULE) {
+        return privilege.lemma ? `${privilege.lemma}\u001f${FORM_PRIVILEGE_RULE}` : '';
+    }
     // Explicit release-bound exclusions must survive hydration as well.
     if (item?.merge_key === '') return '';
     const lemma = lemmaGroupKey(item);
     if (!lemma) return '';
     const signature = visibleSenseMergeSignature(item);
     return signature ? `${lemma}\u001f${signature}` : '';
+}
+
+// Decision 0033: every form of a word shares one card unless the form is
+// privileged, i.e. a meaning that is not the plain word carries real usage on
+// it: another word or part of speech, a sense the dictionary restricts to some
+// forms (impersonal, third-person, imperative), or a sense concentrated on
+// this form and nearly absent from its siblings. Expressions never count:
+// they are their own study items. Reflexive headwords (irse, matar-se) are
+// the base word. Works on Wiktionary and SpanishDict rows alike.
+const FORM_PRIVILEGE_RULE = 'form-privilege/v1';
+const FORM_PRIVILEGE_MIN_EXAMPLES = 3;
+const FORM_PRIVILEGE_MIN_SHARE = 0.10;
+const FORM_PRIVILEGE_CONCENTRATED_SHARE = 0.30;
+const FORM_PRIVILEGE_CONCENTRATED_EXAMPLES = 5;
+const FORM_PRIVILEGE_SIBLING_SHARE = 0.05;
+const FORM_RESTRICTED_TAGS = new Set(['impersonal', 'third-person']);
+
+// matar-se, pôr-se; irse, darse, reírse. An unhyphenated -se is stripped
+// only when the base headword is also on this form's menu, so a word that
+// merely ends in -rse is left alone.
+function formPrivilegeBaseHeadword(value, item = null) {
+    const headword = normalizeLemmaToken(value);
+    if (headword.endsWith('-se')) return headword.slice(0, -3);
+    const base = headword.match(/^(\p{L}*[aeiíoó]r)se$/u)?.[1];
+    if (!base) return headword;
+    return (item?.meanings || []).some(m => normalizeLemmaToken(m?.headword) === base) ? base : headword;
+}
+
+function formPrivilegeCounts(item) {
+    const counts = item?.wsd_distribution?.published_leaf_counts;
+    return (item?.meanings || []).map(meaning => {
+        const exact = counts && meaning?.sense_id ? Number(counts[meaning.sense_id]) : NaN;
+        return Number.isFinite(exact) ? { meaning, n: exact, counted: true }
+            : { meaning, n: Number(meaning?.frequency ?? meaning?.percentage) || 0, counted: false };
+    });
+}
+
+function formPrivilegePos(meaning) {
+    const pos = normalizeLemmaToken(meaning?.pos || meaning?.part_of_speech);
+    if (/^(verb|v)$/u.test(pos)) return 'verb';
+    if (/^(adj|adjective)$/u.test(pos)) return 'adj';
+    if (/^(noun|n)$/u.test(pos)) return 'noun';
+    return pos;
+}
+
+function formPrivilegeFeatures(meaning) {
+    return meaning?.metadata?.sense_metadata?.features || [];
+}
+
+// The word a form belongs to: the headword carrying most of its usage.
+function formPrivilegeLemma(item) {
+    const weight = new Map();
+    for (const { meaning, n } of formPrivilegeCounts(item)) {
+        if (!meaning?.headword || isExpressionSenseForLemma(meaning, item)) continue;
+        const key = formPrivilegeBaseHeadword(meaning.headword, item);
+        weight.set(key, (weight.get(key) || 0) + n);
+    }
+    let best = '', top = 0, total = 0;
+    for (const [key, n] of weight) { total += n; if (n > top) { best = key; top = n; } }
+    return total > 0 && top / total >= 0.5 ? best : '';
+}
+
+// Senses are compared across a word's forms by dictionary reference. A
+// provider may shorten one id differently on different forms (SpanishDict
+// gives tener's "to have" 9b652 on tiene and 9b6529 on tengo), so two ids on
+// the same page match when one is a prefix of the other.
+function formPrivilegeSenseKey(meaning) {
+    return lemmaSenseDedupeKey(meaning);
+}
+
+function formPrivilegeSensesMatch(a, b) {
+    if (a === b) return true;
+    const pa = a.match(/^(ref:[^:]+:[^:]+:)(.+)$/u), pb = b.match(/^(ref:[^:]+:[^:]+:)(.+)$/u);
+    return Boolean(pa && pb && pa[1] === pb[1] && (pa[2].startsWith(pb[2]) || pb[2].startsWith(pa[2])));
+}
+
+// The dictionary page a sense was read from, when the reference names one
+// (spanishdict-menu:hay:449 -> hay).
+function formPrivilegeSourcePage(meaning) {
+    return normalizeLemmaToken(String(meaning?.source_reference || '').match(/^[\w-]+-menu:([^:]+):/u)?.[1]);
+}
+
+const FORM_INFLECTION_MARK = /^(mood|tense|person|number)=/u;
+// A page for a verb plus attached pronouns glosses the pronoun (dime "tell
+// me", hacerlo "to do it"): the base word with an object, not a new meaning.
+const FORM_OBJECT_GLOSS = /\b(me|it|him|her|them|us|myself|yourself|himself|herself|itself|ourselves|yourselves|themselves)\b/iu;
+
+// A sense filed on the form's own page that is not just the base word
+// re-glossed for that form: SpanishDict's hay "there is", but not pensé
+// "I thought; preterite indicative; first person singular".
+function formOwnPageSense(meaning, item, lemma) {
+    const page = formPrivilegeSourcePage(meaning);
+    if (!page || page === lemma || page !== normalizeLemmaToken(item?.word)) return false;
+    if ((item?.meanings || []).some(other => formPrivilegeSourcePage(other) === page
+        && FORM_OBJECT_GLOSS.test(String(other?.translation || '')))) return false;
+    return !formPrivilegeFeatures(meaning).some(f => f?.kind === 'sense_mark'
+        && FORM_INFLECTION_MARK.test(String(f.value)));
+}
+
+// A sense restricted to some forms counts only on a form it can occur on.
+function formRestrictedSenseFits(meaning, item) {
+    const features = formPrivilegeFeatures(meaning);
+    const tags = new Set(features.filter(f => f?.kind === 'grammar_tag').map(f => String(f.value)));
+    const marks = new Set(features.filter(f => f?.kind === 'surface_mark' || f?.kind === 'sense_mark')
+        .map(f => String(f.value)));
+    const persons = [...marks].filter(mark => mark.startsWith('person='));
+    if ([...tags].some(tag => FORM_RESTRICTED_TAGS.has(tag))) {
+        return persons.length === 0 || marks.has('person=3');
+    }
+    if (tags.has('imperative')) return marks.size === 0 || marks.has('mood=imperative');
+    // SpanishDict marks a sense with the form it belongs to (vamos: let's).
+    const own = features.filter(f => f?.kind === 'sense_mark').map(f => String(f.value));
+    return own.includes('mood=imperative') && normalizeLemmaToken(meaning?.headword)
+        === normalizeLemmaToken(item?.word);
+}
+
+// siblingShares: senseKey -> share of that sense on the word's other forms,
+// or null when siblings are not known (the concentration test is then
+// skipped). Senses read from the form's own page have no sibling to compare
+// with, so only the own-page test applies to them.
+function formPrivilegeReasons(item, lemma, siblingShares = null) {
+    const rows = formPrivilegeCounts(item).filter(({ meaning }) => meaning?.headword
+        && !isExpressionSenseForLemma(meaning, item));
+    const total = rows.reduce((sum, row) => sum + row.n, 0);
+    if (!lemma || !(total > 0)) return [];
+    const lemmaRows = rows.filter(({ meaning }) => formPrivilegeBaseHeadword(meaning.headword, item) === lemma);
+    const mainPos = formPrivilegePos(lemmaRows.slice().sort((a, b) => b.n - a.n)[0]?.meaning);
+    const reasons = new Set();
+    const passes = (n, counted) => n / total >= FORM_PRIVILEGE_MIN_SHARE - 1e-9
+        && (!counted || n >= FORM_PRIVILEGE_MIN_EXAMPLES);
+    // Another word or part of speech is judged on all its senses together:
+    // fue's "went" is spread over several senses of ir.
+    const groups = new Map();
+    for (const { meaning, n, counted } of rows) {
+        const base = formPrivilegeBaseHeadword(meaning.headword, item);
+        const key = base !== lemma ? `other_word\u001f${base}`
+            : formPrivilegePos(meaning) !== mainPos ? `part_of_speech\u001f${formPrivilegePos(meaning)}` : '';
+        if (!key) continue;
+        const group = groups.get(key) || { n: 0, counted: true };
+        group.n += n;
+        group.counted &&= counted;
+        groups.set(key, group);
+    }
+    for (const [key, group] of groups) {
+        if (passes(group.n, group.counted)) reasons.add(key.split('\u001f')[0]);
+    }
+    for (const { meaning, n, counted } of rows) {
+        const share = n / total;
+        if (formPrivilegeBaseHeadword(meaning.headword, item) !== lemma
+            || formPrivilegePos(meaning) !== mainPos || !passes(n, counted)) continue;
+        // A restricted sense that is the word's main use on every form
+        // (haver "there is", acontecer) privileges no form in particular.
+        if (formRestrictedSenseFits(meaning, item)) {
+            if (!siblingShares || siblingShares(formPrivilegeSenseKey(meaning)) < FORM_PRIVILEGE_MIN_SHARE) {
+                reasons.add('form_restricted');
+            }
+        }
+        else if (formOwnPageSense(meaning, item, lemma)) reasons.add('own_page');
+        else if (formPrivilegeSourcePage(meaning) === normalizeLemmaToken(item?.word)) continue;
+        // Reflexive senses are the -se companion rule's question, and noun
+        // number already has its own proof (decision 0029).
+        else if (normalizeLemmaToken(meaning.headword) !== lemma || mainPos === 'noun') continue;
+        else if (siblingShares && formPrivilegeSenseKey(meaning).startsWith('ref:')
+            && (!counted || n >= FORM_PRIVILEGE_CONCENTRATED_EXAMPLES)
+            && share >= FORM_PRIVILEGE_CONCENTRATED_SHARE - 1e-9
+            && siblingShares(formPrivilegeSenseKey(meaning)) < FORM_PRIVILEGE_SIBLING_SHARE) {
+            reasons.add('concentrated');
+        }
+    }
+    return [...reasons].sort();
+}
+
+// A contraction must not fold into one of its parts (pt no = em + o stays off
+// em's card, aonde = a + onde off onde's). A listed contraction whose examples belong to another kind of
+// word is that word: Wiktionary lists deu (de + eu, nonstandard) and mas
+// (me + as), but the cards are dar and "but".
+const FORM_CONTRACTION_PART_POS = new Set(['prep', 'preposition', 'article', 'det', 'determiner',
+    'pron', 'pronoun', 'conj', 'conjunction', 'contraction', 'adp']);
+
+// Contractions and unproven noun merges stay separate as before (decision
+// 0029). An expression built on the form no longer keeps it apart.
+function formPrivilegeEligible(item, lemma) {
+    if (!lemma) return false;
+    const lead = formPrivilegeCounts(item).filter(({ meaning }) =>
+        formPrivilegeBaseHeadword(meaning?.headword, item) === lemma).sort((a, b) => b.n - a.n)[0];
+    if (isContractionForLemma(item) && (normalizeLemmaToken(item?.word).includes(lemma)
+        || !lead || FORM_CONTRACTION_PART_POS.has(formPrivilegePos(lead.meaning)))) return false;
+    if (formPrivilegePos(lead?.meaning) === 'noun') {
+        const proof = item?.noun_merge;
+        return proof?.rule_version === 'noun-merge/v2' && proof.allowed === true
+            && normalizeLemmaToken(proof.lemma) === lemma;
+    }
+    return true;
+}
+
+// Senses read from a form's own page carry ids no sibling shares, so they
+// stay out of the sibling comparison altogether.
+function formPrivilegeComparable(meaning, item) {
+    return Boolean(meaning?.headword) && !isExpressionSenseForLemma(meaning, item)
+        && formPrivilegeSourcePage(meaning) !== normalizeLemmaToken(item?.word);
+}
+
+// {surface: {lemma, reasons}} for a whole release: lemma is '' when the form
+// keeps its own card. Siblings are the other forms led by the same word.
+function formPrivilegeVerdicts(rows) {
+    const lemmas = new Map();
+    const pooled = new Map();
+    for (const item of rows || []) {
+        const lemma = formPrivilegeLemma(item);
+        lemmas.set(item, lemma);
+        if (!lemma) continue;
+        const pool = pooled.get(lemma) || { total: 0, senses: new Map() };
+        for (const { meaning, n } of formPrivilegeCounts(item)) {
+            if (!formPrivilegeComparable(meaning, item)) continue;
+            const key = formPrivilegeSenseKey(meaning);
+            pool.senses.set(key, (pool.senses.get(key) || 0) + n);
+            pool.total += n;
+        }
+        pooled.set(lemma, pool);
+    }
+    const verdicts = {};
+    for (const item of rows || []) {
+        const surface = normalizeLemmaToken(item?.word);
+        const lemma = lemmas.get(item);
+        if (!surface) continue;
+        if (!lemma || !formPrivilegeEligible(item, lemma)) {
+            verdicts[surface] = { lemma: '', reasons: lemma ? ['ineligible'] : ['no_word'] };
+            continue;
+        }
+        const own = new Map();
+        let ownTotal = 0;
+        for (const { meaning, n } of formPrivilegeCounts(item)) {
+            if (!formPrivilegeComparable(meaning, item)) continue;
+            const key = formPrivilegeSenseKey(meaning);
+            own.set(key, (own.get(key) || 0) + n);
+            ownTotal += n;
+        }
+        const pool = pooled.get(lemma);
+        const rest = pool.total - ownTotal;
+        let siblingShares = rest > 0 ? key => {
+            let n = 0;
+            for (const [other, count] of pool.senses) {
+                if (formPrivilegeSensesMatch(key, other)) n += count;
+            }
+            for (const [other, count] of own) {
+                if (formPrivilegeSensesMatch(key, other)) n -= count;
+            }
+            return Math.max(0, n) / rest;
+        } : null;
+        // Only senses with a dictionary reference can be compared across
+        // forms. Lyrics glosses are written per form (tengo "I have", tiene
+        // "he/she has"), so without references the sibling tests are skipped
+        // rather than firing on every form.
+        if (siblingShares && ![...own.keys()].some(key => key.startsWith('ref:') && siblingShares(key) > 0)) {
+            siblingShares = null;
+        }
+        const reasons = formPrivilegeReasons(item, lemma, siblingShares);
+        verdicts[surface] = { lemma: reasons.length ? '' : lemma, reasons };
+    }
+    return verdicts;
 }
 
 function spellingWithoutBreaks(value) {
@@ -2358,6 +2626,7 @@ let _contractionSurfaces = null;
 let _mergeKeys = null;
 let _nounMergeVerdicts = null;
 let _visibleMergeSenses = null;
+let _formPrivilegeKeys = null;
 let _mergeKeysRelease = null;
 
 async function stampContractions(vocabulary, langConfig, { detached = false } = {}) {
@@ -2377,7 +2646,9 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
             sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.keys : null,
             sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.noun_verdicts : null,
             built && String(langConfig?.indexPath || '').includes(`/${built}/`)
-                && payload?.visible_sense_rule === VISIBLE_SENSE_MERGE_RULE ? payload?.visible_sense_keys : null);
+                && payload?.visible_sense_rule === VISIBLE_SENSE_MERGE_RULE ? payload?.visible_sense_keys : null,
+            built && String(langConfig?.indexPath || '').includes(`/${built}/`)
+                && payload?.form_privilege_rule === FORM_PRIVILEGE_RULE ? payload?.form_privilege_keys : null);
         return;
     }
     if (_mergeExceptionsFor !== path) {
@@ -2386,6 +2657,7 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
         _mergeKeys = null;
         _nounMergeVerdicts = null;
         _visibleMergeSenses = null;
+        _formPrivilegeKeys = null;
         _mergeKeysRelease = null;
         if (path) {
             try {
@@ -2405,6 +2677,8 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
                     ? payload?.noun_verdicts : null;
                 _visibleMergeSenses = payload?.visible_sense_rule === VISIBLE_SENSE_MERGE_RULE
                     ? payload?.visible_sense_keys : null;
+                _formPrivilegeKeys = payload?.form_privilege_rule === FORM_PRIVILEGE_RULE
+                    ? payload?.form_privilege_keys : null;
                 if (!sameRelease) console.warn(`Merge keys were built for ${built}; ignoring them for this release.`);
             } catch (error) {
                 console.warn('Merge exceptions unavailable:', error);
@@ -2418,15 +2692,22 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
     stampMergeExceptionValues(vocabulary, _contractionSurfaces,
         sameRelease ? _mergeKeys : null, sameRelease ? _nounMergeVerdicts : null,
         _mergeKeysRelease && String(langConfig?.indexPath || '').includes(`/${_mergeKeysRelease}/`)
-            ? _visibleMergeSenses : null);
+            ? _visibleMergeSenses : null,
+        _mergeKeysRelease && String(langConfig?.indexPath || '').includes(`/${_mergeKeysRelease}/`)
+            ? _formPrivilegeKeys : null);
 }
 
-function stampMergeExceptionValues(vocabulary, contractions, keys, nounVerdicts = null, visibleSenses = null) {
+function stampMergeExceptionValues(vocabulary, contractions, keys, nounVerdicts = null, visibleSenses = null,
+    privilegeKeys = null) {
     if (!Array.isArray(vocabulary)) return;
     for (const item of vocabulary) {
         const surface = normalizeLemmaToken(item?.word);
         visibleSenseMergeCache.delete(item);
         delete item._visibleSenseMergeOverlay;
+        delete item._formPrivilegeOverlay;
+        if (typeof privilegeKeys?.[surface] === 'string') {
+            item._formPrivilegeOverlay = { rule: FORM_PRIVILEGE_RULE, lemma: privilegeKeys[surface] };
+        }
         if (typeof visibleSenses?.[surface] === 'string') {
             item._visibleSenseMergeOverlay = { rule: VISIBLE_SENSE_MERGE_RULE,
                 signature: visibleSenses[surface] };
@@ -2446,6 +2727,22 @@ function stampMergeExceptionValues(vocabulary, contractions, keys, nounVerdicts 
         const key = keys?.[surface];
         if (typeof key === 'string') item.merge_key = key;
         else delete item.merge_key;
+    }
+    // Decks with no release-bound verdicts (artist decks, a staging candidate
+    // release) run the same rule here, but only when nearly every row has its
+    // senses: verdicts from a partly loaded deck would change as rows arrive.
+    if (!privilegeKeys) {
+        const loaded = vocabulary.filter(item => item?.meanings?.length && !item._indexRowsPending);
+        if (loaded.length && loaded.length >= 0.9 * vocabulary.length) {
+            const verdicts = formPrivilegeVerdicts(loaded);
+            for (const item of loaded) {
+                const verdict = verdicts[normalizeLemmaToken(item?.word)];
+                // No usage to weigh: leave the row to the older rules.
+                if (verdict && verdict.reasons[0] !== 'no_word') {
+                    item._formPrivilegeOverlay = { rule: FORM_PRIVILEGE_RULE, lemma: verdict.lemma };
+                }
+            }
+        }
     }
 }
 

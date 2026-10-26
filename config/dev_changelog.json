@@ -2,6 +2,31 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T13:26:05+00:00",
+      "date": "2026-10-26 13:26 GMT",
+      "agent": "Claude",
+      "summary": "Merged lemmas: artist decks now use the same one-card-per-word rule, and deu joins dar.",
+      "detail": [
+        "Bad Bunny and other artist decks run the form rule in the app: tengo, tiene, tenía and 18 more forms share the tener card.",
+        "Wiktionary's rare contraction readings (deu = de + eu, mas = me + as) no longer keep a common word apart; real contractions (no, do, aonde) still do.",
+        "Senses without a dictionary reference are no longer compared across forms, which stopped lyrics glosses splitting every verb form."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-26T01:49:35+00:00",
+      "date": "2026-10-26 01:49 GMT",
+      "agent": "Claude",
+      "summary": "Merged lemmas: every form of a word now shares one card unless that form has a meaning of its own (decision 0033).",
+      "detail": [
+        "Portuguese ter, matar and fazer are one card each (ter was split into 18 groups).",
+        "Forms keep their own card for another word (fui, foi, fue), another part of speech (feito, poderes), an impersonal or imperative meaning (há, tem, faz, dá), their own SpanishDict page (hay), or a meaning concentrated on that form (vamos).",
+        "Expressions no longer keep a form apart: sé joins saber, está joins estar.",
+        "Spanish and Portuguese placement pools rebuilt for the new grouping."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T00:49:00+00:00",
       "date": "2026-10-26 00:49 GMT",
       "agent": "Claude",
@@ -343,30 +368,6 @@
         "Correct 100 grammatical-reading rows on 99 Portuguese cards; foram shows they went / they were.",
         "Resolve the correct verb tables while preserving card and meaning IDs, example assignments and progress namespace.",
         "Keep original dictionary grammar and correction provenance; no new lexical WSD assignments are claimed."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T15:29:59+01:00",
-      "date": "2026-10-22 15:29 BST",
-      "agent": "Codex",
-      "summary": "Smart Skip compares visible meanings; card links stay readable and See links open expression reference cards.",
-      "detail": [
-        "Separate related forms when their displayed sense sets differ, while preserving existing merge safeguards and release consistency.",
-        "Keep linked card text at normal size with comfortable tap targets.",
-        "Generate dictionary reference cards only for explicit See links to multiword expressions, including Portuguese haver de."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T15:26:00+01:00",
-      "date": "2026-10-22 15:26 BST",
-      "agent": "Antigravity",
-      "summary": "Walkthrough: single close button, Speech/Music Example tabs without emojis, fixed header separator line",
-      "detail": [
-        "Removed the duplicate text exit button, keeping just the clean '✕' close button in the top right.",
-        "Renamed segmented switcher tabs to 'Speech Example' and 'Music Example', removing emojis.",
-        "Fixed the header and subtitle height so the horizontal line separator stays in the exact same position when toggling between tabs."
       ],
       "commit": "pending"
     }
