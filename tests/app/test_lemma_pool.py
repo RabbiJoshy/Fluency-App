@@ -62,7 +62,7 @@ const ctx={console,window:{}};
 vm.createContext(ctx);
 vm.runInContext(block('lemma-merge-pure'),ctx);
 for (const name of ['exampleSentenceKey','examplesForMeaning','poolLemmaSiblingExamples']) vm.runInContext(fn(name),ctx);
-const overlay={rule:'form-privilege/v2',lemma:'ser'};
+const overlay={rule:'form-privilege/v3',lemma:'ser'};
 const sense={headword:'ser',pos:'verb',source_reference:'kaikki:ser-1',translation:'to be'};
 const host={id:'h',word:'é',_formPrivilegeOverlay:overlay,meanings:[{...sense,examples:[{target:'É bom.'}]}]};
 // foi's own set is not loaded: no rows, no sentences.

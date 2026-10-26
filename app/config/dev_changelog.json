@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T19:24:35+00:00",
+      "date": "2026-10-26 19:24 GMT",
+      "agent": "Claude",
+      "summary": "Merged cards: a noun spelled like its verb (o olhar \"gaze\", o poder \"power\") now gets its own card.",
+      "detail": [
+        "Rule form-privilege/v3 (decision 0033): a noun with the same headword as its verb's infinitive counts as another word, on the infinitive's spelling or its plural only.",
+        "Portuguese: olhar, olhares, poder and andar get their own cards; their other forms (olha, pode, anda…) stay merged. Spanish: no change.",
+        "Conjugated forms are never split by it: Spanish sean, where the name Sean had been filed under ser \"being\", stays on ser."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T18:20:00+00:00",
       "date": "2026-10-26 18:20 GMT",
       "agent": "Claude",
@@ -354,19 +366,6 @@
         "Added Part of Speech filtering (Verbs, Nouns, Adjectives, Adverbs, Function words, Other).",
         "Added Jev Confidence & Gaps filtering (Lowest < 0.2, Marginal < 0.3, Moderate < 0.5, Unresolved gaps, High ≥ 0.8).",
         "Trigger button features an active filter count badge; Reset button restores defaults instantly."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-24T16:00:00+01:00",
-      "date": "2026-10-24 16:00 BST",
-      "agent": "Claude",
-      "summary": "About page: replaced \"What's under the hood\" with a short features section, a Music mode section and a technical-details section.",
-      "detail": [
-        "New \"What makes it different\" section: skip words you already know (with a Skipped / Kept comparison and your chosen languages), examples worth learning from, and expressions.",
-        "New \"Music mode\" section: each artist's slang and learning what people, places and brands are.",
-        "\"How it works (technical details)\" now holds the NLP detail: cognate skipping, merged forms, sentence cleaning, dictionaries, bi-encoder and Jev meaning selection.",
-        "Every Spanish word on the page now has its English meaning in brackets."
       ],
       "commit": "pending"
     }

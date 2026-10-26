@@ -15,7 +15,7 @@ matar/mataria). Wiktionary also gives every form of a verb the whole lemma
 menu (all 16 meanings of *ter* on all 43 forms), so the menu itself rarely
 says which forms are special.
 
-## Rule (`form-privilege/v2`, 26 October 2026)
+## Rule (`form-privilege/v3`, 26 October 2026)
 
 **Principle.** A card is a thing to learn once. Two forms belong on one card
 when someone who has learned one can read the other: the difference is
@@ -30,7 +30,16 @@ rule. Three things count:
 
 1. **Another word** spelled the same, judged over all that word's senses
    together: *fui*/*foi* (ir and ser), *mato* "bush", *tá* "OK", *feito*,
-   *espera* (Wiktionary's separate noun entry), Spanish *fue*.
+   *espera* (Wiktionary's separate noun entry), Spanish *fue*. Since v3 this
+   includes a noun spelled like its verb's infinitive: *o olhar* "gaze",
+   *o poder* "power", *o andar* "floor". The dictionary gives it its own
+   entry, so it is not just a part-of-speech label. It counts only on the
+   infinitive's spelling or its plural (*olhar*, *olhares*), never on a
+   conjugated form: Spanish *sean* had the name Sean filed under *ser*
+   "being". v2 missed these because the headword is spelled the same as the
+   verb's. v3 splits *olhar*, *olhares*, *poder*, *andar* in Portuguese and
+   nothing in Spanish. Participle adjectives (*cansado*, *errado*) were never
+   affected: Wiktionary files them under their own headword.
 2. **A meaning the dictionary restricts to some forms**: a sense tagged
    impersonal or third-person counts only on a third-person form, an
    imperative sense only on an imperative form, and only when the word's

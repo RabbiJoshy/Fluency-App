@@ -3,7 +3,7 @@
  "release_id": "pt-speech-v25-decide-1-expr-10000-slim",
  "per_sense": 30,
  "index_sha256": "0ee50e0a0c71669b770278ba5682bba49f44112a3b33e5df404aec7591c4aa80",
- "merge_keys_from": "data/merge-exceptions/pt-literal-ground-r4-seam-v1-fw1-ds25-visible-v1-decide-expr-v1-fp2.json",
+ "merge_keys_from": "data/merge-exceptions/pt-literal-ground-r4-seam-v1-fw1-ds25-visible-v1-decide-expr-v1-fp3.json",
  "example_format": "slim-example/v1",
  "sources": {
   "opensubtitles": {

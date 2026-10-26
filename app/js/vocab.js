@@ -1115,7 +1115,7 @@ function lemmaStudyGroupKey(item) {
 // card: inflection, or a part-of-speech label for the same meaning.
 // Expressions are their own study items. Reflexive headwords (irse,
 // matar-se) are the base word. Works on Wiktionary and SpanishDict rows alike.
-const FORM_PRIVILEGE_RULE = 'form-privilege/v2';
+const FORM_PRIVILEGE_RULE = 'form-privilege/v3';
 const FORM_PRIVILEGE_MIN_EXAMPLES = 3;
 const FORM_PRIVILEGE_MIN_SHARE = 0.10;
 const FORM_RESTRICTED_TAGS = new Set(['impersonal', 'third-person']);
@@ -1236,15 +1236,27 @@ function formPrivilegeReasons(item, lemma, siblingShares = null) {
     const passes = (n, counted) => n / total >= FORM_PRIVILEGE_MIN_SHARE - 1e-9
         && (!counted || n >= FORM_PRIVILEGE_MIN_EXAMPLES);
     // Another word is judged on all its senses together: fue's "went" is
-    // spread over several senses of ir.
+    // spread over several senses of ir. A noun spelled like its verb (o olhar
+    // "gaze", o poder "power", o andar "floor") is another word too: the
+    // dictionary gives it its own entry, not just a part-of-speech label.
+    const isPos = (meaning, pos) => String(meaning?.pos || '').toLowerCase() === pos;
+    // Only the infinitive's spelling or its plural can be that noun (olhares,
+    // seres), so a conjugated form (Spanish sean, where WSD filed the name
+    // Sean under ser "being") is never split by it.
+    const surface = normalizeLemmaToken(item?.word);
+    const verbLemma = (surface === lemma || surface === `${lemma}es`)
+        && rows.some(({ meaning }) => isPos(meaning, 'verb')
+            && formPrivilegeBaseHeadword(meaning.headword, item) === lemma);
     const others = new Map();
     for (const { meaning, n, counted } of rows) {
         const base = formPrivilegeBaseHeadword(meaning.headword, item);
-        if (base === lemma) continue;
-        const group = others.get(base) || { n: 0, counted: true };
+        const nounOfVerb = base === lemma && verbLemma && isPos(meaning, 'noun');
+        if (base === lemma && !nounOfVerb) continue;
+        const key = nounOfVerb ? `${base}\u001fnoun` : base;
+        const group = others.get(key) || { n: 0, counted: true };
         group.n += n;
         group.counted &&= counted;
-        others.set(base, group);
+        others.set(key, group);
     }
     for (const group of others.values()) {
         if (passes(group.n, group.counted)) reasons.add('other_word');

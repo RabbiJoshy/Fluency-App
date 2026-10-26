@@ -3,7 +3,7 @@
  "release_id": "es-speech-v25-literal-ground-r6-10000x30-fw1-slim",
  "per_sense": 30,
  "index_sha256": "ded436fe0ac91e5aad29335bc622813a2f6e2394a94a53097d2300b22fd3612f",
- "merge_keys_from": "data/merge-exceptions/es-literal-ground-r6-seam-v1-fw1-visible-v1-fp2.json",
+ "merge_keys_from": "data/merge-exceptions/es-literal-ground-r6-seam-v1-fw1-visible-v1-fp3.json",
  "example_format": "slim-example/v1",
  "sources": {
   "tatoeba": {
