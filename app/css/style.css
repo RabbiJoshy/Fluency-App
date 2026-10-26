@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=5f0a9d37");
+@import url("./appearance.css?v=2235d554");
 
 
         * {
@@ -18315,14 +18315,14 @@ body {
   -webkit-backdrop-filter: blur(10px);
 }
 :is(#learningContextModal, #findWordModal, #statsModal, #totalStatsModal,
-    #extrasModal, #cognateRulesModal, #estimationModal, #lyricBreakdownModal,
+    #extrasModal, #estimationModal, #lyricBreakdownModal,
     #songSetModal, #vocabularyImportModal, #extraScopeModal, #helpModal) {
   background: rgba(3, 7, 12, .74);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 :is(#learningContextModal, #findWordModal, #statsModal, #totalStatsModal,
-    #extrasModal, #cognateRulesModal, #estimationModal, #lyricBreakdownModal,
+    #extrasModal, #estimationModal, #lyricBreakdownModal,
     #songSetModal, #vocabularyImportModal, #extraScopeModal, #helpModal) .modal-content {
   border-color: color-mix(in srgb, var(--border-light) 72%, transparent);
   border-radius: 22px;
@@ -18330,7 +18330,7 @@ body {
   box-shadow: 0 28px 80px rgba(0, 0, 0, .48), 0 1px 0 rgba(255, 255, 255, .04) inset;
 }
 :is(#findWordModal, #statsModal, #totalStatsModal, #extrasModal,
-    #cognateRulesModal, #estimationModal, #lyricBreakdownModal,
+    #estimationModal, #lyricBreakdownModal,
     #songSetModal, #vocabularyImportModal) .modal-header {
   padding-bottom: 14px;
   border-bottom: 1px solid var(--border-color);
@@ -21499,15 +21499,15 @@ body.rare-uses-open { overflow: hidden; }
    The selectors list the ids inside :is() so they outrank each modal's own
    id-level sizing. Phones and narrow windows never get data-dock. */
 
-.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
+.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
   align-items: center;
   padding: 16px var(--dock-inset, 16px);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
-.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-start; }
-.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-end; }
-.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content {
+.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-start; }
+.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-end; }
+.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal) > .modal-content {
   box-sizing: border-box;
   width: var(--dock-w, 400px);
   max-width: none;
@@ -21515,8 +21515,8 @@ body.rare-uses-open { overflow: hidden; }
   margin: 0;
   overflow-y: auto;
 }
-.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-left 0.22s ease-out; }
-.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-right 0.22s ease-out; }
+.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-left 0.22s ease-out; }
+.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-right 0.22s ease-out; }
 /* These three scroll an inner list rather than the sheet; give the list the
    full height instead of the centred sheet's 620px cap. */
 .modal[data-dock]:is(#extrasModal) > .modal-content {
@@ -21537,20 +21537,20 @@ body.rare-uses-open { overflow: hidden; }
   border-radius: 22px;
 }
 /* A sheet opened over settings sits on top of it; closing it shows settings. */
-.modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) { z-index: 1010; }
+.modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal) { z-index: 1010; }
 
 /* Study session: the card stays usable beside a docked sheet, so the
    full-viewport backdrop is transparent and lets clicks through. Close with
    the sheet's own close button or Escape. */
-body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
+body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
   background: transparent;
   pointer-events: none;
 }
-body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { pointer-events: auto; }
+body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal) > .modal-content { pointer-events: auto; }
 /* Setup page: a light dim, and a click outside still closes. A sheet stacked
    over settings does not dim settings a second time. */
-body:has(#appContent.hidden) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: rgba(3, 7, 12, 0.32); }
-body:has(#appContent.hidden) .modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: transparent; }
+body:has(#appContent.hidden) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: rgba(3, 7, 12, 0.32); }
+body:has(#appContent.hidden) .modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #reviewHomeModal, #spacedRepetitionInfoModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: transparent; }
 
 /* The rarer-sense knowledge sheet has its own structure. */
 #knowledgeOverviewModal[data-dock]:not([hidden]),

@@ -1,17 +1,17 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=5f0a9d37';
-import { readJsonWithTimeout } from './read-request.js?v=5f0a9d37';
-import { validateVocabularyIndex } from './data-contracts.js?v=5f0a9d37';
-import { formatRoute } from './routes.js?v=5f0a9d37';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=5f0a9d37';
-import { releaseUrl } from './release-host.js?v=5f0a9d37';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=5f0a9d37';
-import { getGrammarWordDefinition } from './function-word-card.js?v=5f0a9d37';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=5f0a9d37';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=5f0a9d37';
-import { createExampleAlignmentLoader } from './example-alignment.js?v=5f0a9d37';
+import './state.js?v=2235d554';
+import { readJsonWithTimeout } from './read-request.js?v=2235d554';
+import { validateVocabularyIndex } from './data-contracts.js?v=2235d554';
+import { formatRoute } from './routes.js?v=2235d554';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=2235d554';
+import { releaseUrl } from './release-host.js?v=2235d554';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=2235d554';
+import { getGrammarWordDefinition } from './function-word-card.js?v=2235d554';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=2235d554';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=2235d554';
+import { createExampleAlignmentLoader } from './example-alignment.js?v=2235d554';
 
 let exampleAlignmentLoader = null;
 function attachExampleAlignment(payload, langConfig) {
@@ -2571,6 +2571,12 @@ async function prepareEstimationCognates(vocabulary, langConfig) {
 
 async function fetchActiveVocabularyData(langConfig) {
     const vocabulary = await fetchActiveVocabularyIndex(langConfig);
+    const indexPath = langConfig?.indexPath || langConfig?.dataPath || '';
+    const artistKey = activeArtist?.slug || window._urlArtistSlug || '';
+    const stampKey = `${indexPath}:${artistKey}:${langConfig?.dictionaryExamplesPath || ''}:${langConfig?.mergeExceptionsPath || ''}`;
+    if (vocabulary && vocabulary._stampedKey === stampKey) {
+        return vocabulary;
+    }
     await prepareEstimationCognates(vocabulary, langConfig);
     // Corpus shares are per-language and tiny; load them on the same pass so
     // the level readout has them before the first render.
@@ -2582,6 +2588,7 @@ async function fetchActiveVocabularyData(langConfig) {
     await stampContractions(vocabulary, langConfig);
     await stampDictionaryExamples(vocabulary,
         activeArtist || window.playlistLiveActive?.() ? null : langConfig);
+    if (vocabulary) vocabulary._stampedKey = stampKey;
     return vocabulary;
 }
 
@@ -4431,6 +4438,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
             }
         }
 
+        window.beginPlacementStudySet?.(flashcards, stats);
         // Initialize card display
         initializeApp();
         window.updateSpeakIcons?.();

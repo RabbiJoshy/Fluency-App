@@ -1,6 +1,6 @@
 // Read-only transfer of verified source meaning knowledge. No target progress is written.
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=5f0a9d37';
-import { mergeProgressRecords } from './progress-identity.js?v=5f0a9d37';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=2235d554';
+import { mergeProgressRecords } from './progress-identity.js?v=2235d554';
 
 let bundle = null;
 let revision = 0;
@@ -127,17 +127,9 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
 }
 function refresh() {
     window.forgetSmartSkipExtras?.();
-    const container = document.getElementById('bridgeToggleContainer');
-    if (container) container.hidden = !bundle || window.bridgeSourceLanguages().length === 0;
-    const toggle = document.getElementById('bridgeToggle');
-    if (toggle) toggle.setAttribute('aria-checked', String(enabled()));
     const modalToggle = document.getElementById('knownLanguagesBridgeToggle');
     if (modalToggle) modalToggle.setAttribute('aria-checked', String(enabled()));
     const bridgeExample = 'Skip words you’ve already learned in other languages you study (e.g. learn <em>noche</em> in Spanish → skip <em>noite</em> in Portuguese).';
-    const sourceLangs = window.bridgeSourceLanguages().map(code => window.knownLanguageLabel?.(code) || code.toUpperCase()).join(' and ');
-    const summaryText = bundle && sourceLangs ? `Uses your saved ${sourceLangs} progress (e.g. learn noche in Spanish → skip noite in Portuguese).` : '';
-    const text = document.getElementById('bridgeSourcesSummary');
-    if (text) text.textContent = summaryText;
     const modalDesc = document.getElementById('knownLanguagesBridgeDesc');
     if (modalDesc) modalDesc.innerHTML = bridgeExample;
     const settingsSummary = document.getElementById('settingsKnownLanguagesSummary');
@@ -170,7 +162,6 @@ function init() {
         window.renderSkippedWords?.('cognate', {force: true});
         refresh();
     };
-    document.getElementById('bridgeToggle')?.addEventListener('click', handleToggle);
     document.getElementById('knownLanguagesBridgeToggle')?.addEventListener('click', handleToggle);
     document.getElementById('settingsKnownLanguagesBtn')?.addEventListener('click', () => window.openKnownLanguagesSettings?.());
     window.addEventListener('language-profile-change', () => {

@@ -143,7 +143,7 @@ const OCCUPANTS = [
         stackOver: id === 'spacedRepetitionInfoModal' ? 'reviewHomeModal' : null,
         open: isShown, close: closeButtonFor(id) })),
     // Setup-page reference sheets: word lists and rules.
-    ...['extrasModal', 'cognateRulesModal'].map(id => ({
+    ...['extrasModal'].map(id => ({
         id, home: 'right', stacks: true, open: isShown, close: closeButtonFor(id) })),
     // Pages reached from settings: they stack over it, and stay centred
     // when opened any other way.

@@ -137,6 +137,18 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-26T00:35:03+00:00",
+      "date": "2026-10-26 00:35 GMT",
+      "agent": "Claude",
+      "summary": "A verb only gets a separate -se card when the -se meaning has at least 3 examples.",
+      "detail": [
+        "matar | matar-se and similar pairs no longer appear on the strength of one stray example.",
+        "Rows without example counts need 10% of usage for the -se half, as other companions do.",
+        "The app and the Python card rules apply the same threshold."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T00:30:00+00:00",
       "date": "2026-10-26 00:30 GMT",
       "agent": "Antigravity",
@@ -146,18 +158,6 @@
         "Rebuilt sense menus with rescued verbal multiword phrases, letter-case lookups, and resolved pointer glosses.",
         "Retires the interim client-side Jev UI sidecar; disambiguated meanings and recorded ties are native to the release artifact.",
         "Regenerated release-bound cognates, bridge, speech-frequency, merge exceptions, dictionary examples, estimation pool, and assignment filters."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T00:35:03+00:00",
-      "date": "2026-10-26 00:35 GMT",
-      "agent": "Claude",
-      "summary": "A verb only gets a separate -se card when the -se meaning has at least 3 examples.",
-      "detail": [
-        "matar | matar-se and similar pairs no longer appear on the strength of one stray example.",
-        "Rows without example counts need 10% of usage for the -se half, as other companions do.",
-        "The app and the Python card rules apply the same threshold."
       ],
       "commit": "pending"
     },

@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=5f0a9d37';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=2235d554';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=5f0a9d37';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=5f0a9d37';
-import { readFastTrack } from './fast-track-preferences.js?v=5f0a9d37';
-import './session-plan.js?v=5f0a9d37';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=5f0a9d37';
+import './state.js?v=2235d554';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=2235d554';
+import { readFastTrack } from './fast-track-preferences.js?v=2235d554';
+import './session-plan.js?v=2235d554';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=2235d554';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -344,17 +344,6 @@ function setupTooltipHandlers() {
         });
     });
 
-    // Legacy detail entry point retained for builds that still include it.
-    document.getElementById('cognateRulesBtn')?.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const step2Tip = document.getElementById('step2Tooltip');
-        if (step2Tip) step2Tip.classList.remove('visible');
-        document.getElementById('cognateRulesModal').classList.remove('hidden');
-    });
-
-    document.getElementById('closeCognateRulesModal').addEventListener('click', function() {
-        document.getElementById('cognateRulesModal').classList.add('hidden');
-    });
 
     // Button info icon handlers
     document.querySelectorAll('.btn-info-icon').forEach(btn => {
@@ -395,9 +384,9 @@ function updateIncorrectButtonVisibility() {
 }
 
 // How long the deck wheel holds before the setup screen behind it is revealed.
-// Extended twice by 3 seconds (5s → 8s → 11s) per user request, for comfortable reading.
-// A tap ends it at once; this is the ceiling for someone who does not tap.
-const DECK_OVERVIEW_HOLD_MS = 11000;
+// Set to a snappy 1.2s beat so the progress arc animation completes smoothly
+// without trapping the user on an 11-second freeze. A tap ends it immediately.
+const DECK_OVERVIEW_HOLD_MS = 1200;
 
 // The big wheel: progress across the whole deck the learner just opened.
 //
@@ -1591,6 +1580,20 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
             // Show coverage info line with word count and frequency threshold
             updateLevelInfoLine(this);
 
+            // Keep the segmented bar and level number in sync immediately for instant visual response.
+            // Segment-driven clicks are a no-op here because the bar already matches.
+            const segBar = document.getElementById('lswSlider');
+            if (segBar) {
+                const buttons = Array.from(document.querySelectorAll('.level-selector-buttons .level-btn'));
+                const idx = buttons.indexOf(this);
+                if (idx >= 0) {
+                    if (+segBar.dataset.value !== idx) setLevelSegmentSelection(idx);
+                    if (!_levelScrubberInitiated) {
+                        _scrollLevelSegToCenter(idx, false); // keep the scrubber centered on the picked level
+                    }
+                }
+            }
+
             // Surface identity and learner grouping are separate. Offer Merge
             // Lemmas whenever the release can reliably map surfaces back to a
             // shared headword; otherwise keep the unavailable option hidden.
@@ -1606,22 +1609,6 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
 
             this._rangeRenderPromise = renderRangeSelector();
             this._rangeRenderPromise.catch(err => console.error('Error rendering ranges:', err));
-
-            // Keep the segmented bar in sync when a (hidden) level button
-            // is chosen programmatically — e.g. auto-select on first load,
-            // or the "Next Level" range button. Segment-driven clicks are
-            // a no-op here because the bar already matches.
-            const segBar = document.getElementById('lswSlider');
-            if (segBar) {
-                const buttons = Array.from(document.querySelectorAll('.level-selector-buttons .level-btn'));
-                const idx = buttons.indexOf(this);
-                if (idx >= 0) {
-                    if (+segBar.dataset.value !== idx) setLevelSegmentSelection(idx);
-                    if (!_levelScrubberInitiated) {
-                        _scrollLevelSegToCenter(idx, false); // keep the scrubber centered on the picked level
-                    }
-                }
-            }
         });
     });
 
@@ -2027,6 +2014,7 @@ function getPreparedSetupVocabulary(language, rawVocab) {
 
 function invalidatePreparedSetupVocabulary() {
     _preparedSetupVocabulary = null;
+    _cachedHomeLevelTiles = null;
 }
 
 function invalidateLyricsSourceCaches(language = selectedLanguage) {
@@ -2203,6 +2191,7 @@ function syncHomeLevelStepper(idx) {
 const HOME_LEVEL_TILE_MIN_STARTED = 2;
 const HOME_LEVEL_TILE_MAX = 8;
 const HOME_LEVEL_TILE_MAX_PHONE = 6;
+let _cachedHomeLevelTiles = null;
 
 function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estimate, smartSkipOn }) {
     const row = document.getElementById('homeLevelTiles');
@@ -2212,35 +2201,45 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
     const hide = () => { row.hidden = true; row.innerHTML = ''; step2?.classList.remove('has-level-tiles'); };
     if (ranges.length < 2 || ranges[0]?.rankBasis === 'category') return hide();
 
-    const rankOf = _levelRankAccessor(ranges[0].rankBasis);
-    const starts = ranges.map(lv => Number(lv.startRank));
-    const levelOf = rank => {
-        let lo = 0, hi = starts.length - 1, found = -1;
-        while (lo <= hi) {
-            const mid = (lo + hi) >> 1;
-            if (starts[mid] <= rank) { found = mid; lo = mid + 1; } else hi = mid - 1;
-        }
-        return found >= 0 && rank < Number(ranges[found].endRank) ? found : -1;
-    };
-    const counts = ranges.map(() => ({ cards: 0, seen: 0, review: 0, estimated: 0, baseline: 0 }));
-    for (const item of vocab) {
-        const i = levelOf(rankOf(item));
-        if (i < 0) continue;
-        const state = getSetupLearningState(item, { seenLemmas, estimatedIds, estimate });
-        const c = counts[i];
-        c.cards++;
-        if (state?.seen) c.seen++;
-        if (state?.needsReview) c.review++;
-        if (state?.estimated) c.estimated++;
-    }
-    if (smartSkipOn) {
-        for (const item of baseline) {
+    const epoch = Number(window.__progressEpoch || 0);
+    const cacheKey = `${selectedLanguage}|${epoch}|${smartSkipOn}|${estimate}|${ranges.length}|${vocab?.length || 0}|${baseline?.length || 0}`;
+
+    let counts, started;
+    if (_cachedHomeLevelTiles && _cachedHomeLevelTiles.key === cacheKey) {
+        counts = _cachedHomeLevelTiles.counts;
+        started = _cachedHomeLevelTiles.started;
+    } else {
+        const rankOf = _levelRankAccessor(ranges[0].rankBasis);
+        const starts = ranges.map(lv => Number(lv.startRank));
+        const levelOf = rank => {
+            let lo = 0, hi = starts.length - 1, found = -1;
+            while (lo <= hi) {
+                const mid = (lo + hi) >> 1;
+                if (starts[mid] <= rank) { found = mid; lo = mid + 1; } else hi = mid - 1;
+            }
+            return found >= 0 && rank < Number(ranges[found].endRank) ? found : -1;
+        };
+        counts = ranges.map(() => ({ cards: 0, seen: 0, review: 0, estimated: 0, baseline: 0 }));
+        for (const item of vocab) {
             const i = levelOf(rankOf(item));
-            if (i >= 0) counts[i].baseline++;
+            if (i < 0) continue;
+            const state = getSetupLearningState(item, { seenLemmas, estimatedIds, estimate });
+            const c = counts[i];
+            c.cards++;
+            if (state?.seen) c.seen++;
+            if (state?.needsReview) c.review++;
+            if (state?.estimated) c.estimated++;
         }
+        if (smartSkipOn) {
+            for (const item of baseline) {
+                const i = levelOf(rankOf(item));
+                if (i >= 0) counts[i].baseline++;
+            }
+        }
+        started = counts.map((c, i) => c.seen > 0 ? i : -1).filter(i => i >= 0);
+        _cachedHomeLevelTiles = { key: cacheKey, counts, started };
     }
 
-    const started = counts.map((c, i) => c.seen > 0 ? i : -1).filter(i => i >= 0);
     if (started.length < HOME_LEVEL_TILE_MIN_STARTED) return hide();
 
     const levelButtons = Array.from(document.querySelectorAll('.level-selector-buttons .level-btn'));
@@ -2333,15 +2332,17 @@ function _levelCenteredIdx(bar) {
     return best;
 }
 
+let _programmaticScrollTimer = null;
 function _scrollLevelSegToCenter(idx, smooth) {
     const bar = document.getElementById('lswSlider');
     if (!bar) return;
     const seg = bar.querySelector('.lsw-seg[data-i="' + idx + '"]');
     if (!seg) return;
     _levelProgrammaticScroll = true;
+    clearTimeout(_programmaticScrollTimer);
     const target = seg.offsetLeft + seg.offsetWidth / 2 - bar.clientWidth / 2;
     bar.scrollTo({ left: Math.max(0, target), behavior: smooth ? 'smooth' : 'auto' });
-    setTimeout(() => { _levelProgrammaticScroll = false; }, smooth ? 500 : 250);
+    _programmaticScrollTimer = setTimeout(() => { _levelProgrammaticScroll = false; }, smooth ? 500 : 300);
 }
 
 function wireLevelScrubber(segBar, buttons) {
@@ -2360,6 +2361,8 @@ function wireLevelScrubber(segBar, buttons) {
     const commit = () => {
         if (_levelProgrammaticScroll || pointerActive) return;
         const targetIdx = _levelCenteredIdx(segBar);
+        const currentIdx = parseInt(segBar.dataset.value ?? '-1', 10);
+        if (targetIdx === currentIdx) return;
         const btn = buttons[targetIdx];
         if (btn) {
             _setupLevelSelectionWasManual = true;
@@ -3177,8 +3180,9 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     }
     // This function is also called directly after progress refreshes and when
     // returning from a completed deck, without passing through the level
-    // renderer. Give every visible set count one coherent, current snapshot.
-    resetSetupStateMemo();
+    // renderer. Re-check progress epoch to keep setup state coherent.
+    if (typeof ensureCurrentSetupStateMemo === 'function') ensureCurrentSetupStateMemo();
+    else if (typeof resetSetupStateMemo === 'function') resetSetupStateMemo();
     const baseConfig = config.languages[selectedLanguage] || {};
     const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
     const container = document.getElementById('rangeSelector');
@@ -3369,7 +3373,6 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
             langConfig, 0, 0, landingWords.map(item => item.sourceRank || item.rank)
         ).catch(() => false);
         if (loaded) {
-            invalidatePreparedSetupVocabulary();
             return renderRangeSelector({ landingRowsChecked: landingRowsChecked + 1 });
         }
     }
@@ -3947,7 +3950,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=5f0a9d37')
+        import('./spotify.js?v=2235d554')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -4084,8 +4087,6 @@ function setupSettingsOverview() {
     });
     go('settingsAccountBtn', 'account');
     go('settingsAdminBtn', 'appData');
-    // About opens in its own tab, leaving Settings as it was.
-    document.getElementById('settingsAboutBtn')?.addEventListener('click', () => window.openAboutPage?.());
     const runImport = () => {
         if (!currentUser || currentUser.isGuest) return;
         window.openVocabularyImportModal?.();

@@ -6,7 +6,7 @@
 // directly. State (flashcards, currentIndex, currentUser, etc.) and helpers
 // like flagWord and getPosColorClass come through the globalThis proxy
 // installed by state.js / auth.js / flashcards.js.
-import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=5f0a9d37';
+import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=2235d554';
 
 // ---------------------------------------------------------------------------
 // Part-of-speech popup
@@ -2060,6 +2060,7 @@ async function showEndOfDeckOptions() {
             : `${stats.setSize || stats.total || 0} cards in this session.${typeof currentUser !== 'undefined' && currentUser && !currentUser.isGuest
                 ? " They'll come back for review when they're due." : ''}`;
 
+    window.completePlacementStudySet?.(stats);
     // Show the modal
     const modal = document.getElementById('deckCompleteModal');
     modal.classList.remove('hidden');

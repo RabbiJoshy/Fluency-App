@@ -2,8 +2,8 @@
 // Parses .srt/.vtt/text, routes through the live no-WSD engine,
 // attaching dialogue lines as unassigned examples to speech vocabulary cards.
 
-import './state.js?v=5f0a9d37';
-import { SERIES_PRESETS, validLiveDeck } from './playlist-live.js?v=5f0a9d37';
+import './state.js?v=2235d554';
+import { SERIES_PRESETS, validLiveDeck } from './playlist-live.js?v=2235d554';
 
 const SDH_REGEX = /\[[^\]]*\]|\([^\)]*\)|<[^>]*>/gu;
 const TIMESTAMP_REGEX = /^\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}/;
@@ -127,7 +127,7 @@ export async function loadSeriesPreset(seriesId, onProgress = null) {
     onProgress?.({ stage: 'fetching', message: `Loading ${preset.title} dialogue sample…` });
     const appRoot = new URL('../', import.meta.url);
     try {
-        const response = await fetch(new URL(`data/series/${preset.file}-deck.json?preset=${preset.revision}`, appRoot), { cache: 'no-store' });
+        const response = await fetch(new URL(`data/series/${preset.file}-deck.json?preset=${preset.revision}`, appRoot));
         const deck = response.ok ? await response.json() : null;
         if (validLiveDeck(deck) && deck.playlistId === seriesId
             && deck.language === 'spanish' && deck.presetRevision === preset.revision) {
@@ -137,7 +137,7 @@ export async function loadSeriesPreset(seriesId, onProgress = null) {
         }
     } catch (_) {}
     try {
-        const response = await fetch(new URL(`data/series/${preset.file}.json`, appRoot), { cache: 'no-store' });
+        const response = await fetch(new URL(`data/series/${preset.file}.json`, appRoot));
         if (!response.ok) throw new Error(`Dialogue HTTP ${response.status}`);
         const dialogue = await response.json();
         const deck = await buildSeriesLiveDeck({

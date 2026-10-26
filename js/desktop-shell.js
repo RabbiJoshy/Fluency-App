@@ -2,7 +2,7 @@
 // back to side-dock.js. Reuse the real header buttons and their handlers.
 const PAGE_IDS = [
     'settingsModal', 'totalStatsModal', 'reviewHomeModal', 'helpModal',
-    'learningContextModal', 'extrasModal', 'cognateRulesModal',
+    'learningContextModal', 'extrasModal',
     'fastModeModal', 'vocabularyImportModal',
     'extraModal',
 ];
