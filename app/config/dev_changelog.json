@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-26T15:12:03+00:00",
+      "date": "2026-10-26 15:12 GMT",
+      "agent": "Claude",
+      "summary": "Portuguese: expressions found in any verb form (tomou conta, vale a pena, dou cabo, faz ideia) now get their own meaning rows.",
+      "detail": [
+        "New release pt-speech-v25-decide-1-expr-10000-slim: DECIDE-1 plus 857 re-asked sentences with inflected expressions on the menu.",
+        "519 sentences moved from a plain verb meaning to the expression (vale a pena: worthwhile, not 'to be worth'); 107 previously unassigned sentences are now shown.",
+        "Every other card is identical to DECIDE-1; companion files (cognates, merge rule, placement pool, filters) rebuilt for the new release."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T14:35:46+00:00",
       "date": "2026-10-26 14:35 GMT",
       "agent": "Claude",
@@ -354,20 +366,6 @@
         "About page: centered the top title ('The problem with most vocabulary apps') so it aligns naturally with the page layout.",
         "About page: added subtle 'Open app →' links at the top header and at the bottom before footnotes for visitors arriving from a CV.",
         "Walkthrough modal: streamlined top bar down to just the centered Speech/Music toggle and the close button, eliminating layout shift and visual clutter."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-22T21:51:58.244631+01:00",
-      "date": "2026-10-22 21:51 BST",
-      "agent": "Codex",
-      "summary": "Clarify grammar-slot pills and enlarge function-word patterns and translations.",
-      "detail": [
-        "Retain + before grammatical slots: saber + infinitive, começar a + infinitive and estar + adjective; literal partners such as querer que keep no extra +.",
-        "Give complement-only frames the same complete, readable phrase pill; prevent slot labels inheriting hanging indents or collapsing into inline backgrounds.",
-        "Increase function-word patterns and English meanings to 20px; make translations bold and align contraction parts beside the headword.",
-        "Verify phone and desktop rendering; leave foram and companion thresholds unchanged.",
-        "Check Portuguese DeepSeek corrections against published release data; record loading evidence for the separate WSD accuracy pass."
       ],
       "commit": "pending"
     }
