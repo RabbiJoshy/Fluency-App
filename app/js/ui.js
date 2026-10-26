@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=7ae50939';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=5f0a9d37';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=7ae50939';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=7ae50939';
-import { readFastTrack } from './fast-track-preferences.js?v=7ae50939';
-import './session-plan.js?v=7ae50939';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=7ae50939';
+import './state.js?v=5f0a9d37';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=5f0a9d37';
+import { readFastTrack } from './fast-track-preferences.js?v=5f0a9d37';
+import './session-plan.js?v=5f0a9d37';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=5f0a9d37';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1340,6 +1340,13 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
 }
 
 async function renderLevelSelector(language, options = {}) {
+    // A caller can fire during boot before a language is chosen. Rendering an
+    // empty config used to fail and leave "Cannot read properties of undefined
+    // (reading 'url')" on the level picker, with a retry bound to the same
+    // missing language. Use the chosen language; with none yet, wait for the
+    // render that follows the choice.
+    language = language || selectedLanguage;
+    if (!language || !config?.languages?.[language]) return;
     const region = document.querySelector?.('#step2 .level-choosing');
     const scope = typeof artistVocabularyScope !== 'undefined' ? artistVocabularyScope : '';
     const context = `${language}|${activeArtist?.slug || ''}|${scope || ''}`;
@@ -3940,7 +3947,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=7ae50939')
+        import('./spotify.js?v=5f0a9d37')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
