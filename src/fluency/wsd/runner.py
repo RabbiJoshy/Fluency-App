@@ -25,6 +25,7 @@ from fluency.wsd.contracts import (
     WSDAssignment,
 )
 from fluency.wsd.multiword import (
+    ExpressionInflector,
     MultiwordEntry,
     is_multiword_analysis,
     multiword_analyses,
@@ -72,6 +73,7 @@ class WSDComponents:
     candidate_policy: CandidatePolicy | None = None
     multiword_index: Mapping[str, Sequence[MultiwordEntry]] | None = None
     multiword_inventory_content_id: str | None = None
+    expression_inflector: ExpressionInflector | None = None
     overlay_provider: Any | None = None
     specialists: tuple[Specialist, ...] = ()
     representations: Mapping[RepresentationRef, Any] | None = None
@@ -331,6 +333,7 @@ class ClosedMenuWSDRunner:
                 surface_form=request.surface_form,
                 sentence=request.sentence,
                 index=self.components.multiword_index,
+                inflector=self.components.expression_inflector,
             ):
                 # The expression must cover the occurrence being classified.
                 # Merely appearing elsewhere in the same subtitle line is not
@@ -347,6 +350,12 @@ class ClosedMenuWSDRunner:
                         entry,
                         span,
                         inventory_content_id=self.components.multiword_inventory_content_id,
+                        paradigm_content_id=(
+                            self.components.expression_inflector.content_id
+                            if self.components.expression_inflector is not None
+                            and self.components.expression_inflector.head(entry.expression) is not None
+                            else None
+                        ),
                     )
                 )
 

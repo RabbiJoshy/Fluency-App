@@ -289,18 +289,166 @@ def is_mwe_false_positive(expression: str, sentence: str, span: tuple[int, int])
     return False
 
 
+_CLITICS = frozenset(("me", "te", "se", "nos", "os", "vos", "lo", "la", "los", "las", "le", "les",
+                      "o", "a", "lhe", "lhes"))
+_REFLEXIVE = frozenset(("me", "te", "se", "nos", "os", "vos"))
+_DEACCENT = str.maketrans("áéíóú", "aeiou")
+_WORD = re.compile(r"[\wáéíóúâêôãõàçüñ]+(?:-[\wáéíóúâêôãõàçüñ]+)*", re.I)
+_CLAUSE_BREAK = re.compile(r"[.,;:!?¿¡()\"“”«»—–]")
+# Prepositions and linkers: never skipped over, and a lone one as the rest of
+# an expression allows no words in between (dá um passo para is not dar para).
+_LINKERS = frozenset((
+    "a", "à", "ao", "aos", "às", "de", "do", "da", "dos", "das", "del", "al", "em", "no", "na", "nos",
+    "nas", "en", "con", "com", "para", "pra", "por", "pelo", "pela", "sin", "sem", "sobre", "entre",
+    "hasta", "até", "desde", "contra", "que", "como", "mais", "más",
+))
+
+
+class ExpressionInflector:
+    """A Wiktionary verb paradigm used to match expressions in any inflection.
+
+    Built from the reflexive tagger's table (``fluency.reflexive.paradigms``,
+    form -> [[lemma, mood, tense, person, number], ...]). An expression
+    inflects only when its first word is a verb's dictionary form, optionally
+    reflexive (``darse cuenta``, ``dar-se conta``); anything else (``não é``,
+    ``quer dizer``, ``no sé``) is already a frozen form and matches exactly.
+    """
+
+    def __init__(self, paradigm: Mapping[str, Sequence[Sequence[str]]], *, content_id: str | None = None):
+        self.content_id = content_id
+        lemmas: dict[str, set[str]] = {}
+        for form, analyses in paradigm.items():
+            for analysis in analyses:
+                if analysis:
+                    lemmas.setdefault(form.casefold(), set()).add(str(analysis[0]).casefold())
+        self._lemmas = {form: frozenset(values) for form, values in lemmas.items()}
+        self._verbs = frozenset(lemma for values in self._lemmas.values() for lemma in values)
+
+    def is_verb(self, lemma: str) -> bool:
+        return lemma.casefold() in self._verbs
+
+    def head(self, expression: str) -> tuple[str, bool, tuple[str, ...]] | None:
+        """(verb lemma, reflexive, remaining words), or None for a frozen expression."""
+        tokens = expression.casefold().split()
+        if len(tokens) < 2:
+            return None
+        first, rest = tokens[0], tuple(tokens[1:])
+        if first.endswith("-se") and self.is_verb(first[:-3]):
+            return first[:-3], True, rest
+        if first.endswith("se") and len(first) > 4 and self.is_verb(first[:-2]):
+            return first[:-2], True, rest
+        if self.is_verb(first):
+            return first, False, rest
+        return None
+
+    def analyse_token(self, token: str) -> tuple[frozenset[str], tuple[str, ...]]:
+        """(lemmas, attached pronouns) for one sentence word: dei-me, dándome, dime."""
+        token = token.casefold()
+        parts = token.split("-")
+        if len(parts) > 1 and all(part in _CLITICS for part in parts[1:]):
+            return self._lemmas.get(parts[0], frozenset()), tuple(parts[1:])
+        found = self._lemmas.get(token)
+        if found:
+            return found, ()
+        # Spanish glues up to two pronouns on and adds a stress mark.
+        for last in _CLITICS:
+            if len(last) < 2 or not token.endswith(last) or len(token) <= len(last) + 2:
+                continue
+            stem = token[: -len(last)]
+            for inner in ("",) + tuple(sorted(c for c in _CLITICS if len(c) > 1)):
+                if inner and not stem.endswith(inner):
+                    continue
+                base = stem[: -len(inner)] if inner else stem
+                for candidate in (base, base.translate(_DEACCENT)):
+                    if candidate in self._lemmas:
+                        return self._lemmas[candidate], tuple(c for c in (inner, last) if c)
+        return frozenset(), ()
+
+    def lemmas_of(self, surface: str) -> frozenset[str]:
+        return self.analyse_token(surface)[0]
+
+    def match(self, expression: str, sentence: str, gap_limit: int = 2) -> tuple[int, int] | None:
+        """Character span of an inflected occurrence, or None.
+
+        The verb may carry attached pronouns or have up to two pronouns right
+        before it (``não me dei conta``, ``me lo di``); a reflexive expression
+        needs a reflexive pronoun in one of those places. Up to ``gap_limit``
+        words may separate the verb from the rest, never across punctuation.
+        """
+        head = self.head(expression)
+        if head is None:
+            return None
+        lemma, reflexive, rest = head
+        # A lone short word (ficar com) would otherwise catch "ficou muito
+        # feliz com"; words in between are allowed only before a fuller rest
+        # (echar mucho de menos, tomar bem conta).
+        if len(rest) == 1 and (len(rest[0]) <= 3 or rest[0] in _LINKERS):
+            gap_limit = 0
+        words = [(m.group(0).casefold(), m.start(), m.end()) for m in _WORD.finditer(sentence)]
+        for i, (token, start, end) in enumerate(words):
+            lemmas, attached = self.analyse_token(token)
+            if lemma not in lemmas:
+                continue
+            before: list[int] = []
+            for j in (i - 1, i - 2):
+                if j < 0 or words[j][0] not in _CLITICS or _CLAUSE_BREAK.search(sentence[words[j][2]:words[j + 1][1]]):
+                    break
+                before.append(j)
+            pronouns = set(attached) | {words[j][0] for j in before}
+            if reflexive and not pronouns & _REFLEXIVE:
+                continue
+            for gap in range(gap_limit + 1):
+                k = i + 1 + gap
+                if k + len(rest) > len(words) or _CLAUSE_BREAK.search(sentence[end:words[k][1]]):
+                    break
+                if gap and words[k - 1][0] in _LINKERS:
+                    break
+                if tuple(word for word, _, _ in words[k:k + len(rest)]) == rest:
+                    # A reflexive pronoun belongs to the expression; an object does not.
+                    lead = [j for j in before if words[j][0] in _REFLEXIVE] if reflexive else []
+                    return (words[min(lead)][1] if lead else start), words[k + len(rest) - 1][2]
+        return None
+
+
+def load_expression_inflector(path) -> ExpressionInflector:
+    import hashlib
+    import json
+    from pathlib import Path
+
+    data = Path(path).read_bytes()
+    return ExpressionInflector(json.loads(data), content_id="sha256:" + hashlib.sha256(data).hexdigest())
+
+
 def multiword_matches(
     *,
     surface_form: str,
     sentence: str,
     index: Mapping[str, Sequence[MultiwordEntry]],
+    inflector: ExpressionInflector | None = None,
 ) -> tuple[tuple[MultiwordEntry, tuple[int, int]], ...]:
-    """Entries whose expression is literally present, with their character span."""
+    """Entries present in the line, with their character span.
+
+    With an ``inflector``, an inflected form also finds the expressions attached
+    to its dictionary word (deu finds ``dar certo``), and verb-led expressions
+    match in any inflection; frozen ones still match exactly.
+    """
 
     flattened = _flatten(sentence)
     lowered = sentence.casefold()
     found: list[tuple[MultiwordEntry, tuple[int, int]]] = []
-    for entry in index.get((surface_form or "").casefold(), ()):
+    surface = (surface_form or "").casefold()
+    candidates = {entry.expression: entry for entry in index.get(surface, ())}
+    if inflector is not None:
+        for lemma in sorted(inflector.lemmas_of(surface)):
+            for entry in index.get(lemma, ()):
+                candidates.setdefault(entry.expression, entry)
+    for entry in candidates.values():
+        if inflector is not None and inflector.head(entry.expression) is not None:
+            span = inflector.match(entry.expression, sentence)
+            if span is not None:
+                if not is_mwe_false_positive(entry.expression, sentence, span):
+                    found.append((entry, span))
+                continue
         # 1. Fast path: exact contiguous string match
         if f" {entry.expression} " in flattened:
             start = lowered.find(entry.expression)
@@ -326,6 +474,7 @@ def multiword_analyses(
     surface_form: str,
     sentence: str,
     index: Mapping[str, Sequence[MultiwordEntry]],
+    inflector: ExpressionInflector | None = None,
 ) -> tuple[tuple[MenuAnalysis, MultiwordEntry, tuple[int, int]], ...]:
     """Synthetic analyses for every multiword sense the line contains.
 
@@ -336,7 +485,7 @@ def multiword_analyses(
 
     built: list[tuple[MenuAnalysis, MultiwordEntry, tuple[int, int]]] = []
     for entry, span in multiword_matches(
-        surface_form=surface_form, sentence=sentence, index=index
+        surface_form=surface_form, sentence=sentence, index=index, inflector=inflector
     ):
         analysis_id = build_analysis_id(
             card_id=card_id,
@@ -393,6 +542,7 @@ def multiword_evidence(
     span: tuple[int, int],
     *,
     inventory_content_id: str | None,
+    paradigm_content_id: str | None = None,
 ) -> dict[str, Any]:
     return {
         "expression": entry.expression,
@@ -408,6 +558,8 @@ def multiword_evidence(
         "sources": list(entry.sources),
         "component_surface_form": analysis.surface_form,
         "inventory_content_id": inventory_content_id,
+        # Set when the expression was matched in an inflected form.
+        "paradigm_content_id": paradigm_content_id,
         "route": entry.route,
         "verbal_idiom": entry.verbal_idiom,
         "flexibility": entry.flexibility,

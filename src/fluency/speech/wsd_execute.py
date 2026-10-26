@@ -42,7 +42,7 @@ from fluency.wsd.gloss_scoring import LeafScore
 from fluency.wsd.bindings import binding_for, pos_gate_for
 from fluency.wsd.languages.spanish import SpanishV5CandidatePolicy, SpanishWSDAdapter
 from fluency.wsd.menus import MenuAnalysis, SenseLeaf
-from fluency.wsd.multiword import index_multiword_senses, multiword_analyses
+from fluency.wsd.multiword import index_multiword_senses, load_expression_inflector, multiword_analyses
 from fluency.wsd.sampling import (
     DEFAULT_EXECUTION_CAP,
     OccurrenceSamplingPolicy,
@@ -1035,6 +1035,11 @@ def main() -> None:
                         help='Write exact cache misses and projected input size before any paid call')
     parser.add_argument("--multiword-inventory", type=Path)
     parser.add_argument(
+        "--expression-paradigms", type=Path,
+        help="Wiktionary verb paradigm (fluency.reflexive.paradigms forms-<lang>.json): "
+             "match verb-led expressions in any inflection (decision 0034)",
+    )
+    parser.add_argument(
         "--profile-id",
         choices=tuple(SUPPORTED_PROFILE_CONSTRAINT_MODES),
         default="es-v7-1",
@@ -1196,6 +1201,9 @@ def main() -> None:
         multiword_index = index_multiword_senses(load_json(args.multiword_inventory))
         multiword_content_id = file_content_id(args.multiword_inventory)
         print(f"multiword inventory: {len(multiword_index):,} attach words")
+    expression_inflector = (
+        load_expression_inflector(args.expression_paradigms) if args.expression_paradigms else None
+    )
 
     profile = WSDExecutionProfile(
         token_tuple_vote=False,
@@ -1382,6 +1390,7 @@ def main() -> None:
                         surface_form=card["display_form"],
                         sentence=text,
                         index=multiword_index,
+                        inflector=expression_inflector,
                     )
                 )
                 if multiword_index is not None
@@ -1470,7 +1479,7 @@ def main() -> None:
         for card, menu_card, sentence_id, text, _translation in work:
             for analysis, _entry, _span in multiword_analyses(
                 card_id=card["card_id"], surface_form=card["display_form"],
-                sentence=text, index=multiword_index,
+                sentence=text, index=multiword_index, inflector=expression_inflector,
             ):
                 needed.add(analysis.senses[0].gloss_text)
                 multiword_texts_by_item.setdefault(
@@ -1625,6 +1634,7 @@ def main() -> None:
         aligner=aligner,
         multiword_index=multiword_index,
         multiword_inventory_content_id=multiword_content_id,
+        expression_inflector=expression_inflector,
         context_model_revisions={"occurrence_pos": pos_pin},
     )
     runner = ClosedMenuWSDRunner(profile, components)
