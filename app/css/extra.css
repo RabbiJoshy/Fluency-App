@@ -1678,24 +1678,55 @@
   margin: 2px 0;
   gap: 8px;
 }
+.extra-conjugations-view.is-drilling .card-cue {
+  gap: 6px 10px;
+}
+.extra-conjugations-view.is-drilling .card-person {
+  font-size: 24px;
+}
+.extra-conjugations-view.is-drilling .card-tense-name {
+  font-size: 24px;
+}
+.extra-conjugations-view.is-drilling .card-verb {
+  font-size: 28px;
+}
+.extra-conjugations-view.is-drilling .card-translation {
+  font-size: 14px;
+  margin-top: 2px;
+}
 .extra-conjugations-view.is-drilling .card-answer {
-  margin-top: 8px;
-  padding-top: 12px;
-  gap: 8px;
+  margin-top: 6px;
+  padding-top: 10px;
+  gap: 6px;
+}
+.extra-conjugations-view.is-drilling .card-form {
+  font-size: 32px;
 }
 .extra-conjugations-view.is-drilling .card-chips {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 .extra-conjugations-view.is-drilling .card-examples {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.extra-conjugations-view.is-drilling .card-example {
+  padding: 8px 10px;
+}
+.extra-conjugations-view.is-drilling .card-example-target {
+  font-size: 14px;
+}
+.extra-conjugations-view.is-drilling .card-example-english {
+  font-size: 12.5px;
 }
 .extra-conjugations-view.is-drilling .grade {
-  margin-top: 14px;
-  margin-bottom: 4px;
+  margin-top: 10px;
+  margin-bottom: 2px;
 }
 .extra-conjugations-view.is-drilling .grade button {
-  padding: 12px 20px;
-  font-size: 15px;
+  padding: 10px 18px;
+  font-size: 14.5px;
 }
 @media (max-width: 640px) {
   #extraModal:has(.extra-conjugations-view.is-drilling) {

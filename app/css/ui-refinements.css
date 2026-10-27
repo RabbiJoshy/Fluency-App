@@ -206,7 +206,12 @@
 .ai-menu-icon--claude {
     color: #d97757;
 }
-/* The first action gets the same deliberate full-width placement as source choices. */
+/* The first action gets the same deliberate full-width placement as source choices.
+   During boot or when language context is established, do not flash this button. */
+html.app-booting #step1,
+body.has-learning-context #step1:not(.language-summary-active) {
+    display: none !important;
+}
 #step1:not(.language-summary-active) #step1Header {
     width: 100%;
     box-sizing: border-box;

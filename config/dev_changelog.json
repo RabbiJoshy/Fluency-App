@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-27T00:43:00+00:00",
+      "date": "2026-10-27 00:43 GMT",
+      "agent": "Antigravity",
+      "summary": "Compact conjugation drill card to prevent overflow on answer; suppress flash of 'Choose language' button during boot.",
+      "detail": [
+        "Scaled down font sizes and tightened spacing in conjugation drill mode (verb, tense, answer form, examples, and grade buttons) so even when examples appear, the card remains strictly within the desktop viewport.",
+        "Suppressed the unselected 'Choose the language you’re learning' step-1 box while the app is booting or when learning context is active."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-27T00:39:22+00:00",
       "date": "2026-10-27 00:39 GMT",
       "agent": "Codex",
@@ -324,19 +335,6 @@
       "detail": [
         "Coverage, percentage digits and every example word use a pale language colour in dark mode, with a darker equivalent in light mode.",
         "Learn and Practise use a darker language-coloured fill to keep white button text readable."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T20:12:15+00:00",
-      "date": "2026-10-26 20:12 GMT",
-      "agent": "Codex",
-      "summary": "Clearer level picker, tidier Smart Skip controls and focused meaning pinning.",
-      "detail": [
-        "Coverage now reads “By Level 4, you’ll recognise X% of everyday speech”, above brighter example words.",
-        "Larger level arrows and desktop progress legend; white Learn and Practise button text.",
-        "Smart Skip master switch and count move to the desktop left; mobile hides the total.",
-        "Meaning pinning hides scrubbers and other tools, keeps See again visible, and places instructions on the card with extra room for pins."
       ],
       "commit": "pending"
     }
