@@ -35,6 +35,16 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-10-27T00:05:42+00:00",
+      "date": "2026-10-27 00:05 GMT",
+      "agent": "Claude",
+      "summary": "Pin notice moves above the bottom icon row.",
+      "detail": [
+        "“Swipe right if you know the rest.” now sits above the icon row, like the pin instructions, on a solid background so nothing behind it shows through."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-26T23:45:00+00:00",
       "date": "2026-10-26 23:45 GMT",
       "agent": "Claude",
@@ -327,19 +337,6 @@
       "detail": [
         "The site builder wrote every file id to git before reading any back; past ~4,000 files both pipes filled and the Linux deploy hung for an hour.",
         "It now feeds the ids from a separate thread. No change to the app itself."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T17:00:03+00:00",
-      "date": "2026-10-26 17:00 GMT",
-      "agent": "Claude",
-      "summary": "Merged word cards now show sentences from all their forms, taken in turn, instead of mostly their commonest form.",
-      "detail": [
-        "Each study set loaded only its own 25 cards' sentences, so a merged card like ser showed 30 of its 808 sentences, all with \"é\".",
-        "New per-set pool files (lemma-pool/v1, Portuguese and Spanish) carry a sample of every other form's sentences: up to 30 per meaning, a form at a time.",
-        "Cards cycle through the forms (foi, é, era, …); lines with an English translation still come first.",
-        "Level 1 Portuguese: ser now has 195 sentences from 28 forms, estar 265 from 34."
       ],
       "commit": "pending"
     }
