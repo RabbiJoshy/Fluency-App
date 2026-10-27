@@ -27521,3 +27521,17 @@ body:has(.card-back .pin-mode-hint:not(.is-notice)) :is(#deckProgressTrack, #car
     opacity: 1;
     pointer-events: auto;
 }
+
+/* The "Swipe right if you know the rest." notice sits above the bottom icon row, like the pin instructions,
+   on a solid background so nothing behind it shows through. Tapping it still dismisses it. */
+.card-back:has(.pin-mode-hint.is-notice) > .links-section { overflow: visible; }
+.card-back .links-section > .pin-mode-hint.is-notice {
+    inset: auto 0 calc(100% + 8px);
+    min-height: 52px;
+    box-sizing: border-box;
+    z-index: 6;
+    background:
+        linear-gradient(rgba(var(--sense-match-rgb, 56, 189, 248), 0.14), rgba(var(--sense-match-rgb, 56, 189, 248), 0.14)),
+        var(--bg-card, #0d0f12);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
