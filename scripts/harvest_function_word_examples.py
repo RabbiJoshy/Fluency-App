@@ -127,97 +127,113 @@ def harvest_artist_candidates(lang: str, words: set[str], max_per_artist: int = 
     artist_candidates = defaultdict(lambda: defaultdict(list))
     patterns = {w: re.compile(r"(?<![\w'’])" + re.escape(w) + r"(?![\w'’])", re.I) for w in words}
 
-    if lang == "es":
-        artist_sources = [
-            ("Bad Bunny", WORKSPACE / "releases/lyrics/lyrics-bad-bunny-v20/app/Artists/es/bad/examples.json"),
-            ("Rosalía", WORKSPACE / "releases/lyrics/lyrics-rosalia-v20/app/Artists/es/rosalia/examples.json"),
-            ("Young Miko", WORKSPACE / "releases/lyrics/lyrics-young-miko-v20/app/Artists/es/young/examples.json"),
-            ("Latin Playlist", WORKSPACE / "releases/lyrics/lyrics-test-playlist-v20/app/Artists/es/test/examples.json"),
-        ]
-        for artist_name, ex_file in artist_sources:
-            if not ex_file.exists():
-                continue
-            data = json.loads(ex_file.read_text(encoding="utf-8"))
-            for group in data.values():
-                sublists = list(group.values()) if isinstance(group, dict) else [group]
-                for sub in sublists:
-                    if not isinstance(sub, list):
-                        continue
-                    for cluster in sub:
-                        items = cluster if isinstance(cluster, list) else [cluster]
-                        for item in items:
-                            if not isinstance(item, dict):
-                                continue
-                            sp = item.get("spanish", "").strip()
-                            en = item.get("english", "").strip()
-                            song = item.get("song_name", artist_name)
-                            if not sp or len(sp) > MAX_SENTENCE_CHARS or len(sp) < 10 or any(c in sp for c in "[]{}()_~#"):
-                                continue
-                            for w, pat in patterns.items():
-                                if len(artist_candidates[w][artist_name]) < max_per_artist and pat.search(sp):
-                                    eid = hashlib.md5((sp + w + artist_name).encode()).hexdigest()[:12]
-                                    artist_candidates[w][artist_name].append({
-                                        "language": lang,
-                                        "word": w,
-                                        "example_id": f"artist_es_{eid}",
-                                        "sentence_id": f"artist_{eid}",
-                                        "sentence": sp,
-                                        "translation": en,
-                                        "source": {
-                                            "name": f"{artist_name} · {song}",
-                                            "source_record_id": f"{artist_name}:{song}:{item.get('timestamp_ms', 0)}",
-                                            "artist": artist_name,
-                                            "song": song
-                                        },
-                                        "channel": "artist"
-                                    })
+    # Dynamically discover all artists registered in app/config/artists.json
+    artists_cfg = {}
+    cfg_path = ROOT / "app/config/artists.json"
+    if cfg_path.exists():
+        try:
+            artists_cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            print(f"Warning: could not parse {cfg_path}: {e}")
 
-    elif lang == "pt":
-        pt_sources = [
-            ("Portuguese Playlist", WORKSPACE / "releases/lyrics/lyrics-portuguese-test-playlist-polyglot-v6/app/Artists/pt/portuguese-test-playlist/examples.json"),
-            ("Portuguese Playlist", WORKSPACE / "releases/lyrics/lyrics-portuguese-test-playlist-polyglot-v5/app/Artists/pt/portuguese-test-playlist/examples.json"),
-            ("Polyglot PT", WORKSPACE / "releases/lyrics/polyglot-pt-v1-20261003/examples.json"),
+    discovered_sources = []
+    for artist_id, cfg in artists_cfg.items():
+        lang_raw = str(cfg.get("language", "")).lower()
+        if lang == "es" and lang_raw in {"spanish", "es"}:
+            lang_match = True
+        elif lang == "pt" and lang_raw in {"portuguese", "pt", "portuguese_brazilian"}:
+            lang_match = True
+        elif lang == "fr" and lang_raw in {"french", "fr"}:
+            lang_match = True
+        elif lang == "nl" and lang_raw in {"dutch", "nl"}:
+            lang_match = True
+        else:
+            lang_match = False
+
+        if not lang_match:
+            continue
+
+        artist_name = cfg.get("name", artist_id)
+        ex_rel = cfg.get("examplesPath")
+        if not ex_rel:
+            continue
+
+        candidates = [
+            ROOT / "app" / ex_rel,
+            ROOT / "app/releases/lyrics" / cfg.get("releaseId", "") / "app" / ex_rel,
+            Path("/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/releases/lyrics") / cfg.get("releaseId", "") / "app" / ex_rel,
+            Path("/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/releases/lyrics/lyrics-all-artists-v20-1/app") / ex_rel,
         ]
-        for default_artist, ex_file in pt_sources:
-            if not ex_file.exists():
-                continue
+        ex_file = next((c for c in candidates if c.exists()), None)
+        if ex_file:
+            discovered_sources.append((artist_name, ex_file))
+
+    # Fallback to known default paths if none discovered via config
+    if not discovered_sources:
+        if lang == "es":
+            discovered_sources = [
+                ("Bad Bunny", ROOT / "app/releases/lyrics/lyrics-all-artists-v20-1/app/Artists/es/bad-bunny/examples.json"),
+                ("Rosalía", ROOT / "app/releases/lyrics/lyrics-all-artists-v20-1/app/Artists/es/rosalia/examples.json"),
+                ("Young Miko", ROOT / "app/releases/lyrics/lyrics-all-artists-v20-1/app/Artists/es/young-miko/examples.json"),
+                ("Latin Playlist", ROOT / "app/releases/lyrics/lyrics-all-artists-v20-1/app/Artists/es/spanish-test-playlist/examples.json"),
+            ]
+        elif lang == "pt":
+            discovered_sources = [
+                ("Portuguese Playlist", ROOT / "app/releases/lyrics/lyrics-portuguese-test-playlist-polyglot-v6/app/Artists/pt/portuguese-test-playlist/examples.json"),
+            ]
+
+    # Additional fallback sources for Portuguese
+    if lang == "pt":
+        extra_pt = [
+            ("Portuguese Playlist", Path("/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/releases/lyrics/polyglot-pt-v1-20261003/examples.json")),
+        ]
+        for name, p in extra_pt:
+            if p.exists() and (name, p) not in discovered_sources:
+                discovered_sources.append((name, p))
+
+    for artist_name, ex_file in discovered_sources:
+        if not ex_file.exists():
+            continue
+        try:
             data = json.loads(ex_file.read_text(encoding="utf-8"))
-            for group in data.values():
-                sublists = list(group.values()) if isinstance(group, dict) else [group]
-                for sub in sublists:
-                    if not isinstance(sub, list):
-                        continue
-                    for cluster in sub:
-                        items = cluster if isinstance(cluster, list) else [cluster]
-                        for item in items:
-                            if not isinstance(item, dict):
-                                continue
-                            pt_text = (item.get("source_text") or item.get("spanish") or "").strip()
-                            en_text = (item.get("english") or item.get("translation") or "").strip()
-                            if not en_text and "nossos pais" in pt_text:
-                                en_text = "And we are still the same and we live like our parents."
-                            song = item.get("song_name") or default_artist
-                            artist = item.get("artist") or default_artist
-                            if not pt_text or not en_text or len(pt_text) > MAX_SENTENCE_CHARS or len(pt_text) < 10 or any(c in pt_text for c in "[]{}()_~#"):
-                                continue
-                            for w, pat in patterns.items():
-                                if len(artist_candidates[w][artist]) < max_per_artist and pat.search(pt_text):
-                                    eid = hashlib.md5((pt_text + w + artist).encode()).hexdigest()[:12]
-                                    artist_candidates[w][artist].append({
-                                        "language": lang,
-                                        "word": w,
-                                        "example_id": f"artist_pt_{eid}",
-                                        "sentence_id": f"artist_{eid}",
-                                        "sentence": pt_text,
-                                        "translation": en_text,
-                                        "source": {
-                                            "name": f"{artist} · {song}",
-                                            "source_record_id": f"{artist}:{song}:{item.get('timestamp_ms', 0)}",
-                                            "artist": artist,
-                                            "song": song
-                                        },
-                                        "channel": "artist"
-                                    })
+        except Exception:
+            continue
+        for group in data.values():
+            sublists = list(group.values()) if isinstance(group, dict) else [group]
+            for sub in sublists:
+                if not isinstance(sub, list):
+                    continue
+                for cluster in sub:
+                    items = cluster if isinstance(cluster, list) else [cluster]
+                    for item in items:
+                        if not isinstance(item, dict):
+                            continue
+                        text = (item.get("spanish") or item.get("source_text") or item.get("targetSentence") or "").strip()
+                        en = (item.get("english") or item.get("translation") or item.get("englishSentence") or "").strip()
+                        if lang == "pt" and not en and "nossos pais" in text:
+                            en = "And we are still the same and we live like our parents."
+                        song = item.get("song_name") or artist_name
+                        cur_artist = item.get("artist") or artist_name
+                        if not text or not en or len(text) > MAX_SENTENCE_CHARS or len(text) < 10 or any(c in text for c in "[]{}()_~#"):
+                            continue
+                        for w, pat in patterns.items():
+                            if len(artist_candidates[w][cur_artist]) < max_per_artist and pat.search(text):
+                                eid = hashlib.md5((text + w + cur_artist).encode()).hexdigest()[:12]
+                                artist_candidates[w][cur_artist].append({
+                                    "language": lang,
+                                    "word": w,
+                                    "example_id": f"artist_{lang}_{eid}",
+                                    "sentence_id": f"artist_{eid}",
+                                    "sentence": text,
+                                    "translation": en,
+                                    "source": {
+                                        "name": f"{cur_artist} · {song}",
+                                        "source_record_id": f"{cur_artist}:{song}:{item.get('timestamp_ms', 0)}",
+                                        "artist": cur_artist,
+                                        "song": song
+                                    },
+                                    "channel": "artist"
+                                })
 
     out = []
     for w in words:

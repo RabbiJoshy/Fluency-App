@@ -27032,16 +27032,16 @@
                         "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
                         "targetHTML": "E nós somos os mesmos e <span class=\"fw-token-v\">vivemos</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">os nossos pais</span>",
                         "translation": "And we are still the same and we live like our parents.",
-                        "source": "Portuguese Playlist · Como Nossos Pais",
+                        "source": "Portuguese Test Playlist · Como Nossos Pais",
                         "channel": "artist",
                         "metadata": {
                             "source": {
-                                "name": "Portuguese Playlist · Como Nossos Pais",
-                                "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
-                                "artist": "Portuguese Playlist",
+                                "name": "Portuguese Test Playlist · Como Nossos Pais",
+                                "source_record_id": "Portuguese Test Playlist:Como Nossos Pais:0",
+                                "artist": "Portuguese Test Playlist",
                                 "song": "Como Nossos Pais"
                             },
-                            "sentence_id": "artist_11473680a873",
+                            "sentence_id": "artist_03b34b5e73a6",
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "pt:como:0",
@@ -27231,16 +27231,16 @@
                         "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
                         "targetHTML": "E nós somos os mesmos e <span class=\"fw-token-v\">vivemos</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">os nossos pais</span>",
                         "translation": "And we are still the same and we live like our parents.",
-                        "source": "Portuguese Playlist · Como Nossos Pais",
+                        "source": "Portuguese Test Playlist · Como Nossos Pais",
                         "channel": "artist",
                         "metadata": {
                             "source": {
-                                "name": "Portuguese Playlist · Como Nossos Pais",
-                                "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
-                                "artist": "Portuguese Playlist",
+                                "name": "Portuguese Test Playlist · Como Nossos Pais",
+                                "source_record_id": "Portuguese Test Playlist:Como Nossos Pais:0",
+                                "artist": "Portuguese Test Playlist",
                                 "song": "Como Nossos Pais"
                             },
-                            "sentence_id": "artist_11473680a873",
+                            "sentence_id": "artist_03b34b5e73a6",
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "pt:como:0",
@@ -27251,21 +27251,21 @@
                     }
                 ],
                 "artist_examples_by_artist": {
-                    "Portuguese Playlist": [
+                    "Portuguese Test Playlist": [
                         {
                             "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
                             "targetHTML": "E nós somos os mesmos e <span class=\"fw-token-v\">vivemos</span> <span class=\"fw-token-connector\">como</span> <span class=\"fw-token-c\">os nossos pais</span>",
                             "translation": "And we are still the same and we live like our parents.",
-                            "source": "Portuguese Playlist · Como Nossos Pais",
+                            "source": "Portuguese Test Playlist · Como Nossos Pais",
                             "channel": "artist",
                             "metadata": {
                                 "source": {
-                                    "name": "Portuguese Playlist · Como Nossos Pais",
-                                    "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
-                                    "artist": "Portuguese Playlist",
+                                    "name": "Portuguese Test Playlist · Como Nossos Pais",
+                                    "source_record_id": "Portuguese Test Playlist:Como Nossos Pais:0",
+                                    "artist": "Portuguese Test Playlist",
                                     "song": "Como Nossos Pais"
                                 },
-                                "sentence_id": "artist_11473680a873",
+                                "sentence_id": "artist_03b34b5e73a6",
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "pt:como:0",
@@ -32697,16 +32697,16 @@
                         "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
                         "targetHTML": "<span class=\"fw-token-connector\">E</span> <span class=\"fw-token-c\">nós somos os mesmos e vivemos como os nossos pais</span>",
                         "translation": "And we are still the same and we live like our parents.",
-                        "source": "Portuguese Playlist · Como Nossos Pais",
+                        "source": "Portuguese Test Playlist · Como Nossos Pais",
                         "channel": "artist",
                         "metadata": {
                             "source": {
-                                "name": "Portuguese Playlist · Como Nossos Pais",
-                                "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
-                                "artist": "Portuguese Playlist",
+                                "name": "Portuguese Test Playlist · Como Nossos Pais",
+                                "source_record_id": "Portuguese Test Playlist:Como Nossos Pais:0",
+                                "artist": "Portuguese Test Playlist",
                                 "song": "Como Nossos Pais"
                             },
-                            "sentence_id": "artist_414e9c5d92e5",
+                            "sentence_id": "artist_745edec1a665",
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "pt:e:0",
@@ -32717,21 +32717,21 @@
                     }
                 ],
                 "artist_examples_by_artist": {
-                    "Portuguese Playlist": [
+                    "Portuguese Test Playlist": [
                         {
                             "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
                             "targetHTML": "<span class=\"fw-token-connector\">E</span> <span class=\"fw-token-c\">nós somos os mesmos e vivemos como os nossos pais</span>",
                             "translation": "And we are still the same and we live like our parents.",
-                            "source": "Portuguese Playlist · Como Nossos Pais",
+                            "source": "Portuguese Test Playlist · Como Nossos Pais",
                             "channel": "artist",
                             "metadata": {
                                 "source": {
-                                    "name": "Portuguese Playlist · Como Nossos Pais",
-                                    "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
-                                    "artist": "Portuguese Playlist",
+                                    "name": "Portuguese Test Playlist · Como Nossos Pais",
+                                    "source_record_id": "Portuguese Test Playlist:Como Nossos Pais:0",
+                                    "artist": "Portuguese Test Playlist",
                                     "song": "Como Nossos Pais"
                                 },
-                                "sentence_id": "artist_414e9c5d92e5",
+                                "sentence_id": "artist_745edec1a665",
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "pt:e:0",
@@ -42517,16 +42517,16 @@
                         "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
                         "targetHTML": "E nós somos os mesmos e vivemos como <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">nossos pais</span>",
                         "translation": "And we are still the same and we live like our parents.",
-                        "source": "Portuguese Playlist · Como Nossos Pais",
+                        "source": "Portuguese Test Playlist · Como Nossos Pais",
                         "channel": "artist",
                         "metadata": {
                             "source": {
-                                "name": "Portuguese Playlist · Como Nossos Pais",
-                                "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
-                                "artist": "Portuguese Playlist",
+                                "name": "Portuguese Test Playlist · Como Nossos Pais",
+                                "source_record_id": "Portuguese Test Playlist:Como Nossos Pais:0",
+                                "artist": "Portuguese Test Playlist",
                                 "song": "Como Nossos Pais"
                             },
-                            "sentence_id": "artist_be4ea9e56f79",
+                            "sentence_id": "artist_e5b05c37b4ad",
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "pt:os:0",
@@ -42539,16 +42539,16 @@
                         "sentence": "Como os nossos pais",
                         "targetHTML": "Como <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">nossos pais</span>",
                         "translation": "And we are still the same and we live like our parents.",
-                        "source": "Portuguese Playlist · Como Nossos Pais",
+                        "source": "Portuguese Test Playlist · Como Nossos Pais",
                         "channel": "artist",
                         "metadata": {
                             "source": {
-                                "name": "Portuguese Playlist · Como Nossos Pais",
-                                "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
-                                "artist": "Portuguese Playlist",
+                                "name": "Portuguese Test Playlist · Como Nossos Pais",
+                                "source_record_id": "Portuguese Test Playlist:Como Nossos Pais:0",
+                                "artist": "Portuguese Test Playlist",
                                 "song": "Como Nossos Pais"
                             },
-                            "sentence_id": "artist_6d1edca3db7d",
+                            "sentence_id": "artist_c374b6f6bce7",
                             "channel": "artist",
                             "automaticSyntax": {
                                 "patternId": "pt:os:0",
@@ -42559,21 +42559,21 @@
                     }
                 ],
                 "artist_examples_by_artist": {
-                    "Portuguese Playlist": [
+                    "Portuguese Test Playlist": [
                         {
                             "sentence": "E nós somos os mesmos e vivemos como os nossos pais",
                             "targetHTML": "E nós somos os mesmos e vivemos como <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">nossos pais</span>",
                             "translation": "And we are still the same and we live like our parents.",
-                            "source": "Portuguese Playlist · Como Nossos Pais",
+                            "source": "Portuguese Test Playlist · Como Nossos Pais",
                             "channel": "artist",
                             "metadata": {
                                 "source": {
-                                    "name": "Portuguese Playlist · Como Nossos Pais",
-                                    "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
-                                    "artist": "Portuguese Playlist",
+                                    "name": "Portuguese Test Playlist · Como Nossos Pais",
+                                    "source_record_id": "Portuguese Test Playlist:Como Nossos Pais:0",
+                                    "artist": "Portuguese Test Playlist",
                                     "song": "Como Nossos Pais"
                                 },
-                                "sentence_id": "artist_be4ea9e56f79",
+                                "sentence_id": "artist_e5b05c37b4ad",
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "pt:os:0",
@@ -42586,16 +42586,16 @@
                             "sentence": "Como os nossos pais",
                             "targetHTML": "Como <span class=\"fw-token-connector\">os</span> <span class=\"fw-token-c\">nossos pais</span>",
                             "translation": "And we are still the same and we live like our parents.",
-                            "source": "Portuguese Playlist · Como Nossos Pais",
+                            "source": "Portuguese Test Playlist · Como Nossos Pais",
                             "channel": "artist",
                             "metadata": {
                                 "source": {
-                                    "name": "Portuguese Playlist · Como Nossos Pais",
-                                    "source_record_id": "Portuguese Playlist:Como Nossos Pais:0",
-                                    "artist": "Portuguese Playlist",
+                                    "name": "Portuguese Test Playlist · Como Nossos Pais",
+                                    "source_record_id": "Portuguese Test Playlist:Como Nossos Pais:0",
+                                    "artist": "Portuguese Test Playlist",
                                     "song": "Como Nossos Pais"
                                 },
-                                "sentence_id": "artist_6d1edca3db7d",
+                                "sentence_id": "artist_c374b6f6bce7",
                                 "channel": "artist",
                                 "automaticSyntax": {
                                     "patternId": "pt:os:0",
