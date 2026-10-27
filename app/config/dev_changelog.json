@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-27T00:16:00+00:00",
+      "date": "2026-10-27 00:16 GMT",
+      "agent": "Antigravity",
+      "summary": "Conjugation mode: one close button, and the active drill opens up without the title.",
+      "detail": [
+        "Removed the \"‹ Extra\" button; the close button (top right) is the single exit.",
+        "In an active drill the \"Verb drills\" title is hidden and the card is larger; the top-right close returns to the drill picker, and closing again goes to Extra."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-27T00:10:00+00:00",
       "date": "2026-10-27 00:10 GMT",
       "agent": "Antigravity",
@@ -329,19 +340,6 @@
       "detail": [
         "A level render could run during start-up before a language was chosen; it failed and its Try again kept the missing language.",
         "The picker now uses the chosen language and waits when none is chosen yet."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T15:14:43+00:00",
-      "date": "2026-10-26 15:14 GMT",
-      "agent": "Codex",
-      "summary": "Rank teaching examples by offline LaBSE scores, including the updated Portuguese release.",
-      "detail": [
-        "Replace the length/number heuristic with existing cached translation-pair scores. Selected examples carry score, model and version in their metadata; higher scores appear first.",
-        "Bind the score companion to the newly updated Portuguese DECIDE-1 expressions release: all 139,957 selected examples have cached scores. Spanish coverage remains 282,808 of 282,808.",
-        "Load only the relevant set’s score files. Selection and frequencies are untouched by the alignment change; ties keep the existing ordering and unscored examples stay available.",
-        "Local mobile verification: Portuguese assim opens at 0.964 and Spanish esa at 0.977; cycling keeps the example pool intact. All 436 app tests and 88 release tests passed."
       ],
       "commit": "pending"
     }
