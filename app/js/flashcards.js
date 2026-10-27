@@ -5471,7 +5471,9 @@ function exampleFaviconHTML(domain) {
         'tatoeba.org': 'icons/tatoeba.svg',
         'wiktionary.org': 'icons/wikipedia-w.svg',
     }[domain];
-    const src = localIcon || `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+    const src = localIcon
+        ? new URL(`../${localIcon}`, import.meta.url).href
+        : `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
     const className = domain === 'wiktionary.org' ? ' example-source-favicon--wikipedia' : '';
     return `<img class="example-source-favicon dict-provenance-icon${className}" src="${src}" width="34" height="34" alt="" aria-hidden="true">`;
 }

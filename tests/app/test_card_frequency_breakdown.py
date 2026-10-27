@@ -10,6 +10,8 @@ supports.
 
 from pathlib import Path
 import unittest
+import shutil
+import subprocess
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -111,6 +113,12 @@ if __name__ == "__main__":
 
 
 class SourceFrequencyReleaseMatchTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which('node'), 'Node.js required')
+    def test_standalone_portuguese_frequency_and_navigation_guards(self) -> None:
+        result = subprocess.run(['node', 'tests/app/standalone_frequency_checks.cjs'],
+                                capture_output=True, text=True, cwd=REPOSITORY_ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_release_check_compares_on_the_release_site_footing(self) -> None:
         # config.js maps every *Path onto the release site, so on the live app
         # the deck's indexPath is a full URL while the frequency file names

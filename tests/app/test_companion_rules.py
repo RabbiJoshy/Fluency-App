@@ -147,8 +147,8 @@ class CompanionRuleTests(unittest.TestCase):
             const low = source.slice(source.indexOf('// low-share-pure'), source.indexOf('// /low-share-pure'));
             const builder = source.slice(source.indexOf('function buildSplitCardPair('), source.indexOf('globalThis.buildSplitCardPair'));
             const modals = fs.readFileSync(process.env.MODALS_JS, 'utf8');
-            const navigation = modals.slice(modals.indexOf('function splitAwareTempCard('), modals.indexOf('function navigateToVocabCard('));
-            const context = { console, selectedLanguage: 'es' }; context.window = context; context.globalThis = context;
+            const navigation = modals.slice(modals.indexOf('function hydrateTempCardFrequency('), modals.indexOf('function navigateToVocabCard('));
+            const context = { console, selectedLanguage: 'es', config: {} }; context.window = context; context.globalThis = context;
             vm.createContext(context); vm.runInContext(pure + low + builder + navigation, context);
             const row = JSON.parse(process.env.ROW);
             const meanings = row.meanings.map(m => ({ ...m, senseId: m.sense_id,

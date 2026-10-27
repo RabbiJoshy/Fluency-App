@@ -9,6 +9,32 @@ ROOT = Path(__file__).resolve().parents[2]
 
 @unittest.skipUnless(shutil.which('node'), 'Node.js required')
 class ServiceWorkerAssetResponsesTests(unittest.TestCase):
+    def test_deployed_precache_has_no_duplicate_requests(self):
+        import json
+        from scripts.build_pages_site import stamp
+        worker = stamp((ROOT / 'app/service-worker.js').read_text(), 'regression-build')
+        result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r"""
+const assert = require('node:assert/strict'), vm = require('node:vm');
+const handlers = {};
+let installed;
+const context = {
+  URL, Set, console,
+  Request: class { constructor(url) { this.url = new URL(url, 'https://example.test').href; } },
+  self: { registration: {scope:'https://example.test/Fluency-App/'},
+    location: {hostname:'example.test'}, addEventListener(name, fn) { handlers[name] = fn; } },
+  caches: { async open() { return { async addAll(requests) {
+    const urls = requests.map(r => r.url);
+    assert.equal(new Set(urls).size, urls.length, 'duplicate requests abort browser cache installation');
+    assert.ok(urls.includes('https://example.test/Fluency-App/icons/tatoeba.svg'));
+    assert.ok(urls.includes('https://example.test/Fluency-App/assets/flags/pt.svg'));
+  }}; } },
+};
+vm.runInNewContext(""" + json.dumps(worker) + r""", context);
+handlers.install({waitUntil(p) { installed = p; }});
+installed.catch(error => { console.error(error); process.exitCode = 1; });
+""")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_html_assets_are_evicted_and_replaced_without_preload_headers(self):
         result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r'''
 const assert = require('node:assert/strict');

@@ -60,6 +60,25 @@ function speechSourceFrequencyOf(item, sourceData) {
     return speechSourceFrequencyForSurface(item?.word, sourceData);
 }
 
+// Standalone search/link cards have no merged-family total. Use the measured
+// displayed surface, or explicitly name the source row when it differs.
+function applyStandaloneSourceFrequency(card, item, sourceData) {
+    if (!card || !sourceData) return;
+    const own = speechSourceFrequencyForSurface(card.displaySurface || card.targetWord, sourceData);
+    const representative = speechSourceFrequencyOf(item, sourceData);
+    card.sourceFrequency = own ?? representative;
+    card.sourceFrequencyBasis = own !== null ? 'own' : representative !== null ? 'other-surface' : 'none';
+    card.sourceFrequencyBasisSurface = card.sourceFrequencyBasis === 'other-surface' ? item.word : '';
+    card.sourceFrequencyIsGroupTotal = false;
+    card.sourceFrequencyForms = 1;
+    card.sourceFrequencyBreakdown = card.sourceFrequency === null ? [] : [{
+        surface: own !== null ? (card.displaySurface || card.targetWord) : item.word,
+        value: card.sourceFrequency,
+    }];
+    card.sourceFrequencyUnit = sourceData.unit || '';
+    card.sourceFrequencySource = sourceData.source || '';
+}
+
 const _cachedLemmaSourceFrequencies = new WeakMap();
 
 function currentWsdPublicationProjection() {
@@ -5384,6 +5403,7 @@ window.loadPrecomputedEstimationPool = loadPrecomputedEstimationPool;
 window.prepareEstimationCognates = prepareEstimationCognates;
 window.loadEstimationExamples = loadEstimationExamples;
 window.loadSpeechSourceFrequency = loadSpeechSourceFrequency;
+window.applyStandaloneSourceFrequency = applyStandaloneSourceFrequency;
 window.fetchActiveVocabularyData = fetchActiveVocabularyData;
 window.ensureLemmaPoolingData = ensureLemmaPoolingData;
 window.getWordId = getWordId;

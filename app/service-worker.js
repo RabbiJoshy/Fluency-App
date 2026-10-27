@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v604';
+const CACHE_NAME = 'flashcards-v605';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -175,7 +175,9 @@ self.addEventListener('install', event => {
   // a version tag — index.html, the config JSONs, and (until now) style.css.
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(
-      urlsToCache.map(url => new Request(scopedPath(url), { cache: 'reload' }))
+      // Deployment stamps collapse older version aliases onto one URL.
+      // Cache.addAll rejects duplicate requests, aborting the entire install.
+      [...new Set(urlsToCache)].map(url => new Request(scopedPath(url), { cache: 'reload' }))
     )).then(() => {
       // Development and staging tabs change rapidly and mixing yesterday's controller
       // with today's HTML produces controls that visibly exist but cannot

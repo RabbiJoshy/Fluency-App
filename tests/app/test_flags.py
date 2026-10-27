@@ -21,6 +21,22 @@ class FlagAssetTests(unittest.TestCase):
                 self.assertIn(f"'/assets/flags/{code}.svg'", worker)
 
     @unittest.skipUnless(shutil.which('node'), 'Node.js required')
+    def test_local_source_icons_follow_module_location(self):
+        result = subprocess.run(['node', '-'], cwd=ROOT, capture_output=True, text=True, input=r"""
+const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
+const raw = fs.readFileSync('app/js/flashcards.js', 'utf8');
+const start = raw.indexOf('function exampleFaviconHTML(');
+const end = raw.indexOf('\n}', start) + 2;
+const source = raw.slice(start, end).replace('import.meta.url', "'https://example.test/Fluency-App/js/flashcards.js?v=build'");
+const context = {URL};
+vm.createContext(context);
+vm.runInContext(source, context);
+assert.ok(context.exampleFaviconHTML('tatoeba.org').includes('https://example.test/Fluency-App/icons/tatoeba.svg'));
+assert.ok(context.exampleFaviconHTML('wiktionary.org').includes('https://example.test/Fluency-App/icons/wikipedia-w.svg'));
+""")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    @unittest.skipUnless(shutil.which('node'), 'Node.js required')
     def test_flag_urls_follow_module_location_not_page_location(self):
         result = subprocess.run(['node', '-'], cwd=ROOT, capture_output=True, text=True, input=r'''
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
