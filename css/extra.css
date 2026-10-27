@@ -1598,21 +1598,32 @@
 .extra-conjugations-title { margin-right: auto; }
 
 /* An active drill is ONE surface: the progress count and the close button sit
-   in its top row, and the card inside is flat (no box within a box). On a
-   phone the surface is the whole screen; on desktop it is a single large
-   panel. The title is gone; closing returns to the drill picker. */
-#extraModal:has(.extra-conjugations-view.is-drilling) { padding: 24px !important; }
-#extraModal:has(.extra-conjugations-view.is-drilling) > .modal-content { max-width: 860px; padding-bottom: 0; }
+   in its top row, and the card inside is flat (no box within a box).
+   On desktop it sizes compactly to fit completely within the viewport without scrolling. */
+#extraModal:has(.extra-conjugations-view.is-drilling) {
+  padding: 16px 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+#extraModal:has(.extra-conjugations-view.is-drilling) > .modal-content {
+  max-width: 760px;
+  width: 100%;
+  padding-bottom: 0;
+  margin: auto;
+}
 .extra-conjugations-view.is-drilling {
   position: relative;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  min-height: calc(100dvh - 48px);
-  padding: 0 28px 24px;
+  max-height: calc(100dvh - 36px);
+  padding: 0 24px 20px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
 }
 .extra-conjugations-view.is-drilling .extra-conjugations-title { display: none; }
 .extra-conjugations-view.is-drilling .extra-conjugations-topbar {
@@ -1624,29 +1635,94 @@
   padding: 0;
   border: 0;
 }
-.extra-conjugations-view.is-drilling #extraConjugationsContainer { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.extra-conjugations-view.is-drilling #screen-drill.is-active { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.extra-conjugations-view.is-drilling .drill-wrap { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: none; margin: 0; min-height: 0; }
-.extra-conjugations-view.is-drilling .drill-head { height: 56px; margin: 0; padding-right: 48px; padding-left: 48px; }
-.extra-conjugations-view.is-drilling .card {
-  flex: 1;
+.extra-conjugations-view.is-drilling #extraConjugationsContainer {
+  display: flex;
+  flex-direction: column;
   min-height: 0;
-  padding: 0 4px;
+}
+.extra-conjugations-view.is-drilling #screen-drill.is-active {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.extra-conjugations-view.is-drilling .drill-wrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  min-height: 0;
+}
+.extra-conjugations-view.is-drilling .drill-head {
+  height: 44px;
+  margin: 0;
+  padding: 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.extra-conjugations-view.is-drilling .card {
+  min-height: 0;
+  padding: 16px 4px 12px;
+  gap: 12px;
   background: transparent;
   border: 0;
   border-radius: 0;
   box-shadow: none;
 }
-.extra-conjugations-view.is-drilling .card:hover { border: 0; box-shadow: none; }
+.extra-conjugations-view.is-drilling .card:hover {
+  border: 0;
+  box-shadow: none;
+}
+.extra-conjugations-view.is-drilling .card-prompt {
+  margin: 2px 0;
+  gap: 8px;
+}
+.extra-conjugations-view.is-drilling .card-answer {
+  margin-top: 8px;
+  padding-top: 12px;
+  gap: 8px;
+}
+.extra-conjugations-view.is-drilling .card-chips {
+  margin-top: 6px;
+}
+.extra-conjugations-view.is-drilling .card-examples {
+  margin: 8px 0 0;
+}
+.extra-conjugations-view.is-drilling .grade {
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+.extra-conjugations-view.is-drilling .grade button {
+  padding: 12px 20px;
+  font-size: 15px;
+}
 @media (max-width: 640px) {
-  #extraModal:has(.extra-conjugations-view.is-drilling) { padding: 0 !important; }
-  #extraModal:has(.extra-conjugations-view.is-drilling) > .modal-content { max-width: none; width: 100%; }
+  #extraModal:has(.extra-conjugations-view.is-drilling) {
+    padding: 0 !important;
+    display: block !important;
+  }
+  #extraModal:has(.extra-conjugations-view.is-drilling) > .modal-content {
+    max-width: none;
+    width: 100%;
+    height: 100%;
+  }
   .extra-conjugations-view.is-drilling {
     min-height: 100dvh;
+    max-height: none;
     padding: env(safe-area-inset-top) 16px calc(16px + env(safe-area-inset-bottom));
     border: 0;
     border-radius: 0;
+    box-shadow: none;
   }
-  .extra-conjugations-view.is-drilling .extra-conjugations-topbar { top: calc(10px + env(safe-area-inset-top)); }
-  .extra-conjugations-view.is-drilling .drill-head { height: calc(56px); }
+  .extra-conjugations-view.is-drilling .extra-conjugations-topbar {
+    top: calc(10px + env(safe-area-inset-top));
+  }
+  .extra-conjugations-view.is-drilling .drill-head {
+    height: 48px;
+  }
+  .extra-conjugations-view.is-drilling .card {
+    flex: 1;
+    justify-content: center;
+  }
 }
