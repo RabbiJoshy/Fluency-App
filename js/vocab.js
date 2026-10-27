@@ -1,17 +1,17 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=94b1823a';
-import { readJsonWithTimeout } from './read-request.js?v=94b1823a';
-import { validateVocabularyIndex } from './data-contracts.js?v=94b1823a';
-import { formatRoute } from './routes.js?v=94b1823a';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=94b1823a';
-import { releaseUrl } from './release-host.js?v=94b1823a';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=94b1823a';
-import { getGrammarWordDefinition } from './function-word-card.js?v=94b1823a';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=94b1823a';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=94b1823a';
-import { createExampleAlignmentLoader } from './example-alignment.js?v=94b1823a';
+import './state.js?v=0e7f73d1';
+import { readJsonWithTimeout } from './read-request.js?v=0e7f73d1';
+import { validateVocabularyIndex } from './data-contracts.js?v=0e7f73d1';
+import { formatRoute } from './routes.js?v=0e7f73d1';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=0e7f73d1';
+import { releaseUrl } from './release-host.js?v=0e7f73d1';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=0e7f73d1';
+import { getGrammarWordDefinition } from './function-word-card.js?v=0e7f73d1';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=0e7f73d1';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=0e7f73d1';
+import { createExampleAlignmentLoader } from './example-alignment.js?v=0e7f73d1';
 
 let exampleAlignmentLoader = null;
 function attachExampleAlignment(payload, langConfig) {
@@ -625,6 +625,7 @@ let _cachedSeenLemmas = null;
 let _cachedSeenLemmasKey = null;
 
 async function buildSeenLemmaSet(vocabData) {
+    if ((typeof activeArtist !== 'undefined' && activeArtist) || globalThis.activeArtist || globalThis.playlistLiveActive?.() || globalThis.window?.playlistLiveActive?.()) return new Set();
     const hasLemmas = lemmaFieldAvailable || (Array.isArray(vocabData) && vocabData.some(item => lemmaStudyGroupKey(item)));
     if (!useLemmaMode || !hasLemmas || !progressData) return new Set();
     if (!lemmaFieldAvailable && hasLemmas) lemmaFieldAvailable = true;
@@ -2832,10 +2833,18 @@ function stampMergeExceptionValues(vocabulary, contractions, keys, nounVerdicts 
         if (typeof key === 'string') item.merge_key = key;
         else delete item.merge_key;
     }
-    // Decks with no release-bound verdicts (artist decks, a staging candidate
-    // release) run the same rule here, but only when nearly every row has its
-    // senses: verdicts from a partly loaded deck would change as rows arrive.
-    if (!privilegeKeys) {
+    // Decks with no release-bound verdicts (a staging candidate speech release)
+    // run the same rule here, but only when nearly every row has its senses:
+    // verdicts from a partly loaded deck would change as rows arrive. Artist
+    // decks and live playlists do not run form privilege or lemma merging.
+    const isLiveOrArtist = Boolean(
+        (typeof activeArtist !== 'undefined' && activeArtist)
+        || globalThis.activeArtist
+        || (typeof playlistLiveActive === 'function' && playlistLiveActive())
+        || globalThis.playlistLiveActive?.()
+        || globalThis.window?.playlistLiveActive?.()
+    );
+    if (!privilegeKeys && !isLiveOrArtist) {
         const loaded = vocabulary.filter(item => item?.meanings?.length && !item._indexRowsPending);
         if (loaded.length && loaded.length >= 0.9 * vocabulary.length) {
             const verdicts = formPrivilegeVerdicts(loaded);
@@ -3106,9 +3115,18 @@ function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Se
         // Artist Extra deliberately includes raw lyric-only entries. A one-off
         // surface form inside a recurring lemma stays in Main and receives the
         // same fallback treatment, so it must also keep its stable slot.
-        return hasTranslation || (!detached && activeArtist && (
+        const allowedRaw = !detached && activeArtist && (
             artistVocabularyScope === 'extra' || isArtistSupplementaryItem(item) || Number(item.corpus_count) <= 1
-        ));
+        );
+        if (!hasTranslation && !allowedRaw) return false;
+        if (!detached && activeArtist && artistVocabularyScope !== 'extra') {
+            const hasAssignedArtistSense = (item.meanings || []).some(meaning =>
+                Number(meaning.frequency || 0) >= ARTIST_MIN_SENSE_FREQ);
+            if (Number(item.corpus_count) > 1 && !hasAssignedArtistSense) {
+                return false;
+            }
+        }
+        return true;
     });
     const hasCorpusFrequency = candidates.some(item => item.hasOwnProperty('corpus_count'));
     candidates.sort((a, b) => hasCorpusFrequency
@@ -3450,7 +3468,16 @@ function buildFilteredVocab(vocabData) {
     // Apply lemma collapsing only after every other inclusion rule. This
     // guarantees one host inside the active song/source subset even when the
     // pipeline's preferred surface is absent or conflicting flags are shipped.
-    if (useLemmaMode && lemmaFieldAvailable) {
+    // Artist decks and live series decks treat each surface as its own card.
+    const isLiveOrArtist = Boolean(
+        (typeof activeArtist !== 'undefined' && activeArtist)
+        || globalThis.activeArtist
+        || (typeof playlistLiveActive === 'function' && playlistLiveActive())
+        || globalThis.playlistLiveActive?.()
+        || globalThis.window?.playlistLiveActive?.()
+    );
+    const canMergeLemmas = useLemmaMode && lemmaFieldAvailable && !isLiveOrArtist;
+    if (canMergeLemmas) {
         const beforeLemmaMerge = result.length;
         result = selectLemmaModeRepresentatives(result);
         counts.lemma += beforeLemmaMerge - result.length;
@@ -3460,7 +3487,7 @@ function buildFilteredVocab(vocabData) {
     // its collapsed sibling forms (same lemma) and order the deck by that total,
     // so the most common LEMMAS surface first — mirrors the example pooling in
     // poolLemmaSiblingExamples.
-    if (useLemmaMode && lemmaFieldAvailable) {
+    if (canMergeLemmas) {
         // A merged lemma lives wherever its highest-frequency surface form
         // lived in the baseline deck. This is the stable anchor that keeps
         // Merge Lemmas from moving the card to a different level or set.

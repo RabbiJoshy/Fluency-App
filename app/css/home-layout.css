@@ -251,7 +251,7 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
 .home-level-stat { display: inline-flex; align-items: center; gap: 5px; }
 .home-level-stat i { width: 8px; height: 8px; border-radius: 50%; }
 .home-level-bar .is-new, .home-level-stat.is-new i { background: var(--set-new, #fff); }
-.home-level-bar .is-seen, .home-level-stat.is-seen i { background: var(--set-review, #896318); }
+.home-level-bar .is-seen, .home-level-bar .is-practice, .home-level-stat.is-seen i, .home-level-stat.is-practice i { background: var(--set-review, #896318); }
 .home-level-bar .is-known, .home-level-stat.is-known i { background: var(--set-known, #16734b); }
 .home-level-bar .is-estimated, .home-level-stat.is-estimated i { background: var(--set-estimated, #77669e); }
 .home-level-bar .is-skipped, .home-level-stat.is-skipped i { background: var(--set-skipped, #566477); }
@@ -1228,7 +1228,7 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
 .home-level-tile-bar { display: flex; gap: 1px; height: 4px; border-radius: 2px; overflow: hidden; background: var(--border-color); }
 .home-level-tile-bar span { display: block; min-width: 2px; }
 .home-level-tile-bar .is-new { background: var(--set-new, #fff); }
-.home-level-tile-bar .is-seen { background: var(--set-review, #896318); }
+.home-level-tile-bar .is-seen, .home-level-tile-bar .is-practice { background: var(--set-review, #896318); }
 .home-level-tile-bar .is-known { background: var(--set-known, #16734b); }
 .home-level-tile-bar .is-estimated { background: var(--set-estimated, #77669e); }
 .home-level-tile-bar .is-skipped { background: var(--set-skipped, #566477); }
@@ -1349,7 +1349,8 @@ body.desktop-workspace:has(#appContent.hidden) #spacedRepetitionInfoModal.modal:
     /* Phones: a dot in the least-learned colour instead of a bar too thin to read. */
     .home-level-tile-bar { display: none; }
     .home-level-tile-dot { display: block; align-self: center; width: 7px; height: 7px; border-radius: 50%; background: var(--set-new, #fff); }
-    .home-level-tile[data-dot="seen"] .home-level-tile-dot { background: var(--set-review, #ffcc00); }
+    .home-level-tile[data-dot="seen"] .home-level-tile-dot,
+    .home-level-tile[data-dot="practice"] .home-level-tile-dot { background: var(--set-review, #ffcc00); }
     .home-level-tile[data-dot="known"] .home-level-tile-dot { background: var(--set-known, #06a557); }
     .home-level-tile[data-dot="none"] .home-level-tile-dot { display: none; }
     /* Phones: the readout's words a step larger. */
