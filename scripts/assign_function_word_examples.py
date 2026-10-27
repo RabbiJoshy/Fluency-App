@@ -44,18 +44,22 @@ def parse_rows(rows):
     from independent_predict import serialize
     cache={}
     for lang in sorted({r['language'] for r in rows}):
+        lang_rows = [r for r in rows if r['language'] == lang]
+        if not lang_rows:
+            continue
         if lang=='pt':
             import stanza
             parser=stanza.Pipeline('pt',processors='tokenize,mwt,pos,lemma,depparse',download_method=None,use_gpu=False,verbose=False)
             version='stanza-pt-default@'+stanza.__version__
+            docs = parser.bulk_process([stanza.Document([], text=r['sentence']) for r in lang_rows])
         elif lang=='es':
             from spacy_adapter import Pipeline
             parser=Pipeline();version=parser.version
+            docs = parser.bulk([r['sentence'] for r in lang_rows])
         else:continue
         labeller=importlib.import_module('labeller_'+lang)
-        for row in rows:
-            if row['language']!=lang:continue
-            text=row['sentence'];word=row['word'];doc=parser(text)
+        for row, doc in zip(lang_rows, docs):
+            text=row['sentence'];word=row['word']
             spans=row.get('spans') or [[m.start(),m.end()] for m in re.finditer(r"(?<![\w'’])"+re.escape(word)+r"(?![\w'’])",text,re.I)]
             label=None
             if len(spans)==1:

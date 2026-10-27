@@ -12,9 +12,13 @@ from typing import Any
 # Lexical licences shared or language-keyed
 THOUGHT_VERBS = {
     'pt': {'achar', 'pensar', 'saber', 'dizer', 'esperar', 'crer', 'supor',
-           'lembrar', 'esquecer', 'acreditar', 'afirmar', 'contar', 'sentir', 'notar'},
+           'lembrar', 'esquecer', 'acreditar', 'afirmar', 'contar', 'sentir', 'notar',
+           'imaginar', 'entender', 'compreender', 'perceber', 'descobrir', 'reconhecer',
+           'garantir', 'prometer', 'admitir'},
     'es': {'creer', 'pensar', 'saber', 'decir', 'esperar', 'suponer',
-           'recordar', 'olvidar', 'afirmar', 'contar', 'sentir', 'notar'}
+           'recordar', 'olvidar', 'afirmar', 'contar', 'sentir', 'notar',
+           'imaginar', 'entender', 'comprender', 'percibir', 'descubrir', 'reconocer',
+           'garantizar', 'prometer', 'admitir'}
 }
 
 MOTION_VERBS = {
@@ -34,10 +38,12 @@ TIME_HEADS = {
 DESTINATION_HEADS = {
     'pt': {'casa', 'escola', 'hospital', 'trabalho', 'cidade', 'aeroporto', 'praia',
            'parque', 'cinema', 'quarto', 'hotel', 'restaurante', 'mercado', 'estação',
-           'universidade', 'igreja', 'porto', 'banco', 'teatro'},
+           'universidade', 'igreja', 'porto', 'banco', 'teatro', 'rua', 'estrada',
+           'centro', 'praça', 'sala', 'cozinha', 'jardim', 'bar'},
     'es': {'casa', 'colegio', 'escuela', 'hospital', 'trabajo', 'ciudad', 'aeropuerto',
            'playa', 'parque', 'cine', 'habitación', 'hotel', 'restaurante', 'mercado',
-           'estación', 'universidad', 'iglesia', 'puerto', 'banco', 'teatro', 'estadio'}
+           'estación', 'universidad', 'iglesia', 'puerto', 'banco', 'teatro', 'estadio',
+           'calle', 'carretera', 'centro', 'plaza', 'sala', 'cocina', 'jardín', 'bar'}
 }
 
 COMPARATIVE_MARKERS = {
@@ -47,9 +53,11 @@ COMPARATIVE_MARKERS = {
 
 DE_VERBAL_FRAMES = {
     'pt': {'gostar', 'precisar', 'lembrar', 'depender', 'esquecer', 'tratar',
-           'falar', 'desistir', 'parar', 'acabar', 'deixar', 'cuidar'},
+           'falar', 'desistir', 'parar', 'acabar', 'deixar', 'cuidar',
+           'duvidar', 'cansar', 'rir', 'trocar', 'fugir'},
     'es': {'dejar', 'acabar', 'tratar', 'parar', 'hablar', 'cuidar',
-           'acordar', 'depender', 'olvidar'}
+           'acordar', 'depender', 'olvidar', 'dudar', 'cansar', 'reír',
+           'cambiar', 'huir'}
 }
 
 DE_ACTION_NOUNS = {
