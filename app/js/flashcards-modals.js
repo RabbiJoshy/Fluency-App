@@ -2068,6 +2068,7 @@ async function showEndOfDeckOptions() {
 }
 
 function hideDeckCompleteModal() {
+    window.dismissPlacementOffer?.();
     document.getElementById('deckCompleteModal').classList.add('hidden');
 }
 

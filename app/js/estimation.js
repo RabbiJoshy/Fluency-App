@@ -1,6 +1,7 @@
 import './state.js?v=20260825ak';
 
 const ESTIMATION_QUESTION_LIMIT = 30;
+const ESTIMATION_EXTENSION_LIMIT = 15;
 const ESTIMATION_BAND_TARGET = 10;
 const ESTIMATION_SET_DETAIL_MAX_LEVEL = 10;
 const ESTIMATION_CONFIDENCE_Z = 1.645; // Approximate 90% interval.
@@ -26,6 +27,8 @@ function createEstimationState() {
         active: false,
         answers: [],
         placementHistory: [],
+        extended: false,
+        extensionOffered: false,
         recheck: null,
         profileKey: null,
         ownerKey: null,
@@ -69,6 +72,8 @@ function openEstimationModal() {
     if (importLink) importLink.hidden = !(currentUser && !currentUser.isGuest);
     estimationState = createEstimationState();
     document.getElementById('retryEstimationBtn').hidden = false;
+    const extension = document.getElementById('estimationExtensionOffer');
+    if (extension) extension.hidden = true;
     const keep = document.getElementById('estimationKeepPosition');
     if (keep) keep.hidden = true;
 }
@@ -76,7 +81,10 @@ function openEstimationModal() {
 // Close estimation modal
 function closeEstimationModal() {
     document.getElementById('estimationModal').classList.add('hidden');
-    if (estimationState.recheck) finishPlacementRecheck();
+    if (estimationState.recheck) {
+        finishPlacementRecheck();
+        if (!window._applyingPlacement) document.getElementById('deckCompleteModal')?.classList.remove('hidden');
+    }
     estimationState.active = false;
     estimationState.loading = false;
     estimationState.sequence = ++estimationSequence;
@@ -88,7 +96,7 @@ function closeEstimationModal() {
 // Keep the historical exclusions, but resolve the same merge/split decisions
 // as the study deck before constructing the sampling distribution.
 function estimationAssumesKnown(item) {
-    if (typeof window.isCognateKnown === 'function') return window.isCognateKnown(item);
+    if (typeof window.isCognateKnown === 'function') return window.isCognateKnown(item, { placement: true });
     return (item.cognate_score ?? (item.is_transparent_cognate ? 1 : 0)) >= 0.83;
 }
 
@@ -224,6 +232,13 @@ function buildEstimationPool(vocabulary, frequencyData = null, { includeAssumed 
             }
         }
     }
+    // Cognate surfaces do not increase a mixed group's sampling frequency.
+    for (const item of items) {
+        if (!item.splitInfo && !item.estimationAssumedKnown) {
+            item.estimationFrequency = item.estimationMembers.filter(m => !m.assumedKnown)
+                .reduce((sum, m) => sum + estimationSurfaceFrequency(m.source, frequencyData) * m.weight, 0);
+        }
+    }
     const included = includeAssumed ? items : items.filter(item => !item.estimationAssumedKnown);
     included.sort((a, b) => b.estimationFrequency - a.estimationFrequency
         || Number(a.rank) - Number(b.rank) || a.estimationKey.localeCompare(b.estimationKey));
@@ -269,7 +284,7 @@ function mainSensePos(word) {
 
 // A candidate is ready once its meanings are loaded and it still qualifies.
 function isShowableWord(word) {
-    return word && !word.estimationAssumedKnown && !estimationAssumesKnown(word) && (!word.splitInfo || Boolean(word.estimationExample)) && word._indexRowsPending !== true
+    return word && !word.estimationAssumedKnown && !estimationAssumesKnown(word.estimationPrompt || word) && (!word.splitInfo || Boolean(word.estimationExample)) && word._indexRowsPending !== true
         && hasTranslatedMeaning(word) && !isFunctionWord(word)
         && ESTIMATION_CONTENT_POS.has(mainSensePos(word));
 }
@@ -489,7 +504,12 @@ function findAvailableWord(preferredBandIndex) {
 // gloss otherwise. The same (POS, gloss) pair is listed once.
 function getWordTranslation(word) {
     if (!word?.meanings?.length) return '';
-    const meanings = word.meanings
+    const translated = word.meanings.filter(m => m?.translation && String(m.translation).trim());
+    const main = translated.filter(m => !m.lowShare && !m.unassigned && m.assignment_method !== 'unassigned');
+    // Use declared usage evidence to order meanings, not to invent an everyday
+    // frequency judgement. Keep all main meanings acceptable at reveal.
+    const meanings = (main.length ? main : translated).slice()
+        .sort((a, b) => assignedSenseWeight(word, b) - assignedSenseWeight(word, a))
         .filter(m => m?.translation && String(m.translation).trim())
         .map(m => ({
             pos: m.pos,
@@ -586,7 +606,7 @@ async function startEstimation(recheck = null) {
         state.placementBaseline = window.assignStableVocabularyRanks
             ? window.assignStableVocabularyRanks(rows, new Set(), { detached: true }) : rows;
         state.placementLevels = getEstimationPlacementLevels(state.placementBaseline);
-        const pool = buildEstimationPool(rows, frequency, { includeAssumed: true });
+        const pool = buildEstimationPool(rows, frequency);
         const ranks = [...new Set(pool.filter(item => item.splitInfo && !item.estimationExample)
             .map(item => Number(item.rank)))];
         if (ranks.length) {
@@ -906,16 +926,26 @@ function buildEstimationPlacementRegions(levels) {
 // a single answer into a sharp placement cliff.
 function calculateRecognitionPlacement(items, bands, levels, baseline, targets = [0.9, 0.8]) {
     const regions = buildEstimationPlacementRegions(levels);
-    const sampled = bands.filter(band => (band.sampleSize ?? band.size) > 0);
+    // Work in non-cognate group coordinates even when a caller supplies a
+    // legacy pool containing assumed-known groups. Their density must not
+    // shift the familiarity curve or its boundary.
+    const positions = new Map();
+    items.forEach((item, index) => {
+        if (!item.estimationAssumedKnown) positions.set(index, positions.size);
+    });
+    const sampled = bands.map(band => {
+        const eligible = [...positions.keys()].filter(index => index >= band.start && index < band.end);
+        return eligible.length ? { ...band, position: (positions.get(eligible[0]) + positions.get(eligible.at(-1))) / 2 } : null;
+    }).filter(Boolean);
     const fitted = fitMonotonicProbabilities(sampled.map(band =>
         band.answers ? band.known / band.answers : 0.5), sampled.map(band => Math.max(1, band.answers)));
-    const anchors = sampled.map((band, index) => ({
-        position: (band.start + band.end - 1) / 2, probability: fitted[index]
-    }));
+    const anchors = sampled.map((band, index) => ({ position: band.position, probability: fitted[index] }));
     const perLevel = regions.map(() => new Map());
     items.forEach((item, index) => {
-        const probability = item.estimationAssumedKnown ? 1 : interpolateRecognition(anchors, index);
+        if (item.estimationAssumedKnown) return;
+        const probability = interpolateRecognition(anchors, positions.get(index));
         item.estimationMembers.forEach(member => {
+            if (!item.splitInfo && member.assumedKnown) return;
             const levelIndex = regions.findIndex(level => {
                 const rank = level.rankBasis === 'stable' ? levelRankOf(member.source) : Number(member.source.rank);
                 return rank >= level.startRank && rank < level.endRank;
@@ -923,10 +953,7 @@ function calculateRecognitionPlacement(items, bands, levels, baseline, targets =
             if (levelIndex < 0) return;
             const map = perLevel[levelIndex];
             const group = map.get(getWordKey(item)) || { total: 0, weight: 0 };
-            // For an unsplit mixed group only the qualifying surfaces receive
-            // assumed recognition. A split is scored from its own meanings.
-            const known = item.estimationAssumedKnown || (!item.splitInfo && member.assumedKnown);
-            group.total += member.weight * (known ? 1 : probability);
+            group.total += member.weight * probability;
             group.weight += member.weight;
             map.set(getWordKey(item), group);
         });
@@ -938,9 +965,10 @@ function calculateRecognitionPlacement(items, bands, levels, baseline, targets =
     const levelAnchors = occupied.map((row, index) => ({ position: row.index, probability: probabilities[index] }));
     const profile = regions.map((level, index) => ({ ...level,
         probability: interpolateRecognition(levelAnchors, index), groups: perLevel[index].size }));
+    const available = profile.filter(level => level.groups > 0);
     const choices = targets.map(target => {
-        const index = profile.findIndex(level => level.probability + 1e-10 < target);
-        const level = profile[index < 0 ? profile.length - 1 : index];
+        const index = available.findIndex(level => level.probability + 1e-10 < target);
+        const level = available[index < 0 ? available.length - 1 : index];
         if (!level) return null;
         const earlier = baseline.filter(source =>
             (level.rankBasis === 'stable' ? levelRankOf(source) : Number(source.rank)) < level.startRank);
@@ -995,19 +1023,22 @@ function showEstimationResult() {
     levelEl.textContent = placement.choices.length > 1 ? 'Choose where to begin'
         : (isSpeechMode() && first ? `Start ${estimationChoiceLocation(first)}` : 'Your starting point');
     const range = `${Math.round(counts.low).toLocaleString()}–${Math.round(counts.high).toLocaleString()}`;
-    const shortCheck = estimationState.wordsTestedCount < ESTIMATION_QUESTION_LIMIT
+    const shortCheck = estimationState.wordsTestedCount !== ESTIMATION_QUESTION_LIMIT
         ? ` The check used ${estimationState.wordsTestedCount} groups.` : '';
     document.getElementById('estimationResultDesc').textContent =
-        `Estimated vocabulary groups: about ${Math.round(counts.point).toLocaleString()} (range ${range}). The range reflects uncertainty from a short check.${shortCheck}`;
+        `Estimated non-cognate vocabulary groups: about ${Math.round(counts.point).toLocaleString()} (range ${range}). The range reflects uncertainty from a short check.${shortCheck}`;
     const multiple = placement.choices.length > 1;
     document.getElementById('estimationPlacementOptions').innerHTML = placement.choices.map((choice, index) => {
         const percentage = Math.round(choice.probability * 100 / 5) * 5;
         const title = isSpeechMode() ? `Start ${estimationChoiceLocation(choice)}` : 'Use this starting point';
         const label = multiple ? (index === 0 ? 'Start earlier · More review' : 'Start further ahead · More new vocabulary') : 'Your suggested starting point';
         const detail = multiple ? (index === 0 ? 'More review, with fewer gaps left behind.' : 'More new vocabulary, with less review.') : 'A useful place to begin; you can change levels at any time.';
-        return `<button type="button" class="estimation-placement-choice" onclick="useEstimatedLevel(${index})"><span class="estimation-choice-label">${label}</span><strong>${title}</strong><span>Around ${percentage}% of the vocabulary here is likely familiar. ${detail}</span></button>`;
+        return `<button type="button" class="estimation-placement-choice" onclick="useEstimatedLevel(${index})"><span class="estimation-choice-label">${label}</span><strong>${title}</strong><span>Around ${percentage}% of the non-cognate vocabulary here is likely familiar. ${detail}</span></button>`;
     }).join('');
     document.getElementById('useEstimatedLevelBtn').hidden = placement.choices.length > 0;
+    estimationState.extensionOffered = canExtendEstimation();
+    const extension = document.getElementById('estimationExtensionOffer');
+    if (extension) extension.hidden = !estimationState.extensionOffered;
 }
 
 // The level button whose [startRank, endRank) span holds a rank, clamped to the
@@ -1041,14 +1072,17 @@ async function useEstimatedLevel(choiceIndex = 0) {
     else if (choice) armPlacementChecker(choice);
     levelEstimates[selectedLanguage] = level;
     saveLevelEstimateToSheet(level);
-    closeEstimationModal();
-    // Rebuild completion annotations immediately, without altering real
-    // progress. Answers to this check are never written as learned words.
-    await window.renderLevelSelector?.(selectedLanguage, { preferActionable: true });
-    if (isSpeechMode()) {
-        const targetRank = choice?.startRank ?? ((estimationState.estimatedLevelRank || level) + 1);
-        await selectLevelForRank(targetRank);
-    }
+    window._applyingPlacement = true;
+    try {
+        closeEstimationModal();
+        // A recheck begins in the study screen; return to setup before routing.
+        if (estimationState.recheck) await window.goBackToSetup?.();
+        await window.renderLevelSelector?.(selectedLanguage, { preferActionable: true });
+        if (isSpeechMode()) {
+            const targetRank = choice?.startRank ?? ((estimationState.estimatedLevelRank || level) + 1);
+            await selectLevelForRank(targetRank);
+        }
+    } finally { window._applyingPlacement = false; }
 }
 
 function retryEstimation() {
@@ -1064,7 +1098,9 @@ function retryEstimation() {
 async function selectLevelForRank(rank) {
     const target = levelButtonForRank(rank);
     if (!target) return false;
-    target.button.click();
+    const wasApplying = window._applyingPlacement;
+    window._applyingPlacement = true;
+    try { target.button.click(); } finally { window._applyingPlacement = wasApplying; }
     await target.button._rangeRenderPromise;
     return true;
 }
@@ -1142,22 +1178,13 @@ function placementStorageKey() {
         ? `account:${currentUser.initials || currentUser.id || currentUser.email}` : 'guest';
     return `fluency-placement-v1:${encodeURIComponent(account)}:${selectedLanguage}`;
 }
-function placementFastTrackProfile() {
-    try {
-        const account = currentUser && !currentUser.isGuest ? String(currentUser.initials) : 'guest';
-        const value = JSON.parse(localStorage.getItem(`fluency_fast_track_v1|${account}|${selectedLanguage.toLowerCase()}`) || 'null');
-        return value ? { enabled: value.enabled, skip: value.skip, bridge: value.bridge,
-            excludedKnownLanguages: value.excludedKnownLanguages } : null;
-    } catch (_) { return null; }
-}
 function placementProfileKey() {
     const cfg = getEstimationLangConfig() || {};
-    return JSON.stringify({ release: cfg.indexPath || cfg.dataPath, pool: cfg.estimationPoolPath,
+    return JSON.stringify({ method: 'non-cognate-placement/v1', release: cfg.indexPath || cfg.dataPath, pool: cfg.estimationPoolPath,
         frequency: cfg.frequencyPath, cognates: cfg.cognatesPath, bridge: cfg.bridgePath,
-        languages: [...(window.activeKnownLanguages?.() || [])].sort(),
+        languages: [...(window.readKnownLanguages?.() || window.activeKnownLanguages?.() || [])].sort(),
         thresholds: window.getCognateAlgorithmInfo?.().thresholds || {},
-        threshold: globalThis.cognateThreshold, single: globalThis.hideSingleOccurrence,
-        fastTrack: placementFastTrackProfile() });
+        threshold: globalThis.cognateThreshold, single: globalThis.hideSingleOccurrence });
 }
 function writePlacementSession(session) {
     try { localStorage.setItem(placementStorageKey(), JSON.stringify(session)); }
@@ -1166,8 +1193,11 @@ function writePlacementSession(session) {
 function readPlacementSession() {
     try {
         const session = JSON.parse(localStorage.getItem(placementStorageKey()) || 'null');
-        if (!session || session.version !== 1 || session.profile !== placementProfileKey()
-            || session.choice.sourceRank !== levelEstimates[selectedLanguage]) return null;
+        if (!session || session.version !== 1) return null;
+        if (session.profile !== placementProfileKey() || session.choice.sourceRank !== levelEstimates[selectedLanguage]) {
+            localStorage.setItem(placementStorageKey(), 'null');
+            return null;
+        }
         return session;
     } catch (_) { return null; }
 }
@@ -1201,11 +1231,35 @@ function placementIsStable() {
     }
     return true;
 }
-function estimationQuestionLimit() { return estimationState.recheck ? 15 : ESTIMATION_QUESTION_LIMIT; }
+function estimationQuestionLimit() {
+    return estimationState.recheck ? 15
+        : ESTIMATION_QUESTION_LIMIT + (estimationState.extended ? ESTIMATION_EXTENSION_LIMIT : 0);
+}
+function canExtendEstimation() {
+    const state = estimationState;
+    return !state.recheck && !state.extended && state.wordsTestedCount === ESTIMATION_QUESTION_LIMIT
+        && !placementIsStable() && state.validWords.some(word =>
+            isShowableWord(word) && !state.shownWordIds.has(getWordKey(word)));
+}
+async function extendEstimation() {
+    const state = estimationState;
+    if (state.active || !state.extensionOffered || !canExtendEstimation()) return;
+    state.extended = true;
+    state.extensionOffered = false;
+    state.sequence = ++estimationSequence;
+    state.active = true;
+    state.loading = false;
+    document.getElementById('estimationExtensionOffer').hidden = true;
+    document.getElementById('estimationResult').style.display = 'none';
+    document.getElementById('estimationTest').style.display = 'flex';
+    // Keep all answers, band counts and shown IDs; only increase the budget.
+    await showNextWord();
+}
+window.extendEstimation = extendEstimation;
 function recheckWordEligible(word) {
     const choice = estimationState.recheck?.choice;
     if (!choice) return true;
-    return word.estimationMembers.every(({ source }) =>
+    return word.estimationMembers.filter(member => word.splitInfo || !member.assumedKnown).every(({ source }) =>
         (choice.rankBasis === 'stable' ? levelRankOf(source) : Number(source.rank)) < choice.startRank);
 }
 function armPlacementChecker(choice) {
@@ -1213,9 +1267,9 @@ function armPlacementChecker(choice) {
     const members = [];
     for (const item of state.validWords) {
         if (item.estimationAssumedKnown) continue;
-        for (const { source } of item.estimationMembers) {
+        for (const { source } of item.estimationMembers.filter(member => item.splitInfo || !member.assumedKnown)) {
             members.push({ rank: Number(source.rank), key: getWordKey(item),
-                id: String(item.splitInfo ? item.id : source.id || ''), split: Boolean(item.splitInfo) });
+                word: source.word, id: String(item.splitInfo ? item.id : source.id || ''), split: Boolean(item.splitInfo) });
         }
     }
     writePlacementSession({ version: 1, profile: placementProfileKey(), choice,
@@ -1245,10 +1299,13 @@ function beginPlacementStudySet(cards, context) {
     session.status = 'collecting'; session.set = identity;
     context.placementSet = identity;
     session.cards = {};
+    const code = window.LANG_CODES?.[selectedLanguage] || selectedLanguage.slice(0, 2);
+    const studiedGroups = new Set(session.members.filter(m =>
+        window.getWordProgressState?.(`${code}0${m.id}`, m.word)?.seen).map(m => m.key));
     for (const card of cards) {
         const matches = session.members.filter(m => m.rank === Number(card.rank));
         const member = matches.find(m => m.split ? String(card.fullId).endsWith(m.id) || String(card.id) === m.id : !card.splitInfo);
-        if (!member || card.previewOnly || card.isChainChild || estimationAssumesKnown(card)
+        if (!member || studiedGroups.has(member.key) || card.previewOnly || card.isChainChild || estimationAssumesKnown(card)
             || window.getWordProgressState?.(card.fullId, card.targetWord)?.seen
             || card.meanings?.some(m => m.isKnownSense)) continue;
         session.cards[card.fullId] = member.key;
@@ -1283,6 +1340,16 @@ function completePlacementStudySet(context) {
         writePlacementSession(session);
     }
     if (panel) panel.hidden = session.status !== 'offered';
+}
+function placementLevelSelected(start, end) {
+    if (window._applyingPlacement) return;
+    const session = readPlacementSession();
+    if (session && !(Number(start) <= session.choice.startRank && session.choice.startRank < Number(end))) {
+        session.status = 'done'; writePlacementSession(session);
+    }
+}
+function dismissPlacementOffer() {
+    if (readPlacementSession()?.status === 'offered') finishPlacementRecheck();
 }
 function finishPlacementRecheck() {
     const session = readPlacementSession();
@@ -1332,7 +1399,7 @@ function showPlacementRecheckResult() {
     document.getElementById('retryEstimationBtn').hidden = true;
     finishPlacementRecheck();
 }
-Object.assign(window, { observePlacementStudyCard, beginPlacementStudySet, recordPlacementStudyAnswer, completePlacementStudySet,
+Object.assign(window, { placementLevelSelected, dismissPlacementOffer, observePlacementStudyCard, beginPlacementStudySet, recordPlacementStudyAnswer, completePlacementStudySet,
     startPlacementRecheck, finishPlacementRecheck });
 
 // Pure helpers are exported for lightweight regression checks without a DOM.

@@ -92,6 +92,13 @@ function harness() {
     h.itemProgressData[bankItem.itemId] = {correct:1,lastCorrect:'2026-10-01T00:00:00Z'};
     h.__progressEpoch++;
     assert(h.bridgeVerdict(target), 'one known matching sense qualifies even if its parent is unseen');
+    assert.equal(h.bridgeVerdict(target,{useProfile:true,profileOnly:true,knownLanguages:[]}),null,
+        'placement never borrows Smart Skip progress');
+    h.relevantSmartSkipLanguages=()=>[];
+    assert(h.bridgeVerdict(target,{useProfile:true,profileOnly:true,knownLanguages:['es']}),
+        'placement uses declared languages even when study excludes a source');
+    delete h.relevantSmartSkipLanguages;
+
     bank.progressEligible = false; h.__progressEpoch++;
     assert.equal(h.bridgeVerdict(target),null,'unused dictionary senses do not inherit whole-card progress');
     bank.progressEligible = true; h.__progressEpoch++;

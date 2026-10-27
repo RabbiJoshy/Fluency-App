@@ -139,5 +139,82 @@ function fixture(h, known = 0) {
     await h.startEstimation(h.readPlacementSession());
     assert.equal(h.levelEstimates.spanish,60);
     assert.equal(h.readPlacementSession().status,'done');
+    // Initial extension is offered only at the uncertain 30-answer boundary.
+    h=harness(); fixture(h);
+    h.run(`estimationState.wordsTestedCount=30;
+        estimationState.answers=[{key:'surface:1',known:true}];
+        estimationState.shownWordIds.add('surface:1');
+        showEstimationResult();`);
+    assert.equal(h.elements.get('estimationExtensionOffer').hidden,false);
+    assert.equal(h.canExtendEstimation(),true);
+    const retainedAnswers=h.estimationState.answers;
+    const retainedBands=h.estimationState.bands;
+    await h.extendEstimation();
+    assert.equal(h.estimationQuestionLimit(),45);
+    assert.equal(h.estimationState.wordsTestedCount,30);
+    assert.equal(h.estimationState.answers,retainedAnswers);
+    assert.equal(h.estimationState.bands,retainedBands);
+    assert.notEqual(h.estimationState.currentWord.id,'1');
+    assert.equal(h.elements.get('estimationExtensionOffer').hidden,true);
+    await h.extendEstimation(); // double click cannot allocate another extension
+    assert.equal(h.estimationQuestionLimit(),45);
+    h.estimationState.wordsTestedCount=45;
+    await h.showNextWord();
+    assert.equal(h.estimationState.active,false);
+    assert.equal(h.canExtendEstimation(),false);
+    assert.equal(h.elements.get('estimationExtensionOffer').hidden,true);
+
+    h=harness(); fixture(h);
+    h.run(`estimationState.wordsTestedCount=30;
+        estimationState.bands.forEach(b=>{b.answers=100;b.known=0;});
+        estimationState.placementHistory=Array(5).fill(placementSignature());
+        showEstimationResult();`);
+    assert.equal(h.canExtendEstimation(),false); // already stable
+    h.estimationState.extended=true;
+    h.estimationState.active=true;
+    h.estimationState.wordsTestedCount=31;
+    await h.showNextWord();
+    assert.equal(h.estimationState.active,false); // extension can finish early
+    h.estimationState.extended=false;
+    h.estimationState.placementHistory=[];
+    h.estimationState.wordsTestedCount=30;
+    h.estimationState.validWords.forEach(w=>h.estimationState.shownWordIds.add(w.estimationKey));
+    assert.equal(h.canExtendEstimation(),false); // exhausted pool
+    h.estimationState.shownWordIds.clear();
+    h.estimationState.recheck=h.readPlacementSession();
+    assert.equal(h.canExtendEstimation(),false); // follow-up remains capped at 15
+    assert.equal(h.estimationQuestionLimit(),15);
+    h.openEstimationModal();
+    assert.equal(h.estimationQuestionLimit(),30);
+    assert.equal(h.elements.get('estimationExtensionOffer').hidden,true);
+
+    // Study toggles do not invalidate evidence; the declared languages do.
+    h=harness({readKnownLanguages:()=>['en']}); fixture(h);
+    const profile=h.placementProfileKey();
+    storage.set('fluency_fast_track_v1|guest|spanish',JSON.stringify({enabled:true,skip:true,bridge:true,excludedKnownLanguages:['en']}));
+    h.excludeCognates=true;
+    h.activeKnownLanguages=()=>[];
+    assert.equal(h.placementProfileKey(),profile);
+    assert.ok(h.readPlacementSession());
+    h.readKnownLanguages=()=>['en','pl'];
+    assert.equal(h.readPlacementSession(),null);
+    // The actual cognate predicate ignores study source exclusions for placement.
+    h=harness({readLanguageProfile:()=>({languages:['en']}),
+        readKnownLanguageSourceExclusions:()=>['en'], relevantSmartSkipLanguages:()=>[]});
+    h.loadModule('cognates.js');
+    const transparent={word:'hospital',cognate_score:1,meanings:[{translation:'hospital',pos:'NOUN'}]};
+    assert.equal(h.isCognateKnown(transparent),false);
+    assert.equal(h.isCognateKnown(transparent,{placement:true}),true);
+    assert.equal(h.estimationAssumesKnown(transparent),true);
+    h.readLanguageProfile=()=>({languages:[]});
+    assert.equal(h.estimationAssumesKnown(transparent),false);
+
+    // Main senses precede low-share / unused dictionary readings at reveal.
+    h=harness();
+    assert.equal(h.getWordTranslation({word:'banco',meanings:[
+        {translation:'obsolete sense',pos:'NOUN',frequency:1,lowShare:true},
+        {translation:'bench',pos:'NOUN',frequency:20},
+        {translation:'bank',pos:'NOUN',frequency:80}]}),'(NOUN) bank, (NOUN) bench');
+
     console.log('Placement evidence, sampling, stopping, first-set trigger, recheck and progress preservation passed.');
 })();

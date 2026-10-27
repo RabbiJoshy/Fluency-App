@@ -200,5 +200,5 @@ const {createHarness} = require('./estimation_harness.cjs');
     assert.equal(beginnerPlacement.choices[0].levelNumber, 1, 'Beginner learner should place at level 1');
     assert.equal(beginnerPlacement.choices[0].setNumber, 1, 'Beginner learner should place at set 1');
 
-    console.log('Detached metadata, precomputed pool fast-path, bounded loading, frequency matching, lazy examples and retry checks passed.');
+    console.log('Detached metadata, profile-safe live fallback, bounded loading, frequency matching, lazy examples and retry checks passed.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

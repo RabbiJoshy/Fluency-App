@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-27T00:39:22+00:00",
+      "date": "2026-10-27 00:39 GMT",
+      "agent": "Codex",
+      "summary": "Level placement measures non-cognate vocabulary consistently and offers an optional longer check.",
+      "detail": [
+        "Cognates no longer inflate placement familiarity, including mixed groups; Smart Skip preferences do not affect the estimate or invalidate its evidence.",
+        "Keep initial placement and first-set recheck evidence separate from learned progress; only accept an earlier recheck position explicitly.",
+        "Offer up to 15 extra questions after an uncertain initial check, retaining earlier answers and stopping when stable.",
+        "Clarify that recalling any main meaning counts, including slow recall or different wording; prioritise supported main readings."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-27T00:32:00+00:00",
       "date": "2026-10-27 00:32 GMT",
       "agent": "Antigravity",
@@ -324,31 +337,6 @@
         "Larger level arrows and desktop progress legend; white Learn and Practise button text.",
         "Smart Skip master switch and count move to the desktop left; mobile hides the total.",
         "Meaning pinning hides scrubbers and other tools, keeps See again visible, and places instructions on the card with extra room for pins."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T20:08:14+00:00",
-      "date": "2026-10-26 20:08 GMT",
-      "agent": "Claude",
-      "summary": "Merged cards: singular and plural nouns (casa/casas) and gender forms (querido/querida) now share a card.",
-      "detail": [
-        "Noun proof noun-merge/v3: a feminine form counts as an inflection like a plural; another word on a noun's menu (casa: casar) no longer blocks it, and is judged by the 3-example, 10% bar instead; a noun and adjective of one headword are one word.",
-        "Portuguese: 1,073 forms join 813 cards (casa/casas, coisa/coisas, vida/vidas, querido/querida/queridos, conta/contas).",
-        "Spanish: six feminine forms join (profesora, compañera, secretaria…); most Spanish nouns still lack SpanishDict evidence.",
-        "Full list: docs/audits/noun-merge-v3-2026-10-26/README.md."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T19:24:35+00:00",
-      "date": "2026-10-26 19:24 GMT",
-      "agent": "Claude",
-      "summary": "Merged cards: a noun spelled like its verb (o olhar \"gaze\", o poder \"power\") now gets its own card.",
-      "detail": [
-        "Rule form-privilege/v3 (decision 0033): a noun with the same headword as its verb's infinitive counts as another word, on the infinitive's spelling or its plural only.",
-        "Portuguese: olhar, olhares, poder and andar get their own cards; their other forms (olha, pode, anda…) stay merged. Spanish: no change.",
-        "Conjugated forms are never split by it: Spanish sean, where the name Sean had been filed under ser \"being\", stays on ser."
       ],
       "commit": "pending"
     }

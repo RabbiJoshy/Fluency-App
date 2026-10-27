@@ -50,7 +50,8 @@ function control(dataset = {}) {
     assert.equal(h.savedRank,50); assert.equal(h.clickedLevel,6); assert.equal(h.annotationsRefreshed,true);
     assert.deepEqual(h.progressData,{existing:{seen:true}});
 
-    // Cognates count towards recognition without becoming sampled prompts.
+    // Cognates neither become prompts nor inflate placement familiarity.
+    // The separate legacy vocabulary-size helper may still report a total.
     const cognate = word('hospital',10,[meaning('hospital','hospital')],{cognate_score:1});
     const opaque = word('opaco',1,[meaning('opaco','opaque')]);
     const full = h.buildEstimationPool([opaque,cognate],{values:{hospital:10,opaco:20}},{includeAssumed:true});
@@ -62,7 +63,7 @@ function control(dataset = {}) {
     assert.equal(h.pickWordFromBand(0),null);
     const sampleBands=h.buildEstimationBands(full); sampleBands[0].answers=1; sampleBands[0].known=0;
     result=h.calculateRecognitionPlacement(full,sampleBands,[{number:1,startRank:1,endRank:11}], [opaque,cognate]);
-    assert.equal(result.profile[0].probability,.5);
+    assert.equal(result.profile[0].probability,0);
     assert.equal(h.calculateGroupEstimate(sampleBands,2).point,1);
     sampleBands[0].known=1; assert.equal(h.calculateGroupEstimate(sampleBands,2).point,2);
     const assumedOnly=h.buildEstimationBands([full[1]]);
@@ -74,7 +75,7 @@ function control(dataset = {}) {
         {estimationKey:'cognate',estimationAssumedKnown:true,estimationMembers:[{source:{rank:21},weight:1}]}];
     result=h.calculateRecognitionPlacement(grouped,[{start:0,end:2,size:2,sampleSize:1,answers:5,known:3}],
         [{number:1,startRank:1,endRank:22}], [...members,{rank:21}]);
-    assert.ok(Math.abs(result.profile[0].probability-.8)<1e-10);
+    assert.ok(Math.abs(result.profile[0].probability-.6)<1e-10);
 
     // Mixed groups use their most frequent non-cognate form, even when a
     // cognate is the group's frequency leader.
@@ -84,7 +85,28 @@ function control(dataset = {}) {
         word('hospitales',2,[meaning('hospital','hospitals',1,{source_reference:'dictionary:hospital:noun'})],{noun_merge:nounProof})
     ],{values:{hospital:100,hospitales:5}},{includeAssumed:true});
     assert.equal(mixed.length,1); assert.equal(mixed[0].word,'hospitales');
-    assert.equal(mixed[0].estimationAssumedKnown,false); assert.equal(mixed[0].estimationFrequency,105);
+    assert.equal(mixed[0].estimationAssumedKnown,false); assert.equal(mixed[0].estimationFrequency,5);
+    const mixedBands=h.buildEstimationBands(mixed); mixedBands[0].answers=10; mixedBands[0].known=3;
+    const mixedPlacement=h.calculateRecognitionPlacement(mixed,mixedBands,
+        [{number:1,startRank:1,endRank:3}],mixed[0].estimationMembers.map(m=>m.source));
+    assert.equal(mixedPlacement.profile[0].groups,1);
+    assert.ok(Math.abs(mixedPlacement.profile[0].probability-.3)<1e-10);
+    assert.equal(h.isShowableWord(mixed[0]),true,'non-cognate representative must not inherit the cognate leader verdict');
+    const onlyCognate=h.calculateRecognitionPlacement([full[1]],h.buildEstimationBands([full[1]]),
+        [{number:1,startRank:1,endRank:11}],[cognate]);
+    assert.equal(onlyCognate.choices.length,0,'an all-cognate region supplies no placement evidence');
+
+    // Inserting a cognate into a band's coordinates cannot move the curve.
+    const ordinary=items.slice(0,10);
+    const originalBands=[{start:0,end:5,size:5,sampleSize:5,answers:10,known:9},
+        {start:5,end:10,size:5,sampleSize:5,answers:10,known:3}];
+    const before=h.calculateRecognitionPlacement(ordinary,originalBands,levels,rows);
+    const inserted=[ordinary[0],{...full[1],estimationMembers:[{source:{rank:1},weight:1}]},...ordinary.slice(1)];
+    const after=h.calculateRecognitionPlacement(inserted,[{...originalBands[0],end:6},
+        {...originalBands[1],start:6,end:11}],levels,rows);
+    assert.deepEqual(Array.from(after.profile,p=>p.probability),Array.from(before.profile,p=>p.probability));
+    assert.deepEqual(Array.from(after.choices,c=>c.startRank),Array.from(before.choices,c=>c.startRank));
+
     const blocked=h.buildEstimationPool([
         word('hospital',1,[meaning('hospital','hospital')],{noun_merge:{...nounProof,allowed:false}}),
         word('hospitales',2,[meaning('hospital','hospitals')],{noun_merge:{...nounProof,allowed:false}})
