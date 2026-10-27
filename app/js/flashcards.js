@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=83d38224';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=83d38224';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=83d38224';
-import { songCreditHTML } from './song-credit.js?v=83d38224';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=83d38224';
+import './state.js?v=c6517fa7';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=c6517fa7';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=c6517fa7';
+import { songCreditHTML } from './song-credit.js?v=c6517fa7';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=c6517fa7';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=83d38224';
-import { fitSenseRowText } from './card-row-layout.js?v=83d38224';
+import { exampleTranslationAlignment } from './example-alignment.js?v=c6517fa7';
+import { fitSenseRowText } from './card-row-layout.js?v=c6517fa7';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=83d38224';
-import { goToRoute, routeCodeFor } from './routes.js?v=83d38224';
-import { memoryTipTileHTML } from './memory-tips.js?v=83d38224';
+import './speech.js?v=c6517fa7';
+import { goToRoute, routeCodeFor } from './routes.js?v=c6517fa7';
+import { memoryTipTileHTML } from './memory-tips.js?v=c6517fa7';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=83d38224';
-import './side-dock.js?v=83d38224';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=83d38224';
+} from './function-word-card.js?v=c6517fa7';
+import './side-dock.js?v=c6517fa7';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=c6517fa7';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=83d38224';
+} from './example-personalisation.js?v=c6517fa7';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=83d38224';
+} from './spanishdict-usage.js?v=c6517fa7';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=83d38224';
+} from './reverse-cues.js?v=c6517fa7';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=83d38224';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=83d38224';
+} from './card-metadata-pills.js?v=c6517fa7';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=c6517fa7';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -5471,7 +5471,9 @@ function exampleFaviconHTML(domain) {
         'tatoeba.org': 'icons/tatoeba.svg',
         'wiktionary.org': 'icons/wikipedia-w.svg',
     }[domain];
-    const src = localIcon || `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+    const src = localIcon
+        ? new URL(`../${localIcon}`, import.meta.url).href
+        : `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
     const className = domain === 'wiktionary.org' ? ' example-source-favicon--wikipedia' : '';
     return `<img class="example-source-favicon dict-provenance-icon${className}" src="${src}" width="34" height="34" alt="" aria-hidden="true">`;
 }
@@ -7355,8 +7357,12 @@ function renderCardWikipediaBadge(card) {
             || label.grammar
             || 'base form';
     };
+    // Several verb pills can share the same analyses on the two faces.
+    // Reuse their markup within this render; the next update starts fresh.
+    let morphPopoverHTML;
     const renderMorphPopover = () => {
-        if (!morphLabels.length) return '';
+        if (morphPopoverHTML !== undefined) return morphPopoverHTML;
+        if (!morphLabels.length) return (morphPopoverHTML = '');
         const renderRow = (label, isPrimary) => {
             const form = describeMorphForm(label);
             if (!label.person && !form) return null;
@@ -7368,7 +7374,7 @@ function renderCardWikipediaBadge(card) {
                 <span class="morph-pop-form">${escapeCardText(form)}</span>
             </li>`;
         };
-        const usable = morphLabels.filter(label => renderRow(label, false));
+        const usable = morphLabels.filter(label => label.person || describeMorphForm(label));
         if (!usable.length) return '';
         const primary = renderRow(usable[0], true);
         const alternatives = usable.slice(1).map(label => renderRow(label, false));
@@ -7383,11 +7389,11 @@ function renderCardWikipediaBadge(card) {
                 <ul class="morph-pop-list morph-pop-alts" hidden>${alternatives.join('')}</ul>`
             : '';
         const heading = altCount ? 'Preferred reading' : 'Form';
-        return `<div class="morph-popover" hidden role="dialog" aria-label="Verb morphology">
+        return (morphPopoverHTML = `<div class="morph-popover" hidden role="dialog" aria-label="Verb morphology">
             <div class="morph-pop-title">${heading}</div>
             <ul class="morph-pop-list">${primary}</ul>
             ${altBlock}
-        </div>`;
+        </div>`);
     };
     // The pill remains a press-to-reveal control for the complete explanation.
     // English-first cards additionally receive the compact persistent rendering
@@ -9959,15 +9965,8 @@ function renderCardWikipediaBadge(card) {
         const currentPair = pairOf(scrubIndex);
         Array.from(progressSegments.children).forEach((segment, i) => {
             const pair = pairOf(i);
-            if (pair) {
-                segment.dataset.pair = String(pair.start);
-                segment.dataset.pairPos = pair.pos;
-            } else {
-                delete segment.dataset.pair;
-                delete segment.dataset.pairPos;
-            }
-            segment.classList.toggle('is-pair-active', Boolean(pair && currentPair && pair.start === currentPair.start));
-            const distance = Math.abs(i - scrubIndex);
+            const isPairActive = Boolean(pair && currentPair && pair.start === currentPair.start);
+            const distance = Math.min(Math.abs(i - scrubIndex), 4);
             const result = stats.cardStats[i] || null;
             const hasCorrect = Number(result?.correct || 0) > 0;
             const hasIncorrect = Number(result?.incorrect || 0) > 0;
@@ -9975,14 +9974,32 @@ function renderCardWikipediaBadge(card) {
                 ? 'mixed'
                 : (hasCorrect ? 'correct' : (hasIncorrect ? 'incorrect' : 'unanswered'));
             const isScrubCurrent = i === scrubIndex;
-            segment.classList.toggle('is-visited', stats.studied.has(i));
+            const isVisited = stats.studied.has(i);
+            const isPhraseCurrent = onPhraseCard && isScrubCurrent;
+            // Example/sense changes rerender the card without changing this
+            // ruler. Avoid rewriting every segment's attributes in large sets.
+            // Include all displayed state so grades, resets, split companions
+            // and phrase handoffs still refresh without a persistent deck cache.
+            const renderState = [segmentCount, pair?.start, pair?.pos, isPairActive,
+                distance, resultState, isScrubCurrent, isVisited, isPhraseCurrent].join('|');
+            if (segment._fluencyProgressState === renderState) return;
+            segment._fluencyProgressState = renderState;
+            if (pair) {
+                segment.dataset.pair = String(pair.start);
+                segment.dataset.pairPos = pair.pos;
+            } else {
+                delete segment.dataset.pair;
+                delete segment.dataset.pairPos;
+            }
+            segment.classList.toggle('is-pair-active', isPairActive);
+            segment.classList.toggle('is-visited', isVisited);
             segment.classList.toggle('is-current', isScrubCurrent);
             // The marker stays put; its colour is what says "you're in phrases".
-            segment.classList.toggle('is-phrases', onPhraseCard && isScrubCurrent);
+            segment.classList.toggle('is-phrases', isPhraseCurrent);
             segment.classList.toggle('is-result-correct', resultState === 'correct');
             segment.classList.toggle('is-result-incorrect', resultState === 'incorrect');
             segment.classList.toggle('is-result-mixed', resultState === 'mixed');
-            segment.dataset.distance = String(Math.min(distance, 4));
+            segment.dataset.distance = String(distance);
             segment.dataset.result = resultState;
             segment.setAttribute('aria-current', isScrubCurrent ? 'step' : 'false');
             segment.setAttribute('aria-label', onPhraseCard && isScrubCurrent
@@ -11913,8 +11930,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '83d38224';
-const MODALS_ASSET_VERSION = '83d38224';
+const ASSET_VERSION = 'c6517fa7';
+const MODALS_ASSET_VERSION = 'c6517fa7';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

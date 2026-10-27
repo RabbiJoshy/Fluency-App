@@ -6,7 +6,7 @@
 // directly. State (flashcards, currentIndex, currentUser, etc.) and helpers
 // like flagWord and getPosColorClass come through the globalThis proxy
 // installed by state.js / auth.js / flashcards.js.
-import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=83d38224';
+import { savedPhraseEntry, saveItemButtonHTML } from './saved-items.js?v=c6517fa7';
 
 // ---------------------------------------------------------------------------
 // Part-of-speech popup
@@ -1190,9 +1190,25 @@ function navigateToCard(targetIndex) {
 // peek) is studied as it is in a set: companions wait in `_splitNext`/`_splitPrev`
 // (stepToSplitSibling shows each in turn, in either direction). When the
 // path focuses one meaning, the card holding it opens first.
+// Load the same published figures used by study sets for search and word links.
+// Only rerender if one of these cards is still visible in the same language.
+function hydrateTempCardFrequency(cards, vocabEntry) {
+    const language = selectedLanguage;
+    const langConfig = config?.languages?.[language];
+    if (!window.loadSpeechSourceFrequency || !window.applyStandaloneSourceFrequency) return;
+    window.loadSpeechSourceFrequency(langConfig).then(sourceData => {
+        if (!sourceData) return;
+        cards.forEach(card => window.applyStandaloneSourceFrequency(card, vocabEntry, sourceData));
+        if (selectedLanguage === language && cards.includes(flashcards[currentIndex])) updateCard();
+    }).catch(error => console.warn('Standalone source frequency unavailable:', error));
+}
+
 function splitAwareTempCard(vocabEntry, baseCard, focusIndex = 0) {
     const pair = window.buildSplitCardPair?.(vocabEntry, baseCard, baseCard.meanings);
-    if (!pair) return { card: baseCard, meaningIndex: focusIndex };
+    if (!pair) {
+        hydrateTempCardFrequency([baseCard], vocabEntry);
+        return { card: baseCard, meaningIndex: focusIndex };
+    }
     const focused = baseCard.meanings[focusIndex];
     const same = m => m === focused || (focused && m.meaning === focused.meaning
         && (m.senseId || '') === (focused.senseId || '') && (m.headword || '') === (focused.headword || ''));
@@ -1203,6 +1219,7 @@ function splitAwareTempCard(vocabEntry, baseCard, focusIndex = 0) {
         card._splitNext = ordered[index + 1] || null;
         card._splitPrev = ordered[index - 1] || null;
     });
+    hydrateTempCardFrequency(ordered, vocabEntry);
     const first = ordered[0];
     const meaningIndex = focusIndex > 0 ? Math.max(0, first.meanings.findIndex(same)) : 0;
     return { card: first, meaningIndex };

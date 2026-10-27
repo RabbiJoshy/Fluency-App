@@ -1,17 +1,17 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=83d38224';
-import { readJsonWithTimeout } from './read-request.js?v=83d38224';
-import { validateVocabularyIndex } from './data-contracts.js?v=83d38224';
-import { formatRoute } from './routes.js?v=83d38224';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=83d38224';
-import { releaseUrl } from './release-host.js?v=83d38224';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=83d38224';
-import { getGrammarWordDefinition } from './function-word-card.js?v=83d38224';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=83d38224';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=83d38224';
-import { createExampleAlignmentLoader } from './example-alignment.js?v=83d38224';
+import './state.js?v=c6517fa7';
+import { readJsonWithTimeout } from './read-request.js?v=c6517fa7';
+import { validateVocabularyIndex } from './data-contracts.js?v=c6517fa7';
+import { formatRoute } from './routes.js?v=c6517fa7';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=c6517fa7';
+import { releaseUrl } from './release-host.js?v=c6517fa7';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=c6517fa7';
+import { getGrammarWordDefinition } from './function-word-card.js?v=c6517fa7';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=c6517fa7';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=c6517fa7';
+import { createExampleAlignmentLoader } from './example-alignment.js?v=c6517fa7';
 
 let exampleAlignmentLoader = null;
 function attachExampleAlignment(payload, langConfig) {
@@ -58,6 +58,25 @@ function speechSourceFrequencyForSurface(surface, sourceData) {
 
 function speechSourceFrequencyOf(item, sourceData) {
     return speechSourceFrequencyForSurface(item?.word, sourceData);
+}
+
+// Standalone search/link cards have no merged-family total. Use the measured
+// displayed surface, or explicitly name the source row when it differs.
+function applyStandaloneSourceFrequency(card, item, sourceData) {
+    if (!card || !sourceData) return;
+    const own = speechSourceFrequencyForSurface(card.displaySurface || card.targetWord, sourceData);
+    const representative = speechSourceFrequencyOf(item, sourceData);
+    card.sourceFrequency = own ?? representative;
+    card.sourceFrequencyBasis = own !== null ? 'own' : representative !== null ? 'other-surface' : 'none';
+    card.sourceFrequencyBasisSurface = card.sourceFrequencyBasis === 'other-surface' ? item.word : '';
+    card.sourceFrequencyIsGroupTotal = false;
+    card.sourceFrequencyForms = 1;
+    card.sourceFrequencyBreakdown = card.sourceFrequency === null ? [] : [{
+        surface: own !== null ? (card.displaySurface || card.targetWord) : item.word,
+        value: card.sourceFrequency,
+    }];
+    card.sourceFrequencyUnit = sourceData.unit || '';
+    card.sourceFrequencySource = sourceData.source || '';
 }
 
 const _cachedLemmaSourceFrequencies = new WeakMap();
@@ -5384,6 +5403,7 @@ window.loadPrecomputedEstimationPool = loadPrecomputedEstimationPool;
 window.prepareEstimationCognates = prepareEstimationCognates;
 window.loadEstimationExamples = loadEstimationExamples;
 window.loadSpeechSourceFrequency = loadSpeechSourceFrequency;
+window.applyStandaloneSourceFrequency = applyStandaloneSourceFrequency;
 window.fetchActiveVocabularyData = fetchActiveVocabularyData;
 window.ensureLemmaPoolingData = ensureLemmaPoolingData;
 window.getWordId = getWordId;

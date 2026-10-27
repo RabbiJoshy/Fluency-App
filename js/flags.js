@@ -7,7 +7,7 @@
 // — language chip, picker, loading mark, reverse button — gets it without its
 // own code. A flag we have no file for stays an emoji.
 
-const FLAG_DIR = 'assets/flags/';
+const FLAG_DIR = new URL('../assets/flags/', import.meta.url).href;
 const AVAILABLE = new Set([
     'ao', 'ar', 'bo', 'br', 'cl', 'co', 'cr', 'cu', 'cz', 'do', 'es', 'fi', 'fr',
     'gb', 'gt', 'gw', 'hn', 'it', 'mo', 'mx', 'mz', 'ni', 'nl', 'pa', 'pe', 'pl',
@@ -68,6 +68,7 @@ const SKIP_PARENTS = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT', 'OPTION', 
 
 function replaceFlagsInTextNode(node) {
     const text = node.nodeValue;
+    FLAG_EMOJI.lastIndex = 0;
     if (!text || !FLAG_EMOJI.test(text)) return;
     FLAG_EMOJI.lastIndex = 0;
     const parent = node.parentNode;
