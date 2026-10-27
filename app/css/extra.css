@@ -1592,25 +1592,3 @@
   color: var(--text-secondary);
   font: 14px/1.5 var(--font-reading);
 }
-
-
-
-/* Verb drills opened from a study card cover the whole screen (no navigation
-   gutter, nothing of the card or its panel showing through) and sit above any
-   card panel; closing returns to the card. */
-body #extraModal.is-from-card:not(.hidden) {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100dvh !important;
-  z-index: 3000;
-  padding: 16px !important;
-  align-items: flex-start !important;
-  background: var(--bg-primary) !important;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-body #extraModal.is-from-card:not(.hidden) > .modal-content {
-  max-width: 900px;
-  margin: 0 auto;
-}
