@@ -1,6 +1,6 @@
 // Read-only transfer of verified source meaning knowledge. No target progress is written.
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=1e1535e6';
-import { mergeProgressRecords } from './progress-identity.js?v=1e1535e6';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=ff461f74';
+import { mergeProgressRecords } from './progress-identity.js?v=ff461f74';
 
 let bundle = null;
 let revision = 0;
@@ -68,7 +68,7 @@ function sourceKnown(card) {
         return state?.known === true;
     });
 }
-function verdict(item, {useProfile = false, forceProgress = false} = {}) {
+function verdict(item, {useProfile = false, forceProgress = false, profileOnly = false, knownLanguages = null} = {}) {
     if (!bundle || bundle.targetLanguage !== selectedLanguage) return null;
     const word = normalize(item?.word || item?.targetWord);
     const target = bundle.targets[word];
@@ -90,12 +90,12 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
             return headwordMatch && transMatch;
         });
     })) return null;
-    const profile = useProfile ? new Set(globalThis.activeKnownLanguages?.() || []) : new Set();
-    const useProgress = forceProgress || enabled();
+    const profile = useProfile ? new Set(knownLanguages || globalThis.activeKnownLanguages?.() || []) : new Set();
+    const useProgress = !profileOnly && (forceProgress || enabled());
     if (!profile.size && !useProgress) return null;
     const preference = readFastTrack(selectedLanguage);
     const epoch = [revision, window.__progressEpoch || 0, preference.updatedAt,
-        window.readLanguageProfile?.().updatedAt || 0, (window.relevantSmartSkipLanguages?.() || Object.keys(bundle.sources)).join(','), useProfile, forceProgress].join('|');
+        window.readLanguageProfile?.().updatedAt || 0, (window.relevantSmartSkipLanguages?.() || Object.keys(bundle.sources)).join(','), useProfile, forceProgress, profileOnly, [...profile].sort().join(',')].join('|');
     if (cacheEpoch !== epoch) {cacheEpoch = epoch; verdictCache.clear();}
     if (verdictCache.has(word)) return verdictCache.get(word);
     const evidence = [];
@@ -103,7 +103,7 @@ function verdict(item, {useProfile = false, forceProgress = false} = {}) {
         let match = null;
         for (const candidate of requirement) {
             const [code, sourceWord, pivot] = candidate;
-            if (window.relevantSmartSkipLanguages && !window.relevantSmartSkipLanguages().includes(code)) continue;
+            if (!profileOnly && window.relevantSmartSkipLanguages && !window.relevantSmartSkipLanguages().includes(code)) continue;
             if (profile.has(code) && (!target.meanings[index]?.verb || bundle.verb_compatible?.[word]?.[code] === true)) {
                 match = {code, word: sourceWord, pivot, basis: 'profile'};
                 break;

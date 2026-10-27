@@ -19,7 +19,7 @@
 //
 // The old scalar still works. Where a release predates this, `cognate_score`
 // is read as the English entry, so Spanish is untouched.
-import './state.js?v=1e1535e6';
+import './state.js?v=ff461f74';
 
 const SELECTED_KEY = 'fluency_known_languages_v1';
 
@@ -276,11 +276,14 @@ function cognateScoreFor(item, code) {
 
 // Does any language the learner reads already give them this word? Each is
 // asked separately, at its own cutoff.
-function isCognateKnown(item) {
+function isCognateKnown(item, { placement = false } = {}) {
     if (!item) return false;
-    if (globalThis.bridgeVerdict?.(item, { useProfile: true })) return true;
+    // Placement follows the declared language profile, never study exclusions
+    // or vocabulary transferred from another deck by Smart Skip.
+    const languages = placement ? readSelected() : activeKnownLanguages();
+    if (globalThis.bridgeVerdict?.(item, { useProfile: true, profileOnly: placement, knownLanguages: languages })) return true;
     if (isSenseItem(item)) {
-        for (const code of activeKnownLanguages()) {
+        for (const code of languages) {
             if (code !== 'en' && globalThis.bridgeVerbCompatible?.(item, code) === false) continue;
             const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
             if (cognateScoreFor(item, code) >= cutoff) return true;
@@ -295,10 +298,10 @@ function isCognateKnown(item) {
     // Preferring the map would have silently narrowed Spanish Lyrics to
     // whichever of its words happened to appear in the Speech map.
     const legacy = Number(item.cognate_score || 0);
-    if (activeKnownLanguages().includes('en') && legacy > 0 && legacy >= Number(globalThis.cognateThreshold || 0)) return true;
+    if (languages.includes('en') && legacy > 0 && legacy >= Number(globalThis.cognateThreshold || 0)) return true;
     const perLanguage = item.cognate_scores;
     if (!perLanguage) return false;
-    for (const code of activeKnownLanguages()) {
+    for (const code of languages) {
         if (code !== 'en' && globalThis.bridgeVerbCompatible?.(item, code) === false) continue;
         const score = Number(perLanguage[code] || 0);
         const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
