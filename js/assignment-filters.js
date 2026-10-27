@@ -2,7 +2,7 @@
 // (mercury-decide, Jev, or none), its lowest published confidence, gaps (a
 // sentence kept NONE), and parts of speech. All of it comes from the release's
 // filter index; filtering never touches card IDs, progress or assignments.
-import { readJsonWithTimeout } from './read-request.js?v=77b99200';
+import { readJsonWithTimeout } from './read-request.js?v=a58f9b9f';
 
 export const assignmentFilter = {
     excludeSingleSense: false,

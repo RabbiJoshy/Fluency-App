@@ -135,15 +135,15 @@ export async function openConjugationsScreen(targetVerb = null, targetView = nul
 
     try {
         if (!window.ConjugationProgress) {
-            await loadScript('conjugation/progress.js?v=77b99200');
+            await loadScript('conjugation/progress.js?v=a58f9b9f');
         }
         if (!window.conjugationBoot) {
-            await loadScript('conjugation/app.js?v=77b99200');
+            await loadScript('conjugation/app.js?v=a58f9b9f');
         }
         if (!window._conjugationDecks || !window._conjugationDecks[drillCode]) {
-            await loadScript(`conjugation/data/${drillCode}.js?v=77b99200`);
+            await loadScript(`conjugation/data/${drillCode}.js?v=a58f9b9f`);
             try {
-                await loadScript(`conjugation/data/${drillCode}-not-verbs.js?v=77b99200`);
+                await loadScript(`conjugation/data/${drillCode}-not-verbs.js?v=a58f9b9f`);
             } catch (_) {
                 // not-verbs is optional
             }
@@ -313,18 +313,7 @@ export async function openSongPickerScreen() {
     renderSongsList(songs);
 }
 
-// Verb drills opened from a study card return to that card, not to the Extra
-// menu: the menu is a page the learner never visited.
-let conjugationFromCard = false;
-
-function setConjugationFromCard(on) {
-    conjugationFromCard = on;
-    document.getElementById('extraModal')?.classList.toggle('is-from-card', on);
-    const label = document.querySelector('#extraConjugationsBackBtn .extra-back-label');
-    if (label) label.textContent = on ? 'Back to card' : 'Extra';
-}
-
-function showExtraMenuView() {
+export function backToExtraMenu() {
     const menuView = document.getElementById('extraMenuView');
     const conjView = document.getElementById('extraConjugationsView');
     const songPickerView = document.getElementById('extraSongPickerView');
@@ -339,18 +328,9 @@ function showExtraMenuView() {
     } catch (_) {}
 }
 
-export function backToExtraMenu() {
-    if (conjugationFromCard) {
-        closeExtraModal();
-        return;
-    }
-    showExtraMenuView();
-}
-
 export function openExtraModal() {
     updateExtraUI();
-    setConjugationFromCard(false);
-    showExtraMenuView();
+    backToExtraMenu();
     const modal = document.getElementById('extraModal');
     if (modal) {
         modal.classList.remove('hidden');
@@ -358,7 +338,6 @@ export function openExtraModal() {
 }
 
 export function closeExtraModal() {
-    setConjugationFromCard(false);
     const modal = document.getElementById('extraModal');
     if (modal) {
         modal.classList.add('hidden');
@@ -400,14 +379,11 @@ export function initExtraWorkspace() {
         }
     });
 
-    const conjBackBtn = document.getElementById('extraConjugationsBackBtn');
-    conjBackBtn?.addEventListener('click', backToExtraMenu);
-
     // Close steps back one level: in a drill → the conjugation menu; in the
     // conjugation menu → the Extra menu (not out of Extra altogether).
     const conjCloseBtn = document.getElementById('extraConjugationsCloseBtn');
     conjCloseBtn?.addEventListener('click', () => {
-        if (!conjugationFromCard && window.conjugationCloseStep?.()) return;
+        if (window.conjugationCloseStep?.()) return;
         backToExtraMenu();
     });
 
@@ -475,9 +451,8 @@ export function initExtraWorkspace() {
     }
 
     window.openExtraModal = openExtraModal;
-    window.openConjugationsScreen = (targetVerb = null, targetView = null, options = {}) => {
+    window.openConjugationsScreen = (targetVerb = null, targetView = null) => {
         openExtraModal();
-        if (options?.fromCard) setConjugationFromCard(true);
         openConjugationsScreen(targetVerb, targetView);
     };
     window.addEventListener('popstate', () => {

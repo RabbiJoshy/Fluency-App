@@ -1,4 +1,4 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=77b99200';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=a58f9b9f';
 // Lazy-loaded conjugation table for js/flashcards.js. Loaded on first
 // click of the conjugation toggle. The data cache (window._conjugationData)
 // is populated by core's loadConjugationData on Speech boot; this module
@@ -17,7 +17,7 @@ import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.j
 
 // Cells are matched to the card's word exactly as the sense-row English is,
 // so a -se table ("me siento") opens on the card's tense and marks its form.
-import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=77b99200';
+import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=a58f9b9f';
 
 const CONJ_UI = {
     spanish: {
@@ -382,16 +382,18 @@ async function toggleConjugationTable() {
             panel.innerHTML = inner;
             const drillLink = panel.querySelector('.conj-drill-link');
             if (drillLink) {
-                drillLink.addEventListener('click', (e) => {
-                    if (typeof window.openConjugationsScreen === 'function') {
-                        e.preventDefault();
-                        // Leave the card's panel first, so the drill is the only
-                        // thing on screen, and return to the card afterwards.
-                        panel.classList.remove('visible');
-                        panel._loadRequest = (panel._loadRequest || 0) + 1;
-                        stowConjPanel(panel);
-                        window.openConjugationsScreen(drillLink.dataset.verb || lemma, null, { fromCard: true });
-                    }
+                drillLink.addEventListener('click', async (e) => {
+                    if (typeof window.openConjugationsScreen !== 'function') return;
+                    e.preventDefault();
+                    // Conjugation mode is its own screen, so it ends the study
+                    // session. Ask first; the deck remembers its place.
+                    if (!confirm('Leaving this deck to open conjugation mode.\n\nYou can come back to this deck any time and carry on where you left off.')) return;
+                    panel.classList.remove('visible');
+                    panel._loadRequest = (panel._loadRequest || 0) + 1;
+                    stowConjPanel(panel);
+                    const verb = drillLink.dataset.verb || lemma;
+                    await window.goBackToSetup?.();
+                    window.openConjugationsScreen(verb);
                 });
             }
         } catch (error) {

@@ -1,4 +1,4 @@
-import { beginRegionLoading, boundedLoad } from './loading-ui.js?v=77b99200';
+import { beginRegionLoading, boundedLoad } from './loading-ui.js?v=a58f9b9f';
 // A single local snapshot powers the coverage and card counts. No example
 // corpus is downloaded, and completed loads cannot reopen a closed dialog.
 export function summarizeProgress(cards, { getId, getState, getProgress }) {
