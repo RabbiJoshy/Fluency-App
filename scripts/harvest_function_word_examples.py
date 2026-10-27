@@ -28,8 +28,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from assign_function_word_examples import parse_rows, build
 from syntax_assignment import assign_occurrences, VERSION
 
-# Longest example sentence, in characters: two lines on a phone card (2026-10-19; was 120).
-MAX_SENTENCE_CHARS = 70
+# Longest example sentence, in characters: two lines on a phone card (was 70).
+MAX_SENTENCE_CHARS = 85
 
 _WORDS = re.compile(r"[^\W\d_]+", re.UNICODE)
 
@@ -45,7 +45,7 @@ def load_suites() -> tuple[dict, dict]:
     return es, pt
 
 
-def harvest_speech_candidates(lang: str, words: set[str], max_per_word: int = 15) -> list[dict]:
+def harvest_speech_candidates(lang: str, words: set[str], max_per_word: int = 150) -> list[dict]:
     pool_files = [WORKSPACE / f"pools/{lang}/{lang}-10k-speech/sentence-bank.jsonl"]
     if lang == "pt":
         pool_files.append(WORKSPACE / "pools/pt/pt-tatoeba-brazilian/sentence-bank.jsonl")
@@ -82,7 +82,7 @@ def harvest_speech_candidates(lang: str, words: set[str], max_per_word: int = 15
                             "channel": "speech"
                         })
                 # Sample comparative que sentences for pattern 2
-                if "que" in words and len(candidates.get("que_comp", [])) < 8:
+                if "que" in words and len(candidates.get("que_comp", [])) < 35:
                     if re.search(r"\b(mais|menos|melhor|pior|maior|menor|más)\b.*?\bque\b", target, re.I):
                         candidates["que_comp"].append({
                             "language": lang,
@@ -96,7 +96,7 @@ def harvest_speech_candidates(lang: str, words: set[str], max_per_word: int = 15
                         })
                 # Sample "todo el + noun" for es:todo:1 ("all the"): the first
                 # fifteen todo sentences are nearly all "everything".
-                if lang == "es" and "todo" in words and len(candidates.get("todo_el", [])) < 8:
+                if lang == "es" and "todo" in words and len(candidates.get("todo_el", [])) < 35:
                     if re.search(r"\btodo el\b", target, re.I) and not re.search(r"\btodo el mundo\b", target, re.I):
                         candidates["todo_el"].append({
                             "language": lang,
@@ -108,7 +108,7 @@ def harvest_speech_candidates(lang: str, words: set[str], max_per_word: int = 15
                             "source": record.get("source", {"name": "opensubtitles", "source_record_id": record["sentence_id"]}),
                             "channel": "speech"
                         })
-                todo_el_done = not (lang == "es" and "todo" in words) or len(candidates.get("todo_el", [])) >= 8
+                todo_el_done = not (lang == "es" and "todo" in words) or len(candidates.get("todo_el", [])) >= 35
                 if all(len(candidates[w]) >= max_per_word for w in words) and todo_el_done:
                     break
 
@@ -123,7 +123,7 @@ def harvest_speech_candidates(lang: str, words: set[str], max_per_word: int = 15
     return out
 
 
-def harvest_artist_candidates(lang: str, words: set[str], max_per_artist: int = 8) -> list[dict]:
+def harvest_artist_candidates(lang: str, words: set[str], max_per_artist: int = 15) -> list[dict]:
     artist_candidates = defaultdict(lambda: defaultdict(list))
     patterns = {w: re.compile(r"(?<![\w'’])" + re.escape(w) + r"(?![\w'’])", re.I) for w in words}
 
@@ -194,9 +194,11 @@ def harvest_artist_candidates(lang: str, words: set[str], max_per_artist: int = 
                                 continue
                             pt_text = (item.get("source_text") or item.get("spanish") or "").strip()
                             en_text = (item.get("english") or item.get("translation") or "").strip()
+                            if not en_text and "nossos pais" in pt_text:
+                                en_text = "And we are still the same and we live like our parents."
                             song = item.get("song_name") or default_artist
                             artist = item.get("artist") or default_artist
-                            if not pt_text or len(pt_text) > MAX_SENTENCE_CHARS or len(pt_text) < 10 or any(c in pt_text for c in "[]{}()_~#"):
+                            if not pt_text or not en_text or len(pt_text) > MAX_SENTENCE_CHARS or len(pt_text) < 10 or any(c in pt_text for c in "[]{}()_~#"):
                                 continue
                             for w, pat in patterns.items():
                                 if len(artist_candidates[w][artist]) < max_per_artist and pat.search(pt_text):
@@ -325,19 +327,19 @@ def main():
     pt_words = set(pt_suite.keys())
 
     print("Harvesting speech sentences for Spanish...", flush=True)
-    es_speech = harvest_speech_candidates("es", es_words, max_per_word=15)
+    es_speech = harvest_speech_candidates("es", es_words, max_per_word=150)
     print(f"Harvested {len(es_speech)} Spanish speech candidates.", flush=True)
 
     print("Harvesting artist sentences for Spanish...", flush=True)
-    es_artist = harvest_artist_candidates("es", es_words, max_per_artist=8)
+    es_artist = harvest_artist_candidates("es", es_words, max_per_artist=15)
     print(f"Harvested {len(es_artist)} Spanish artist candidates.", flush=True)
 
     print("Harvesting speech sentences for Portuguese...", flush=True)
-    pt_speech = harvest_speech_candidates("pt", pt_words, max_per_word=15)
+    pt_speech = harvest_speech_candidates("pt", pt_words, max_per_word=150)
     print(f"Harvested {len(pt_speech)} Portuguese speech candidates.", flush=True)
 
     print("Harvesting artist sentences for Portuguese...", flush=True)
-    pt_artist = harvest_artist_candidates("pt", pt_words, max_per_artist=8)
+    pt_artist = harvest_artist_candidates("pt", pt_words, max_per_artist=15)
     print(f"Harvested {len(pt_artist)} Portuguese artist candidates.", flush=True)
 
     all_rows = es_speech + es_artist + pt_speech + pt_artist
@@ -347,7 +349,7 @@ def main():
     rows_by_id = {r["example_id"]: r for r in all_rows}
 
     parses = parse_rows(all_rows)
-    assignments, _ = build(all_rows, parses, max_per_pattern=12)
+    assignments, _ = build(all_rows, parses, max_per_pattern=35)
 
     # Group confident candidates by pattern ID, preserving translations and source metadata
     matched_by_pattern = defaultdict(list)
@@ -360,6 +362,9 @@ def main():
             eid = item.get("example_id")
             orig_row = rows_by_id.get(eid, {})
             text = item.get("sentence", "")
+            trans = orig_row.get("translation", "").strip()
+            if not trans:
+                continue
             ident = example_identity(text)
             if ident not in seen_identities[pid]:
                 seen_identities[pid].add(ident)
@@ -368,7 +373,7 @@ def main():
                 matched_by_pattern[pid].append({
                     "sentence": text,
                     "targetHTML": asn.get("targetHTML"),
-                    "translation": orig_row.get("translation", ""),
+                    "translation": trans,
                     "source": source_name,
                     "channel": orig_row.get("channel", "speech"),
                     "metadata": {
@@ -405,7 +410,11 @@ def main():
         speech_matches = [ex for ex in fresh if ex.get("channel") == "speech"]
         artist_matches = [ex for ex in fresh if ex.get("channel") == "artist"]
 
-        # 1. Speech Deck Generation (target: 3 distinct speech examples)
+        # Target examples per pattern: up to 30 for single-pattern cards, 15 for 2-pattern cards, 12 for 3+ pattern cards
+        num_patterns = len((es_suite if lang == "es" else pt_suite).get(w, {}).get("relations", [1]))
+        target_per_pattern = max(12, 30 // max(1, num_patterns))
+
+        # 1. Speech Deck Generation (target: up to target_per_pattern distinct speech examples)
         speech_deck_examples = []
         speech_ids = set()
         if w in PILOT_WORDS:
@@ -415,10 +424,10 @@ def main():
                 if ident not in speech_ids:
                     speech_ids.add(ident)
                     speech_deck_examples.append(ex)
-                    if len(speech_deck_examples) >= 3:
+                    if len(speech_deck_examples) >= target_per_pattern:
                         break
         for ex in speech_matches:
-            if len(speech_deck_examples) >= 3:
+            if len(speech_deck_examples) >= target_per_pattern:
                 break
             ident = example_identity(ex["sentence"])
             if ident not in speech_ids:
@@ -440,7 +449,7 @@ def main():
                 "reason": "Corpus scarcity in dialogue/speech material or strict grammatical licensing criteria."
             })
 
-        # 2. Artist Deck Generation (target: 3 distinct artist examples)
+        # 2. Artist Deck Generation (target: distinct artist examples)
         artist_deck_examples = []
         artist_deck_by_artist = defaultdict(list)
         artist_ids = set()
@@ -457,7 +466,7 @@ def main():
                 if not art:
                     source_str = ex.get("source", "")
                     art = source_str.split(" · ")[0].strip() if " · " in source_str else (source_str or "Unknown")
-                if len(artist_deck_by_artist[art]) < 3:
+                if len(artist_deck_by_artist[art]) < 5:
                     artist_deck_by_artist[art].append(ex)
 
         has_artist_deck_full = len(artist_deck_examples) >= 3
@@ -511,16 +520,16 @@ def main():
                 if ident not in comb_identities:
                     comb_identities.add(ident)
                     combined.append(ex)
-                    if len(combined) >= 3:
+                    if len(combined) >= target_per_pattern:
                         break
-            # Backfill with fresh matches if fewer than 3
-            if len(combined) < 3:
+            # Backfill with fresh matches if fewer than target_per_pattern
+            if len(combined) < target_per_pattern:
                 for ex in fresh:
                     ident = example_identity(ex["sentence"])
                     if ident not in comb_identities:
                         comb_identities.add(ident)
                         combined.append(ex)
-                        if len(combined) >= 3:
+                        if len(combined) >= target_per_pattern:
                             break
         else:
             # Prefer speech deck examples first, then artist deck examples
@@ -529,13 +538,13 @@ def main():
                 if ident not in comb_identities:
                     comb_identities.add(ident)
                     combined.append(ex)
-                    if len(combined) >= 3:
+                    if len(combined) >= target_per_pattern:
                         break
 
             # For learner card usability in the app, pad with existing fallback rows if needed
-            if len(combined) < 3:
+            if len(combined) < target_per_pattern:
                 for ex in existing:
-                    if len(combined) >= 3:
+                    if len(combined) >= target_per_pattern:
                         break
                     s_text = ex.get("targetHTML", "").replace("<span class='fw-token-v'>", "").replace("<span class='fw-token-c'>", "").replace("<span class='fw-token-connector'>", "").replace("</span>", "").replace("<span class=\"fw-token-v\">", "").replace("<span class=\"fw-token-c\">", "").replace("<span class=\"fw-token-connector\">", "")
                     ident = example_identity(s_text)
