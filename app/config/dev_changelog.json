@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-27T00:22:00+00:00",
+      "date": "2026-10-27 00:22 GMT",
+      "agent": "Antigravity",
+      "summary": "Conjugation drill is one surface: progress and close sit at the top, no box inside a box; full screen on phones.",
+      "detail": [
+        "While drilling, the progress count and the ✕ live in the top row of a single panel; the inner card is flat.",
+        "On a phone the drill fills the whole screen; on desktop it is one large panel."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-27T00:16:00+00:00",
       "date": "2026-10-27 00:16 GMT",
       "agent": "Antigravity",
@@ -329,17 +340,6 @@
         "New per-set pool files (lemma-pool/v1, Portuguese and Spanish) carry a sample of every other form's sentences: up to 30 per meaning, a form at a time.",
         "Cards cycle through the forms (foi, é, era, …); lines with an English translation still come first.",
         "Level 1 Portuguese: ser now has 195 sentences from 28 forms, estar 265 from 34."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T15:40:34+00:00",
-      "date": "2026-10-26 15:40 GMT",
-      "agent": "Claude",
-      "summary": "Fix: the level picker no longer shows \"Cannot read properties of undefined (reading 'url')\" after a fresh load.",
-      "detail": [
-        "A level render could run during start-up before a language was chosen; it failed and its Try again kept the missing language.",
-        "The picker now uses the chosen language and waits when none is chosen yet."
       ],
       "commit": "pending"
     }
