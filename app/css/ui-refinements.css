@@ -948,7 +948,7 @@
   z-index: 1071;
   display: grid;
   gap: 12px;
-  max-height: 85dvh;
+  max-height: calc(85dvh / var(--ui-zoom, 1));
   overflow-y: auto;
   box-sizing: border-box;
   padding: 22px 18px calc(env(safe-area-inset-bottom, 0px) + 16px);

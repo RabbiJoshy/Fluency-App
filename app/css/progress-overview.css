@@ -5,7 +5,7 @@
 #topBarProgressBtn svg { width: 22px; height: 22px; }
 #topBarProgressBtn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
 #totalStatsModal .total-progress-modal-content {
-    width: min(100%, 680px); max-width: 680px; max-height: min(90dvh, 920px);
+    width: min(100%, 680px); max-width: 680px; max-height: min(calc(90dvh / var(--ui-zoom, 1)), 920px);
     display: flex; flex-direction: column; padding: 0; overflow: hidden;
     border: 1px solid var(--border-color); border-radius: 22px; background: var(--bg-card);
 }
@@ -56,7 +56,7 @@
 #progressDataActionStatus { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
 @media (max-width: 520px) {
     #totalStatsModal { padding: 12px; }
-    #totalStatsModal .total-progress-modal-content { max-height: calc(100dvh - 24px); border-radius: 18px; }
+    #totalStatsModal .total-progress-modal-content { max-height: calc(100dvh / var(--ui-zoom, 1) - 24px); border-radius: 18px; }
     #totalStatsModal .modal-header { padding: 18px 16px 14px; }
     #totalStatsModal h2 { font-size: 23px; }
     #totalStatsModal .total-progress-body { padding: 16px; }

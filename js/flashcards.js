@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=792f5f82';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=792f5f82';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=792f5f82';
-import { songCreditHTML } from './song-credit.js?v=792f5f82';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=792f5f82';
+import './state.js?v=1e1535e6';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=1e1535e6';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=1e1535e6';
+import { songCreditHTML } from './song-credit.js?v=1e1535e6';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=1e1535e6';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=792f5f82';
-import { fitSenseRowText } from './card-row-layout.js?v=792f5f82';
+import { exampleTranslationAlignment } from './example-alignment.js?v=1e1535e6';
+import { fitSenseRowText } from './card-row-layout.js?v=1e1535e6';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=792f5f82';
-import { goToRoute, routeCodeFor } from './routes.js?v=792f5f82';
-import { memoryTipTileHTML } from './memory-tips.js?v=792f5f82';
+import './speech.js?v=1e1535e6';
+import { goToRoute, routeCodeFor } from './routes.js?v=1e1535e6';
+import { memoryTipTileHTML } from './memory-tips.js?v=1e1535e6';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=792f5f82';
-import './side-dock.js?v=792f5f82';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=792f5f82';
+} from './function-word-card.js?v=1e1535e6';
+import './side-dock.js?v=1e1535e6';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=1e1535e6';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=792f5f82';
+} from './example-personalisation.js?v=1e1535e6';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=792f5f82';
+} from './spanishdict-usage.js?v=1e1535e6';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=792f5f82';
+} from './reverse-cues.js?v=1e1535e6';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=792f5f82';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=792f5f82';
+} from './card-metadata-pills.js?v=1e1535e6';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=1e1535e6';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1127,6 +1127,10 @@ function abbreviateInlineFrames(root) {
     });
 }
 
+function currentLayoutZoom() {
+    return parseFloat(getComputedStyle(document.body).zoom) || 1;
+}
+
 // On the active row an abbreviation shows what it stands for; on any other
 // row the tap selects the row as before.
 function showSenseAbbreviation(abbr) {
@@ -1136,11 +1140,12 @@ function showSenseAbbreviation(abbr) {
     const text = abbr.dataset.full || '';
     tip.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
     document.body.append(tip);
+    const zoom = currentLayoutZoom();
     const at = abbr.getBoundingClientRect();
     const width = tip.offsetWidth;
-    const left = Math.min(Math.max(8, at.left + at.width / 2 - width / 2), window.innerWidth - width - 8);
+    const left = Math.min(Math.max(8, (at.left + at.width / 2) / zoom - width / 2), window.innerWidth / zoom - width - 8);
     tip.style.left = `${left}px`;
-    tip.style.top = `${Math.max(8, at.top - tip.offsetHeight - 8)}px`;
+    tip.style.top = `${Math.max(8, at.top / zoom - tip.offsetHeight - 8)}px`;
     const close = () => { tip.remove(); document.removeEventListener('pointerdown', close, true); window.removeEventListener('scroll', close, true); };
     setTimeout(() => {
         document.addEventListener('pointerdown', close, true);
@@ -1642,14 +1647,16 @@ function fitSenseRowLayouts(root) {
 }
 
 let posSummaryResizeFrame = 0;
-window.addEventListener('resize', () => {
+function onLayoutDimensionChange() {
     cancelAnimationFrame(posSummaryResizeFrame);
     posSummaryResizeFrame = requestAnimationFrame(() => {
         fitSenseRowLayouts(document.getElementById('backContent'));
         fitPosSectionSummaries(document.getElementById('backContent'));
         refitMeaningScroll();
     });
-});
+}
+window.addEventListener('resize', onLayoutDimensionChange);
+window.addEventListener('fluency-text-size-change', onLayoutDimensionChange);
 
 // Measure the vertical room that belongs to the meanings scroller after every
 // other in-flow child has taken its rendered space. Both auto-expansion and the
@@ -1662,7 +1669,7 @@ function availableHeightForMeaningScroll(backEl, scroll) {
     for (const child of backEl.children) {
         if (child === scroll || child.classList.contains('conjugation-panel')) continue;
         const cs = getComputedStyle(child);
-        if (cs.display === 'none' || cs.position === 'absolute' || cs.position === 'fixed') continue;
+        if (cs.display === 'none' || cs.visibility === 'hidden' || cs.position === 'absolute' || cs.position === 'fixed') continue;
         otherFlowChildren++;
         overhead += child.offsetHeight
             // Auto margins below the meanings are spare space, not content.
@@ -1703,7 +1710,7 @@ function refitMeaningScroll(backEl = document.getElementById('backContent')) {
     scroll.style.maxHeight = '';
     const available = availableHeightForMeaningScroll(backEl, scroll);
     collapseSubsensesToFit(scroll, available);
-    if (scroll.scrollHeight > available) scroll.style.maxHeight = Math.max(100, available) + 'px';
+    if (scroll.scrollHeight > available + 2) scroll.style.maxHeight = Math.max(100, available) + 'px';
 }
 document.addEventListener('sense-details-change', () => refitMeaningScroll());
 document.addEventListener('toggle', event => {
@@ -2155,14 +2162,15 @@ function openDirectionPopover(anchor) {
     _directionPopover = popover;
 
     // Fixed positioning keeps this out of the card's preserve-3d context.
+    const zoom = currentLayoutZoom();
     const rect = anchor.getBoundingClientRect();
     const width = popover.offsetWidth;
     const left = Math.min(
-        Math.max(8, rect.left + rect.width / 2 - width / 2),
-        Math.max(8, window.innerWidth - width - 8)
+        Math.max(8, (rect.left + rect.width / 2) / zoom - width / 2),
+        Math.max(8, window.innerWidth / zoom - width - 8)
     );
-    let top = rect.top - popover.offsetHeight - 10;
-    if (top < 8) top = Math.min(rect.bottom + 10, window.innerHeight - popover.offsetHeight - 8);
+    let top = rect.top / zoom - popover.offsetHeight - 10;
+    if (top < 8) top = Math.min(rect.bottom / zoom + 10, window.innerHeight / zoom - popover.offsetHeight - 8);
     popover.style.left = `${Math.round(left)}px`;
     popover.style.top = `${Math.round(top)}px`;
 
@@ -7526,12 +7534,13 @@ function renderCardWikipediaBadge(card) {
             }
             names.forEach(name => { name.title = name.textContent; });
             // A joined pill keeps its full names unless they genuinely do not fit.
+            const frontZoom = currentLayoutZoom();
             frontPOSEl.querySelectorAll('.front-pos-joined').forEach(group => {
                 group.classList.remove('is-short');
                 const pair = group.closest('.front-lemma-pair');
                 const room = frontPOSEl.clientWidth;
                 if ((pair && pair.scrollWidth > pair.clientWidth + 1)
-                    || (room && group.getBoundingClientRect().width > room - 4)) {
+                    || (room && group.getBoundingClientRect().width / frontZoom > room - 4)) {
                     group.classList.add('is-short');
                 }
             });
@@ -9849,7 +9858,7 @@ function renderCardWikipediaBadge(card) {
                 // the remaining room. Floor the cap value (not the gate) at
                 // 60px so the scroller stays usable even when overhead is
                 // tight, instead of silently disabling the cap.
-                if (scroll.scrollHeight > availableForScroll) {
+                if (scroll.scrollHeight > availableForScroll + 2) {
                     scroll.style.maxHeight = Math.max(100, availableForScroll) + 'px';
                     // Keep the stable menu order and move only the viewport.
                     // `nearest` avoids a jump when the selected row is already
@@ -11758,14 +11767,15 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
     }
     tip.classList.toggle('freq-tooltip-wide', showList);
 
+    const zoom = currentLayoutZoom();
     const rect = button.getBoundingClientRect();
-    const tipWidth = Math.min(showList ? 340 : 300, window.innerWidth - 16);
-    let left = rect.left + rect.width / 2 - tipWidth / 2;
-    left = Math.max(8, Math.min(left, window.innerWidth - tipWidth - 8));
+    const tipWidth = Math.min(showList ? 340 : 300, window.innerWidth / zoom - 16);
+    let left = (rect.left + rect.width / 2) / zoom - tipWidth / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth / zoom - tipWidth - 8));
     tip.style.left = left + 'px';
     tip.style.width = tipWidth + 'px';
-    const above = rect.top - tip.offsetHeight - 10;
-    tip.style.top = (above >= 8 ? above : rect.bottom + 10) + 'px';
+    const above = rect.top / zoom - tip.offsetHeight - 10;
+    tip.style.top = (above >= 8 ? above : rect.bottom / zoom + 10) + 'px';
     tip.classList.remove('hiding');
     clearTimeout(tip._hideTimer);
     if (pinned) {
@@ -11903,8 +11913,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '792f5f82';
-const MODALS_ASSET_VERSION = '792f5f82';
+const ASSET_VERSION = '1e1535e6';
+const MODALS_ASSET_VERSION = '1e1535e6';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

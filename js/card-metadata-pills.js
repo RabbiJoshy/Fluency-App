@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=792f5f82';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=1e1535e6';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -2035,13 +2035,14 @@ export function openSenseNote(event, control) {
     // On a phone the note opens beside the button that asked for it: just
     // below it, or just above when there is no room below.
     if (window.matchMedia?.('(max-width: 600px)').matches) {
+        const zoom = parseFloat(getComputedStyle(document.body).zoom) || 1;
         const anchor = control.getBoundingClientRect();
-        const height = dialog.getBoundingClientRect().height;
+        const height = dialog.getBoundingClientRect().height / zoom;
         const gap = 8;
         const edge = 10;
-        let top = anchor.bottom + gap;
-        if (top + height > window.innerHeight - edge) top = anchor.top - gap - height;
-        top = Math.max(edge, Math.min(top, window.innerHeight - edge - height));
+        let top = anchor.bottom / zoom + gap;
+        if (top + height > window.innerHeight / zoom - edge) top = anchor.top / zoom - gap - height;
+        top = Math.max(edge, Math.min(top, window.innerHeight / zoom - edge - height));
         overlay.classList.add('is-anchored');
         dialog.style.marginTop = `${Math.round(top)}px`;
     }
