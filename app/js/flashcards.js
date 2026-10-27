@@ -1127,6 +1127,10 @@ function abbreviateInlineFrames(root) {
     });
 }
 
+function currentLayoutZoom() {
+    return parseFloat(getComputedStyle(document.body).zoom) || 1;
+}
+
 // On the active row an abbreviation shows what it stands for; on any other
 // row the tap selects the row as before.
 function showSenseAbbreviation(abbr) {
@@ -1136,11 +1140,12 @@ function showSenseAbbreviation(abbr) {
     const text = abbr.dataset.full || '';
     tip.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
     document.body.append(tip);
+    const zoom = currentLayoutZoom();
     const at = abbr.getBoundingClientRect();
     const width = tip.offsetWidth;
-    const left = Math.min(Math.max(8, at.left + at.width / 2 - width / 2), window.innerWidth - width - 8);
+    const left = Math.min(Math.max(8, (at.left + at.width / 2) / zoom - width / 2), window.innerWidth / zoom - width - 8);
     tip.style.left = `${left}px`;
-    tip.style.top = `${Math.max(8, at.top - tip.offsetHeight - 8)}px`;
+    tip.style.top = `${Math.max(8, at.top / zoom - tip.offsetHeight - 8)}px`;
     const close = () => { tip.remove(); document.removeEventListener('pointerdown', close, true); window.removeEventListener('scroll', close, true); };
     setTimeout(() => {
         document.addEventListener('pointerdown', close, true);
@@ -1642,14 +1647,16 @@ function fitSenseRowLayouts(root) {
 }
 
 let posSummaryResizeFrame = 0;
-window.addEventListener('resize', () => {
+function onLayoutDimensionChange() {
     cancelAnimationFrame(posSummaryResizeFrame);
     posSummaryResizeFrame = requestAnimationFrame(() => {
         fitSenseRowLayouts(document.getElementById('backContent'));
         fitPosSectionSummaries(document.getElementById('backContent'));
         refitMeaningScroll();
     });
-});
+}
+window.addEventListener('resize', onLayoutDimensionChange);
+window.addEventListener('fluency-text-size-change', onLayoutDimensionChange);
 
 // Measure the vertical room that belongs to the meanings scroller after every
 // other in-flow child has taken its rendered space. Both auto-expansion and the
@@ -1662,7 +1669,7 @@ function availableHeightForMeaningScroll(backEl, scroll) {
     for (const child of backEl.children) {
         if (child === scroll || child.classList.contains('conjugation-panel')) continue;
         const cs = getComputedStyle(child);
-        if (cs.display === 'none' || cs.position === 'absolute' || cs.position === 'fixed') continue;
+        if (cs.display === 'none' || cs.visibility === 'hidden' || cs.position === 'absolute' || cs.position === 'fixed') continue;
         otherFlowChildren++;
         overhead += child.offsetHeight
             // Auto margins below the meanings are spare space, not content.
@@ -1703,7 +1710,7 @@ function refitMeaningScroll(backEl = document.getElementById('backContent')) {
     scroll.style.maxHeight = '';
     const available = availableHeightForMeaningScroll(backEl, scroll);
     collapseSubsensesToFit(scroll, available);
-    if (scroll.scrollHeight > available) scroll.style.maxHeight = Math.max(100, available) + 'px';
+    if (scroll.scrollHeight > available + 2) scroll.style.maxHeight = Math.max(100, available) + 'px';
 }
 document.addEventListener('sense-details-change', () => refitMeaningScroll());
 document.addEventListener('toggle', event => {
@@ -2155,14 +2162,15 @@ function openDirectionPopover(anchor) {
     _directionPopover = popover;
 
     // Fixed positioning keeps this out of the card's preserve-3d context.
+    const zoom = currentLayoutZoom();
     const rect = anchor.getBoundingClientRect();
     const width = popover.offsetWidth;
     const left = Math.min(
-        Math.max(8, rect.left + rect.width / 2 - width / 2),
-        Math.max(8, window.innerWidth - width - 8)
+        Math.max(8, (rect.left + rect.width / 2) / zoom - width / 2),
+        Math.max(8, window.innerWidth / zoom - width - 8)
     );
-    let top = rect.top - popover.offsetHeight - 10;
-    if (top < 8) top = Math.min(rect.bottom + 10, window.innerHeight - popover.offsetHeight - 8);
+    let top = rect.top / zoom - popover.offsetHeight - 10;
+    if (top < 8) top = Math.min(rect.bottom / zoom + 10, window.innerHeight / zoom - popover.offsetHeight - 8);
     popover.style.left = `${Math.round(left)}px`;
     popover.style.top = `${Math.round(top)}px`;
 
@@ -7526,12 +7534,13 @@ function renderCardWikipediaBadge(card) {
             }
             names.forEach(name => { name.title = name.textContent; });
             // A joined pill keeps its full names unless they genuinely do not fit.
+            const frontZoom = currentLayoutZoom();
             frontPOSEl.querySelectorAll('.front-pos-joined').forEach(group => {
                 group.classList.remove('is-short');
                 const pair = group.closest('.front-lemma-pair');
                 const room = frontPOSEl.clientWidth;
                 if ((pair && pair.scrollWidth > pair.clientWidth + 1)
-                    || (room && group.getBoundingClientRect().width > room - 4)) {
+                    || (room && group.getBoundingClientRect().width / frontZoom > room - 4)) {
                     group.classList.add('is-short');
                 }
             });
@@ -9849,7 +9858,7 @@ function renderCardWikipediaBadge(card) {
                 // the remaining room. Floor the cap value (not the gate) at
                 // 60px so the scroller stays usable even when overhead is
                 // tight, instead of silently disabling the cap.
-                if (scroll.scrollHeight > availableForScroll) {
+                if (scroll.scrollHeight > availableForScroll + 2) {
                     scroll.style.maxHeight = Math.max(100, availableForScroll) + 'px';
                     // Keep the stable menu order and move only the viewport.
                     // `nearest` avoids a jump when the selected row is already
@@ -11758,14 +11767,15 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
     }
     tip.classList.toggle('freq-tooltip-wide', showList);
 
+    const zoom = currentLayoutZoom();
     const rect = button.getBoundingClientRect();
-    const tipWidth = Math.min(showList ? 340 : 300, window.innerWidth - 16);
-    let left = rect.left + rect.width / 2 - tipWidth / 2;
-    left = Math.max(8, Math.min(left, window.innerWidth - tipWidth - 8));
+    const tipWidth = Math.min(showList ? 340 : 300, window.innerWidth / zoom - 16);
+    let left = (rect.left + rect.width / 2) / zoom - tipWidth / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth / zoom - tipWidth - 8));
     tip.style.left = left + 'px';
     tip.style.width = tipWidth + 'px';
-    const above = rect.top - tip.offsetHeight - 10;
-    tip.style.top = (above >= 8 ? above : rect.bottom + 10) + 'px';
+    const above = rect.top / zoom - tip.offsetHeight - 10;
+    tip.style.top = (above >= 8 ? above : rect.bottom / zoom + 10) + 'px';
     tip.classList.remove('hiding');
     clearTimeout(tip._hideTimer);
     if (pinned) {

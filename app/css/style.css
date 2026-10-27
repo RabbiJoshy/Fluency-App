@@ -2986,7 +2986,9 @@
             border-color: rgba(var(--sense-match-rgb, 56, 189, 248), 0.45);
         }
         /* Pin mode keeps the word, meanings and See again control available. */
-        .card-back:has(.pin-mode-hint:not(.is-notice)) .card-details > :not(.back-header, .meanings-scroll, .links-section, .pin-mode-hint),
+        .card-back:has(.pin-mode-hint:not(.is-notice)) .card-details > :not(.back-header, .meanings-scroll, .links-section, .pin-mode-hint) {
+            display: none !important;
+        }
         .card-back:has(.pin-mode-hint:not(.is-notice)) .links-section > :not(.pin-mode-hint, .knowledge-overview-trigger) {
             opacity: 0;
             pointer-events: none;
@@ -3566,7 +3568,7 @@
         .see-expression-dialog {
             width: min(540px, calc(100vw - 32px));
             max-width: calc(100vw - 32px);
-            max-height: calc(100dvh - 32px);
+            max-height: calc(100dvh / var(--ui-zoom, 1) - 32px);
             margin: auto;
             padding: 0;
             box-sizing: border-box;
@@ -22081,7 +22083,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 .sense-note-dialog {
     position: relative;
     width: min(360px, 100%);
-    max-height: min(620px, calc(100dvh - 40px));
+    max-height: min(620px, calc(100dvh / var(--ui-zoom, 1) - 40px));
     overflow-y: auto;
     padding: 20px 22px 18px;
     border: 1px solid rgba(var(--sense-match-rgb, 103, 191, 133), 0.35);
@@ -22170,7 +22172,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     }
     .sense-note-dialog {
         width: 100%;
-        max-height: min(70dvh, 560px);
+        max-height: min(calc(70dvh / var(--ui-zoom, 1)), 560px);
         border-radius: 16px 16px 12px 12px;
         padding: 20px 20px max(18px, env(safe-area-inset-bottom));
     }
@@ -25975,7 +25977,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 #fastModeModal .smart-skip-row[aria-expanded="true"]::after { transform: rotate(90deg); }
 @media (min-width: 900px) {
   .smart-skip-secondary-settings > summary { display: none; }
-  #fastModeModal .smart-skip-shortcuts { max-height: calc(100dvh - 86px); overflow-y: auto; overscroll-behavior: contain; }
+  #fastModeModal .smart-skip-shortcuts { max-height: calc(100dvh / var(--ui-zoom, 1) - 86px); overflow-y: auto; overscroll-behavior: contain; }
   .smart-skip-browser-controls { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 62px); z-index: 8; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
 }
 @media (max-width: 899px) {
@@ -26518,7 +26520,16 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .links-section .ref-tile-icon,
 .links-section:has(> :nth-child(5)) .ref-tile-icon { width: 32px; height: 32px; }
 .links-section .ref-tile-label,
-.links-section:has(> :nth-child(5)) .ref-tile-label { font-size: 16px; }
+.links-section:has(> :nth-child(5)) .ref-tile-label {
+    font-size: 16px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+@media (max-width: 767px) {
+    .links-section:has(> :nth-child(5)) .ref-tile-label { font-size: 13px; }
+}
 .links-section .ref-tile-meter i { width: 7px; }
 .links-section .ref-tile-meter i:nth-child(1) { height: 9px; }
 .links-section .ref-tile-meter i:nth-child(2) { height: 17px; }
@@ -27512,9 +27523,14 @@ body:has(.card-back .pin-mode-hint:not(.is-notice)) :is(#deckProgressTrack, #car
 }
 /* Reserve the complete pin target plus a text gap, including inline rows. */
 .card-back .meanings-scroll .meaning-row:is(.meaning-row-regular, .meaning-row-group):has(.sense-pin-btn) {
-    padding-left: 56px !important;
+    padding-left: 44px !important;
+    padding-right: 44px !important;
 }
-.card-back .meaning-row:has(.sense-pin-btn) > .row-lead-marks { left: 56px; }
+.card-back .meaning-row:has(.sense-pin-btn) > .row-lead-marks { left: 44px; }
+.card-back .meanings-scroll .meaning-row:has(.sense-pin-btn) > .meaning-row-body {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
 
 .card-back:has(.pin-mode-hint:not(.is-notice)) .knowledge-overview-trigger {
     visibility: visible;

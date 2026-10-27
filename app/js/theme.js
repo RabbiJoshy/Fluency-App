@@ -60,7 +60,7 @@ function updateTextSizeControls(size) {
     });
 }
 
-export function applyTextSize(size, { persist = false } = {}) {
+export function applyTextSize(size, { persist = false, announce = true } = {}) {
     const normalized = normalizeTextSize(size);
     if (persist) {
         try { browserWindow?.localStorage.setItem(TEXT_SIZE_STORAGE_KEY, normalized); } catch (_) {}
@@ -68,6 +68,12 @@ export function applyTextSize(size, { persist = false } = {}) {
     if (browserDocument) {
         browserDocument.documentElement.dataset.textSize = normalized;
         updateTextSizeControls(normalized);
+        if (announce) {
+            browserWindow?.dispatchEvent(new CustomEvent('fluency-text-size-change', {
+                detail: { textSize: normalized }
+            }));
+            browserWindow?.dispatchEvent(new Event('resize'));
+        }
     }
     return normalized;
 }

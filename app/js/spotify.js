@@ -1777,14 +1777,15 @@ function _openAutoplayPopover(btn) {
 
     // Fixed positioning keeps this independent of whatever the credit strip's
     // containing block happens to be on either card surface.
+    const zoom = parseFloat(getComputedStyle(document.body).zoom) || 1;
     const rect = btn.getBoundingClientRect();
     const width = popover.offsetWidth;
     const left = Math.min(
-        Math.max(8, rect.left + rect.width / 2 - width / 2),
-        Math.max(8, window.innerWidth - width - 8)
+        Math.max(8, (rect.left + rect.width / 2) / zoom - width / 2),
+        Math.max(8, window.innerWidth / zoom - width - 8)
     );
-    let top = rect.top - popover.offsetHeight - 10;
-    if (top < 8) top = Math.min(rect.bottom + 10, window.innerHeight - popover.offsetHeight - 8);
+    let top = rect.top / zoom - popover.offsetHeight - 10;
+    if (top < 8) top = Math.min(rect.bottom / zoom + 10, window.innerHeight / zoom - popover.offsetHeight - 8);
     popover.style.left = `${Math.round(left)}px`;
     popover.style.top = `${Math.round(top)}px`;
 
