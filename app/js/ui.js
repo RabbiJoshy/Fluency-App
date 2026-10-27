@@ -2286,14 +2286,14 @@ function renderHomeLevelTiles({ vocab, baseline, seenLemmas, estimatedIds, estim
         const c = counts[i];
         const skipped = Math.max(0, c.baseline - c.cards);
         const known = Math.max(0, c.seen - c.review - c.estimated);
-        const segments = [['known', known], ['seen', c.review], ['estimated', c.estimated], ['new', c.cards - c.seen], ['skipped', skipped]]
+        const segments = [['known', known], ['practice', c.review], ['estimated', c.estimated], ['new', c.cards - c.seen], ['skipped', skipped]]
             .filter(([, n]) => n > 0)
             .map(([kind, n]) => `<span class="is-${kind}" style="flex-grow:${n}"></span>`).join('');
         const metrics = _levelBandMetrics(ranges[i]);
         // Phones show one dot per tile, the least-learned colour present:
-        // any new word → white, else any seen → yellow, else green.
+        // any new word → white, else any practice/review → yellow, else green.
         // A level with nothing answered yet has no dot at all.
-        const dot = c.seen === 0 ? 'none' : c.cards - c.seen > 0 ? 'new' : c.review > 0 ? 'seen' : 'known';
+        const dot = c.seen === 0 ? 'none' : c.cards - c.seen > 0 ? 'new' : c.review > 0 ? 'practice' : 'known';
         return `<button type="button" class="home-level-tile${i === selectedIdx ? ' is-selected' : ''}" data-dot="${dot}" data-level-index="${i}" role="radio" aria-checked="${i === selectedIdx}" aria-label="Level ${i + 1}, words ${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}">
                 <span class="home-level-tile-num">${i + 1}</span>
                 <span class="home-level-tile-bar" aria-hidden="true">${segments}</span>
@@ -2865,12 +2865,14 @@ async function updateLemmaToggleVisibility() {
     const lemmaSelector = document.getElementById('lemmaToggleSelector');
     const rangeStepNumber = document.getElementById('rangeStepNumber');
 
-    // Prefer the release/config contract. Older releases without an explicit
-    // declaration retain the data inspection fallback during migration.
-    const declaredCapability = window._activeReleaseCapabilities?.mergeLemmas
-        ?? langConfig?.capabilities?.mergeLemmas;
+    // Prefer the release/config contract. Artist decks and live playlists
+    // treat each surface as its own card and do not merge lemmas without a
+    // release-bound contract.
+    const isLiveOrArtist = Boolean(activeArtist || window.playlistLiveActive?.());
+    const declaredCapability = isLiveOrArtist ? false
+        : (window._activeReleaseCapabilities?.mergeLemmas ?? langConfig?.capabilities?.mergeLemmas);
     lemmaFieldAvailable = declaredCapability === true;
-    if (langConfig && typeof declaredCapability !== 'boolean') {
+    if (!isLiveOrArtist && langConfig && typeof declaredCapability !== 'boolean') {
         try {
             const vocabData = await fetchActiveVocabularyData(langConfig);
             lemmaFieldAvailable = vocabData.some(item =>
@@ -3111,11 +3113,14 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
     // Merge Lemmas treats progress on any surface form as progress on the
     // shared lemma. This is the same set used by Learn New during deck build,
     // so the button count cannot advertise cards that will then be removed.
-    const lemmaKey = typeof globalThis.lemmaSeenKey === 'function'
-        ? globalThis.lemmaSeenKey(item)
-        : (globalThis.lemmaGroupKey?.(item) || item.lemma);
-    if (lemmaKey && seenLemmas.has(lemmaKey)) {
-        return { ...recordedState, seen: true, needsReview: false, learned: true, inheritedLemma: true };
+    // Artist decks and live playlists treat each surface as its own card.
+    if (!activeArtist && !window.playlistLiveActive?.()) {
+        const lemmaKey = typeof globalThis.lemmaSeenKey === 'function'
+            ? globalThis.lemmaSeenKey(item)
+            : (globalThis.lemmaGroupKey?.(item) || item.lemma);
+        if (lemmaKey && seenLemmas.has(lemmaKey)) {
+            return { ...recordedState, seen: true, needsReview: false, learned: true, inheritedLemma: true };
+        }
     }
 
     if (window.playlistLiveActive?.()) {
@@ -3533,13 +3538,12 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
         const baseConfig = config.languages[selectedLanguage] || {};
         window.prefetchStudySetPayload?.(activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig, context.range);
     }
-    // Practise is language-wide, so this level's words that are waiting there
-    // are shown as "Seen" here rather than as a per-level Practice count.
-    const description = `${levelNewCount} new, ${levelReviewCount} seen, ${levelKnownCount} known, ${levelEstimatedCount} estimated, ${levelSkippedCount} skipped`;
+    // Words in this level waiting in Practice.
+    const description = `${levelNewCount} new, ${levelReviewCount} practice, ${levelKnownCount} known, ${levelEstimatedCount} estimated, ${levelSkippedCount} skipped`;
     const goDisabled = nextCount === 0 || _studySessionStarting;
     const segments = [
         ['new', 'New', levelNewCount],
-        ['seen', 'Seen', levelReviewCount],
+        ['practice', 'Practice', levelReviewCount],
         ['known', 'Known', levelKnownCount],
         ['estimated', 'Estimated', levelEstimatedCount],
         ['skipped', 'Skipped', levelSkippedCount]
