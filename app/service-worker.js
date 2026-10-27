@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v602';
+const CACHE_NAME = 'flashcards-v604';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -112,6 +112,42 @@ const urlsToCache = [
   '/js/spanishdict-usage.js?v=20260825ak',
   '/js/reverse-cues.js?v=20260927v24',
   '/js/flags.js?v=20260929flags',
+  // Keep the original SVG flags available before any language is opened offline.
+  '/assets/flags/ao.svg',
+  '/assets/flags/ar.svg',
+  '/assets/flags/bo.svg',
+  '/assets/flags/br.svg',
+  '/assets/flags/cl.svg',
+  '/assets/flags/co.svg',
+  '/assets/flags/cr.svg',
+  '/assets/flags/cu.svg',
+  '/assets/flags/cz.svg',
+  '/assets/flags/do.svg',
+  '/assets/flags/es.svg',
+  '/assets/flags/fi.svg',
+  '/assets/flags/fr.svg',
+  '/assets/flags/gb.svg',
+  '/assets/flags/gt.svg',
+  '/assets/flags/gw.svg',
+  '/assets/flags/hn.svg',
+  '/assets/flags/it.svg',
+  '/assets/flags/mo.svg',
+  '/assets/flags/mx.svg',
+  '/assets/flags/mz.svg',
+  '/assets/flags/ni.svg',
+  '/assets/flags/nl.svg',
+  '/assets/flags/pa.svg',
+  '/assets/flags/pe.svg',
+  '/assets/flags/pl.svg',
+  '/assets/flags/pr.svg',
+  '/assets/flags/pt.svg',
+  '/assets/flags/py.svg',
+  '/assets/flags/ru.svg',
+  '/assets/flags/se.svg',
+  '/assets/flags/sv.svg',
+  '/assets/flags/us.svg',
+  '/assets/flags/uy.svg',
+  '/assets/flags/ve.svg',
   '/js/card-metadata-pills.js?v=20261013rows',
   '/js/flashcards.js?v=20261026speed',
   '/js/sense-reference-cards.js?v=1',

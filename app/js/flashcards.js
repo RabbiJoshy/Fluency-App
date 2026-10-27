@@ -7355,8 +7355,12 @@ function renderCardWikipediaBadge(card) {
             || label.grammar
             || 'base form';
     };
+    // Several verb pills can share the same analyses on the two faces.
+    // Reuse their markup within this render; the next update starts fresh.
+    let morphPopoverHTML;
     const renderMorphPopover = () => {
-        if (!morphLabels.length) return '';
+        if (morphPopoverHTML !== undefined) return morphPopoverHTML;
+        if (!morphLabels.length) return (morphPopoverHTML = '');
         const renderRow = (label, isPrimary) => {
             const form = describeMorphForm(label);
             if (!label.person && !form) return null;
@@ -7368,7 +7372,7 @@ function renderCardWikipediaBadge(card) {
                 <span class="morph-pop-form">${escapeCardText(form)}</span>
             </li>`;
         };
-        const usable = morphLabels.filter(label => renderRow(label, false));
+        const usable = morphLabels.filter(label => label.person || describeMorphForm(label));
         if (!usable.length) return '';
         const primary = renderRow(usable[0], true);
         const alternatives = usable.slice(1).map(label => renderRow(label, false));
@@ -7383,11 +7387,11 @@ function renderCardWikipediaBadge(card) {
                 <ul class="morph-pop-list morph-pop-alts" hidden>${alternatives.join('')}</ul>`
             : '';
         const heading = altCount ? 'Preferred reading' : 'Form';
-        return `<div class="morph-popover" hidden role="dialog" aria-label="Verb morphology">
+        return (morphPopoverHTML = `<div class="morph-popover" hidden role="dialog" aria-label="Verb morphology">
             <div class="morph-pop-title">${heading}</div>
             <ul class="morph-pop-list">${primary}</ul>
             ${altBlock}
-        </div>`;
+        </div>`);
     };
     // The pill remains a press-to-reveal control for the complete explanation.
     // English-first cards additionally receive the compact persistent rendering
@@ -9959,15 +9963,8 @@ function renderCardWikipediaBadge(card) {
         const currentPair = pairOf(scrubIndex);
         Array.from(progressSegments.children).forEach((segment, i) => {
             const pair = pairOf(i);
-            if (pair) {
-                segment.dataset.pair = String(pair.start);
-                segment.dataset.pairPos = pair.pos;
-            } else {
-                delete segment.dataset.pair;
-                delete segment.dataset.pairPos;
-            }
-            segment.classList.toggle('is-pair-active', Boolean(pair && currentPair && pair.start === currentPair.start));
-            const distance = Math.abs(i - scrubIndex);
+            const isPairActive = Boolean(pair && currentPair && pair.start === currentPair.start);
+            const distance = Math.min(Math.abs(i - scrubIndex), 4);
             const result = stats.cardStats[i] || null;
             const hasCorrect = Number(result?.correct || 0) > 0;
             const hasIncorrect = Number(result?.incorrect || 0) > 0;
@@ -9975,14 +9972,32 @@ function renderCardWikipediaBadge(card) {
                 ? 'mixed'
                 : (hasCorrect ? 'correct' : (hasIncorrect ? 'incorrect' : 'unanswered'));
             const isScrubCurrent = i === scrubIndex;
-            segment.classList.toggle('is-visited', stats.studied.has(i));
+            const isVisited = stats.studied.has(i);
+            const isPhraseCurrent = onPhraseCard && isScrubCurrent;
+            // Example/sense changes rerender the card without changing this
+            // ruler. Avoid rewriting every segment's attributes in large sets.
+            // Include all displayed state so grades, resets, split companions
+            // and phrase handoffs still refresh without a persistent deck cache.
+            const renderState = [segmentCount, pair?.start, pair?.pos, isPairActive,
+                distance, resultState, isScrubCurrent, isVisited, isPhraseCurrent].join('|');
+            if (segment._fluencyProgressState === renderState) return;
+            segment._fluencyProgressState = renderState;
+            if (pair) {
+                segment.dataset.pair = String(pair.start);
+                segment.dataset.pairPos = pair.pos;
+            } else {
+                delete segment.dataset.pair;
+                delete segment.dataset.pairPos;
+            }
+            segment.classList.toggle('is-pair-active', isPairActive);
+            segment.classList.toggle('is-visited', isVisited);
             segment.classList.toggle('is-current', isScrubCurrent);
             // The marker stays put; its colour is what says "you're in phrases".
-            segment.classList.toggle('is-phrases', onPhraseCard && isScrubCurrent);
+            segment.classList.toggle('is-phrases', isPhraseCurrent);
             segment.classList.toggle('is-result-correct', resultState === 'correct');
             segment.classList.toggle('is-result-incorrect', resultState === 'incorrect');
             segment.classList.toggle('is-result-mixed', resultState === 'mixed');
-            segment.dataset.distance = String(Math.min(distance, 4));
+            segment.dataset.distance = String(distance);
             segment.dataset.result = resultState;
             segment.setAttribute('aria-current', isScrubCurrent ? 'step' : 'false');
             segment.setAttribute('aria-label', onPhraseCard && isScrubCurrent

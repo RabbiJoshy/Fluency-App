@@ -9,6 +9,11 @@ ROOT = Path(__file__).resolve().parents[2]
 
 @unittest.skipUnless(shutil.which('node'), 'Node.js required')
 class ScrubberTests(unittest.TestCase):
+    def test_large_deck_render_only_updates_changed_segments(self):
+        result = subprocess.run(['node', 'tests/app/scrubber_render_checks.cjs'],
+                                capture_output=True, text=True, cwd=ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_card_scrubber_tactile_navigation_without_abrupt_skips(self):
         script = r"""
         const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');

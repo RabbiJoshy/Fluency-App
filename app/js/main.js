@@ -18,7 +18,6 @@ import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20261026speed';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20261025loading';
-import './tutorial.js?v=20260929sense6';
 import './estimation.js?v=20261026extension';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260927pa';
@@ -45,6 +44,53 @@ import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
 
+// The tutorial and replica cards are sizeable and unused by returning learners.
+// Keep the synchronous mode check available to onboarding without fetching them.
+let tutorialModulePromise = null;
+function loadCardTutorial() {
+    if (!tutorialModulePromise) {
+        tutorialModulePromise = import('./tutorial.js?v=20260929sense6').catch(error => {
+            tutorialModulePromise = null; // A later tap can retry a failed request.
+            throw error;
+        });
+    }
+    return tutorialModulePromise;
+}
+
+window.getCardTutorialMode = () => {
+    if (window.activeArtist || window.playlistLiveActive?.()) return 'lyrics';
+    if (document.getElementById('step1')?.classList.contains('source-speech-active')) return 'speech';
+    return null;
+};
+window.openCardTutorial = async (...args) => {
+    try {
+        await loadCardTutorial();
+        window.openCardTutorial(...args);
+    } catch (error) {
+        console.warn('Could not load the card tutorial:', error);
+        window.alert('The tutorial could not load. Check your connection and try again.');
+    }
+};
+window.openFirstRunCardTutorial = () => {
+    if (['word', 'about', 'walkthrough'].includes(window.fluencyRoute?.kind)) return false;
+    try {
+        if (localStorage.getItem('fluencyCardWalkthroughSeenV1') === '1'
+            || localStorage.getItem('fluencyCardWalkthroughPromptV1') === '1') return false;
+    } catch (_) {}
+    const language = window.activeArtist?.language
+        || document.querySelector('.lang-tab.active')?.dataset.lang
+        || (document.getElementById('step1')?.classList.contains('language-summary-active')
+            ? window.selectedLanguage : null);
+    if (!['spanish', 'portuguese', 'czech', 'french'].includes(language)
+        || !window.getCardTutorialMode()) return false;
+    if (document.querySelector('.modal:not(.hidden), .knowledge-overview-modal:not([hidden])')) return false;
+    // The real controller repeats eligibility after loading: authentication or
+    // another onboarding sheet may have opened while the request was in flight.
+    void loadCardTutorial().then(() => window.openFirstRunCardTutorial())
+        .catch(error => console.warn('Card tutorial deferred:', error));
+    return true;
+};
+
 function startCardTutorial(language) {
     window.setCardTutorialLanguage?.(language);
     closeTutorialIntroduction();
@@ -53,7 +99,14 @@ function startCardTutorial(language) {
 
 // The tutorial lists its own chapters, so there is nothing to choose before
 // it opens — except the language, when the page has not settled one.
-function openTutorialIntroduction() {
+async function openTutorialIntroduction() {
+    try {
+        await loadCardTutorial();
+    } catch (error) {
+        console.warn('Could not load the card tutorial:', error);
+        window.alert('The tutorial could not load. Check your connection and try again.');
+        return;
+    }
     document.getElementById('resumeLastSetCard')?.remove();
     const knownLanguage = window.getCardTutorialLanguageKey?.();
     if (knownLanguage) {
