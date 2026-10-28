@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=e273caa9';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=e273caa9';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=e273caa9';
-import { songCreditHTML } from './song-credit.js?v=e273caa9';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=e273caa9';
+import './state.js?v=e5f2e653';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=e5f2e653';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=e5f2e653';
+import { songCreditHTML } from './song-credit.js?v=e5f2e653';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=e5f2e653';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=e273caa9';
-import { fitSenseRowText } from './card-row-layout.js?v=e273caa9';
+import { exampleTranslationAlignment } from './example-alignment.js?v=e5f2e653';
+import { fitSenseRowText } from './card-row-layout.js?v=e5f2e653';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=e273caa9';
-import { goToRoute, routeCodeFor } from './routes.js?v=e273caa9';
-import { memoryTipTileHTML } from './memory-tips.js?v=e273caa9';
+import './speech.js?v=e5f2e653';
+import { goToRoute, routeCodeFor } from './routes.js?v=e5f2e653';
+import { memoryTipTileHTML } from './memory-tips.js?v=e5f2e653';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=e273caa9';
-import './side-dock.js?v=e273caa9';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=e273caa9';
+} from './function-word-card.js?v=e5f2e653';
+import './side-dock.js?v=e5f2e653';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=e5f2e653';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=e273caa9';
+} from './example-personalisation.js?v=e5f2e653';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=e273caa9';
+} from './spanishdict-usage.js?v=e5f2e653';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=e273caa9';
+} from './reverse-cues.js?v=e5f2e653';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=e273caa9';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=e273caa9';
+} from './card-metadata-pills.js?v=e5f2e653';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=e5f2e653';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -7488,7 +7488,11 @@ function renderCardWikipediaBadge(card) {
         (posSource.length ? posSource : [{ pos: card.partOfSpeech, headword: citationForm }]).forEach(meaning => {
             if (['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(meaning.pos)) return;
             if (isHiddenExpressionOnParent(card, meaning)) return;
-            const lemma = String(meaning.headword || citationForm || displayedTargetHeadword || '').trim();
+            const defaultLemma = String(citationForm || card.lemma || displayedTargetHeadword || '').trim();
+            const rawLemma = String(meaning.headword || defaultLemma).trim();
+            const lemma = (foldSurfaceForm(rawLemma) === foldSurfaceForm(defaultLemma) || foldSurfaceForm(rawLemma) === foldSurfaceForm(displayedTargetHeadword))
+                ? (defaultLemma || rawLemma)
+                : rawLemma;
             const key = `${lemma}\0${meaning.pos}`;
             if (!meaning.pos || seenPairs.has(key)) return;
             seenPairs.add(key);
@@ -7500,11 +7504,13 @@ function renderCardWikipediaBadge(card) {
             // Parts of speech of one lemma are one joined pill; a different
             // lemma ("from x") is its own pill.
             const targetKey = foldSurfaceForm(displayedTargetHeadword);
+            const canonicalKey = foldSurfaceForm(citationForm || card.lemma || '');
             const pillGroups = [];
             const groupByLemma = new Map();
             pairs.forEach(pair => {
-                const key = !pair.lemma || foldSurfaceForm(pair.lemma) === targetKey
-                    ? '' : foldSurfaceForm(pair.lemma);
+                const pairKey = foldSurfaceForm(pair.lemma);
+                const key = (!pair.lemma || pairKey === targetKey || (pairKey === canonicalKey && targetKey === canonicalKey))
+                    ? '' : pairKey;
                 let group = groupByLemma.get(key);
                 if (!group) {
                     group = { lemma: key ? pair.lemma : '', pairs: [] };
@@ -11960,8 +11966,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'e273caa9';
-const MODALS_ASSET_VERSION = 'e273caa9';
+const ASSET_VERSION = 'e5f2e653';
+const MODALS_ASSET_VERSION = 'e5f2e653';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
