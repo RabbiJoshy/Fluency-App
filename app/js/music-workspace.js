@@ -60,7 +60,7 @@ function init() {
                     </button>
                     <button type="button" id="eliteSeriesBtn" class="music-artist-option">
                         <span class="music-artist-image" aria-hidden="true">É</span>
-                        <span><strong>Élite</strong><small>8 episodes · Season 1 sample · Spanish with English examples</small></span>
+                        <span><strong>Élite</strong><small>24 episodes · Seasons 1–3 sample · Spanish with English examples</small></span>
                     </button>
                 </div>
                 <div id="musicPickerHost"></div>

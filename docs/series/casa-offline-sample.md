@@ -109,10 +109,14 @@ files fail the build. Partial coverage requires the explicit flag and is
 recorded in both generated assets. A future dataset revision must also update
 `CASA_PRESET_REVISION` in `app/js/playlist-live.js` to refresh browser caches.
 
-Both the bundled preset and its browser fallback preserve full Spanish/English groups. The preset revision is `offline-30-episodes-v6-example-reuse`, so reopening refreshes older caches while failed refreshes retain usable decks. No source matching or WSD calls are made when opening the preset.
+Both the bundled preset and its browser fallback preserve full Spanish/English groups. The preset revision is `subdl-api-30-episodes-v7`, so reopening refreshes older caches while failed refreshes retain usable decks. No source matching or WSD calls are made when opening the preset.
 
 The Netflix bridge diagnostic sample and unchanged-count comparison are saved
 locally under `Fluency-Workspace/audits/casa-netflix-bridge-20261026/`.
 
 See [Complete series decks](complete-series-decks.md) for the shared build,
 Wiktionary source, entity limitations and Élite preset.
+
+The [2026-10-28 API refresh](subdl-api-trial.md) reacquired the SubDL sources
+without changing the 30-episode corpus or its translation coverage. Seven
+Season 3 episodes and the Spanish recut bridge remain explicit retained fallbacks.

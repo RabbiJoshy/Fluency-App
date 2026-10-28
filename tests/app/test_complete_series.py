@@ -22,7 +22,7 @@ class CompleteSeriesTests(unittest.TestCase):
 
     def test_every_observed_form_has_one_frequency_ranked_card(self):
         for slug, count, tokens, episodes in [('casa-de-papel', 12706, 136924, 30),
-                                              ('elite', 4482, 35791, 8)]:
+                                              ('elite', 8378, 99442, 24)]:
             with self.subTest(series=slug):
                 deck = json.loads((ROOT / f'app/data/series/{slug}-deck.json').read_text())
                 observed = deck['intake']['surfaces']
@@ -58,5 +58,14 @@ class CompleteSeriesTests(unittest.TestCase):
         episode = next(ep for ep in dialogue['episodes'] if ep['episode'] == 'S01E08')
         for cue in episode['lines'][638:641]:
             self.assertNotIn('translation', cue)
-        self.assertEqual(dialogue['coverage']['translatedEpisodes'], 8)
+        season3 = next(ep for ep in dialogue['episodes'] if ep['episode'] == 'S03E02')
+        self.assertNotIn('translation', season3['lines'][55])
+        self.assertEqual(dialogue['coverage']['translatedEpisodes'], 24)
         self.assertFalse(dialogue['coverage']['complete'])
+
+    def test_api_provenance_distinguishes_retained_casa_fallback(self):
+        for slug, api_count, retained_count in [('casa-de-papel', 23, 7), ('elite', 24, 0)]:
+            manifest = json.loads((ROOT / f'app/data/series/{slug}-sources.json').read_text())
+            self.assertEqual(sum(r['acquisition'] == 'subdl-api' for r in manifest['episodes']), api_count)
+            self.assertEqual(sum(r['acquisition'] == 'retained-reviewed-fallback' for r in manifest['episodes']), retained_count)
+            self.assertFalse(any('api_key=' in r['url'] for r in manifest['episodes'] + manifest['translationSources']))

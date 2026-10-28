@@ -15,18 +15,24 @@ import build_casa_de_papel as casa
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def prepare(workspace):
+def prepare(workspace, sources_dir=ROOT / 'app/data/series'):
     bundles = []
     for slug, raw in [('casa-de-papel', workspace / 'raw/series/la-casa-de-papel'),
                       ('elite', workspace / 'raw/series/elite/20261025')]:
-        manifest = json.loads((ROOT / f'app/data/series/{slug}-sources.json').read_text())
+        manifest = json.loads((sources_dir / f'{slug}-sources.json').read_text())
         episodes = casa.add_translations(casa.load_episodes(manifest, raw, True), manifest, raw)
         inventory = json.loads((ROOT / 'app/data/speech-frequency/es-literal-ground-r6-fw1.json').read_text())['values']
         dialogue, deck = casa.build(episodes, inventory, manifest, include_all=True)
+        if manifest.get('acquisition'):
+            deck['acquisition'] = manifest['acquisition']
         if slug == 'elite':
-            deck['presetRevision'] = 'offline-season1-v1-all-forms'
-            dialogue['coverage'].update(complete=False, missing=[], scope='Season 1 sample',
-                                        sampleComplete=len(episodes) == 8)
+            if not manifest.get('acquisition'):
+                deck['presetRevision'] = 'offline-season1-v1-all-forms'
+            seasons = manifest.get('sampleSeasons', [1])
+            dialogue['coverage'].update(complete=False,
+                scope='Seasons 1–3 sample' if seasons == [1, 2, 3] else 'Season 1 sample',
+                sampleComplete=all(f'S{s:02}E{e:02}' in {ep['episode'] for ep in episodes}
+                                   for s in seasons for e in range(1, 9)))
         bundles.append((slug, episodes, dialogue, deck))
     return bundles, inventory
 
@@ -96,12 +102,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--wiktionary', type=Path, required=True)
+    parser.add_argument('--sources-dir', type=Path, default=ROOT / 'app/data/series')
+    parser.add_argument('--output-dir', type=Path, default=ROOT / 'app/data/series')
     args = parser.parse_args()
-    bundles, inventory = prepare(args.workspace)
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    bundles, inventory = prepare(args.workspace, args.sources_dir)
     entity_path = args.workspace / 'raw/series/series-entities-20261026.json'
     entity_results = json.loads(entity_path.read_text()) if entity_path.exists() else {}
     lexicon = build_lexicon(bundles, inventory, args.wiktionary, entity_results)
-    (ROOT / 'app/data/series/spanish-lexicon.json').write_text(json.dumps(lexicon, ensure_ascii=False, separators=(',', ':'))+'\n')
+    lexicon_path = args.output_dir / 'spanish-lexicon.json'
+    lexicon_path.write_text(json.dumps(lexicon, ensure_ascii=False, separators=(',', ':'))+'\n')
     for slug, episodes, dialogue, deck in bundles:
         records = [{'title': ep['episode'], 'artist': deck['playlistName'],
                     'dialogueLines': [{'text': line['spanish']} for line in ep['lines']]} for ep in episodes]
@@ -109,11 +119,11 @@ def main():
             input=json.dumps({'records': records, 'speechSurfaces': list(inventory)}), text=True,
             capture_output=True, check=True)
         deck['intake'] = json.loads(result.stdout)
-        result = subprocess.run(['node', str(ROOT / 'scripts/complete_series_deck.mjs')],
+        result = subprocess.run(['node', str(ROOT / 'scripts/complete_series_deck.mjs'), str(lexicon_path)],
             input=json.dumps(deck), text=True, capture_output=True, check=True)
         deck = json.loads(result.stdout)
         for name, value in [(f'{slug}.json', dialogue), (f'{slug}-deck.json', deck)]:
-            (ROOT / 'app/data/series' / name).write_text(json.dumps(value, ensure_ascii=False, separators=(',', ':'))+'\n')
+            (args.output_dir / name).write_text(json.dumps(value, ensure_ascii=False, separators=(',', ':'))+'\n')
         print(slug, len(episodes), 'episodes', deck['matchedCount'], 'cards', deck['vocabularySummary'], flush=True)
 
 

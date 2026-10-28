@@ -7,7 +7,7 @@ not mean all seasons were obtained or every line has an English translation.
 | Sample | Episodes | Dialogue tokens | Cards | Levels | Cards with English examples |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Casa | 30, original numbering across Seasons 1–4 | 136,924 | 12,706 | 128 | 7,930 |
-| Élite | 8, Season 1 | 35,791 | 4,482 | 45 | 3,817 |
+| Élite | 24, Seasons 1–3 | 99,442 | 8,378 | 84 | 7,301 |
 
 Admission never depends on a frequency-list or dictionary hit. Names, numbers,
 inflections, attached forms, slang and unrecognised tokens are retained. Cards
@@ -32,7 +32,7 @@ it does not establish whether a name refers to a city or a character. The
 separate optional entity acquisition hit provider throttling after 132 queries.
 Unresolved entity checks remain pending and do not discard cards. Other unknown
 forms are not automatically labelled slang. Casa currently has 676 cards with a
-pending definition and Élite has 165. Some are numerals, names, loanwords or
+pending definition and Élite has 421. Some are numerals, names, loanwords or
 attached forms; no English definition is fabricated for these.
 
 Examples retain the existing conservative full-passage alignment policy. English
@@ -45,6 +45,11 @@ their own study rank through session and preview hydration. The complete union
 is used in setup, levels, search and study. Source changes invalidate prepared
 vocabulary, and refresh failure retains the usable cached deck. Optional server
 saving stays in the background. The Music inventory admission policy is unchanged.
+
+The 2026-10-28 [SubDL API trial](subdl-api-trial.md) refreshes Casa acquisition
+provenance and expands Élite to three seasons. Casa retains seven previously
+reviewed Season 3 episodes because the API returned no Spanish Season 3 release.
+Élite is entirely acquired through API-discovered downloads.
 
 ## Rebuild
 
@@ -67,7 +72,7 @@ original character offsets, translated examples, canonical and supplementary
 preview hydration, all 128 Casa levels, switching presets, rebuild fallbacks,
 failed saving, and zero WSD worker starts.
 
-## Missing-English audit
+## Earlier missing-English audit (2026-10-26)
 
 Checked against every original cue and selected card example on 2026-10-26.
 After upgrading translated repetitions, every form with an accepted bilingual

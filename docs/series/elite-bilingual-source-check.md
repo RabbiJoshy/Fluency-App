@@ -103,3 +103,11 @@ forms receive cards (45 study levels), including words outside the 10k inventory
 English examples are available on 3,817 cards; the reviewed bad phone passage
 is excluded. No WSD assignments are added. See
 [Complete series decks](complete-series-decks.md) for the build and limitations.
+
+## API refresh on 2026-10-28
+
+The preset now uses 24 episodes across Seasons 1–3, acquired from SubDL through
+its authenticated search API and public archive download endpoint. It has
+8,378 cards, 99,442 occurrences and English examples on 7,301 cards. The original
+Season 1 quality exclusion remains; one Season 3 passage is also excluded.
+See the [API trial](subdl-api-trial.md) for selection, review and timing evidence.

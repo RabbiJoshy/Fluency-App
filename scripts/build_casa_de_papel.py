@@ -27,6 +27,16 @@ TOKEN = re.compile(r"[^\W_]+(?:['’\-][^\W_]+)*", re.UNICODE)
 REVISION = "offline-30-episodes-v6-example-reuse"
 
 
+def expected_episodes(manifest):
+    counts = manifest.get('expectedEpisodeCounts')
+    if counts is None:
+        return EXPECTED
+    if not counts or any(type(count) is not int or count < 1 for count in counts):
+        raise ValueError('Invalid expected episode counts')
+    return {(season, episode) for season, count in enumerate(counts, 1)
+            for episode in range(1, count + 1)}
+
+
 def milliseconds(value):
     hours, minutes, seconds, fraction = map(int, TIME.fullmatch(value).groups())
     return ((hours * 60 + minutes) * 60 + seconds) * 1000 + fraction
@@ -78,9 +88,10 @@ def read_source(raw_root, record):
 
 def load_episodes(manifest, raw_root, allow_partial=False):
     episodes, seen = [], set()
+    expected = expected_episodes(manifest)
     for record in manifest["episodes"]:
         key = record["season"], record["episode"]
-        if key in seen or key not in EXPECTED:
+        if key in seen or key not in expected:
             raise ValueError(f"Duplicate or unexpected episode: {key}")
         seen.add(key)
         cues = parse_srt(read_source(raw_root, record))
@@ -88,7 +99,7 @@ def load_episodes(manifest, raw_root, allow_partial=False):
         if len(cues) < 200 or max((c["end_ms"] for c in cues), default=0) < 30 * 60 * 1000:
             raise ValueError(f"Incomplete dialogue: {key}")
         episodes.append({"episode": f"S{key[0]:02}E{key[1]:02}", "lines": cues})
-    missing = sorted(EXPECTED - seen)
+    missing = sorted(expected - seen)
     if missing and not allow_partial:
         raise ValueError("Missing episodes: " + ", ".join(f"S{s:02}E{e:02}" for s, e in missing))
     return sorted(episodes, key=lambda ep: ep["episode"])
@@ -238,7 +249,7 @@ def build(episodes, inventory, manifest, *, include_all=False):
                     if i < len(choices) and len(selected) < 5 and not any(e['text'] == choices[i]['text'] for e in selected):
                         selected.append(choices[i])
     actual = {ep["episode"] for ep in episodes}
-    expected = {f"S{s:02}E{e:02}" for s, e in EXPECTED}
+    expected = {f"S{s:02}E{e:02}" for s, e in expected_episodes(manifest)}
     coverage = {"episodes": len(episodes), "seasons": sorted({int(ep["episode"][1:3]) for ep in episodes}),
                 "numbering": manifest["numbering"], "complete": actual == expected,
                 "missing": sorted(expected - actual), "exampleTranslations": "unavailable"}
@@ -251,7 +262,7 @@ def build(episodes, inventory, manifest, *, include_all=False):
     dialogue = {"series_id": series_id, "title": title, "language": "spanish",
                 "episodes_count": len(episodes), "total_lines_count": sum(len(e["lines"]) for e in episodes),
                 "coverage": coverage, "episodes": episodes}
-    deck = {"id": "live", "presetRevision": REVISION, "sourceKind": "series",
+    deck = {"id": "live", "presetRevision": manifest.get('presetRevision', REVISION), "sourceKind": "series",
             "playlistId": series_id, "playlistName": title, "language": "spanish",
             "builtAt": manifest["retrievedAt"], "trackCount": len(episodes), "lyricsTrackCount": len(episodes),
             "tokenCount": token_count, "matchedCount": len(surfaces), "coverage": coverage, "surfaces": surfaces}

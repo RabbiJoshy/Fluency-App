@@ -14,10 +14,10 @@ const MAX_LINES_PER_SURFACE = 5;
 
 let _liveDeck = null;
 
-export const CASA_PRESET_REVISION = 'offline-30-episodes-v6-example-reuse';
+export const CASA_PRESET_REVISION = 'subdl-api-30-episodes-v7';
 export const SERIES_PRESETS = {
     'la-casa-de-papel': { title: 'La Casa de Papel', file: 'casa-de-papel', revision: CASA_PRESET_REVISION },
-    elite: { title: 'Élite', file: 'elite', revision: 'offline-season1-v1-all-forms' }
+    elite: { title: 'Élite', file: 'elite', revision: 'subdl-api-seasons1-3-v2-all-forms' }
 };
 
 export function validLiveDeck(deck) {
