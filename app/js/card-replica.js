@@ -447,7 +447,7 @@ export function renderFront(card) {
         card.mergedLemma
         || (typeof window !== 'undefined' && window.useLemmaMode && card.mergedLemma !== false)
     );
-    const smartGroupTag = isMergedFormsMode ? '<span class="card-smart-group-tag">(Smart Group)</span>' : '';
+    const smartGroupTag = isMergedFormsMode ? '<span class="card-smart-group-tag">Group</span>' : '';
     const rankLabel = stat('card-rank-label', 'Vocabulary Rank', card.rank.toLocaleString(), rankOf, true, smartGroupTag);
     // Same two figures the live card puts here, in the same words. An earlier
     // draft hedged with "Frequency from the Spanish release", which told a

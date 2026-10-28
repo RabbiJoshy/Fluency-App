@@ -7736,7 +7736,7 @@ function renderCardWikipediaBadge(card) {
             || (typeof window !== 'undefined' && window.useLemmaMode && card.mergedLemma !== false)
         );
         const smartGroupTag = isMergedFormsMode
-            ? '<span class="card-smart-group-tag">(Smart Group)</span>'
+            ? '<span class="card-smart-group-tag">Group</span>'
             : '';
         frontRankingEl.innerHTML =
             cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), rankOf, true, smartGroupTag)
