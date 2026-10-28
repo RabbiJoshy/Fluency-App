@@ -1,10 +1,10 @@
 // Naive live-playlist deck: tokenise lyrics in the browser, join them to the
 // speech inventory, and study those cards with unassigned song-line examples.
-import { clearRoute, parseRoute } from './routes.js?v=e5f2e653';
-import { releaseUrl } from './release-host.js?v=e5f2e653';
-import { enrichOfflineDeck, loadOfflineIntakeAssets } from './offline-intake.js?v=e5f2e653';
-import { standaloneWordMeanings } from './lexical-guards.js?v=e5f2e653';
-import { completeSeriesVocabulary, loadSeriesLexicon } from './series-vocabulary.js?v=e5f2e653';
+import { clearRoute, parseRoute } from './routes.js?v=7b1e5ad4';
+import { releaseUrl } from './release-host.js?v=7b1e5ad4';
+import { enrichOfflineDeck, loadOfflineIntakeAssets } from './offline-intake.js?v=7b1e5ad4';
+import { standaloneWordMeanings } from './lexical-guards.js?v=7b1e5ad4';
+import { completeSeriesVocabulary, loadSeriesLexicon } from './series-vocabulary.js?v=7b1e5ad4';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;

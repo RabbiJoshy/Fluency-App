@@ -95,6 +95,8 @@ function ensureCue() {
     }
 }
 
+export const MAX_DISPLAYED_MERGED_FORMS = 14;
+
 export function renderMergedFormsCue(card, visible = true) {
     ensureCue();
     if (!cue) return;
@@ -106,12 +108,36 @@ export function renderMergedFormsCue(card, visible = true) {
     if (cue.hidden) return;
     trigger.textContent = `+${others.length} other form${others.length === 1 ? '' : 's'}`;
     trigger.setAttribute('aria-label', `${trigger.textContent}. Show forms merged by Smart Skip`);
-    panel.querySelector('.merged-forms-list').replaceChildren(...forms.map(form => {
+
+    // Ensure the currently displayed surface is always included within the capped slice
+    let displayedForms = forms;
+    let extraCount = 0;
+    if (forms.length > MAX_DISPLAYED_MERGED_FORMS) {
+        const shownIdx = forms.findIndex(f => f.normalize('NFC').toLocaleLowerCase() === shown);
+        if (shownIdx >= MAX_DISPLAYED_MERGED_FORMS) {
+            // Swap shown form into the visible window
+            displayedForms = [forms[shownIdx], ...forms.slice(0, MAX_DISPLAYED_MERGED_FORMS - 1)];
+        } else {
+            displayedForms = forms.slice(0, MAX_DISPLAYED_MERGED_FORMS);
+        }
+        extraCount = forms.length - displayedForms.length;
+    }
+
+    const items = displayedForms.map(form => {
         const item = document.createElement('span');
         item.textContent = form;
         if (form.normalize('NFC').toLocaleLowerCase() === shown) item.className = 'is-displayed';
         return item;
-    }));
+    });
+
+    if (extraCount > 0) {
+        const moreItem = document.createElement('span');
+        moreItem.className = 'merged-forms-more';
+        moreItem.textContent = `+ ${extraCount} more`;
+        items.push(moreItem);
+    }
+
+    panel.querySelector('.merged-forms-list').replaceChildren(...items);
     requestAnimationFrame(positionCue);
     document.fonts?.ready?.then(positionCue);
 }

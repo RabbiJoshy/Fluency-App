@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=e5f2e653");
+@import url("./appearance.css?v=7b1e5ad4");
 
 
         * {
@@ -27393,13 +27393,23 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-relation-box .fw-relation-meaning { flex: 0 1 auto; margin: 0; text-align: right; font-size: 16px; color: var(--text-secondary); }
 .fw-relation-box.is-stacked .fw-relation-meaning { flex: 1 0 100%; text-align: left; }
 
+.card-stat-above {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  margin-bottom: 2px;
+}
 .card-smart-group-tag {
   font-size: 11.5px;
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.65);
-  margin-bottom: 1px;
   white-space: nowrap;
 }
 :root[data-theme="light"] .card-smart-group-tag {
@@ -27495,6 +27505,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .merged-forms-heading { margin-bottom: 12px; font: 600 15px/1.4 var(--font-reading); text-align: center; }
 .merged-forms-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font: 400 15px/1.5 var(--font-reading); text-align: center; }
 .merged-forms-list .is-displayed { font-weight: 700; }
+.merged-forms-list .merged-forms-more {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-style: italic;
+}
 @media (pointer: coarse) { .merged-forms-trigger { min-height: 44px; } }
 
 /* A lone grouped row's shared translation, written into each sub-sense when

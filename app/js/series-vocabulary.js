@@ -1,6 +1,6 @@
 // Series admission is independent of dictionary coverage. Never drop an unknown
 // form or merge it with a lemma; definitions and entity candidates are metadata.
-import { standaloneWordMeanings } from './lexical-guards.js?v=e5f2e653';
+import { standaloneWordMeanings } from './lexical-guards.js?v=7b1e5ad4';
 
 export const SERIES_ADMISSION_POLICY = 'all-forms-v1';
 let seriesLexiconPromise;
