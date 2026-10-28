@@ -7488,7 +7488,11 @@ function renderCardWikipediaBadge(card) {
         (posSource.length ? posSource : [{ pos: card.partOfSpeech, headword: citationForm }]).forEach(meaning => {
             if (['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(meaning.pos)) return;
             if (isHiddenExpressionOnParent(card, meaning)) return;
-            const lemma = String(meaning.headword || citationForm || displayedTargetHeadword || '').trim();
+            const defaultLemma = String(citationForm || card.lemma || displayedTargetHeadword || '').trim();
+            const rawLemma = String(meaning.headword || defaultLemma).trim();
+            const lemma = (foldSurfaceForm(rawLemma) === foldSurfaceForm(defaultLemma) || foldSurfaceForm(rawLemma) === foldSurfaceForm(displayedTargetHeadword))
+                ? (defaultLemma || rawLemma)
+                : rawLemma;
             const key = `${lemma}\0${meaning.pos}`;
             if (!meaning.pos || seenPairs.has(key)) return;
             seenPairs.add(key);
@@ -7500,11 +7504,13 @@ function renderCardWikipediaBadge(card) {
             // Parts of speech of one lemma are one joined pill; a different
             // lemma ("from x") is its own pill.
             const targetKey = foldSurfaceForm(displayedTargetHeadword);
+            const canonicalKey = foldSurfaceForm(citationForm || card.lemma || '');
             const pillGroups = [];
             const groupByLemma = new Map();
             pairs.forEach(pair => {
-                const key = !pair.lemma || foldSurfaceForm(pair.lemma) === targetKey
-                    ? '' : foldSurfaceForm(pair.lemma);
+                const pairKey = foldSurfaceForm(pair.lemma);
+                const key = (!pair.lemma || pairKey === targetKey || (pairKey === canonicalKey && targetKey === canonicalKey))
+                    ? '' : pairKey;
                 let group = groupByLemma.get(key);
                 if (!group) {
                     group = { lemma: key ? pair.lemma : '', pairs: [] };

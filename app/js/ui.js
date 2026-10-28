@@ -1166,39 +1166,7 @@ function updateStep5Tooltip() {
 
 function _findRangeSlice(items, rankOf, minRank, maxRank) {
     if (!items || items.length === 0) return [];
-    const len = items.length;
     const rFn = typeof rankOf === 'function' ? rankOf : (it => it?.rank);
-    const firstRank = rFn(items[0]);
-    const lastRank = rFn(items[len - 1]);
-    if (firstRank != null && lastRank != null && firstRank <= lastRank) {
-        let low = 0, high = len - 1;
-        let startIdx = len;
-        while (low <= high) {
-            const mid = (low + high) >> 1;
-            const r = rFn(items[mid]);
-            if (r >= minRank) {
-                startIdx = mid;
-                high = mid - 1;
-            } else {
-                low = mid + 1;
-            }
-        }
-        if (startIdx >= len || rFn(items[startIdx]) >= maxRank) return [];
-        low = startIdx;
-        high = len - 1;
-        let endIdx = startIdx;
-        while (low <= high) {
-            const mid = (low + high) >> 1;
-            const r = rFn(items[mid]);
-            if (r < maxRank) {
-                endIdx = mid;
-                low = mid + 1;
-            } else {
-                high = mid - 1;
-            }
-        }
-        return items.slice(startIdx, endIdx + 1);
-    }
     return items.filter(item => {
         const rank = rFn(item);
         return rank >= minRank && rank < maxRank;
@@ -2865,18 +2833,17 @@ async function updateLemmaToggleVisibility() {
     const lemmaSelector = document.getElementById('lemmaToggleSelector');
     const rangeStepNumber = document.getElementById('rangeStepNumber');
 
-    // Prefer the release/config contract. Artist decks and live playlists
-    // treat each surface as its own card and do not merge lemmas without a
-    // release-bound contract.
-    const isLiveOrArtist = Boolean(activeArtist || window.playlistLiveActive?.());
-    const declaredCapability = isLiveOrArtist ? false
+    // Prefer the release/config contract. Live playlists
+    // treat each surface as its own card.
+    const isLive = Boolean(window.playlistLiveActive?.());
+    const declaredCapability = isLive ? false
         : (window._activeReleaseCapabilities?.mergeLemmas ?? langConfig?.capabilities?.mergeLemmas);
     lemmaFieldAvailable = declaredCapability === true;
-    if (!isLiveOrArtist && langConfig && typeof declaredCapability !== 'boolean') {
+    if (!isLive && langConfig && typeof declaredCapability !== 'boolean') {
         try {
             const vocabData = await fetchActiveVocabularyData(langConfig);
             lemmaFieldAvailable = vocabData.some(item =>
-                item.hasOwnProperty('most_frequent_lemma_instance')
+                item.hasOwnProperty('most_frequent_lemma_instance') || item.lemma || item.canonical_form
             );
         } catch (error) {
             console.error('Error checking lemma field availability:', error);

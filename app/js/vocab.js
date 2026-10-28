@@ -2837,14 +2837,12 @@ function stampMergeExceptionValues(vocabulary, contractions, keys, nounVerdicts 
     // run the same rule here, but only when nearly every row has its senses:
     // verdicts from a partly loaded deck would change as rows arrive. Artist
     // decks and live playlists do not run form privilege or lemma merging.
-    const isLiveOrArtist = Boolean(
-        (typeof activeArtist !== 'undefined' && activeArtist)
-        || globalThis.activeArtist
-        || (typeof playlistLiveActive === 'function' && playlistLiveActive())
+    const isLivePlaylist = Boolean(
+        (typeof playlistLiveActive === 'function' && playlistLiveActive())
         || globalThis.playlistLiveActive?.()
         || globalThis.window?.playlistLiveActive?.()
     );
-    if (!privilegeKeys && !isLiveOrArtist) {
+    if (!privilegeKeys && !isLivePlaylist) {
         const loaded = vocabulary.filter(item => item?.meanings?.length && !item._indexRowsPending);
         if (loaded.length && loaded.length >= 0.9 * vocabulary.length) {
             const verdicts = formPrivilegeVerdicts(loaded);
@@ -3468,15 +3466,12 @@ function buildFilteredVocab(vocabData) {
     // Apply lemma collapsing only after every other inclusion rule. This
     // guarantees one host inside the active song/source subset even when the
     // pipeline's preferred surface is absent or conflicting flags are shipped.
-    // Artist decks and live series decks treat each surface as its own card.
-    const isLiveOrArtist = Boolean(
-        (typeof activeArtist !== 'undefined' && activeArtist)
-        || globalThis.activeArtist
-        || (typeof playlistLiveActive === 'function' && playlistLiveActive())
+    const isLivePlaylist = Boolean(
+        (typeof playlistLiveActive === 'function' && playlistLiveActive())
         || globalThis.playlistLiveActive?.()
         || globalThis.window?.playlistLiveActive?.()
     );
-    const canMergeLemmas = useLemmaMode && lemmaFieldAvailable && !isLiveOrArtist;
+    const canMergeLemmas = useLemmaMode && lemmaFieldAvailable && !isLivePlaylist;
     if (canMergeLemmas) {
         const beforeLemmaMerge = result.length;
         result = selectLemmaModeRepresentatives(result);
