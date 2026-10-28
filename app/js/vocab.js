@@ -4212,7 +4212,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
             }
 
             // Synthesize clitic meaning (parallel to MWE, cycles through forms)
-            if (item.clitic_memberships && item.clitic_memberships.length > 0) {
+            // Synthesize CLITIC meanings (deprecated — expressions show MWEs only)
+            if (false && item.clitic_memberships && item.clitic_memberships.length > 0) {
                 const allClitics = [];
                 for (const cl of item.clitic_memberships) {
                     const matched = cl.examples || [];
@@ -5369,7 +5370,8 @@ function synthesizeSpecialMeanings(item, meanings) {
             allExamples: allMWEs[0].examples,
         });
     }
-    if (item.clitic_memberships && item.clitic_memberships.length > 0) {
+    // Synthesize CLITIC meanings (deprecated — expressions show MWEs only)
+    if (false && item.clitic_memberships && item.clitic_memberships.length > 0) {
         const allClitics = item.clitic_memberships.map(cl => {
             const matched = cl.examples || [];
             return {

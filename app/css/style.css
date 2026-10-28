@@ -15736,23 +15736,31 @@
             vertical-align: middle;
         }
 
-        /* Bad Bunny mode album artwork backgrounds */
-        body.artist-mode .card-face {
+        /* Artist mode album artwork backgrounds: restricted to front face; back remains solid black */
+        body.artist-mode .card-face.card-front {
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
 
-        body.artist-mode .card-face::after {
+        body.artist-mode .card-face.card-front::after {
             content: '';
             position: absolute;
             inset: 0;
             /* Higher alpha = more opaque overlay = artist album artwork
                shows through less. Keeps it as an atmospheric cue without
                competing with the text. */
-            background: rgba(30, 39, 50, 0.9);
+            background: rgba(18, 22, 28, 0.94);
             border-radius: 16px;
             z-index: 0;
+        }
+
+        body.artist-mode .card-face.card-back {
+            background-image: none !important;
+        }
+
+        body.artist-mode .card-face.card-back::after {
+            display: none !important;
         }
 
         /* Lift the face's own children above the ::after artwork overlay.
@@ -25551,12 +25559,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     box-shadow: 0 10px 28px rgba(27, 39, 51, 0.12);
   }
   body.artist-mode .card-back.has-action-tray > #backContent {
-    background-image: linear-gradient(rgba(30, 39, 50, 0.9), rgba(30, 39, 50, 0.9)), var(--card-artwork, none);
-    background-size: cover;
-    background-position: center;
+    background-image: none !important;
   }
   :root[data-theme="light"] body.artist-mode .card-back.has-action-tray > #backContent {
-    background-image: linear-gradient(rgba(250, 252, 253, 0.91), rgba(250, 252, 253, 0.91)), var(--card-artwork, none);
+    background-image: none !important;
   }
 }
 @media (min-width: 768px) {
@@ -26389,14 +26395,18 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .fw-part-plus { font:inherit; color:var(--text-muted); }
 .fw-sentence-panel { margin-top:4px; }
 .fw-sentence-target { font-weight:400; }
-.fw-token-connector, .fw-sentence-target .fw-token-connector { color:#fff; font-weight:700; text-decoration-thickness:1px; text-underline-offset:4px; }
+.fw-token-connector { color:#fff; font-weight:700; text-decoration-thickness:1px; text-underline-offset:4px; }
+.fw-sentence-target .fw-token-connector { font-weight:700; text-decoration-thickness:1px; text-underline-offset:4px; }
 .fw-credit-start { overflow:visible; white-space:normal; min-width:0; max-width:75%; display:flex; align-items:center; }
 .fw-credit-start .example-source-chip { max-width:100%; }
+.fw-credit-end { display: flex; align-items: center; justify-content: flex-end; min-width: 44px; }
+.fw-credit-end > .spotify-btn { flex: 0 0 auto; }
 .fw-example-credit-row { min-height:42px; }
 /* As on ordinary cards: a source icon keeps the left edge and the dots centre;
    a text credit ("Source not verified") keeps the old left/right split. */
 .fw-example-credit-row:has(.example-source-chip--icon) { position:relative; justify-content:center; }
 .fw-example-credit-row:has(.example-source-chip--icon) > .fw-credit-start { position:absolute; left:0; top:50%; transform:translateY(-50%); max-width:48px; }
+.fw-example-credit-row:has(.example-source-chip--icon) > .fw-credit-end { position:absolute; right:0; top:50%; transform:translateY(-50%); }
 .fw-example-credit-row:has(.example-source-chip--icon) > .fw-sentence-ticks-container { margin-left:0; max-width:calc(100% - 112px); }
 
 /* Function-word cards (2026-10-19): same type as ordinary card backs (DM
@@ -27029,21 +27039,24 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
    usage patterns, not every meaning. */
 .fw-patterns-label { margin: 6px 0 0; text-align: center; font: 500 14px/1.3 var(--font-reading); color: var(--text-muted); }
 .fw-relation-box {
-  border: 1px solid color-mix(in srgb, var(--text-primary) 16%, transparent);
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  border-left: 4px solid transparent;
   border-radius: 8px;
   background: transparent;
   min-height: 44px;
-  padding: 7px 12px;
+  padding: 10px 14px;
 }
 .fw-relation-box:hover { background: color-mix(in srgb, var(--text-primary) 4%, transparent); }
 .fw-relation-box.is-selected,
 .fw-relation-box[aria-pressed="true"] {
   /* Same marker as an ordinary sense row (2026-10-21): stronger fill and a
-     4px bar on the left in the partner's colour, no outline. */
+     4px bar on the left in the partner's colour, no outline. Same padding/border
+     prevents shrinking on click. */
   border: 2px solid transparent;
   border-left: 4px solid rgb(var(--fw-row-rgb, var(--sense-match-rgb)));
   background: rgba(var(--fw-row-rgb, var(--sense-match-rgb)), 0.24);
-  padding: 6px 11px;
+  padding: 10px 14px;
 }
 .fw-relation-meaning { font-size: 18px; margin-top: 2px; }
 
@@ -27370,11 +27383,28 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .fw-relation-box {
   display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
-  gap: 2px 14px; text-align: left; padding: 10px 14px;
+  gap: 2px 14px; text-align: left; padding: 10px 14px; box-sizing: border-box;
+}
+.fw-relation-box.is-selected,
+.fw-relation-box[aria-pressed="true"] {
+  padding: 10px 14px; box-sizing: border-box;
 }
 .fw-relation-box .fw-relation-formula { flex: 0 0 auto; max-width: 100%; text-align: left; line-height: 1.5; }
 .fw-relation-box .fw-relation-meaning { flex: 0 1 auto; margin: 0; text-align: right; font-size: 16px; color: var(--text-secondary); }
 .fw-relation-box.is-stacked .fw-relation-meaning { flex: 1 0 100%; text-align: left; }
+
+.card-smart-group-tag {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 1px;
+  white-space: nowrap;
+}
+:root[data-theme="light"] .card-smart-group-tag {
+  color: rgba(0, 0, 0, 0.55);
+}
 
 /* Construction frames match function-word patterns: bold connector, word-type pill. */
 .sense-grammar-cue .frame-connector { color: var(--text-primary); font-weight: 700; }

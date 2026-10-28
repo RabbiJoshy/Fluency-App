@@ -28,9 +28,10 @@ assert.ok(html.includes('rgb(74, 158, 255)'));
 assert.ok(html.includes('<b>tatoeba</b>'));
 const que=vm.runInContext("functionWordBlockHTML({word:'que'},'pt')",ctx);
 assert.ok(que.includes('color:rgb(0, 212, 170)">think / say'));
-// Typed slots are pills in the pattern row; untyped ones ("more, less or better") take no colour.
+// Typed slots are pills in the pattern row; more / less inherits adv pill styling.
 assert.ok(que.includes('class="fw-token-v fw-slot-pill" data-pos="verb"'));
-assert.ok(que.includes('<span class="fw-token-v is-untyped">more / less'));
+assert.ok(que.includes('class="fw-token-v fw-slot-pill" data-pos="adv"'));
+assert.ok(que.includes('>more / less<'));
 // Meanings are English translations, not descriptions.
 assert.ok(que.includes('class="fw-relation-meaning">than<'));
 assert.ok(!que.includes('#8fb8d8') && !que.includes('#c3a6df'));

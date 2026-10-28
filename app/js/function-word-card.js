@@ -78,14 +78,19 @@ function fwAccentPos(relation) {
 }
 // A partner slot names a word type (verb, noun…) or describes one. Those that
 // name a thing are noun phrases — "em + place" is em + casa — so they take the
-// noun colour; a clause ("…") or "more / less" names no word type.
+// noun colour; adverbs and degree markers like "more / less" take the adv colour.
 const FW_POS_SLOTS = ['noun', 'verb', 'adj', 'pron', 'prep', 'adv', 'det', 'conj', 'clitic', 'part'];
 const FW_NOMINAL_SLOTS = new Set(['place', 'person', 'thing', 'time', 'reason', 'role', 'topic', 'endpoint', 'place / time', 'route / reason']);
+const FW_ADVERBIAL_SLOTS = new Set(['more / less', 'more, less or better', 'more', 'less', 'manner', 'degree']);
 function fwSlotType(relation, side) {
     const type = relation?.slotTypes?.[side];
     if (FW_POS_SLOTS.includes(type)) return type;
     const label = String(relation?.formulaHTML || '').match(new RegExp(`fw-token-${side}['"]>([^<]*)<`))?.[1];
-    return label && FW_NOMINAL_SLOTS.has(label.trim().toLowerCase()) ? 'noun' : '';
+    if (!label) return '';
+    const norm = label.trim().toLowerCase();
+    if (FW_NOMINAL_SLOTS.has(norm)) return 'noun';
+    if (FW_ADVERBIAL_SLOTS.has(norm)) return 'adv';
+    return '';
 }
 // A pattern row's colour is its partner's word type; with no typed partner,
 // the function word's own colour. No active row is left white.
@@ -104,8 +109,8 @@ function fwPartsHTML(parts) {
 }
 // Slots that name a word type (noun, verb, adjective…) take that type's
 // colour: as a pill in the pattern row, as coloured words in the example.
-// Anything else ("destination", "more, less or better", a clause) stays
-// uncoloured. The function word itself is styled white by CSS.
+// In the example expression, the connector surface form receives the colour
+// of its partner in the fixed pattern (e.g. que in que + noun takes noun colour).
 function fwSlotHTML(html, relation, inPattern = false) {
     // A slot the pattern no longer names (e.g. the clause after "think + que")
     // stays plain text in the example rather than taking a colour.
@@ -122,10 +127,21 @@ function fwSlotHTML(html, relation, inPattern = false) {
         return `<span class="fw-token-${side}${pill}" data-pos="${type}" style="--slot-rgb: ${rgb}; color:rgb(${rgb})">`;
     });
     const pos = fwAccentPos(relation);
-    if (pos) out = out.replace(/<span class=['"]fw-token-connector['"]>/g, `<span class="fw-token-connector" data-pos="${esc(pos)}">`);
+    const partnerRgb = fwRowRgb(relation);
+    if (!inPattern && partnerRgb) {
+        out = out.replace(/<span class=['"]fw-token-connector['"]>/g,
+            `<span class="fw-token-connector" data-pos="${esc(pos || '')}" style="--slot-rgb: ${partnerRgb}; color: rgb(${partnerRgb});">`);
+    } else if (pos) {
+        out = out.replace(/<span class=['"]fw-token-connector['"]>/g, `<span class="fw-token-connector" data-pos="${esc(pos)}">`);
+    }
     return out;
 }
 function fwCreditHTML(example) {
+    const song = example?.song_name || example?.song || example?.metadata?.source?.song;
+    const artist = example?.artist || example?.vocalists || example?.metadata?.source?.artist;
+    if (song && fwPresentation.songCreditHTML) {
+        return fwPresentation.songCreditHTML(song, artist);
+    }
     if (example?.metadata?.source?.source_record_id) {
         return fwPresentation.provenanceHTML?.(example) || '';
     }
@@ -586,6 +602,11 @@ function refreshFunctionWordCardBack() {
     if (ticksContainer) {
         ticksContainer.innerHTML = renderFwTicks(examples.length, _activeExampleIndex);
     }
+
+    const creditEndEl = container.querySelector('.fw-credit-end');
+    if (creditEndEl) {
+        creditEndEl.innerHTML = currentEx ? (fwPresentation.spotifyButtonHTML?.(currentEx) || '') : '';
+    }
 }
 
 // Pattern rows: the meaning sits beside the pattern when both fit, else beneath it.
@@ -692,6 +713,7 @@ export function functionWordBlockHTML(card, lang) {
             creditHTML = '<span class="fw-shortage-badge">Shortage</span>';
         }
         const ticksHTML = renderFwTicks(examples.length, _activeExampleIndex);
+        const spotifyBtnHTML = currentEx ? (fwPresentation.spotifyButtonHTML?.(currentEx) || '') : '';
 
         return `
             <div class="fw-deterministic-card" data-word="${esc(wordKey)}" data-lang="${esc(lang || 'pt')}" data-pos="${esc(fwAccentPos(currentRel))}" data-deck="${esc(deckContext.channel)}" data-artist="${esc(deckContext.artist)}" style="--sense-match-rgb: ${fwPresentation.posRgb?.(fwAccentPos(currentRel) || card?.pos || card?.meanings?.[0]?.pos) || 'var(--accent-primary-rgb)'};">
@@ -709,6 +731,7 @@ export function functionWordBlockHTML(card, lang) {
                     <div class="fw-example-credit-row">
                         <span class="fw-credit-start">${creditHTML}</span>
                         <div class="fw-sentence-ticks-container">${ticksHTML}</div>
+                        <div class="fw-credit-end">${spotifyBtnHTML}</div>
                     </div>
                 </div>
             </div>`;
