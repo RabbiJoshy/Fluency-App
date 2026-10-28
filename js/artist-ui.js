@@ -1,4 +1,4 @@
-import './state.js?v=0e7f73d1';
+import './state.js?v=e273caa9';
 
 // Per-artist default album art, keyed by slug (for multi-artist fallback)
 const artistDefaultArt = {};
@@ -36,7 +36,15 @@ function getAlbumImageForSong(songName, artistSlug) {
 function updateArtistBackground() {
     if (!activeArtist) return;
 
-    const cardFaces = document.querySelectorAll('.card-face');
+    // The back of cards remains solid black (matching speech mode) for maximal contrast.
+    // Artwork is applied only to the less cluttered front card face.
+    const cardFronts = document.querySelectorAll('.card-face.card-front');
+    const cardBacks = document.querySelectorAll('.card-face.card-back');
+    cardBacks.forEach(face => {
+        if (face.dataset.albumImage) delete face.dataset.albumImage;
+        face.style.backgroundImage = 'none';
+        face.style.removeProperty('--card-artwork');
+    });
 
     let songName = null;
     let artistSlug = null;
@@ -52,7 +60,7 @@ function updateArtistBackground() {
 
     const imageUrl = getAlbumImageForSong(songName, artistSlug);
 
-    cardFaces.forEach(face => {
+    cardFronts.forEach(face => {
         if (face.dataset.albumImage === imageUrl) return;
         face.dataset.albumImage = imageUrl;
         face.style.backgroundImage = imageUrl ? `url('${imageUrl}')` : '';

@@ -1,17 +1,17 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=0e7f73d1';
-import { readJsonWithTimeout } from './read-request.js?v=0e7f73d1';
-import { validateVocabularyIndex } from './data-contracts.js?v=0e7f73d1';
-import { formatRoute } from './routes.js?v=0e7f73d1';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=0e7f73d1';
-import { releaseUrl } from './release-host.js?v=0e7f73d1';
-import { promoteSubglossTranslations } from './sense-gloss.js?v=0e7f73d1';
-import { getGrammarWordDefinition } from './function-word-card.js?v=0e7f73d1';
-import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=0e7f73d1';
-import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=0e7f73d1';
-import { createExampleAlignmentLoader } from './example-alignment.js?v=0e7f73d1';
+import './state.js?v=e273caa9';
+import { readJsonWithTimeout } from './read-request.js?v=e273caa9';
+import { validateVocabularyIndex } from './data-contracts.js?v=e273caa9';
+import { formatRoute } from './routes.js?v=e273caa9';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=e273caa9';
+import { releaseUrl } from './release-host.js?v=e273caa9';
+import { promoteSubglossTranslations } from './sense-gloss.js?v=e273caa9';
+import { getGrammarWordDefinition } from './function-word-card.js?v=e273caa9';
+import { loadWsdUiSidecar, applyWsdUiIndex, wsdUiExamplePayload, wsdUiCard } from './wsd-ui-sidecar.js?v=e273caa9';
+import { prepareAssignmentFilters, passesAssignmentFilters } from './assignment-filters.js?v=e273caa9';
+import { createExampleAlignmentLoader } from './example-alignment.js?v=e273caa9';
 
 let exampleAlignmentLoader = null;
 function attachExampleAlignment(payload, langConfig) {
@@ -4212,7 +4212,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
             }
 
             // Synthesize clitic meaning (parallel to MWE, cycles through forms)
-            if (item.clitic_memberships && item.clitic_memberships.length > 0) {
+            // Synthesize CLITIC meanings (deprecated — expressions show MWEs only)
+            if (false && item.clitic_memberships && item.clitic_memberships.length > 0) {
                 const allClitics = [];
                 for (const cl of item.clitic_memberships) {
                     const matched = cl.examples || [];
@@ -5369,7 +5370,8 @@ function synthesizeSpecialMeanings(item, meanings) {
             allExamples: allMWEs[0].examples,
         });
     }
-    if (item.clitic_memberships && item.clitic_memberships.length > 0) {
+    // Synthesize CLITIC meanings (deprecated — expressions show MWEs only)
+    if (false && item.clitic_memberships && item.clitic_memberships.length > 0) {
         const allClitics = item.clitic_memberships.map(cl => {
             const matched = cl.examples || [];
             return {

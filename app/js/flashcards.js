@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=0e7f73d1';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=0e7f73d1';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=0e7f73d1';
-import { songCreditHTML } from './song-credit.js?v=0e7f73d1';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=0e7f73d1';
+import './state.js?v=e273caa9';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=e273caa9';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=e273caa9';
+import { songCreditHTML } from './song-credit.js?v=e273caa9';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=e273caa9';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=0e7f73d1';
-import { fitSenseRowText } from './card-row-layout.js?v=0e7f73d1';
+import { exampleTranslationAlignment } from './example-alignment.js?v=e273caa9';
+import { fitSenseRowText } from './card-row-layout.js?v=e273caa9';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=0e7f73d1';
-import { goToRoute, routeCodeFor } from './routes.js?v=0e7f73d1';
-import { memoryTipTileHTML } from './memory-tips.js?v=0e7f73d1';
+import './speech.js?v=e273caa9';
+import { goToRoute, routeCodeFor } from './routes.js?v=e273caa9';
+import { memoryTipTileHTML } from './memory-tips.js?v=e273caa9';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=0e7f73d1';
-import './side-dock.js?v=0e7f73d1';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=0e7f73d1';
+} from './function-word-card.js?v=e273caa9';
+import './side-dock.js?v=e273caa9';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=e273caa9';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=0e7f73d1';
+} from './example-personalisation.js?v=e273caa9';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=0e7f73d1';
+} from './spanishdict-usage.js?v=e273caa9';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=0e7f73d1';
+} from './reverse-cues.js?v=e273caa9';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=0e7f73d1';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=0e7f73d1';
+} from './card-metadata-pills.js?v=e273caa9';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=e273caa9';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1854,29 +1854,50 @@ function exampleSungByActiveArtist(example) {
 }
 
 function getSpotifyTrackIdForExample(example) {
-    if (!example || !example.song_name) return null;
+    if (!example) return null;
+    const songName = example.song_name || example.song || example.metadata?.source?.song || null;
     // Playlist builds carry the exact source Spotify track ID. This avoids
     // resolving a mixed playlist against its deck name (and avoids a race
     // with the legacy global mapping fetch).
     if (example.spotify_track_id) return example.spotify_track_id;
+    if (example.metadata?.source?.spotify_track_id) return example.metadata.source.spotify_track_id;
+    if (!songName) return null;
     if (!window._spotifyTracks) return null;
     let artistName = null;
-    if (example.artist) {
-        artistName = window._allArtistsConfig?.[example.artist]?.name || null;
+    const artistKey = example.artist || example.metadata?.source?.artist || null;
+    if (artistKey) {
+        artistName = window._allArtistsConfig?.[artistKey]?.name || artistKey;
     }
     if (!artistName) artistName = activeArtist?.name || null;
-    return artistName ? (window._spotifyTracks[artistName] || {})[example.song_name] || null : null;
+    return artistName ? (window._spotifyTracks[artistName] || {})[songName] || null : null;
 }
 
 function isExampleSnippetEligible(example) {
-    const start = Number(example?.timestamp_ms);
-    const end = Number(example?.end_timestamp_ms);
+    const start = Number(example?.timestamp_ms ?? example?.metadata?.source?.timestamp_ms);
+    const end = Number(example?.end_timestamp_ms ?? example?.metadata?.source?.end_timestamp_ms);
     const duration = end - start;
     return !!getSpotifyTrackIdForExample(example)
         && Number.isFinite(start)
         && Number.isFinite(end)
         && duration >= 350
         && duration <= 30000;
+}
+
+function buildSpotifyButtonHTMLForExample(example) {
+    if (!example) return '';
+    const spotifyTrackId = getSpotifyTrackIdForExample(example);
+    const spotifyUrl = example.spotify_url || example.metadata?.source?.spotify_url || null;
+    if (!spotifyTrackId && !spotifyUrl) return '';
+
+    const positionMs = Number(example.timestamp_ms ?? example.metadata?.source?.timestamp_ms ?? 0);
+    const cardAutoplayAvailable = isExampleSnippetEligible(example);
+    const spotifySvg = `<svg width="44" height="44" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`;
+    const spotifyBtnActiveClass = cardAutoplayAvailable && _exampleAutoplayActive ? ' autoplay-active' : '';
+
+    if (spotifyTrackId) {
+        return `<button type="button" class="spotify-btn${spotifyBtnActiveClass}" data-track-id="${spotifyTrackId}" data-position-ms="${positionMs}" title="${cardAutoplayAvailable ? 'Play in Spotify · hold to toggle lyric autoplay' : 'Play in Spotify'}" style="cursor:pointer; margin:0;" onclick="event.stopPropagation(); spotifyBtnActivate(event, '${spotifyTrackId}', ${positionMs})" ontouchend="event.stopPropagation(); spotifyBtnActivate(event, '${spotifyTrackId}', ${positionMs})"${cardAutoplayAvailable ? ` onmousedown="spotifyBtnPressStart(event)" onmouseup="spotifyBtnPressEnd()" onmouseleave="spotifyBtnPressEnd()" ontouchstart="spotifyBtnPressStart(event)" ontouchcancel="spotifyBtnPressEnd()"` : ''}>${spotifySvg}</button>`;
+    }
+    return `<a href="${spotifyUrl}" target="_blank" class="spotify-btn" title="Open in Spotify" onclick="event.stopPropagation()">${spotifySvg}</a>`;
 }
 
 let _exampleAutoplayActive = false;
@@ -4905,7 +4926,9 @@ function isAmbiguousMweMeaning(meaning) {
 
 function isExpressionChildMeaning(meaning, card) {
     if (!meaning) return false;
-    if (meaning.pos === 'MWE' || meaning.pos === 'CLITIC') return true;
+    // Pronominals/clitics are deprecated from expression child cards — expressions show MWEs only
+    if (meaning.pos === 'CLITIC') return false;
+    if (meaning.pos === 'MWE') return true;
     if (isMergedMweAdapter(meaning)) return true;
     if (String(meaning.context || '').toLowerCase() === 'multiword expression') return true;
     if (isInvariantMweMeaning(meaning) || isAmbiguousMweMeaning(meaning)) return true;
@@ -4953,17 +4976,16 @@ function isHiddenExpressionOnParent(card, meaning) {
 }
 
 // Ordered list of chainable children for a real deck card. Source of truth
-// is card.meanings entries for expressions/CLITICs. Chain-child cards
-// themselves are excluded — their single expression meaning is the card's
-// own content, not something to chain further.
+// is card.meanings entries for MWE expressions. Clitics/pronominals are deprecated
+// from expression cards. Chain-child cards themselves are excluded.
 function collectChainItems(card) {
     if (!card || card.isChainChild) return [];
     if (cardHasOnlyExpressionMeanings(card)) return [];
     return (card.meanings || [])
         .map((m, idx) => ({ m, idx }))
-        .filter(({ m }) => isExpressionChildMeaning(m, card))
+        .filter(({ m }) => m.pos !== 'CLITIC' && isExpressionChildMeaning(m, card))
         .flatMap(({ m, idx }) => {
-            const list = m.allMWEs || m.allClitics || [m];
+            const list = m.allMWEs || [m];
             return list.map((item, sub) => {
                 const ev = item.metadata?.multiword_evidence?.[0];
                 const expr = item.expression || item.form || item.headword || ev?.expression || '';
@@ -4976,7 +4998,7 @@ function collectChainItems(card) {
                     parentWord: card.displaySurface || card.targetWord || card.word || '',
                     meaningIndex: idx,
                     subIndex: sub,
-                    kind: m.pos === 'CLITIC' ? 'CLITIC' : 'MWE',
+                    kind: 'MWE',
                     expression: expr,
                     variants: item.variants || [],
                     translation: trans,
@@ -4995,7 +5017,7 @@ function collectExpressionItems(card) {
     const seen = new Set(chainItems.map(item => String(item.expression || '').toLocaleLowerCase()));
     const extras = [];
     for (const unused of card.unusedMenuSenses || []) {
-        if (!isExpressionChildMeaning(unused, card)) continue;
+        if (unused.pos === 'CLITIC' || !isExpressionChildMeaning(unused, card)) continue;
         const expr = unused.headword || unused.expression || '';
         const key = String(expr).toLocaleLowerCase();
         if (!expr || seen.has(key)) continue;
@@ -5005,7 +5027,7 @@ function collectExpressionItems(card) {
             parentWord: card.displaySurface || card.targetWord,
             meaningIndex: -1,
             subIndex: extras.length,
-            kind: unused.pos === 'CLITIC' ? 'CLITIC' : 'MWE',
+            kind: 'MWE',
             expression: expr,
             variants: unused.variants || [],
             translation: unused.meaning || unused.translation || '',
@@ -7703,8 +7725,15 @@ function renderCardWikipediaBadge(card) {
         // under the frequency: rank 23 of 3,200.
         const rankOf = vocabularySize ? `of ${vocabularySize.toLocaleString()}` : '';
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocabulary Rank';
+        const isMergedFormsMode = Boolean(
+            card.mergedLemma
+            || (typeof window !== 'undefined' && window.useLemmaMode && card.mergedLemma !== false)
+        );
+        const smartGroupTag = isMergedFormsMode
+            ? '<span class="card-smart-group-tag">(Smart Group)</span>'
+            : '';
         frontRankingEl.innerHTML =
-            cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), rankOf, true)
+            cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), rankOf, true, smartGroupTag)
             + freqHtml;
         frontRankingEl.style.display = 'flex';
     } else {
@@ -11712,9 +11741,10 @@ function _freqBreakdownOf(button) {
 // One front-of-card figure: wording on the first line, the number (and any
 // muted unit or denominator) on the second. The first class names the block
 // for the tutorial anchors (.card-rank-label, .card-freq-label).
-function cardStatHTML(kindClass, label, value, unit = '', below = false) {
+function cardStatHTML(kindClass, label, value, unit = '', below = false, above = '') {
     const end = kindClass === 'card-rank-label' ? '' : ' card-stat--end';
     return `<span class="card-stat${end} ${kindClass}">`
+        + `${above ? `<span class="card-stat-above">${above}</span>` : ''}`
         + `<span class="card-stat-label">${label}</span>`
         + `<span class="card-stat-line"><strong class="card-stat-value">${value}</strong>`
         + `${unit && !below ? `<span class="card-stat-unit">${unit}</span>` : ''}</span>`
@@ -11930,8 +11960,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '0e7f73d1';
-const MODALS_ASSET_VERSION = '0e7f73d1';
+const ASSET_VERSION = 'e273caa9';
+const MODALS_ASSET_VERSION = 'e273caa9';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
@@ -11982,4 +12012,9 @@ window.toggleSenseMetadataChip = toggleSenseMetadataChip;
 window.toggleProminenceBadge = toggleProminenceBadge;
 
 // Function-word cards share the main card palette and source controls.
-configureFunctionWordPresentation({posRgb: getPosAccentRgb, provenanceHTML: exampleProvenanceHTML});
+configureFunctionWordPresentation({
+    posRgb: getPosAccentRgb,
+    provenanceHTML: exampleProvenanceHTML,
+    songCreditHTML,
+    spotifyButtonHTML: buildSpotifyButtonHTMLForExample
+});

@@ -1,4 +1,4 @@
-import { songCreditHTML } from './song-credit.js?v=0e7f73d1';
+import { songCreditHTML } from './song-credit.js?v=e273caa9';
 // The replica card: real demo entries and the markup that draws them.
 //
 // Two features show a flashcard without the app having loaded a deck, and they
@@ -436,13 +436,19 @@ export function renderFront(card) {
     // Like the live card: the deck's size sits small under the rank.
     const rankOf = card.vocabSize ? `of ${card.vocabSize.toLocaleString()}` : '';
     // `below` puts the unit on its own line, as "per million" is on the live card.
-    const stat = (kind, label, value, unit = '', below = false) =>
+    const stat = (kind, label, value, unit = '', below = false, above = '') =>
         `<span class="card-stat${kind === 'card-rank-label' ? '' : ' card-stat--end'} ${kind}">`
+        + `${above ? `<span class="card-stat-above">${above}</span>` : ''}`
         + `<span class="card-stat-label">${label}</span>`
         + `<span class="card-stat-line"><strong class="card-stat-value">${value}</strong>`
         + `${unit && !below ? `<span class="card-stat-unit">${unit}</span>` : ''}</span>`
         + `${unit && below ? `<span class="card-stat-unit card-stat-unit--below">${unit}</span>` : ''}</span>`;
-    const rankLabel = stat('card-rank-label', 'Vocabulary Rank', card.rank.toLocaleString(), rankOf, true);
+    const isMergedFormsMode = Boolean(
+        card.mergedLemma
+        || (typeof window !== 'undefined' && window.useLemmaMode && card.mergedLemma !== false)
+    );
+    const smartGroupTag = isMergedFormsMode ? '<span class="card-smart-group-tag">(Smart Group)</span>' : '';
+    const rankLabel = stat('card-rank-label', 'Vocabulary Rank', card.rank.toLocaleString(), rankOf, true, smartGroupTag);
     // Same two figures the live card puts here, in the same words. An earlier
     // draft hedged with "Frequency from the Spanish release", which told a
     // visitor nothing: the number is the point, and a count per million is

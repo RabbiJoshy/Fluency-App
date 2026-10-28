@@ -1,4 +1,4 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=0e7f73d1';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=e273caa9';
 // Lazy-loaded conjugation table for js/flashcards.js. Loaded on first
 // click of the conjugation toggle. The data cache (window._conjugationData)
 // is populated by core's loadConjugationData on Speech boot; this module
@@ -17,7 +17,7 @@ import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.j
 
 // Cells are matched to the card's word exactly as the sense-row English is,
 // so a -se table ("me siento") opens on the card's tense and marks its form.
-import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=0e7f73d1';
+import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=e273caa9';
 
 const CONJ_UI = {
     spanish: {

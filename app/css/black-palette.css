@@ -51,6 +51,9 @@
 ) {
     background: #1d2024;
 }
-:root:not([data-theme="light"]) body.artist-mode:has(#appContent:not(.hidden)) .card-face::after {
-    background: rgba(13, 14, 16, 0.9);
+:root:not([data-theme="light"]) body.artist-mode:has(#appContent:not(.hidden)) .card-face.card-front::after {
+    background: rgba(10, 11, 14, 0.94);
+}
+:root:not([data-theme="light"]) body.artist-mode:has(#appContent:not(.hidden)) .card-face.card-back::after {
+    display: none !important;
 }
