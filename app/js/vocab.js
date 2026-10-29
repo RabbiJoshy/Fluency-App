@@ -3478,10 +3478,8 @@ function buildFilteredVocab(vocabData) {
         counts.lemma += beforeLemmaMerge - result.length;
     }
 
-    // In lemma mode, pool each surviving representative's frequency across all
-    // its collapsed sibling forms (same lemma) and order the deck by that total,
-    // so the most common LEMMAS surface first — mirrors the example pooling in
-    // poolLemmaSiblingExamples.
+    // Pool sibling counts for merged groups. Artist ordering uses that evidence;
+    // Speech ordering follows the source-frequency anchors used by its levels.
     if (canMergeLemmas) {
         // A merged lemma lives wherever its highest-frequency surface form
         // lived in the baseline deck. This is the stable anchor that keeps
@@ -3517,7 +3515,16 @@ function buildFilteredVocab(vocabData) {
                 ? item.lemma_example_count
                 : item.lemma_total_count;
         }
-        result.sort((a, b) => (b.pooled_frequency || 0) - (a.pooled_frequency || 0));
+        if (activeArtist) {
+            result.sort((a, b) => (b.pooled_frequency || 0) - (a.pooled_frequency || 0));
+        } else {
+            // Speech examples are a lazily loaded teaching sample, not corpus
+            // frequency. Sorting by their count promotes whichever shards have
+            // been opened, including cards outside the selected level. Keep
+            // merged groups at their earliest source-frequency slot, the same
+            // stable rank used to select levels, then number that order below.
+            result.sort((a, b) => a.stableRank - b.stableRank);
+        }
     } else if (percentageMode && hasCorpusFrequency) {
         // Artist indexes are usually frequency-sorted, but that is not a safe
         // contract (the current Young Miko index has dozens of upward jumps).
