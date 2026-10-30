@@ -1177,7 +1177,7 @@ function _findRangeSlice(items, rankOf, minRank, maxRank) {
 // the first level that still has work. The visible scrubber gets a small
 // partial-progress bar; its hidden .level-btn keeps the same data for setup
 // logic and the non-slider fallback.
-async function findFirstIncompleteLevelBtn(language, buttons) {
+async function findFirstIncompleteLevelBtn(language, buttons, { unseenOnly = false, afterIndex = -1 } = {}) {
     const langConfig = config.languages[language];
     if (!langConfig) return null;
     const vocabularyData = await fetchActiveVocabularyData(langConfig);
@@ -1300,11 +1300,35 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
                 autoCompleted ? `Level ${buttonIndex + 1}, AUTO` : `Level ${buttonIndex + 1}, ${completion}% complete`
             );
         }
-        if (!firstIncomplete && hasUnseen) firstIncomplete = btn;
+        if (!firstIncomplete && hasUnseen && buttonIndex > afterIndex) firstIncomplete = btn;
         if (!firstWithReview && reviewCount > 0) firstWithReview = btn;
     }
-    return firstIncomplete || firstWithReview || lastAvailable || buttons[buttons.length - 1];
+    return firstIncomplete || (unseenOnly ? null : firstWithReview || lastAvailable || buttons[buttons.length - 1]);
 }
+
+// Called only after a master Smart Skip activation has finished recounting.
+// Keep inspection on the current level whenever it still has new cards.
+async function advanceSmartSkipLevel(language, fromLevel, isCurrent = () => true) {
+    const artist = activeArtist;
+    const stillCurrent = () => isCurrent() && selectedLanguage === language
+        && selectedLevel === fromLevel && activeArtist === artist
+        && !document.getElementById('setupPanel')?.classList.contains('hidden');
+    if (!stillCurrent() || window.__studySessionContext?.unseenCount !== 0
+        || (activeArtist && artistVocabularyScope === 'extra')) return null;
+    const buttons = Array.from(document.querySelectorAll('.level-selector-buttons .level-btn, #levelSelector > .level-btn'));
+    const index = _findLevelButtonIndex(buttons, fromLevel);
+    if (index < 0) return null;
+    const next = await findFirstIncompleteLevelBtn(language, buttons, { unseenOnly: true, afterIndex: index });
+    if (!stillCurrent() || window.__studySessionContext?.unseenCount !== 0) return null;
+    if (!next) return 'No new words in this or later levels.';
+    const nextIndex = buttons.indexOf(next);
+    next.click();
+    await next._rangeRenderPromise;
+    if (!isCurrent() || selectedLanguage !== language || selectedLevel !== next.dataset.level) return null;
+    _scrollLevelSegToCenter(nextIndex, true);
+    return `No new words left in Level ${index + 1} · Moved to Level ${nextIndex + 1}`;
+}
+window.advanceSmartSkipLevel = advanceSmartSkipLevel;
 
 async function renderLevelSelector(language, options = {}) {
     // A caller can fire during boot before a language is chosen. Rendering an
