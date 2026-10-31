@@ -7711,7 +7711,7 @@ function renderCardWikipediaBadge(card) {
             // still shows a figure, but must say whose it is — the number is
             // real, it is just not this form's. Never let the three read alike.
             const basis = card.sourceFrequencyBasis || 'own';
-            const label = basis === 'total'
+            const label = basis === 'group' ? 'Group frequency' : basis === 'total'
                 ? 'Frequency · All Forms'
                 : basis === 'other-surface'
                     ? `Frequency · ${escapeCardText(card.sourceFrequencyBasisSurface || 'Listed Form')}`
@@ -7721,7 +7721,7 @@ function renderCardWikipediaBadge(card) {
             // attribute context by escapeCardText.
             const breakdown = escapeCardText(JSON.stringify(
                 (card.sourceFrequencyBreakdown || []).map(row => [row.surface, row.value])));
-            freqHtml = `<button class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">`
+            freqHtml = `<button class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis="${basis}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">`
                 + `<span class="card-stat-label">${label}</span>`
                 + `<span class="card-stat-line"><strong class="card-stat-value">${formatCardFrequency(card.sourceFrequency)}</strong></span>`
                 + (perMillion ? '<span class="card-stat-unit card-stat-unit--below">per million</span>' : '')
@@ -11799,7 +11799,9 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
     // rather than letting a family total pass as the word's own figure.
     const isTotal = button?.dataset.frequencyIsTotal === '1';
     const otherSurface = button?.dataset.frequencyBasisSurface || '';
-    const basis = isTotal
+    const basis = button?.dataset.frequencyBasis === 'group'
+        ? 'Sum of the canonical frequencies of the forms in this group. '
+        : isTotal
         ? `The source does not list this exact form, so this is every listed form added together. `
         : otherSurface
             ? `The source does not list this exact form; this is the figure for ${escapeCardText(otherSurface)}. `

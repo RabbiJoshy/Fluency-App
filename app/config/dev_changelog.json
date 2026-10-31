@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-31T12:13:39+00:00",
+      "date": "2026-10-31 12:13 GMT",
+      "agent": "Codex",
+      "summary": "Rank Speech groups by the sum of their canonical member frequencies.",
+      "detail": [
+        "Use complete release-matched frequency data to sum each grouped surface once; never use sampled examples, an average, or the representative alone for group order.",
+        "Select levels in the same canonical group order to avoid missing ranks. Show the same sum as Group frequency with an itemised breakdown.",
+        "Coverage follows the ranked groups and includes their member surfaces. Languages without complete canonical measurements retain source order.",
+        "Includes the corrected Group label and Smart Skip advancement from the preceding staged changes."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-30T09:08:43+00:00",
       "date": "2026-10-30 09:08 GMT",
       "agent": "Codex",
@@ -324,18 +337,6 @@
       "detail": [
         "Coverage, percentage digits and example words are white in dark mode, with neutral dark text in light mode.",
         "Darker green Learn and Practise buttons remain unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T20:58:16+00:00",
-      "date": "2026-10-26 20:58 GMT",
-      "agent": "Codex",
-      "summary": "Larger level arrows, a slimmer desktop sidebar and roomier study panels.",
-      "detail": [
-        "Level arrow targets increase to 64px on mobile and 72px on desktop.",
-        "The desktop sidebar is 10% narrower; Practise receives all 23.6px of recovered width while Learn keeps its previous width.",
-        "Desktop Learn and Practise panel gutters and inner control padding are reduced by 20%."
       ],
       "commit": "pending"
     }

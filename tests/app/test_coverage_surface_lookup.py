@@ -31,6 +31,8 @@ vm.runInNewContext(fs.readFileSync('app/js/coverage.js','utf8').replace(/^import
   {word:'být', stableRank:2, item:{word:'je'}},
  ];
  assert.equal(Math.round(ctx.levelCoverage(samples, 1, 3) * 1000) / 1000, 0.06);
+ // Canonically ordered groups use their displayed position and every member.
+ assert.equal(ctx.levelCoverage([{studyRank:1,stableRank:99,coverageSurfaces:['to','je']}],1,2),0.06);
  // Samples without an item (other callers) still read their own word.
  assert.equal(ctx.levelCoverage([{word:'to', stableRank:1}], 1, 2), 0.036);
 })().catch(e => { console.error(e); process.exit(1); });

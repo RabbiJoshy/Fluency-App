@@ -45,6 +45,33 @@ const merged=[row('hablo','hablar',1),row('comer','comer',2),row('hablar','habla
 ranked=ctx.buildFilteredVocab(merged).vocab;
 assert.deepEqual(Array.from(ranked,x=>[x.word,x.stableRank,x.displayRank]),
  [['hablar',1,1],['comer',2,2]]);
+// Canonical totals, rather than an average, maximum, or loaded examples.
+merged._speechSourceFrequency={values:{hablo:12,hablar:3,comer:14}};
+let built=ctx.buildFilteredVocab(merged);
+assert.equal(built.rankBasis,'display');
+assert.equal(built.levelBaseline,built.vocab);
+assert.deepEqual(Array.from(built.vocab,x=>[x.word,x.canonicalGroupFrequency]),[['hablar',15],['comer',14]]);
+merged[0].meanings[0].examples=examples(500);
+assert.deepEqual(Array.from(ctx.buildFilteredVocab(merged).vocab,x=>[x.word,x.canonicalGroupFrequency]),[['hablar',15],['comer',14]]);
+// Flip the relative order while the most frequent individual member is still
+// comer: the combined hablar total must win and each form is counted once.
+merged._speechSourceFrequency.values.comer=16;
+built=ctx.buildFilteredVocab(merged);
+assert.deepEqual(Array.from(built.vocab,x=>x.word),['comer','hablar']);
+// Missing canonical measurements cannot silently count as zero.
+delete merged._speechSourceFrequency.values.hablo;
+assert.equal(ctx.buildFilteredVocab(merged).rankBasis,'stable');
+merged._speechSourceFrequency.values.hablo=12;
+built=ctx.buildFilteredVocab(merged);
+// Level selection follows the same ranked group list.
+const ui=fs.readFileSync('app/js/ui.js','utf8');
+const start=ui.indexOf('function computeSmartLevelRanges(');
+const end=ui.indexOf('function getActiveLevelRanges(',start);
+Object.assign(ctx,{STUDY_LEVEL_TARGET_CARDS:1,STUDY_LEVEL_MAX_COUNT:100,STUDY_LEVEL_MIN_COUNT:1,STABLE_SET_SLOT_COUNT:1});
+vm.runInNewContext(ui.slice(start,end),ctx);
+const levels=ctx.computeSmartLevelRanges(built.levelBaseline,built.rankBasis);
+assert.equal(levels[0].rankBasis,'display');
+assert.deepEqual(Array.from(built.vocab.filter(x=>x.displayRank>=levels[0].startRank && x.displayRank<levels[0].endRank),x=>x.word),['comer']);
 console.log('Speech redo rank and lazy-example regression checks passed');
 ''')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

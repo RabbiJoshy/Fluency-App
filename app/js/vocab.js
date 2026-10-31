@@ -2678,6 +2678,9 @@ async function fetchActiveVocabularyData(langConfig) {
     await stampContractions(vocabulary, langConfig);
     await stampDictionaryExamples(vocabulary,
         activeArtist || window.playlistLiveActive?.() ? null : langConfig);
+    if (vocabulary && !activeArtist && !window.playlistLiveActive?.()) {
+        vocabulary._speechSourceFrequency = await loadSpeechSourceFrequency(langConfig);
+    }
     if (vocabulary) vocabulary._stampedKey = stampKey;
     return vocabulary;
 }
@@ -3478,8 +3481,9 @@ function buildFilteredVocab(vocabData) {
         counts.lemma += beforeLemmaMerge - result.length;
     }
 
-    // Pool sibling counts for merged groups. Artist ordering uses that evidence;
-    // Speech ordering follows the source-frequency anchors used by its levels.
+    // Artist evidence counts and canonical Speech frequencies are different
+    // measurements. Never rank Speech by its lazily loaded teaching examples.
+    let canonicalGroupOrder = false;
     if (canMergeLemmas) {
         // A merged lemma lives wherever its highest-frequency surface form
         // lived in the baseline deck. This is the stable anchor that keeps
@@ -3518,12 +3522,26 @@ function buildFilteredVocab(vocabData) {
         if (activeArtist) {
             result.sort((a, b) => (b.pooled_frequency || 0) - (a.pooled_frequency || 0));
         } else {
-            // Speech examples are a lazily loaded teaching sample, not corpus
-            // frequency. Sorting by their count promotes whichever shards have
-            // been opened, including cards outside the selected level. Keep
-            // merged groups at their earliest source-frequency slot, the same
-            // stable rank used to select levels, then number that order below.
-            result.sort((a, b) => a.stableRank - b.stableRank);
+            const source = vocabData._speechSourceFrequency;
+            canonicalGroupOrder = Boolean(source) && result.every(item => {
+                const forms = item._mergedDeckSurfaces?.length ? item._mergedDeckSurfaces : [item.word];
+                return forms.every(form => speechSourceFrequencyForSurface(form, source) !== null);
+            });
+            for (const item of result) {
+                delete item.canonicalGroupFrequency;
+                delete item.canonicalGroupBreakdown;
+                if (!canonicalGroupOrder) continue;
+                const forms = [...new Set(item._mergedDeckSurfaces?.length ? item._mergedDeckSurfaces : [item.word])];
+                item.canonicalGroupBreakdown = forms.map(surface => ({
+                    surface, value: speechSourceFrequencyForSurface(surface, source)
+                })).sort((a, b) => b.value - a.value);
+                item.canonicalGroupFrequency = item.canonicalGroupBreakdown.reduce((sum, form) => sum + form.value, 0);
+            }
+            // Missing canonical data is not zero frequency. Keep the source
+            // order for that configuration instead of mixing partial totals.
+            result.sort((a, b) => (canonicalGroupOrder
+                ? b.canonicalGroupFrequency - a.canonicalGroupFrequency : 0)
+                || a.stableRank - b.stableRank);
         }
     } else if (percentageMode && hasCorpusFrequency) {
         // Artist indexes are usually frequency-sorted, but that is not a safe
@@ -3548,7 +3566,9 @@ function buildFilteredVocab(vocabData) {
         _extraCategoryGroups = [];
     }
 
-    return { vocab: result, counts, stableBaseline };
+    return { vocab: result, counts, stableBaseline,
+        levelBaseline: canonicalGroupOrder ? result : stableBaseline,
+        rankBasis: canonicalGroupOrder ? 'display' : 'stable' };
 }
 
 // Guest learning is tab-memory only: "another 20" must advance without syncing answers.
@@ -4395,6 +4415,17 @@ async function loadVocabularyData(rangeString, opts = {}) {
             // Retain routing diagnostics on the study card so a one-tap
             // classification report can state both the requested correction
             // and what the current pipeline actually stamped.
+            // When ranked by a canonical group sum, show that same sum and
+            // its actual members, explicitly labelled as a group measurement.
+            if (useLemmaMode && item.canonicalGroupBreakdown?.length > 1) {
+                card.sourceFrequency = item.canonicalGroupFrequency;
+                card.sourceFrequencyGroupTotal = item.canonicalGroupFrequency;
+                card.sourceFrequencyIsGroupTotal = true;
+                card.sourceFrequencyBasis = 'group';
+                card.sourceFrequencyBasisSurface = '';
+                card.sourceFrequencyForms = item.canonicalGroupBreakdown.length;
+                card.sourceFrequencyBreakdown = item.canonicalGroupBreakdown;
+            }
             card.is_english = item.is_english ?? null;
             card.is_english_loanword = item.is_english_loanword ?? null;
             card.cognate_score = item.cognate_score ?? null;
