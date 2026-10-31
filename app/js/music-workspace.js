@@ -1,4 +1,4 @@
-import { beginRegionLoading } from './loading-ui.js?v=7b1e5ad4';
+import { beginRegionLoading } from './loading-ui.js?v=9a7fdc92';
 // Music owns its browsing, song selection and study setup. Existing deck
 // loaders still own vocabulary/progress; route handoffs reopen this workspace.
 const HANDOFF_KEY = 'fluency_music_workspace_v1';
@@ -60,7 +60,7 @@ function init() {
                     </button>
                     <button type="button" id="eliteSeriesBtn" class="music-artist-option">
                         <span class="music-artist-image" aria-hidden="true">É</span>
-                        <span><strong>Élite</strong><small>8 episodes · Season 1 sample · Spanish with English examples</small></span>
+                        <span><strong>Élite</strong><small>24 episodes · Seasons 1–3 sample · Spanish with English examples</small></span>
                     </button>
                 </div>
                 <div id="musicPickerHost"></div>

@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=7b1e5ad4';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=7b1e5ad4';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=7b1e5ad4';
-import { songCreditHTML } from './song-credit.js?v=7b1e5ad4';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=7b1e5ad4';
+import './state.js?v=9a7fdc92';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=9a7fdc92';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=9a7fdc92';
+import { songCreditHTML } from './song-credit.js?v=9a7fdc92';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=9a7fdc92';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=7b1e5ad4';
-import { fitSenseRowText } from './card-row-layout.js?v=7b1e5ad4';
+import { exampleTranslationAlignment } from './example-alignment.js?v=9a7fdc92';
+import { fitSenseRowText } from './card-row-layout.js?v=9a7fdc92';
 import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=7b1e5ad4';
-import { goToRoute, routeCodeFor } from './routes.js?v=7b1e5ad4';
-import { memoryTipTileHTML } from './memory-tips.js?v=7b1e5ad4';
+import './speech.js?v=9a7fdc92';
+import { goToRoute, routeCodeFor } from './routes.js?v=9a7fdc92';
+import { memoryTipTileHTML } from './memory-tips.js?v=9a7fdc92';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=7b1e5ad4';
-import './side-dock.js?v=7b1e5ad4';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=7b1e5ad4';
+} from './function-word-card.js?v=9a7fdc92';
+import './side-dock.js?v=9a7fdc92';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=9a7fdc92';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=7b1e5ad4';
+} from './example-personalisation.js?v=9a7fdc92';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=7b1e5ad4';
+} from './spanishdict-usage.js?v=9a7fdc92';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=7b1e5ad4';
+} from './reverse-cues.js?v=9a7fdc92';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=7b1e5ad4';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=7b1e5ad4';
+} from './card-metadata-pills.js?v=9a7fdc92';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=9a7fdc92';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -7711,7 +7711,7 @@ function renderCardWikipediaBadge(card) {
             // still shows a figure, but must say whose it is — the number is
             // real, it is just not this form's. Never let the three read alike.
             const basis = card.sourceFrequencyBasis || 'own';
-            const label = basis === 'total'
+            const label = basis === 'group' ? 'Group frequency' : basis === 'total'
                 ? 'Frequency · All Forms'
                 : basis === 'other-surface'
                     ? `Frequency · ${escapeCardText(card.sourceFrequencyBasisSurface || 'Listed Form')}`
@@ -7721,7 +7721,7 @@ function renderCardWikipediaBadge(card) {
             // attribute context by escapeCardText.
             const breakdown = escapeCardText(JSON.stringify(
                 (card.sourceFrequencyBreakdown || []).map(row => [row.surface, row.value])));
-            freqHtml = `<button class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">`
+            freqHtml = `<button class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis="${basis}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">`
                 + `<span class="card-stat-label">${label}</span>`
                 + `<span class="card-stat-line"><strong class="card-stat-value">${formatCardFrequency(card.sourceFrequency)}</strong></span>`
                 + (perMillion ? '<span class="card-stat-unit card-stat-unit--below">per million</span>' : '')
@@ -11799,7 +11799,9 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
     // rather than letting a family total pass as the word's own figure.
     const isTotal = button?.dataset.frequencyIsTotal === '1';
     const otherSurface = button?.dataset.frequencyBasisSurface || '';
-    const basis = isTotal
+    const basis = button?.dataset.frequencyBasis === 'group'
+        ? 'Sum of the canonical frequencies of the forms in this group. '
+        : isTotal
         ? `The source does not list this exact form, so this is every listed form added together. `
         : otherSurface
             ? `The source does not list this exact form; this is the figure for ${escapeCardText(otherSurface)}. `
@@ -11966,8 +11968,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '7b1e5ad4';
-const MODALS_ASSET_VERSION = '7b1e5ad4';
+const ASSET_VERSION = '9a7fdc92';
+const MODALS_ASSET_VERSION = '9a7fdc92';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

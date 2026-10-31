@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=7b1e5ad4';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=9a7fdc92';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=7b1e5ad4';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=7b1e5ad4';
-import { readFastTrack } from './fast-track-preferences.js?v=7b1e5ad4';
-import './session-plan.js?v=7b1e5ad4';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=7b1e5ad4';
+import './state.js?v=9a7fdc92';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=9a7fdc92';
+import { readFastTrack } from './fast-track-preferences.js?v=9a7fdc92';
+import './session-plan.js?v=9a7fdc92';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=9a7fdc92';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1177,7 +1177,7 @@ function _findRangeSlice(items, rankOf, minRank, maxRank) {
 // the first level that still has work. The visible scrubber gets a small
 // partial-progress bar; its hidden .level-btn keeps the same data for setup
 // logic and the non-slider fallback.
-async function findFirstIncompleteLevelBtn(language, buttons) {
+async function findFirstIncompleteLevelBtn(language, buttons, { unseenOnly = false, afterIndex = -1 } = {}) {
     const langConfig = config.languages[language];
     if (!langConfig) return null;
     const vocabularyData = await fetchActiveVocabularyData(langConfig);
@@ -1300,11 +1300,35 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
                 autoCompleted ? `Level ${buttonIndex + 1}, AUTO` : `Level ${buttonIndex + 1}, ${completion}% complete`
             );
         }
-        if (!firstIncomplete && hasUnseen) firstIncomplete = btn;
+        if (!firstIncomplete && hasUnseen && buttonIndex > afterIndex) firstIncomplete = btn;
         if (!firstWithReview && reviewCount > 0) firstWithReview = btn;
     }
-    return firstIncomplete || firstWithReview || lastAvailable || buttons[buttons.length - 1];
+    return firstIncomplete || (unseenOnly ? null : firstWithReview || lastAvailable || buttons[buttons.length - 1]);
 }
+
+// Called only after a master Smart Skip activation has finished recounting.
+// Keep inspection on the current level whenever it still has new cards.
+async function advanceSmartSkipLevel(language, fromLevel, isCurrent = () => true) {
+    const artist = activeArtist;
+    const stillCurrent = () => isCurrent() && selectedLanguage === language
+        && selectedLevel === fromLevel && activeArtist === artist
+        && !document.getElementById('setupPanel')?.classList.contains('hidden');
+    if (!stillCurrent() || window.__studySessionContext?.unseenCount !== 0
+        || (activeArtist && artistVocabularyScope === 'extra')) return null;
+    const buttons = Array.from(document.querySelectorAll('.level-selector-buttons .level-btn, #levelSelector > .level-btn'));
+    const index = _findLevelButtonIndex(buttons, fromLevel);
+    if (index < 0) return null;
+    const next = await findFirstIncompleteLevelBtn(language, buttons, { unseenOnly: true, afterIndex: index });
+    if (!stillCurrent() || window.__studySessionContext?.unseenCount !== 0) return null;
+    if (!next) return 'No new words in this or later levels.';
+    const nextIndex = buttons.indexOf(next);
+    next.click();
+    await next._rangeRenderPromise;
+    if (!isCurrent() || selectedLanguage !== language || selectedLevel !== next.dataset.level) return null;
+    _scrollLevelSegToCenter(nextIndex, true);
+    return `No new words left in Level ${index + 1} · Moved to Level ${nextIndex + 1}`;
+}
+window.advanceSmartSkipLevel = advanceSmartSkipLevel;
 
 async function renderLevelSelector(language, options = {}) {
     // A caller can fire during boot before a language is chosen. Rendering an
@@ -1411,14 +1435,15 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
     const _raw = _levelSliderRawCache[cacheKey];
     if (_raw && !usingReleaseLevels) {
         if (!window.playlistLiveActive?.()) {
-            // Level boundaries are built from the stable baseline before any
-            // optional filters. Filters change the eligible card count inside
-            // a level, never the level's identity or rank span.
+            // Canonically ranked Speech groups use the same order for levels
+            // and displayed ranks. Other modes retain their stable baseline.
             const prepared = getPreparedSetupVocabulary(selectedLanguage, _raw);
-            _smartLevelRangesCache = computeSmartLevelRanges(prepared?.stableBaseline || []);
+            const rankBasis = prepared?.rankBasis || 'stable';
+            _smartLevelRangesCache = computeSmartLevelRanges(prepared?.levelBaseline || prepared?.stableBaseline || [], rankBasis);
             const eligible = prepared?.vocab || [];
+            const rankOf = _levelRankAccessor(rankBasis);
             const lastEligibleRank = eligible.reduce((maxRank, item) =>
-                Math.max(maxRank, Number(item.stableRank) || 0), 0);
+                Math.max(maxRank, Number(rankOf(item)) || 0), 0);
             // Hide only empty trailing levels (most notably the reserved 1×
             // tail while single-occurrence words are hidden). Re-enabling a
             // filter appends those levels without changing any earlier cut.
@@ -1499,7 +1524,7 @@ async function renderLevelSelectorNow(language, { preferActionable = false } = {
             ? `${(initial.threshold * 100).toFixed(1)}%`
             : (releaseCoverage != null ? `${(releaseCoverage * 100).toFixed(1)}%` : '');
         const artistScope = typeof artistVocabularyScope !== 'undefined' ? artistVocabularyScope : '';
-        const renderedContext = `${language}|${activeArtist?.slug || ''}|${artistScope}|${Boolean(window.playlistLiveActive?.())}|${Boolean(useLemmaMode)}|${percentageRanges.length}`;
+        const renderedContext = `${language}|${activeArtist?.slug || ''}|${artistScope}|${Boolean(window.playlistLiveActive?.())}|${Boolean(useLemmaMode)}|${percentageRanges.length}|${percentageRanges[0]?.rankBasis}|${percentageRanges.at(-1)?.endRank}`;
         const isAlreadyRendered = container?.dataset?.renderedContext === renderedContext
             && container?.querySelector?.('#lswSlider')
             && container?.querySelectorAll?.('.level-btn')?.length === percentageRanges.length;
@@ -1811,9 +1836,9 @@ let _studySessionStarting = false;
 // large ones. Each level is subdivided into stable STABLE_SET_SLOT_COUNT-position
 // progress regions. Every mode (Speech, Lyrics, artist) uses these app-built levels.
 //
-// Boundaries always use the form-level corpus frequency baseline. Merge
-// Lemmas anchors a merged card to its highest-frequency form, and every
-// optional exclusion simply leaves a hole inside the fixed region.
+// Speech groups with complete canonical frequencies use the ranked group
+// list for boundaries. Other configurations retain the form-level baseline;
+// optional exclusions leave holes inside those fixed regions.
 // The estimator and picker share these exact half-open, fixed baseline slots.
 function buildStableSetRanges(startRank, endRank, rankBasis = 'stable') {
     if (!Number.isFinite(startRank) || !Number.isFinite(endRank) || endRank <= startRank) return [];
@@ -1826,7 +1851,7 @@ function buildStableSetRanges(startRank, endRank, rankBasis = 'stable') {
 }
 window.buildStableSetRanges = buildStableSetRanges;
 
-function computeSmartLevelRanges(filteredVocab) {
+function computeSmartLevelRanges(filteredVocab, rankBasis = 'stable') {
     if (!filteredVocab || filteredVocab.length === 0) return [];
     const items = filteredVocab;
     const total = items.length;
@@ -1892,7 +1917,7 @@ function computeSmartLevelRanges(filteredVocab) {
             level,
             startRank,
             endRank,
-            rankBasis: 'stable',
+            rankBasis,
             cardCount,
             bandCardCount,
             threshold: hasFrequency ? coverage : null,
@@ -1994,6 +2019,8 @@ function getPreparedSetupVocabulary(language, rawVocab) {
         rank: item.rank,
         displayRank: item.displayRank,
         stableRank: item.stableRank,
+        studyRank: result.rankBasis === 'display' ? item.displayRank : item.stableRank,
+        coverageSurfaces: result.rankBasis === 'display' ? item.canonicalGroupBreakdown?.map(form => form.surface) : null,
         word: item.lemma || item.targetWord || item.word || '',
         item
     })).filter(sample => sample.word);
@@ -3259,7 +3286,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
     const rankOf = _levelRankAccessor(rankBasis);
     const sliceFn = typeof _findRangeSlice === 'function' ? _findRangeSlice : (items, rFn, minR, maxR) => (items || []).filter(item => { const r = rFn ? rFn(item) : item?.rank; return r >= minR && r < maxR; });
     const wordsInLevel = sliceFn(filteredVocab, rankOf, minWord, maxWord);
-    const baselineInLevel = sliceFn(preparedVocabulary?.stableBaseline, rankOf, minWord, maxWord);
+    const baselineInLevel = sliceFn(preparedVocabulary?.levelBaseline || preparedVocabulary?.stableBaseline, rankOf, minWord, maxWord);
     if (wordsInLevel.length === 0 && baselineInLevel.length === 0) {
         container.innerHTML = '<div class="study-set-empty">No cards remain in this level with the current settings.</div>';
         document.getElementById('step4').style.display = 'block';
@@ -3276,7 +3303,7 @@ async function renderRangeSelectorNow({ landingRowsChecked = 0 } = {}) {
         : null;
     const seenLemmas = await window.buildSeenLemmaSet?.(vocabularyData) || new Set();
     renderHomeLevelTiles({
-        vocab: filteredVocab, baseline: preparedVocabulary?.stableBaseline || [],
+        vocab: filteredVocab, baseline: preparedVocabulary?.levelBaseline || preparedVocabulary?.stableBaseline || [],
         seenLemmas, estimatedIds, estimate, smartSkipOn: Boolean(window.isFastTrackOn?.())
     });
 
@@ -3964,7 +3991,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=7b1e5ad4')
+        import('./spotify.js?v=9a7fdc92')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

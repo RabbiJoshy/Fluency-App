@@ -16,7 +16,7 @@
 // words really are half of everything said. Gain keeps a legible number all the
 // way down (3.0% for the same band) by shrinking the denominator as the learner
 // advances. Share is the default; gain is a setting.
-import './state.js?v=7b1e5ad4';
+import './state.js?v=9a7fdc92';
 
 const MODE_KEY = 'fluency_coverage_mode_v1';
 
@@ -78,12 +78,13 @@ function shareOf(word) {
 function sumBand(samples, startRank, endRank) {
     let total = 0;
     for (const sample of samples || []) {
-        const rank = Number(sample?.stableRank ?? sample?.rank);
+        const rank = Number(sample?.studyRank ?? sample?.stableRank ?? sample?.rank);
         if (Number.isFinite(rank) && rank >= startRank && rank < endRank) {
             // Shares are keyed by the observed surface. A setup sample's
             // `word` is its display headword (ten for the card "to"), which
             // read the wrong share for 6,286 of 10,000 Czech cards.
-            total += shareOf(sample.item?.word ?? sample.word);
+            const forms = sample.coverageSurfaces || [sample.item?.word ?? sample.word];
+            for (const form of new Set(forms)) total += shareOf(form);
         }
     }
     return total;

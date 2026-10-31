@@ -6,9 +6,9 @@
 // from them. The cards are the shared replicas (card-replica.js); the
 // frequency bars come from prominence-badge.js, as on the live card.
 
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=7b1e5ad4';
-import './prominence-badge.js?v=7b1e5ad4';
-import './walkthrough.js?v=7b1e5ad4';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=9a7fdc92';
+import './prominence-badge.js?v=9a7fdc92';
+import './walkthrough.js?v=9a7fdc92';
 
 // Minimal Markdown → HTML renderer. Handles headings (##/###), paragraphs,
 // unordered lists, bold/italic, inline code, links, and images. Enough for
@@ -627,7 +627,7 @@ async function renderAboutPage() {
     const body = document.getElementById('aboutProjectBody');
     if (!body) return;
     try {
-        const resp = await fetch('content/about.md?v=7b1e5ad4', { cache: 'no-cache' });
+        const resp = await fetch('content/about.md?v=9a7fdc92', { cache: 'no-cache' });
         if (!resp.ok) throw new Error('Failed to load about.md');
         body.innerHTML = renderMarkdown(await resp.text());
         layoutAboutFeatures(body);

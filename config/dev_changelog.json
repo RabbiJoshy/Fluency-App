@@ -2,6 +2,44 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-31T12:13:39+00:00",
+      "date": "2026-10-31 12:13 GMT",
+      "agent": "Codex",
+      "summary": "Rank Speech groups by the sum of their canonical member frequencies.",
+      "detail": [
+        "Use complete release-matched frequency data to sum each grouped surface once; never use sampled examples, an average, or the representative alone for group order.",
+        "Select levels in the same canonical group order to avoid missing ranks. Show the same sum as Group frequency with an itemised breakdown.",
+        "Coverage follows the ranked groups and includes their member surfaces. Languages without complete canonical measurements retain source order.",
+        "Includes the corrected Group label and Smart Skip advancement from the preceding staged changes."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-30T09:08:43+00:00",
+      "date": "2026-10-30 09:08 GMT",
+      "agent": "Codex",
+      "summary": "Anchor the Group label correctly and advance past empty levels when enabling Smart Skip.",
+      "detail": [
+        "Place Group directly above its Vocabulary Rank block.",
+        "After enabling Smart Skip, retain the current level if new words remain; otherwise select the next level with new words and explain the move. Turning it off preserves the selected level.",
+        "Keep the current level when no later new words remain; cancel stale automatic navigation after another toggle or a manual level change.",
+        "Audited Spanish ir: ordinary forms merge, while privileged forms such as fui, fue, fuiste, fuera and vaya remain separate. Existing companion and merge rules are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-29T21:14:07+00:00",
+      "date": "2026-10-29 21:14 GMT",
+      "agent": "Codex",
+      "summary": "Fix gaps and shifting ranks in Speech mode with Smart Skip.",
+      "detail": [
+        "Order merged Speech cards by the same stable source-frequency positions used for level membership, rather than counts of currently loaded example sentences.",
+        "Keep merged citation forms at their earliest sibling position; loading another level no longer reshuffles vocabulary ranks.",
+        "Regression reproduces the redo sequence 1, 2, 3, 4, 7, 8 and verifies consecutive ranks after the fix. All 460 app tests pass."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-27T00:43:00+00:00",
       "date": "2026-10-27 00:43 GMT",
       "agent": "Antigravity",
@@ -299,42 +337,6 @@
       "detail": [
         "Coverage, percentage digits and example words are white in dark mode, with neutral dark text in light mode.",
         "Darker green Learn and Practise buttons remain unchanged."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T20:58:16+00:00",
-      "date": "2026-10-26 20:58 GMT",
-      "agent": "Codex",
-      "summary": "Larger level arrows, a slimmer desktop sidebar and roomier study panels.",
-      "detail": [
-        "Level arrow targets increase to 64px on mobile and 72px on desktop.",
-        "The desktop sidebar is 10% narrower; Practise receives all 23.6px of recovered width while Learn keeps its previous width.",
-        "Desktop Learn and Practise panel gutters and inner control padding are reduced by 20%."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T20:58:00+00:00",
-      "date": "2026-10-26 20:58 GMT",
-      "agent": "Claude",
-      "summary": "Flatter Settings, and Saved words now open in their own popup.",
-      "detail": [
-        "Settings tabs are one flat surface: underlined tabs, plain-text switches and hairline rows instead of boxes inside boxes.",
-        "Saved is a single row in Settings → Your words (hidden until you save something) that opens a Saved popup; the list no longer sits inside Settings.",
-        "Progress's Saved button opens the same popup.",
-        "Languages-you-know flags are bigger."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T20:55:49+00:00",
-      "date": "2026-10-26 20:55 GMT",
-      "agent": "Codex",
-      "summary": "Brighter language-tinted level details and darker Learn and Practise buttons.",
-      "detail": [
-        "Coverage, percentage digits and every example word use a pale language colour in dark mode, with a darker equivalent in light mode.",
-        "Learn and Practise use a darker language-coloured fill to keep white button text readable."
       ],
       "commit": "pending"
     }

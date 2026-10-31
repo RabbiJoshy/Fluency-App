@@ -1,10 +1,10 @@
 // Naive live-playlist deck: tokenise lyrics in the browser, join them to the
 // speech inventory, and study those cards with unassigned song-line examples.
-import { clearRoute, parseRoute } from './routes.js?v=7b1e5ad4';
-import { releaseUrl } from './release-host.js?v=7b1e5ad4';
-import { enrichOfflineDeck, loadOfflineIntakeAssets } from './offline-intake.js?v=7b1e5ad4';
-import { standaloneWordMeanings } from './lexical-guards.js?v=7b1e5ad4';
-import { completeSeriesVocabulary, loadSeriesLexicon } from './series-vocabulary.js?v=7b1e5ad4';
+import { clearRoute, parseRoute } from './routes.js?v=9a7fdc92';
+import { releaseUrl } from './release-host.js?v=9a7fdc92';
+import { enrichOfflineDeck, loadOfflineIntakeAssets } from './offline-intake.js?v=9a7fdc92';
+import { standaloneWordMeanings } from './lexical-guards.js?v=9a7fdc92';
+import { completeSeriesVocabulary, loadSeriesLexicon } from './series-vocabulary.js?v=9a7fdc92';
 
 const LIVE_DB_NAME = 'fluency-playlist-lyrics';
 const LIVE_DB_VERSION = 2;
@@ -14,10 +14,10 @@ const MAX_LINES_PER_SURFACE = 5;
 
 let _liveDeck = null;
 
-export const CASA_PRESET_REVISION = 'offline-30-episodes-v6-example-reuse';
+export const CASA_PRESET_REVISION = 'subdl-api-30-episodes-v7';
 export const SERIES_PRESETS = {
     'la-casa-de-papel': { title: 'La Casa de Papel', file: 'casa-de-papel', revision: CASA_PRESET_REVISION },
-    elite: { title: 'Élite', file: 'elite', revision: 'offline-season1-v1-all-forms' }
+    elite: { title: 'Élite', file: 'elite', revision: 'subdl-api-seasons1-3-v2-all-forms' }
 };
 
 export function validLiveDeck(deck) {

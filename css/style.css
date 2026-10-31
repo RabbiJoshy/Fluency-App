@@ -1,4 +1,4 @@
-@import url("./appearance.css?v=7b1e5ad4");
+@import url("./appearance.css?v=9a7fdc92");
 
 
         * {
@@ -4842,6 +4842,7 @@
         /* Two-line figure: the wording above, the number below. Rank and
            frequency share every size so the two read as a pair. */
         .card-stat {
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -27596,3 +27597,18 @@ body:has(.card-back .pin-mode-hint:not(.is-notice)) :is(#deckProgressTrack, #car
         var(--bg-card, #0d0f12);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
 }
+
+.smart-skip-level-notice {
+  position: fixed;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10001;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+  font-size: 14px;
+  color: var(--text-primary);
+  pointer-events: none;
+}
+.smart-skip-level-notice[hidden] { display: none; }

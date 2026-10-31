@@ -16,20 +16,46 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=7b1e5ad4';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=7b1e5ad4';
+import './state.js?v=9a7fdc92';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=9a7fdc92';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
 let advancedRefreshTimer = null;
-function refreshAdvancedStudyChoices() {
+let advancedRefreshVersion = 0;
+let levelNoticeTimer = null;
+function showSmartSkipLevelNotice(message) {
+    dismissSmartSkipActivationAnimation();
+    let notice = document.getElementById('smartSkipLevelNotice');
+    if (!notice) {
+        notice = document.createElement('div');
+        notice.id = 'smartSkipLevelNotice';
+        notice.className = 'smart-skip-level-notice smart-skip-toast-inner';
+        notice.setAttribute('role', 'status');
+        document.body.appendChild(notice);
+    }
+    clearTimeout(levelNoticeTimer);
+    notice.textContent = message;
+    notice.hidden = false;
+    levelNoticeTimer = setTimeout(() => { notice.hidden = true; }, 4500);
+}
+function refreshAdvancedStudyChoices(advanceFrom = null) {
     clearTimeout(advancedRefreshTimer);
+    const version = ++advancedRefreshVersion;
+    const language = selectedLanguage;
+    const artist = globalThis.activeArtist;
     advancedRefreshTimer = setTimeout(async () => {
+        if (version !== advancedRefreshVersion || selectedLanguage !== language || globalThis.activeArtist !== artist) return;
         const setup = document.getElementById('setupPanel');
         if (setup?.classList.contains('hidden')) return;
         try {
-            await globalThis.renderLevelSelector?.(selectedLanguage);
+            await globalThis.renderLevelSelector?.(language);
             await globalThis.updateExclusionBars?.();
+            if (advanceFrom !== null) {
+                const isCurrent = () => version === advancedRefreshVersion && currentState() === 'on';
+                const message = await globalThis.advanceSmartSkipLevel?.(language, advanceFrom, isCurrent);
+                if (message && isCurrent()) showSmartSkipLevelNotice(message);
+            }
         } catch (error) {
             console.warn('Could not refresh Smart Skip choices', error);
         }
@@ -186,6 +212,9 @@ function triggerSmartSkipActivationAnimation() {
 // re-rendering the level bands — happens exactly once and exactly as it does
 // when the learner changes them by hand.
 function applyFastMode(on) {
+    const advanceFrom = on ? globalThis.selectedLevel ?? null : null;
+    const notice = document.getElementById('smartSkipLevelNotice');
+    if (notice) notice.hidden = true;
     if (on) triggerSmartSkipActivationAnimation();
     else dismissSmartSkipActivationAnimation();
     const previous = readFastTrack(selectedLanguage);
@@ -217,7 +246,7 @@ function applyFastMode(on) {
     globalThis.excludeSlang = on && skipSlang;
     globalThis.excludeProperNouns = on && skipEntities;
     applyingMasterSwitch = false;
-    refreshAdvancedStudyChoices();
+    refreshAdvancedStudyChoices(advanceFrom);
 
     saveFastTrack(selectedLanguage, { enabled: on, merge, skip, skipGrammar, skipSlang, skipEntities });
 
