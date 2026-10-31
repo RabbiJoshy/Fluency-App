@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-31T12:53:44+00:00",
+      "date": "2026-10-31 12:53 GMT",
+      "agent": "Codex",
+      "summary": "Show Group only on cards with merged forms and match its rank-label font size.",
+      "detail": [
+        "Use the same actual-membership check for Group and the front-side merged-forms disclosure.",
+        "Match Group to the Vocabulary Rank label at 14.5px."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-31T12:13:39+00:00",
       "date": "2026-10-31 12:13 GMT",
       "agent": "Codex",
@@ -326,17 +337,6 @@
       "summary": "Settings rows no longer stretch across a wide screen.",
       "detail": [
         "On desktop the flat Settings rows are capped at 560px and line up under the title, so each label sits next to its switch."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T21:12:01+00:00",
-      "date": "2026-10-26 21:12 GMT",
-      "agent": "Codex",
-      "summary": "White coverage and example text on the level picker.",
-      "detail": [
-        "Coverage, percentage digits and example words are white in dark mode, with neutral dark text in light mode.",
-        "Darker green Learn and Practise buttons remain unchanged."
       ],
       "commit": "pending"
     }

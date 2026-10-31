@@ -9,7 +9,7 @@ import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=2';
 import { installCardTouch } from './card-touch.js';
 import { exampleTranslationAlignment } from './example-alignment.js?v=1';
 import { fitSenseRowText } from './card-row-layout.js?v=20261013rows';
-import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
+import { renderMergedFormsCue, closeMergedFormsCue, hasMergedFormsCue } from './merged-forms-cue.js';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20261013music';
 import { memoryTipTileHTML } from './memory-tips.js?v=20261019rules';
@@ -7731,11 +7731,7 @@ function renderCardWikipediaBadge(card) {
         // under the frequency: rank 23 of 3,200.
         const rankOf = vocabularySize ? `of ${vocabularySize.toLocaleString()}` : '';
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocabulary Rank';
-        const isMergedFormsMode = Boolean(
-            card.mergedLemma
-            || (typeof window !== 'undefined' && window.useLemmaMode && card.mergedLemma !== false)
-        );
-        const smartGroupTag = isMergedFormsMode
+        const smartGroupTag = hasMergedFormsCue(card)
             ? '<span class="card-smart-group-tag">Group</span>'
             : '';
         frontRankingEl.innerHTML =

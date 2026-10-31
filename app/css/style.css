@@ -23349,7 +23349,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 
 /* Card front corners: labels a little larger and brighter, figures larger. */
 .card-ranking .card-stat { color: rgba(255, 255, 255, 0.76); }
-.card-ranking .card-stat-label { font-size: 14.5px; }
+.card-ranking .card-stat-label,
+.card-ranking .card-smart-group-tag { font-size: 14.5px; }
 .card-ranking .card-stat-unit,
 .card-ranking .card-stat-unit--below { font-size: 12.5px; opacity: 1; }
 .card-ranking .card-stat-value { font-size: 30px; }
@@ -27406,7 +27407,6 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   margin-bottom: 2px;
 }
 .card-smart-group-tag {
-  font-size: 11.5px;
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0.02em;

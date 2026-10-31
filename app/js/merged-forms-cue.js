@@ -10,6 +10,11 @@ export function mergedCardForms(card) {
     return [...forms.values()];
 }
 
+export function hasMergedFormsCue(card, forms = mergedCardForms(card)) {
+    const shown = String(card?.displaySurface || card?.targetWord || '').normalize('NFC').toLocaleLowerCase();
+    return forms.length > 1 && forms.some(form => form.normalize('NFC').toLocaleLowerCase() === shown);
+}
+
 let cue;
 let panel;
 let trigger;
@@ -104,7 +109,7 @@ export function renderMergedFormsCue(card, visible = true) {
     const forms = mergedCardForms(card);
     const shown = String(card?.displaySurface || card?.targetWord || '').normalize('NFC').toLocaleLowerCase();
     const others = forms.filter(form => form.normalize('NFC').toLocaleLowerCase() !== shown);
-    cue.hidden = !visible || !forms.some(form => form.normalize('NFC').toLocaleLowerCase() === shown) || !others.length;
+    cue.hidden = !visible || !hasMergedFormsCue(card, forms);
     if (cue.hidden) return;
     trigger.textContent = `+${others.length} other form${others.length === 1 ? '' : 's'}`;
     trigger.setAttribute('aria-label', `${trigger.textContent}. Show forms merged by Smart Skip`);

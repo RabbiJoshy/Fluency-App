@@ -34,6 +34,13 @@ assert.equal(h.buildCardFormModel(host,host.meanings,{mergedLemma:true}).display
 const unmerged = h.buildCardFormModel(sabe,sabe.meanings,{mergedLemma:false});
 assert.equal(unmerged.displaySurface,'sabe');
 assert.equal(h.mergedCardForms(unmerged).length,0);
+assert.equal(h.hasMergedFormsCue(model),true);
+assert.equal(h.hasMergedFormsCue(unmerged),false);
+assert.equal(h.hasMergedFormsCue({...model,isChainChild:true}),false);
+assert.equal(h.hasMergedFormsCue({mergedLemma:true,targetWord:'que',mergedGroupSurfaces:['que']}),false);
+assert.equal(h.hasMergedFormsCue({mergedLemma:true,targetWord:'que'}),false);
+assert.equal(h.hasMergedFormsCue({...model,displaySurface:'absent'}),false);
+assert.equal(h.hasMergedFormsCue({mergedLemma:true,displaySurface:'É',mergedGroupSurfaces:['e\u0301','são']}),true);
 assert.equal(h.mergedCardForms({...model,isChainChild:true}).length,0);
 assert.deepEqual(Array.from(h.mergedCardForms({mergedLemma:true,mergedGroupSurfaces:['é','e\u0301','É','são','são']})),['É','são']);
 '''], cwd=ROOT, capture_output=True, text=True)
