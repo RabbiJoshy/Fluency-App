@@ -1,4 +1,4 @@
-import { beginRegionLoading } from './loading-ui.js?v=9a7fdc92';
+import { beginRegionLoading } from './loading-ui.js?v=008fb31e';
 // Music owns its browsing, song selection and study setup. Existing deck
 // loaders still own vocabulary/progress; route handoffs reopen this workspace.
 const HANDOFF_KEY = 'fluency_music_workspace_v1';

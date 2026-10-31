@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=9a7fdc92';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=9a7fdc92';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=9a7fdc92';
-import { songCreditHTML } from './song-credit.js?v=9a7fdc92';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=9a7fdc92';
+import './state.js?v=008fb31e';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=008fb31e';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=008fb31e';
+import { songCreditHTML } from './song-credit.js?v=008fb31e';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=008fb31e';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=9a7fdc92';
-import { fitSenseRowText } from './card-row-layout.js?v=9a7fdc92';
-import { renderMergedFormsCue, closeMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=9a7fdc92';
-import { goToRoute, routeCodeFor } from './routes.js?v=9a7fdc92';
-import { memoryTipTileHTML } from './memory-tips.js?v=9a7fdc92';
+import { exampleTranslationAlignment } from './example-alignment.js?v=008fb31e';
+import { fitSenseRowText } from './card-row-layout.js?v=008fb31e';
+import { renderMergedFormsCue, closeMergedFormsCue, hasMergedFormsCue } from './merged-forms-cue.js';
+import './speech.js?v=008fb31e';
+import { goToRoute, routeCodeFor } from './routes.js?v=008fb31e';
+import { memoryTipTileHTML } from './memory-tips.js?v=008fb31e';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=9a7fdc92';
-import './side-dock.js?v=9a7fdc92';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=9a7fdc92';
+} from './function-word-card.js?v=008fb31e';
+import './side-dock.js?v=008fb31e';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=008fb31e';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=9a7fdc92';
+} from './example-personalisation.js?v=008fb31e';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=9a7fdc92';
+} from './spanishdict-usage.js?v=008fb31e';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=9a7fdc92';
+} from './reverse-cues.js?v=008fb31e';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=9a7fdc92';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=9a7fdc92';
+} from './card-metadata-pills.js?v=008fb31e';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=008fb31e';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -7731,11 +7731,7 @@ function renderCardWikipediaBadge(card) {
         // under the frequency: rank 23 of 3,200.
         const rankOf = vocabularySize ? `of ${vocabularySize.toLocaleString()}` : '';
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocabulary Rank';
-        const isMergedFormsMode = Boolean(
-            card.mergedLemma
-            || (typeof window !== 'undefined' && window.useLemmaMode && card.mergedLemma !== false)
-        );
-        const smartGroupTag = isMergedFormsMode
+        const smartGroupTag = hasMergedFormsCue(card)
             ? '<span class="card-smart-group-tag">Group</span>'
             : '';
         frontRankingEl.innerHTML =
@@ -11968,8 +11964,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '9a7fdc92';
-const MODALS_ASSET_VERSION = '9a7fdc92';
+const ASSET_VERSION = '008fb31e';
+const MODALS_ASSET_VERSION = '008fb31e';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
