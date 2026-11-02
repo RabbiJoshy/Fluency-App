@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-11-02T08:50:00+00:00",
+      "date": "2026-11-02 08:50 GMT",
+      "agent": "Claude",
+      "summary": "Bad Bunny's meanings now come from Jev, line by line (lyrics-bad-bunny-v21-jev-1). Other artists are unchanged.",
+      "detail": [
+        "Jev 1.14 decided all 26,668 lines on the 7,094 cards with several meanings. One-meaning cards are unchanged.",
+        "A line no listed meaning fits leaves its card (2,547 lines). A card with no line left shows its lyrics and no meaning (572 cards)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-31T12:53:44+00:00",
       "date": "2026-10-31 12:53 GMT",
       "agent": "Codex",
@@ -327,16 +338,6 @@
       "detail": [
         "Browse all is centred across the Practise content area, including the empty state.",
         "The Mistakes first note is centred above the Practise button."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T21:15:00+00:00",
-      "date": "2026-10-26 21:15 GMT",
-      "agent": "Claude",
-      "summary": "Settings rows no longer stretch across a wide screen.",
-      "detail": [
-        "On desktop the flat Settings rows are capped at 560px and line up under the title, so each label sits next to its switch."
       ],
       "commit": "pending"
     }

@@ -11435,7 +11435,7 @@ function buildProvenancePanelHTML(card) {
         decisionAlgo = 'Deterministic (one meaning)';
     } else if (/lyrics-[a-z-]*v2\d/.test(String(releaseId || '')) && senseCount > 1) {
         menuOrigin = sources.includes('wiktionary') ? 'Shared resolver: Wiktionary' : 'Shared resolver: SpanishDict';
-        decisionAlgo = 'spaCy TRF + Embedding margin';
+        decisionAlgo = /-jev-/.test(String(releaseId)) ? 'Jev 1.14, line by line' : 'spaCy TRF + Embedding margin';
     } else if (sources.includes('override:') || sources.includes('curated:lyrics_cultural')) {
         menuOrigin = 'Cultural Overrides';
         graftOverlay = 'Cultural Expression Overlay';
