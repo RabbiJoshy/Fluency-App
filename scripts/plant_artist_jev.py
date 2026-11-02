@@ -15,7 +15,11 @@ release byte for byte.
 - Runner-up senses at >= 0.5 x the top sense are recorded as ties.
 - A sense the base release already shows keeps its base release gloss.
 
-    python scripts/plant_artist_jev.py --review <run dir> --release-id lyrics-bad-bunny-v21-jev-1
+    python scripts/plant_artist_jev.py --review <run dir> --release-id <id>
+        [--changed-review <dir with plan.json, changed.json, changed/>]
+
+--changed-review overlays a later re-plan: cards named in its changed.json take
+that plan's menu and its decisions (a card now holding one sense needs none).
 """
 from __future__ import annotations
 
@@ -74,17 +78,30 @@ def line_decisions(run: Path) -> dict[str, dict[str, dict]]:
     return out
 
 
-def plant(run: Path, release_id: str, slug: str) -> None:
+def plant(run: Path, release_id: str, slug: str, later: Path | None = None) -> None:
     base = LYRICS / BASE_RELEASE / "app" / "Artists" / "es" / slug
     plan = read(run.parent / "plan.json")
     live_master, live_examples = read(base / "vocabulary_master.json"), read(base / "examples.json")
     live_index, live_evidence = read(base / "index.json"), read(base / "wsd-evidence.json")
     decisions = line_decisions(run)
+    changed: set[str] = set()
+    if later:
+        changed = set(read(later / "changed.json"))
+        plan = read(later / "plan.json")
+        decisions = {k: v for k, v in decisions.items() if k not in changed}
+        decisions.update(line_decisions(later / "changed"))
+        for cid in changed:
+            if len(plan[cid]["senses"]) == 1:
+                only = plan[cid]["senses"][0]["sense_id"]
+                decisions[cid] = {ex["spanish"]: {"sense_id": only, "p": 1.0, "p_none": 0.0, "margin": None, "ties": []}
+                                  for ex in plan[cid]["examples"]}
     master, examples, index, stats = {}, {}, [], Counter()
     glosses_new = []
     for item in live_index:
         cid = item["id"]
         card, live = plan[cid], live_master[cid]
+        if cid in changed:
+            live = {**live, **card["card"]}
         if cid not in decisions:
             master[cid], examples[cid] = live, live_examples[cid]
             index.append(item)
@@ -228,8 +245,9 @@ def main() -> None:
     ap.add_argument("--review", type=Path, required=True, help="run dir holding requests.json and responses/")
     ap.add_argument("--release-id", required=True)
     ap.add_argument("--artist", default="bad-bunny")
+    ap.add_argument("--changed-review", type=Path)
     args = ap.parse_args()
-    plant(args.review, args.release_id, args.artist)
+    plant(args.review, args.release_id, args.artist, args.changed_review)
 
 
 if __name__ == "__main__":

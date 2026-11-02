@@ -50,6 +50,12 @@ class ProviderChain:
         for source in self.sources:
             declaration = source.declare(surface)
             held = tuple(h for h in declaration.headwords if source.has_entry(h.headword, surface))
+            if held:
+                # A source that answers may still name a headword only another
+                # holds: mejores is mejor, and SpanishDict's table adds mejorar,
+                # which only Wiktionary holds.
+                held = tuple(h for h in declaration.headwords
+                             if any(s.has_entry(h.headword, surface) for s in self.sources))
             said[source.provider] = {
                 "coverage": declaration.coverage,
                 "headwords": [h.headword for h in declaration.headwords],

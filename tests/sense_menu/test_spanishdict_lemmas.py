@@ -11,6 +11,7 @@ from fluency.sense_menu.spanishdict_lemmas import (
     CONJUGATION_TABLE,
     ENCLITIC_HOST,
     OVERRIDE,
+    PAGE_FORM,
     PAGE_RELATION,
     PAGE_SELF,
     REFLEXIVE_HEADWORD,
@@ -60,6 +61,22 @@ class PageTests(unittest.TestCase):
             found = rule().resolve(surface, page(head))
             self.assertEqual(found.status, STATUS_DECLARED)
             self.assertEqual([(l.lemma, l.provenance) for l in found.lemmas], [(head, PAGE_SELF)])
+
+    def test_a_page_filing_a_gender_or_number_form_answers(self) -> None:
+        """linda shows lindo with no label; the table's lindar must not be all it gets."""
+        table = SpanishDictLemmaRule({"linda": [{"lemma": "lindar", "mood": "indicativo", "person": "3s"}]})
+        found = table.resolve("linda", page("lindo"))
+        self.assertEqual(found.lemma_names, ["lindo", "lindar"])
+        self.assertEqual(found.lemmas[0].provenance, PAGE_FORM)
+        self.assertEqual(found.lemmas[1].provenance, CONJUGATION_TABLE)
+        for surface, headword in (("fría", "frío"), ("luces", "luz"), ("notas", "nota"), ("animales", "animal")):
+            self.assertIn(headword, rule().resolve(surface, page(headword)).lemma_names)
+
+    def test_a_similar_spelling_is_not_a_form(self) -> None:
+        for surface, headword in (("yes", "y"), ("tómatelo", "tomate"), ("cartel", "carta"), ("cógelo", "cómelo"),
+                                  ("postees", "poste"), ("matcha", "match"), ("compes", "comp.")):
+            found = rule().resolve(surface, page(headword))
+            self.assertNotIn(headword, found.lemma_names)
 
     def test_a_different_word_on_the_page_is_rejected_not_a_lemma(self) -> None:
         """tómatelo was answered with *tomate* and no substitution flag."""

@@ -11,6 +11,7 @@ sentence), with the target occurrence marked <<like this>>.
     python run_jev.py --pilot 50          # build pilot requests, print projected cost
     python run_jev.py --pilot 50 --run    # paid
     python run_jev.py --all [--run]
+    python run_jev.py --changed changed.json --review <dir> [--run]   # only these cards, plan from <dir>
 """
 from __future__ import annotations
 
@@ -28,8 +29,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
-OUT = REPO.parent / "Fluency-Workspace/reviews/bb-jev-20261101"
-PLAN = OUT / "plan.json"  # plan_artist('bad-bunny') dump, max_senses_per_headword lifted
+OUT = REPO.parent / "Fluency-Workspace/reviews/bb-jev-20261101"  # holds plan.json: plan_artist('bad-bunny'), max_senses_per_headword lifted
 MODEL, URL, PRICE = "jev-1.14.0", "https://api.typesafe.ai/v1/systemone", 0.042e-6
 TOKENS_PER_SENTENCE = 580  # measured on the Bad Bunny pilot; Portuguese ran at 412, but lyric menus are longer
 CAP_USD = 1.50
@@ -159,13 +159,19 @@ def main() -> None:
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--pilot", type=int)
     g.add_argument("--all", action="store_true")
+    g.add_argument("--changed", type=Path)
+    ap.add_argument("--review", type=Path, default=OUT)
     ap.add_argument("--run", action="store_true")
     ap.add_argument("--workers", type=int, default=4)
     args = ap.parse_args()
-    plan = json.loads(PLAN.read_text(encoding="utf-8"))
-    name = "all" if args.all else f"pilot{args.pilot}"
-    reqs = [r for k in pick(plan, None if args.all else args.pilot) for r in build(k, plan[k])]
-    run_dir = OUT / name
+    plan = json.loads((args.review / "plan.json").read_text(encoding="utf-8"))
+    name = "all" if args.all else "changed" if args.changed else f"pilot{args.pilot}"
+    if args.changed:
+        keys = [k for k in json.loads(args.changed.read_text(encoding="utf-8")) if len(plan[k]["senses"]) > 1]
+    else:
+        keys = pick(plan, None if args.all else args.pilot)
+    reqs = [r for k in keys for r in build(k, plan[k])]
+    run_dir = args.review / name
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "requests.json").write_text(json.dumps(reqs, ensure_ascii=False, indent=1), encoding="utf-8")
     n_sent = sum(len(r["body"]["questions"]) for r in reqs)

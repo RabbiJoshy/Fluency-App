@@ -11,9 +11,13 @@ What SpanishDict *declares* about a surface is narrow, and that is the point:
    substitution and is a Spanish entry. On that page only two headwords count:
    one equal to the surface (ignoring case, ``¡¿!?`` and abbreviation dots, so
    ``¡Uy!`` is *uy* and ``Ud.`` is *ud*), and one the page states is the
-   surface's conjugation or inflection. Any other headword is SpanishDict
-   answering about a different word -- *tómatelo* answered with *tomate*,
-   *cógelo* with *cómelo* -- and is recorded as rejected, never used.
+   surface's conjugation or inflection. A page that files the surface under a
+   word it is a plain gender or number form of counts too, though the page has
+   no label saying so (*linda* on *lindo*, *luces* on *luz*); the conjugation
+   table's verbs stay beside it, because *molesta* is also *molestar*. Any other
+   headword is SpanishDict answering about a different word -- *tómatelo*
+   answered with *tomate*, *cógelo* with *cómelo* -- and is recorded as
+   rejected, never used.
 2. **Its conjugation table**, an exact form -> verb lookup, consulted only where
    the page gave no lemma. Where the page answers, the page is SpanishDict's
    answer about that surface; the table would add an infinitive to nouns that
@@ -46,11 +50,12 @@ from fluency.surfaces.resolver import (
     ABSENT, FETCHED_CACHE, MENU, UNFETCHED, Headword, ProviderDeclaration,
 )
 
-RULE_VERSION = "spanishdict-declared-lemma/v5"
+RULE_VERSION = "spanishdict-declared-lemma/v6"
 
 OVERRIDE = "override"
 PAGE_SELF = "spanishdict-page-self"
 PAGE_RELATION = "spanishdict-page-declared-relation"
+PAGE_FORM = "spanishdict-page-gender-number-form"
 CONJUGATION_TABLE = "spanishdict-conjugation-table"
 ENCLITIC_HOST = "spanishdict-conjugation-table-enclitic-host"
 REFLEXIVE_HEADWORD = "spanishdict-pronominal-headword"
@@ -72,6 +77,24 @@ _PUNCTUATION = str.maketrans("", "", "¡!¿?.")
 def headword_key(text: str) -> str:
     """Comparison key for "is this headword the surface itself"."""
     return unicodedata.normalize("NFC", str(text)).translate(_PUNCTUATION).strip().casefold()
+
+
+def is_gender_number_form(surface: str, headword: str) -> bool:
+    """surface is headword's plural or feminine, by regular spelling: linda/lindo, luces/luz."""
+    form, head = deaccent(headword_key(surface)), deaccent(headword_key(headword))
+    if len(head) < 3 or form == head or not str(headword).isalpha():
+        return False
+    if head[-1] in "aeiou":
+        forms = {head + "s"}
+    else:
+        forms = {head + "es"}
+    if head.endswith("z"):
+        forms.add(head[:-1] + "ces")
+    if head.endswith("o"):
+        forms.update({head[:-1] + "a", head[:-1] + "as"})
+    elif head.endswith(("or", "on", "es", "an", "in")):  # trabajadora, patana
+        forms.update({head + "a", head + "as"})
+    return form in forms
 
 
 def deaccent(word: str) -> str:
@@ -205,6 +228,7 @@ RELATION = {
     OVERRIDE: "override",
     PAGE_SELF: "self",
     PAGE_RELATION: "form",
+    PAGE_FORM: "form",
     CONJUGATION_TABLE: "form",
     ENCLITIC_HOST: "enclitic",
     REFLEXIVE_HEADWORD: "enclitic",
@@ -214,6 +238,7 @@ TRUST = {
     OVERRIDE: _trust.CURATED,
     PAGE_SELF: _trust.PROVIDER,
     PAGE_RELATION: _trust.PROVIDER,
+    PAGE_FORM: _trust.DERIVED,
     CONJUGATION_TABLE: _trust.PROVIDER,
     ENCLITIC_HOST: _trust.DERIVED,
     REFLEXIVE_HEADWORD: _trust.DERIVED,
@@ -375,6 +400,11 @@ class SpanishDictLemmaRule:
                     add(item.lemma, item.provenance, item.detail)
             elif head in stated:
                 add(head, PAGE_RELATION, stated[head])
+            elif is_gender_number_form(surface, head):
+                add(head, PAGE_FORM)
+                for row in self.conjugation_reverse.get(surface, ()):
+                    if row.get('lemma'):
+                        add(row['lemma'], CONJUGATION_TABLE)
             elif head not in unknown and head not in rejected:
                 rejected.append(head)
         # A grammatical surface entry proves this is a verbal homograph.

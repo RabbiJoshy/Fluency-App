@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-11-02T18:36:05+00:00",
+      "date": "2026-11-02 18:36 GMT",
+      "agent": "Claude",
+      "summary": "Bad Bunny: common words like linda, fría and luces now get their real meanings (lyrics-bad-bunny-v21-jev-2).",
+      "detail": [
+        "SpanishDict's own page files linda under lindo; the lookup now accepts that when the word is a plain gender or plural form.",
+        "131 cards changed: 18 regain a meaning, and junk menu entries such as humar on humanos are gone."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-11-02T08:50:00+00:00",
       "date": "2026-11-02 08:50 GMT",
       "agent": "Claude",
@@ -327,17 +338,6 @@
       "summary": "Settings rows no longer stretch across a wide screen.",
       "detail": [
         "On desktop the flat Settings rows are capped at 560px and line up under the title, so each label sits next to its switch."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-26T21:15:23+00:00",
-      "date": "2026-10-26 21:15 GMT",
-      "agent": "Codex",
-      "summary": "Centre Browse all and Mistakes first in Practise.",
-      "detail": [
-        "Browse all is centred across the Practise content area, including the empty state.",
-        "The Mistakes first note is centred above the Practise button."
       ],
       "commit": "pending"
     }
