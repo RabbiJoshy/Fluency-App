@@ -1,11 +1,11 @@
-import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=86d1d886';
+import { beginRegionLoading, showRegionError, boundedLoad } from './loading-ui.js?v=e7473225';
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=86d1d886';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=86d1d886';
-import { readFastTrack } from './fast-track-preferences.js?v=86d1d886';
-import './session-plan.js?v=86d1d886';
-import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=86d1d886';
+import './state.js?v=e7473225';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=e7473225';
+import { readFastTrack } from './fast-track-preferences.js?v=e7473225';
+import './session-plan.js?v=e7473225';
+import { assignmentFilter, assignmentFiltersAvailable, activeFilterCount } from './assignment-filters.js?v=e7473225';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3066,10 +3066,12 @@ function applyLanguageColorTheme() {
     // The second flag colour stays recognisable. It is a thin stripe, not a
     // second fill, so it does not need the same lift as the buttons.
     const secondaryHex = langConfig.colorTheme.secondary;
-    const secondary = {
-        color: secondaryHex,
-        ink: relativeLuminance(secondaryHex) < 0.4 ? '#ffffff' : '#10141b',
-    };
+    const secondary = theme === 'light'
+        ? readableFlagColor(secondaryHex, 'light')
+        : {
+            color: secondaryHex,
+            ink: relativeLuminance(secondaryHex) < 0.4 ? '#ffffff' : '#10141b',
+        };
     const root = document.documentElement;
     paintAccent(root, primary, secondary);
     // The stylesheet pins the setup panel to a neutral indigo. An inline
@@ -3991,7 +3993,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=86d1d886')
+        import('./spotify.js?v=e7473225')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

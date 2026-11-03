@@ -1313,12 +1313,15 @@
     box-shadow: inset 0 0 0 1.5px rgba(var(--sense-match-rgb), 0.5), inset 3px 0 0 rgb(var(--sense-match-rgb)), inset -3px 0 0 rgb(var(--sense-match-rgb)) !important;
 }
 
-/* Same saturated status colours as the dark theme; the bar outline frames white new cards. */
+/* Light theme status colours: new cards use a soft slate so they contrast against white backgrounds,
+   and review uses a readable warm amber instead of neon yellow. */
+:root[data-theme="light"],
+:root[data-theme="light"] #setupPanel,
 :root[data-theme="light"] #step4,
 :root[data-theme="light"] #levelColoursTooltip {
     --set-known: #06a557;
-    --set-review: #ffcc00;
-    --set-new: #ffffff;
+    --set-review: #d97706;
+    --set-new: #94a3b8;
     --set-skipped: #64748b;
     --set-estimated: #9f7aea;
 }
@@ -1326,4 +1329,159 @@
 :root[data-theme="light"] .meanings-scroll.inline-sense-rows .meaning-pos-section .meaning-row:not(.is-current-sense):not(.selected):not(:hover):not(#_) {
     background: transparent !important;
     border-color: transparent;
+}
+
+/* --- Top Bar & Navigation in Light Mode --- */
+:root[data-theme="light"] #topBar .top-bar-icon-btn,
+:root[data-theme="light"] #topBar .gear-btn {
+    color: var(--text-primary);
+}
+:root[data-theme="light"] #topBar .top-bar-icon-btn:hover,
+:root[data-theme="light"] #topBar .gear-btn:hover {
+    color: var(--accent-primary);
+    background: var(--bg-tertiary);
+}
+:root[data-theme="light"] #reverseLangBtn .reverse-swap-glyph {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    box-shadow: 0 1px 3px rgba(27, 39, 51, 0.15);
+}
+
+/* --- Card Front Stats --- */
+:root[data-theme="light"] .card-ranking .card-stat {
+    color: var(--text-muted);
+}
+:root[data-theme="light"] .card-ranking .card-stat-label {
+    color: var(--text-secondary);
+}
+:root[data-theme="light"] .card-ranking .card-stat-unit,
+:root[data-theme="light"] .card-ranking .card-stat-unit--below {
+    color: var(--text-muted);
+}
+:root[data-theme="light"] .card-ranking .card-stat-value {
+    color: var(--text-primary);
+}
+
+/* --- Active Study Progress Scrubber --- */
+:root[data-theme="light"] .deck-progress-segment.is-visited:not(.is-current) {
+    --scrubber-marker-text: var(--text-muted);
+}
+:root[data-theme="light"] .deck-progress-segment.is-result-correct,
+:root[data-theme="light"] .deck-progress-segment.is-visited.is-result-correct:not(.is-current) {
+    --scrubber-marker-fill: color-mix(in srgb, var(--success) 14%, var(--bg-card));
+    --scrubber-marker-border: color-mix(in srgb, var(--success) 60%, transparent);
+    --scrubber-marker-text: #065f46;
+}
+:root[data-theme="light"] .deck-progress-segment.is-result-incorrect,
+:root[data-theme="light"] .deck-progress-segment.is-visited.is-result-incorrect:not(.is-current) {
+    --scrubber-marker-fill: color-mix(in srgb, var(--error) 14%, var(--bg-card));
+    --scrubber-marker-border: color-mix(in srgb, var(--error) 60%, transparent);
+    --scrubber-marker-text: #9f1239;
+}
+:root[data-theme="light"] .deck-progress-segment.is-result-mixed,
+:root[data-theme="light"] .deck-progress-segment.is-visited.is-result-mixed:not(.is-current) {
+    --scrubber-marker-fill: color-mix(in srgb, #f59e0b 16%, var(--bg-card));
+    --scrubber-marker-border: color-mix(in srgb, #f59e0b 60%, transparent);
+    --scrubber-marker-text: #92400e;
+}
+:root[data-theme="light"] .deck-progress-segment.is-pair-active:not(.is-current) {
+    --scrubber-marker-text: var(--text-primary);
+}
+
+/* --- Function Word Cards --- */
+:root[data-theme="light"] .fw-token-connector,
+:root[data-theme="light"] .fw-sentence-target .fw-token-connector,
+:root[data-theme="light"] .fw-relation-formula .fw-token-connector {
+    color: var(--text-primary) !important;
+    font-weight: 700;
+    background: none !important;
+}
+:root[data-theme="light"] .fw-token-v {
+    color: #0284c7;
+}
+:root[data-theme="light"] .fw-token-c {
+    color: #7c3aed;
+}
+:root[data-theme="light"] .fw-sentence-panel {
+    background: #f2f6f8;
+    border: 1px solid var(--border-color);
+}
+:root[data-theme="light"] .fw-sentence-target {
+    color: var(--text-primary);
+}
+:root[data-theme="light"] .fw-sentence-translation {
+    color: var(--text-secondary);
+    border-top-color: var(--border-color);
+}
+:root[data-theme="light"] .fw-relation-box:hover {
+    background: rgba(23, 33, 43, 0.05);
+}
+:root[data-theme="light"] .fw-heading,
+:root[data-theme="light"] .fw-heading-word {
+    color: var(--text-primary);
+}
+
+/* --- Home Layout: Smart Skip & Level Progression Dots --- */
+:root[data-theme="light"] .home-smart-skip {
+    background: #f2f6f8;
+    border: 1px solid var(--border-color);
+}
+:root[data-theme="light"] .home-smart-skip.is-on {
+    background: color-mix(in srgb, var(--accent-primary) 10%, #ffffff);
+    border-color: color-mix(in srgb, var(--accent-primary) 35%, var(--border-color));
+}
+:root[data-theme="light"] .home-smart-skip-copy {
+    color: var(--text-muted);
+}
+:root[data-theme="light"] .home-smart-skip-copy strong {
+    color: var(--text-primary);
+}
+:root[data-theme="light"] .home-level-tile-bar .is-new,
+:root[data-theme="light"] .home-level-tile-dot {
+    background: #94a3b8;
+}
+:root[data-theme="light"] .home-level-tile[data-dot="seen"] .home-level-tile-dot,
+:root[data-theme="light"] .home-level-tile[data-dot="practice"] .home-level-tile-dot {
+    background: #d97706;
+}
+
+/* --- Extra Conjugations Drill --- */
+:root[data-theme="light"] .extra-conjugations-view .mood-toggle-pill {
+    border-color: var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+:root[data-theme="light"] .extra-conjugations-view .mood-toggle-pill:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+}
+:root[data-theme="light"] .extra-conjugations-view .check:has(input:checked) {
+    border-color: color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
+    background: color-mix(in srgb, var(--accent-primary) 8%, var(--bg-card));
+}
+:root[data-theme="light"] .extra-conjugations-view .mood-group {
+    border-color: var(--border-color);
+    background: var(--bg-card);
+}
+:root[data-theme="light"] .extra-conjugations-view .mood-group[open] {
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+}
+:root[data-theme="light"] .extra-conjugations-view .card-mood-pill[data-mood*="subj"] {
+    color: #7c3aed;
+    border-color: rgba(124, 58, 237, 0.4);
+    background: rgba(124, 58, 237, 0.09);
+}
+
+/* --- Sense Prominence Tooltip Popup --- */
+:root[data-theme="light"] .sense-prominence-popup {
+    background: #17212b;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 8px 24px rgba(27, 39, 51, 0.22);
+}
+:root[data-theme="light"] .sense-prominence-popup strong {
+    color: #ffffff;
 }
