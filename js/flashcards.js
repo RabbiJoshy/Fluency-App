@@ -1,43 +1,43 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=008fb31e';
-import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=008fb31e';
-import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=008fb31e';
-import { songCreditHTML } from './song-credit.js?v=008fb31e';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=008fb31e';
+import './state.js?v=86d1d886';
+import { isSeeExpressionReference, resolveSeeExpression, showSeeExpressionCard } from './sense-reference-cards.js?v=86d1d886';
+import { savedPhraseEntry, saveItemButtonHTML, highlightSavedSentence, isItemSaved, SAVE_STAR_ICON } from './saved-items.js?v=86d1d886';
+import { songCreditHTML } from './song-credit.js?v=86d1d886';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=86d1d886';
 import { installCardTouch } from './card-touch.js';
-import { exampleTranslationAlignment } from './example-alignment.js?v=008fb31e';
-import { fitSenseRowText } from './card-row-layout.js?v=008fb31e';
+import { exampleTranslationAlignment } from './example-alignment.js?v=86d1d886';
+import { fitSenseRowText } from './card-row-layout.js?v=86d1d886';
 import { renderMergedFormsCue, closeMergedFormsCue, hasMergedFormsCue } from './merged-forms-cue.js';
-import './speech.js?v=008fb31e';
-import { goToRoute, routeCodeFor } from './routes.js?v=008fb31e';
-import { memoryTipTileHTML } from './memory-tips.js?v=008fb31e';
+import './speech.js?v=86d1d886';
+import { goToRoute, routeCodeFor } from './routes.js?v=86d1d886';
+import { memoryTipTileHTML } from './memory-tips.js?v=86d1d886';
 import {
     functionWordBlockHTML,
     configureFunctionWordPresentation,
     isFunctionWordCard,
     getPortugueseGrammarDefinition,
     getCardAmbientGlow
-} from './function-word-card.js?v=008fb31e';
-import './side-dock.js?v=008fb31e';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=008fb31e';
+} from './function-word-card.js?v=86d1d886';
+import './side-dock.js?v=86d1d886';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=86d1d886';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=008fb31e';
+} from './example-personalisation.js?v=86d1d886';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=008fb31e';
+} from './spanishdict-usage.js?v=86d1d886';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=008fb31e';
+} from './reverse-cues.js?v=86d1d886';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -72,8 +72,8 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=008fb31e';
-import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=008fb31e';
+} from './card-metadata-pills.js?v=86d1d886';
+import { prominenceBadgeHTML, hideProminenceTooltip, toggleProminenceBadge } from './prominence-badge.js?v=86d1d886';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -11435,7 +11435,7 @@ function buildProvenancePanelHTML(card) {
         decisionAlgo = 'Deterministic (one meaning)';
     } else if (/lyrics-[a-z-]*v2\d/.test(String(releaseId || '')) && senseCount > 1) {
         menuOrigin = sources.includes('wiktionary') ? 'Shared resolver: Wiktionary' : 'Shared resolver: SpanishDict';
-        decisionAlgo = 'spaCy TRF + Embedding margin';
+        decisionAlgo = /-jev-/.test(String(releaseId)) ? 'Jev 1.14, line by line' : 'spaCy TRF + Embedding margin';
     } else if (sources.includes('override:') || sources.includes('curated:lyrics_cultural')) {
         menuOrigin = 'Cultural Overrides';
         graftOverlay = 'Cultural Expression Overlay';
@@ -11964,8 +11964,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '008fb31e';
-const MODALS_ASSET_VERSION = '008fb31e';
+const ASSET_VERSION = '86d1d886';
+const MODALS_ASSET_VERSION = '86d1d886';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
