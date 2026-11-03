@@ -11,7 +11,11 @@ ROOT = Path(__file__).resolve().parents[2]
 class ServiceWorkerAssetResponsesTests(unittest.TestCase):
     def test_deployed_precache_has_no_duplicate_requests(self):
         import json
-        from scripts.build_pages_site import stamp
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("build_pages_site", ROOT / "scripts/build_pages_site.py")
+        build_pages_site = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(build_pages_site)
+        stamp = build_pages_site.stamp
         worker = stamp((ROOT / 'app/service-worker.js').read_text(), 'regression-build')
         result = subprocess.run(['node', '-'], cwd=ROOT, text=True, capture_output=True, input=r"""
 const assert = require('node:assert/strict'), vm = require('node:vm');

@@ -281,10 +281,14 @@ body:not(.desktop-workspace) #setupPanel[data-home-open="practise"] #reviewDeckS
     gap: 8px;
     padding: 6px 6px 6px 10px;
     border-radius: 10px;
-    background: color-mix(in srgb, var(--accent-primary) 36%, #000);
     transition: background .15s ease;
 }
-.home-smart-skip.is-on { background: color-mix(in srgb, var(--accent-primary) 48%, #000); }
+:root:not([data-theme="light"]) .home-smart-skip {
+    background: color-mix(in srgb, var(--accent-primary) 36%, #000);
+}
+:root:not([data-theme="light"]) .home-smart-skip.is-on {
+    background: color-mix(in srgb, var(--accent-primary) 48%, #000);
+}
 .home-smart-skip-icon {
     width: 16px;
     height: 16px;

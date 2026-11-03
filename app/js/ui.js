@@ -3066,10 +3066,12 @@ function applyLanguageColorTheme() {
     // The second flag colour stays recognisable. It is a thin stripe, not a
     // second fill, so it does not need the same lift as the buttons.
     const secondaryHex = langConfig.colorTheme.secondary;
-    const secondary = {
-        color: secondaryHex,
-        ink: relativeLuminance(secondaryHex) < 0.4 ? '#ffffff' : '#10141b',
-    };
+    const secondary = theme === 'light'
+        ? readableFlagColor(secondaryHex, 'light')
+        : {
+            color: secondaryHex,
+            ink: relativeLuminance(secondaryHex) < 0.4 ? '#ffffff' : '#10141b',
+        };
     const root = document.documentElement;
     paintAccent(root, primary, secondary);
     // The stylesheet pins the setup panel to a neutral indigo. An inline

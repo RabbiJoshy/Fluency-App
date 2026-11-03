@@ -62,6 +62,7 @@
     --text-primary: #17212b;
     --text-secondary: #354353;
     --text-muted: #5d6b7a;
+    --text-subtle: #5d6b7a;
 
     --accent-orange: #c84f24;
     --accent-amber: #946000;
@@ -69,6 +70,12 @@
     --accent-green: #087f68;
     --accent-phrases: #7453c6;
     --accent-phrases-rgb: 116, 83, 198;
+
+    --accent-secondary: #946000;
+    --accent-secondary-text: #ffffff;
+
+    --set-new: #94a3b8;
+    --set-review: #b45309;
 
     --success: #087f68;
     --error: #bd3847;

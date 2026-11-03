@@ -883,6 +883,46 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('css/light-theme.css?v=20261011style', html)
         self.assertIn('/css/light-theme.css?v=20261011style', worker)
 
+    def test_light_theme_legibility_and_contrast_rules(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        light_css = (APP_ROOT / "css" / "light-theme.css").read_text(encoding="utf-8")
+        home_css = (APP_ROOT / "css" / "home-layout.css").read_text(encoding="utf-8")
+        ui_js = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+
+        # Top bar icons and reverse lang button
+        self.assertIn(':root[data-theme="light"] #topBar .top-bar-icon-btn', light_css)
+        self.assertIn(':root[data-theme="light"] #reverseLangBtn .reverse-swap-glyph', light_css)
+
+        # Card front statistics
+        self.assertIn(':root[data-theme="light"] .card-ranking .card-stat', light_css)
+        self.assertIn(':root[data-theme="light"] .card-ranking .card-stat-value', light_css)
+
+        # Scrubber markers
+        self.assertIn(':root[data-theme="light"] .deck-progress-segment.is-result-correct', light_css)
+        self.assertIn('--scrubber-marker-text: #065f46;', light_css)
+        self.assertIn('--scrubber-marker-text: #9f1239;', light_css)
+
+        # Function word connectors and panels
+        self.assertIn(':root[data-theme="light"] .fw-token-connector', light_css)
+        self.assertIn(':root[data-theme="light"] .fw-sentence-panel', light_css)
+
+        # Home layout Smart Skip and level dots
+        self.assertIn(':root[data-theme="light"] .home-smart-skip', light_css)
+        self.assertIn(':root:not([data-theme="light"]) .home-smart-skip', home_css)
+        self.assertIn(':root[data-theme="light"] .home-level-tile-bar .is-new', light_css)
+
+        # Light theme level status colours avoid white on white
+        self.assertIn('--set-new: #94a3b8;', light_css)
+        self.assertIn('--set-review: #d97706;', light_css)
+
+        # ui.js uses readableFlagColor for secondary accent in light theme
+        self.assertIn("theme === 'light'\n        ? readableFlagColor(secondaryHex, 'light')", ui_js)
+
+        # light-theme.css loads after home-layout.css in index.html
+        home_idx = html.index('css/home-layout.css')
+        light_idx = html.index('css/light-theme.css')
+        self.assertGreater(light_idx, home_idx, "light-theme.css must load after home-layout.css")
+
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
